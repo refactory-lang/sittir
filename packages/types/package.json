@@ -1,0 +1,40 @@
+{
+  "name": "@sittir/types",
+  "version": "0.1.0",
+  "description": "Language-agnostic type projection from tree-sitter grammars to typed IR builders",
+  "license": "MIT",
+  "homepage": "https://github.com/refactory-lang/sittir#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/refactory-lang/sittir.git",
+    "directory": "packages/types"
+  },
+  "keywords": [
+    "tree-sitter",
+    "ir",
+    "codegen",
+    "typescript",
+    "types"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsgo -p tsconfig.build.json",
+    "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+    "dev": "tsgo -p tsconfig.build.json --watch",
+    "type-check": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "type-fest": "^5.4.4"
+  }
+}

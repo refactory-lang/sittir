@@ -1,0 +1,45 @@
+{
+  "name": "@sittir/rust",
+  "version": "0.1.0",
+  "description": "Typed Rust IR builder — 134 node kinds from tree-sitter-rust grammar",
+  "license": "MIT",
+  "homepage": "https://github.com/refactory-lang/sittir#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/refactory-lang/sittir.git",
+    "directory": "packages/rust"
+  },
+  "keywords": [
+    "rust",
+    "tree-sitter",
+    "ir",
+    "codegen",
+    "ast"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsgo -p tsconfig.build.json",
+    "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+    "dev": "tsgo -p tsconfig.build.json --watch",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@sittir/types": "workspace:*"
+  },
+  "devDependencies": {
+    "type-fest": "^5.4.4"
+  }
+}

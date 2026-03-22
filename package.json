@@ -1,0 +1,50 @@
+{
+  "name": "sittir",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generate typed IR builders from tree-sitter grammars",
+  "type": "module",
+  "author": "Pradeep Mouli",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sittir/sittir.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r run build",
+    "clean": "pnpm -r run clean && rm -rf node_modules/.cache",
+    "clean:all": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules",
+    "dev": "pnpm -r --parallel run dev",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "fresh": "pnpm clean:all && pnpm install",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "test": "pnpm -r run test",
+    "test:coverage": "pnpm -r run test:coverage",
+    "test:watch": "pnpm -r --parallel run test -- --watch",
+    "type-check": "pnpm -r run type-check",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "pnpm run build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
+    "@types/node": "^25.5.0",
+    "@typescript/native-preview": "7.0.0-dev.20260317.1",
+    "@vitest/coverage-v8": "^4.1.0",
+    "oxfmt": "^0.41.0",
+    "oxlint": "^1.56.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.32.1"
+}
