@@ -1,7 +1,7 @@
 /**
  * IR Code Generator
  *
- * Reads tree-sitter grammar definitions from @codemod.com/jssg-types
+ * Reads tree-sitter grammar definitions from node-types.json
  * and generates:
  * 1. Builder factory functions (structItem(), functionItem(), etc.)
  * 2. Render switch cases
