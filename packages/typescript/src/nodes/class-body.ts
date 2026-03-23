@@ -1,20 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ClassBody } from '../types.js';
+import type { AbstractMethodSignature, ClassBody, ClassStaticBlock, Decorator, IndexSignature, MethodDefinition, MethodSignature, PublicFieldDefinition } from '../types.js';
 
 
-class ClassBodyBuilder extends BaseBuilder<ClassBody> {
-  private _decorator: BaseBuilder[] = [];
-  private _children: BaseBuilder[] = [];
+class ClassBodyBuilder extends Builder<ClassBody> {
+  private _decorator: Builder[] = [];
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  decorator(value: BaseBuilder[]): this {
+  decorator(...value: Builder[]): this {
     this._decorator = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -52,6 +52,30 @@ class ClassBodyBuilder extends BaseBuilder<ClassBody> {
   }
 }
 
+export type { ClassBodyBuilder };
+
 export function class_body(): ClassBodyBuilder {
   return new ClassBodyBuilder();
+}
+
+export interface ClassBodyOptions {
+  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
+  children?: Builder<AbstractMethodSignature | ClassStaticBlock | IndexSignature | MethodDefinition | MethodSignature | PublicFieldDefinition> | (Builder<AbstractMethodSignature | ClassStaticBlock | IndexSignature | MethodDefinition | MethodSignature | PublicFieldDefinition>)[];
+}
+
+export namespace class_body {
+  export function from(options: ClassBodyOptions): ClassBodyBuilder {
+    const b = new ClassBodyBuilder();
+    if (options.decorator !== undefined) {
+      const _v = options.decorator;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.decorator(..._arr);
+    }
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

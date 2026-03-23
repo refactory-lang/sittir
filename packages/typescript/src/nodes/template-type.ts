@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TemplateType } from '../types.js';
+import type { InferType, PrimaryType, TemplateType } from '../types.js';
 
 
-class TemplateTypeBuilder extends BaseBuilder<TemplateType> {
-  private _children: BaseBuilder[] = [];
+class TemplateTypeBuilder extends Builder<TemplateType> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -39,6 +39,20 @@ class TemplateTypeBuilder extends BaseBuilder<TemplateType> {
   }
 }
 
-export function template_type(children: BaseBuilder): TemplateTypeBuilder {
+export type { TemplateTypeBuilder };
+
+export function template_type(children: Builder): TemplateTypeBuilder {
   return new TemplateTypeBuilder(children);
+}
+
+export interface TemplateTypeOptions {
+  children: Builder<InferType | PrimaryType> | (Builder<InferType | PrimaryType>)[];
+}
+
+export namespace template_type {
+  export function from(options: TemplateTypeOptions): TemplateTypeBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TemplateTypeBuilder(_ctor);
+    return b;
+  }
 }

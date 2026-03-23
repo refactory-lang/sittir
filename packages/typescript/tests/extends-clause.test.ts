@@ -3,19 +3,19 @@ import { ir } from '../src/builder.js';
 
 describe('extends_clause', () => {
   it('should build with correct kind', () => {
-    const builder = ir.extends_clause([ir.identifier('test')]);
+    const builder = ir.extends_clause(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('extends_clause');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.extends_clause([ir.identifier('test')]);
+    const builder = ir.extends_clause(ir.identifier('a'), ir.identifier('b'));
     const source = builder.renderImpl();
     expect(source).toContain('extends');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.extends_clause([ir.identifier('test')]);
+    const builder = ir.extends_clause(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('extends_clause');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +24,7 @@ describe('extends_clause', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.extends_clause([ir.identifier('test')]);
+    const builder = ir.extends_clause(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

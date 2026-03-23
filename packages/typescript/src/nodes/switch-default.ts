@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SwitchDefault } from '../types.js';
+import type { Statement, SwitchDefault } from '../types.js';
 
 
-class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
-  private _body: BaseBuilder[] = [];
+class SwitchDefaultBuilder extends Builder<SwitchDefault> {
+  private _body: Builder[] = [];
 
   constructor() { super(); }
 
-  body(value: BaseBuilder[]): this {
+  body(...value: Builder[]): this {
     this._body = value;
     return this;
   }
@@ -41,6 +41,24 @@ class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
   }
 }
 
+export type { SwitchDefaultBuilder };
+
 export function switch_default(): SwitchDefaultBuilder {
   return new SwitchDefaultBuilder();
+}
+
+export interface SwitchDefaultOptions {
+  body?: Builder<Statement> | (Builder<Statement>)[];
+}
+
+export namespace switch_default {
+  export function from(options: SwitchDefaultOptions): SwitchDefaultBuilder {
+    const b = new SwitchDefaultBuilder();
+    if (options.body !== undefined) {
+      const _v = options.body;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.body(..._arr);
+    }
+    return b;
+  }
 }

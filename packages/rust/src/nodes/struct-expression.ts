@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { StructExpression } from '../types.js';
+import type { FieldInitializerList, GenericTypeWithTurbofish, ScopedTypeIdentifier, StructExpression, TypeIdentifier } from '../types.js';
 
 
-class StructBuilder extends BaseBuilder<StructExpression> {
-  private _body!: BaseBuilder;
-  private _name: BaseBuilder;
+class StructBuilder extends Builder<StructExpression> {
+  private _body!: Builder;
+  private _name: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
@@ -42,6 +42,21 @@ class StructBuilder extends BaseBuilder<StructExpression> {
   }
 }
 
-export function struct_(name: BaseBuilder): StructBuilder {
+export type { StructBuilder };
+
+export function struct_(name: Builder): StructBuilder {
   return new StructBuilder(name);
+}
+
+export interface StructExpressionOptions {
+  body: Builder<FieldInitializerList>;
+  name: Builder<GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier>;
+}
+
+export namespace struct_ {
+  export function from(options: StructExpressionOptions): StructBuilder {
+    const b = new StructBuilder(options.name);
+    if (options.body !== undefined) b.body(options.body);
+    return b;
+  }
 }

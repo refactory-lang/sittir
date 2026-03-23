@@ -3,13 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('class_heritage', () => {
   it('should build with correct kind', () => {
-    const builder = ir.class_heritage([ir.identifier('test')]);
+    const builder = ir.class_heritage(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('class_heritage');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.class_heritage([ir.identifier('test')]);
+    const builder = ir.class_heritage(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('class_heritage');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +18,7 @@ describe('class_heritage', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.class_heritage([ir.identifier('test')]);
+    const builder = ir.class_heritage(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -1,20 +1,21 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LookupType } from '../types.js';
 
 
-class LookupTypeBuilder extends BaseBuilder<LookupType> {
-  private _children: BaseBuilder[] = [];
+class LookupTypeBuilder extends Builder<LookupType> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
     parts.push('[');
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     parts.push(']');
     return parts.join(' ');
   }
@@ -30,15 +31,29 @@ class LookupTypeBuilder extends BaseBuilder<LookupType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
     parts.push({ kind: 'token', text: '[', type: '[' });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     parts.push({ kind: 'token', text: ']', type: ']' });
     return parts;
   }
 }
 
-export function lookup_type(children: BaseBuilder[]): LookupTypeBuilder {
-  return new LookupTypeBuilder(children);
+export type { LookupTypeBuilder };
+
+export function lookup_type(...children: Builder[]): LookupTypeBuilder {
+  return new LookupTypeBuilder(...children);
+}
+
+export interface LookupTypeOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace lookup_type {
+  export function from(options: LookupTypeOptions): LookupTypeBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new LookupTypeBuilder(..._arr);
+    return b;
+  }
 }

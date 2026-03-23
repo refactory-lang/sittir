@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ReadonlyType } from '../types.js';
 
 
-class ReadonlyTypeBuilder extends BaseBuilder<ReadonlyType> {
-  private _children: BaseBuilder[] = [];
+class ReadonlyTypeBuilder extends Builder<ReadonlyType> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class ReadonlyTypeBuilder extends BaseBuilder<ReadonlyType> {
   }
 }
 
-export function readonly_type(children: BaseBuilder): ReadonlyTypeBuilder {
+export type { ReadonlyTypeBuilder };
+
+export function readonly_type(children: Builder): ReadonlyTypeBuilder {
   return new ReadonlyTypeBuilder(children);
+}
+
+export interface ReadonlyTypeOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace readonly_type {
+  export function from(options: ReadonlyTypeOptions): ReadonlyTypeBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ReadonlyTypeBuilder(_ctor);
+    return b;
+  }
 }

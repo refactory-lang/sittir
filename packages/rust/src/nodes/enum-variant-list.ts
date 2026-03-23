@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { EnumVariantList } from '../types.js';
+import type { AttributeItem, EnumVariant, EnumVariantList } from '../types.js';
 
 
-class EnumVariantListBuilder extends BaseBuilder<EnumVariantList> {
-  private _children: BaseBuilder[] = [];
+class EnumVariantListBuilder extends Builder<EnumVariantList> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -16,7 +16,10 @@ class EnumVariantListBuilder extends BaseBuilder<EnumVariantList> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('{');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
+    if (this._children[2]) parts.push(this.renderChild(this._children[2]!, ctx));
+    if (this._children[3]) parts.push(this.renderChild(this._children[3]!, ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -33,14 +36,33 @@ class EnumVariantListBuilder extends BaseBuilder<EnumVariantList> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '{', type: '{' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
+    if (this._children[2]) parts.push({ kind: 'builder', builder: this._children[2]! });
+    if (this._children[3]) parts.push({ kind: 'builder', builder: this._children[3]! });
     parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
 }
 
+export type { EnumVariantListBuilder };
+
 export function enum_variant_list(): EnumVariantListBuilder {
   return new EnumVariantListBuilder();
+}
+
+export interface EnumVariantListOptions {
+  children?: Builder<AttributeItem | EnumVariant> | (Builder<AttributeItem | EnumVariant>)[];
+}
+
+export namespace enum_variant_list {
+  export function from(options: EnumVariantListOptions): EnumVariantListBuilder {
+    const b = new EnumVariantListBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

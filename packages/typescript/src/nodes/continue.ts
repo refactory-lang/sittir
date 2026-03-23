@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ContinueStatement } from '../types.js';
+import type { ContinueStatement, StatementIdentifier } from '../types.js';
 
 
-class ContinueBuilder extends BaseBuilder<ContinueStatement> {
-  private _label?: BaseBuilder;
+class ContinueBuilder extends Builder<ContinueStatement> {
+  private _label?: Builder;
 
   constructor() { super(); }
 
-  label(value: BaseBuilder): this {
+  label(value: Builder): this {
     this._label = value;
     return this;
   }
@@ -37,6 +37,23 @@ class ContinueBuilder extends BaseBuilder<ContinueStatement> {
   }
 }
 
+export type { ContinueBuilder };
+
 export function continue_(): ContinueBuilder {
   return new ContinueBuilder();
+}
+
+export interface ContinueStatementOptions {
+  label?: Builder<StatementIdentifier> | string;
+}
+
+export namespace continue_ {
+  export function from(options: ContinueStatementOptions): ContinueBuilder {
+    const b = new ContinueBuilder();
+    if (options.label !== undefined) {
+      const _v = options.label;
+      b.label(typeof _v === 'string' ? new LeafBuilder('statement_identifier', _v) : _v);
+    }
+    return b;
+  }
 }

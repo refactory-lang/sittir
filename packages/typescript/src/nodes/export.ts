@@ -1,38 +1,38 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExportStatement } from '../types.js';
+import type { Declaration, Decorator, ExportClause, ExportStatement, Expression, Identifier, NamespaceExport } from '../types.js';
 
 
-class ExportBuilder extends BaseBuilder<ExportStatement> {
-  private _declaration?: BaseBuilder;
-  private _decorator: BaseBuilder[] = [];
-  private _source?: BaseBuilder;
-  private _value?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ExportBuilder extends Builder<ExportStatement> {
+  private _declaration?: Builder;
+  private _decorator: Builder[] = [];
+  private _source?: Builder;
+  private _value?: Builder;
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  declaration(value: BaseBuilder): this {
+  declaration(value: Builder): this {
     this._declaration = value;
     return this;
   }
 
-  decorator(value: BaseBuilder[]): this {
+  decorator(...value: Builder[]): this {
     this._decorator = value;
     return this;
   }
 
-  source(value: BaseBuilder): this {
+  source(value: Builder): this {
     this._source = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -44,6 +44,9 @@ class ExportBuilder extends BaseBuilder<ExportStatement> {
     parts.push('from');
     if (this._source) parts.push(this.renderChild(this._source, ctx));
     if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._declaration) parts.push(this.renderChild(this._declaration, ctx));
+    if (this._decorator.length > 0) parts.push(this.renderChildren(this._decorator, ', ', ctx));
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
     return parts.join(' ');
   }
 
@@ -69,10 +72,45 @@ class ExportBuilder extends BaseBuilder<ExportStatement> {
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    if (this._declaration) parts.push({ kind: 'builder', builder: this._declaration, fieldName: 'declaration' });
+    for (const child of this._decorator) {
+      parts.push({ kind: 'builder', builder: child, fieldName: 'decorator' });
+    }
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     return parts;
   }
 }
 
+export type { ExportBuilder };
+
 export function export_(): ExportBuilder {
   return new ExportBuilder();
+}
+
+export interface ExportStatementOptions {
+  declaration?: Builder<Declaration>;
+  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
+  source?: Builder;
+  value?: Builder<Expression>;
+  children?: Builder<ExportClause | Expression | Identifier | NamespaceExport> | (Builder<ExportClause | Expression | Identifier | NamespaceExport>)[];
+}
+
+export namespace export_ {
+  export function from(options: ExportStatementOptions): ExportBuilder {
+    const b = new ExportBuilder();
+    if (options.declaration !== undefined) b.declaration(options.declaration);
+    if (options.decorator !== undefined) {
+      const _v = options.decorator;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.decorator(..._arr);
+    }
+    if (options.source !== undefined) b.source(options.source);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

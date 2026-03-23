@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { BreakExpression } from '../types.js';
+import type { BreakExpression, Expression, Label } from '../types.js';
 
 
-class BreakBuilder extends BaseBuilder<BreakExpression> {
-  private _children: BaseBuilder[] = [];
+class BreakBuilder extends Builder<BreakExpression> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -39,6 +39,24 @@ class BreakBuilder extends BaseBuilder<BreakExpression> {
   }
 }
 
+export type { BreakBuilder };
+
 export function break_(): BreakBuilder {
   return new BreakBuilder();
+}
+
+export interface BreakExpressionOptions {
+  children?: Builder<Expression | Label> | (Builder<Expression | Label>)[];
+}
+
+export namespace break_ {
+  export function from(options: BreakExpressionOptions): BreakBuilder {
+    const b = new BreakBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

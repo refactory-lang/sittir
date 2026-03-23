@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { QualifiedType } from '../types.js';
+import type { QualifiedType, Type } from '../types.js';
 
 
-class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
-  private _alias: BaseBuilder;
-  private _type!: BaseBuilder;
+class QualifiedTypeBuilder extends Builder<QualifiedType> {
+  private _alias!: Builder;
+  private _type: Builder;
 
-  constructor(alias: BaseBuilder) {
+  constructor(type_: Builder) {
     super();
-    this._alias = alias;
+    this._type = type_;
   }
 
-  type(value: BaseBuilder): this {
-    this._type = value;
+  alias(value: Builder): this {
+    this._alias = value;
     return this;
   }
 
@@ -28,8 +28,8 @@ class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
   build(ctx?: RenderContext): QualifiedType {
     return {
       kind: 'qualified_type',
-      alias: this.renderChild(this._alias, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
+      alias: this._alias ? this.renderChild(this._alias, ctx) : undefined,
+      type: this.renderChild(this._type, ctx),
     } as unknown as QualifiedType;
   }
 
@@ -44,6 +44,21 @@ class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
   }
 }
 
-export function qualified_type(alias: BaseBuilder): QualifiedTypeBuilder {
-  return new QualifiedTypeBuilder(alias);
+export type { QualifiedTypeBuilder };
+
+export function qualified_type(type_: Builder): QualifiedTypeBuilder {
+  return new QualifiedTypeBuilder(type_);
+}
+
+export interface QualifiedTypeOptions {
+  alias: Builder<Type>;
+  type: Builder<Type>;
+}
+
+export namespace qualified_type {
+  export function from(options: QualifiedTypeOptions): QualifiedTypeBuilder {
+    const b = new QualifiedTypeBuilder(options.type);
+    if (options.alias !== undefined) b.alias(options.alias);
+    return b;
+  }
 }

@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExtendsClause } from '../types.js';
+import type { Expression, ExtendsClause, TypeArguments } from '../types.js';
 
 
-class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
-  private _typeArguments: BaseBuilder[] = [];
-  private _value: BaseBuilder[] = [];
+class ExtendsClauseBuilder extends Builder<ExtendsClause> {
+  private _typeArguments: Builder[] = [];
+  private _value: Builder[] = [];
 
-  constructor(value: BaseBuilder[]) {
+  constructor(...value: Builder[]) {
     super();
     this._value = value;
   }
 
-  typeArguments(value: BaseBuilder[]): this {
+  typeArguments(...value: Builder[]): this {
     this._typeArguments = value;
     return this;
   }
@@ -48,6 +48,27 @@ class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
   }
 }
 
-export function extends_clause(value: BaseBuilder[]): ExtendsClauseBuilder {
-  return new ExtendsClauseBuilder(value);
+export type { ExtendsClauseBuilder };
+
+export function extends_clause(...value: Builder[]): ExtendsClauseBuilder {
+  return new ExtendsClauseBuilder(...value);
+}
+
+export interface ExtendsClauseOptions {
+  typeArguments?: Builder<TypeArguments> | (Builder<TypeArguments>)[];
+  value: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace extends_clause {
+  export function from(options: ExtendsClauseOptions): ExtendsClauseBuilder {
+    const _ctor = options.value;
+    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
+    const b = new ExtendsClauseBuilder(..._arr);
+    if (options.typeArguments !== undefined) {
+      const _v = options.typeArguments;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.typeArguments(..._arr);
+    }
+    return b;
+  }
 }

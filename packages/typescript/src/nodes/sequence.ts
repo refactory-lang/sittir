@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SequenceExpression } from '../types.js';
+import type { Expression, SequenceExpression } from '../types.js';
 
 
-class SequenceBuilder extends BaseBuilder<SequenceExpression> {
-  private _children: BaseBuilder[] = [];
+class SequenceBuilder extends Builder<SequenceExpression> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     return parts.join(' ');
   }
 
@@ -28,13 +28,29 @@ class SequenceBuilder extends BaseBuilder<SequenceExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     return parts;
   }
 }
 
-export function sequence(children: BaseBuilder[]): SequenceBuilder {
-  return new SequenceBuilder(children);
+export type { SequenceBuilder };
+
+export function sequence(...children: Builder[]): SequenceBuilder {
+  return new SequenceBuilder(...children);
+}
+
+export interface SequenceExpressionOptions {
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace sequence {
+  export function from(options: SequenceExpressionOptions): SequenceBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new SequenceBuilder(..._arr);
+    return b;
+  }
 }

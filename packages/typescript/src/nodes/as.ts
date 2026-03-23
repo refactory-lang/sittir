@@ -1,21 +1,21 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AsExpression } from '../types.js';
+import type { AsExpression, Expression } from '../types.js';
 
 
-class AsBuilder extends BaseBuilder<AsExpression> {
-  private _children: BaseBuilder[] = [];
+class AsBuilder extends Builder<AsExpression> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
     parts.push('as');
-    parts.push('const');
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -30,15 +30,28 @@ class AsBuilder extends BaseBuilder<AsExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
     parts.push({ kind: 'token', text: 'as', type: 'as' });
-    parts.push({ kind: 'token', text: 'const', type: 'const' });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
 
-export function as(children: BaseBuilder[]): AsBuilder {
-  return new AsBuilder(children);
+export type { AsBuilder };
+
+export function as(...children: Builder[]): AsBuilder {
+  return new AsBuilder(...children);
+}
+
+export interface AsExpressionOptions {
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace as {
+  export function from(options: AsExpressionOptions): AsBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new AsBuilder(..._arr);
+    return b;
+  }
 }

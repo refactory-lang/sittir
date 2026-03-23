@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExternModifier } from '../types.js';
+import type { ExternModifier, StringLiteral } from '../types.js';
 
 
-class ExternModifierBuilder extends BaseBuilder<ExternModifier> {
-  private _children: BaseBuilder[] = [];
+class ExternModifierBuilder extends Builder<ExternModifier> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -39,6 +39,24 @@ class ExternModifierBuilder extends BaseBuilder<ExternModifier> {
   }
 }
 
+export type { ExternModifierBuilder };
+
 export function extern_modifier(): ExternModifierBuilder {
   return new ExternModifierBuilder();
+}
+
+export interface ExternModifierOptions {
+  children?: Builder<StringLiteral> | (Builder<StringLiteral>)[];
+}
+
+export namespace extern_modifier {
+  export function from(options: ExternModifierOptions): ExternModifierBuilder {
+    const b = new ExternModifierBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

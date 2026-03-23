@@ -3,13 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('sequence_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.sequence([ir.identifier('test')]);
+    const builder = ir.sequence(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('sequence_expression');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.sequence([ir.identifier('test')]);
+    const builder = ir.sequence(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('sequence_expression');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +18,7 @@ describe('sequence_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.sequence([ir.identifier('test')]);
+    const builder = ir.sequence(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

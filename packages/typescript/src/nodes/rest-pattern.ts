@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { RestPattern } from '../types.js';
+import type { ArrayPattern, Identifier, MemberExpression, NonNullExpression, ObjectPattern, RestPattern, SubscriptExpression, Undefined } from '../types.js';
 
 
-class RestPatternBuilder extends BaseBuilder<RestPattern> {
-  private _children: BaseBuilder[] = [];
+class RestPatternBuilder extends Builder<RestPattern> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class RestPatternBuilder extends BaseBuilder<RestPattern> {
   }
 }
 
-export function rest_pattern(children: BaseBuilder): RestPatternBuilder {
+export type { RestPatternBuilder };
+
+export function rest_pattern(children: Builder): RestPatternBuilder {
   return new RestPatternBuilder(children);
+}
+
+export interface RestPatternOptions {
+  children: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | SubscriptExpression | Undefined> | (Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | SubscriptExpression | Undefined>)[];
+}
+
+export namespace rest_pattern {
+  export function from(options: RestPatternOptions): RestPatternBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new RestPatternBuilder(_ctor);
+    return b;
+  }
 }

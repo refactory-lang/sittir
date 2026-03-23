@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ArrayType } from '../types.js';
+import type { ArrayType, Expression, Type } from '../types.js';
 
 
-class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
-  private _element: BaseBuilder;
-  private _length?: BaseBuilder;
+class ArrayTypeBuilder extends Builder<ArrayType> {
+  private _element: Builder;
+  private _length?: Builder;
 
-  constructor(element: BaseBuilder) {
+  constructor(element: Builder) {
     super();
     this._element = element;
   }
 
-  length(value: BaseBuilder): this {
+  length(value: Builder): this {
     this._length = value;
     return this;
   }
@@ -52,6 +52,21 @@ class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
   }
 }
 
-export function array_type(element: BaseBuilder): ArrayTypeBuilder {
+export type { ArrayTypeBuilder };
+
+export function array_type(element: Builder): ArrayTypeBuilder {
   return new ArrayTypeBuilder(element);
+}
+
+export interface ArrayTypeOptions {
+  element: Builder<Type>;
+  length?: Builder<Expression>;
+}
+
+export namespace array_type {
+  export function from(options: ArrayTypeOptions): ArrayTypeBuilder {
+    const b = new ArrayTypeBuilder(options.element);
+    if (options.length !== undefined) b.length(options.length);
+    return b;
+  }
 }

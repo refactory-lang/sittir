@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TupleType } from '../types.js';
+import type { TupleType, Type } from '../types.js';
 
 
-class TupleTypeBuilder extends BaseBuilder<TupleType> {
-  private _children: BaseBuilder[] = [];
+class TupleTypeBuilder extends Builder<TupleType> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -14,7 +14,7 @@ class TupleTypeBuilder extends BaseBuilder<TupleType> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('(');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     parts.push(')');
     return parts.join(' ');
   }
@@ -31,14 +31,30 @@ class TupleTypeBuilder extends BaseBuilder<TupleType> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '(', type: '(' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     parts.push({ kind: 'token', text: ')', type: ')' });
     return parts;
   }
 }
 
-export function tuple_type(children: BaseBuilder[]): TupleTypeBuilder {
-  return new TupleTypeBuilder(children);
+export type { TupleTypeBuilder };
+
+export function tuple_type(...children: Builder[]): TupleTypeBuilder {
+  return new TupleTypeBuilder(...children);
+}
+
+export interface TupleTypeOptions {
+  children: Builder<Type> | (Builder<Type>)[];
+}
+
+export namespace tuple_type {
+  export function from(options: TupleTypeOptions): TupleTypeBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new TupleTypeBuilder(..._arr);
+    return b;
+  }
 }

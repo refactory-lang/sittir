@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Constraint } from '../types.js';
 
 
-class ConstraintBuilder extends BaseBuilder<Constraint> {
-  private _children: BaseBuilder[] = [];
+class ConstraintBuilder extends Builder<Constraint> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class ConstraintBuilder extends BaseBuilder<Constraint> {
   }
 }
 
-export function constraint(children: BaseBuilder): ConstraintBuilder {
+export type { ConstraintBuilder };
+
+export function constraint(children: Builder): ConstraintBuilder {
   return new ConstraintBuilder(children);
+}
+
+export interface ConstraintOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace constraint {
+  export function from(options: ConstraintOptions): ConstraintBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ConstraintBuilder(_ctor);
+    return b;
+  }
 }

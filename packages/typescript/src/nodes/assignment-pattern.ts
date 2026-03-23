@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AssignmentPattern } from '../types.js';
+import type { AssignmentPattern, Expression, Pattern } from '../types.js';
 
 
-class AssignmentPatternBuilder extends BaseBuilder<AssignmentPattern> {
-  private _left: BaseBuilder;
-  private _right!: BaseBuilder;
+class AssignmentPatternBuilder extends Builder<AssignmentPattern> {
+  private _left: Builder;
+  private _right!: Builder;
 
-  constructor(left: BaseBuilder) {
+  constructor(left: Builder) {
     super();
     this._left = left;
   }
 
-  right(value: BaseBuilder): this {
+  right(value: Builder): this {
     this._right = value;
     return this;
   }
@@ -44,6 +44,21 @@ class AssignmentPatternBuilder extends BaseBuilder<AssignmentPattern> {
   }
 }
 
-export function assignment_pattern(left: BaseBuilder): AssignmentPatternBuilder {
+export type { AssignmentPatternBuilder };
+
+export function assignment_pattern(left: Builder): AssignmentPatternBuilder {
   return new AssignmentPatternBuilder(left);
+}
+
+export interface AssignmentPatternOptions {
+  left: Builder<Pattern>;
+  right: Builder<Expression>;
+}
+
+export namespace assignment_pattern {
+  export function from(options: AssignmentPatternOptions): AssignmentPatternBuilder {
+    const b = new AssignmentPatternBuilder(options.left);
+    if (options.right !== undefined) b.right(options.right);
+    return b;
+  }
 }

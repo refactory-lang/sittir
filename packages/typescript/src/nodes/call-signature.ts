@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CallSignature } from '../types.js';
+import type { AssertsAnnotation, CallSignature, FormalParameters, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class CallSignatureBuilder extends BaseBuilder<CallSignature> {
-  private _parameters: BaseBuilder;
-  private _returnType?: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class CallSignatureBuilder extends Builder<CallSignature> {
+  private _parameters: Builder;
+  private _returnType?: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -51,6 +51,23 @@ class CallSignatureBuilder extends BaseBuilder<CallSignature> {
   }
 }
 
-export function call_signature(parameters: BaseBuilder): CallSignatureBuilder {
+export type { CallSignatureBuilder };
+
+export function call_signature(parameters: Builder): CallSignatureBuilder {
   return new CallSignatureBuilder(parameters);
+}
+
+export interface CallSignatureOptions {
+  parameters: Builder<FormalParameters>;
+  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace call_signature {
+  export function from(options: CallSignatureOptions): CallSignatureBuilder {
+    const b = new CallSignatureBuilder(options.parameters);
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

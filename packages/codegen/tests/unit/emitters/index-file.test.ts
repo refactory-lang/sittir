@@ -7,7 +7,7 @@ describe('emitIndex', () => {
     expect(source).toContain("from './types.js'");
     expect(source).toContain("from './builder.js'");
     expect(source).toContain('ir');
-    expect(source).toContain("BaseBuilder");
+    expect(source).toContain("Builder");
     expect(source).toContain("LeafBuilder");
     expect(source).toContain("RenderContext");
     // Should NOT export eliminated files

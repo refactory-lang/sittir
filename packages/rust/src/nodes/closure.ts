@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ClosureExpression } from '../types.js';
+import type { ClosureExpression, ClosureParameters, Expression, Type } from '../types.js';
 
 
-class ClosureBuilder extends BaseBuilder<ClosureExpression> {
-  private _body: BaseBuilder;
-  private _parameters!: BaseBuilder;
-  private _returnType?: BaseBuilder;
+class ClosureBuilder extends Builder<ClosureExpression> {
+  private _body!: Builder;
+  private _parameters: Builder;
+  private _returnType?: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(parameters: Builder) {
     super();
-    this._body = body;
+    this._parameters = parameters;
   }
 
-  parameters(value: BaseBuilder): this {
-    this._parameters = value;
+  body(value: Builder): this {
+    this._body = value;
     return this;
   }
 
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
@@ -37,8 +37,8 @@ class ClosureBuilder extends BaseBuilder<ClosureExpression> {
   build(ctx?: RenderContext): ClosureExpression {
     return {
       kind: 'closure_expression',
-      body: this.renderChild(this._body, ctx),
-      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      parameters: this.renderChild(this._parameters, ctx),
       returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
     } as unknown as ClosureExpression;
   }
@@ -57,6 +57,23 @@ class ClosureBuilder extends BaseBuilder<ClosureExpression> {
   }
 }
 
-export function closure(body: BaseBuilder): ClosureBuilder {
-  return new ClosureBuilder(body);
+export type { ClosureBuilder };
+
+export function closure(parameters: Builder): ClosureBuilder {
+  return new ClosureBuilder(parameters);
+}
+
+export interface ClosureExpressionOptions {
+  body: Builder<Expression>;
+  parameters: Builder<ClosureParameters>;
+  returnType?: Builder<Type>;
+}
+
+export namespace closure {
+  export function from(options: ClosureExpressionOptions): ClosureBuilder {
+    const b = new ClosureBuilder(options.parameters);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    return b;
+  }
 }

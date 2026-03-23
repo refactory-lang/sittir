@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { UseWildcard } from '../types.js';
+import type { Crate, Identifier, Metavariable, ScopedIdentifier, Self, Super, UseWildcard } from '../types.js';
 
 
-class UseWildcardBuilder extends BaseBuilder<UseWildcard> {
-  private _children: BaseBuilder[] = [];
+class UseWildcardBuilder extends Builder<UseWildcard> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -39,6 +39,24 @@ class UseWildcardBuilder extends BaseBuilder<UseWildcard> {
   }
 }
 
+export type { UseWildcardBuilder };
+
 export function use_wildcard(): UseWildcardBuilder {
   return new UseWildcardBuilder();
+}
+
+export interface UseWildcardOptions {
+  children?: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super> | (Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>)[];
+}
+
+export namespace use_wildcard {
+  export function from(options: UseWildcardOptions): UseWildcardBuilder {
+    const b = new UseWildcardBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

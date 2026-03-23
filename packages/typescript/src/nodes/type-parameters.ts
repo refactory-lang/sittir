@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeParameters } from '../types.js';
+import type { TypeParameter, TypeParameters } from '../types.js';
 
 
-class TypeParametersBuilder extends BaseBuilder<TypeParameters> {
-  private _children: BaseBuilder[] = [];
+class TypeParametersBuilder extends Builder<TypeParameters> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -14,7 +14,7 @@ class TypeParametersBuilder extends BaseBuilder<TypeParameters> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('<');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     parts.push('>');
     return parts.join(' ');
   }
@@ -31,14 +31,30 @@ class TypeParametersBuilder extends BaseBuilder<TypeParameters> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '<', type: '<' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     parts.push({ kind: 'token', text: '>', type: '>' });
     return parts;
   }
 }
 
-export function type_parameters(children: BaseBuilder[]): TypeParametersBuilder {
-  return new TypeParametersBuilder(children);
+export type { TypeParametersBuilder };
+
+export function type_parameters(...children: Builder[]): TypeParametersBuilder {
+  return new TypeParametersBuilder(...children);
+}
+
+export interface TypeParametersOptions {
+  children: Builder<TypeParameter> | (Builder<TypeParameter>)[];
+}
+
+export namespace type_parameters {
+  export function from(options: TypeParametersOptions): TypeParametersBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new TypeParametersBuilder(..._arr);
+    return b;
+  }
 }

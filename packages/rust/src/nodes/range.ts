@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { RangeExpression } from '../types.js';
+import type { Expression, RangeExpression } from '../types.js';
 
 
-class RangeBuilder extends BaseBuilder<RangeExpression> {
-  private _children: BaseBuilder[] = [];
+class RangeBuilder extends Builder<RangeExpression> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -39,6 +39,24 @@ class RangeBuilder extends BaseBuilder<RangeExpression> {
   }
 }
 
+export type { RangeBuilder };
+
 export function range(): RangeBuilder {
   return new RangeBuilder();
+}
+
+export interface RangeExpressionOptions {
+  children?: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace range {
+  export function from(options: RangeExpressionOptions): RangeBuilder {
+    const b = new RangeBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

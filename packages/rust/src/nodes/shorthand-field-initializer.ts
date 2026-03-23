@@ -1,19 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ShorthandFieldInitializer } from '../types.js';
+import type { AttributeItem, Identifier, ShorthandFieldInitializer } from '../types.js';
 
 
-class ShorthandFieldInitializerBuilder extends BaseBuilder<ShorthandFieldInitializer> {
-  private _children: BaseBuilder[] = [];
+class ShorthandFieldInitializerBuilder extends Builder<ShorthandFieldInitializer> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -28,13 +29,27 @@ class ShorthandFieldInitializerBuilder extends BaseBuilder<ShorthandFieldInitial
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
 
-export function shorthand_field_initializer(children: BaseBuilder[]): ShorthandFieldInitializerBuilder {
-  return new ShorthandFieldInitializerBuilder(children);
+export type { ShorthandFieldInitializerBuilder };
+
+export function shorthand_field_initializer(...children: Builder[]): ShorthandFieldInitializerBuilder {
+  return new ShorthandFieldInitializerBuilder(...children);
+}
+
+export interface ShorthandFieldInitializerOptions {
+  children: Builder<AttributeItem | Identifier> | (Builder<AttributeItem | Identifier>)[];
+}
+
+export namespace shorthand_field_initializer {
+  export function from(options: ShorthandFieldInitializerOptions): ShorthandFieldInitializerBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new ShorthandFieldInitializerBuilder(..._arr);
+    return b;
+  }
 }

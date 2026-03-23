@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TupleExpression } from '../types.js';
+import type { AttributeItem, Expression, TupleExpression } from '../types.js';
 
 
-class TupleBuilder extends BaseBuilder<TupleExpression> {
-  private _children: BaseBuilder[] = [];
+class TupleBuilder extends Builder<TupleExpression> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -14,8 +14,7 @@ class TupleBuilder extends BaseBuilder<TupleExpression> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('(');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
-    parts.push(',');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     parts.push(')');
     return parts.join(' ');
   }
@@ -32,15 +31,30 @@ class TupleBuilder extends BaseBuilder<TupleExpression> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '(', type: '(' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
-    parts.push({ kind: 'token', text: ',', type: ',' });
     parts.push({ kind: 'token', text: ')', type: ')' });
     return parts;
   }
 }
 
-export function tuple(children: BaseBuilder[]): TupleBuilder {
-  return new TupleBuilder(children);
+export type { TupleBuilder };
+
+export function tuple(...children: Builder[]): TupleBuilder {
+  return new TupleBuilder(...children);
+}
+
+export interface TupleExpressionOptions {
+  children: Builder<Expression | AttributeItem> | (Builder<Expression | AttributeItem>)[];
+}
+
+export namespace tuple {
+  export function from(options: TupleExpressionOptions): TupleBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new TupleBuilder(..._arr);
+    return b;
+  }
 }

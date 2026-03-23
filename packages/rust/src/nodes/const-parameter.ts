@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConstParameter } from '../types.js';
+import type { ConstParameter, Identifier, Literal, NegativeLiteral, Type } from '../types.js';
 
 
-class ConstParameterBuilder extends BaseBuilder<ConstParameter> {
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _value?: BaseBuilder;
+class ConstParameterBuilder extends Builder<ConstParameter> {
+  private _name: Builder;
+  private _type!: Builder;
+  private _value?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
@@ -61,6 +61,24 @@ class ConstParameterBuilder extends BaseBuilder<ConstParameter> {
   }
 }
 
-export function const_parameter(name: BaseBuilder): ConstParameterBuilder {
+export type { ConstParameterBuilder };
+
+export function const_parameter(name: Builder): ConstParameterBuilder {
   return new ConstParameterBuilder(name);
+}
+
+export interface ConstParameterOptions {
+  name: Builder<Identifier> | string;
+  type: Builder<Type>;
+  value?: Builder<Literal | Identifier | NegativeLiteral>;
+}
+
+export namespace const_parameter {
+  export function from(options: ConstParameterOptions): ConstParameterBuilder {
+    const _ctor = options.name;
+    const b = new ConstParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

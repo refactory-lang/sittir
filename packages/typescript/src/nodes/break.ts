@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { BreakStatement } from '../types.js';
+import type { BreakStatement, StatementIdentifier } from '../types.js';
 
 
-class BreakBuilder extends BaseBuilder<BreakStatement> {
-  private _label?: BaseBuilder;
+class BreakBuilder extends Builder<BreakStatement> {
+  private _label?: Builder;
 
   constructor() { super(); }
 
-  label(value: BaseBuilder): this {
+  label(value: Builder): this {
     this._label = value;
     return this;
   }
@@ -37,6 +37,23 @@ class BreakBuilder extends BaseBuilder<BreakStatement> {
   }
 }
 
+export type { BreakBuilder };
+
 export function break_(): BreakBuilder {
   return new BreakBuilder();
+}
+
+export interface BreakStatementOptions {
+  label?: Builder<StatementIdentifier> | string;
+}
+
+export namespace break_ {
+  export function from(options: BreakStatementOptions): BreakBuilder {
+    const b = new BreakBuilder();
+    if (options.label !== undefined) {
+      const _v = options.label;
+      b.label(typeof _v === 'string' ? new LeafBuilder('statement_identifier', _v) : _v);
+    }
+    return b;
+  }
 }

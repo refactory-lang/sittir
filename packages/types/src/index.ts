@@ -370,7 +370,7 @@ export interface CSTNode {
  * (named node) or an anonymous token (keyword/punctuation/separator).
  */
 export type CSTChild =
-	| { kind: 'builder'; builder: BaseBuilder; fieldName?: string }
+	| { kind: 'builder'; builder: Builder; fieldName?: string }
 	| { kind: 'token'; text: string; type?: string }
 	| { kind: 'sep'; text: string };
 
@@ -395,7 +395,7 @@ function offsetToPosition(offset: number, fullText: string, baseOffset: number):
  *
  * @typeParam N - The IR node type produced by this builder.
  */
-export abstract class BaseBuilder<N extends { kind: string } = { kind: string }> {
+export abstract class Builder<N extends { kind: string } = { kind: string }> {
 	/** Render this node to source text (no validation). Override in subclasses. */
 	abstract renderImpl(ctx?: RenderContext): string;
 
@@ -414,13 +414,13 @@ export abstract class BaseBuilder<N extends { kind: string } = { kind: string }>
 	}
 
 	/** Render a single child builder. */
-	protected renderChild(child: BaseBuilder, ctx?: RenderContext): string {
+	protected renderChild(child: Builder, ctx?: RenderContext): string {
 		return child.renderImpl(ctx);
 	}
 
 	/** Render an array of child builders, joined by separator. */
 	protected renderChildren(
-		children: BaseBuilder[],
+		children: Builder[],
 		sep: string,
 		ctx?: RenderContext,
 	): string {
@@ -548,7 +548,7 @@ export abstract class BaseBuilder<N extends { kind: string } = { kind: string }>
  * Builder for terminal/leaf nodes (identifiers, literals, keywords).
  * Wraps a raw text string in a typed builder.
  */
-export class LeafBuilder<K extends string = string> extends BaseBuilder<{
+export class LeafBuilder<K extends string = string> extends Builder<{
 	kind: K;
 }> {
 	constructor(
@@ -586,17 +586,36 @@ export class LeafBuilder<K extends string = string> extends BaseBuilder<{
 }
 
 // ---------------------------------------------------------------------------
-// Legacy interfaces (deprecated — use BaseBuilder instead)
+// Edit interface (codemod-compatible)
 // ---------------------------------------------------------------------------
 
-/** @deprecated Use BaseBuilder instead. */
+/** A text-level edit: replace bytes [startPos, endPos) with insertedText. */
+export interface Edit {
+	startPos: number;
+	endPos: number;
+	insertedText: string;
+}
+
+
+// ---------------------------------------------------------------------------
+// Deprecated aliases
+// ---------------------------------------------------------------------------
+
+/** @deprecated Renamed to Builder. */
+export type BaseBuilder<N extends { kind: string } = { kind: string }> = Builder<N>;
+
+// ---------------------------------------------------------------------------
+// Legacy interfaces (deprecated — use Builder instead)
+// ---------------------------------------------------------------------------
+
+/** @deprecated Use Builder instead. */
 export interface BuilderTerminal<N extends { kind: string }> {
 	build(): N;
 	render(): string;
 	renderImpl(): string;
 }
 
-/** @deprecated Use BaseBuilder instead. */
+/** @deprecated Use Builder instead. */
 export interface RenderPipeline<N extends { kind: string }> {
 	render(node: N): string;
 	renderImpl(node: N): string;

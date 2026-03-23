@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LetCondition } from '../types.js';
+import type { Expression, LetCondition, Pattern } from '../types.js';
 
 
-class LetConditionBuilder extends BaseBuilder<LetCondition> {
-  private _pattern: BaseBuilder;
-  private _value!: BaseBuilder;
+class LetConditionBuilder extends Builder<LetCondition> {
+  private _pattern: Builder;
+  private _value!: Builder;
 
-  constructor(pattern: BaseBuilder) {
+  constructor(pattern: Builder) {
     super();
     this._pattern = pattern;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
@@ -46,6 +46,21 @@ class LetConditionBuilder extends BaseBuilder<LetCondition> {
   }
 }
 
-export function let_condition(pattern: BaseBuilder): LetConditionBuilder {
+export type { LetConditionBuilder };
+
+export function let_condition(pattern: Builder): LetConditionBuilder {
   return new LetConditionBuilder(pattern);
+}
+
+export interface LetConditionOptions {
+  pattern: Builder<Pattern>;
+  value: Builder<Expression>;
+}
+
+export namespace let_condition {
+  export function from(options: LetConditionOptions): LetConditionBuilder {
+    const b = new LetConditionBuilder(options.pattern);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

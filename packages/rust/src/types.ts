@@ -408,6 +408,159 @@ export type WhileExpressionConfig = BuilderConfig<RustGrammar, WhileExpression>;
 export type YieldExpression = NodeType<RustGrammar, 'yield_expression'>;
 export type YieldExpressionConfig = BuilderConfig<RustGrammar, YieldExpression>;
 
+// Leaf node types
+export type BooleanLiteral = { kind: 'boolean_literal' };
+export type EmptyStatement = { kind: 'empty_statement' };
+export type FragmentSpecifier = { kind: 'fragment_specifier' };
+export type InnerDocCommentMarker = { kind: 'inner_doc_comment_marker' };
+export type NeverType = { kind: 'never_type' };
+export type OuterDocCommentMarker = { kind: 'outer_doc_comment_marker' };
+export type RemainingFieldPattern = { kind: 'remaining_field_pattern' };
+export type UnitExpression = { kind: 'unit_expression' };
+export type UnitType = { kind: 'unit_type' };
+export type CharLiteral = { kind: 'char_literal' };
+export type Crate = { kind: 'crate' };
+export type DocComment = { kind: 'doc_comment' };
+export type EscapeSequence = { kind: 'escape_sequence' };
+export type FieldIdentifier = { kind: 'field_identifier' };
+export type FloatLiteral = { kind: 'float_literal' };
+export type Identifier = { kind: 'identifier' };
+export type IntegerLiteral = { kind: 'integer_literal' };
+export type Metavariable = { kind: 'metavariable' };
+export type MutableSpecifier = { kind: 'mutable_specifier' };
+export type PrimitiveType = { kind: 'primitive_type' };
+export type Self = { kind: 'self' };
+export type Shebang = { kind: 'shebang' };
+export type ShorthandFieldIdentifier = { kind: 'shorthand_field_identifier' };
+export type StringContent = { kind: 'string_content' };
+export type Super = { kind: 'super' };
+export type TypeIdentifier = { kind: 'type_identifier' };
+
+// Supertype unions
+export type DeclarationStatement =
+  | AssociatedType
+  | AttributeItem
+  | ConstItem
+  | EmptyStatement
+  | EnumItem
+  | ExternCrateDeclaration
+  | ForeignModItem
+  | FunctionItem
+  | FunctionSignatureItem
+  | ImplItem
+  | InnerAttributeItem
+  | LetDeclaration
+  | MacroDefinition
+  | MacroInvocation
+  | ModItem
+  | StaticItem
+  | StructItem
+  | TraitItem
+  | TypeItem
+  | UnionItem
+  | UseDeclaration
+;
+
+export type Expression =
+  | ArrayExpression
+  | AssignmentExpression
+  | AsyncBlock
+  | AwaitExpression
+  | BinaryExpression
+  | BreakExpression
+  | CallExpression
+  | ClosureExpression
+  | CompoundAssignmentExpr
+  | ConstBlock
+  | ContinueExpression
+  | FieldExpression
+  | ForExpression
+  | GenBlock
+  | GenericFunction
+  | Identifier
+  | IfExpression
+  | IndexExpression
+  | LoopExpression
+  | MacroInvocation
+  | MatchExpression
+  | Metavariable
+  | ParenthesizedExpression
+  | RangeExpression
+  | ReferenceExpression
+  | ReturnExpression
+  | ScopedIdentifier
+  | Self
+  | StructExpression
+  | TryBlock
+  | TryExpression
+  | TupleExpression
+  | TypeCastExpression
+  | UnaryExpression
+  | UnitExpression
+  | UnsafeBlock
+  | WhileExpression
+  | YieldExpression
+;
+
+export type Literal =
+  | BooleanLiteral
+  | CharLiteral
+  | FloatLiteral
+  | IntegerLiteral
+  | RawStringLiteral
+  | StringLiteral
+;
+
+export type LiteralPattern =
+  | BooleanLiteral
+  | CharLiteral
+  | FloatLiteral
+  | IntegerLiteral
+  | NegativeLiteral
+  | RawStringLiteral
+  | StringLiteral
+;
+
+export type Pattern =
+  | LiteralPattern
+  | CapturedPattern
+  | ConstBlock
+  | GenericPattern
+  | Identifier
+  | MacroInvocation
+  | MutPattern
+  | OrPattern
+  | RangePattern
+  | RefPattern
+  | ReferencePattern
+  | RemainingFieldPattern
+  | ScopedIdentifier
+  | SlicePattern
+  | StructPattern
+  | TuplePattern
+  | TupleStructPattern
+;
+
+export type Type =
+  | AbstractType
+  | ArrayType
+  | BoundedType
+  | DynamicType
+  | FunctionType
+  | GenericType
+  | MacroInvocation
+  | Metavariable
+  | NeverType
+  | PointerType
+  | PrimitiveType
+  | ReferenceType
+  | RemovedTraitBound
+  | ScopedTypeIdentifier
+  | TupleType
+  | TypeIdentifier
+  | UnitType
+;
+
 export type RustIrNode =
   | AbstractType
   | Arguments

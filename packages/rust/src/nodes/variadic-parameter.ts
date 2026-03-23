@@ -1,20 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { VariadicParameter } from '../types.js';
+import type { MutableSpecifier, Pattern, VariadicParameter } from '../types.js';
 
 
-class VariadicParameterBuilder extends BaseBuilder<VariadicParameter> {
-  private _pattern?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class VariadicParameterBuilder extends Builder<VariadicParameter> {
+  private _pattern?: Builder;
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  pattern(value: BaseBuilder): this {
+  pattern(value: Builder): this {
     this._pattern = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -54,6 +54,26 @@ class VariadicParameterBuilder extends BaseBuilder<VariadicParameter> {
   }
 }
 
+export type { VariadicParameterBuilder };
+
 export function variadic_parameter(): VariadicParameterBuilder {
   return new VariadicParameterBuilder();
+}
+
+export interface VariadicParameterOptions {
+  pattern?: Builder<Pattern>;
+  children?: Builder<MutableSpecifier> | string | (Builder<MutableSpecifier> | string)[];
+}
+
+export namespace variadic_parameter {
+  export function from(options: VariadicParameterOptions): VariadicParameterBuilder {
+    const b = new VariadicParameterBuilder();
+    if (options.pattern !== undefined) b.pattern(options.pattern);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('mutable_specifier', _x) : _x));
+    }
+    return b;
+  }
 }

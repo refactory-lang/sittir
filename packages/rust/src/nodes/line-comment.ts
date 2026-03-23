@@ -1,26 +1,26 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LineComment } from '../types.js';
+import type { DocComment, InnerDocCommentMarker, LineComment, OuterDocCommentMarker } from '../types.js';
 
 
-class LineCommentBuilder extends BaseBuilder<LineComment> {
-  private _doc?: BaseBuilder;
-  private _inner?: BaseBuilder;
-  private _outer?: BaseBuilder;
+class LineCommentBuilder extends Builder<LineComment> {
+  private _doc?: Builder;
+  private _inner?: Builder;
+  private _outer?: Builder;
 
   constructor() { super(); }
 
-  doc(value: BaseBuilder): this {
+  doc(value: Builder): this {
     this._doc = value;
     return this;
   }
 
-  inner(value: BaseBuilder): this {
+  inner(value: Builder): this {
     this._inner = value;
     return this;
   }
 
-  outer(value: BaseBuilder): this {
+  outer(value: Builder): this {
     this._outer = value;
     return this;
   }
@@ -28,6 +28,9 @@ class LineCommentBuilder extends BaseBuilder<LineComment> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('//');
+    if (this._doc) parts.push(this.renderChild(this._doc, ctx));
+    if (this._inner) parts.push(this.renderChild(this._inner, ctx));
+    if (this._outer) parts.push(this.renderChild(this._outer, ctx));
     return parts.join(' ');
   }
 
@@ -45,10 +48,40 @@ class LineCommentBuilder extends BaseBuilder<LineComment> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '//', type: '//' });
+    if (this._doc) parts.push({ kind: 'builder', builder: this._doc, fieldName: 'doc' });
+    if (this._inner) parts.push({ kind: 'builder', builder: this._inner, fieldName: 'inner' });
+    if (this._outer) parts.push({ kind: 'builder', builder: this._outer, fieldName: 'outer' });
     return parts;
   }
 }
 
+export type { LineCommentBuilder };
+
 export function line_comment(): LineCommentBuilder {
   return new LineCommentBuilder();
+}
+
+export interface LineCommentOptions {
+  doc?: Builder<DocComment> | string;
+  inner?: Builder<InnerDocCommentMarker> | string;
+  outer?: Builder<OuterDocCommentMarker> | string;
+}
+
+export namespace line_comment {
+  export function from(options: LineCommentOptions): LineCommentBuilder {
+    const b = new LineCommentBuilder();
+    if (options.doc !== undefined) {
+      const _v = options.doc;
+      b.doc(typeof _v === 'string' ? new LeafBuilder('doc_comment', _v) : _v);
+    }
+    if (options.inner !== undefined) {
+      const _v = options.inner;
+      b.inner(typeof _v === 'string' ? new LeafBuilder('inner_doc_comment_marker', _v) : _v);
+    }
+    if (options.outer !== undefined) {
+      const _v = options.outer;
+      b.outer(typeof _v === 'string' ? new LeafBuilder('outer_doc_comment_marker', _v) : _v);
+    }
+    return b;
+  }
 }

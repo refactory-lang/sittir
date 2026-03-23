@@ -1,20 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { RangePattern } from '../types.js';
+import type { Crate, Identifier, LiteralPattern, Metavariable, RangePattern, ScopedIdentifier, Self, Super } from '../types.js';
 
 
-class RangePatternBuilder extends BaseBuilder<RangePattern> {
-  private _left?: BaseBuilder;
-  private _right?: BaseBuilder;
+class RangePatternBuilder extends Builder<RangePattern> {
+  private _left?: Builder;
+  private _right?: Builder;
 
   constructor() { super(); }
 
-  left(value: BaseBuilder): this {
+  left(value: Builder): this {
     this._left = value;
     return this;
   }
 
-  right(value: BaseBuilder): this {
+  right(value: Builder): this {
     this._right = value;
     return this;
   }
@@ -46,6 +46,22 @@ class RangePatternBuilder extends BaseBuilder<RangePattern> {
   }
 }
 
+export type { RangePatternBuilder };
+
 export function range_pattern(): RangePatternBuilder {
   return new RangePatternBuilder();
+}
+
+export interface RangePatternOptions {
+  left?: Builder<LiteralPattern | Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
+  right?: Builder<LiteralPattern | Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
+}
+
+export namespace range_pattern {
+  export function from(options: RangePatternOptions): RangePatternBuilder {
+    const b = new RangePatternBuilder();
+    if (options.left !== undefined) b.left(options.left);
+    if (options.right !== undefined) b.right(options.right);
+    return b;
+  }
 }

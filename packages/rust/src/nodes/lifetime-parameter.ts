@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LifetimeParameter } from '../types.js';
+import type { LifetimeParameter, TraitBounds } from '../types.js';
 
 
-class LifetimeParameterBuilder extends BaseBuilder<LifetimeParameter> {
-  private _bounds?: BaseBuilder;
-  private _name: BaseBuilder;
+class LifetimeParameterBuilder extends Builder<LifetimeParameter> {
+  private _bounds?: Builder;
+  private _name: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  bounds(value: BaseBuilder): this {
+  bounds(value: Builder): this {
     this._bounds = value;
     return this;
   }
@@ -42,6 +42,21 @@ class LifetimeParameterBuilder extends BaseBuilder<LifetimeParameter> {
   }
 }
 
-export function lifetime_parameter(name: BaseBuilder): LifetimeParameterBuilder {
+export type { LifetimeParameterBuilder };
+
+export function lifetime_parameter(name: Builder): LifetimeParameterBuilder {
   return new LifetimeParameterBuilder(name);
+}
+
+export interface LifetimeParameterOptions {
+  bounds?: Builder<TraitBounds>;
+  name: Builder;
+}
+
+export namespace lifetime_parameter {
+  export function from(options: LifetimeParameterOptions): LifetimeParameterBuilder {
+    const b = new LifetimeParameterBuilder(options.name);
+    if (options.bounds !== undefined) b.bounds(options.bounds);
+    return b;
+  }
 }

@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AmbientDeclaration } from '../types.js';
+import type { AmbientDeclaration, Declaration, PropertyIdentifier, StatementBlock } from '../types.js';
 
 
-class AmbientBuilder extends BaseBuilder<AmbientDeclaration> {
-  private _children: BaseBuilder[] = [];
+class AmbientBuilder extends Builder<AmbientDeclaration> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -37,6 +37,21 @@ class AmbientBuilder extends BaseBuilder<AmbientDeclaration> {
   }
 }
 
-export function ambient(children: BaseBuilder[]): AmbientBuilder {
-  return new AmbientBuilder(children);
+export type { AmbientBuilder };
+
+export function ambient(...children: Builder[]): AmbientBuilder {
+  return new AmbientBuilder(...children);
+}
+
+export interface AmbientDeclarationOptions {
+  children: Builder<Declaration | PropertyIdentifier | StatementBlock> | (Builder<Declaration | PropertyIdentifier | StatementBlock>)[];
+}
+
+export namespace ambient {
+  export function from(options: AmbientDeclarationOptions): AmbientBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new AmbientBuilder(..._arr);
+    return b;
+  }
 }

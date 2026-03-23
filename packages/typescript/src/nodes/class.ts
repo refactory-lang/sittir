@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ClassDeclaration } from '../types.js';
+import type { ClassBody, ClassDeclaration, ClassHeritage, Decorator, TypeIdentifier, TypeParameters } from '../types.js';
 
 
-class ClassBuilder extends BaseBuilder<ClassDeclaration> {
-  private _body!: BaseBuilder;
-  private _decorator: BaseBuilder[] = [];
-  private _name: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ClassBuilder extends Builder<ClassDeclaration> {
+  private _body!: Builder;
+  private _decorator: Builder[] = [];
+  private _name: Builder;
+  private _typeParameters?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
 
-  decorator(value: BaseBuilder[]): this {
+  decorator(...value: Builder[]): this {
     this._decorator = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -75,6 +75,36 @@ class ClassBuilder extends BaseBuilder<ClassDeclaration> {
   }
 }
 
-export function class_(name: BaseBuilder): ClassBuilder {
+export type { ClassBuilder };
+
+export function class_(name: Builder): ClassBuilder {
   return new ClassBuilder(name);
+}
+
+export interface ClassDeclarationOptions {
+  body: Builder<ClassBody>;
+  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
+  name: Builder<TypeIdentifier> | string;
+  typeParameters?: Builder<TypeParameters>;
+  children?: Builder<ClassHeritage> | (Builder<ClassHeritage>)[];
+}
+
+export namespace class_ {
+  export function from(options: ClassDeclarationOptions): ClassBuilder {
+    const _ctor = options.name;
+    const b = new ClassBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.decorator !== undefined) {
+      const _v = options.decorator;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.decorator(..._arr);
+    }
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { WherePredicate } from '../types.js';
+import type { ArrayType, GenericType, HigherRankedTraitBound, PointerType, PrimitiveType, ReferenceType, ScopedTypeIdentifier, TraitBounds, TupleType, TypeIdentifier, WherePredicate } from '../types.js';
 
 
-class WherePredicateBuilder extends BaseBuilder<WherePredicate> {
-  private _bounds: BaseBuilder;
-  private _left!: BaseBuilder;
+class WherePredicateBuilder extends Builder<WherePredicate> {
+  private _bounds!: Builder;
+  private _left: Builder;
 
-  constructor(bounds: BaseBuilder) {
+  constructor(left: Builder) {
     super();
-    this._bounds = bounds;
+    this._left = left;
   }
 
-  left(value: BaseBuilder): this {
-    this._left = value;
+  bounds(value: Builder): this {
+    this._bounds = value;
     return this;
   }
 
@@ -27,8 +27,8 @@ class WherePredicateBuilder extends BaseBuilder<WherePredicate> {
   build(ctx?: RenderContext): WherePredicate {
     return {
       kind: 'where_predicate',
-      bounds: this.renderChild(this._bounds, ctx),
-      left: this._left ? this.renderChild(this._left, ctx) : undefined,
+      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
+      left: this.renderChild(this._left, ctx),
     } as unknown as WherePredicate;
   }
 
@@ -42,6 +42,21 @@ class WherePredicateBuilder extends BaseBuilder<WherePredicate> {
   }
 }
 
-export function where_predicate(bounds: BaseBuilder): WherePredicateBuilder {
-  return new WherePredicateBuilder(bounds);
+export type { WherePredicateBuilder };
+
+export function where_predicate(left: Builder): WherePredicateBuilder {
+  return new WherePredicateBuilder(left);
+}
+
+export interface WherePredicateOptions {
+  bounds: Builder<TraitBounds>;
+  left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
+}
+
+export namespace where_predicate {
+  export function from(options: WherePredicateOptions): WherePredicateBuilder {
+    const b = new WherePredicateBuilder(options.left);
+    if (options.bounds !== undefined) b.bounds(options.bounds);
+    return b;
+  }
 }

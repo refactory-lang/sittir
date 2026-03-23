@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeCastExpression } from '../types.js';
+import type { Expression, Type, TypeCastExpression } from '../types.js';
 
 
-class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
-  private _type: BaseBuilder;
-  private _value!: BaseBuilder;
+class TypeCastBuilder extends Builder<TypeCastExpression> {
+  private _type!: Builder;
+  private _value: Builder;
 
-  constructor(type_: BaseBuilder) {
+  constructor(value: Builder) {
     super();
-    this._type = type_;
+    this._value = value;
   }
 
-  value(value: BaseBuilder): this {
-    this._value = value;
+  type(value: Builder): this {
+    this._type = value;
     return this;
   }
 
@@ -28,8 +28,8 @@ class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
   build(ctx?: RenderContext): TypeCastExpression {
     return {
       kind: 'type_cast_expression',
-      type: this.renderChild(this._type, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+      type: this._type ? this.renderChild(this._type, ctx) : undefined,
+      value: this.renderChild(this._value, ctx),
     } as unknown as TypeCastExpression;
   }
 
@@ -44,6 +44,21 @@ class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
   }
 }
 
-export function type_cast(type_: BaseBuilder): TypeCastBuilder {
-  return new TypeCastBuilder(type_);
+export type { TypeCastBuilder };
+
+export function type_cast(value: Builder): TypeCastBuilder {
+  return new TypeCastBuilder(value);
+}
+
+export interface TypeCastExpressionOptions {
+  type: Builder<Type>;
+  value: Builder<Expression>;
+}
+
+export namespace type_cast {
+  export function from(options: TypeCastExpressionOptions): TypeCastBuilder {
+    const b = new TypeCastBuilder(options.value);
+    if (options.type !== undefined) b.type(options.type);
+    return b;
+  }
 }

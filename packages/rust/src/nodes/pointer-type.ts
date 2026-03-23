@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { PointerType } from '../types.js';
+import type { MutableSpecifier, PointerType, Type } from '../types.js';
 
 
-class PointerTypeBuilder extends BaseBuilder<PointerType> {
-  private _type: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class PointerTypeBuilder extends Builder<PointerType> {
+  private _type: Builder;
+  private _children: Builder[] = [];
 
-  constructor(type_: BaseBuilder) {
+  constructor(type_: Builder) {
     super();
     this._type = type_;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -20,7 +20,7 @@ class PointerTypeBuilder extends BaseBuilder<PointerType> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('*');
-    parts.push('const');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
@@ -38,12 +38,33 @@ class PointerTypeBuilder extends BaseBuilder<PointerType> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '*', type: '*' });
-    parts.push({ kind: 'token', text: 'const', type: 'const' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }
 
-export function pointer_type(type_: BaseBuilder): PointerTypeBuilder {
+export type { PointerTypeBuilder };
+
+export function pointer_type(type_: Builder): PointerTypeBuilder {
   return new PointerTypeBuilder(type_);
+}
+
+export interface PointerTypeOptions {
+  type: Builder<Type>;
+  children?: Builder<MutableSpecifier> | string | (Builder<MutableSpecifier> | string)[];
+}
+
+export namespace pointer_type {
+  export function from(options: PointerTypeOptions): PointerTypeBuilder {
+    const b = new PointerTypeBuilder(options.type);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('mutable_specifier', _x) : _x));
+    }
+    return b;
+  }
 }

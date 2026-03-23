@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { NegativeLiteral } from '../types.js';
+import type { FloatLiteral, IntegerLiteral, NegativeLiteral } from '../types.js';
 
 
-class NegativeLiteralBuilder extends BaseBuilder<NegativeLiteral> {
-  private _children: BaseBuilder[] = [];
+class NegativeLiteralBuilder extends Builder<NegativeLiteral> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class NegativeLiteralBuilder extends BaseBuilder<NegativeLiteral> {
   }
 }
 
-export function negative_literal(children: BaseBuilder): NegativeLiteralBuilder {
+export type { NegativeLiteralBuilder };
+
+export function negative_literal(children: Builder): NegativeLiteralBuilder {
   return new NegativeLiteralBuilder(children);
+}
+
+export interface NegativeLiteralOptions {
+  children: Builder<FloatLiteral | IntegerLiteral> | (Builder<FloatLiteral | IntegerLiteral>)[];
+}
+
+export namespace negative_literal {
+  export function from(options: NegativeLiteralOptions): NegativeLiteralBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new NegativeLiteralBuilder(_ctor);
+    return b;
+  }
 }

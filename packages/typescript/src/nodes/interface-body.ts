@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { InterfaceBody } from '../types.js';
+import type { CallSignature, ConstructSignature, ExportStatement, IndexSignature, InterfaceBody, MethodSignature, PropertySignature } from '../types.js';
 
 
-class InterfaceBodyBuilder extends BaseBuilder<InterfaceBody> {
-  private _children: BaseBuilder[] = [];
+class InterfaceBodyBuilder extends Builder<InterfaceBody> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -35,6 +35,24 @@ class InterfaceBodyBuilder extends BaseBuilder<InterfaceBody> {
   }
 }
 
+export type { InterfaceBodyBuilder };
+
 export function interface_body(): InterfaceBodyBuilder {
   return new InterfaceBodyBuilder();
+}
+
+export interface InterfaceBodyOptions {
+  children?: Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature> | (Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature>)[];
+}
+
+export namespace interface_body {
+  export function from(options: InterfaceBodyOptions): InterfaceBodyBuilder {
+    const b = new InterfaceBodyBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { PairPattern } from '../types.js';
+import type { AssignmentPattern, ComputedPropertyName, PairPattern, Pattern, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
 
 
-class PairPatternBuilder extends BaseBuilder<PairPattern> {
-  private _key: BaseBuilder;
-  private _value!: BaseBuilder;
+class PairPatternBuilder extends Builder<PairPattern> {
+  private _key: Builder;
+  private _value!: Builder;
 
-  constructor(key: BaseBuilder) {
+  constructor(key: Builder) {
     super();
     this._key = key;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
@@ -44,6 +44,21 @@ class PairPatternBuilder extends BaseBuilder<PairPattern> {
   }
 }
 
-export function pair_pattern(key: BaseBuilder): PairPatternBuilder {
+export type { PairPatternBuilder };
+
+export function pair_pattern(key: Builder): PairPatternBuilder {
   return new PairPatternBuilder(key);
+}
+
+export interface PairPatternOptions {
+  key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  value: Builder<AssignmentPattern | Pattern>;
+}
+
+export namespace pair_pattern {
+  export function from(options: PairPatternOptions): PairPatternBuilder {
+    const b = new PairPatternBuilder(options.key);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

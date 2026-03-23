@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SwitchCase } from '../types.js';
+import type { Expression, SequenceExpression, Statement, SwitchCase } from '../types.js';
 
 
-class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
-  private _body: BaseBuilder[] = [];
-  private _value: BaseBuilder;
+class SwitchCaseBuilder extends Builder<SwitchCase> {
+  private _body: Builder[] = [];
+  private _value: Builder;
 
-  constructor(value: BaseBuilder) {
+  constructor(value: Builder) {
     super();
     this._value = value;
   }
 
-  body(value: BaseBuilder[]): this {
+  body(...value: Builder[]): this {
     this._body = value;
     return this;
   }
@@ -48,6 +48,25 @@ class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
   }
 }
 
-export function switch_case(value: BaseBuilder): SwitchCaseBuilder {
+export type { SwitchCaseBuilder };
+
+export function switch_case(value: Builder): SwitchCaseBuilder {
   return new SwitchCaseBuilder(value);
+}
+
+export interface SwitchCaseOptions {
+  body?: Builder<Statement> | (Builder<Statement>)[];
+  value: Builder<Expression | SequenceExpression>;
+}
+
+export namespace switch_case {
+  export function from(options: SwitchCaseOptions): SwitchCaseBuilder {
+    const b = new SwitchCaseBuilder(options.value);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.body(..._arr);
+    }
+    return b;
+  }
 }

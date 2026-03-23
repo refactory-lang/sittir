@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TokenRepetition } from '../types.js';
+import type { Crate, Identifier, Literal, Metavariable, MutableSpecifier, PrimitiveType, Self, Super, TokenRepetition, TokenTree } from '../types.js';
 
 
-class TokenRepetitionBuilder extends BaseBuilder<TokenRepetition> {
-  private _children: BaseBuilder[] = [];
+class TokenRepetitionBuilder extends Builder<TokenRepetition> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -45,6 +45,24 @@ class TokenRepetitionBuilder extends BaseBuilder<TokenRepetition> {
   }
 }
 
+export type { TokenRepetitionBuilder };
+
 export function token_repetition(): TokenRepetitionBuilder {
   return new TokenRepetitionBuilder();
+}
+
+export interface TokenRepetitionOptions {
+  children?: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree> | (Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree>)[];
+}
+
+export namespace token_repetition {
+  export function from(options: TokenRepetitionOptions): TokenRepetitionBuilder {
+    const b = new TokenRepetitionBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { RawStringLiteral } from '../types.js';
+import type { RawStringLiteral, StringContent } from '../types.js';
 
 
-class RawStringLiteralBuilder extends BaseBuilder<RawStringLiteral> {
-  private _children: BaseBuilder[] = [];
+class RawStringLiteralBuilder extends Builder<RawStringLiteral> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -35,6 +35,20 @@ class RawStringLiteralBuilder extends BaseBuilder<RawStringLiteral> {
   }
 }
 
-export function raw_string_literal(children: BaseBuilder): RawStringLiteralBuilder {
+export type { RawStringLiteralBuilder };
+
+export function raw_string_literal(children: Builder): RawStringLiteralBuilder {
   return new RawStringLiteralBuilder(children);
+}
+
+export interface RawStringLiteralOptions {
+  children: Builder<StringContent> | string | (Builder<StringContent> | string)[];
+}
+
+export namespace raw_string_literal {
+  export function from(options: RawStringLiteralOptions): RawStringLiteralBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new RawStringLiteralBuilder(typeof _ctor === 'string' ? new LeafBuilder('string_content', _ctor) : _ctor);
+    return b;
+  }
 }

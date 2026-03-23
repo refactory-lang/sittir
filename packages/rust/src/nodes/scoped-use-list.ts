@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ScopedUseList } from '../types.js';
+import type { Crate, Identifier, Metavariable, ScopedIdentifier, ScopedUseList, Self, Super, UseList } from '../types.js';
 
 
-class ScopedUseListBuilder extends BaseBuilder<ScopedUseList> {
-  private _list: BaseBuilder;
-  private _path?: BaseBuilder;
+class ScopedUseListBuilder extends Builder<ScopedUseList> {
+  private _list: Builder;
+  private _path?: Builder;
 
-  constructor(list: BaseBuilder) {
+  constructor(list: Builder) {
     super();
     this._list = list;
   }
 
-  path(value: BaseBuilder): this {
+  path(value: Builder): this {
     this._path = value;
     return this;
   }
@@ -44,6 +44,21 @@ class ScopedUseListBuilder extends BaseBuilder<ScopedUseList> {
   }
 }
 
-export function scoped_use_list(list: BaseBuilder): ScopedUseListBuilder {
+export type { ScopedUseListBuilder };
+
+export function scoped_use_list(list: Builder): ScopedUseListBuilder {
   return new ScopedUseListBuilder(list);
+}
+
+export interface ScopedUseListOptions {
+  list: Builder<UseList>;
+  path?: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
+}
+
+export namespace scoped_use_list {
+  export function from(options: ScopedUseListOptions): ScopedUseListBuilder {
+    const b = new ScopedUseListBuilder(options.list);
+    if (options.path !== undefined) b.path(options.path);
+    return b;
+  }
 }

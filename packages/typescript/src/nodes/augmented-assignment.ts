@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AugmentedAssignmentExpression } from '../types.js';
+import type { AugmentedAssignmentExpression, Expression, Identifier, MemberExpression, NonNullExpression, ParenthesizedExpression, SubscriptExpression } from '../types.js';
 
 
-class AugmentedAssignmentBuilder extends BaseBuilder<AugmentedAssignmentExpression> {
-  private _left: BaseBuilder;
-  private _operator!: BaseBuilder;
-  private _right!: BaseBuilder;
+class AugmentedAssignmentBuilder extends Builder<AugmentedAssignmentExpression> {
+  private _left: Builder;
+  private _operator!: Builder;
+  private _right!: Builder;
 
-  constructor(left: BaseBuilder) {
+  constructor(left: Builder) {
     super();
     this._left = left;
   }
 
-  operator(value: BaseBuilder): this {
+  operator(value: Builder): this {
     this._operator = value;
     return this;
   }
 
-  right(value: BaseBuilder): this {
+  right(value: Builder): this {
     this._right = value;
     return this;
   }
@@ -51,6 +51,23 @@ class AugmentedAssignmentBuilder extends BaseBuilder<AugmentedAssignmentExpressi
   }
 }
 
-export function augmented_assignment(left: BaseBuilder): AugmentedAssignmentBuilder {
+export type { AugmentedAssignmentBuilder };
+
+export function augmented_assignment(left: Builder): AugmentedAssignmentBuilder {
   return new AugmentedAssignmentBuilder(left);
+}
+
+export interface AugmentedAssignmentExpressionOptions {
+  left: Builder<Identifier | MemberExpression | NonNullExpression | ParenthesizedExpression | SubscriptExpression>;
+  operator: Builder;
+  right: Builder<Expression>;
+}
+
+export namespace augmented_assignment {
+  export function from(options: AugmentedAssignmentExpressionOptions): AugmentedAssignmentBuilder {
+    const b = new AugmentedAssignmentBuilder(options.left);
+    if (options.operator !== undefined) b.operator(options.operator);
+    if (options.right !== undefined) b.right(options.right);
+    return b;
+  }
 }

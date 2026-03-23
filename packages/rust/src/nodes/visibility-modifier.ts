@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { VisibilityModifier } from '../types.js';
+import type { Crate, Identifier, Metavariable, ScopedIdentifier, Self, Super, VisibilityModifier } from '../types.js';
 
 
-class VisibilityModifierBuilder extends BaseBuilder<VisibilityModifier> {
-  private _children: BaseBuilder[] = [];
+class VisibilityModifierBuilder extends Builder<VisibilityModifier> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -37,6 +37,24 @@ class VisibilityModifierBuilder extends BaseBuilder<VisibilityModifier> {
   }
 }
 
+export type { VisibilityModifierBuilder };
+
 export function visibility_modifier(): VisibilityModifierBuilder {
   return new VisibilityModifierBuilder();
+}
+
+export interface VisibilityModifierOptions {
+  children?: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super> | (Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>)[];
+}
+
+export namespace visibility_modifier {
+  export function from(options: VisibilityModifierOptions): VisibilityModifierBuilder {
+    const b = new VisibilityModifierBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

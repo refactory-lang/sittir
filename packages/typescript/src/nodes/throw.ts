@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ThrowStatement } from '../types.js';
+import type { Expression, SequenceExpression, ThrowStatement } from '../types.js';
 
 
-class ThrowBuilder extends BaseBuilder<ThrowStatement> {
-  private _children: BaseBuilder[] = [];
+class ThrowBuilder extends Builder<ThrowStatement> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class ThrowBuilder extends BaseBuilder<ThrowStatement> {
   }
 }
 
-export function throw_(children: BaseBuilder): ThrowBuilder {
+export type { ThrowBuilder };
+
+export function throw_(children: Builder): ThrowBuilder {
   return new ThrowBuilder(children);
+}
+
+export interface ThrowStatementOptions {
+  children: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
+}
+
+export namespace throw_ {
+  export function from(options: ThrowStatementOptions): ThrowBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ThrowBuilder(_ctor);
+    return b;
+  }
 }

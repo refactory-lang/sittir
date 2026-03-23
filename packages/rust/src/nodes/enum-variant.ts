@@ -1,30 +1,30 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { EnumVariant } from '../types.js';
+import type { EnumVariant, Expression, FieldDeclarationList, Identifier, OrderedFieldDeclarationList, VisibilityModifier } from '../types.js';
 
 
-class EnumVariantBuilder extends BaseBuilder<EnumVariant> {
-  private _body?: BaseBuilder;
-  private _name: BaseBuilder;
-  private _value?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class EnumVariantBuilder extends Builder<EnumVariant> {
+  private _body?: Builder;
+  private _name: Builder;
+  private _value?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -68,6 +68,30 @@ class EnumVariantBuilder extends BaseBuilder<EnumVariant> {
   }
 }
 
-export function enum_variant(name: BaseBuilder): EnumVariantBuilder {
+export type { EnumVariantBuilder };
+
+export function enum_variant(name: Builder): EnumVariantBuilder {
   return new EnumVariantBuilder(name);
+}
+
+export interface EnumVariantOptions {
+  body?: Builder<FieldDeclarationList | OrderedFieldDeclarationList>;
+  name: Builder<Identifier> | string;
+  value?: Builder<Expression>;
+  children?: Builder<VisibilityModifier> | (Builder<VisibilityModifier>)[];
+}
+
+export namespace enum_variant {
+  export function from(options: EnumVariantOptions): EnumVariantBuilder {
+    const _ctor = options.name;
+    const b = new EnumVariantBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

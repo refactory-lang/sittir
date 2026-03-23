@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { IfExpression } from '../types.js';
+import type { ElseClause, Expression, IfExpression, LetChain, LetCondition } from '../types.js';
 
 
-class IfBuilder extends BaseBuilder<IfExpression> {
-  private _alternative?: BaseBuilder;
-  private _condition: BaseBuilder;
-  private _consequence!: BaseBuilder;
+class IfBuilder extends Builder<IfExpression> {
+  private _alternative?: Builder;
+  private _condition: Builder;
+  private _consequence!: Builder;
 
-  constructor(condition: BaseBuilder) {
+  constructor(condition: Builder) {
     super();
     this._condition = condition;
   }
 
-  alternative(value: BaseBuilder): this {
+  alternative(value: Builder): this {
     this._alternative = value;
     return this;
   }
 
-  consequence(value: BaseBuilder): this {
+  consequence(value: Builder): this {
     this._consequence = value;
     return this;
   }
@@ -53,6 +53,23 @@ class IfBuilder extends BaseBuilder<IfExpression> {
   }
 }
 
-export function if_(condition: BaseBuilder): IfBuilder {
+export type { IfBuilder };
+
+export function if_(condition: Builder): IfBuilder {
   return new IfBuilder(condition);
+}
+
+export interface IfExpressionOptions {
+  alternative?: Builder<ElseClause>;
+  condition: Builder<Expression | LetChain | LetCondition>;
+  consequence: Builder;
+}
+
+export namespace if_ {
+  export function from(options: IfExpressionOptions): IfBuilder {
+    const b = new IfBuilder(options.condition);
+    if (options.alternative !== undefined) b.alternative(options.alternative);
+    if (options.consequence !== undefined) b.consequence(options.consequence);
+    return b;
+  }
 }

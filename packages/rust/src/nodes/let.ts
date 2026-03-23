@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LetDeclaration } from '../types.js';
+import type { Expression, LetDeclaration, MutableSpecifier, Pattern, Type } from '../types.js';
 
 
-class LetBuilder extends BaseBuilder<LetDeclaration> {
-  private _alternative?: BaseBuilder;
-  private _pattern: BaseBuilder;
-  private _type?: BaseBuilder;
-  private _value?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class LetBuilder extends Builder<LetDeclaration> {
+  private _alternative?: Builder;
+  private _pattern: Builder;
+  private _type?: Builder;
+  private _value?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(pattern: BaseBuilder) {
+  constructor(pattern: Builder) {
     super();
     this._pattern = pattern;
   }
 
-  alternative(value: BaseBuilder): this {
+  alternative(value: Builder): this {
     this._alternative = value;
     return this;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -93,6 +93,31 @@ class LetBuilder extends BaseBuilder<LetDeclaration> {
   }
 }
 
-export function let_(pattern: BaseBuilder): LetBuilder {
+export type { LetBuilder };
+
+export function let_(pattern: Builder): LetBuilder {
   return new LetBuilder(pattern);
+}
+
+export interface LetDeclarationOptions {
+  alternative?: Builder;
+  pattern: Builder<Pattern>;
+  type?: Builder<Type>;
+  value?: Builder<Expression>;
+  children?: Builder<MutableSpecifier> | string | (Builder<MutableSpecifier> | string)[];
+}
+
+export namespace let_ {
+  export function from(options: LetDeclarationOptions): LetBuilder {
+    const b = new LetBuilder(options.pattern);
+    if (options.alternative !== undefined) b.alternative(options.alternative);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('mutable_specifier', _x) : _x));
+    }
+    return b;
+  }
 }

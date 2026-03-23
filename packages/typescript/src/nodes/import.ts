@@ -1,20 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImportStatement } from '../types.js';
+import type { ImportAttribute, ImportClause, ImportRequireClause, ImportStatement } from '../types.js';
 
 
-class ImportBuilder extends BaseBuilder<ImportStatement> {
-  private _source?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ImportBuilder extends Builder<ImportStatement> {
+  private _source?: Builder;
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  source(value: BaseBuilder): this {
+  source(value: Builder): this {
     this._source = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -22,9 +22,10 @@ class ImportBuilder extends BaseBuilder<ImportStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('import');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
     parts.push('from');
     if (this._source) parts.push(this.renderChild(this._source, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -41,15 +42,34 @@ class ImportBuilder extends BaseBuilder<ImportStatement> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: 'import', type: 'import' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
     parts.push({ kind: 'token', text: 'from', type: 'from' });
     if (this._source) parts.push({ kind: 'builder', builder: this._source, fieldName: 'source' });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
 
+export type { ImportBuilder };
+
 export function import_(): ImportBuilder {
   return new ImportBuilder();
+}
+
+export interface ImportStatementOptions {
+  source?: Builder;
+  children?: Builder<ImportAttribute | ImportClause | ImportRequireClause> | (Builder<ImportAttribute | ImportClause | ImportRequireClause>)[];
+}
+
+export namespace import_ {
+  export function from(options: ImportStatementOptions): ImportBuilder {
+    const b = new ImportBuilder();
+    if (options.source !== undefined) b.source(options.source);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AssignmentExpression } from '../types.js';
+import type { AssignmentExpression, Expression } from '../types.js';
 
 
-class AssignmentBuilder extends BaseBuilder<AssignmentExpression> {
-  private _left: BaseBuilder;
-  private _right!: BaseBuilder;
+class AssignmentBuilder extends Builder<AssignmentExpression> {
+  private _left: Builder;
+  private _right!: Builder;
 
-  constructor(left: BaseBuilder) {
+  constructor(left: Builder) {
     super();
     this._left = left;
   }
 
-  right(value: BaseBuilder): this {
+  right(value: Builder): this {
     this._right = value;
     return this;
   }
@@ -44,6 +44,21 @@ class AssignmentBuilder extends BaseBuilder<AssignmentExpression> {
   }
 }
 
-export function assignment(left: BaseBuilder): AssignmentBuilder {
+export type { AssignmentBuilder };
+
+export function assignment(left: Builder): AssignmentBuilder {
   return new AssignmentBuilder(left);
+}
+
+export interface AssignmentExpressionOptions {
+  left: Builder<Expression>;
+  right: Builder<Expression>;
+}
+
+export namespace assignment {
+  export function from(options: AssignmentExpressionOptions): AssignmentBuilder {
+    const b = new AssignmentBuilder(options.left);
+    if (options.right !== undefined) b.right(options.right);
+    return b;
+  }
 }

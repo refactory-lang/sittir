@@ -3,19 +3,19 @@ import { ir } from '../src/builder.js';
 
 describe('or_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.or_pattern([ir.identifier('test')]);
+    const builder = ir.or_pattern(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('or_pattern');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.or_pattern([ir.identifier('test')]);
+    const builder = ir.or_pattern(ir.identifier('a'), ir.identifier('b'));
     const source = builder.renderImpl();
     expect(source).toContain('|');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.or_pattern([ir.identifier('test')]);
+    const builder = ir.or_pattern(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('or_pattern');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +24,7 @@ describe('or_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.or_pattern([ir.identifier('test')]);
+    const builder = ir.or_pattern(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

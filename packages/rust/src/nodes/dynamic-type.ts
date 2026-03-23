@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { DynamicType } from '../types.js';
+import type { DynamicType, FunctionType, GenericType, HigherRankedTraitBound, ScopedTypeIdentifier, TupleType, TypeIdentifier } from '../types.js';
 
 
-class DynamicTypeBuilder extends BaseBuilder<DynamicType> {
-  private _trait: BaseBuilder;
+class DynamicTypeBuilder extends Builder<DynamicType> {
+  private _trait: Builder;
 
-  constructor(trait: BaseBuilder) {
+  constructor(trait: Builder) {
     super();
     this._trait = trait;
   }
@@ -35,6 +35,19 @@ class DynamicTypeBuilder extends BaseBuilder<DynamicType> {
   }
 }
 
-export function dynamic_type(trait: BaseBuilder): DynamicTypeBuilder {
+export type { DynamicTypeBuilder };
+
+export function dynamic_type(trait: Builder): DynamicTypeBuilder {
   return new DynamicTypeBuilder(trait);
+}
+
+export interface DynamicTypeOptions {
+  trait: Builder<FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
+}
+
+export namespace dynamic_type {
+  export function from(options: DynamicTypeOptions): DynamicTypeBuilder {
+    const b = new DynamicTypeBuilder(options.trait);
+    return b;
+  }
 }

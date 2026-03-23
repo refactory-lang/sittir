@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { BinaryExpression } from '../types.js';
+import type { BinaryExpression, Expression } from '../types.js';
 
 
-class BinaryBuilder extends BaseBuilder<BinaryExpression> {
-  private _left: BaseBuilder;
-  private _operator!: BaseBuilder;
-  private _right!: BaseBuilder;
+class BinaryBuilder extends Builder<BinaryExpression> {
+  private _left: Builder;
+  private _operator!: Builder;
+  private _right!: Builder;
 
-  constructor(left: BaseBuilder) {
+  constructor(left: Builder) {
     super();
     this._left = left;
   }
 
-  operator(value: BaseBuilder): this {
+  operator(value: Builder): this {
     this._operator = value;
     return this;
   }
 
-  right(value: BaseBuilder): this {
+  right(value: Builder): this {
     this._right = value;
     return this;
   }
@@ -51,6 +51,23 @@ class BinaryBuilder extends BaseBuilder<BinaryExpression> {
   }
 }
 
-export function binary(left: BaseBuilder): BinaryBuilder {
+export type { BinaryBuilder };
+
+export function binary(left: Builder): BinaryBuilder {
   return new BinaryBuilder(left);
+}
+
+export interface BinaryExpressionOptions {
+  left: Builder<Expression>;
+  operator: Builder;
+  right: Builder<Expression>;
+}
+
+export namespace binary {
+  export function from(options: BinaryExpressionOptions): BinaryBuilder {
+    const b = new BinaryBuilder(options.left);
+    if (options.operator !== undefined) b.operator(options.operator);
+    if (options.right !== undefined) b.right(options.right);
+    return b;
+  }
 }

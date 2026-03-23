@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ReturnExpression } from '../types.js';
+import type { Expression, ReturnExpression } from '../types.js';
 
 
-class ReturnBuilder extends BaseBuilder<ReturnExpression> {
-  private _children: BaseBuilder[] = [];
+class ReturnBuilder extends Builder<ReturnExpression> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -39,6 +39,24 @@ class ReturnBuilder extends BaseBuilder<ReturnExpression> {
   }
 }
 
+export type { ReturnBuilder };
+
 export function return_(): ReturnBuilder {
   return new ReturnBuilder();
+}
+
+export interface ReturnExpressionOptions {
+  children?: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace return_ {
+  export function from(options: ReturnExpressionOptions): ReturnBuilder {
+    const b = new ReturnBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

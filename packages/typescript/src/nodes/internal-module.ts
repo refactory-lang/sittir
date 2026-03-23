@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { InternalModule } from '../types.js';
+import type { Identifier, InternalModule, NestedIdentifier, StatementBlock } from '../types.js';
 
 
-class InternalModuleBuilder extends BaseBuilder<InternalModule> {
-  private _body?: BaseBuilder;
-  private _name: BaseBuilder;
+class InternalModuleBuilder extends Builder<InternalModule> {
+  private _body?: Builder;
+  private _name: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
@@ -44,6 +44,21 @@ class InternalModuleBuilder extends BaseBuilder<InternalModule> {
   }
 }
 
-export function internal_module(name: BaseBuilder): InternalModuleBuilder {
+export type { InternalModuleBuilder };
+
+export function internal_module(name: Builder): InternalModuleBuilder {
   return new InternalModuleBuilder(name);
+}
+
+export interface InternalModuleOptions {
+  body?: Builder<StatementBlock>;
+  name: Builder<Identifier | NestedIdentifier>;
+}
+
+export namespace internal_module {
+  export function from(options: InternalModuleOptions): InternalModuleBuilder {
+    const b = new InternalModuleBuilder(options.name);
+    if (options.body !== undefined) b.body(options.body);
+    return b;
+  }
 }

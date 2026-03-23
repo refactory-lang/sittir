@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionDeclaration } from '../types.js';
+import type { AssertsAnnotation, FormalParameters, FunctionDeclaration, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class FunctionBuilder extends BaseBuilder<FunctionDeclaration> {
-  private _body!: BaseBuilder;
-  private _name: BaseBuilder;
-  private _parameters!: BaseBuilder;
-  private _returnType?: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class FunctionBuilder extends Builder<FunctionDeclaration> {
+  private _body!: Builder;
+  private _name: Builder;
+  private _parameters!: Builder;
+  private _returnType?: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
 
-  parameters(value: BaseBuilder): this {
+  parameters(value: Builder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -71,6 +71,28 @@ class FunctionBuilder extends BaseBuilder<FunctionDeclaration> {
   }
 }
 
-export function function_(name: BaseBuilder): FunctionBuilder {
+export type { FunctionBuilder };
+
+export function function_(name: Builder): FunctionBuilder {
   return new FunctionBuilder(name);
+}
+
+export interface FunctionDeclarationOptions {
+  body: Builder<StatementBlock>;
+  name: Builder<Identifier> | string;
+  parameters: Builder<FormalParameters>;
+  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace function_ {
+  export function from(options: FunctionDeclarationOptions): FunctionBuilder {
+    const _ctor = options.name;
+    const b = new FunctionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.parameters !== undefined) b.parameters(options.parameters);
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

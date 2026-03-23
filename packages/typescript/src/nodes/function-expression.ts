@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionExpression } from '../types.js';
+import type { AssertsAnnotation, FormalParameters, FunctionExpression, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class FunctionBuilder extends BaseBuilder<FunctionExpression> {
-  private _body: BaseBuilder;
-  private _name?: BaseBuilder;
-  private _parameters!: BaseBuilder;
-  private _returnType?: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class FunctionBuilder extends Builder<FunctionExpression> {
+  private _body!: Builder;
+  private _name?: Builder;
+  private _parameters: Builder;
+  private _returnType?: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(parameters: Builder) {
     super();
-    this._body = body;
+    this._parameters = parameters;
   }
 
-  name(value: BaseBuilder): this {
+  body(value: Builder): this {
+    this._body = value;
+    return this;
+  }
+
+  name(value: Builder): this {
     this._name = value;
     return this;
   }
 
-  parameters(value: BaseBuilder): this {
-    this._parameters = value;
-    return this;
-  }
-
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -49,9 +49,9 @@ class FunctionBuilder extends BaseBuilder<FunctionExpression> {
   build(ctx?: RenderContext): FunctionExpression {
     return {
       kind: 'function_expression',
-      body: this.renderChild(this._body, ctx),
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
       name: this._name ? this.renderChild(this._name, ctx) : undefined,
-      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
+      parameters: this.renderChild(this._parameters, ctx),
       returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
       typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
     } as unknown as FunctionExpression;
@@ -71,6 +71,30 @@ class FunctionBuilder extends BaseBuilder<FunctionExpression> {
   }
 }
 
-export function function_(body: BaseBuilder): FunctionBuilder {
-  return new FunctionBuilder(body);
+export type { FunctionBuilder };
+
+export function function_(parameters: Builder): FunctionBuilder {
+  return new FunctionBuilder(parameters);
+}
+
+export interface FunctionExpressionOptions {
+  body: Builder<StatementBlock>;
+  name?: Builder<Identifier> | string;
+  parameters: Builder<FormalParameters>;
+  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace function_ {
+  export function from(options: FunctionExpressionOptions): FunctionBuilder {
+    const b = new FunctionBuilder(options.parameters);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.name !== undefined) {
+      const _v = options.name;
+      b.name(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
+    }
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

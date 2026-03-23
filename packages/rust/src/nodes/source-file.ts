@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SourceFile } from '../types.js';
+import type { DeclarationStatement, ExpressionStatement, Shebang, SourceFile } from '../types.js';
 
 
-class SourceFileBuilder extends BaseBuilder<SourceFile> {
-  private _children: BaseBuilder[] = [];
+class SourceFileBuilder extends Builder<SourceFile> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -37,6 +37,24 @@ class SourceFileBuilder extends BaseBuilder<SourceFile> {
   }
 }
 
+export type { SourceFileBuilder };
+
 export function file(): SourceFileBuilder {
   return new SourceFileBuilder();
+}
+
+export interface SourceFileOptions {
+  children?: Builder<DeclarationStatement | ExpressionStatement | Shebang> | (Builder<DeclarationStatement | ExpressionStatement | Shebang>)[];
+}
+
+export namespace file {
+  export function from(options: SourceFileOptions): SourceFileBuilder {
+    const b = new SourceFileBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -12,7 +12,6 @@ describe('pointer_type', () => {
     const builder = ir.pointer_type(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('*');
-    expect(source).toContain('const');
   });
 
   it('should produce a valid CST node', () => {

@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { IndexSignature } from '../types.js';
+import type { AddingTypeAnnotation, Identifier, IndexSignature, MappedTypeClause, OmittingTypeAnnotation, OptingTypeAnnotation, TypeAnnotation } from '../types.js';
 
 
-class IndexSignatureBuilder extends BaseBuilder<IndexSignature> {
-  private _indexType?: BaseBuilder;
-  private _name?: BaseBuilder;
-  private _sign?: BaseBuilder;
-  private _type: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class IndexSignatureBuilder extends Builder<IndexSignature> {
+  private _indexType?: Builder;
+  private _name?: Builder;
+  private _sign?: Builder;
+  private _type: Builder;
+  private _children: Builder[] = [];
 
-  constructor(type_: BaseBuilder) {
+  constructor(type_: Builder) {
     super();
     this._type = type_;
   }
 
-  indexType(value: BaseBuilder): this {
+  indexType(value: Builder): this {
     this._indexType = value;
     return this;
   }
 
-  name(value: BaseBuilder): this {
+  name(value: Builder): this {
     this._name = value;
     return this;
   }
 
-  sign(value: BaseBuilder): this {
+  sign(value: Builder): this {
     this._sign = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -79,6 +79,34 @@ class IndexSignatureBuilder extends BaseBuilder<IndexSignature> {
   }
 }
 
-export function index_signature(type_: BaseBuilder): IndexSignatureBuilder {
+export type { IndexSignatureBuilder };
+
+export function index_signature(type_: Builder): IndexSignatureBuilder {
   return new IndexSignatureBuilder(type_);
+}
+
+export interface IndexSignatureOptions {
+  indexType?: Builder;
+  name?: Builder<Identifier> | string;
+  sign?: Builder;
+  type: Builder<AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation>;
+  children?: Builder<MappedTypeClause> | (Builder<MappedTypeClause>)[];
+}
+
+export namespace index_signature {
+  export function from(options: IndexSignatureOptions): IndexSignatureBuilder {
+    const b = new IndexSignatureBuilder(options.type);
+    if (options.indexType !== undefined) b.indexType(options.indexType);
+    if (options.name !== undefined) {
+      const _v = options.name;
+      b.name(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
+    }
+    if (options.sign !== undefined) b.sign(options.sign);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

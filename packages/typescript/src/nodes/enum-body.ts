@@ -1,20 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { EnumBody } from '../types.js';
+import type { ComputedPropertyName, EnumAssignment, EnumBody, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
 
 
-class EnumBodyBuilder extends BaseBuilder<EnumBody> {
-  private _name: BaseBuilder[] = [];
-  private _children: BaseBuilder[] = [];
+class EnumBodyBuilder extends Builder<EnumBody> {
+  private _name: Builder[] = [];
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  name(value: BaseBuilder[]): this {
+  name(...value: Builder[]): this {
     this._name = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -56,6 +56,30 @@ class EnumBodyBuilder extends BaseBuilder<EnumBody> {
   }
 }
 
+export type { EnumBodyBuilder };
+
 export function enum_body(): EnumBodyBuilder {
   return new EnumBodyBuilder();
+}
+
+export interface EnumBodyOptions {
+  name?: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier> | (Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>)[];
+  children?: Builder<EnumAssignment> | (Builder<EnumAssignment>)[];
+}
+
+export namespace enum_body {
+  export function from(options: EnumBodyOptions): EnumBodyBuilder {
+    const b = new EnumBodyBuilder();
+    if (options.name !== undefined) {
+      const _v = options.name;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.name(..._arr);
+    }
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

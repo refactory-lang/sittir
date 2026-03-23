@@ -1,30 +1,30 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionType } from '../types.js';
+import type { ForLifetimes, FunctionModifiers, FunctionType, Parameters, ScopedTypeIdentifier, Type, TypeIdentifier } from '../types.js';
 
 
-class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
-  private _parameters: BaseBuilder;
-  private _returnType?: BaseBuilder;
-  private _trait?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class FunctionTypeBuilder extends Builder<FunctionType> {
+  private _parameters: Builder;
+  private _returnType?: Builder;
+  private _trait?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
 
-  trait(value: BaseBuilder): this {
+  trait(value: Builder): this {
     this._trait = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -68,6 +68,29 @@ class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
   }
 }
 
-export function function_type(parameters: BaseBuilder): FunctionTypeBuilder {
+export type { FunctionTypeBuilder };
+
+export function function_type(parameters: Builder): FunctionTypeBuilder {
   return new FunctionTypeBuilder(parameters);
+}
+
+export interface FunctionTypeOptions {
+  parameters: Builder<Parameters>;
+  returnType?: Builder<Type>;
+  trait?: Builder<ScopedTypeIdentifier | TypeIdentifier>;
+  children?: Builder<ForLifetimes | FunctionModifiers> | (Builder<ForLifetimes | FunctionModifiers>)[];
+}
+
+export namespace function_type {
+  export function from(options: FunctionTypeOptions): FunctionTypeBuilder {
+    const b = new FunctionTypeBuilder(options.parameters);
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.trait !== undefined) b.trait(options.trait);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

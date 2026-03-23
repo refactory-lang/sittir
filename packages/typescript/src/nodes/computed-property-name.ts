@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ComputedPropertyName } from '../types.js';
+import type { ComputedPropertyName, Expression } from '../types.js';
 
 
-class ComputedPropertyNameBuilder extends BaseBuilder<ComputedPropertyName> {
-  private _children: BaseBuilder[] = [];
+class ComputedPropertyNameBuilder extends Builder<ComputedPropertyName> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -39,6 +39,20 @@ class ComputedPropertyNameBuilder extends BaseBuilder<ComputedPropertyName> {
   }
 }
 
-export function computed_property_name(children: BaseBuilder): ComputedPropertyNameBuilder {
+export type { ComputedPropertyNameBuilder };
+
+export function computed_property_name(children: Builder): ComputedPropertyNameBuilder {
   return new ComputedPropertyNameBuilder(children);
+}
+
+export interface ComputedPropertyNameOptions {
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace computed_property_name {
+  export function from(options: ComputedPropertyNameOptions): ComputedPropertyNameBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ComputedPropertyNameBuilder(_ctor);
+    return b;
+  }
 }

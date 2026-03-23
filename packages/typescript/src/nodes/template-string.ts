@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TemplateString } from '../types.js';
+import type { EscapeSequence, StringFragment, TemplateString, TemplateSubstitution } from '../types.js';
 
 
-class TemplateStringBuilder extends BaseBuilder<TemplateString> {
-  private _children: BaseBuilder[] = [];
+class TemplateStringBuilder extends Builder<TemplateString> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -41,6 +41,24 @@ class TemplateStringBuilder extends BaseBuilder<TemplateString> {
   }
 }
 
+export type { TemplateStringBuilder };
+
 export function template_string(): TemplateStringBuilder {
   return new TemplateStringBuilder();
+}
+
+export interface TemplateStringOptions {
+  children?: Builder<EscapeSequence | StringFragment | TemplateSubstitution> | (Builder<EscapeSequence | StringFragment | TemplateSubstitution>)[];
+}
+
+export namespace template_string {
+  export function from(options: TemplateStringOptions): TemplateStringBuilder {
+    const b = new TemplateStringBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

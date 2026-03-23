@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CatchClause } from '../types.js';
+import type { ArrayPattern, CatchClause, Identifier, ObjectPattern, StatementBlock, TypeAnnotation } from '../types.js';
 
 
-class CatchClauseBuilder extends BaseBuilder<CatchClause> {
-  private _body: BaseBuilder;
-  private _parameter?: BaseBuilder;
-  private _type?: BaseBuilder;
+class CatchClauseBuilder extends Builder<CatchClause> {
+  private _body: Builder;
+  private _parameter?: Builder;
+  private _type?: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder) {
     super();
     this._body = body;
   }
 
-  parameter(value: BaseBuilder): this {
+  parameter(value: Builder): this {
     this._parameter = value;
     return this;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
@@ -61,6 +61,23 @@ class CatchClauseBuilder extends BaseBuilder<CatchClause> {
   }
 }
 
-export function catch_clause(body: BaseBuilder): CatchClauseBuilder {
+export type { CatchClauseBuilder };
+
+export function catch_clause(body: Builder): CatchClauseBuilder {
   return new CatchClauseBuilder(body);
+}
+
+export interface CatchClauseOptions {
+  body: Builder<StatementBlock>;
+  parameter?: Builder<ArrayPattern | Identifier | ObjectPattern>;
+  type?: Builder<TypeAnnotation>;
+}
+
+export namespace catch_clause {
+  export function from(options: CatchClauseOptions): CatchClauseBuilder {
+    const b = new CatchClauseBuilder(options.body);
+    if (options.parameter !== undefined) b.parameter(options.parameter);
+    if (options.type !== undefined) b.type(options.type);
+    return b;
+  }
 }

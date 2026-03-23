@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FieldInitializer } from '../types.js';
+import type { AttributeItem, Expression, FieldIdentifier, FieldInitializer, IntegerLiteral } from '../types.js';
 
 
-class FieldInitializerBuilder extends BaseBuilder<FieldInitializer> {
-  private _field: BaseBuilder;
-  private _value!: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class FieldInitializerBuilder extends Builder<FieldInitializer> {
+  private _field: Builder;
+  private _value!: Builder;
+  private _children: Builder[] = [];
 
-  constructor(field: BaseBuilder) {
+  constructor(field: Builder) {
     super();
     this._field = field;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -55,6 +55,27 @@ class FieldInitializerBuilder extends BaseBuilder<FieldInitializer> {
   }
 }
 
-export function field_initializer(field: BaseBuilder): FieldInitializerBuilder {
+export type { FieldInitializerBuilder };
+
+export function field_initializer(field: Builder): FieldInitializerBuilder {
   return new FieldInitializerBuilder(field);
+}
+
+export interface FieldInitializerOptions {
+  field: Builder<FieldIdentifier | IntegerLiteral>;
+  value: Builder<Expression>;
+  children?: Builder<AttributeItem> | (Builder<AttributeItem>)[];
+}
+
+export namespace field_initializer {
+  export function from(options: FieldInitializerOptions): FieldInitializerBuilder {
+    const b = new FieldInitializerBuilder(options.field);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ElseClause } from '../types.js';
+import type { ElseClause, IfExpression } from '../types.js';
 
 
-class ElseClauseBuilder extends BaseBuilder<ElseClause> {
-  private _children: BaseBuilder[] = [];
+class ElseClauseBuilder extends Builder<ElseClause> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class ElseClauseBuilder extends BaseBuilder<ElseClause> {
   }
 }
 
-export function else_clause(children: BaseBuilder): ElseClauseBuilder {
+export type { ElseClauseBuilder };
+
+export function else_clause(children: Builder): ElseClauseBuilder {
   return new ElseClauseBuilder(children);
+}
+
+export interface ElseClauseOptions {
+  children: Builder<IfExpression> | (Builder<IfExpression>)[];
+}
+
+export namespace else_clause {
+  export function from(options: ElseClauseOptions): ElseClauseBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ElseClauseBuilder(_ctor);
+    return b;
+  }
 }

@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { NonNullExpression } from '../types.js';
+import type { Expression, NonNullExpression } from '../types.js';
 
 
-class NonNullBuilder extends BaseBuilder<NonNullExpression> {
-  private _children: BaseBuilder[] = [];
+class NonNullBuilder extends Builder<NonNullExpression> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class NonNullBuilder extends BaseBuilder<NonNullExpression> {
   }
 }
 
-export function non_null(children: BaseBuilder): NonNullBuilder {
+export type { NonNullBuilder };
+
+export function non_null(children: Builder): NonNullBuilder {
   return new NonNullBuilder(children);
+}
+
+export interface NonNullExpressionOptions {
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace non_null {
+  export function from(options: NonNullExpressionOptions): NonNullBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new NonNullBuilder(_ctor);
+    return b;
+  }
 }

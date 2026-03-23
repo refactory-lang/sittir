@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { InnerAttributeItem } from '../types.js';
+import type { Attribute, InnerAttributeItem } from '../types.js';
 
 
-class InnerAttributeBuilder extends BaseBuilder<InnerAttributeItem> {
-  private _children: BaseBuilder[] = [];
+class InnerAttributeBuilder extends Builder<InnerAttributeItem> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -43,6 +43,20 @@ class InnerAttributeBuilder extends BaseBuilder<InnerAttributeItem> {
   }
 }
 
-export function inner_attribute(children: BaseBuilder): InnerAttributeBuilder {
+export type { InnerAttributeBuilder };
+
+export function inner_attribute(children: Builder): InnerAttributeBuilder {
   return new InnerAttributeBuilder(children);
+}
+
+export interface InnerAttributeItemOptions {
+  children: Builder<Attribute> | (Builder<Attribute>)[];
+}
+
+export namespace inner_attribute {
+  export function from(options: InnerAttributeItemOptions): InnerAttributeBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new InnerAttributeBuilder(_ctor);
+    return b;
+  }
 }

@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TernaryExpression } from '../types.js';
+import type { Expression, TernaryExpression } from '../types.js';
 
 
-class TernaryBuilder extends BaseBuilder<TernaryExpression> {
-  private _alternative: BaseBuilder;
-  private _condition!: BaseBuilder;
-  private _consequence!: BaseBuilder;
+class TernaryBuilder extends Builder<TernaryExpression> {
+  private _alternative!: Builder;
+  private _condition: Builder;
+  private _consequence!: Builder;
 
-  constructor(alternative: BaseBuilder) {
+  constructor(condition: Builder) {
     super();
-    this._alternative = alternative;
+    this._condition = condition;
   }
 
-  condition(value: BaseBuilder): this {
-    this._condition = value;
+  alternative(value: Builder): this {
+    this._alternative = value;
     return this;
   }
 
-  consequence(value: BaseBuilder): this {
+  consequence(value: Builder): this {
     this._consequence = value;
     return this;
   }
@@ -35,8 +35,8 @@ class TernaryBuilder extends BaseBuilder<TernaryExpression> {
   build(ctx?: RenderContext): TernaryExpression {
     return {
       kind: 'ternary_expression',
-      alternative: this.renderChild(this._alternative, ctx),
-      condition: this._condition ? this.renderChild(this._condition, ctx) : undefined,
+      alternative: this._alternative ? this.renderChild(this._alternative, ctx) : undefined,
+      condition: this.renderChild(this._condition, ctx),
       consequence: this._consequence ? this.renderChild(this._consequence, ctx) : undefined,
     } as unknown as TernaryExpression;
   }
@@ -53,6 +53,23 @@ class TernaryBuilder extends BaseBuilder<TernaryExpression> {
   }
 }
 
-export function ternary(alternative: BaseBuilder): TernaryBuilder {
-  return new TernaryBuilder(alternative);
+export type { TernaryBuilder };
+
+export function ternary(condition: Builder): TernaryBuilder {
+  return new TernaryBuilder(condition);
+}
+
+export interface TernaryExpressionOptions {
+  alternative: Builder<Expression>;
+  condition: Builder<Expression>;
+  consequence: Builder<Expression>;
+}
+
+export namespace ternary {
+  export function from(options: TernaryExpressionOptions): TernaryBuilder {
+    const b = new TernaryBuilder(options.condition);
+    if (options.alternative !== undefined) b.alternative(options.alternative);
+    if (options.consequence !== undefined) b.consequence(options.consequence);
+    return b;
+  }
 }

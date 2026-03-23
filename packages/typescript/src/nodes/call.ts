@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CallExpression } from '../types.js';
+import type { Arguments, CallExpression, Expression, TemplateString, TypeArguments } from '../types.js';
 
 
-class CallBuilder extends BaseBuilder<CallExpression> {
-  private _arguments: BaseBuilder;
-  private _function!: BaseBuilder;
-  private _typeArguments?: BaseBuilder;
+class CallBuilder extends Builder<CallExpression> {
+  private _arguments!: Builder;
+  private _function: Builder;
+  private _typeArguments?: Builder;
 
-  constructor(arguments_: BaseBuilder) {
+  constructor(function_: Builder) {
     super();
-    this._arguments = arguments_;
+    this._function = function_;
   }
 
-  function(value: BaseBuilder): this {
-    this._function = value;
+  arguments(value: Builder): this {
+    this._arguments = value;
     return this;
   }
 
-  typeArguments(value: BaseBuilder): this {
+  typeArguments(value: Builder): this {
     this._typeArguments = value;
     return this;
   }
@@ -34,8 +34,8 @@ class CallBuilder extends BaseBuilder<CallExpression> {
   build(ctx?: RenderContext): CallExpression {
     return {
       kind: 'call_expression',
-      arguments: this.renderChild(this._arguments, ctx),
-      function: this._function ? this.renderChild(this._function, ctx) : undefined,
+      arguments: this._arguments ? this.renderChild(this._arguments, ctx) : undefined,
+      function: this.renderChild(this._function, ctx),
       typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
     } as unknown as CallExpression;
   }
@@ -51,6 +51,23 @@ class CallBuilder extends BaseBuilder<CallExpression> {
   }
 }
 
-export function call(arguments_: BaseBuilder): CallBuilder {
-  return new CallBuilder(arguments_);
+export type { CallBuilder };
+
+export function call(function_: Builder): CallBuilder {
+  return new CallBuilder(function_);
+}
+
+export interface CallExpressionOptions {
+  arguments: Builder<Arguments | TemplateString>;
+  function: Builder<Expression>;
+  typeArguments?: Builder<TypeArguments>;
+}
+
+export namespace call {
+  export function from(options: CallExpressionOptions): CallBuilder {
+    const b = new CallBuilder(options.function);
+    if (options.arguments !== undefined) b.arguments(options.arguments);
+    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
+    return b;
+  }
 }

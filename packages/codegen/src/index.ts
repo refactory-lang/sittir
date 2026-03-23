@@ -100,7 +100,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 	const tests = new Map<string, string>();
 
 	for (const node of nodes) {
-		builders.set(node.kind, emitBuilder({ grammar: config.grammar, node }));
+		builders.set(node.kind, emitBuilder({ grammar: config.grammar, node, nodeKinds, leafKinds, supertypes }));
 		tests.set(node.kind, emitTest({
 			grammar: config.grammar,
 			node,
@@ -111,7 +111,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 
 	return {
 		grammar: emitGrammar({ grammar: config.grammar }),
-		types: emitTypes({ grammar: config.grammar, nodeKinds }),
+		types: emitTypes({ grammar: config.grammar, nodeKinds, leafKinds, supertypes }),
 		builders,
 		builder: emitFluent({ grammar: config.grammar, nodeKinds, leafKinds, operatorContexts, nodes, supertypes }),
 		consts: emitConsts({ grammar: config.grammar, nodeKinds, leafKinds, keywords, operators: operatorTokens, nodes }),

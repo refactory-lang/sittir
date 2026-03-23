@@ -1,30 +1,30 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConstItem } from '../types.js';
+import type { ConstItem, Expression, Identifier, Type, VisibilityModifier } from '../types.js';
 
 
-class ConstBuilder extends BaseBuilder<ConstItem> {
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _value?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ConstBuilder extends Builder<ConstItem> {
+  private _name: Builder;
+  private _type!: Builder;
+  private _value?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -74,6 +74,30 @@ class ConstBuilder extends BaseBuilder<ConstItem> {
   }
 }
 
-export function const_(name: BaseBuilder): ConstBuilder {
+export type { ConstBuilder };
+
+export function const_(name: Builder): ConstBuilder {
   return new ConstBuilder(name);
+}
+
+export interface ConstItemOptions {
+  name: Builder<Identifier> | string;
+  type: Builder<Type>;
+  value?: Builder<Expression>;
+  children?: Builder<VisibilityModifier> | (Builder<VisibilityModifier>)[];
+}
+
+export namespace const_ {
+  export function from(options: ConstItemOptions): ConstBuilder {
+    const _ctor = options.name;
+    const b = new ConstBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

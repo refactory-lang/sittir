@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { PublicFieldDefinition } from '../types.js';
+import type { AccessibilityModifier, ComputedPropertyName, Decorator, Expression, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, PublicFieldDefinition, TypeAnnotation } from '../types.js';
 
 
-class PublicFieldDefinitionBuilder extends BaseBuilder<PublicFieldDefinition> {
-  private _decorator: BaseBuilder[] = [];
-  private _name: BaseBuilder;
-  private _type?: BaseBuilder;
-  private _value?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class PublicFieldDefinitionBuilder extends Builder<PublicFieldDefinition> {
+  private _decorator: Builder[] = [];
+  private _name: Builder;
+  private _type?: Builder;
+  private _value?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  decorator(value: BaseBuilder[]): this {
+  decorator(...value: Builder[]): this {
     this._decorator = value;
     return this;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -38,7 +38,8 @@ class PublicFieldDefinitionBuilder extends BaseBuilder<PublicFieldDefinition> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._decorator.length > 0) parts.push(this.renderChildren(this._decorator, ', ', ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     if (this._value) {
@@ -66,9 +67,8 @@ class PublicFieldDefinitionBuilder extends BaseBuilder<PublicFieldDefinition> {
     for (const child of this._decorator) {
       parts.push({ kind: 'builder', builder: child, fieldName: 'decorator' });
     }
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     if (this._value) {
@@ -79,6 +79,35 @@ class PublicFieldDefinitionBuilder extends BaseBuilder<PublicFieldDefinition> {
   }
 }
 
-export function public_field_definition(name: BaseBuilder): PublicFieldDefinitionBuilder {
+export type { PublicFieldDefinitionBuilder };
+
+export function public_field_definition(name: Builder): PublicFieldDefinitionBuilder {
   return new PublicFieldDefinitionBuilder(name);
+}
+
+export interface PublicFieldDefinitionOptions {
+  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
+  name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  type?: Builder<TypeAnnotation>;
+  value?: Builder<Expression>;
+  children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
+}
+
+export namespace public_field_definition {
+  export function from(options: PublicFieldDefinitionOptions): PublicFieldDefinitionBuilder {
+    const b = new PublicFieldDefinitionBuilder(options.name);
+    if (options.decorator !== undefined) {
+      const _v = options.decorator;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.decorator(..._arr);
+    }
+    if (options.type !== undefined) b.type(options.type);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

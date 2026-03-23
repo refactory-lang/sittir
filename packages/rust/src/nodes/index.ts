@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { IndexExpression } from '../types.js';
+import type { Expression, IndexExpression } from '../types.js';
 
 
-class IndexBuilder extends BaseBuilder<IndexExpression> {
-  private _children: BaseBuilder[] = [];
+class IndexBuilder extends Builder<IndexExpression> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -39,6 +39,21 @@ class IndexBuilder extends BaseBuilder<IndexExpression> {
   }
 }
 
-export function index(children: BaseBuilder[]): IndexBuilder {
-  return new IndexBuilder(children);
+export type { IndexBuilder };
+
+export function index(...children: Builder[]): IndexBuilder {
+  return new IndexBuilder(...children);
+}
+
+export interface IndexExpressionOptions {
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace index {
+  export function from(options: IndexExpressionOptions): IndexBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new IndexBuilder(..._arr);
+    return b;
+  }
 }

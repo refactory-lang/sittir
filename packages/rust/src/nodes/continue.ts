@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ContinueExpression } from '../types.js';
+import type { ContinueExpression, Label } from '../types.js';
 
 
-class ContinueBuilder extends BaseBuilder<ContinueExpression> {
-  private _children: BaseBuilder[] = [];
+class ContinueBuilder extends Builder<ContinueExpression> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -39,6 +39,24 @@ class ContinueBuilder extends BaseBuilder<ContinueExpression> {
   }
 }
 
+export type { ContinueBuilder };
+
 export function continue_(): ContinueBuilder {
   return new ContinueBuilder();
+}
+
+export interface ContinueExpressionOptions {
+  children?: Builder<Label> | (Builder<Label>)[];
+}
+
+export namespace continue_ {
+  export function from(options: ContinueExpressionOptions): ContinueBuilder {
+    const b = new ContinueBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

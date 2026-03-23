@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { NewExpression } from '../types.js';
+import type { Arguments, NewExpression, PrimaryExpression, TypeArguments } from '../types.js';
 
 
-class NewBuilder extends BaseBuilder<NewExpression> {
-  private _arguments?: BaseBuilder;
-  private _constructor: BaseBuilder;
-  private _typeArguments?: BaseBuilder;
+class NewBuilder extends Builder<NewExpression> {
+  private _arguments?: Builder;
+  private _constructor: Builder;
+  private _typeArguments?: Builder;
 
-  constructor(constructor: BaseBuilder) {
+  constructor(constructor: Builder) {
     super();
     this._constructor = constructor;
   }
 
-  arguments(value: BaseBuilder): this {
+  arguments(value: Builder): this {
     this._arguments = value;
     return this;
   }
 
-  typeArguments(value: BaseBuilder): this {
+  typeArguments(value: Builder): this {
     this._typeArguments = value;
     return this;
   }
@@ -53,6 +53,23 @@ class NewBuilder extends BaseBuilder<NewExpression> {
   }
 }
 
-export function new_(constructor: BaseBuilder): NewBuilder {
+export type { NewBuilder };
+
+export function new_(constructor: Builder): NewBuilder {
   return new NewBuilder(constructor);
+}
+
+export interface NewExpressionOptions {
+  arguments?: Builder<Arguments>;
+  constructor: Builder<PrimaryExpression>;
+  typeArguments?: Builder<TypeArguments>;
+}
+
+export namespace new_ {
+  export function from(options: NewExpressionOptions): NewBuilder {
+    const b = new NewBuilder(options.constructor);
+    if (options.arguments !== undefined) b.arguments(options.arguments);
+    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
+    return b;
+  }
 }

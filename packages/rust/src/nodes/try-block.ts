@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TryBlock } from '../types.js';
 
 
-class TryBlockBuilder extends BaseBuilder<TryBlock> {
-  private _children: BaseBuilder[] = [];
+class TryBlockBuilder extends Builder<TryBlock> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class TryBlockBuilder extends BaseBuilder<TryBlock> {
   }
 }
 
-export function try_block(children: BaseBuilder): TryBlockBuilder {
+export type { TryBlockBuilder };
+
+export function try_block(children: Builder): TryBlockBuilder {
   return new TryBlockBuilder(children);
+}
+
+export interface TryBlockOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace try_block {
+  export function from(options: TryBlockOptions): TryBlockBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TryBlockBuilder(_ctor);
+    return b;
+  }
 }

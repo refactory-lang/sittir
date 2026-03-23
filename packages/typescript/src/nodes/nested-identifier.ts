@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { NestedIdentifier } from '../types.js';
+import type { Identifier, MemberExpression, NestedIdentifier, PropertyIdentifier } from '../types.js';
 
 
-class NestedIdentifierBuilder extends BaseBuilder<NestedIdentifier> {
-  private _object: BaseBuilder;
-  private _property!: BaseBuilder;
+class NestedIdentifierBuilder extends Builder<NestedIdentifier> {
+  private _object: Builder;
+  private _property!: Builder;
 
-  constructor(object: BaseBuilder) {
+  constructor(object: Builder) {
     super();
     this._object = object;
   }
 
-  property(value: BaseBuilder): this {
+  property(value: Builder): this {
     this._property = value;
     return this;
   }
@@ -44,6 +44,24 @@ class NestedIdentifierBuilder extends BaseBuilder<NestedIdentifier> {
   }
 }
 
-export function nested_identifier(object: BaseBuilder): NestedIdentifierBuilder {
+export type { NestedIdentifierBuilder };
+
+export function nested_identifier(object: Builder): NestedIdentifierBuilder {
   return new NestedIdentifierBuilder(object);
+}
+
+export interface NestedIdentifierOptions {
+  object: Builder<Identifier | MemberExpression>;
+  property: Builder<PropertyIdentifier> | string;
+}
+
+export namespace nested_identifier {
+  export function from(options: NestedIdentifierOptions): NestedIdentifierBuilder {
+    const b = new NestedIdentifierBuilder(options.object);
+    if (options.property !== undefined) {
+      const _v = options.property;
+      b.property(typeof _v === 'string' ? new LeafBuilder('property_identifier', _v) : _v);
+    }
+    return b;
+  }
 }

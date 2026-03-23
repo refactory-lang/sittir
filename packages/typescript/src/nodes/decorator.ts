@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Decorator } from '../types.js';
+import type { CallExpression, Decorator, Identifier, MemberExpression, ParenthesizedExpression } from '../types.js';
 
 
-class DecoratorBuilder extends BaseBuilder<Decorator> {
-  private _children: BaseBuilder[] = [];
+class DecoratorBuilder extends Builder<Decorator> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class DecoratorBuilder extends BaseBuilder<Decorator> {
   }
 }
 
-export function decorator(children: BaseBuilder): DecoratorBuilder {
+export type { DecoratorBuilder };
+
+export function decorator(children: Builder): DecoratorBuilder {
   return new DecoratorBuilder(children);
+}
+
+export interface DecoratorOptions {
+  children: Builder<CallExpression | Identifier | MemberExpression | ParenthesizedExpression> | (Builder<CallExpression | Identifier | MemberExpression | ParenthesizedExpression>)[];
+}
+
+export namespace decorator {
+  export function from(options: DecoratorOptions): DecoratorBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new DecoratorBuilder(_ctor);
+    return b;
+  }
 }

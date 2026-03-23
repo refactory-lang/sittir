@@ -1,30 +1,30 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionSignature } from '../types.js';
+import type { AssertsAnnotation, FormalParameters, FunctionSignature, Identifier, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class FunctionSignatureBuilder extends BaseBuilder<FunctionSignature> {
-  private _name: BaseBuilder;
-  private _parameters!: BaseBuilder;
-  private _returnType?: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class FunctionSignatureBuilder extends Builder<FunctionSignature> {
+  private _name: Builder;
+  private _parameters!: Builder;
+  private _returnType?: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  parameters(value: BaseBuilder): this {
+  parameters(value: Builder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -62,6 +62,26 @@ class FunctionSignatureBuilder extends BaseBuilder<FunctionSignature> {
   }
 }
 
-export function function_signature(name: BaseBuilder): FunctionSignatureBuilder {
+export type { FunctionSignatureBuilder };
+
+export function function_signature(name: Builder): FunctionSignatureBuilder {
   return new FunctionSignatureBuilder(name);
+}
+
+export interface FunctionSignatureOptions {
+  name: Builder<Identifier> | string;
+  parameters: Builder<FormalParameters>;
+  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace function_signature {
+  export function from(options: FunctionSignatureOptions): FunctionSignatureBuilder {
+    const _ctor = options.name;
+    const b = new FunctionSignatureBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.parameters !== undefined) b.parameters(options.parameters);
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

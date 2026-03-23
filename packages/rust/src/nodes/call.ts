@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CallExpression } from '../types.js';
+import type { Arguments, ArrayExpression, AssignmentExpression, AsyncBlock, AwaitExpression, BinaryExpression, BreakExpression, CallExpression, ClosureExpression, CompoundAssignmentExpr, ConstBlock, ContinueExpression, FieldExpression, ForExpression, GenBlock, GenericFunction, Identifier, IfExpression, IndexExpression, Literal, LoopExpression, MacroInvocation, MatchExpression, Metavariable, ParenthesizedExpression, ReferenceExpression, ReturnExpression, ScopedIdentifier, Self, StructExpression, TryBlock, TryExpression, TupleExpression, TypeCastExpression, UnaryExpression, UnitExpression, UnsafeBlock, WhileExpression, YieldExpression } from '../types.js';
 
 
-class CallBuilder extends BaseBuilder<CallExpression> {
-  private _arguments: BaseBuilder;
-  private _function!: BaseBuilder;
+class CallBuilder extends Builder<CallExpression> {
+  private _arguments!: Builder;
+  private _function: Builder;
 
-  constructor(arguments_: BaseBuilder) {
+  constructor(function_: Builder) {
     super();
-    this._arguments = arguments_;
+    this._function = function_;
   }
 
-  function(value: BaseBuilder): this {
-    this._function = value;
+  arguments(value: Builder): this {
+    this._arguments = value;
     return this;
   }
 
@@ -27,8 +27,8 @@ class CallBuilder extends BaseBuilder<CallExpression> {
   build(ctx?: RenderContext): CallExpression {
     return {
       kind: 'call_expression',
-      arguments: this.renderChild(this._arguments, ctx),
-      function: this._function ? this.renderChild(this._function, ctx) : undefined,
+      arguments: this._arguments ? this.renderChild(this._arguments, ctx) : undefined,
+      function: this.renderChild(this._function, ctx),
     } as unknown as CallExpression;
   }
 
@@ -42,6 +42,21 @@ class CallBuilder extends BaseBuilder<CallExpression> {
   }
 }
 
-export function call(arguments_: BaseBuilder): CallBuilder {
-  return new CallBuilder(arguments_);
+export type { CallBuilder };
+
+export function call(function_: Builder): CallBuilder {
+  return new CallBuilder(function_);
+}
+
+export interface CallExpressionOptions {
+  arguments: Builder<Arguments>;
+  function: Builder<Literal | ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression>;
+}
+
+export namespace call {
+  export function from(options: CallExpressionOptions): CallBuilder {
+    const b = new CallBuilder(options.function);
+    if (options.arguments !== undefined) b.arguments(options.arguments);
+    return b;
+  }
 }

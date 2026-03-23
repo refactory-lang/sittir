@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { UseDeclaration } from '../types.js';
+import type { Crate, Identifier, Metavariable, ScopedIdentifier, ScopedUseList, Self, Super, UseAsClause, UseDeclaration, UseList, UseWildcard, VisibilityModifier } from '../types.js';
 
 
-class UseBuilder extends BaseBuilder<UseDeclaration> {
-  private _argument: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class UseBuilder extends Builder<UseDeclaration> {
+  private _argument: Builder;
+  private _children: Builder[] = [];
 
-  constructor(argument: BaseBuilder) {
+  constructor(argument: Builder) {
     super();
     this._argument = argument;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -48,6 +48,25 @@ class UseBuilder extends BaseBuilder<UseDeclaration> {
   }
 }
 
-export function use_(argument: BaseBuilder): UseBuilder {
+export type { UseBuilder };
+
+export function use_(argument: Builder): UseBuilder {
   return new UseBuilder(argument);
+}
+
+export interface UseDeclarationOptions {
+  argument: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard>;
+  children?: Builder<VisibilityModifier> | (Builder<VisibilityModifier>)[];
+}
+
+export namespace use_ {
+  export function from(options: UseDeclarationOptions): UseBuilder {
+    const b = new UseBuilder(options.argument);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

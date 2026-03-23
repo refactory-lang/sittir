@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ImplementsClause } from '../types.js';
 
 
-class ImplementsClauseBuilder extends BaseBuilder<ImplementsClause> {
-  private _children: BaseBuilder[] = [];
+class ImplementsClauseBuilder extends Builder<ImplementsClause> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -14,7 +14,7 @@ class ImplementsClauseBuilder extends BaseBuilder<ImplementsClause> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('implements');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     return parts.join(' ');
   }
 
@@ -30,13 +30,29 @@ class ImplementsClauseBuilder extends BaseBuilder<ImplementsClause> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: 'implements', type: 'implements' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     return parts;
   }
 }
 
-export function implements_clause(children: BaseBuilder[]): ImplementsClauseBuilder {
-  return new ImplementsClauseBuilder(children);
+export type { ImplementsClauseBuilder };
+
+export function implements_clause(...children: Builder[]): ImplementsClauseBuilder {
+  return new ImplementsClauseBuilder(...children);
+}
+
+export interface ImplementsClauseOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace implements_clause {
+  export function from(options: ImplementsClauseOptions): ImplementsClauseBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new ImplementsClauseBuilder(..._arr);
+    return b;
+  }
 }

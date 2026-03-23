@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeParameter } from '../types.js';
+import type { TraitBounds, Type, TypeIdentifier, TypeParameter } from '../types.js';
 
 
-class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
-  private _bounds?: BaseBuilder;
-  private _defaultType?: BaseBuilder;
-  private _name: BaseBuilder;
+class TypeParameterBuilder extends Builder<TypeParameter> {
+  private _bounds?: Builder;
+  private _defaultType?: Builder;
+  private _name: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  bounds(value: BaseBuilder): this {
+  bounds(value: Builder): this {
     this._bounds = value;
     return this;
   }
 
-  defaultType(value: BaseBuilder): this {
+  defaultType(value: Builder): this {
     this._defaultType = value;
     return this;
   }
@@ -57,6 +57,24 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
   }
 }
 
-export function type_parameter(name: BaseBuilder): TypeParameterBuilder {
+export type { TypeParameterBuilder };
+
+export function type_parameter(name: Builder): TypeParameterBuilder {
   return new TypeParameterBuilder(name);
+}
+
+export interface TypeParameterOptions {
+  bounds?: Builder<TraitBounds>;
+  defaultType?: Builder<Type>;
+  name: Builder<TypeIdentifier> | string;
+}
+
+export namespace type_parameter {
+  export function from(options: TypeParameterOptions): TypeParameterBuilder {
+    const _ctor = options.name;
+    const b = new TypeParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.bounds !== undefined) b.bounds(options.bounds);
+    if (options.defaultType !== undefined) b.defaultType(options.defaultType);
+    return b;
+  }
 }

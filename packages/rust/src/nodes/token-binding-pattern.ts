@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TokenBindingPattern } from '../types.js';
+import type { FragmentSpecifier, Metavariable, TokenBindingPattern } from '../types.js';
 
 
-class TokenBindingPatternBuilder extends BaseBuilder<TokenBindingPattern> {
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
+class TokenBindingPatternBuilder extends Builder<TokenBindingPattern> {
+  private _name: Builder;
+  private _type!: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
@@ -44,6 +44,25 @@ class TokenBindingPatternBuilder extends BaseBuilder<TokenBindingPattern> {
   }
 }
 
-export function token_binding_pattern(name: BaseBuilder): TokenBindingPatternBuilder {
+export type { TokenBindingPatternBuilder };
+
+export function token_binding_pattern(name: Builder): TokenBindingPatternBuilder {
   return new TokenBindingPatternBuilder(name);
+}
+
+export interface TokenBindingPatternOptions {
+  name: Builder<Metavariable> | string;
+  type: Builder<FragmentSpecifier> | string;
+}
+
+export namespace token_binding_pattern {
+  export function from(options: TokenBindingPatternOptions): TokenBindingPatternBuilder {
+    const _ctor = options.name;
+    const b = new TokenBindingPatternBuilder(typeof _ctor === 'string' ? new LeafBuilder('metavariable', _ctor) : _ctor);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(typeof _v === 'string' ? new LeafBuilder('fragment_specifier', _v) : _v);
+    }
+    return b;
+  }
 }

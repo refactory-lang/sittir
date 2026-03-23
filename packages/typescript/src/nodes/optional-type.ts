@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { OptionalType } from '../types.js';
 
 
-class OptionalTypeBuilder extends BaseBuilder<OptionalType> {
-  private _children: BaseBuilder[] = [];
+class OptionalTypeBuilder extends Builder<OptionalType> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class OptionalTypeBuilder extends BaseBuilder<OptionalType> {
   }
 }
 
-export function optional_type(children: BaseBuilder): OptionalTypeBuilder {
+export type { OptionalTypeBuilder };
+
+export function optional_type(children: Builder): OptionalTypeBuilder {
   return new OptionalTypeBuilder(children);
+}
+
+export interface OptionalTypeOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace optional_type {
+  export function from(options: OptionalTypeOptions): OptionalTypeBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new OptionalTypeBuilder(_ctor);
+    return b;
+  }
 }

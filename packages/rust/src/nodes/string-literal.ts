@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { StringLiteral } from '../types.js';
+import type { EscapeSequence, StringContent, StringLiteral } from '../types.js';
 
 
-class StringLiteralBuilder extends BaseBuilder<StringLiteral> {
-  private _children: BaseBuilder[] = [];
+class StringLiteralBuilder extends Builder<StringLiteral> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -39,6 +39,24 @@ class StringLiteralBuilder extends BaseBuilder<StringLiteral> {
   }
 }
 
+export type { StringLiteralBuilder };
+
 export function string_literal(): StringLiteralBuilder {
   return new StringLiteralBuilder();
+}
+
+export interface StringLiteralOptions {
+  children?: Builder<EscapeSequence | StringContent> | (Builder<EscapeSequence | StringContent>)[];
+}
+
+export namespace string_literal {
+  export function from(options: StringLiteralOptions): StringLiteralBuilder {
+    const b = new StringLiteralBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

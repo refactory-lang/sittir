@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ArrayPattern } from '../types.js';
+import type { ArrayPattern, AssignmentPattern, Pattern } from '../types.js';
 
 
-class ArrayPatternBuilder extends BaseBuilder<ArrayPattern> {
-  private _children: BaseBuilder[] = [];
+class ArrayPatternBuilder extends Builder<ArrayPattern> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -16,7 +16,12 @@ class ArrayPatternBuilder extends BaseBuilder<ArrayPattern> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('[');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length === 1) {
+      parts.push(',');
+      parts.push(this.renderChild(this._children[0]!, ctx));
+    } else if (this._children.length > 1) {
+      parts.push(this.renderChildren(this._children, ' , ', ctx));
+    }
     parts.push(']');
     return parts.join(' ');
   }
@@ -33,14 +38,33 @@ class ArrayPatternBuilder extends BaseBuilder<ArrayPattern> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '[', type: '[' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0 || this._children.length === 1) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     parts.push({ kind: 'token', text: ']', type: ']' });
     return parts;
   }
 }
 
+export type { ArrayPatternBuilder };
+
 export function array_pattern(): ArrayPatternBuilder {
   return new ArrayPatternBuilder();
+}
+
+export interface ArrayPatternOptions {
+  children?: Builder<AssignmentPattern | Pattern> | (Builder<AssignmentPattern | Pattern>)[];
+}
+
+export namespace array_pattern {
+  export function from(options: ArrayPatternOptions): ArrayPatternBuilder {
+    const b = new ArrayPatternBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

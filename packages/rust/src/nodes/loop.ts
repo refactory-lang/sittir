@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LoopExpression } from '../types.js';
+import type { Label, LoopExpression } from '../types.js';
 
 
-class LoopBuilder extends BaseBuilder<LoopExpression> {
-  private _body: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class LoopBuilder extends Builder<LoopExpression> {
+  private _body: Builder;
+  private _children: Builder[] = [];
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder) {
     super();
     this._body = body;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -46,6 +46,25 @@ class LoopBuilder extends BaseBuilder<LoopExpression> {
   }
 }
 
-export function loop(body: BaseBuilder): LoopBuilder {
+export type { LoopBuilder };
+
+export function loop(body: Builder): LoopBuilder {
   return new LoopBuilder(body);
+}
+
+export interface LoopExpressionOptions {
+  body: Builder;
+  children?: Builder<Label> | (Builder<Label>)[];
+}
+
+export namespace loop {
+  export function from(options: LoopExpressionOptions): LoopBuilder {
+    const b = new LoopBuilder(options.body);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

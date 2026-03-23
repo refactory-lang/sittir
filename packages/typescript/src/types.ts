@@ -423,6 +423,149 @@ export type WithStatementConfig = BuilderConfig<TypescriptGrammar, WithStatement
 export type YieldExpression = NodeType<TypescriptGrammar, 'yield_expression'>;
 export type YieldExpressionConfig = BuilderConfig<TypescriptGrammar, YieldExpression>;
 
+// Leaf node types
+export type AccessibilityModifier = { kind: 'accessibility_modifier' };
+export type DebuggerStatement = { kind: 'debugger_statement' };
+export type EmptyStatement = { kind: 'empty_statement' };
+export type ExistentialType = { kind: 'existential_type' };
+export type Identifier = { kind: 'identifier' };
+export type MetaProperty = { kind: 'meta_property' };
+export type OptionalChain = { kind: 'optional_chain' };
+export type OverrideModifier = { kind: 'override_modifier' };
+export type PredefinedType = { kind: 'predefined_type' };
+export type Comment = { kind: 'comment' };
+export type EscapeSequence = { kind: 'escape_sequence' };
+export type False = { kind: 'false' };
+export type HashBangLine = { kind: 'hash_bang_line' };
+export type HtmlComment = { kind: 'html_comment' };
+export type Null = { kind: 'null' };
+export type PrivatePropertyIdentifier = { kind: 'private_property_identifier' };
+export type PropertyIdentifier = { kind: 'property_identifier' };
+export type RegexFlags = { kind: 'regex_flags' };
+export type RegexPattern = { kind: 'regex_pattern' };
+export type ShorthandPropertyIdentifier = { kind: 'shorthand_property_identifier' };
+export type ShorthandPropertyIdentifierPattern = { kind: 'shorthand_property_identifier_pattern' };
+export type StatementIdentifier = { kind: 'statement_identifier' };
+export type StringFragment = { kind: 'string_fragment' };
+export type Super = { kind: 'super' };
+export type This = { kind: 'this' };
+export type ThisType = { kind: 'this_type' };
+export type True = { kind: 'true' };
+export type TypeIdentifier = { kind: 'type_identifier' };
+export type Undefined = { kind: 'undefined' };
+
+// Supertype unions
+export type Declaration =
+  | AbstractClassDeclaration
+  | AmbientDeclaration
+  | ClassDeclaration
+  | EnumDeclaration
+  | FunctionDeclaration
+  | FunctionSignature
+  | GeneratorFunctionDeclaration
+  | ImportAlias
+  | InterfaceDeclaration
+  | InternalModule
+  | LexicalDeclaration
+  | TypeAliasDeclaration
+  | VariableDeclaration
+;
+
+export type Expression =
+  | AsExpression
+  | AssignmentExpression
+  | AugmentedAssignmentExpression
+  | AwaitExpression
+  | BinaryExpression
+  | InstantiationExpression
+  | InternalModule
+  | NewExpression
+  | SatisfiesExpression
+  | TernaryExpression
+  | TypeAssertion
+  | UnaryExpression
+  | UpdateExpression
+  | YieldExpression
+;
+
+export type Pattern =
+  | ArrayPattern
+  | Identifier
+  | MemberExpression
+  | NonNullExpression
+  | ObjectPattern
+  | RestPattern
+  | SubscriptExpression
+  | Undefined
+;
+
+export type PrimaryExpression =
+  | Array
+  | ArrowFunction
+  | CallExpression
+  | False
+  | FunctionExpression
+  | GeneratorFunction
+  | Identifier
+  | MemberExpression
+  | MetaProperty
+  | NonNullExpression
+  | Null
+  | ParenthesizedExpression
+  | Regex
+  | SubscriptExpression
+  | Super
+  | TemplateString
+  | This
+  | True
+  | Undefined
+;
+
+export type PrimaryType =
+  | ArrayType
+  | ConditionalType
+  | ExistentialType
+  | FlowMaybeType
+  | GenericType
+  | IndexTypeQuery
+  | IntersectionType
+  | LiteralType
+  | LookupType
+  | NestedTypeIdentifier
+  | ObjectType
+  | ParenthesizedType
+  | PredefinedType
+  | TemplateLiteralType
+  | ThisType
+  | TupleType
+  | TypeIdentifier
+  | TypeQuery
+  | UnionType
+;
+
+export type Statement =
+  | BreakStatement
+  | ContinueStatement
+  | DebuggerStatement
+  | Declaration
+  | DoStatement
+  | EmptyStatement
+  | ExportStatement
+  | ExpressionStatement
+  | ForInStatement
+  | ForStatement
+  | IfStatement
+  | ImportStatement
+  | LabeledStatement
+  | ReturnStatement
+  | StatementBlock
+  | SwitchStatement
+  | ThrowStatement
+  | TryStatement
+  | WhileStatement
+  | WithStatement
+;
+
 export type TypescriptIrNode =
   | AbstractClassDeclaration
   | AbstractMethodSignature

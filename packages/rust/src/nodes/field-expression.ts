@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FieldExpression } from '../types.js';
+import type { Expression, FieldExpression, FieldIdentifier, IntegerLiteral } from '../types.js';
 
 
-class FieldBuilder extends BaseBuilder<FieldExpression> {
-  private _field: BaseBuilder;
-  private _value!: BaseBuilder;
+class FieldBuilder extends Builder<FieldExpression> {
+  private _field!: Builder;
+  private _value: Builder;
 
-  constructor(field: BaseBuilder) {
+  constructor(value: Builder) {
     super();
-    this._field = field;
+    this._value = value;
   }
 
-  value(value: BaseBuilder): this {
-    this._value = value;
+  field(value: Builder): this {
+    this._field = value;
     return this;
   }
 
@@ -28,8 +28,8 @@ class FieldBuilder extends BaseBuilder<FieldExpression> {
   build(ctx?: RenderContext): FieldExpression {
     return {
       kind: 'field_expression',
-      field: this.renderChild(this._field, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+      field: this._field ? this.renderChild(this._field, ctx) : undefined,
+      value: this.renderChild(this._value, ctx),
     } as unknown as FieldExpression;
   }
 
@@ -44,6 +44,21 @@ class FieldBuilder extends BaseBuilder<FieldExpression> {
   }
 }
 
-export function field(field: BaseBuilder): FieldBuilder {
-  return new FieldBuilder(field);
+export type { FieldBuilder };
+
+export function field(value: Builder): FieldBuilder {
+  return new FieldBuilder(value);
+}
+
+export interface FieldExpressionOptions {
+  field: Builder<FieldIdentifier | IntegerLiteral>;
+  value: Builder<Expression>;
+}
+
+export namespace field {
+  export function from(options: FieldExpressionOptions): FieldBuilder {
+    const b = new FieldBuilder(options.value);
+    if (options.field !== undefined) b.field(options.field);
+    return b;
+  }
 }

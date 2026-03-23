@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MatchPattern } from '../types.js';
+import type { Expression, LetChain, LetCondition, MatchPattern, Pattern } from '../types.js';
 
 
-class MatchPatternBuilder extends BaseBuilder<MatchPattern> {
-  private _condition?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class MatchPatternBuilder extends Builder<MatchPattern> {
+  private _condition?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
 
-  condition(value: BaseBuilder): this {
+  condition(value: Builder): this {
     this._condition = value;
     return this;
   }
@@ -50,6 +50,22 @@ class MatchPatternBuilder extends BaseBuilder<MatchPattern> {
   }
 }
 
-export function match_pattern(children: BaseBuilder): MatchPatternBuilder {
+export type { MatchPatternBuilder };
+
+export function match_pattern(children: Builder): MatchPatternBuilder {
   return new MatchPatternBuilder(children);
+}
+
+export interface MatchPatternOptions {
+  condition?: Builder<Expression | LetChain | LetCondition>;
+  children: Builder<Pattern> | (Builder<Pattern>)[];
+}
+
+export namespace match_pattern {
+  export function from(options: MatchPatternOptions): MatchPatternBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new MatchPatternBuilder(_ctor);
+    if (options.condition !== undefined) b.condition(options.condition);
+    return b;
+  }
 }

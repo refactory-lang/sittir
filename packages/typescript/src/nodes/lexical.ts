@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LexicalDeclaration } from '../types.js';
+import type { LexicalDeclaration, VariableDeclarator } from '../types.js';
 
 
-class LexicalBuilder extends BaseBuilder<LexicalDeclaration> {
-  private _kind: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class LexicalBuilder extends Builder<LexicalDeclaration> {
+  private _kind: Builder;
+  private _children: Builder[] = [];
 
-  constructor(kind: BaseBuilder) {
+  constructor(kind: Builder) {
     super();
     this._kind = kind;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -20,7 +20,7 @@ class LexicalBuilder extends BaseBuilder<LexicalDeclaration> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._kind) parts.push(this.renderChild(this._kind, ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     return parts.join(' ');
   }
 
@@ -36,13 +36,33 @@ class LexicalBuilder extends BaseBuilder<LexicalDeclaration> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._kind) parts.push({ kind: 'builder', builder: this._kind, fieldName: 'kind' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     return parts;
   }
 }
 
-export function lexical(kind: BaseBuilder): LexicalBuilder {
+export type { LexicalBuilder };
+
+export function lexical(kind: Builder): LexicalBuilder {
   return new LexicalBuilder(kind);
+}
+
+export interface LexicalDeclarationOptions {
+  kind: Builder;
+  children?: Builder<VariableDeclarator> | (Builder<VariableDeclarator>)[];
+}
+
+export namespace lexical {
+  export function from(options: LexicalDeclarationOptions): LexicalBuilder {
+    const b = new LexicalBuilder(options.kind);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

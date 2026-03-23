@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeBinding } from '../types.js';
+import type { Type, TypeArguments, TypeBinding, TypeIdentifier } from '../types.js';
 
 
-class TypeBindingBuilder extends BaseBuilder<TypeBinding> {
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _typeArguments?: BaseBuilder;
+class TypeBindingBuilder extends Builder<TypeBinding> {
+  private _name: Builder;
+  private _type!: Builder;
+  private _typeArguments?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  typeArguments(value: BaseBuilder): this {
+  typeArguments(value: Builder): this {
     this._typeArguments = value;
     return this;
   }
@@ -53,6 +53,24 @@ class TypeBindingBuilder extends BaseBuilder<TypeBinding> {
   }
 }
 
-export function type_binding(name: BaseBuilder): TypeBindingBuilder {
+export type { TypeBindingBuilder };
+
+export function type_binding(name: Builder): TypeBindingBuilder {
   return new TypeBindingBuilder(name);
+}
+
+export interface TypeBindingOptions {
+  name: Builder<TypeIdentifier> | string;
+  type: Builder<Type>;
+  typeArguments?: Builder<TypeArguments>;
+}
+
+export namespace type_binding {
+  export function from(options: TypeBindingOptions): TypeBindingBuilder {
+    const _ctor = options.name;
+    const b = new TypeBindingBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
+    return b;
+  }
 }

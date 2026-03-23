@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AttributeItem } from '../types.js';
+import type { Attribute, AttributeItem } from '../types.js';
 
 
-class AttributeBuilder extends BaseBuilder<AttributeItem> {
-  private _children: BaseBuilder[] = [];
+class AttributeBuilder extends Builder<AttributeItem> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -41,6 +41,20 @@ class AttributeBuilder extends BaseBuilder<AttributeItem> {
   }
 }
 
-export function attribute(children: BaseBuilder): AttributeBuilder {
+export type { AttributeBuilder };
+
+export function attribute(children: Builder): AttributeBuilder {
   return new AttributeBuilder(children);
+}
+
+export interface AttributeItemOptions {
+  children: Builder<Attribute> | (Builder<Attribute>)[];
+}
+
+export namespace attribute {
+  export function from(options: AttributeItemOptions): AttributeBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new AttributeBuilder(_ctor);
+    return b;
+  }
 }

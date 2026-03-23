@@ -26,9 +26,9 @@ export function emitIndex(config: EmitIndexConfig): string {
     '// Constants (node kinds, keywords, operators, field maps)',
     `export * from './consts.js';`,
     '',
-    '// Base builder + leaf builder (re-export from @sittir/types)',
-    `export { BaseBuilder, LeafBuilder } from '@sittir/types';`,
-    `export type { RenderContext } from '@sittir/types';`,
+    '// Base builder + leaf builder + edit utilities (re-export from @sittir/types)',
+    `export { Builder, LeafBuilder } from '@sittir/types';`,
+    `export type { RenderContext, Edit } from '@sittir/types';`,
     '',
   ];
 

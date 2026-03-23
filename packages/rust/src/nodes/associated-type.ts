@@ -1,30 +1,30 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AssociatedType } from '../types.js';
+import type { AssociatedType, TraitBounds, TypeIdentifier, TypeParameters, WhereClause } from '../types.js';
 
 
-class AssociatedTypeBuilder extends BaseBuilder<AssociatedType> {
-  private _bounds?: BaseBuilder;
-  private _name: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class AssociatedTypeBuilder extends Builder<AssociatedType> {
+  private _bounds?: Builder;
+  private _name: Builder;
+  private _typeParameters?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  bounds(value: BaseBuilder): this {
+  bounds(value: Builder): this {
     this._bounds = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -66,6 +66,30 @@ class AssociatedTypeBuilder extends BaseBuilder<AssociatedType> {
   }
 }
 
-export function associated_type(name: BaseBuilder): AssociatedTypeBuilder {
+export type { AssociatedTypeBuilder };
+
+export function associated_type(name: Builder): AssociatedTypeBuilder {
   return new AssociatedTypeBuilder(name);
+}
+
+export interface AssociatedTypeOptions {
+  bounds?: Builder<TraitBounds>;
+  name: Builder<TypeIdentifier> | string;
+  typeParameters?: Builder<TypeParameters>;
+  children?: Builder<WhereClause> | (Builder<WhereClause>)[];
+}
+
+export namespace associated_type {
+  export function from(options: AssociatedTypeOptions): AssociatedTypeBuilder {
+    const _ctor = options.name;
+    const b = new AssociatedTypeBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.bounds !== undefined) b.bounds(options.bounds);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

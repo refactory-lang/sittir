@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { WithStatement } from '../types.js';
+import type { ParenthesizedExpression, Statement, WithStatement } from '../types.js';
 
 
-class WithBuilder extends BaseBuilder<WithStatement> {
-  private _body: BaseBuilder;
-  private _object!: BaseBuilder;
+class WithBuilder extends Builder<WithStatement> {
+  private _body!: Builder;
+  private _object: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(object: Builder) {
     super();
-    this._body = body;
+    this._object = object;
   }
 
-  object(value: BaseBuilder): this {
-    this._object = value;
+  body(value: Builder): this {
+    this._body = value;
     return this;
   }
 
@@ -28,8 +28,8 @@ class WithBuilder extends BaseBuilder<WithStatement> {
   build(ctx?: RenderContext): WithStatement {
     return {
       kind: 'with_statement',
-      body: this.renderChild(this._body, ctx),
-      object: this._object ? this.renderChild(this._object, ctx) : undefined,
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      object: this.renderChild(this._object, ctx),
     } as unknown as WithStatement;
   }
 
@@ -44,6 +44,21 @@ class WithBuilder extends BaseBuilder<WithStatement> {
   }
 }
 
-export function with_(body: BaseBuilder): WithBuilder {
-  return new WithBuilder(body);
+export type { WithBuilder };
+
+export function with_(object: Builder): WithBuilder {
+  return new WithBuilder(object);
+}
+
+export interface WithStatementOptions {
+  body: Builder<Statement>;
+  object: Builder<ParenthesizedExpression>;
+}
+
+export namespace with_ {
+  export function from(options: WithStatementOptions): WithBuilder {
+    const b = new WithBuilder(options.object);
+    if (options.body !== undefined) b.body(options.body);
+    return b;
+  }
 }

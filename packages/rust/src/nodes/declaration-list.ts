@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { DeclarationList } from '../types.js';
+import type { DeclarationList, DeclarationStatement } from '../types.js';
 
 
-class DeclarationListBuilder extends BaseBuilder<DeclarationList> {
-  private _children: BaseBuilder[] = [];
+class DeclarationListBuilder extends Builder<DeclarationList> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -41,6 +41,24 @@ class DeclarationListBuilder extends BaseBuilder<DeclarationList> {
   }
 }
 
+export type { DeclarationListBuilder };
+
 export function declaration_list(): DeclarationListBuilder {
   return new DeclarationListBuilder();
+}
+
+export interface DeclarationListOptions {
+  children?: Builder<DeclarationStatement> | (Builder<DeclarationStatement>)[];
+}
+
+export namespace declaration_list {
+  export function from(options: DeclarationListOptions): DeclarationListBuilder {
+    const b = new DeclarationListBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

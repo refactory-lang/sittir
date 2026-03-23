@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { EnumAssignment } from '../types.js';
+import type { ComputedPropertyName, EnumAssignment, Expression, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
 
 
-class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
-  private _name: BaseBuilder;
-  private _value!: BaseBuilder;
+class EnumAssignmentBuilder extends Builder<EnumAssignment> {
+  private _name: Builder;
+  private _value!: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
@@ -44,6 +44,21 @@ class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
   }
 }
 
-export function enum_assignment(name: BaseBuilder): EnumAssignmentBuilder {
+export type { EnumAssignmentBuilder };
+
+export function enum_assignment(name: Builder): EnumAssignmentBuilder {
   return new EnumAssignmentBuilder(name);
+}
+
+export interface EnumAssignmentOptions {
+  name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  value: Builder<Expression>;
+}
+
+export namespace enum_assignment {
+  export function from(options: EnumAssignmentOptions): EnumAssignmentBuilder {
+    const b = new EnumAssignmentBuilder(options.name);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

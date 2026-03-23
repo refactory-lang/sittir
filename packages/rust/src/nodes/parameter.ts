@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Parameter } from '../types.js';
+import type { MutableSpecifier, Parameter, Pattern, Self, Type } from '../types.js';
 
 
-class ParameterBuilder extends BaseBuilder<Parameter> {
-  private _pattern: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ParameterBuilder extends Builder<Parameter> {
+  private _pattern: Builder;
+  private _type!: Builder;
+  private _children: Builder[] = [];
 
-  constructor(pattern: BaseBuilder) {
+  constructor(pattern: Builder) {
     super();
     this._pattern = pattern;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -55,6 +55,27 @@ class ParameterBuilder extends BaseBuilder<Parameter> {
   }
 }
 
-export function parameter(pattern: BaseBuilder): ParameterBuilder {
+export type { ParameterBuilder };
+
+export function parameter(pattern: Builder): ParameterBuilder {
   return new ParameterBuilder(pattern);
+}
+
+export interface ParameterOptions {
+  pattern: Builder<Pattern | Self>;
+  type: Builder<Type>;
+  children?: Builder<MutableSpecifier> | string | (Builder<MutableSpecifier> | string)[];
+}
+
+export namespace parameter {
+  export function from(options: ParameterOptions): ParameterBuilder {
+    const b = new ParameterBuilder(options.pattern);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('mutable_specifier', _x) : _x));
+    }
+    return b;
+  }
 }

@@ -383,13 +383,15 @@ export const ir = {
 
 export type RustIr = typeof ir;
 
-import type { BaseBuilder } from '@sittir/types';
+import type { Builder, Edit } from '@sittir/types';
 
 /** Tree-sitter CST node interface (minimal shape). */
 interface CSTInput {
   type: string;
   text: string;
   isNamed: boolean;
+  startIndex: number;
+  endIndex: number;
   namedChildren: CSTInput[];
   childForFieldName(name: string): CSTInput | null;
   childrenForFieldName(name: string): CSTInput[];
@@ -399,14 +401,14 @@ interface CSTInput {
  * Hydrate a tree-sitter CST node into a builder tree.
  * Walks the CST recursively — no parsing needed.
  */
-export function fromCST(node: CSTInput): BaseBuilder<{ kind: string }> {
+export function fromCST(node: CSTInput): Builder<{ kind: string }> {
   // Leaf / unknown nodes → LeafBuilder
   const builder = resolveBuilder(node);
   if (!builder) return new LeafBuilder(node.type, node.text);
   return builder;
 }
 
-function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
+function resolveBuilder(node: CSTInput): Builder<{ kind: string }> | null {
   switch (node.type) {
     case 'abstract_type': {
       const ctorChild = node.childForFieldName('trait');
@@ -415,7 +417,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['trait'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'arguments': {
@@ -423,7 +425,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'array_expression': {
@@ -434,7 +436,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['length'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'array_type': {
@@ -462,7 +464,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['bounds', 'name', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'async_block': {
@@ -514,7 +516,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'bounded_type': {
-      const b = ir.bounded_type(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.bounded_type(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'bracketed_type': {
@@ -527,25 +529,25 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'call_expression': {
-      const ctorChild = node.childForFieldName('arguments');
-      const b = ir.call(ctorChild ? fromCST(ctorChild) : new LeafBuilder('arguments', ''));
-      const functionChild = node.childForFieldName('function');
-      if (functionChild) b.function(fromCST(functionChild));
+      const ctorChild = node.childForFieldName('function');
+      const b = ir.call(ctorChild ? fromCST(ctorChild) : new LeafBuilder('function', ''));
+      const argumentsChild = node.childForFieldName('arguments');
+      if (argumentsChild) b.arguments(fromCST(argumentsChild));
       return b;
     }
     case 'captured_pattern': {
-      const b = ir.captured_pattern(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.captured_pattern(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'closure_expression': {
-      const ctorChild = node.childForFieldName('body');
-      const b = ir.closure(ctorChild ? fromCST(ctorChild) : new LeafBuilder('body', ''));
-      const parametersChild = node.childForFieldName('parameters');
-      if (parametersChild) b.parameters(fromCST(parametersChild));
+      const ctorChild = node.childForFieldName('parameters');
+      const b = ir.closure(ctorChild ? fromCST(ctorChild) : new LeafBuilder('parameters', ''));
+      const bodyChild = node.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild));
       const returnTypeChild = node.childForFieldName('return_type');
       if (returnTypeChild) b.returnType(fromCST(returnTypeChild));
       return b;
@@ -555,7 +557,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'compound_assignment_expr': {
@@ -583,7 +585,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['name', 'type', 'value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'const_parameter': {
@@ -600,7 +602,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'declaration_list': {
@@ -608,7 +610,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'dynamic_type': {
@@ -632,7 +634,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'name', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'enum_variant': {
@@ -646,7 +648,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'name', 'value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'enum_variant_list': {
@@ -654,7 +656,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'expression_statement': {
@@ -671,7 +673,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['alias', 'name'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'extern_modifier': {
@@ -679,7 +681,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'field_declaration': {
@@ -691,7 +693,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['name', 'type'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'field_declaration_list': {
@@ -699,14 +701,14 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'field_expression': {
-      const ctorChild = node.childForFieldName('field');
-      const b = ir.fieldExpression(ctorChild ? fromCST(ctorChild) : new LeafBuilder('field', ''));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
+      const ctorChild = node.childForFieldName('value');
+      const b = ir.fieldExpression(ctorChild ? fromCST(ctorChild) : new LeafBuilder('value', ''));
+      const fieldChild = node.childForFieldName('field');
+      if (fieldChild) b.field(fromCST(fieldChild));
       return b;
     }
     case 'field_initializer': {
@@ -718,7 +720,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['field', 'value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'field_initializer_list': {
@@ -726,7 +728,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'field_pattern': {
@@ -738,29 +740,29 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['name', 'pattern'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'for_expression': {
-      const ctorChild = node.childForFieldName('body');
-      const b = ir.for(ctorChild ? fromCST(ctorChild) : new LeafBuilder('body', ''));
-      const patternChild = node.childForFieldName('pattern');
-      if (patternChild) b.pattern(fromCST(patternChild));
+      const ctorChild = node.childForFieldName('pattern');
+      const b = ir.for(ctorChild ? fromCST(ctorChild) : new LeafBuilder('pattern', ''));
+      const bodyChild = node.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild));
       const valueChild = node.childForFieldName('value');
       if (valueChild) b.value(fromCST(valueChild));
       const remainingChildren = node.namedChildren.filter(c => {
         const fieldNames = ['body', 'pattern', 'value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'for_lifetimes': {
-      const b = ir.for_lifetimes(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.for_lifetimes(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'foreign_mod_item': {
-      const b = ir.foreign_mod(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.foreign_mod(...node.namedChildren.map(c => fromCST(c)));
       const bodyChild = node.childForFieldName('body');
       if (bodyChild) b.body(fromCST(bodyChild));
       return b;
@@ -780,7 +782,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'name', 'parameters', 'return_type', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'function_modifiers': {
@@ -788,7 +790,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'function_signature_item': {
@@ -804,7 +806,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['name', 'parameters', 'return_type', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'function_type': {
@@ -818,7 +820,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['parameters', 'return_type', 'trait'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'gen_block': {
@@ -840,7 +842,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['type_arguments'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'generic_type': {
@@ -858,10 +860,10 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'higher_ranked_trait_bound': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.higher_ranked_trait_bound(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
+      const ctorChild = node.childForFieldName('type_parameters');
+      const b = ir.higher_ranked_trait_bound(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type_parameters', ''));
+      const typeChild = node.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild));
       return b;
     }
     case 'if_expression': {
@@ -886,11 +888,11 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'trait', 'type', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'index_expression': {
-      const b = ir.index(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.index(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'inner_attribute_item': {
@@ -904,7 +906,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'let_chain': {
-      const b = ir.let_chain(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.let_chain(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'let_condition': {
@@ -927,7 +929,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['alternative', 'pattern', 'type', 'value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'lifetime_parameter': {
@@ -954,7 +956,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'macro_definition': {
@@ -964,7 +966,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['name'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'macro_invocation': {
@@ -974,7 +976,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['macro'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'macro_rule': {
@@ -993,7 +995,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['pattern', 'value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'match_block': {
@@ -1001,14 +1003,14 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'match_expression': {
-      const ctorChild = node.childForFieldName('body');
-      const b = ir.match(ctorChild ? fromCST(ctorChild) : new LeafBuilder('body', ''));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
+      const ctorChild = node.childForFieldName('value');
+      const b = ir.match(ctorChild ? fromCST(ctorChild) : new LeafBuilder('value', ''));
+      const bodyChild = node.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild));
       return b;
     }
     case 'match_pattern': {
@@ -1027,11 +1029,11 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'name'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'mut_pattern': {
-      const b = ir.mut_pattern(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.mut_pattern(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'negative_literal': {
@@ -1040,18 +1042,18 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'or_pattern': {
-      const b = ir.or_pattern(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.or_pattern(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'ordered_field_declaration_list': {
       const b = ir.ordered_field_declaration_list();
       const typeChildren = node.childrenForFieldName('type');
-      if (typeChildren.length > 0) b.type(typeChildren.map(c => fromCST(c)));
+      if (typeChildren.length > 0) b.type(...typeChildren.map(c => fromCST(c)));
       const remainingChildren = node.namedChildren.filter(c => {
         const fieldNames = ['type'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'parameter': {
@@ -1063,7 +1065,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['pattern', 'type'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'parameters': {
@@ -1071,7 +1073,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'parenthesized_expression': {
@@ -1086,14 +1088,14 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['type'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'qualified_type': {
-      const ctorChild = node.childForFieldName('alias');
-      const b = ir.qualified_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('alias', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
+      const ctorChild = node.childForFieldName('type');
+      const b = ir.qualified_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
+      const aliasChild = node.childForFieldName('alias');
+      if (aliasChild) b.alias(fromCST(aliasChild));
       return b;
     }
     case 'range_expression': {
@@ -1101,7 +1103,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'range_pattern': {
@@ -1129,11 +1131,11 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'reference_pattern': {
-      const b = ir.reference_pattern(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.reference_pattern(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'reference_type': {
@@ -1143,7 +1145,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['type'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'removed_trait_bound': {
@@ -1156,7 +1158,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'scoped_identifier': {
@@ -1181,11 +1183,11 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'self_parameter': {
-      const b = ir.self_parameter(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.self_parameter(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'shorthand_field_initializer': {
-      const b = ir.shorthand_field_initializer(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.shorthand_field_initializer(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'slice_pattern': {
@@ -1193,7 +1195,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'source_file': {
@@ -1201,7 +1203,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'static_item': {
@@ -1215,7 +1217,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['name', 'type', 'value'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'string_literal': {
@@ -1223,7 +1225,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'struct_expression': {
@@ -1244,7 +1246,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'name', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'struct_pattern': {
@@ -1254,7 +1256,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['type'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'token_binding_pattern': {
@@ -1269,7 +1271,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'token_repetition_pattern': {
@@ -1277,7 +1279,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'token_tree': {
@@ -1285,7 +1287,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'token_tree_pattern': {
@@ -1293,11 +1295,11 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'trait_bounds': {
-      const b = ir.trait_bounds(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.trait_bounds(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'trait_item': {
@@ -1313,7 +1315,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'bounds', 'name', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'try_block': {
@@ -1327,7 +1329,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'tuple_expression': {
-      const b = ir.tuple(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.tuple(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'tuple_pattern': {
@@ -1335,7 +1337,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'tuple_struct_pattern': {
@@ -1345,15 +1347,15 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['type'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'tuple_type': {
-      const b = ir.tuple_type(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.tuple_type(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'type_arguments': {
-      const b = ir.type_arguments(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.type_arguments(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'type_binding': {
@@ -1366,10 +1368,10 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'type_cast_expression': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.type_cast(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
+      const ctorChild = node.childForFieldName('value');
+      const b = ir.type_cast(ctorChild ? fromCST(ctorChild) : new LeafBuilder('value', ''));
+      const typeChild = node.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild));
       return b;
     }
     case 'type_item': {
@@ -1383,7 +1385,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['name', 'type', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'type_parameter': {
@@ -1396,7 +1398,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'type_parameters': {
-      const b = ir.type_parameters(node.namedChildren.map(c => fromCST(c)));
+      const b = ir.type_parameters(...node.namedChildren.map(c => fromCST(c)));
       return b;
     }
     case 'unary_expression': {
@@ -1415,7 +1417,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['body', 'name', 'type_parameters'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'unsafe_block': {
@@ -1424,10 +1426,10 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       return b;
     }
     case 'use_as_clause': {
-      const ctorChild = node.childForFieldName('alias');
-      const b = ir.use_as_clause(ctorChild ? fromCST(ctorChild) : new LeafBuilder('alias', ''));
-      const pathChild = node.childForFieldName('path');
-      if (pathChild) b.path(fromCST(pathChild));
+      const ctorChild = node.childForFieldName('path');
+      const b = ir.use_as_clause(ctorChild ? fromCST(ctorChild) : new LeafBuilder('path', ''));
+      const aliasChild = node.childForFieldName('alias');
+      if (aliasChild) b.alias(fromCST(aliasChild));
       return b;
     }
     case 'use_bounds': {
@@ -1435,7 +1437,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'use_declaration': {
@@ -1445,7 +1447,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['argument'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'use_list': {
@@ -1453,7 +1455,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'use_wildcard': {
@@ -1461,7 +1463,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'variadic_parameter': {
@@ -1472,7 +1474,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
         const fieldNames = ['pattern'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'visibility_modifier': {
@@ -1480,7 +1482,7 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'where_clause': {
@@ -1488,26 +1490,26 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'where_predicate': {
-      const ctorChild = node.childForFieldName('bounds');
-      const b = ir.where_predicate(ctorChild ? fromCST(ctorChild) : new LeafBuilder('bounds', ''));
-      const leftChild = node.childForFieldName('left');
-      if (leftChild) b.left(fromCST(leftChild));
+      const ctorChild = node.childForFieldName('left');
+      const b = ir.where_predicate(ctorChild ? fromCST(ctorChild) : new LeafBuilder('left', ''));
+      const boundsChild = node.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild));
       return b;
     }
     case 'while_expression': {
-      const ctorChild = node.childForFieldName('body');
-      const b = ir.while(ctorChild ? fromCST(ctorChild) : new LeafBuilder('body', ''));
-      const conditionChild = node.childForFieldName('condition');
-      if (conditionChild) b.condition(fromCST(conditionChild));
+      const ctorChild = node.childForFieldName('condition');
+      const b = ir.while(ctorChild ? fromCST(ctorChild) : new LeafBuilder('condition', ''));
+      const bodyChild = node.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild));
       const remainingChildren = node.namedChildren.filter(c => {
         const fieldNames = ['body', 'condition'];
         return !fieldNames.some(fn => node.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     case 'yield_expression': {
@@ -1515,9 +1517,27 @@ function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {
       const remainingChildren = node.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
       return b;
     }
     default: return null;
   }
+}
+
+/**
+ * Create a codemod-compatible Edit from a tree-sitter node.
+ * Hydrates the node into a builder, passes it to the transform,
+ * then renders the result and wraps it with byte positions.
+ */
+export function edit(
+  node: CSTInput,
+  transform: (builder: Builder) => Builder,
+): Edit {
+  const builder = fromCST(node);
+  const result = transform(builder);
+  return {
+    startPos: node.startIndex,
+    endPos: node.endIndex,
+    insertedText: result.renderImpl(),
+  };
 }

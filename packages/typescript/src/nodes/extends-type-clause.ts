@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExtendsTypeClause } from '../types.js';
+import type { ExtendsTypeClause, GenericType, NestedTypeIdentifier, TypeIdentifier } from '../types.js';
 
 
-class ExtendsTypeClauseBuilder extends BaseBuilder<ExtendsTypeClause> {
-  private _type: BaseBuilder[] = [];
+class ExtendsTypeClauseBuilder extends Builder<ExtendsTypeClause> {
+  private _type: Builder[] = [];
 
-  constructor(type_: BaseBuilder[]) {
+  constructor(...type_: Builder[]) {
     super();
     this._type = type_;
   }
@@ -37,6 +37,21 @@ class ExtendsTypeClauseBuilder extends BaseBuilder<ExtendsTypeClause> {
   }
 }
 
-export function extends_type_clause(type_: BaseBuilder[]): ExtendsTypeClauseBuilder {
-  return new ExtendsTypeClauseBuilder(type_);
+export type { ExtendsTypeClauseBuilder };
+
+export function extends_type_clause(...type_: Builder[]): ExtendsTypeClauseBuilder {
+  return new ExtendsTypeClauseBuilder(...type_);
+}
+
+export interface ExtendsTypeClauseOptions {
+  type: Builder<GenericType | NestedTypeIdentifier | TypeIdentifier> | (Builder<GenericType | NestedTypeIdentifier | TypeIdentifier>)[];
+}
+
+export namespace extends_type_clause {
+  export function from(options: ExtendsTypeClauseOptions): ExtendsTypeClauseBuilder {
+    const _ctor = options.type;
+    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
+    const b = new ExtendsTypeClauseBuilder(..._arr);
+    return b;
+  }
 }

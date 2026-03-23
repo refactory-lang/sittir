@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImportClause } from '../types.js';
+import type { Identifier, ImportClause, NamedImports, NamespaceImport } from '../types.js';
 
 
-class ImportClauseBuilder extends BaseBuilder<ImportClause> {
-  private _children: BaseBuilder[] = [];
+class ImportClauseBuilder extends Builder<ImportClause> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -35,6 +35,21 @@ class ImportClauseBuilder extends BaseBuilder<ImportClause> {
   }
 }
 
-export function import_clause(children: BaseBuilder[]): ImportClauseBuilder {
-  return new ImportClauseBuilder(children);
+export type { ImportClauseBuilder };
+
+export function import_clause(...children: Builder[]): ImportClauseBuilder {
+  return new ImportClauseBuilder(...children);
+}
+
+export interface ImportClauseOptions {
+  children: Builder<Identifier | NamedImports | NamespaceImport> | (Builder<Identifier | NamedImports | NamespaceImport>)[];
+}
+
+export namespace import_clause {
+  export function from(options: ImportClauseOptions): ImportClauseBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new ImportClauseBuilder(..._arr);
+    return b;
+  }
 }

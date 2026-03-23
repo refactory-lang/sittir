@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AbstractType } from '../types.js';
+import type { AbstractType, BoundedType, FunctionType, GenericType, RemovedTraitBound, ScopedTypeIdentifier, TupleType, TypeIdentifier, TypeParameters } from '../types.js';
 
 
-class AbstractTypeBuilder extends BaseBuilder<AbstractType> {
-  private _trait: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class AbstractTypeBuilder extends Builder<AbstractType> {
+  private _trait: Builder;
+  private _children: Builder[] = [];
 
-  constructor(trait: BaseBuilder) {
+  constructor(trait: Builder) {
     super();
     this._trait = trait;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -46,6 +46,25 @@ class AbstractTypeBuilder extends BaseBuilder<AbstractType> {
   }
 }
 
-export function abstract_type(trait: BaseBuilder): AbstractTypeBuilder {
+export type { AbstractTypeBuilder };
+
+export function abstract_type(trait: Builder): AbstractTypeBuilder {
   return new AbstractTypeBuilder(trait);
+}
+
+export interface AbstractTypeOptions {
+  trait: Builder<BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
+  children?: Builder<TypeParameters> | (Builder<TypeParameters>)[];
+}
+
+export namespace abstract_type {
+  export function from(options: AbstractTypeOptions): AbstractTypeBuilder {
+    const b = new AbstractTypeBuilder(options.trait);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

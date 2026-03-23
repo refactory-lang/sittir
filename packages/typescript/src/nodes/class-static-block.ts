@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ClassStaticBlock } from '../types.js';
+import type { ClassStaticBlock, StatementBlock } from '../types.js';
 
 
-class ClassStaticBlockBuilder extends BaseBuilder<ClassStaticBlock> {
-  private _body: BaseBuilder;
+class ClassStaticBlockBuilder extends Builder<ClassStaticBlock> {
+  private _body: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder) {
     super();
     this._body = body;
   }
@@ -35,6 +35,19 @@ class ClassStaticBlockBuilder extends BaseBuilder<ClassStaticBlock> {
   }
 }
 
-export function class_static_block(body: BaseBuilder): ClassStaticBlockBuilder {
+export type { ClassStaticBlockBuilder };
+
+export function class_static_block(body: Builder): ClassStaticBlockBuilder {
   return new ClassStaticBlockBuilder(body);
+}
+
+export interface ClassStaticBlockOptions {
+  body: Builder<StatementBlock>;
+}
+
+export namespace class_static_block {
+  export function from(options: ClassStaticBlockOptions): ClassStaticBlockBuilder {
+    const b = new ClassStaticBlockBuilder(options.body);
+    return b;
+  }
 }

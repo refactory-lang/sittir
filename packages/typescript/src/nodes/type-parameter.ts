@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeParameter } from '../types.js';
+import type { Constraint, DefaultType, TypeIdentifier, TypeParameter } from '../types.js';
 
 
-class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
-  private _constraint?: BaseBuilder;
-  private _name: BaseBuilder;
-  private _value?: BaseBuilder;
+class TypeParameterBuilder extends Builder<TypeParameter> {
+  private _constraint?: Builder;
+  private _name: Builder;
+  private _value?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  constraint(value: BaseBuilder): this {
+  constraint(value: Builder): this {
     this._constraint = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
@@ -51,6 +51,24 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
   }
 }
 
-export function type_parameter(name: BaseBuilder): TypeParameterBuilder {
+export type { TypeParameterBuilder };
+
+export function type_parameter(name: Builder): TypeParameterBuilder {
   return new TypeParameterBuilder(name);
+}
+
+export interface TypeParameterOptions {
+  constraint?: Builder<Constraint>;
+  name: Builder<TypeIdentifier> | string;
+  value?: Builder<DefaultType>;
+}
+
+export namespace type_parameter {
+  export function from(options: TypeParameterOptions): TypeParameterBuilder {
+    const _ctor = options.name;
+    const b = new TypeParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.constraint !== undefined) b.constraint(options.constraint);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

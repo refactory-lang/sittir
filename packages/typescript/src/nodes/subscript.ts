@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SubscriptExpression } from '../types.js';
+import type { Expression, OptionalChain, PredefinedType, SequenceExpression, SubscriptExpression } from '../types.js';
 
 
-class SubscriptBuilder extends BaseBuilder<SubscriptExpression> {
-  private _index: BaseBuilder;
-  private _object!: BaseBuilder;
-  private _optionalChain?: BaseBuilder;
+class SubscriptBuilder extends Builder<SubscriptExpression> {
+  private _index!: Builder;
+  private _object: Builder;
+  private _optionalChain?: Builder;
 
-  constructor(index: BaseBuilder) {
+  constructor(object: Builder) {
     super();
-    this._index = index;
+    this._object = object;
   }
 
-  object(value: BaseBuilder): this {
-    this._object = value;
+  index(value: Builder): this {
+    this._index = value;
     return this;
   }
 
-  optionalChain(value: BaseBuilder): this {
+  optionalChain(value: Builder): this {
     this._optionalChain = value;
     return this;
   }
@@ -36,8 +36,8 @@ class SubscriptBuilder extends BaseBuilder<SubscriptExpression> {
   build(ctx?: RenderContext): SubscriptExpression {
     return {
       kind: 'subscript_expression',
-      index: this.renderChild(this._index, ctx),
-      object: this._object ? this.renderChild(this._object, ctx) : undefined,
+      index: this._index ? this.renderChild(this._index, ctx) : undefined,
+      object: this.renderChild(this._object, ctx),
       optionalChain: this._optionalChain ? this.renderChild(this._optionalChain, ctx) : undefined,
     } as unknown as SubscriptExpression;
   }
@@ -55,6 +55,26 @@ class SubscriptBuilder extends BaseBuilder<SubscriptExpression> {
   }
 }
 
-export function subscript(index: BaseBuilder): SubscriptBuilder {
-  return new SubscriptBuilder(index);
+export type { SubscriptBuilder };
+
+export function subscript(object: Builder): SubscriptBuilder {
+  return new SubscriptBuilder(object);
+}
+
+export interface SubscriptExpressionOptions {
+  index: Builder<Expression | PredefinedType | SequenceExpression>;
+  object: Builder<Expression>;
+  optionalChain?: Builder<OptionalChain> | string;
+}
+
+export namespace subscript {
+  export function from(options: SubscriptExpressionOptions): SubscriptBuilder {
+    const b = new SubscriptBuilder(options.object);
+    if (options.index !== undefined) b.index(options.index);
+    if (options.optionalChain !== undefined) {
+      const _v = options.optionalChain;
+      b.optionalChain(typeof _v === 'string' ? new LeafBuilder('optional_chain', _v) : _v);
+    }
+    return b;
+  }
 }

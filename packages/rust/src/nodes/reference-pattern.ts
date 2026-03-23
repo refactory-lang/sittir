@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ReferencePattern } from '../types.js';
+import type { MutableSpecifier, Pattern, ReferencePattern } from '../types.js';
 
 
-class ReferencePatternBuilder extends BaseBuilder<ReferencePattern> {
-  private _children: BaseBuilder[] = [];
+class ReferencePatternBuilder extends Builder<ReferencePattern> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -37,6 +37,21 @@ class ReferencePatternBuilder extends BaseBuilder<ReferencePattern> {
   }
 }
 
-export function reference_pattern(children: BaseBuilder[]): ReferencePatternBuilder {
-  return new ReferencePatternBuilder(children);
+export type { ReferencePatternBuilder };
+
+export function reference_pattern(...children: Builder[]): ReferencePatternBuilder {
+  return new ReferencePatternBuilder(...children);
+}
+
+export interface ReferencePatternOptions {
+  children: Builder<Pattern | MutableSpecifier> | (Builder<Pattern | MutableSpecifier>)[];
+}
+
+export namespace reference_pattern {
+  export function from(options: ReferencePatternOptions): ReferencePatternBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new ReferencePatternBuilder(..._arr);
+    return b;
+  }
 }

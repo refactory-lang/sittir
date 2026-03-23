@@ -1,24 +1,26 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LabeledStatement } from '../types.js';
+import type { LabeledStatement, Statement, StatementIdentifier } from '../types.js';
 
 
-class LabeledBuilder extends BaseBuilder<LabeledStatement> {
-  private _body: BaseBuilder;
-  private _label!: BaseBuilder;
+class LabeledBuilder extends Builder<LabeledStatement> {
+  private _body: Builder;
+  private _label!: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder) {
     super();
     this._body = body;
   }
 
-  label(value: BaseBuilder): this {
+  label(value: Builder): this {
     this._label = value;
     return this;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
+    if (this._label) parts.push(this.renderChild(this._label, ctx));
     return parts.join(' ');
   }
 
@@ -34,10 +36,30 @@ class LabeledBuilder extends BaseBuilder<LabeledStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+    if (this._label) parts.push({ kind: 'builder', builder: this._label, fieldName: 'label' });
     return parts;
   }
 }
 
-export function labeled(body: BaseBuilder): LabeledBuilder {
+export type { LabeledBuilder };
+
+export function labeled(body: Builder): LabeledBuilder {
   return new LabeledBuilder(body);
+}
+
+export interface LabeledStatementOptions {
+  body: Builder<Statement>;
+  label: Builder<StatementIdentifier> | string;
+}
+
+export namespace labeled {
+  export function from(options: LabeledStatementOptions): LabeledBuilder {
+    const b = new LabeledBuilder(options.body);
+    if (options.label !== undefined) {
+      const _v = options.label;
+      b.label(typeof _v === 'string' ? new LeafBuilder('statement_identifier', _v) : _v);
+    }
+    return b;
+  }
 }

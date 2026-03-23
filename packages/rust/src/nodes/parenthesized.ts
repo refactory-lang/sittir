@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ParenthesizedExpression } from '../types.js';
+import type { Expression, ParenthesizedExpression } from '../types.js';
 
 
-class ParenthesizedBuilder extends BaseBuilder<ParenthesizedExpression> {
-  private _children: BaseBuilder[] = [];
+class ParenthesizedBuilder extends Builder<ParenthesizedExpression> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -39,6 +39,20 @@ class ParenthesizedBuilder extends BaseBuilder<ParenthesizedExpression> {
   }
 }
 
-export function parenthesized(children: BaseBuilder): ParenthesizedBuilder {
+export type { ParenthesizedBuilder };
+
+export function parenthesized(children: Builder): ParenthesizedBuilder {
   return new ParenthesizedBuilder(children);
+}
+
+export interface ParenthesizedExpressionOptions {
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace parenthesized {
+  export function from(options: ParenthesizedExpressionOptions): ParenthesizedBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ParenthesizedBuilder(_ctor);
+    return b;
+  }
 }

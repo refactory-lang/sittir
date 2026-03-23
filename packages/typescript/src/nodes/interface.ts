@@ -1,30 +1,30 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { InterfaceDeclaration } from '../types.js';
+import type { ExtendsTypeClause, InterfaceBody, InterfaceDeclaration, TypeIdentifier, TypeParameters } from '../types.js';
 
 
-class InterfaceBuilder extends BaseBuilder<InterfaceDeclaration> {
-  private _body!: BaseBuilder;
-  private _name: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class InterfaceBuilder extends Builder<InterfaceDeclaration> {
+  private _body!: Builder;
+  private _name: Builder;
+  private _typeParameters?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -64,6 +64,30 @@ class InterfaceBuilder extends BaseBuilder<InterfaceDeclaration> {
   }
 }
 
-export function interface_(name: BaseBuilder): InterfaceBuilder {
+export type { InterfaceBuilder };
+
+export function interface_(name: Builder): InterfaceBuilder {
   return new InterfaceBuilder(name);
+}
+
+export interface InterfaceDeclarationOptions {
+  body: Builder<InterfaceBody>;
+  name: Builder<TypeIdentifier> | string;
+  typeParameters?: Builder<TypeParameters>;
+  children?: Builder<ExtendsTypeClause> | (Builder<ExtendsTypeClause>)[];
+}
+
+export namespace interface_ {
+  export function from(options: InterfaceDeclarationOptions): InterfaceBuilder {
+    const _ctor = options.name;
+    const b = new InterfaceBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

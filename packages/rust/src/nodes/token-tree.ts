@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TokenTree } from '../types.js';
+import type { Crate, Identifier, Literal, Metavariable, MutableSpecifier, PrimitiveType, Self, Super, TokenRepetition, TokenTree } from '../types.js';
 
 
-class TokenTreeBuilder extends BaseBuilder<TokenTree> {
-  private _children: BaseBuilder[] = [];
+class TokenTreeBuilder extends Builder<TokenTree> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -41,6 +41,24 @@ class TokenTreeBuilder extends BaseBuilder<TokenTree> {
   }
 }
 
+export type { TokenTreeBuilder };
+
 export function token_tree(): TokenTreeBuilder {
   return new TokenTreeBuilder();
+}
+
+export interface TokenTreeOptions {
+  children?: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree> | (Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree>)[];
+}
+
+export namespace token_tree {
+  export function from(options: TokenTreeOptions): TokenTreeBuilder {
+    const b = new TokenTreeBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

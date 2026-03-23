@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { NamespaceImport } from '../types.js';
+import type { Identifier, NamespaceImport } from '../types.js';
 
 
-class NamespaceImportBuilder extends BaseBuilder<NamespaceImport> {
-  private _children: BaseBuilder[] = [];
+class NamespaceImportBuilder extends Builder<NamespaceImport> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -39,6 +39,20 @@ class NamespaceImportBuilder extends BaseBuilder<NamespaceImport> {
   }
 }
 
-export function namespace_import(children: BaseBuilder): NamespaceImportBuilder {
+export type { NamespaceImportBuilder };
+
+export function namespace_import(children: Builder): NamespaceImportBuilder {
   return new NamespaceImportBuilder(children);
+}
+
+export interface NamespaceImportOptions {
+  children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+}
+
+export namespace namespace_import {
+  export function from(options: NamespaceImportOptions): NamespaceImportBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new NamespaceImportBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    return b;
+  }
 }

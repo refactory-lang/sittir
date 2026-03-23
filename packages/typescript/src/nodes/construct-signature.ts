@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConstructSignature } from '../types.js';
+import type { ConstructSignature, FormalParameters, TypeAnnotation, TypeParameters } from '../types.js';
 
 
-class ConstructSignatureBuilder extends BaseBuilder<ConstructSignature> {
-  private _parameters: BaseBuilder;
-  private _type?: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class ConstructSignatureBuilder extends Builder<ConstructSignature> {
+  private _parameters: Builder;
+  private _type?: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder) {
     super();
     this._parameters = parameters;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -53,6 +53,23 @@ class ConstructSignatureBuilder extends BaseBuilder<ConstructSignature> {
   }
 }
 
-export function construct_signature(parameters: BaseBuilder): ConstructSignatureBuilder {
+export type { ConstructSignatureBuilder };
+
+export function construct_signature(parameters: Builder): ConstructSignatureBuilder {
   return new ConstructSignatureBuilder(parameters);
+}
+
+export interface ConstructSignatureOptions {
+  parameters: Builder<FormalParameters>;
+  type?: Builder<TypeAnnotation>;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace construct_signature {
+  export function from(options: ConstructSignatureOptions): ConstructSignatureBuilder {
+    const b = new ConstructSignatureBuilder(options.parameters);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

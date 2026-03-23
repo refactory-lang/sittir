@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { InstantiationExpression } from '../types.js';
+import type { Expression, Identifier, InstantiationExpression, MemberExpression, SubscriptExpression, TypeArguments } from '../types.js';
 
 
-class InstantiationBuilder extends BaseBuilder<InstantiationExpression> {
-  private _function?: BaseBuilder;
-  private _typeArguments: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class InstantiationBuilder extends Builder<InstantiationExpression> {
+  private _function?: Builder;
+  private _typeArguments: Builder;
+  private _children: Builder[] = [];
 
-  constructor(typeArguments: BaseBuilder) {
+  constructor(typeArguments: Builder) {
     super();
     this._typeArguments = typeArguments;
   }
 
-  function(value: BaseBuilder): this {
+  function(value: Builder): this {
     this._function = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -27,6 +27,7 @@ class InstantiationBuilder extends BaseBuilder<InstantiationExpression> {
     const parts: string[] = [];
     if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
+    if (this._function) parts.push(this.renderChild(this._function, ctx));
     return parts.join(' ');
   }
 
@@ -47,10 +48,32 @@ class InstantiationBuilder extends BaseBuilder<InstantiationExpression> {
       parts.push({ kind: 'builder', builder: child });
     }
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
+    if (this._function) parts.push({ kind: 'builder', builder: this._function, fieldName: 'function' });
     return parts;
   }
 }
 
-export function instantiation(typeArguments: BaseBuilder): InstantiationBuilder {
+export type { InstantiationBuilder };
+
+export function instantiation(typeArguments: Builder): InstantiationBuilder {
   return new InstantiationBuilder(typeArguments);
+}
+
+export interface InstantiationExpressionOptions {
+  function?: Builder<Identifier | MemberExpression | SubscriptExpression>;
+  typeArguments: Builder<TypeArguments>;
+  children?: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace instantiation {
+  export function from(options: InstantiationExpressionOptions): InstantiationBuilder {
+    const b = new InstantiationBuilder(options.typeArguments);
+    if (options.function !== undefined) b.function(options.function);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

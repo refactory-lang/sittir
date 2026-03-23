@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FinallyClause } from '../types.js';
+import type { FinallyClause, StatementBlock } from '../types.js';
 
 
-class FinallyClauseBuilder extends BaseBuilder<FinallyClause> {
-  private _body: BaseBuilder;
+class FinallyClauseBuilder extends Builder<FinallyClause> {
+  private _body: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder) {
     super();
     this._body = body;
   }
@@ -35,6 +35,19 @@ class FinallyClauseBuilder extends BaseBuilder<FinallyClause> {
   }
 }
 
-export function finally_clause(body: BaseBuilder): FinallyClauseBuilder {
+export type { FinallyClauseBuilder };
+
+export function finally_clause(body: Builder): FinallyClauseBuilder {
   return new FinallyClauseBuilder(body);
+}
+
+export interface FinallyClauseOptions {
+  body: Builder<StatementBlock>;
+}
+
+export namespace finally_clause {
+  export function from(options: FinallyClauseOptions): FinallyClauseBuilder {
+    const b = new FinallyClauseBuilder(options.body);
+    return b;
+  }
 }

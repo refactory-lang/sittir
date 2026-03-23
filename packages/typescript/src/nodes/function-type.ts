@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionType } from '../types.js';
+import type { FormalParameters, FunctionType, TypeParameters, TypePredicate } from '../types.js';
 
 
-class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
-  private _parameters: BaseBuilder;
-  private _returnType!: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class FunctionTypeBuilder extends Builder<FunctionType> {
+  private _parameters: Builder;
+  private _returnType!: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -53,6 +53,23 @@ class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
   }
 }
 
-export function function_type(parameters: BaseBuilder): FunctionTypeBuilder {
+export type { FunctionTypeBuilder };
+
+export function function_type(parameters: Builder): FunctionTypeBuilder {
   return new FunctionTypeBuilder(parameters);
+}
+
+export interface FunctionTypeOptions {
+  parameters: Builder<FormalParameters>;
+  returnType: Builder<TypePredicate>;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace function_type {
+  export function from(options: FunctionTypeOptions): FunctionTypeBuilder {
+    const b = new FunctionTypeBuilder(options.parameters);
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

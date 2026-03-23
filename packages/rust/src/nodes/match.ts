@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MatchExpression } from '../types.js';
+import type { Expression, MatchBlock, MatchExpression } from '../types.js';
 
 
-class MatchBuilder extends BaseBuilder<MatchExpression> {
-  private _body: BaseBuilder;
-  private _value!: BaseBuilder;
+class MatchBuilder extends Builder<MatchExpression> {
+  private _body!: Builder;
+  private _value: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(value: Builder) {
     super();
-    this._body = body;
+    this._value = value;
   }
 
-  value(value: BaseBuilder): this {
-    this._value = value;
+  body(value: Builder): this {
+    this._body = value;
     return this;
   }
 
@@ -28,8 +28,8 @@ class MatchBuilder extends BaseBuilder<MatchExpression> {
   build(ctx?: RenderContext): MatchExpression {
     return {
       kind: 'match_expression',
-      body: this.renderChild(this._body, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      value: this.renderChild(this._value, ctx),
     } as unknown as MatchExpression;
   }
 
@@ -44,6 +44,21 @@ class MatchBuilder extends BaseBuilder<MatchExpression> {
   }
 }
 
-export function match(body: BaseBuilder): MatchBuilder {
-  return new MatchBuilder(body);
+export type { MatchBuilder };
+
+export function match(value: Builder): MatchBuilder {
+  return new MatchBuilder(value);
+}
+
+export interface MatchExpressionOptions {
+  body: Builder<MatchBlock>;
+  value: Builder<Expression>;
+}
+
+export namespace match {
+  export function from(options: MatchExpressionOptions): MatchBuilder {
+    const b = new MatchBuilder(options.value);
+    if (options.body !== undefined) b.body(options.body);
+    return b;
+  }
 }

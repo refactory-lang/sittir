@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConstructorType } from '../types.js';
+import type { ConstructorType, FormalParameters, TypeParameters } from '../types.js';
 
 
-class ConstructorTypeBuilder extends BaseBuilder<ConstructorType> {
-  private _parameters: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class ConstructorTypeBuilder extends Builder<ConstructorType> {
+  private _parameters: Builder;
+  private _type!: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder) {
     super();
     this._parameters = parameters;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -55,6 +55,23 @@ class ConstructorTypeBuilder extends BaseBuilder<ConstructorType> {
   }
 }
 
-export function constructor_type(parameters: BaseBuilder): ConstructorTypeBuilder {
+export type { ConstructorTypeBuilder };
+
+export function constructor_type(parameters: Builder): ConstructorTypeBuilder {
   return new ConstructorTypeBuilder(parameters);
+}
+
+export interface ConstructorTypeOptions {
+  parameters: Builder<FormalParameters>;
+  type: Builder;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace constructor_type {
+  export function from(options: ConstructorTypeOptions): ConstructorTypeBuilder {
+    const b = new ConstructorTypeBuilder(options.parameters);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

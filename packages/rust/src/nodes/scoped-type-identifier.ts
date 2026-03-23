@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ScopedTypeIdentifier } from '../types.js';
+import type { BracketedType, Crate, GenericType, Identifier, Metavariable, ScopedIdentifier, ScopedTypeIdentifier, Self, Super, TypeIdentifier } from '../types.js';
 
 
-class ScopedTypeIdentifierBuilder extends BaseBuilder<ScopedTypeIdentifier> {
-  private _name: BaseBuilder;
-  private _path?: BaseBuilder;
+class ScopedTypeIdentifierBuilder extends Builder<ScopedTypeIdentifier> {
+  private _name: Builder;
+  private _path?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  path(value: BaseBuilder): this {
+  path(value: Builder): this {
     this._path = value;
     return this;
   }
@@ -44,6 +44,22 @@ class ScopedTypeIdentifierBuilder extends BaseBuilder<ScopedTypeIdentifier> {
   }
 }
 
-export function scoped_type_identifier(name: BaseBuilder): ScopedTypeIdentifierBuilder {
+export type { ScopedTypeIdentifierBuilder };
+
+export function scoped_type_identifier(name: Builder): ScopedTypeIdentifierBuilder {
   return new ScopedTypeIdentifierBuilder(name);
+}
+
+export interface ScopedTypeIdentifierOptions {
+  name: Builder<TypeIdentifier> | string;
+  path?: Builder<BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
+}
+
+export namespace scoped_type_identifier {
+  export function from(options: ScopedTypeIdentifierOptions): ScopedTypeIdentifierBuilder {
+    const _ctor = options.name;
+    const b = new ScopedTypeIdentifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.path !== undefined) b.path(options.path);
+    return b;
+  }
 }

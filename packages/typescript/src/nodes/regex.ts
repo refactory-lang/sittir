@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Regex } from '../types.js';
+import type { Regex, RegexFlags, RegexPattern } from '../types.js';
 
 
-class RegexBuilder extends BaseBuilder<Regex> {
-  private _flags?: BaseBuilder;
-  private _pattern: BaseBuilder;
+class RegexBuilder extends Builder<Regex> {
+  private _flags?: Builder;
+  private _pattern: Builder;
 
-  constructor(pattern: BaseBuilder) {
+  constructor(pattern: Builder) {
     super();
     this._pattern = pattern;
   }
 
-  flags(value: BaseBuilder): this {
+  flags(value: Builder): this {
     this._flags = value;
     return this;
   }
@@ -46,6 +46,25 @@ class RegexBuilder extends BaseBuilder<Regex> {
   }
 }
 
-export function regex(pattern: BaseBuilder): RegexBuilder {
+export type { RegexBuilder };
+
+export function regex(pattern: Builder): RegexBuilder {
   return new RegexBuilder(pattern);
+}
+
+export interface RegexOptions {
+  flags?: Builder<RegexFlags> | string;
+  pattern: Builder<RegexPattern> | string;
+}
+
+export namespace regex {
+  export function from(options: RegexOptions): RegexBuilder {
+    const _ctor = options.pattern;
+    const b = new RegexBuilder(typeof _ctor === 'string' ? new LeafBuilder('regex_pattern', _ctor) : _ctor);
+    if (options.flags !== undefined) {
+      const _v = options.flags;
+      b.flags(typeof _v === 'string' ? new LeafBuilder('regex_flags', _v) : _v);
+    }
+    return b;
+  }
 }

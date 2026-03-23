@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeAnnotation } from '../types.js';
 
 
-class TypeAnnotationBuilder extends BaseBuilder<TypeAnnotation> {
-  private _children: BaseBuilder[] = [];
+class TypeAnnotationBuilder extends Builder<TypeAnnotation> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class TypeAnnotationBuilder extends BaseBuilder<TypeAnnotation> {
   }
 }
 
-export function type_annotation(children: BaseBuilder): TypeAnnotationBuilder {
+export type { TypeAnnotationBuilder };
+
+export function type_annotation(children: Builder): TypeAnnotationBuilder {
   return new TypeAnnotationBuilder(children);
+}
+
+export interface TypeAnnotationOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace type_annotation {
+  export function from(options: TypeAnnotationOptions): TypeAnnotationBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TypeAnnotationBuilder(_ctor);
+    return b;
+  }
 }

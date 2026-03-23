@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Label } from '../types.js';
+import type { Identifier, Label } from '../types.js';
 
 
-class LabelBuilder extends BaseBuilder<Label> {
-  private _children: BaseBuilder[] = [];
+class LabelBuilder extends Builder<Label> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class LabelBuilder extends BaseBuilder<Label> {
   }
 }
 
-export function label(children: BaseBuilder): LabelBuilder {
+export type { LabelBuilder };
+
+export function label(children: Builder): LabelBuilder {
   return new LabelBuilder(children);
+}
+
+export interface LabelOptions {
+  children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+}
+
+export namespace label {
+  export function from(options: LabelOptions): LabelBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new LabelBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    return b;
+  }
 }

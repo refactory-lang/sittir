@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { GenericTypeWithTurbofish } from '../types.js';
+import type { GenericTypeWithTurbofish, ScopedIdentifier, TypeArguments, TypeIdentifier } from '../types.js';
 
 
-class GenericTypeWithTurbofishBuilder extends BaseBuilder<GenericTypeWithTurbofish> {
-  private _type: BaseBuilder;
-  private _typeArguments!: BaseBuilder;
+class GenericTypeWithTurbofishBuilder extends Builder<GenericTypeWithTurbofish> {
+  private _type: Builder;
+  private _typeArguments!: Builder;
 
-  constructor(type_: BaseBuilder) {
+  constructor(type_: Builder) {
     super();
     this._type = type_;
   }
 
-  typeArguments(value: BaseBuilder): this {
+  typeArguments(value: Builder): this {
     this._typeArguments = value;
     return this;
   }
@@ -44,6 +44,21 @@ class GenericTypeWithTurbofishBuilder extends BaseBuilder<GenericTypeWithTurbofi
   }
 }
 
-export function generic_type_with_turbofish(type_: BaseBuilder): GenericTypeWithTurbofishBuilder {
+export type { GenericTypeWithTurbofishBuilder };
+
+export function generic_type_with_turbofish(type_: Builder): GenericTypeWithTurbofishBuilder {
   return new GenericTypeWithTurbofishBuilder(type_);
+}
+
+export interface GenericTypeWithTurbofishOptions {
+  type: Builder<ScopedIdentifier | TypeIdentifier>;
+  typeArguments: Builder<TypeArguments>;
+}
+
+export namespace generic_type_with_turbofish {
+  export function from(options: GenericTypeWithTurbofishOptions): GenericTypeWithTurbofishBuilder {
+    const b = new GenericTypeWithTurbofishBuilder(options.type);
+    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
+    return b;
+  }
 }

@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { EnumDeclaration } from '../types.js';
+import type { EnumBody, EnumDeclaration, Identifier } from '../types.js';
 
 
-class EnumBuilder extends BaseBuilder<EnumDeclaration> {
-  private _body!: BaseBuilder;
-  private _name: BaseBuilder;
+class EnumBuilder extends Builder<EnumDeclaration> {
+  private _body!: Builder;
+  private _name: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
@@ -44,6 +44,22 @@ class EnumBuilder extends BaseBuilder<EnumDeclaration> {
   }
 }
 
-export function enum_(name: BaseBuilder): EnumBuilder {
+export type { EnumBuilder };
+
+export function enum_(name: Builder): EnumBuilder {
   return new EnumBuilder(name);
+}
+
+export interface EnumDeclarationOptions {
+  body: Builder<EnumBody>;
+  name: Builder<Identifier> | string;
+}
+
+export namespace enum_ {
+  export function from(options: EnumDeclarationOptions): EnumBuilder {
+    const _ctor = options.name;
+    const b = new EnumBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.body !== undefined) b.body(options.body);
+    return b;
+  }
 }

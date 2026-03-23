@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { StructPattern } from '../types.js';
+import type { FieldPattern, RemainingFieldPattern, ScopedTypeIdentifier, StructPattern, TypeIdentifier } from '../types.js';
 
 
-class StructPatternBuilder extends BaseBuilder<StructPattern> {
-  private _type: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class StructPatternBuilder extends Builder<StructPattern> {
+  private _type: Builder;
+  private _children: Builder[] = [];
 
-  constructor(type_: BaseBuilder) {
+  constructor(type_: Builder) {
     super();
     this._type = type_;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -21,7 +21,12 @@ class StructPatternBuilder extends BaseBuilder<StructPattern> {
     const parts: string[] = [];
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     parts.push('{');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length === 1) {
+      parts.push(',');
+      parts.push(this.renderChild(this._children[0]!, ctx));
+    } else if (this._children.length > 1) {
+      parts.push(this.renderChildren(this._children, ' , ', ctx));
+    }
     parts.push('}');
     return parts.join(' ');
   }
@@ -40,14 +45,34 @@ class StructPatternBuilder extends BaseBuilder<StructPattern> {
     const parts: CSTChild[] = [];
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     parts.push({ kind: 'token', text: '{', type: '{' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0 || this._children.length === 1) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
 }
 
-export function struct_pattern(type_: BaseBuilder): StructPatternBuilder {
+export type { StructPatternBuilder };
+
+export function struct_pattern(type_: Builder): StructPatternBuilder {
   return new StructPatternBuilder(type_);
+}
+
+export interface StructPatternOptions {
+  type: Builder<ScopedTypeIdentifier | TypeIdentifier>;
+  children?: Builder<FieldPattern | RemainingFieldPattern> | (Builder<FieldPattern | RemainingFieldPattern>)[];
+}
+
+export namespace struct_pattern {
+  export function from(options: StructPatternOptions): StructPatternBuilder {
+    const b = new StructPatternBuilder(options.type);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,20 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ArrayExpression } from '../types.js';
+import type { ArrayExpression, AttributeItem, Expression } from '../types.js';
 
 
-class ArrayBuilder extends BaseBuilder<ArrayExpression> {
-  private _length?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ArrayBuilder extends Builder<ArrayExpression> {
+  private _length?: Builder;
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  length(value: BaseBuilder): this {
+  length(value: Builder): this {
     this._length = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -52,6 +52,26 @@ class ArrayBuilder extends BaseBuilder<ArrayExpression> {
   }
 }
 
+export type { ArrayBuilder };
+
 export function array(): ArrayBuilder {
   return new ArrayBuilder();
+}
+
+export interface ArrayExpressionOptions {
+  length?: Builder<Expression>;
+  children?: Builder<Expression | AttributeItem> | (Builder<Expression | AttributeItem>)[];
+}
+
+export namespace array {
+  export function from(options: ArrayExpressionOptions): ArrayBuilder {
+    const b = new ArrayBuilder();
+    if (options.length !== undefined) b.length(options.length);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

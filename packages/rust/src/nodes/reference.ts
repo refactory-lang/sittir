@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ReferenceExpression } from '../types.js';
+import type { Expression, MutableSpecifier, ReferenceExpression } from '../types.js';
 
 
-class ReferenceBuilder extends BaseBuilder<ReferenceExpression> {
-  private _value: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ReferenceBuilder extends Builder<ReferenceExpression> {
+  private _value: Builder;
+  private _children: Builder[] = [];
 
-  constructor(value: BaseBuilder) {
+  constructor(value: Builder) {
     super();
     this._value = value;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -21,7 +21,7 @@ class ReferenceBuilder extends BaseBuilder<ReferenceExpression> {
     const parts: string[] = [];
     parts.push('&');
     parts.push('raw');
-    parts.push('const');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._value) parts.push(this.renderChild(this._value, ctx));
     return parts.join(' ');
   }
@@ -40,12 +40,33 @@ class ReferenceBuilder extends BaseBuilder<ReferenceExpression> {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '&', type: '&' });
     parts.push({ kind: 'token', text: 'raw', type: 'raw' });
-    parts.push({ kind: 'token', text: 'const', type: 'const' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     return parts;
   }
 }
 
-export function reference(value: BaseBuilder): ReferenceBuilder {
+export type { ReferenceBuilder };
+
+export function reference(value: Builder): ReferenceBuilder {
   return new ReferenceBuilder(value);
+}
+
+export interface ReferenceExpressionOptions {
+  value: Builder<Expression>;
+  children?: Builder<MutableSpecifier> | string | (Builder<MutableSpecifier> | string)[];
+}
+
+export namespace reference {
+  export function from(options: ReferenceExpressionOptions): ReferenceBuilder {
+    const b = new ReferenceBuilder(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('mutable_specifier', _x) : _x));
+    }
+    return b;
+  }
 }

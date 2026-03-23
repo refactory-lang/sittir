@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MacroInvocation } from '../types.js';
+import type { Identifier, MacroInvocation, ScopedIdentifier, TokenTree } from '../types.js';
 
 
-class MacroInvocationBuilder extends BaseBuilder<MacroInvocation> {
-  private _macro: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class MacroInvocationBuilder extends Builder<MacroInvocation> {
+  private _macro: Builder;
+  private _children: Builder[] = [];
 
-  constructor(macro: BaseBuilder) {
+  constructor(macro: Builder) {
     super();
     this._macro = macro;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -46,6 +46,25 @@ class MacroInvocationBuilder extends BaseBuilder<MacroInvocation> {
   }
 }
 
-export function macro_invocation(macro: BaseBuilder): MacroInvocationBuilder {
+export type { MacroInvocationBuilder };
+
+export function macro_invocation(macro: Builder): MacroInvocationBuilder {
   return new MacroInvocationBuilder(macro);
+}
+
+export interface MacroInvocationOptions {
+  macro: Builder<Identifier | ScopedIdentifier>;
+  children?: Builder<TokenTree> | (Builder<TokenTree>)[];
+}
+
+export namespace macro_invocation {
+  export function from(options: MacroInvocationOptions): MacroInvocationBuilder {
+    const b = new MacroInvocationBuilder(options.macro);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { WhileExpression } from '../types.js';
+import type { Expression, Label, LetChain, LetCondition, WhileExpression } from '../types.js';
 
 
-class WhileBuilder extends BaseBuilder<WhileExpression> {
-  private _body: BaseBuilder;
-  private _condition!: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class WhileBuilder extends Builder<WhileExpression> {
+  private _body!: Builder;
+  private _condition: Builder;
+  private _children: Builder[] = [];
 
-  constructor(body: BaseBuilder) {
+  constructor(condition: Builder) {
     super();
-    this._body = body;
+    this._condition = condition;
   }
 
-  condition(value: BaseBuilder): this {
-    this._condition = value;
+  body(value: Builder): this {
+    this._body = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -35,8 +35,8 @@ class WhileBuilder extends BaseBuilder<WhileExpression> {
   build(ctx?: RenderContext): WhileExpression {
     return {
       kind: 'while_expression',
-      body: this.renderChild(this._body, ctx),
-      condition: this._condition ? this.renderChild(this._condition, ctx) : undefined,
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      condition: this.renderChild(this._condition, ctx),
       children: this._children.map(c => this.renderChild(c, ctx)),
     } as unknown as WhileExpression;
   }
@@ -55,6 +55,27 @@ class WhileBuilder extends BaseBuilder<WhileExpression> {
   }
 }
 
-export function while_(body: BaseBuilder): WhileBuilder {
-  return new WhileBuilder(body);
+export type { WhileBuilder };
+
+export function while_(condition: Builder): WhileBuilder {
+  return new WhileBuilder(condition);
+}
+
+export interface WhileExpressionOptions {
+  body: Builder;
+  condition: Builder<Expression | LetChain | LetCondition>;
+  children?: Builder<Label> | (Builder<Label>)[];
+}
+
+export namespace while_ {
+  export function from(options: WhileExpressionOptions): WhileBuilder {
+    const b = new WhileBuilder(options.condition);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

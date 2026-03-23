@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImplItem } from '../types.js';
+import type { DeclarationList, GenericType, ImplItem, ScopedTypeIdentifier, Type, TypeIdentifier, TypeParameters, WhereClause } from '../types.js';
 
 
-class ImplBuilder extends BaseBuilder<ImplItem> {
-  private _body?: BaseBuilder;
-  private _trait?: BaseBuilder;
-  private _type: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ImplBuilder extends Builder<ImplItem> {
+  private _body?: Builder;
+  private _trait?: Builder;
+  private _type: Builder;
+  private _typeParameters?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(type_: BaseBuilder) {
+  constructor(type_: Builder) {
     super();
     this._type = type_;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
 
-  trait(value: BaseBuilder): this {
+  trait(value: Builder): this {
     this._trait = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -81,6 +81,31 @@ class ImplBuilder extends BaseBuilder<ImplItem> {
   }
 }
 
-export function impl(type_: BaseBuilder): ImplBuilder {
+export type { ImplBuilder };
+
+export function impl(type_: Builder): ImplBuilder {
   return new ImplBuilder(type_);
+}
+
+export interface ImplItemOptions {
+  body?: Builder<DeclarationList>;
+  trait?: Builder<GenericType | ScopedTypeIdentifier | TypeIdentifier>;
+  type: Builder<Type>;
+  typeParameters?: Builder<TypeParameters>;
+  children?: Builder<WhereClause> | (Builder<WhereClause>)[];
+}
+
+export namespace impl {
+  export function from(options: ImplItemOptions): ImplBuilder {
+    const b = new ImplBuilder(options.type);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.trait !== undefined) b.trait(options.trait);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

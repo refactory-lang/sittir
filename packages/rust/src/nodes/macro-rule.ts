@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MacroRule } from '../types.js';
+import type { MacroRule, TokenTree, TokenTreePattern } from '../types.js';
 
 
-class MacroRuleBuilder extends BaseBuilder<MacroRule> {
-  private _left: BaseBuilder;
-  private _right!: BaseBuilder;
+class MacroRuleBuilder extends Builder<MacroRule> {
+  private _left: Builder;
+  private _right!: Builder;
 
-  constructor(left: BaseBuilder) {
+  constructor(left: Builder) {
     super();
     this._left = left;
   }
 
-  right(value: BaseBuilder): this {
+  right(value: Builder): this {
     this._right = value;
     return this;
   }
@@ -44,6 +44,21 @@ class MacroRuleBuilder extends BaseBuilder<MacroRule> {
   }
 }
 
-export function macro_rule(left: BaseBuilder): MacroRuleBuilder {
+export type { MacroRuleBuilder };
+
+export function macro_rule(left: Builder): MacroRuleBuilder {
   return new MacroRuleBuilder(left);
+}
+
+export interface MacroRuleOptions {
+  left: Builder<TokenTreePattern>;
+  right: Builder<TokenTree>;
+}
+
+export namespace macro_rule {
+  export function from(options: MacroRuleOptions): MacroRuleBuilder {
+    const b = new MacroRuleBuilder(options.left);
+    if (options.right !== undefined) b.right(options.right);
+    return b;
+  }
 }

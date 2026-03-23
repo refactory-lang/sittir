@@ -1,38 +1,39 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { StaticItem } from '../types.js';
+import type { Expression, Identifier, MutableSpecifier, StaticItem, Type, VisibilityModifier } from '../types.js';
 
 
-class StaticBuilder extends BaseBuilder<StaticItem> {
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _value?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class StaticBuilder extends Builder<StaticItem> {
+  private _name: Builder;
+  private _type!: Builder;
+  private _value?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
     parts.push('static');
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     parts.push(':');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
@@ -58,10 +59,9 @@ class StaticBuilder extends BaseBuilder<StaticItem> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
     parts.push({ kind: 'token', text: 'static', type: 'static' });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     parts.push({ kind: 'token', text: ':', type: ':' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
@@ -74,6 +74,30 @@ class StaticBuilder extends BaseBuilder<StaticItem> {
   }
 }
 
-export function static_(name: BaseBuilder): StaticBuilder {
+export type { StaticBuilder };
+
+export function static_(name: Builder): StaticBuilder {
   return new StaticBuilder(name);
+}
+
+export interface StaticItemOptions {
+  name: Builder<Identifier> | string;
+  type: Builder<Type>;
+  value?: Builder<Expression>;
+  children?: Builder<MutableSpecifier | VisibilityModifier> | (Builder<MutableSpecifier | VisibilityModifier>)[];
+}
+
+export namespace static_ {
+  export function from(options: StaticItemOptions): StaticBuilder {
+    const _ctor = options.name;
+    const b = new StaticBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

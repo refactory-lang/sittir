@@ -13,7 +13,6 @@ describe('reference_expression', () => {
     const source = builder.renderImpl();
     expect(source).toContain('&');
     expect(source).toContain('raw');
-    expect(source).toContain('const');
   });
 
   it('should produce a valid CST node', () => {

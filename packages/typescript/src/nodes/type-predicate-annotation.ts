@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypePredicateAnnotation } from '../types.js';
+import type { TypePredicate, TypePredicateAnnotation } from '../types.js';
 
 
-class TypePredicateAnnotationBuilder extends BaseBuilder<TypePredicateAnnotation> {
-  private _children: BaseBuilder[] = [];
+class TypePredicateAnnotationBuilder extends Builder<TypePredicateAnnotation> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class TypePredicateAnnotationBuilder extends BaseBuilder<TypePredicateAnnotation
   }
 }
 
-export function type_predicate_annotation(children: BaseBuilder): TypePredicateAnnotationBuilder {
+export type { TypePredicateAnnotationBuilder };
+
+export function type_predicate_annotation(children: Builder): TypePredicateAnnotationBuilder {
   return new TypePredicateAnnotationBuilder(children);
+}
+
+export interface TypePredicateAnnotationOptions {
+  children: Builder<TypePredicate> | (Builder<TypePredicate>)[];
+}
+
+export namespace type_predicate_annotation {
+  export function from(options: TypePredicateAnnotationOptions): TypePredicateAnnotationBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TypePredicateAnnotationBuilder(_ctor);
+    return b;
+  }
 }

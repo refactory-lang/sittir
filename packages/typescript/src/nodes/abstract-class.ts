@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AbstractClassDeclaration } from '../types.js';
+import type { AbstractClassDeclaration, ClassBody, ClassHeritage, Decorator, TypeIdentifier, TypeParameters } from '../types.js';
 
 
-class AbstractClassBuilder extends BaseBuilder<AbstractClassDeclaration> {
-  private _body!: BaseBuilder;
-  private _decorator: BaseBuilder[] = [];
-  private _name: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class AbstractClassBuilder extends Builder<AbstractClassDeclaration> {
+  private _body!: Builder;
+  private _decorator: Builder[] = [];
+  private _name: Builder;
+  private _typeParameters?: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
 
-  decorator(value: BaseBuilder[]): this {
+  decorator(...value: Builder[]): this {
     this._decorator = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -77,6 +77,36 @@ class AbstractClassBuilder extends BaseBuilder<AbstractClassDeclaration> {
   }
 }
 
-export function abstract_class(name: BaseBuilder): AbstractClassBuilder {
+export type { AbstractClassBuilder };
+
+export function abstract_class(name: Builder): AbstractClassBuilder {
   return new AbstractClassBuilder(name);
+}
+
+export interface AbstractClassDeclarationOptions {
+  body: Builder<ClassBody>;
+  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
+  name: Builder<TypeIdentifier> | string;
+  typeParameters?: Builder<TypeParameters>;
+  children?: Builder<ClassHeritage> | (Builder<ClassHeritage>)[];
+}
+
+export namespace abstract_class {
+  export function from(options: AbstractClassDeclarationOptions): AbstractClassBuilder {
+    const _ctor = options.name;
+    const b = new AbstractClassBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.decorator !== undefined) {
+      const _v = options.decorator;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.decorator(..._arr);
+    }
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

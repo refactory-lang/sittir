@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TokenRepetitionPattern } from '../types.js';
+import type { Crate, Identifier, Literal, Metavariable, MutableSpecifier, PrimitiveType, Self, Super, TokenBindingPattern, TokenRepetitionPattern, TokenTreePattern } from '../types.js';
 
 
-class TokenRepetitionPatternBuilder extends BaseBuilder<TokenRepetitionPattern> {
-  private _children: BaseBuilder[] = [];
+class TokenRepetitionPatternBuilder extends Builder<TokenRepetitionPattern> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -45,6 +45,24 @@ class TokenRepetitionPatternBuilder extends BaseBuilder<TokenRepetitionPattern> 
   }
 }
 
+export type { TokenRepetitionPatternBuilder };
+
 export function token_repetition_pattern(): TokenRepetitionPatternBuilder {
   return new TokenRepetitionPatternBuilder();
+}
+
+export interface TokenRepetitionPatternOptions {
+  children?: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern> | (Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern>)[];
+}
+
+export namespace token_repetition_pattern {
+  export function from(options: TokenRepetitionPatternOptions): TokenRepetitionPatternBuilder {
+    const b = new TokenRepetitionPatternBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

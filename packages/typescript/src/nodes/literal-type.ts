@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LiteralType } from '../types.js';
+import type { False, LiteralType, Null, True, UnaryExpression, Undefined } from '../types.js';
 
 
-class LiteralTypeBuilder extends BaseBuilder<LiteralType> {
-  private _children: BaseBuilder[] = [];
+class LiteralTypeBuilder extends Builder<LiteralType> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -35,6 +35,20 @@ class LiteralTypeBuilder extends BaseBuilder<LiteralType> {
   }
 }
 
-export function literal_type(children: BaseBuilder): LiteralTypeBuilder {
+export type { LiteralTypeBuilder };
+
+export function literal_type(children: Builder): LiteralTypeBuilder {
   return new LiteralTypeBuilder(children);
+}
+
+export interface LiteralTypeOptions {
+  children: Builder<False | Null | True | UnaryExpression | Undefined> | (Builder<False | Null | True | UnaryExpression | Undefined>)[];
+}
+
+export namespace literal_type {
+  export function from(options: LiteralTypeOptions): LiteralTypeBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new LiteralTypeBuilder(_ctor);
+    return b;
+  }
 }

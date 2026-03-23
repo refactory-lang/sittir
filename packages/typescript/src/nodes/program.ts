@@ -1,21 +1,22 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Program } from '../types.js';
+import type { HashBangLine, Program, Statement } from '../types.js';
 
 
-class ProgramBuilder extends BaseBuilder<Program> {
-  private _children: BaseBuilder[] = [];
+class ProgramBuilder extends Builder<Program> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -30,13 +31,30 @@ class ProgramBuilder extends BaseBuilder<Program> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
 
+export type { ProgramBuilder };
+
 export function file(): ProgramBuilder {
   return new ProgramBuilder();
+}
+
+export interface ProgramOptions {
+  children?: Builder<HashBangLine | Statement> | (Builder<HashBangLine | Statement>)[];
+}
+
+export namespace file {
+  export function from(options: ProgramOptions): ProgramBuilder {
+    const b = new ProgramBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

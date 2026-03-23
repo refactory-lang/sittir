@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MappedTypeClause } from '../types.js';
+import type { MappedTypeClause, TypeIdentifier } from '../types.js';
 
 
-class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
-  private _alias?: BaseBuilder;
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
+class MappedTypeClauseBuilder extends Builder<MappedTypeClause> {
+  private _alias?: Builder;
+  private _name: Builder;
+  private _type!: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  alias(value: BaseBuilder): this {
+  alias(value: Builder): this {
     this._alias = value;
     return this;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
@@ -59,6 +59,24 @@ class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
   }
 }
 
-export function mapped_type_clause(name: BaseBuilder): MappedTypeClauseBuilder {
+export type { MappedTypeClauseBuilder };
+
+export function mapped_type_clause(name: Builder): MappedTypeClauseBuilder {
   return new MappedTypeClauseBuilder(name);
+}
+
+export interface MappedTypeClauseOptions {
+  alias?: Builder;
+  name: Builder<TypeIdentifier> | string;
+  type: Builder;
+}
+
+export namespace mapped_type_clause {
+  export function from(options: MappedTypeClauseOptions): MappedTypeClauseBuilder {
+    const _ctor = options.name;
+    const b = new MappedTypeClauseBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.alias !== undefined) b.alias(options.alias);
+    if (options.type !== undefined) b.type(options.type);
+    return b;
+  }
 }

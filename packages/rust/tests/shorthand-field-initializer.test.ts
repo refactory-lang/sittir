@@ -3,13 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('shorthand_field_initializer', () => {
   it('should build with correct kind', () => {
-    const builder = ir.shorthand_field_initializer([ir.identifier('test')]);
+    const builder = ir.shorthand_field_initializer(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('shorthand_field_initializer');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.shorthand_field_initializer([ir.identifier('test')]);
+    const builder = ir.shorthand_field_initializer(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('shorthand_field_initializer');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +18,7 @@ describe('shorthand_field_initializer', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.shorthand_field_initializer([ir.identifier('test')]);
+    const builder = ir.shorthand_field_initializer(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

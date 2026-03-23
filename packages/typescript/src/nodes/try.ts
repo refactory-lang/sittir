@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TryStatement } from '../types.js';
+import type { CatchClause, FinallyClause, StatementBlock, TryStatement } from '../types.js';
 
 
-class TryBuilder extends BaseBuilder<TryStatement> {
-  private _body: BaseBuilder;
-  private _finalizer?: BaseBuilder;
-  private _handler?: BaseBuilder;
+class TryBuilder extends Builder<TryStatement> {
+  private _body: Builder;
+  private _finalizer?: Builder;
+  private _handler?: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder) {
     super();
     this._body = body;
   }
 
-  finalizer(value: BaseBuilder): this {
+  finalizer(value: Builder): this {
     this._finalizer = value;
     return this;
   }
 
-  handler(value: BaseBuilder): this {
+  handler(value: Builder): this {
     this._handler = value;
     return this;
   }
@@ -53,6 +53,23 @@ class TryBuilder extends BaseBuilder<TryStatement> {
   }
 }
 
-export function try_(body: BaseBuilder): TryBuilder {
+export type { TryBuilder };
+
+export function try_(body: Builder): TryBuilder {
   return new TryBuilder(body);
+}
+
+export interface TryStatementOptions {
+  body: Builder<StatementBlock>;
+  finalizer?: Builder<FinallyClause>;
+  handler?: Builder<CatchClause>;
+}
+
+export namespace try_ {
+  export function from(options: TryStatementOptions): TryBuilder {
+    const b = new TryBuilder(options.body);
+    if (options.finalizer !== undefined) b.finalizer(options.finalizer);
+    if (options.handler !== undefined) b.handler(options.handler);
+    return b;
+  }
 }

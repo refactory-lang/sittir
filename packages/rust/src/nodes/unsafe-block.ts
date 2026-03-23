@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { UnsafeBlock } from '../types.js';
 
 
-class UnsafeBlockBuilder extends BaseBuilder<UnsafeBlock> {
-  private _children: BaseBuilder[] = [];
+class UnsafeBlockBuilder extends Builder<UnsafeBlock> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class UnsafeBlockBuilder extends BaseBuilder<UnsafeBlock> {
   }
 }
 
-export function unsafe_block(children: BaseBuilder): UnsafeBlockBuilder {
+export type { UnsafeBlockBuilder };
+
+export function unsafe_block(children: Builder): UnsafeBlockBuilder {
   return new UnsafeBlockBuilder(children);
+}
+
+export interface UnsafeBlockOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace unsafe_block {
+  export function from(options: UnsafeBlockOptions): UnsafeBlockBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new UnsafeBlockBuilder(_ctor);
+    return b;
+  }
 }

@@ -1,19 +1,21 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SelfParameter } from '../types.js';
+import type { MutableSpecifier, Self, SelfParameter } from '../types.js';
 
 
-class SelfParameterBuilder extends BaseBuilder<SelfParameter> {
-  private _children: BaseBuilder[] = [];
+class SelfParameterBuilder extends Builder<SelfParameter> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
+    if (this._children[2]) parts.push(this.renderChild(this._children[2]!, ctx));
     return parts.join(' ');
   }
 
@@ -28,13 +30,28 @@ class SelfParameterBuilder extends BaseBuilder<SelfParameter> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
+    if (this._children[2]) parts.push({ kind: 'builder', builder: this._children[2]! });
     return parts;
   }
 }
 
-export function self_parameter(children: BaseBuilder[]): SelfParameterBuilder {
-  return new SelfParameterBuilder(children);
+export type { SelfParameterBuilder };
+
+export function self_parameter(...children: Builder[]): SelfParameterBuilder {
+  return new SelfParameterBuilder(...children);
+}
+
+export interface SelfParameterOptions {
+  children: Builder<MutableSpecifier | Self> | (Builder<MutableSpecifier | Self>)[];
+}
+
+export namespace self_parameter {
+  export function from(options: SelfParameterOptions): SelfParameterBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new SelfParameterBuilder(..._arr);
+    return b;
+  }
 }

@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MatchArm } from '../types.js';
+import type { AttributeItem, Expression, InnerAttributeItem, MatchArm, MatchPattern } from '../types.js';
 
 
-class MatchArmBuilder extends BaseBuilder<MatchArm> {
-  private _pattern: BaseBuilder;
-  private _value!: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class MatchArmBuilder extends Builder<MatchArm> {
+  private _pattern: Builder;
+  private _value!: Builder;
+  private _children: Builder[] = [];
 
-  constructor(pattern: BaseBuilder) {
+  constructor(pattern: Builder) {
     super();
     this._pattern = pattern;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -57,6 +57,27 @@ class MatchArmBuilder extends BaseBuilder<MatchArm> {
   }
 }
 
-export function match_arm(pattern: BaseBuilder): MatchArmBuilder {
+export type { MatchArmBuilder };
+
+export function match_arm(pattern: Builder): MatchArmBuilder {
   return new MatchArmBuilder(pattern);
+}
+
+export interface MatchArmOptions {
+  pattern: Builder<MatchPattern>;
+  value: Builder<Expression>;
+  children?: Builder<AttributeItem | InnerAttributeItem> | (Builder<AttributeItem | InnerAttributeItem>)[];
+}
+
+export namespace match_arm {
+  export function from(options: MatchArmOptions): MatchArmBuilder {
+    const b = new MatchArmBuilder(options.pattern);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

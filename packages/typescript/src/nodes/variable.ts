@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { VariableDeclaration } from '../types.js';
+import type { VariableDeclaration, VariableDeclarator } from '../types.js';
 
 
-class VariableBuilder extends BaseBuilder<VariableDeclaration> {
-  private _children: BaseBuilder[] = [];
+class VariableBuilder extends Builder<VariableDeclaration> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -14,7 +14,7 @@ class VariableBuilder extends BaseBuilder<VariableDeclaration> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('var');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     return parts.join(' ');
   }
 
@@ -30,13 +30,29 @@ class VariableBuilder extends BaseBuilder<VariableDeclaration> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: 'var', type: 'var' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     return parts;
   }
 }
 
-export function variable(children: BaseBuilder[]): VariableBuilder {
-  return new VariableBuilder(children);
+export type { VariableBuilder };
+
+export function variable(...children: Builder[]): VariableBuilder {
+  return new VariableBuilder(...children);
+}
+
+export interface VariableDeclarationOptions {
+  children: Builder<VariableDeclarator> | (Builder<VariableDeclarator>)[];
+}
+
+export namespace variable {
+  export function from(options: VariableDeclarationOptions): VariableBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new VariableBuilder(..._arr);
+    return b;
+  }
 }

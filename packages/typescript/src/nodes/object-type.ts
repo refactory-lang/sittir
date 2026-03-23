@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ObjectType } from '../types.js';
+import type { CallSignature, ConstructSignature, ExportStatement, IndexSignature, MethodSignature, ObjectType, PropertySignature } from '../types.js';
 
 
-class ObjectTypeBuilder extends BaseBuilder<ObjectType> {
-  private _children: BaseBuilder[] = [];
+class ObjectTypeBuilder extends Builder<ObjectType> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -16,7 +16,8 @@ class ObjectTypeBuilder extends BaseBuilder<ObjectType> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('{');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -33,14 +34,31 @@ class ObjectTypeBuilder extends BaseBuilder<ObjectType> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '{', type: '{' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
 }
 
+export type { ObjectTypeBuilder };
+
 export function object_type(): ObjectTypeBuilder {
   return new ObjectTypeBuilder();
+}
+
+export interface ObjectTypeOptions {
+  children?: Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature> | (Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature>)[];
+}
+
+export namespace object_type {
+  export function from(options: ObjectTypeOptions): ObjectTypeBuilder {
+    const b = new ObjectTypeBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

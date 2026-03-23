@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FieldDeclaration } from '../types.js';
+import type { FieldDeclaration, FieldIdentifier, Type, VisibilityModifier } from '../types.js';
 
 
-class FieldBuilder extends BaseBuilder<FieldDeclaration> {
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class FieldBuilder extends Builder<FieldDeclaration> {
+  private _name: Builder;
+  private _type!: Builder;
+  private _children: Builder[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -55,6 +55,28 @@ class FieldBuilder extends BaseBuilder<FieldDeclaration> {
   }
 }
 
-export function field(name: BaseBuilder): FieldBuilder {
+export type { FieldBuilder };
+
+export function field(name: Builder): FieldBuilder {
   return new FieldBuilder(name);
+}
+
+export interface FieldDeclarationOptions {
+  name: Builder<FieldIdentifier> | string;
+  type: Builder<Type>;
+  children?: Builder<VisibilityModifier> | (Builder<VisibilityModifier>)[];
+}
+
+export namespace field {
+  export function from(options: FieldDeclarationOptions): FieldBuilder {
+    const _ctor = options.name;
+    const b = new FieldBuilder(typeof _ctor === 'string' ? new LeafBuilder('field_identifier', _ctor) : _ctor);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

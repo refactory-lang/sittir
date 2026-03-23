@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TraitBounds } from '../types.js';
+import type { HigherRankedTraitBound, TraitBounds, Type } from '../types.js';
 
 
-class TraitBoundsBuilder extends BaseBuilder<TraitBounds> {
-  private _children: BaseBuilder[] = [];
+class TraitBoundsBuilder extends Builder<TraitBounds> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -14,7 +14,7 @@ class TraitBoundsBuilder extends BaseBuilder<TraitBounds> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push(':');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' + ', ctx));
     return parts.join(' ');
   }
 
@@ -30,13 +30,29 @@ class TraitBoundsBuilder extends BaseBuilder<TraitBounds> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: ':', type: ':' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: '+', type: '+' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     return parts;
   }
 }
 
-export function trait_bounds(children: BaseBuilder[]): TraitBoundsBuilder {
-  return new TraitBoundsBuilder(children);
+export type { TraitBoundsBuilder };
+
+export function trait_bounds(...children: Builder[]): TraitBoundsBuilder {
+  return new TraitBoundsBuilder(...children);
+}
+
+export interface TraitBoundsOptions {
+  children: Builder<Type | HigherRankedTraitBound> | (Builder<Type | HigherRankedTraitBound>)[];
+}
+
+export namespace trait_bounds {
+  export function from(options: TraitBoundsOptions): TraitBoundsBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new TraitBoundsBuilder(..._arr);
+    return b;
+  }
 }

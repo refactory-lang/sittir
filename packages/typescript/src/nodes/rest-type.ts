@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { RestType } from '../types.js';
 
 
-class RestTypeBuilder extends BaseBuilder<RestType> {
-  private _children: BaseBuilder[] = [];
+class RestTypeBuilder extends Builder<RestType> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class RestTypeBuilder extends BaseBuilder<RestType> {
   }
 }
 
-export function rest_type(children: BaseBuilder): RestTypeBuilder {
+export type { RestTypeBuilder };
+
+export function rest_type(children: Builder): RestTypeBuilder {
   return new RestTypeBuilder(children);
+}
+
+export interface RestTypeOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace rest_type {
+  export function from(options: RestTypeOptions): RestTypeBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new RestTypeBuilder(_ctor);
+    return b;
+  }
 }

@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TemplateSubstitution } from '../types.js';
+import type { Expression, SequenceExpression, TemplateSubstitution } from '../types.js';
 
 
-class TemplateSubstitutionBuilder extends BaseBuilder<TemplateSubstitution> {
-  private _children: BaseBuilder[] = [];
+class TemplateSubstitutionBuilder extends Builder<TemplateSubstitution> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -39,6 +39,20 @@ class TemplateSubstitutionBuilder extends BaseBuilder<TemplateSubstitution> {
   }
 }
 
-export function template_substitution(children: BaseBuilder): TemplateSubstitutionBuilder {
+export type { TemplateSubstitutionBuilder };
+
+export function template_substitution(children: Builder): TemplateSubstitutionBuilder {
   return new TemplateSubstitutionBuilder(children);
+}
+
+export interface TemplateSubstitutionOptions {
+  children: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
+}
+
+export namespace template_substitution {
+  export function from(options: TemplateSubstitutionOptions): TemplateSubstitutionBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TemplateSubstitutionBuilder(_ctor);
+    return b;
+  }
 }

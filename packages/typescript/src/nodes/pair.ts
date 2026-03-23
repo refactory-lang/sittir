@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Pair } from '../types.js';
+import type { ComputedPropertyName, Expression, Pair, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
 
 
-class PairBuilder extends BaseBuilder<Pair> {
-  private _key: BaseBuilder;
-  private _value!: BaseBuilder;
+class PairBuilder extends Builder<Pair> {
+  private _key: Builder;
+  private _value!: Builder;
 
-  constructor(key: BaseBuilder) {
+  constructor(key: Builder) {
     super();
     this._key = key;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
@@ -44,6 +44,21 @@ class PairBuilder extends BaseBuilder<Pair> {
   }
 }
 
-export function pair(key: BaseBuilder): PairBuilder {
+export type { PairBuilder };
+
+export function pair(key: Builder): PairBuilder {
   return new PairBuilder(key);
+}
+
+export interface PairOptions {
+  key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  value: Builder<Expression>;
+}
+
+export namespace pair {
+  export function from(options: PairOptions): PairBuilder {
+    const b = new PairBuilder(options.key);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

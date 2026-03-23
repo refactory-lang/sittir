@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AwaitExpression } from '../types.js';
+import type { AwaitExpression, Expression } from '../types.js';
 
 
-class AwaitBuilder extends BaseBuilder<AwaitExpression> {
-  private _children: BaseBuilder[] = [];
+class AwaitBuilder extends Builder<AwaitExpression> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class AwaitBuilder extends BaseBuilder<AwaitExpression> {
   }
 }
 
-export function await_(children: BaseBuilder): AwaitBuilder {
+export type { AwaitBuilder };
+
+export function await_(children: Builder): AwaitBuilder {
   return new AwaitBuilder(children);
+}
+
+export interface AwaitExpressionOptions {
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace await_ {
+  export function from(options: AwaitExpressionOptions): AwaitBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new AwaitBuilder(_ctor);
+    return b;
+  }
 }

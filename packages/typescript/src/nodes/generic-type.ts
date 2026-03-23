@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { GenericType } from '../types.js';
+import type { GenericType, NestedTypeIdentifier, TypeArguments, TypeIdentifier } from '../types.js';
 
 
-class GenericTypeBuilder extends BaseBuilder<GenericType> {
-  private _name: BaseBuilder;
-  private _typeArguments!: BaseBuilder;
+class GenericTypeBuilder extends Builder<GenericType> {
+  private _name: Builder;
+  private _typeArguments!: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  typeArguments(value: BaseBuilder): this {
+  typeArguments(value: Builder): this {
     this._typeArguments = value;
     return this;
   }
@@ -42,6 +42,21 @@ class GenericTypeBuilder extends BaseBuilder<GenericType> {
   }
 }
 
-export function generic_type(name: BaseBuilder): GenericTypeBuilder {
+export type { GenericTypeBuilder };
+
+export function generic_type(name: Builder): GenericTypeBuilder {
   return new GenericTypeBuilder(name);
+}
+
+export interface GenericTypeOptions {
+  name: Builder<NestedTypeIdentifier | TypeIdentifier>;
+  typeArguments: Builder<TypeArguments>;
+}
+
+export namespace generic_type {
+  export function from(options: GenericTypeOptions): GenericTypeBuilder {
+    const b = new GenericTypeBuilder(options.name);
+    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
+    return b;
+  }
 }

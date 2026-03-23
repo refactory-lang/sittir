@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { GenericPattern } from '../types.js';
+import type { GenericPattern, Identifier, ScopedIdentifier, TypeArguments } from '../types.js';
 
 
-class GenericPatternBuilder extends BaseBuilder<GenericPattern> {
-  private _typeArguments: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class GenericPatternBuilder extends Builder<GenericPattern> {
+  private _typeArguments: Builder;
+  private _children: Builder[] = [];
 
-  constructor(typeArguments: BaseBuilder) {
+  constructor(typeArguments: Builder) {
     super();
     this._typeArguments = typeArguments;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -46,6 +46,25 @@ class GenericPatternBuilder extends BaseBuilder<GenericPattern> {
   }
 }
 
-export function generic_pattern(typeArguments: BaseBuilder): GenericPatternBuilder {
+export type { GenericPatternBuilder };
+
+export function generic_pattern(typeArguments: Builder): GenericPatternBuilder {
   return new GenericPatternBuilder(typeArguments);
+}
+
+export interface GenericPatternOptions {
+  typeArguments: Builder<TypeArguments>;
+  children?: Builder<Identifier | ScopedIdentifier> | (Builder<Identifier | ScopedIdentifier>)[];
+}
+
+export namespace generic_pattern {
+  export function from(options: GenericPatternOptions): GenericPatternBuilder {
+    const b = new GenericPatternBuilder(options.typeArguments);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

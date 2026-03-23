@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { YieldExpression } from '../types.js';
+import type { Expression, YieldExpression } from '../types.js';
 
 
-class YieldBuilder extends BaseBuilder<YieldExpression> {
-  private _children: BaseBuilder[] = [];
+class YieldBuilder extends Builder<YieldExpression> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -41,6 +41,24 @@ class YieldBuilder extends BaseBuilder<YieldExpression> {
   }
 }
 
+export type { YieldBuilder };
+
 export function yield_(): YieldBuilder {
   return new YieldBuilder();
+}
+
+export interface YieldExpressionOptions {
+  children?: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace yield_ {
+  export function from(options: YieldExpressionOptions): YieldBuilder {
+    const b = new YieldBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

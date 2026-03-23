@@ -3,13 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('type_assertion', () => {
   it('should build with correct kind', () => {
-    const builder = ir.type_assertion([ir.identifier('test')]);
+    const builder = ir.type_assertion(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('type_assertion');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.type_assertion([ir.identifier('test')]);
+    const builder = ir.type_assertion(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('type_assertion');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +18,7 @@ describe('type_assertion', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.type_assertion([ir.identifier('test')]);
+    const builder = ir.type_assertion(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

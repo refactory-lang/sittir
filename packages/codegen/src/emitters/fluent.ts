@@ -6,6 +6,7 @@
 
 import type { NodeMeta, SupertypeInfo } from '../grammar-reader.ts';
 import { toShortName, toGrammarTypeName, toFactoryName, toFieldName, resolveFileNames } from '../naming.ts';
+import { selectConstructorField } from './builder.ts';
 
 export interface OperatorContext {
   parentKind: string;
@@ -204,15 +205,17 @@ export function emitFluent(config: EmitFluentConfig): string {
   lines.push(`export type ${grammarPrefix}Ir = typeof ir;`);
   lines.push('');
 
-  // --- fromCST() ---
+  // --- fromCST() + edit() ---
   if (config.nodes && config.nodes.length > 0) {
-    lines.push(`import type { BaseBuilder } from '@sittir/types';`);
+    lines.push(`import type { Builder, Edit } from '@sittir/types';`);
     lines.push('');
     lines.push('/** Tree-sitter CST node interface (minimal shape). */');
     lines.push('interface CSTInput {');
     lines.push('  type: string;');
     lines.push('  text: string;');
     lines.push('  isNamed: boolean;');
+    lines.push('  startIndex: number;');
+    lines.push('  endIndex: number;');
     lines.push('  namedChildren: CSTInput[];');
     lines.push('  childForFieldName(name: string): CSTInput | null;');
     lines.push('  childrenForFieldName(name: string): CSTInput[];');
@@ -222,14 +225,14 @@ export function emitFluent(config: EmitFluentConfig): string {
     lines.push(' * Hydrate a tree-sitter CST node into a builder tree.');
     lines.push(' * Walks the CST recursively — no parsing needed.');
     lines.push(' */');
-    lines.push('export function fromCST(node: CSTInput): BaseBuilder<{ kind: string }> {');
+    lines.push('export function fromCST(node: CSTInput): Builder<{ kind: string }> {');
     lines.push('  // Leaf / unknown nodes → LeafBuilder');
     lines.push('  const builder = resolveBuilder(node);');
     lines.push('  if (!builder) return new LeafBuilder(node.type, node.text);');
     lines.push('  return builder;');
     lines.push('}');
     lines.push('');
-    lines.push('function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {');
+    lines.push('function resolveBuilder(node: CSTInput): Builder<{ kind: string }> | null {');
     lines.push('  switch (node.type) {');
 
     for (const nodeMeta of config.nodes) {
@@ -242,24 +245,25 @@ export function emitFluent(config: EmitFluentConfig): string {
 
       lines.push(`    case '${nodeMeta.kind}': {`);
 
-      // Find constructor param
-      const requiredFields = nodeMeta.fields.filter((f) => f.required);
-      const nameField = requiredFields.find((f) => f.name === 'name');
-      const argField = requiredFields.find((f) => f.name === 'argument');
-      const ctorField = nameField ?? argField ?? requiredFields[0];
+      // Find constructor param — uses same logic as builder emitter
+      const ctorResult = selectConstructorField(nodeMeta, config.grammar);
+      const ctorField = ctorResult?.source === 'field'
+        ? nodeMeta.fields.find(f => f.name === ctorResult.name)
+        : undefined;
+      const ctorIsChildren = ctorResult?.source === 'children';
 
       // Constructor arg
       if (ctorField) {
         if (ctorField.multiple) {
           lines.push(`      const ctorChildren = node.childrenForFieldName('${ctorField.name}');`);
-          lines.push(`      const b = ir.${irKey}(ctorChildren.map(c => fromCST(c)));`);
+          lines.push(`      const b = ir.${irKey}(...ctorChildren.map(c => fromCST(c)));`);
         } else {
           lines.push(`      const ctorChild = node.childForFieldName('${ctorField.name}');`);
           lines.push(`      const b = ir.${irKey}(ctorChild ? fromCST(ctorChild) : new LeafBuilder('${ctorField.name}', ''));`);
         }
-      } else if (nodeMeta.hasChildren && nodeMeta.children?.required) {
-        if (nodeMeta.children.multiple) {
-          lines.push(`      const b = ir.${irKey}(node.namedChildren.map(c => fromCST(c)));`);
+      } else if (ctorIsChildren) {
+        if (nodeMeta.children?.multiple) {
+          lines.push(`      const b = ir.${irKey}(...node.namedChildren.map(c => fromCST(c)));`);
         } else {
           lines.push(`      const firstChild = node.namedChildren[0];`);
           lines.push(`      const b = ir.${irKey}(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));`);
@@ -274,7 +278,7 @@ export function emitFluent(config: EmitFluentConfig): string {
         const fieldName = toFieldName(field.name);
         if (field.multiple) {
           lines.push(`      const ${fieldName}Children = node.childrenForFieldName('${field.name}');`);
-          lines.push(`      if (${fieldName}Children.length > 0) b.${fieldName}(${fieldName}Children.map(c => fromCST(c)));`);
+          lines.push(`      if (${fieldName}Children.length > 0) b.${fieldName}(...${fieldName}Children.map(c => fromCST(c)));`);
         } else {
           lines.push(`      const ${fieldName}Child = node.childForFieldName('${field.name}');`);
           lines.push(`      if (${fieldName}Child) b.${fieldName}(fromCST(${fieldName}Child));`);
@@ -282,7 +286,7 @@ export function emitFluent(config: EmitFluentConfig): string {
       }
 
       // Set children (if not used as constructor)
-      if (nodeMeta.hasChildren && !(nodeMeta.children?.required && !ctorField)) {
+      if (nodeMeta.hasChildren && !ctorIsChildren) {
         if (!ctorField || ctorField.name !== 'children') {
           lines.push('      const remainingChildren = node.namedChildren.filter(c => {');
           const fieldNames = nodeMeta.fields.map(f => `'${f.name}'`);
@@ -293,7 +297,7 @@ export function emitFluent(config: EmitFluentConfig): string {
             lines.push('        return true;');
           }
           lines.push('      });');
-          lines.push('      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));');
+          lines.push('      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));');
         }
       }
 
@@ -303,6 +307,26 @@ export function emitFluent(config: EmitFluentConfig): string {
 
     lines.push("    default: return null;");
     lines.push('  }');
+    lines.push('}');
+    lines.push('');
+
+    // --- edit() ---
+    lines.push('/**');
+    lines.push(' * Create a codemod-compatible Edit from a tree-sitter node.');
+    lines.push(' * Hydrates the node into a builder, passes it to the transform,');
+    lines.push(' * then renders the result and wraps it with byte positions.');
+    lines.push(' */');
+    lines.push('export function edit(');
+    lines.push('  node: CSTInput,');
+    lines.push('  transform: (builder: Builder) => Builder,');
+    lines.push('): Edit {');
+    lines.push('  const builder = fromCST(node);');
+    lines.push('  const result = transform(builder);');
+    lines.push('  return {');
+    lines.push('    startPos: node.startIndex,');
+    lines.push('    endPos: node.endIndex,');
+    lines.push('    insertedText: result.renderImpl(),');
+    lines.push('  };');
     lines.push('}');
     lines.push('');
   }

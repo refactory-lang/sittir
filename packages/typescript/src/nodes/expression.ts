@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExpressionStatement } from '../types.js';
+import type { Expression, ExpressionStatement, SequenceExpression } from '../types.js';
 
 
-class ExpressionBuilder extends BaseBuilder<ExpressionStatement> {
-  private _children: BaseBuilder[] = [];
+class ExpressionBuilder extends Builder<ExpressionStatement> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -35,6 +35,20 @@ class ExpressionBuilder extends BaseBuilder<ExpressionStatement> {
   }
 }
 
-export function expression(children: BaseBuilder): ExpressionBuilder {
+export type { ExpressionBuilder };
+
+export function expression(children: Builder): ExpressionBuilder {
   return new ExpressionBuilder(children);
+}
+
+export interface ExpressionStatementOptions {
+  children: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
+}
+
+export namespace expression {
+  export function from(options: ExpressionStatementOptions): ExpressionBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ExpressionBuilder(_ctor);
+    return b;
+  }
 }

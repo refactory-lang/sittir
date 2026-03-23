@@ -46,7 +46,7 @@ export function emitTest(config: EmitTestConfig): string {
 
   const ctorKind = needsConstructorArg(node);
   const ctorArg = ctorKind === 'multiple'
-    ? '[ir.identifier(\'test\')]'
+    ? 'ir.identifier(\'a\'), ir.identifier(\'b\')'
     : ctorKind === 'single'
       ? 'ir.identifier(\'test\')'
       : '';

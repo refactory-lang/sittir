@@ -3,13 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('tuple_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.tuple([ir.identifier('test')]);
+    const builder = ir.tuple(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('tuple_expression');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.tuple([ir.identifier('test')]);
+    const builder = ir.tuple(ir.identifier('a'), ir.identifier('b'));
     const source = builder.renderImpl();
     expect(source).toContain('(');
     expect(source).toContain(',');
@@ -17,7 +17,7 @@ describe('tuple_expression', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.tuple([ir.identifier('test')]);
+    const builder = ir.tuple(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('tuple_expression');
     expect(cst.isNamed).toBe(true);
@@ -26,7 +26,7 @@ describe('tuple_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.tuple([ir.identifier('test')]);
+    const builder = ir.tuple(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

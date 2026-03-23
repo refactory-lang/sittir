@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ForLifetimes } from '../types.js';
 
 
-class ForLifetimesBuilder extends BaseBuilder<ForLifetimes> {
-  private _children: BaseBuilder[] = [];
+class ForLifetimesBuilder extends Builder<ForLifetimes> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -15,7 +15,7 @@ class ForLifetimesBuilder extends BaseBuilder<ForLifetimes> {
     const parts: string[] = [];
     parts.push('for');
     parts.push('<');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
     parts.push('>');
     return parts.join(' ');
   }
@@ -33,14 +33,30 @@ class ForLifetimesBuilder extends BaseBuilder<ForLifetimes> {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: 'for', type: 'for' });
     parts.push({ kind: 'token', text: '<', type: '<' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     parts.push({ kind: 'token', text: '>', type: '>' });
     return parts;
   }
 }
 
-export function for_lifetimes(children: BaseBuilder[]): ForLifetimesBuilder {
-  return new ForLifetimesBuilder(children);
+export type { ForLifetimesBuilder };
+
+export function for_lifetimes(...children: Builder[]): ForLifetimesBuilder {
+  return new ForLifetimesBuilder(...children);
+}
+
+export interface ForLifetimesOptions {
+  children: Builder | (Builder)[];
+}
+
+export namespace for_lifetimes {
+  export function from(options: ForLifetimesOptions): ForLifetimesBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new ForLifetimesBuilder(..._arr);
+    return b;
+  }
 }

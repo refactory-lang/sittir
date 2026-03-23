@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExportSpecifier } from '../types.js';
+import type { ExportSpecifier, Identifier } from '../types.js';
 
 
-class ExportSpecifierBuilder extends BaseBuilder<ExportSpecifier> {
-  private _alias?: BaseBuilder;
-  private _name: BaseBuilder;
+class ExportSpecifierBuilder extends Builder<ExportSpecifier> {
+  private _alias?: Builder;
+  private _name: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  alias(value: BaseBuilder): this {
+  alias(value: Builder): this {
     this._alias = value;
     return this;
   }
@@ -48,6 +48,21 @@ class ExportSpecifierBuilder extends BaseBuilder<ExportSpecifier> {
   }
 }
 
-export function export_specifier(name: BaseBuilder): ExportSpecifierBuilder {
+export type { ExportSpecifierBuilder };
+
+export function export_specifier(name: Builder): ExportSpecifierBuilder {
   return new ExportSpecifierBuilder(name);
+}
+
+export interface ExportSpecifierOptions {
+  alias?: Builder<Identifier>;
+  name: Builder<Identifier>;
+}
+
+export namespace export_specifier {
+  export function from(options: ExportSpecifierOptions): ExportSpecifierBuilder {
+    const b = new ExportSpecifierBuilder(options.name);
+    if (options.alias !== undefined) b.alias(options.alias);
+    return b;
+  }
 }

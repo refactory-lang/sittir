@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImportAlias } from '../types.js';
+import type { Identifier, ImportAlias, NestedIdentifier } from '../types.js';
 
 
-class ImportAliasBuilder extends BaseBuilder<ImportAlias> {
-  private _children: BaseBuilder[] = [];
+class ImportAliasBuilder extends Builder<ImportAlias> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -14,8 +14,9 @@ class ImportAliasBuilder extends BaseBuilder<ImportAlias> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('import');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
     parts.push('=');
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -31,14 +32,28 @@ class ImportAliasBuilder extends BaseBuilder<ImportAlias> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: 'import', type: 'import' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
     parts.push({ kind: 'token', text: '=', type: '=' });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
 
-export function import_alias(children: BaseBuilder[]): ImportAliasBuilder {
-  return new ImportAliasBuilder(children);
+export type { ImportAliasBuilder };
+
+export function import_alias(...children: Builder[]): ImportAliasBuilder {
+  return new ImportAliasBuilder(...children);
+}
+
+export interface ImportAliasOptions {
+  children: Builder<Identifier | NestedIdentifier> | (Builder<Identifier | NestedIdentifier>)[];
+}
+
+export namespace import_alias {
+  export function from(options: ImportAliasOptions): ImportAliasBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new ImportAliasBuilder(..._arr);
+    return b;
+  }
 }

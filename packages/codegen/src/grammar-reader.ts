@@ -7,12 +7,16 @@ export interface FieldMeta {
 	required: boolean;
 	multiple: boolean;
 	types: string[];
+	/** Named types only (excludes anonymous tokens). Maps to builder/type names. */
+	namedTypes: string[];
 }
 
 export interface ChildrenMeta {
 	required: boolean;
 	multiple: boolean;
 	types: string[];
+	/** Named types only (excludes anonymous tokens). */
+	namedTypes: string[];
 }
 
 export interface NodeMeta {
@@ -147,14 +151,21 @@ function walkForTokens(rule: GrammarRule, optional: boolean, tokens: string[]): 
 			break;
 		case 'CHOICE': {
 			const hasBlank = rule.members.some(m => m.type === 'BLANK');
+			const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
 			if (hasBlank) {
 				// Everything inside is optional
 				for (const member of rule.members) {
 					walkForTokens(member, true, tokens);
 				}
 			} else {
-				// Non-optional CHOICE — use first variant
-				walkForTokens(rule.members[0]!, optional, tokens);
+				// Non-optional CHOICE — for binary STRING/SYMBOL, prefer SYMBOL
+				let preferred = nonBlank[0]!;
+				if (nonBlank.length === 2) {
+					const hasString = nonBlank.some(m => m.type === 'STRING');
+					const symbolMember = nonBlank.find(m => m.type === 'SYMBOL');
+					if (hasString && symbolMember) preferred = symbolMember;
+				}
+				walkForTokens(preferred, optional, tokens);
 			}
 			break;
 		}
@@ -240,6 +251,7 @@ export function readGrammarNode(grammar: string, nodeKind: string): NodeMeta {
 				required: raw.required,
 				multiple: raw.multiple,
 				types: raw.types.map((t) => t.type),
+				namedTypes: raw.types.filter((t) => t.named).map((t) => t.type),
 			});
 		}
 	}
@@ -253,6 +265,7 @@ export function readGrammarNode(grammar: string, nodeKind: string): NodeMeta {
 			required: entry.children.required,
 			multiple: entry.children.multiple,
 			types: entry.children.types.map((t) => t.type),
+			namedTypes: entry.children.types.filter((t) => t.named).map((t) => t.type),
 		};
 	}
 

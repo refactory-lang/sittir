@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TemplateLiteralType } from '../types.js';
+import type { StringFragment, TemplateLiteralType, TemplateType } from '../types.js';
 
 
-class TemplateLiteralTypeBuilder extends BaseBuilder<TemplateLiteralType> {
-  private _children: BaseBuilder[] = [];
+class TemplateLiteralTypeBuilder extends Builder<TemplateLiteralType> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -41,6 +41,24 @@ class TemplateLiteralTypeBuilder extends BaseBuilder<TemplateLiteralType> {
   }
 }
 
+export type { TemplateLiteralTypeBuilder };
+
 export function template_literal_type(): TemplateLiteralTypeBuilder {
   return new TemplateLiteralTypeBuilder();
+}
+
+export interface TemplateLiteralTypeOptions {
+  children?: Builder<StringFragment | TemplateType> | (Builder<StringFragment | TemplateType>)[];
+}
+
+export namespace template_literal_type {
+  export function from(options: TemplateLiteralTypeOptions): TemplateLiteralTypeBuilder {
+    const b = new TemplateLiteralTypeBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

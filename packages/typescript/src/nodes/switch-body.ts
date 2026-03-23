@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SwitchBody } from '../types.js';
+import type { SwitchBody, SwitchCase, SwitchDefault } from '../types.js';
 
 
-class SwitchBodyBuilder extends BaseBuilder<SwitchBody> {
-  private _children: BaseBuilder[] = [];
+class SwitchBodyBuilder extends Builder<SwitchBody> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -41,6 +41,24 @@ class SwitchBodyBuilder extends BaseBuilder<SwitchBody> {
   }
 }
 
+export type { SwitchBodyBuilder };
+
 export function switch_body(): SwitchBodyBuilder {
   return new SwitchBodyBuilder();
+}
+
+export interface SwitchBodyOptions {
+  children?: Builder<SwitchCase | SwitchDefault> | (Builder<SwitchCase | SwitchDefault>)[];
+}
+
+export namespace switch_body {
+  export function from(options: SwitchBodyOptions): SwitchBodyBuilder {
+    const b = new SwitchBodyBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

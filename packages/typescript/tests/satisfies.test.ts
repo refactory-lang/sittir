@@ -3,19 +3,19 @@ import { ir } from '../src/builder.js';
 
 describe('satisfies_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.satisfies([ir.identifier('test')]);
+    const builder = ir.satisfies(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('satisfies_expression');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.satisfies([ir.identifier('test')]);
+    const builder = ir.satisfies(ir.identifier('a'), ir.identifier('b'));
     const source = builder.renderImpl();
     expect(source).toContain('satisfies');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.satisfies([ir.identifier('test')]);
+    const builder = ir.satisfies(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('satisfies_expression');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +24,7 @@ describe('satisfies_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.satisfies([ir.identifier('test')]);
+    const builder = ir.satisfies(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

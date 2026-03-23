@@ -1,24 +1,24 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { VariableDeclarator } from '../types.js';
+import type { ArrayPattern, Expression, Identifier, ObjectPattern, TypeAnnotation, VariableDeclarator } from '../types.js';
 
 
-class VariableDeclaratorBuilder extends BaseBuilder<VariableDeclarator> {
-  private _name: BaseBuilder;
-  private _type?: BaseBuilder;
-  private _value?: BaseBuilder;
+class VariableDeclaratorBuilder extends Builder<VariableDeclarator> {
+  private _name: Builder;
+  private _type?: Builder;
+  private _value?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder): this {
     this._type = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
@@ -57,6 +57,23 @@ class VariableDeclaratorBuilder extends BaseBuilder<VariableDeclarator> {
   }
 }
 
-export function variable_declarator(name: BaseBuilder): VariableDeclaratorBuilder {
+export type { VariableDeclaratorBuilder };
+
+export function variable_declarator(name: Builder): VariableDeclaratorBuilder {
   return new VariableDeclaratorBuilder(name);
+}
+
+export interface VariableDeclaratorOptions {
+  name: Builder<ArrayPattern | Identifier | ObjectPattern>;
+  type?: Builder<TypeAnnotation>;
+  value?: Builder<Expression>;
+}
+
+export namespace variable_declarator {
+  export function from(options: VariableDeclaratorOptions): VariableDeclaratorBuilder {
+    const b = new VariableDeclaratorBuilder(options.name);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

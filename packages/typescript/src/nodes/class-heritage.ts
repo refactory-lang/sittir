@@ -1,19 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ClassHeritage } from '../types.js';
+import type { ClassHeritage, ExtendsClause, ImplementsClause } from '../types.js';
 
 
-class ClassHeritageBuilder extends BaseBuilder<ClassHeritage> {
-  private _children: BaseBuilder[] = [];
+class ClassHeritageBuilder extends Builder<ClassHeritage> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -28,13 +29,27 @@ class ClassHeritageBuilder extends BaseBuilder<ClassHeritage> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
 
-export function class_heritage(children: BaseBuilder[]): ClassHeritageBuilder {
-  return new ClassHeritageBuilder(children);
+export type { ClassHeritageBuilder };
+
+export function class_heritage(...children: Builder[]): ClassHeritageBuilder {
+  return new ClassHeritageBuilder(...children);
+}
+
+export interface ClassHeritageOptions {
+  children: Builder<ExtendsClause | ImplementsClause> | (Builder<ExtendsClause | ImplementsClause>)[];
+}
+
+export namespace class_heritage {
+  export function from(options: ClassHeritageOptions): ClassHeritageBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new ClassHeritageBuilder(..._arr);
+    return b;
+  }
 }

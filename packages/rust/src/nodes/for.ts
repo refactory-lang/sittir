@@ -1,30 +1,30 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ForExpression } from '../types.js';
+import type { Expression, ForExpression, Label, Pattern } from '../types.js';
 
 
-class ForBuilder extends BaseBuilder<ForExpression> {
-  private _body: BaseBuilder;
-  private _pattern!: BaseBuilder;
-  private _value!: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ForBuilder extends Builder<ForExpression> {
+  private _body!: Builder;
+  private _pattern: Builder;
+  private _value!: Builder;
+  private _children: Builder[] = [];
 
-  constructor(body: BaseBuilder) {
+  constructor(pattern: Builder) {
     super();
-    this._body = body;
+    this._pattern = pattern;
   }
 
-  pattern(value: BaseBuilder): this {
-    this._pattern = value;
+  body(value: Builder): this {
+    this._body = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder): this {
     this._value = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -43,8 +43,8 @@ class ForBuilder extends BaseBuilder<ForExpression> {
   build(ctx?: RenderContext): ForExpression {
     return {
       kind: 'for_expression',
-      body: this.renderChild(this._body, ctx),
-      pattern: this._pattern ? this.renderChild(this._pattern, ctx) : undefined,
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      pattern: this.renderChild(this._pattern, ctx),
       value: this._value ? this.renderChild(this._value, ctx) : undefined,
       children: this._children.map(c => this.renderChild(c, ctx)),
     } as unknown as ForExpression;
@@ -66,6 +66,29 @@ class ForBuilder extends BaseBuilder<ForExpression> {
   }
 }
 
-export function for_(body: BaseBuilder): ForBuilder {
-  return new ForBuilder(body);
+export type { ForBuilder };
+
+export function for_(pattern: Builder): ForBuilder {
+  return new ForBuilder(pattern);
+}
+
+export interface ForExpressionOptions {
+  body: Builder;
+  pattern: Builder<Pattern>;
+  value: Builder<Expression>;
+  children?: Builder<Label> | (Builder<Label>)[];
+}
+
+export namespace for_ {
+  export function from(options: ForExpressionOptions): ForBuilder {
+    const b = new ForBuilder(options.pattern);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.value !== undefined) b.value(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

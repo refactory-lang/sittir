@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeQuery } from '../types.js';
+import type { CallExpression, Identifier, InstantiationExpression, MemberExpression, SubscriptExpression, This, TypeQuery } from '../types.js';
 
 
-class TypeQueryBuilder extends BaseBuilder<TypeQuery> {
-  private _children: BaseBuilder[] = [];
+class TypeQueryBuilder extends Builder<TypeQuery> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder) {
     super();
     this._children = [children];
   }
@@ -37,6 +37,20 @@ class TypeQueryBuilder extends BaseBuilder<TypeQuery> {
   }
 }
 
-export function type_query(children: BaseBuilder): TypeQueryBuilder {
+export type { TypeQueryBuilder };
+
+export function type_query(children: Builder): TypeQueryBuilder {
   return new TypeQueryBuilder(children);
+}
+
+export interface TypeQueryOptions {
+  children: Builder<CallExpression | Identifier | InstantiationExpression | MemberExpression | SubscriptExpression | This> | (Builder<CallExpression | Identifier | InstantiationExpression | MemberExpression | SubscriptExpression | This>)[];
+}
+
+export namespace type_query {
+  export function from(options: TypeQueryOptions): TypeQueryBuilder {
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TypeQueryBuilder(_ctor);
+    return b;
+  }
 }

@@ -1,36 +1,36 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { GeneratorFunctionDeclaration } from '../types.js';
+import type { AssertsAnnotation, FormalParameters, GeneratorFunctionDeclaration, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class GeneratorFunctionBuilder extends BaseBuilder<GeneratorFunctionDeclaration> {
-  private _body!: BaseBuilder;
-  private _name: BaseBuilder;
-  private _parameters!: BaseBuilder;
-  private _returnType?: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class GeneratorFunctionBuilder extends Builder<GeneratorFunctionDeclaration> {
+  private _body!: Builder;
+  private _name: Builder;
+  private _parameters!: Builder;
+  private _returnType?: Builder;
+  private _typeParameters?: Builder;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder) {
     super();
     this._name = name;
   }
 
-  body(value: BaseBuilder): this {
+  body(value: Builder): this {
     this._body = value;
     return this;
   }
 
-  parameters(value: BaseBuilder): this {
+  parameters(value: Builder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: BaseBuilder): this {
+  returnType(value: Builder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  typeParameters(value: Builder): this {
     this._typeParameters = value;
     return this;
   }
@@ -73,6 +73,28 @@ class GeneratorFunctionBuilder extends BaseBuilder<GeneratorFunctionDeclaration>
   }
 }
 
-export function generator_function(name: BaseBuilder): GeneratorFunctionBuilder {
+export type { GeneratorFunctionBuilder };
+
+export function generator_function(name: Builder): GeneratorFunctionBuilder {
   return new GeneratorFunctionBuilder(name);
+}
+
+export interface GeneratorFunctionDeclarationOptions {
+  body: Builder<StatementBlock>;
+  name: Builder<Identifier> | string;
+  parameters: Builder<FormalParameters>;
+  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  typeParameters?: Builder<TypeParameters>;
+}
+
+export namespace generator_function {
+  export function from(options: GeneratorFunctionDeclarationOptions): GeneratorFunctionBuilder {
+    const _ctor = options.name;
+    const b = new GeneratorFunctionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.body !== undefined) b.body(options.body);
+    if (options.parameters !== undefined) b.parameters(options.parameters);
+    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    return b;
+  }
 }

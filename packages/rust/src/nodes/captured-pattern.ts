@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CapturedPattern } from '../types.js';
+import type { CapturedPattern, Pattern } from '../types.js';
 
 
-class CapturedPatternBuilder extends BaseBuilder<CapturedPattern> {
-  private _children: BaseBuilder[] = [];
+class CapturedPatternBuilder extends Builder<CapturedPattern> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -37,6 +37,21 @@ class CapturedPatternBuilder extends BaseBuilder<CapturedPattern> {
   }
 }
 
-export function captured_pattern(children: BaseBuilder[]): CapturedPatternBuilder {
-  return new CapturedPatternBuilder(children);
+export type { CapturedPatternBuilder };
+
+export function captured_pattern(...children: Builder[]): CapturedPatternBuilder {
+  return new CapturedPatternBuilder(...children);
+}
+
+export interface CapturedPatternOptions {
+  children: Builder<Pattern> | (Builder<Pattern>)[];
+}
+
+export namespace captured_pattern {
+  export function from(options: CapturedPatternOptions): CapturedPatternBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new CapturedPatternBuilder(..._arr);
+    return b;
+  }
 }

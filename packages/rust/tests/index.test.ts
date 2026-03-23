@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('index_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.index([ir.identifier('test')]);
+    const builder = ir.index(ir.identifier('a'), ir.identifier('b'));
     const node = builder.build();
     expect(node.kind).toBe('index_expression');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.index([ir.identifier('test')]);
+    const builder = ir.index(ir.identifier('a'), ir.identifier('b'));
     const source = builder.renderImpl();
     expect(source).toContain('[');
     expect(source).toContain(']');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.index([ir.identifier('test')]);
+    const builder = ir.index(ir.identifier('a'), ir.identifier('b'));
     const cst = builder.toCST();
     expect(cst.type).toBe('index_expression');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('index_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.index([ir.identifier('test')]);
+    const builder = ir.index(ir.identifier('a'), ir.identifier('b'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

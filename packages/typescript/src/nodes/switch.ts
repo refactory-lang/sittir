@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SwitchStatement } from '../types.js';
+import type { ParenthesizedExpression, SwitchBody, SwitchStatement } from '../types.js';
 
 
-class SwitchBuilder extends BaseBuilder<SwitchStatement> {
-  private _body: BaseBuilder;
-  private _value!: BaseBuilder;
+class SwitchBuilder extends Builder<SwitchStatement> {
+  private _body!: Builder;
+  private _value: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(value: Builder) {
     super();
-    this._body = body;
+    this._value = value;
   }
 
-  value(value: BaseBuilder): this {
-    this._value = value;
+  body(value: Builder): this {
+    this._body = value;
     return this;
   }
 
@@ -28,8 +28,8 @@ class SwitchBuilder extends BaseBuilder<SwitchStatement> {
   build(ctx?: RenderContext): SwitchStatement {
     return {
       kind: 'switch_statement',
-      body: this.renderChild(this._body, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      value: this.renderChild(this._value, ctx),
     } as unknown as SwitchStatement;
   }
 
@@ -44,6 +44,21 @@ class SwitchBuilder extends BaseBuilder<SwitchStatement> {
   }
 }
 
-export function switch_(body: BaseBuilder): SwitchBuilder {
-  return new SwitchBuilder(body);
+export type { SwitchBuilder };
+
+export function switch_(value: Builder): SwitchBuilder {
+  return new SwitchBuilder(value);
+}
+
+export interface SwitchStatementOptions {
+  body: Builder<SwitchBody>;
+  value: Builder<ParenthesizedExpression>;
+}
+
+export namespace switch_ {
+  export function from(options: SwitchStatementOptions): SwitchBuilder {
+    const b = new SwitchBuilder(options.value);
+    if (options.body !== undefined) b.body(options.body);
+    return b;
+  }
 }

@@ -1,19 +1,19 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { WhileStatement } from '../types.js';
+import type { ParenthesizedExpression, Statement, WhileStatement } from '../types.js';
 
 
-class WhileBuilder extends BaseBuilder<WhileStatement> {
-  private _body: BaseBuilder;
-  private _condition!: BaseBuilder;
+class WhileBuilder extends Builder<WhileStatement> {
+  private _body!: Builder;
+  private _condition: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(condition: Builder) {
     super();
-    this._body = body;
+    this._condition = condition;
   }
 
-  condition(value: BaseBuilder): this {
-    this._condition = value;
+  body(value: Builder): this {
+    this._body = value;
     return this;
   }
 
@@ -28,8 +28,8 @@ class WhileBuilder extends BaseBuilder<WhileStatement> {
   build(ctx?: RenderContext): WhileStatement {
     return {
       kind: 'while_statement',
-      body: this.renderChild(this._body, ctx),
-      condition: this._condition ? this.renderChild(this._condition, ctx) : undefined,
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      condition: this.renderChild(this._condition, ctx),
     } as unknown as WhileStatement;
   }
 
@@ -44,6 +44,21 @@ class WhileBuilder extends BaseBuilder<WhileStatement> {
   }
 }
 
-export function while_(body: BaseBuilder): WhileBuilder {
-  return new WhileBuilder(body);
+export type { WhileBuilder };
+
+export function while_(condition: Builder): WhileBuilder {
+  return new WhileBuilder(condition);
+}
+
+export interface WhileStatementOptions {
+  body: Builder<Statement>;
+  condition: Builder<ParenthesizedExpression>;
+}
+
+export namespace while_ {
+  export function from(options: WhileStatementOptions): WhileBuilder {
+    const b = new WhileBuilder(options.condition);
+    if (options.body !== undefined) b.body(options.body);
+    return b;
+  }
 }

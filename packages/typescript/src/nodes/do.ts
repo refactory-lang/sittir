@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { DoStatement } from '../types.js';
+import type { DoStatement, ParenthesizedExpression, Statement } from '../types.js';
 
 
-class DoBuilder extends BaseBuilder<DoStatement> {
-  private _body: BaseBuilder;
-  private _condition!: BaseBuilder;
+class DoBuilder extends Builder<DoStatement> {
+  private _body: Builder;
+  private _condition!: Builder;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder) {
     super();
     this._body = body;
   }
 
-  condition(value: BaseBuilder): this {
+  condition(value: Builder): this {
     this._condition = value;
     return this;
   }
@@ -46,6 +46,21 @@ class DoBuilder extends BaseBuilder<DoStatement> {
   }
 }
 
-export function do_(body: BaseBuilder): DoBuilder {
+export type { DoBuilder };
+
+export function do_(body: Builder): DoBuilder {
   return new DoBuilder(body);
+}
+
+export interface DoStatementOptions {
+  body: Builder<Statement>;
+  condition: Builder<ParenthesizedExpression>;
+}
+
+export namespace do_ {
+  export function from(options: DoStatementOptions): DoBuilder {
+    const b = new DoBuilder(options.body);
+    if (options.condition !== undefined) b.condition(options.condition);
+    return b;
+  }
 }

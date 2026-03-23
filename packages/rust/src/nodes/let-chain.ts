@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LetChain } from '../types.js';
+import type { Expression, LetChain, LetCondition } from '../types.js';
 
 
-class LetChainBuilder extends BaseBuilder<LetChain> {
-  private _children: BaseBuilder[] = [];
+class LetChainBuilder extends Builder<LetChain> {
+  private _children: Builder[] = [];
 
-  constructor(children: BaseBuilder[]) {
+  constructor(...children: Builder[]) {
     super();
     this._children = children;
   }
@@ -33,6 +33,21 @@ class LetChainBuilder extends BaseBuilder<LetChain> {
   }
 }
 
-export function let_chain(children: BaseBuilder[]): LetChainBuilder {
-  return new LetChainBuilder(children);
+export type { LetChainBuilder };
+
+export function let_chain(...children: Builder[]): LetChainBuilder {
+  return new LetChainBuilder(...children);
+}
+
+export interface LetChainOptions {
+  children: Builder<Expression | LetCondition> | (Builder<Expression | LetCondition>)[];
+}
+
+export namespace let_chain {
+  export function from(options: LetChainOptions): LetChainBuilder {
+    const _children = options.children;
+    const _arr = Array.isArray(_children) ? _children : [_children];
+    const b = new LetChainBuilder(..._arr);
+    return b;
+  }
 }

@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionModifiers } from '../types.js';
+import type { ExternModifier, FunctionModifiers } from '../types.js';
 
 
-class FunctionModifiersBuilder extends BaseBuilder<FunctionModifiers> {
-  private _children: BaseBuilder[] = [];
+class FunctionModifiersBuilder extends Builder<FunctionModifiers> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -35,6 +35,24 @@ class FunctionModifiersBuilder extends BaseBuilder<FunctionModifiers> {
   }
 }
 
+export type { FunctionModifiersBuilder };
+
 export function function_modifiers(): FunctionModifiersBuilder {
   return new FunctionModifiersBuilder();
+}
+
+export interface FunctionModifiersOptions {
+  children?: Builder<ExternModifier> | (Builder<ExternModifier>)[];
+}
+
+export namespace function_modifiers {
+  export function from(options: FunctionModifiersOptions): FunctionModifiersBuilder {
+    const b = new FunctionModifiersBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }

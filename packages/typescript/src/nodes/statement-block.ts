@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { StatementBlock } from '../types.js';
+import type { Statement, StatementBlock } from '../types.js';
 
 
-class StatementBlockBuilder extends BaseBuilder<StatementBlock> {
-  private _children: BaseBuilder[] = [];
+class StatementBlockBuilder extends Builder<StatementBlock> {
+  private _children: Builder[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder[]): this {
     this._children = value;
     return this;
   }
@@ -41,6 +41,24 @@ class StatementBlockBuilder extends BaseBuilder<StatementBlock> {
   }
 }
 
+export type { StatementBlockBuilder };
+
 export function statement_block(): StatementBlockBuilder {
   return new StatementBlockBuilder();
+}
+
+export interface StatementBlockOptions {
+  children?: Builder<Statement> | (Builder<Statement>)[];
+}
+
+export namespace statement_block {
+  export function from(options: StatementBlockOptions): StatementBlockBuilder {
+    const b = new StatementBlockBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr);
+    }
+    return b;
+  }
 }
