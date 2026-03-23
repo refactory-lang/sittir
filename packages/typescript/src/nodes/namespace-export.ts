@@ -1,14 +1,14 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Identifier, NamespaceExport } from '../types.js';
+import type { Identifier, NamespaceExport, String } from '../types.js';
 
 
 class NamespaceExportBuilder extends Builder<NamespaceExport> {
-  private _children: Builder<Identifier>[] = [];
+  private _children: Builder<Identifier | String>[] = [];
 
-  constructor(children: Builder<Identifier>) {
+  constructor(...children: Builder<Identifier | String>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -22,7 +22,7 @@ class NamespaceExportBuilder extends Builder<NamespaceExport> {
   build(ctx?: RenderContext): NamespaceExport {
     return {
       kind: 'namespace_export',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as NamespaceExport;
   }
 
@@ -41,18 +41,19 @@ class NamespaceExportBuilder extends Builder<NamespaceExport> {
 
 export type { NamespaceExportBuilder };
 
-export function namespace_export(children: Builder<Identifier>): NamespaceExportBuilder {
-  return new NamespaceExportBuilder(children);
+export function namespace_export(...children: Builder<Identifier | String>[]): NamespaceExportBuilder {
+  return new NamespaceExportBuilder(...children);
 }
 
 export interface NamespaceExportOptions {
-  children: Builder<Identifier> | (Builder<Identifier>)[];
+  children?: Builder<Identifier | String> | string | (Builder<Identifier | String> | string)[];
 }
 
 export namespace namespace_export {
   export function from(options: NamespaceExportOptions): NamespaceExportBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new NamespaceExportBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new NamespaceExportBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v));
     return b;
   }
 }

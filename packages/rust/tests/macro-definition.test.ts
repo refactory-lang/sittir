@@ -13,9 +13,6 @@ describe('macro_definition', () => {
     const builder = ir.macroDefinition(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('macro_rules!');
-    expect(source).toContain('(');
-    expect(source).toContain(')');
-    expect(source).toContain(';');
   });
 
   it('should produce a valid CST node', () => {

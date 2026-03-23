@@ -1,23 +1,26 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AbstractClassDeclaration, ClassBody, ClassHeritage, Decorator, TypeIdentifier, TypeParameters } from '../types.js';
+import { decorator } from './decorator.js';
+import type { DecoratorOptions } from './decorator.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { class_body } from './class-body.js';
+import type { ClassBodyOptions } from './class-body.js';
+import { class_heritage } from './class-heritage.js';
+import type { ClassHeritageOptions } from './class-heritage.js';
 
 
 class AbstractClassDeclarationBuilder extends Builder<AbstractClassDeclaration> {
-  private _body!: Builder<ClassBody>;
   private _decorator: Builder<Decorator>[] = [];
   private _name: Builder<TypeIdentifier>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _body!: Builder<ClassBody>;
   private _children: Builder<ClassHeritage>[] = [];
 
   constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
-  }
-
-  body(value: Builder<ClassBody>): this {
-    this._body = value;
-    return this;
   }
 
   decorator(...value: Builder<Decorator>[]): this {
@@ -27,6 +30,11 @@ class AbstractClassDeclarationBuilder extends Builder<AbstractClassDeclaration> 
 
   typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
+    return this;
+  }
+
+  body(value: Builder<ClassBody>): this {
+    this._body = value;
     return this;
   }
 
@@ -50,10 +58,10 @@ class AbstractClassDeclarationBuilder extends Builder<AbstractClassDeclaration> 
   build(ctx?: RenderContext): AbstractClassDeclaration {
     return {
       kind: 'abstract_class_declaration',
-      body: this._body?.build(ctx),
       decorator: this._decorator.map(c => c.build(ctx)),
       name: this._name.build(ctx),
       typeParameters: this._typeParameters?.build(ctx),
+      body: this._body?.build(ctx),
       children: this._children[0]?.build(ctx),
     } as AbstractClassDeclaration;
   }
@@ -84,28 +92,34 @@ export function abstract_class_declaration(name: Builder<TypeIdentifier>): Abstr
 }
 
 export interface AbstractClassDeclarationOptions {
-  body: Builder<ClassBody>;
-  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
+  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
   name: Builder<TypeIdentifier> | string;
-  typeParameters?: Builder<TypeParameters>;
-  children?: Builder<ClassHeritage> | (Builder<ClassHeritage>)[];
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  body: Builder<ClassBody> | ClassBodyOptions;
+  children?: Builder<ClassHeritage> | ClassHeritageOptions | (Builder<ClassHeritage> | ClassHeritageOptions)[];
 }
 
 export namespace abstract_class_declaration {
   export function from(options: AbstractClassDeclarationOptions): AbstractClassDeclarationBuilder {
     const _ctor = options.name;
     const b = new AbstractClassDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
-    if (options.body !== undefined) b.body(options.body);
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr);
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
     }
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : class_body.from(_v as ClassBodyOptions));
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : class_heritage.from(_x as ClassHeritageOptions)));
     }
     return b;
   }

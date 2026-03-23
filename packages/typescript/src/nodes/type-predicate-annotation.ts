@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypePredicate, TypePredicateAnnotation } from '../types.js';
+import { type_predicate } from './type-predicate.js';
+import type { TypePredicateOptions } from './type-predicate.js';
 
 
 class TypePredicateAnnotationBuilder extends Builder<TypePredicateAnnotation> {
@@ -44,13 +46,13 @@ export function type_predicate_annotation(children: Builder<TypePredicate>): Typ
 }
 
 export interface TypePredicateAnnotationOptions {
-  children: Builder<TypePredicate> | (Builder<TypePredicate>)[];
+  children: Builder<TypePredicate> | TypePredicateOptions | (Builder<TypePredicate> | TypePredicateOptions)[];
 }
 
 export namespace type_predicate_annotation {
   export function from(options: TypePredicateAnnotationOptions): TypePredicateAnnotationBuilder {
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new TypePredicateAnnotationBuilder(_ctor);
+    const b = new TypePredicateAnnotationBuilder(_ctor instanceof Builder ? _ctor : type_predicate.from(_ctor as TypePredicateOptions));
     return b;
   }
 }

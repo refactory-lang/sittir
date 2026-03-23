@@ -13,6 +13,7 @@ import { attribute as attributeItem } from './nodes/attribute-item.js';
 import { await_expression } from './nodes/await-expression.js';
 import { base_field_initializer } from './nodes/base-field-initializer.js';
 import { binary_expression } from './nodes/binary-expression.js';
+import { block } from './nodes/block.js';
 import { block_comment } from './nodes/block-comment.js';
 import { bounded_type } from './nodes/bounded-type.js';
 import { bracketed_type } from './nodes/bracketed-type.js';
@@ -62,6 +63,7 @@ import { label } from './nodes/label.js';
 import { let_chain } from './nodes/let-chain.js';
 import { let_condition } from './nodes/let-condition.js';
 import { let_declaration } from './nodes/let-declaration.js';
+import { lifetime } from './nodes/lifetime.js';
 import { lifetime_parameter } from './nodes/lifetime-parameter.js';
 import { line_comment } from './nodes/line-comment.js';
 import { loop_expression } from './nodes/loop-expression.js';
@@ -150,6 +152,7 @@ export const ir = {
   awaitExpression: await_expression,
   baseFieldInitializer: base_field_initializer,
   binaryExpression: binary_expression,
+  block,
   blockComment: block_comment,
   boundedType: bounded_type,
   bracketedType: bracketed_type,
@@ -199,6 +202,7 @@ export const ir = {
   letChain: let_chain,
   letCondition: let_condition,
   letDeclaration: let_declaration,
+  lifetime,
   lifetimeParameter: lifetime_parameter,
   lineComment: line_comment,
   loopExpression: loop_expression,
@@ -360,6 +364,7 @@ export const ir = {
     asyncBlock: async_block,
     await: await_expression,
     binary: binary_expression,
+    block: block,
     break: break_expression,
     call: call_expression,
     closure: closure_expression,
@@ -554,6 +559,15 @@ function resolveBuilder(node: CSTNode): Builder | null {
       if (operatorChild) b.operator(fromCST(operatorChild) as any);
       const rightChild = n.childForFieldName('right');
       if (rightChild) b.right(fromCST(rightChild) as any);
+      return b;
+    }
+    case 'block': {
+      const n = node as CSTNode<'block'>;
+      const b = ir.block();
+      const remainingChildren = n.namedChildren.filter(c => {
+        return true;
+      });
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'block_comment': {
@@ -1030,6 +1044,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
+      return b;
+    }
+    case 'lifetime': {
+      const n = node as CSTNode<'lifetime'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.lifetime(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'lifetime_parameter': {

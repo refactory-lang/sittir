@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { IntersectionType } from '../types.js';
+import type { IntersectionType, Type } from '../types.js';
 
 
 class IntersectionTypeBuilder extends Builder<IntersectionType> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Type>[]) {
     super();
     this._children = children;
   }
@@ -43,18 +43,18 @@ class IntersectionTypeBuilder extends Builder<IntersectionType> {
 
 export type { IntersectionTypeBuilder };
 
-export function intersection_type(...children: Builder[]): IntersectionTypeBuilder {
+export function intersection_type(...children: Builder<Type>[]): IntersectionTypeBuilder {
   return new IntersectionTypeBuilder(...children);
 }
 
 export interface IntersectionTypeOptions {
-  children: Builder | (Builder)[];
+  children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace intersection_type {
   export function from(options: IntersectionTypeOptions): IntersectionTypeBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new IntersectionTypeBuilder(..._arr);
     return b;
   }

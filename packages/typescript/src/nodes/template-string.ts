@@ -4,11 +4,11 @@ import type { EscapeSequence, StringFragment, TemplateString, TemplateSubstituti
 
 
 class TemplateStringBuilder extends Builder<TemplateString> {
-  private _children: Builder<EscapeSequence | StringFragment | TemplateSubstitution>[] = [];
+  private _children: Builder<StringFragment | EscapeSequence | TemplateSubstitution>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<EscapeSequence | StringFragment | TemplateSubstitution>[]): this {
+  children(...value: Builder<StringFragment | EscapeSequence | TemplateSubstitution>[]): this {
     this._children = value;
     return this;
   }
@@ -48,7 +48,7 @@ export function template_string(): TemplateStringBuilder {
 }
 
 export interface TemplateStringOptions {
-  children?: Builder<EscapeSequence | StringFragment | TemplateSubstitution> | (Builder<EscapeSequence | StringFragment | TemplateSubstitution>)[];
+  children?: Builder<StringFragment | EscapeSequence | TemplateSubstitution> | (Builder<StringFragment | EscapeSequence | TemplateSubstitution>)[];
 }
 
 export namespace template_string {

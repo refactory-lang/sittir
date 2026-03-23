@@ -30,10 +30,10 @@ class DictPatternBuilder extends Builder<DictPattern> {
     parts.push('{');
     if (this._key.length > 0) {
       if (this._key.length > 0) parts.push(this.renderChildren(this._key, ', ', ctx));
-      parts.push(':');
       if (this._value.length > 0) parts.push(this.renderChildren(this._value, ', ', ctx));
+      if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
       parts.push(',');
-      parts.push(':');
+      if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
       parts.push(',');
     }
     parts.push('}');
@@ -58,12 +58,12 @@ class DictPatternBuilder extends Builder<DictPattern> {
       for (const child of this._key) {
         parts.push({ kind: 'builder', builder: child, fieldName: 'key' });
       }
-      parts.push({ kind: 'token', text: ':', type: ':' });
       for (const child of this._value) {
         parts.push({ kind: 'builder', builder: child, fieldName: 'value' });
       }
+      if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
       parts.push({ kind: 'token', text: ',', type: ',' });
-      parts.push({ kind: 'token', text: ':', type: ':' });
+      if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
       parts.push({ kind: 'token', text: ',', type: ',' });
     }
     parts.push({ kind: 'token', text: '}', type: '}' });

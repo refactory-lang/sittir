@@ -23,7 +23,6 @@ class ArrayExpressionBuilder extends Builder<ArrayExpression> {
     const parts: string[] = [];
     parts.push('[');
     if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
-    parts.push(';');
     if (this._length) parts.push(this.renderChild(this._length, ctx));
     parts.push(']');
     return parts.join(' ');
@@ -45,7 +44,6 @@ class ArrayExpressionBuilder extends Builder<ArrayExpression> {
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
-    parts.push({ kind: 'token', text: ';', type: ';' });
     if (this._length) parts.push({ kind: 'builder', builder: this._length, fieldName: 'length' });
     parts.push({ kind: 'token', text: ']', type: ']' });
     return parts;

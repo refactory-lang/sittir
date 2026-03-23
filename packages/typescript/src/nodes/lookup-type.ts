@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LookupType } from '../types.js';
+import type { LookupType, PrimaryType, Type } from '../types.js';
 
 
 class LookupTypeBuilder extends Builder<LookupType> {
-  private _children: Builder[] = [];
+  private _children: Builder<PrimaryType | Type>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<PrimaryType | Type>[]) {
     super();
     this._children = children;
   }
@@ -41,18 +41,18 @@ class LookupTypeBuilder extends Builder<LookupType> {
 
 export type { LookupTypeBuilder };
 
-export function lookup_type(...children: Builder[]): LookupTypeBuilder {
+export function lookup_type(...children: Builder<PrimaryType | Type>[]): LookupTypeBuilder {
   return new LookupTypeBuilder(...children);
 }
 
 export interface LookupTypeOptions {
-  children: Builder | (Builder)[];
+  children?: Builder<PrimaryType | Type> | (Builder<PrimaryType | Type>)[];
 }
 
 export namespace lookup_type {
   export function from(options: LookupTypeOptions): LookupTypeBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new LookupTypeBuilder(..._arr);
     return b;
   }

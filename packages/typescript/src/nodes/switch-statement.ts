@@ -1,11 +1,15 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ParenthesizedExpression, SwitchBody, SwitchStatement } from '../types.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
+import { switch_body } from './switch-body.js';
+import type { SwitchBodyOptions } from './switch-body.js';
 
 
 class SwitchStatementBuilder extends Builder<SwitchStatement> {
-  private _body!: Builder<SwitchBody>;
   private _value: Builder<ParenthesizedExpression>;
+  private _body!: Builder<SwitchBody>;
 
   constructor(value: Builder<ParenthesizedExpression>) {
     super();
@@ -28,8 +32,8 @@ class SwitchStatementBuilder extends Builder<SwitchStatement> {
   build(ctx?: RenderContext): SwitchStatement {
     return {
       kind: 'switch_statement',
-      body: this._body?.build(ctx),
       value: this._value.build(ctx),
+      body: this._body?.build(ctx),
     } as SwitchStatement;
   }
 
@@ -51,14 +55,18 @@ export function switch_statement(value: Builder<ParenthesizedExpression>): Switc
 }
 
 export interface SwitchStatementOptions {
-  body: Builder<SwitchBody>;
-  value: Builder<ParenthesizedExpression>;
+  value: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
+  body: Builder<SwitchBody> | SwitchBodyOptions;
 }
 
 export namespace switch_statement {
   export function from(options: SwitchStatementOptions): SwitchStatementBuilder {
-    const b = new SwitchStatementBuilder(options.value);
-    if (options.body !== undefined) b.body(options.body);
+    const _ctor = options.value;
+    const b = new SwitchStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor as ParenthesizedExpressionOptions));
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : switch_body.from(_v as SwitchBodyOptions));
+    }
     return b;
   }
 }

@@ -1,13 +1,13 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Identifier, ImportSpecifier } from '../types.js';
+import type { Identifier, ImportSpecifier, String } from '../types.js';
 
 
 class ImportSpecifierBuilder extends Builder<ImportSpecifier> {
+  private _name: Builder<Identifier | String>;
   private _alias?: Builder<Identifier>;
-  private _name: Builder<Identifier>;
 
-  constructor(name: Builder<Identifier>) {
+  constructor(name: Builder<Identifier | String>) {
     super();
     this._name = name;
   }
@@ -27,8 +27,8 @@ class ImportSpecifierBuilder extends Builder<ImportSpecifier> {
   build(ctx?: RenderContext): ImportSpecifier {
     return {
       kind: 'import_specifier',
-      alias: this._alias?.build(ctx),
       name: this._name.build(ctx),
+      alias: this._alias?.build(ctx),
     } as ImportSpecifier;
   }
 
@@ -44,18 +44,19 @@ class ImportSpecifierBuilder extends Builder<ImportSpecifier> {
 
 export type { ImportSpecifierBuilder };
 
-export function import_specifier(name: Builder<Identifier>): ImportSpecifierBuilder {
+export function import_specifier(name: Builder<Identifier | String>): ImportSpecifierBuilder {
   return new ImportSpecifierBuilder(name);
 }
 
 export interface ImportSpecifierOptions {
+  name: Builder<Identifier | String> | string;
   alias?: Builder<Identifier> | string;
-  name: Builder<Identifier>;
 }
 
 export namespace import_specifier {
   export function from(options: ImportSpecifierOptions): ImportSpecifierBuilder {
-    const b = new ImportSpecifierBuilder(options.name);
+    const _ctor = options.name;
+    const b = new ImportSpecifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.alias !== undefined) {
       const _v = options.alias;
       b.alias(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);

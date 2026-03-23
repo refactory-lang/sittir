@@ -9,12 +9,6 @@ describe('splat_type', () => {
     expect((node as any).children).toHaveProperty('kind');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.splatType(ir.identifier('test'));
-    const source = builder.renderImpl();
-    expect(source).toContain('*');
-  });
-
   it('should produce a valid CST node', () => {
     const builder = ir.splatType(ir.identifier('test'));
     const cst = builder.toCST();

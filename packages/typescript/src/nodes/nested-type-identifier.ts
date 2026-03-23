@@ -51,7 +51,7 @@ export function nested_type_identifier(name: Builder<TypeIdentifier>): NestedTyp
 }
 
 export interface NestedTypeIdentifierOptions {
-  module: Builder<Identifier | NestedIdentifier>;
+  module: Builder<Identifier | NestedIdentifier> | string;
   name: Builder<TypeIdentifier> | string;
 }
 
@@ -59,7 +59,10 @@ export namespace nested_type_identifier {
   export function from(options: NestedTypeIdentifierOptions): NestedTypeIdentifierBuilder {
     const _ctor = options.name;
     const b = new NestedTypeIdentifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
-    if (options.module !== undefined) b.module(options.module);
+    if (options.module !== undefined) {
+      const _v = options.module;
+      b.module(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
+    }
     return b;
   }
 }

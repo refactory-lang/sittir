@@ -16,6 +16,7 @@ import {
   toBuilderClassName,
   toShortName,
   toFieldName,
+  toFileName,
   toParamName,
 } from '../naming.ts';
 
@@ -192,6 +193,121 @@ function flattenRule(
           return flattenRule(symbolMember, fieldMeta, grammar, optional);
         }
       }
+
+      // Multi-branch CHOICE (e.g. export_statement with wildcard/declaration/type variants):
+      // 1. Find tokens common to ALL branches (truly required)
+      // 2. Merge fields from all branches
+      // 3. Group branch-specific tokens with adjacent fields
+      if (nonBlank.length > 1) {
+        const branches = nonBlank.map(m => flattenRule(m, fieldMeta, grammar, true));
+
+        // Find tokens that appear in ALL branches
+        const collectTokens = (els: RenderElement[]): Set<string> => {
+          const tokens = new Set<string>();
+          for (const el of els) {
+            if (el.kind === 'token') tokens.add(el.value);
+            if (el.kind === 'group') for (const ge of el.elements) {
+              if (ge.kind === 'token') tokens.add(ge.value);
+            }
+          }
+          return tokens;
+        };
+        const tokenSets = branches.map(collectTokens);
+        const commonTokens = new Set(
+          [...tokenSets[0]!].filter(t => tokenSets.every(s => s.has(t))),
+        );
+
+        // Score branches by field coverage for ordering
+        const scored = branches.map((flattened, idx) => {
+          let fieldCount = 0;
+          for (const el of flattened) {
+            if (el.kind === 'field' && fieldMeta.has(el.name)) fieldCount++;
+            if (el.kind === 'group') for (const ge of el.elements) {
+              if (ge.kind === 'field' && fieldMeta.has(ge.name)) fieldCount++;
+            }
+          }
+          return { flattened, idx, fieldCount };
+        });
+        scored.sort((a, b) => b.fieldCount - a.fieldCount);
+
+        // If scoring doesn't differentiate branches (all same count),
+        // fall back to first-branch behavior (preserves tokens like ';' in expression_statement)
+        const allSameScore = scored.every(s => s.fieldCount === scored[0]!.fieldCount);
+        if (allSameScore) {
+          return flattenRule(nonBlank[0]!, fieldMeta, grammar, optional);
+        }
+
+        const result: RenderElement[] = [];
+        const seenFields = new Set<string>();
+        const seenTokens = new Set<string>();
+        let seenChildren = false;
+
+        // Compute which fields are unique to a single branch vs shared
+        const fieldBranchCount = new Map<string, number>();
+        for (const { flattened } of scored) {
+          const branchFields = new Set<string>();
+          for (const el of flattened) {
+            if (el.kind === 'field' && fieldMeta.has(el.name)) branchFields.add(el.name);
+            if (el.kind === 'group') for (const ge of el.elements) {
+              if (ge.kind === 'field' && fieldMeta.has(ge.name)) branchFields.add(ge.name);
+            }
+          }
+          for (const f of branchFields) {
+            fieldBranchCount.set(f, (fieldBranchCount.get(f) ?? 0) + 1);
+          }
+        }
+
+        for (const { flattened } of scored) {
+          for (const el of flattened) {
+            if (el.kind === 'token') {
+              // Common tokens → non-optional; branch-specific → skip
+              if (commonTokens.has(el.value) && !seenTokens.has(el.value)) {
+                seenTokens.add(el.value);
+                result.push({ ...el, optional });
+              }
+            } else if (el.kind === 'field') {
+              if (!seenFields.has(el.name) && fieldMeta.has(el.name)) {
+                seenFields.add(el.name);
+                result.push(el);
+              }
+            } else if (el.kind === 'group') {
+              const hasNewField = el.elements.some(
+                ge => ge.kind === 'field' && !seenFields.has(ge.name) && fieldMeta.has(ge.name),
+              );
+              if (hasNewField) {
+                // Filter branch-specific tokens from groups unless the guard field is unique to this branch
+                const guardField = el.elements.find(e => e.kind === 'field');
+                const guardName = guardField?.kind === 'field' ? guardField.name : undefined;
+                const guardIsUnique = guardName && (fieldBranchCount.get(guardName) ?? 0) <= 1;
+
+                if (guardIsUnique) {
+                  // Keep the group as-is (tokens are meaningful for this unique field)
+                  for (const ge of el.elements) {
+                    if (ge.kind === 'field') seenFields.add(ge.name);
+                  }
+                  result.push(el);
+                } else {
+                  // Strip branch-specific tokens, just add the fields
+                  for (const ge of el.elements) {
+                    if (ge.kind === 'field' && !seenFields.has(ge.name) && fieldMeta.has(ge.name)) {
+                      seenFields.add(ge.name);
+                      result.push(ge);
+                    }
+                  }
+                }
+              }
+            } else if (el.kind === 'symbol') {
+              if (!seenChildren) {
+                seenChildren = true;
+                result.push(el);
+              }
+            }
+          }
+        }
+
+        return result;
+      }
+
       return flattenRule(nonBlank[0]!, fieldMeta, grammar, optional);
     }
 
@@ -640,10 +756,71 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     }
   }
 
+  // Find the leaf kind for a field's named types (enables string auto-wrapping).
+  // Only matches when the field is unambiguously a leaf position:
+  // - Exactly one named type that's a leaf
+  // - Or one named type that's a non-leaf plus one-or-more leaf alternatives
+  //   (e.g., ['nested_type_identifier', 'type_identifier'] — the leaf is the string target)
+  function findLeafKind(namedTypes: string[]): string | undefined {
+    if (namedTypes.length === 0) return undefined;
+    // Single leaf type — unambiguous
+    if (namedTypes.length === 1 && leafKindSet.has(namedTypes[0]!)) return namedTypes[0]!;
+    // Multiple types: only if ALL are leaves (rare) or mix of few leaves + few branches
+    // For now: accept string if there's exactly one leaf among a small set (≤3 types)
+    if (namedTypes.length <= 3) {
+      const leaves = namedTypes.filter(nt => leafKindSet.has(nt));
+      if (leaves.length === 1) return leaves[0]!;
+    }
+    // Supertypes with many subtypes → never auto-resolve to string
+    return undefined;
+  }
+
+  // Find the single branch node kind for a field (enables POJO auto-resolution).
+  // Returns the kind if there's exactly ONE named type that's a concrete node (not leaf, not supertype).
+  function findSingleBranchKind(namedTypes: string[]): string | undefined {
+    if (namedTypes.length !== 1) return undefined;
+    const nt = namedTypes[0]!;
+    if (leafKindSet.has(nt)) return undefined;
+    if (supertypes.some(s => s.name === nt)) return undefined;
+    if (nodeKindSet.has(nt)) return nt;
+    return undefined;
+  }
+
   // Check if .from() needs LeafBuilder for string → builder resolution
-  const hasLeafResolution = node.fields.some(f =>
-    f.namedTypes.length === 1 && leafKindSet.has(f.namedTypes[0]!)
-  ) || !!(node.children?.namedTypes.length === 1 && node.children.namedTypes[0] !== undefined && leafKindSet.has(node.children.namedTypes[0]));
+  const hasLeafResolution = node.fields.some(f => findLeafKind(f.namedTypes) !== undefined)
+    || !!(node.children && findLeafKind(node.children.namedTypes) !== undefined);
+
+  // Collect cross-builder POJO dependencies: fields with a single branch kind
+  // that can accept a plain options object instead of a Builder instance.
+  // Map from field name → { kind, shortName, fileName, typeName, optionsName }
+  const pojoDeps = new Map<string, { kind: string; shortName: string; fileName: string; typeName: string; optionsName: string }>();
+  for (const field of node.fields) {
+    const branchKind = findSingleBranchKind(field.namedTypes);
+    if (branchKind && branchKind !== kind) { // skip self-references
+      pojoDeps.set(field.name, {
+        kind: branchKind,
+        shortName: toShortName(branchKind),
+        fileName: toFileName(branchKind),
+        typeName: toTypeName(branchKind),
+        optionsName: `${toTypeName(branchKind)}Options`,
+      });
+    }
+  }
+  // Also check children
+  let childrenPojoDep: { kind: string; shortName: string; fileName: string; typeName: string; optionsName: string } | undefined;
+  if (node.children) {
+    const branchKind = findSingleBranchKind(node.children.namedTypes);
+    if (branchKind && branchKind !== kind) {
+      childrenPojoDep = {
+        kind: branchKind,
+        shortName: toShortName(branchKind),
+        fileName: toFileName(branchKind),
+        typeName: toTypeName(branchKind),
+        optionsName: `${toTypeName(branchKind)}Options`,
+      };
+    }
+  }
+  const hasPojoDeps = pojoDeps.size > 0 || childrenPojoDep !== undefined;
 
   /** Get the Builder<T> type string for a field, or plain Builder if unresolved. */
   function builderType(fieldName: string): string {
@@ -672,6 +849,22 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // Import all referenced types from types.ts
   const sortedImports = [...importedTypes].sort();
   lines.push(`import type { ${sortedImports.join(', ')} } from '../types.js';`);
+
+  // Cross-builder imports for POJO auto-resolution in .from()
+  if (hasPojoDeps) {
+    const allDeps = new Map(pojoDeps);
+    if (childrenPojoDep) allDeps.set('__children__', childrenPojoDep);
+    // Deduplicate by kind (multiple fields might reference the same builder)
+    const byKind = new Map<string, { shortName: string; fileName: string; optionsName: string }>();
+    for (const dep of allDeps.values()) {
+      byKind.set(dep.kind, dep);
+    }
+    for (const dep of byKind.values()) {
+      lines.push(`import { ${dep.shortName} } from './${dep.fileName}.js';`);
+      lines.push(`import type { ${dep.optionsName} } from './${dep.fileName}.js';`);
+    }
+  }
+
   lines.push('');
   lines.push('');
 
@@ -907,12 +1100,29 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // --- .from() declarative API ---
   const optionsName = `${typeName}Options`;
 
+  // Compute the accepted option type for a field (Builder, | string, | XxxOptions)
+  function fieldOptionType(preciseType: string, namedTypes: string[], fieldName?: string): string {
+    const leafKind = findLeafKind(namedTypes);
+    if (leafKind) return `${preciseType} | string`;
+    const pojoEntry = fieldName !== undefined ? pojoDeps.get(fieldName) : childrenPojoDep;
+    if (pojoEntry) return `${preciseType} | ${pojoEntry.optionsName}`;
+    return preciseType;
+  }
+
+  // Generate a resolution expression for a value that may be string, POJO, or Builder
+  function fieldResolveExpr(varName: string, namedTypes: string[], fieldName?: string): string | undefined {
+    const leafKind = findLeafKind(namedTypes);
+    if (leafKind) return `typeof ${varName} === 'string' ? new LeafBuilder('${leafKind}', ${varName}) : ${varName}`;
+    const pojoEntry = fieldName !== undefined ? pojoDeps.get(fieldName) : childrenPojoDep;
+    if (pojoEntry) return `${varName} instanceof Builder ? ${varName} : ${pojoEntry.shortName}.from(${varName} as ${pojoEntry.optionsName})`;
+    return undefined;
+  }
+
   lines.push(`export interface ${optionsName} {`);
   for (const field of node.fields) {
     const fieldName = toFieldName(field.name);
     const preciseType = builderType(field.name);
-    const isLeaf = field.namedTypes.length === 1 && leafKindSet.has(field.namedTypes[0]!);
-    const baseType = isLeaf ? `${preciseType} | string` : preciseType;
+    const baseType = fieldOptionType(preciseType, field.namedTypes, field.name);
     const optional = !field.required;
 
     if (field.multiple) {
@@ -923,17 +1133,12 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   }
   if (node.hasChildren) {
     const ct = childBuilderType();
-    const isLeaf = !!(node.children?.namedTypes.length === 1 && node.children.namedTypes[0] !== undefined && leafKindSet.has(node.children.namedTypes[0]));
-    const baseType = isLeaf ? `${ct} | string` : ct;
-    const isRequired = !!(node.children?.required && constructorParam?.source === 'children');
+    const baseType = fieldOptionType(ct, node.children!.namedTypes);
+    const isRequired = !!(node.children?.required && constructorParam?.source === 'children' && !node.children?.multiple);
     lines.push(`  children${isRequired ? '' : '?'}: ${baseType} | (${baseType})[];`);
   }
   lines.push('}');
   lines.push('');
-
-  // Helper for leaf resolution expressions
-  const resolveExpr = (varName: string, leafKind: string) =>
-    `typeof ${varName} === 'string' ? new LeafBuilder('${leafKind}', ${varName}) : ${varName}`;
 
   // Namespace with .from()
   lines.push(`export namespace ${shortName} {`);
@@ -943,30 +1148,28 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   if (constructorParam && constructorParam.source === 'field') {
     const ctorFieldName = toFieldName(constructorParam.name);
     const ctorField = node.fields.find(f => f.name === constructorParam.name);
-    const ctorLeaf = !!(ctorField && ctorField.namedTypes.length === 1 && leafKindSet.has(ctorField.namedTypes[0]!));
-    const ctorLeafKind = ctorLeaf ? ctorField!.namedTypes[0]! : '';
+    const resolve = ctorField ? fieldResolveExpr('_ctor', ctorField.namedTypes, ctorField.name) : undefined;
 
     if (ctorField?.multiple) {
       lines.push(`    const _ctor = options.${ctorFieldName};`);
       lines.push(`    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];`);
-      if (ctorLeaf) {
-        lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => ${resolveExpr('_v', ctorLeafKind)}));`);
+      if (resolve) {
+        lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => ${fieldResolveExpr('_v', ctorField!.namedTypes, ctorField!.name)}));`);
       } else {
         lines.push(`    const b = new ${builderClassName}(..._arr);`);
       }
     } else {
-      if (ctorLeaf) {
+      if (resolve) {
         lines.push(`    const _ctor = options.${ctorFieldName};`);
-        lines.push(`    const b = new ${builderClassName}(${resolveExpr('_ctor', ctorLeafKind)});`);
+        lines.push(`    const b = new ${builderClassName}(${resolve});`);
       } else {
         lines.push(`    const b = new ${builderClassName}(options.${ctorFieldName});`);
       }
     }
   } else if (constructorParam?.source === 'children') {
     const isMultiple = node.children?.multiple;
-    const isLeaf = !!(node.children?.namedTypes.length === 1 && node.children.namedTypes[0] !== undefined && leafKindSet.has(node.children.namedTypes[0]));
-    const leafKind = isLeaf ? node.children!.namedTypes[0]! : '';
-    const childrenRequired = !!node.children?.required;
+    const resolve = node.children ? fieldResolveExpr('_v', node.children.namedTypes) : undefined;
+    const childrenRequired = !!(node.children?.required && !isMultiple);
 
     if (isMultiple) {
       lines.push(`    const _children = options.children;`);
@@ -975,25 +1178,25 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       } else {
         lines.push(`    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];`);
       }
-      if (isLeaf) {
-        lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => ${resolveExpr('_v', leafKind)}));`);
+      if (resolve) {
+        lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => ${resolve}));`);
       } else {
         lines.push(`    const b = new ${builderClassName}(..._arr);`);
       }
     } else {
-      // Single child as constructor — normalize from T | T[]
+      const resolveCtorExpr = node.children ? fieldResolveExpr('_ctor', node.children.namedTypes) : undefined;
       if (childrenRequired) {
         lines.push(`    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;`);
-        if (isLeaf) {
-          lines.push(`    const b = new ${builderClassName}(${resolveExpr('_ctor', leafKind)});`);
+        if (resolveCtorExpr) {
+          lines.push(`    const b = new ${builderClassName}(${resolveCtorExpr});`);
         } else {
           lines.push(`    const b = new ${builderClassName}(_ctor);`);
         }
       } else {
         lines.push(`    const _raw = options.children;`);
         lines.push(`    const _ctor = _raw !== undefined ? (Array.isArray(_raw) ? _raw[0]! : _raw) : undefined;`);
-        if (isLeaf) {
-          lines.push(`    const b = _ctor !== undefined ? new ${builderClassName}(${resolveExpr('_ctor', leafKind)}) : new ${builderClassName}();`);
+        if (resolveCtorExpr) {
+          lines.push(`    const b = _ctor !== undefined ? new ${builderClassName}(${resolveCtorExpr}) : new ${builderClassName}();`);
         } else {
           lines.push(`    const b = _ctor !== undefined ? new ${builderClassName}(_ctor) : new ${builderClassName}();`);
         }
@@ -1006,24 +1209,23 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // Set non-constructor fields
   for (const field of setterFields) {
     const fieldName = toFieldName(field.name);
-    const isLeaf = field.namedTypes.length === 1 && leafKindSet.has(field.namedTypes[0]!);
-    const leafKind = isLeaf ? field.namedTypes[0]! : '';
+    const resolve = fieldResolveExpr('_v', field.namedTypes, field.name);
 
     if (field.multiple) {
       lines.push(`    if (options.${fieldName} !== undefined) {`);
       lines.push(`      const _v = options.${fieldName};`);
       lines.push(`      const _arr = Array.isArray(_v) ? _v : [_v];`);
-      if (isLeaf) {
-        lines.push(`      b.${fieldName}(..._arr.map(_x => ${resolveExpr('_x', leafKind)}));`);
+      if (resolve) {
+        lines.push(`      b.${fieldName}(..._arr.map(_v => ${resolve}));`);
       } else {
         lines.push(`      b.${fieldName}(..._arr);`);
       }
       lines.push(`    }`);
     } else {
-      if (isLeaf) {
+      if (resolve) {
         lines.push(`    if (options.${fieldName} !== undefined) {`);
         lines.push(`      const _v = options.${fieldName};`);
-        lines.push(`      b.${fieldName}(${resolveExpr('_v', leafKind)});`);
+        lines.push(`      b.${fieldName}(${resolve});`);
         lines.push(`    }`);
       } else {
         lines.push(`    if (options.${fieldName} !== undefined) b.${fieldName}(options.${fieldName});`);
@@ -1033,14 +1235,13 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // Children (if not constructor)
   if (node.hasChildren && constructorParam?.source !== 'children') {
-    const isLeaf = !!(node.children?.namedTypes.length === 1 && node.children.namedTypes[0] !== undefined && leafKindSet.has(node.children.namedTypes[0]));
-    const leafKind = isLeaf ? node.children!.namedTypes[0]! : '';
+    const resolve = node.children ? fieldResolveExpr('_x', node.children.namedTypes) : undefined;
 
     lines.push(`    if (options.children !== undefined) {`);
     lines.push(`      const _v = options.children;`);
     lines.push(`      const _arr = Array.isArray(_v) ? _v : [_v];`);
-    if (isLeaf) {
-      lines.push(`      b.children(..._arr.map(_x => ${resolveExpr('_x', leafKind)}));`);
+    if (resolve) {
+      lines.push(`      b.children(..._arr.map(_x => ${resolve}));`);
     } else {
       lines.push(`      b.children(..._arr);`);
     }

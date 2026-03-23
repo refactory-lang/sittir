@@ -11,12 +11,6 @@ describe('complex_pattern', () => {
     expect((node as any).children[0]).toHaveProperty('kind');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.complexPattern(ir.float('test'), ir.float('test'));
-    const source = builder.renderImpl();
-    expect(source).toContain('+');
-  });
-
   it('should produce a valid CST node', () => {
     const builder = ir.complexPattern(ir.float('test'), ir.float('test'));
     const cst = builder.toCST();

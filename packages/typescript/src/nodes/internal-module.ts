@@ -1,13 +1,15 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Identifier, InternalModule, NestedIdentifier, StatementBlock } from '../types.js';
+import type { Identifier, InternalModule, NestedIdentifier, StatementBlock, String } from '../types.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
 class InternalModuleBuilder extends Builder<InternalModule> {
+  private _name: Builder<String | Identifier | NestedIdentifier>;
   private _body?: Builder<StatementBlock>;
-  private _name: Builder<Identifier | NestedIdentifier>;
 
-  constructor(name: Builder<Identifier | NestedIdentifier>) {
+  constructor(name: Builder<String | Identifier | NestedIdentifier>) {
     super();
     this._name = name;
   }
@@ -28,8 +30,8 @@ class InternalModuleBuilder extends Builder<InternalModule> {
   build(ctx?: RenderContext): InternalModule {
     return {
       kind: 'internal_module',
-      body: this._body?.build(ctx),
       name: this._name.build(ctx),
+      body: this._body?.build(ctx),
     } as InternalModule;
   }
 
@@ -46,19 +48,23 @@ class InternalModuleBuilder extends Builder<InternalModule> {
 
 export type { InternalModuleBuilder };
 
-export function internal_module(name: Builder<Identifier | NestedIdentifier>): InternalModuleBuilder {
+export function internal_module(name: Builder<String | Identifier | NestedIdentifier>): InternalModuleBuilder {
   return new InternalModuleBuilder(name);
 }
 
 export interface InternalModuleOptions {
-  body?: Builder<StatementBlock>;
-  name: Builder<Identifier | NestedIdentifier>;
+  name: Builder<String | Identifier | NestedIdentifier> | string;
+  body?: Builder<StatementBlock> | StatementBlockOptions;
 }
 
 export namespace internal_module {
   export function from(options: InternalModuleOptions): InternalModuleBuilder {
-    const b = new InternalModuleBuilder(options.name);
-    if (options.body !== undefined) b.body(options.body);
+    const _ctor = options.name;
+    const b = new InternalModuleBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : statement_block.from(_v as StatementBlockOptions));
+    }
     return b;
   }
 }

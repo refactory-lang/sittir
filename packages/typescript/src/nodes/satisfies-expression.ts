@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Expression, SatisfiesExpression } from '../types.js';
+import type { Expression, SatisfiesExpression, Type } from '../types.js';
 
 
 class SatisfiesExpressionBuilder extends Builder<SatisfiesExpression> {
-  private _children: Builder<Expression>[] = [];
+  private _children: Builder<Expression | Type>[] = [];
 
-  constructor(...children: Builder<Expression>[]) {
+  constructor(...children: Builder<Expression | Type>[]) {
     super();
     this._children = children;
   }
@@ -39,18 +39,18 @@ class SatisfiesExpressionBuilder extends Builder<SatisfiesExpression> {
 
 export type { SatisfiesExpressionBuilder };
 
-export function satisfies_expression(...children: Builder<Expression>[]): SatisfiesExpressionBuilder {
+export function satisfies_expression(...children: Builder<Expression | Type>[]): SatisfiesExpressionBuilder {
   return new SatisfiesExpressionBuilder(...children);
 }
 
 export interface SatisfiesExpressionOptions {
-  children: Builder<Expression> | (Builder<Expression>)[];
+  children?: Builder<Expression | Type> | (Builder<Expression | Type>)[];
 }
 
 export namespace satisfies_expression {
   export function from(options: SatisfiesExpressionOptions): SatisfiesExpressionBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new SatisfiesExpressionBuilder(..._arr);
     return b;
   }

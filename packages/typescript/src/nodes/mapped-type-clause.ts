@@ -1,25 +1,25 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MappedTypeClause, TypeIdentifier } from '../types.js';
+import type { MappedTypeClause, Type, TypeIdentifier } from '../types.js';
 
 
 class MappedTypeClauseBuilder extends Builder<MappedTypeClause> {
-  private _alias?: Builder;
   private _name: Builder<TypeIdentifier>;
-  private _type!: Builder;
+  private _type!: Builder<Type>;
+  private _alias?: Builder<Type>;
 
   constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  alias(value: Builder): this {
-    this._alias = value;
+  type(value: Builder<Type>): this {
+    this._type = value;
     return this;
   }
 
-  type(value: Builder): this {
-    this._type = value;
+  alias(value: Builder<Type>): this {
+    this._alias = value;
     return this;
   }
 
@@ -38,9 +38,9 @@ class MappedTypeClauseBuilder extends Builder<MappedTypeClause> {
   build(ctx?: RenderContext): MappedTypeClause {
     return {
       kind: 'mapped_type_clause',
-      alias: this._alias?.build(ctx),
       name: this._name.build(ctx),
       type: this._type?.build(ctx),
+      alias: this._alias?.build(ctx),
     } as MappedTypeClause;
   }
 
@@ -66,17 +66,17 @@ export function mapped_type_clause(name: Builder<TypeIdentifier>): MappedTypeCla
 }
 
 export interface MappedTypeClauseOptions {
-  alias?: Builder;
   name: Builder<TypeIdentifier> | string;
-  type: Builder;
+  type: Builder<Type>;
+  alias?: Builder<Type>;
 }
 
 export namespace mapped_type_clause {
   export function from(options: MappedTypeClauseOptions): MappedTypeClauseBuilder {
     const _ctor = options.name;
     const b = new MappedTypeClauseBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
-    if (options.alias !== undefined) b.alias(options.alias);
     if (options.type !== undefined) b.type(options.type);
+    if (options.alias !== undefined) b.alias(options.alias);
     return b;
   }
 }

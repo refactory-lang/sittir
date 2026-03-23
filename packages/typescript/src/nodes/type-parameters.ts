@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeParameter, TypeParameters } from '../types.js';
+import { type_parameter } from './type-parameter.js';
+import type { TypeParameterOptions } from './type-parameter.js';
 
 
 class TypeParametersBuilder extends Builder<TypeParameters> {
@@ -47,14 +49,14 @@ export function type_parameters(...children: Builder<TypeParameter>[]): TypePara
 }
 
 export interface TypeParametersOptions {
-  children: Builder<TypeParameter> | (Builder<TypeParameter>)[];
+  children?: Builder<TypeParameter> | TypeParameterOptions | (Builder<TypeParameter> | TypeParameterOptions)[];
 }
 
 export namespace type_parameters {
   export function from(options: TypeParametersOptions): TypeParametersBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new TypeParametersBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new TypeParametersBuilder(..._arr.map(_v => _v instanceof Builder ? _v : type_parameter.from(_v as TypeParameterOptions)));
     return b;
   }
 }

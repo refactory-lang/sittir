@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ForLifetimes } from '../types.js';
+import type { ForLifetimes, Lifetime } from '../types.js';
 
 
 class ForLifetimesBuilder extends Builder<ForLifetimes> {
-  private _children: Builder[] = [];
+  private _children: Builder<Lifetime>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Lifetime>[]) {
     super();
     this._children = children;
   }
@@ -44,12 +44,12 @@ class ForLifetimesBuilder extends Builder<ForLifetimes> {
 
 export type { ForLifetimesBuilder };
 
-export function for_lifetimes(...children: Builder[]): ForLifetimesBuilder {
+export function for_lifetimes(...children: Builder<Lifetime>[]): ForLifetimesBuilder {
   return new ForLifetimesBuilder(...children);
 }
 
 export interface ForLifetimesOptions {
-  children: Builder | (Builder)[];
+  children: Builder<Lifetime> | (Builder<Lifetime>)[];
 }
 
 export namespace for_lifetimes {

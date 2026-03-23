@@ -28,9 +28,9 @@ class LineCommentBuilder extends Builder<LineComment> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('//');
+    if (this._outer) parts.push(this.renderChild(this._outer, ctx));
     if (this._doc) parts.push(this.renderChild(this._doc, ctx));
     if (this._inner) parts.push(this.renderChild(this._inner, ctx));
-    if (this._outer) parts.push(this.renderChild(this._outer, ctx));
     return parts.join(' ');
   }
 
@@ -48,9 +48,9 @@ class LineCommentBuilder extends Builder<LineComment> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '//', type: '//' });
+    if (this._outer) parts.push({ kind: 'builder', builder: this._outer, fieldName: 'outer' });
     if (this._doc) parts.push({ kind: 'builder', builder: this._doc, fieldName: 'doc' });
     if (this._inner) parts.push({ kind: 'builder', builder: this._inner, fieldName: 'inner' });
-    if (this._outer) parts.push({ kind: 'builder', builder: this._outer, fieldName: 'outer' });
     return parts;
   }
 }

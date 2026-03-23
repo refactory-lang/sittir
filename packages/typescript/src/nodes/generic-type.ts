@@ -1,13 +1,15 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GenericType, NestedTypeIdentifier, TypeArguments, TypeIdentifier } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
 
 
 class GenericTypeBuilder extends Builder<GenericType> {
-  private _name: Builder<NestedTypeIdentifier | TypeIdentifier>;
+  private _name: Builder<TypeIdentifier | NestedTypeIdentifier>;
   private _typeArguments!: Builder<TypeArguments>;
 
-  constructor(name: Builder<NestedTypeIdentifier | TypeIdentifier>) {
+  constructor(name: Builder<TypeIdentifier | NestedTypeIdentifier>) {
     super();
     this._name = name;
   }
@@ -44,19 +46,23 @@ class GenericTypeBuilder extends Builder<GenericType> {
 
 export type { GenericTypeBuilder };
 
-export function generic_type(name: Builder<NestedTypeIdentifier | TypeIdentifier>): GenericTypeBuilder {
+export function generic_type(name: Builder<TypeIdentifier | NestedTypeIdentifier>): GenericTypeBuilder {
   return new GenericTypeBuilder(name);
 }
 
 export interface GenericTypeOptions {
-  name: Builder<NestedTypeIdentifier | TypeIdentifier>;
-  typeArguments: Builder<TypeArguments>;
+  name: Builder<TypeIdentifier | NestedTypeIdentifier> | string;
+  typeArguments: Builder<TypeArguments> | TypeArgumentsOptions;
 }
 
 export namespace generic_type {
   export function from(options: GenericTypeOptions): GenericTypeBuilder {
-    const b = new GenericTypeBuilder(options.name);
-    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
+    const _ctor = options.name;
+    const b = new GenericTypeBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.typeArguments !== undefined) {
+      const _v = options.typeArguments;
+      b.typeArguments(_v instanceof Builder ? _v : type_arguments.from(_v as TypeArgumentsOptions));
+    }
     return b;
   }
 }

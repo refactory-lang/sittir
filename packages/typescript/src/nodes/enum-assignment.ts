@@ -1,13 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ComputedPropertyName, EnumAssignment, Expression, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
+import type { ComputedPropertyName, EnumAssignment, Expression, Number, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
 
 
 class EnumAssignmentBuilder extends Builder<EnumAssignment> {
-  private _name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  private _name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
   private _value!: Builder<Expression>;
 
-  constructor(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>) {
+  constructor(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>) {
     super();
     this._name = name;
   }
@@ -46,12 +46,12 @@ class EnumAssignmentBuilder extends Builder<EnumAssignment> {
 
 export type { EnumAssignmentBuilder };
 
-export function enum_assignment(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>): EnumAssignmentBuilder {
+export function enum_assignment(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>): EnumAssignmentBuilder {
   return new EnumAssignmentBuilder(name);
 }
 
 export interface EnumAssignmentOptions {
-  name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
   value: Builder<Expression>;
 }
 

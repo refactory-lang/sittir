@@ -4,11 +4,11 @@ import type { CallSignature, ConstructSignature, ExportStatement, IndexSignature
 
 
 class ObjectTypeBuilder extends Builder<ObjectType> {
-  private _children: Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature>[] = [];
+  private _children: Builder<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature>[]): this {
+  children(...value: Builder<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature>[]): this {
     this._children = value;
     return this;
   }
@@ -48,7 +48,7 @@ export function object_type(): ObjectTypeBuilder {
 }
 
 export interface ObjectTypeOptions {
-  children?: Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature> | (Builder<CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature>)[];
+  children?: Builder<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature> | (Builder<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature>)[];
 }
 
 export namespace object_type {

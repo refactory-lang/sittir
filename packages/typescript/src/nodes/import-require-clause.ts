@@ -1,13 +1,15 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Identifier, ImportRequireClause } from '../types.js';
+import type { Identifier, ImportRequireClause, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
 
 
 class ImportRequireClauseBuilder extends Builder<ImportRequireClause> {
-  private _source: Builder;
+  private _source: Builder<String>;
   private _children: Builder<Identifier>[] = [];
 
-  constructor(source: Builder) {
+  constructor(source: Builder<String>) {
     super();
     this._source = source;
   }
@@ -54,18 +56,19 @@ class ImportRequireClauseBuilder extends Builder<ImportRequireClause> {
 
 export type { ImportRequireClauseBuilder };
 
-export function import_require_clause(source: Builder): ImportRequireClauseBuilder {
+export function import_require_clause(source: Builder<String>): ImportRequireClauseBuilder {
   return new ImportRequireClauseBuilder(source);
 }
 
 export interface ImportRequireClauseOptions {
-  source: Builder;
+  source: Builder<String> | StringOptions;
   children?: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace import_require_clause {
   export function from(options: ImportRequireClauseOptions): ImportRequireClauseBuilder {
-    const b = new ImportRequireClauseBuilder(options.source);
+    const _ctor = options.source;
+    const b = new ImportRequireClauseBuilder(_ctor instanceof Builder ? _ctor : string.from(_ctor as StringOptions));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];

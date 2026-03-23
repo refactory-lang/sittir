@@ -1,12 +1,12 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConstParameter, Identifier, Literal, NegativeLiteral, Type } from '../types.js';
+import type { Block, ConstParameter, Identifier, Literal, NegativeLiteral, Type } from '../types.js';
 
 
 class ConstParameterBuilder extends Builder<ConstParameter> {
   private _name: Builder<Identifier>;
   private _type!: Builder<Type>;
-  private _value?: Builder<Literal | Identifier | NegativeLiteral>;
+  private _value?: Builder<Literal | Block | Identifier | NegativeLiteral>;
 
   constructor(name: Builder<Identifier>) {
     super();
@@ -18,7 +18,7 @@ class ConstParameterBuilder extends Builder<ConstParameter> {
     return this;
   }
 
-  value(value: Builder<Literal | Identifier | NegativeLiteral>): this {
+  value(value: Builder<Literal | Block | Identifier | NegativeLiteral>): this {
     this._value = value;
     return this;
   }
@@ -70,7 +70,7 @@ export function const_parameter(name: Builder<Identifier>): ConstParameterBuilde
 export interface ConstParameterOptions {
   name: Builder<Identifier> | string;
   type: Builder<Type>;
-  value?: Builder<Literal | Identifier | NegativeLiteral>;
+  value?: Builder<Literal | Block | Identifier | NegativeLiteral>;
 }
 
 export namespace const_parameter {

@@ -1,18 +1,18 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExportSpecifier, Identifier } from '../types.js';
+import type { ExportSpecifier, Identifier, String } from '../types.js';
 
 
 class ExportSpecifierBuilder extends Builder<ExportSpecifier> {
-  private _alias?: Builder<Identifier>;
-  private _name: Builder<Identifier>;
+  private _name: Builder<Identifier | String>;
+  private _alias?: Builder<Identifier | String>;
 
-  constructor(name: Builder<Identifier>) {
+  constructor(name: Builder<Identifier | String>) {
     super();
     this._name = name;
   }
 
-  alias(value: Builder<Identifier>): this {
+  alias(value: Builder<Identifier | String>): this {
     this._alias = value;
     return this;
   }
@@ -30,8 +30,8 @@ class ExportSpecifierBuilder extends Builder<ExportSpecifier> {
   build(ctx?: RenderContext): ExportSpecifier {
     return {
       kind: 'export_specifier',
-      alias: this._alias?.build(ctx),
       name: this._name.build(ctx),
+      alias: this._alias?.build(ctx),
     } as ExportSpecifier;
   }
 
@@ -50,19 +50,23 @@ class ExportSpecifierBuilder extends Builder<ExportSpecifier> {
 
 export type { ExportSpecifierBuilder };
 
-export function export_specifier(name: Builder<Identifier>): ExportSpecifierBuilder {
+export function export_specifier(name: Builder<Identifier | String>): ExportSpecifierBuilder {
   return new ExportSpecifierBuilder(name);
 }
 
 export interface ExportSpecifierOptions {
-  alias?: Builder<Identifier>;
-  name: Builder<Identifier>;
+  name: Builder<Identifier | String> | string;
+  alias?: Builder<Identifier | String> | string;
 }
 
 export namespace export_specifier {
   export function from(options: ExportSpecifierOptions): ExportSpecifierBuilder {
-    const b = new ExportSpecifierBuilder(options.name);
-    if (options.alias !== undefined) b.alias(options.alias);
+    const _ctor = options.name;
+    const b = new ExportSpecifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.alias !== undefined) {
+      const _v = options.alias;
+      b.alias(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
+    }
     return b;
   }
 }

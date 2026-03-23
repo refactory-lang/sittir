@@ -4,11 +4,11 @@ import type { InferType, PrimaryType, TemplateType } from '../types.js';
 
 
 class TemplateTypeBuilder extends Builder<TemplateType> {
-  private _children: Builder<InferType | PrimaryType>[] = [];
+  private _children: Builder<PrimaryType | InferType>[] = [];
 
-  constructor(children: Builder<InferType | PrimaryType>) {
+  constructor(...children: Builder<PrimaryType | InferType>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -22,7 +22,7 @@ class TemplateTypeBuilder extends Builder<TemplateType> {
   build(ctx?: RenderContext): TemplateType {
     return {
       kind: 'template_type',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as TemplateType;
   }
 
@@ -41,18 +41,19 @@ class TemplateTypeBuilder extends Builder<TemplateType> {
 
 export type { TemplateTypeBuilder };
 
-export function template_type(children: Builder<InferType | PrimaryType>): TemplateTypeBuilder {
-  return new TemplateTypeBuilder(children);
+export function template_type(...children: Builder<PrimaryType | InferType>[]): TemplateTypeBuilder {
+  return new TemplateTypeBuilder(...children);
 }
 
 export interface TemplateTypeOptions {
-  children: Builder<InferType | PrimaryType> | (Builder<InferType | PrimaryType>)[];
+  children?: Builder<PrimaryType | InferType> | (Builder<PrimaryType | InferType>)[];
 }
 
 export namespace template_type {
   export function from(options: TemplateTypeOptions): TemplateTypeBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new TemplateTypeBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new TemplateTypeBuilder(..._arr);
     return b;
   }
 }

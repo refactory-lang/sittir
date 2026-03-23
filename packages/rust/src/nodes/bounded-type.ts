@@ -1,21 +1,20 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { BoundedType, Type, UseBounds } from '../types.js';
+import type { BoundedType, Lifetime, Type, UseBounds } from '../types.js';
 
 
 class BoundedTypeBuilder extends Builder<BoundedType> {
-  private _children: Builder<Type | UseBounds>[] = [];
+  private _children: Builder<Type | Lifetime | UseBounds>[] = [];
 
-  constructor(...children: Builder<Type | UseBounds>[]) {
+  constructor(...children: Builder<Type | Lifetime | UseBounds>[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('+');
-    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -30,21 +29,22 @@ class BoundedTypeBuilder extends Builder<BoundedType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
     parts.push({ kind: 'token', text: '+', type: '+' });
-    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
 
 export type { BoundedTypeBuilder };
 
-export function bounded_type(...children: Builder<Type | UseBounds>[]): BoundedTypeBuilder {
+export function bounded_type(...children: Builder<Type | Lifetime | UseBounds>[]): BoundedTypeBuilder {
   return new BoundedTypeBuilder(...children);
 }
 
 export interface BoundedTypeOptions {
-  children: Builder<Type | UseBounds> | (Builder<Type | UseBounds>)[];
+  children: Builder<Type | Lifetime | UseBounds> | (Builder<Type | Lifetime | UseBounds>)[];
 }
 
 export namespace bounded_type {

@@ -1,25 +1,29 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConstructorType, FormalParameters, TypeParameters } from '../types.js';
+import type { ConstructorType, FormalParameters, Type, TypeParameters } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
 
 
 class ConstructorTypeBuilder extends Builder<ConstructorType> {
-  private _parameters: Builder<FormalParameters>;
-  private _type!: Builder;
   private _typeParameters?: Builder<TypeParameters>;
+  private _parameters: Builder<FormalParameters>;
+  private _type!: Builder<Type>;
 
   constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  type(value: Builder): this {
-    this._type = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  type(value: Builder<Type>): this {
+    this._type = value;
     return this;
   }
 
@@ -36,9 +40,9 @@ class ConstructorTypeBuilder extends Builder<ConstructorType> {
   build(ctx?: RenderContext): ConstructorType {
     return {
       kind: 'constructor_type',
+      typeParameters: this._typeParameters?.build(ctx),
       parameters: this._parameters.build(ctx),
       type: this._type?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
     } as ConstructorType;
   }
 
@@ -62,16 +66,20 @@ export function constructor_type(parameters: Builder<FormalParameters>): Constru
 }
 
 export interface ConstructorTypeOptions {
-  parameters: Builder<FormalParameters>;
-  type: Builder;
-  typeParameters?: Builder<TypeParameters>;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  type: Builder<Type>;
 }
 
 export namespace constructor_type {
   export function from(options: ConstructorTypeOptions): ConstructorTypeBuilder {
-    const b = new ConstructorTypeBuilder(options.parameters);
+    const _ctor = options.parameters;
+    const b = new ConstructorTypeBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
     if (options.type !== undefined) b.type(options.type);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
     return b;
   }
 }

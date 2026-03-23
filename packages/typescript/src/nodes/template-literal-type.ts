@@ -1,4 +1,4 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { StringFragment, TemplateLiteralType, TemplateType } from '../types.js';
 
@@ -48,7 +48,7 @@ export function template_literal_type(): TemplateLiteralTypeBuilder {
 }
 
 export interface TemplateLiteralTypeOptions {
-  children?: Builder<StringFragment | TemplateType> | (Builder<StringFragment | TemplateType>)[];
+  children?: Builder<StringFragment | TemplateType> | string | (Builder<StringFragment | TemplateType> | string)[];
 }
 
 export namespace template_literal_type {
@@ -57,7 +57,7 @@ export namespace template_literal_type {
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('string_fragment', _x) : _x));
     }
     return b;
   }

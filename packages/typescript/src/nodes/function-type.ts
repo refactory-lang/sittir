@@ -1,25 +1,29 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FormalParameters, FunctionType, TypeParameters, TypePredicate } from '../types.js';
+import type { Asserts, FormalParameters, FunctionType, Type, TypeParameters, TypePredicate } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
 
 
 class FunctionTypeBuilder extends Builder<FunctionType> {
-  private _parameters: Builder<FormalParameters>;
-  private _returnType!: Builder<TypePredicate>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _parameters: Builder<FormalParameters>;
+  private _returnType!: Builder<Type | Asserts | TypePredicate>;
 
   constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: Builder<TypePredicate>): this {
-    this._returnType = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  returnType(value: Builder<Type | Asserts | TypePredicate>): this {
+    this._returnType = value;
     return this;
   }
 
@@ -35,9 +39,9 @@ class FunctionTypeBuilder extends Builder<FunctionType> {
   build(ctx?: RenderContext): FunctionType {
     return {
       kind: 'function_type',
+      typeParameters: this._typeParameters?.build(ctx),
       parameters: this._parameters.build(ctx),
       returnType: this._returnType?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
     } as FunctionType;
   }
 
@@ -60,16 +64,20 @@ export function function_type(parameters: Builder<FormalParameters>): FunctionTy
 }
 
 export interface FunctionTypeOptions {
-  parameters: Builder<FormalParameters>;
-  returnType: Builder<TypePredicate>;
-  typeParameters?: Builder<TypeParameters>;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  returnType: Builder<Type | Asserts | TypePredicate>;
 }
 
 export namespace function_type {
   export function from(options: FunctionTypeOptions): FunctionTypeBuilder {
-    const b = new FunctionTypeBuilder(options.parameters);
+    const _ctor = options.parameters;
+    const b = new FunctionTypeBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
     if (options.returnType !== undefined) b.returnType(options.returnType);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
     return b;
   }
 }

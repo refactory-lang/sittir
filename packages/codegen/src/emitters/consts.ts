@@ -109,8 +109,8 @@ export function emitConsts(config: EmitConstsConfig): string {
     for (const ek of config.enumKinds) {
       // primitive_type → PRIMITIVE_TYPES, predefined_type → PREDEFINED_TYPES
       const constName = ek.kind.toUpperCase() + 'S';
-      // primitive_type → PrimitiveType
-      const typeName = ek.kind.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+      // primitive_type → PrimitiveTypeValue (Value suffix avoids collision with node types)
+      const typeName = ek.kind.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('') + 'Value';
 
       lines.push(`/** Valid values for \`${ek.kind}\` nodes. */`);
       lines.push(`export const ${constName} = [`);

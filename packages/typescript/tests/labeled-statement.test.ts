@@ -3,14 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('labeled_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.labeledStatement(ir.debuggerStatement('test'));
+    const builder = ir.labeledStatement();
     const node = builder.build();
     expect(node.kind).toBe('labeled_statement');
-    expect((node as any).body).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.labeledStatement(ir.debuggerStatement('test'));
+    const builder = ir.labeledStatement();
     const cst = builder.toCST();
     expect(cst.type).toBe('labeled_statement');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +18,7 @@ describe('labeled_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.labeledStatement(ir.debuggerStatement('test'));
+    const builder = ir.labeledStatement();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

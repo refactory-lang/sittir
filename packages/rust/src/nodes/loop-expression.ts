@@ -1,13 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Label, LoopExpression } from '../types.js';
+import type { Block, Label, LoopExpression } from '../types.js';
 
 
 class LoopExpressionBuilder extends Builder<LoopExpression> {
-  private _body: Builder;
+  private _body: Builder<Block>;
   private _children: Builder<Label>[] = [];
 
-  constructor(body: Builder) {
+  constructor(body: Builder<Block>) {
     super();
     this._body = body;
   }
@@ -48,12 +48,12 @@ class LoopExpressionBuilder extends Builder<LoopExpression> {
 
 export type { LoopExpressionBuilder };
 
-export function loop_expression(body: Builder): LoopExpressionBuilder {
+export function loop_expression(body: Builder<Block>): LoopExpressionBuilder {
   return new LoopExpressionBuilder(body);
 }
 
 export interface LoopExpressionOptions {
-  body: Builder;
+  body: Builder<Block>;
   children?: Builder<Label> | (Builder<Label>)[];
 }
 

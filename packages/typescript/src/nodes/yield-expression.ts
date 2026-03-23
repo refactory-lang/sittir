@@ -6,11 +6,9 @@ import type { Expression, YieldExpression } from '../types.js';
 class YieldExpressionBuilder extends Builder<YieldExpression> {
   private _children: Builder<Expression>[] = [];
 
-  constructor() { super(); }
-
-  children(...value: Builder<Expression>[]): this {
-    this._children = value;
-    return this;
+  constructor(...children: Builder<Expression>[]) {
+    super();
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -24,7 +22,7 @@ class YieldExpressionBuilder extends Builder<YieldExpression> {
   build(ctx?: RenderContext): YieldExpression {
     return {
       kind: 'yield_expression',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as YieldExpression;
   }
 
@@ -43,8 +41,8 @@ class YieldExpressionBuilder extends Builder<YieldExpression> {
 
 export type { YieldExpressionBuilder };
 
-export function yield_expression(): YieldExpressionBuilder {
-  return new YieldExpressionBuilder();
+export function yield_expression(...children: Builder<Expression>[]): YieldExpressionBuilder {
+  return new YieldExpressionBuilder(...children);
 }
 
 export interface YieldExpressionOptions {
@@ -53,12 +51,9 @@ export interface YieldExpressionOptions {
 
 export namespace yield_expression {
   export function from(options: YieldExpressionOptions): YieldExpressionBuilder {
-    const b = new YieldExpressionBuilder();
-    if (options.children !== undefined) {
-      const _v = options.children;
-      const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
-    }
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new YieldExpressionBuilder(..._arr);
     return b;
   }
 }

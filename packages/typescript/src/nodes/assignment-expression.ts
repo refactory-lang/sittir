@@ -4,10 +4,10 @@ import type { ArrayPattern, AssignmentExpression, Expression, Identifier, Member
 
 
 class AssignmentExpressionBuilder extends Builder<AssignmentExpression> {
-  private _left: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | ParenthesizedExpression | SubscriptExpression | Undefined>;
+  private _left: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression | ParenthesizedExpression>;
   private _right!: Builder<Expression>;
 
-  constructor(left: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | ParenthesizedExpression | SubscriptExpression | Undefined>) {
+  constructor(left: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression | ParenthesizedExpression>) {
     super();
     this._left = left;
   }
@@ -46,12 +46,12 @@ class AssignmentExpressionBuilder extends Builder<AssignmentExpression> {
 
 export type { AssignmentExpressionBuilder };
 
-export function assignment_expression(left: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | ParenthesizedExpression | SubscriptExpression | Undefined>): AssignmentExpressionBuilder {
+export function assignment_expression(left: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression | ParenthesizedExpression>): AssignmentExpressionBuilder {
   return new AssignmentExpressionBuilder(left);
 }
 
 export interface AssignmentExpressionOptions {
-  left: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | ParenthesizedExpression | SubscriptExpression | Undefined>;
+  left: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression | ParenthesizedExpression>;
   right: Builder<Expression>;
 }
 

@@ -4,11 +4,11 @@ import type { AugmentedAssignmentExpression, Expression, Identifier, MemberExpre
 
 
 class AugmentedAssignmentExpressionBuilder extends Builder<AugmentedAssignmentExpression> {
-  private _left: Builder<Identifier | MemberExpression | NonNullExpression | ParenthesizedExpression | SubscriptExpression>;
+  private _left: Builder<MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression>;
   private _operator!: Builder;
   private _right!: Builder<Expression>;
 
-  constructor(left: Builder<Identifier | MemberExpression | NonNullExpression | ParenthesizedExpression | SubscriptExpression>) {
+  constructor(left: Builder<MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression>) {
     super();
     this._left = left;
   }
@@ -53,12 +53,12 @@ class AugmentedAssignmentExpressionBuilder extends Builder<AugmentedAssignmentEx
 
 export type { AugmentedAssignmentExpressionBuilder };
 
-export function augmented_assignment_expression(left: Builder<Identifier | MemberExpression | NonNullExpression | ParenthesizedExpression | SubscriptExpression>): AugmentedAssignmentExpressionBuilder {
+export function augmented_assignment_expression(left: Builder<MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression>): AugmentedAssignmentExpressionBuilder {
   return new AugmentedAssignmentExpressionBuilder(left);
 }
 
 export interface AugmentedAssignmentExpressionOptions {
-  left: Builder<Identifier | MemberExpression | NonNullExpression | ParenthesizedExpression | SubscriptExpression>;
+  left: Builder<MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression>;
   operator: Builder;
   right: Builder<Expression>;
 }

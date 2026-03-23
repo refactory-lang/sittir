@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { OmittingTypeAnnotation } from '../types.js';
+import type { OmittingTypeAnnotation, Type } from '../types.js';
 
 
 class OmittingTypeAnnotationBuilder extends Builder<OmittingTypeAnnotation> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Type>) {
     super();
     this._children = [children];
   }
@@ -39,12 +39,12 @@ class OmittingTypeAnnotationBuilder extends Builder<OmittingTypeAnnotation> {
 
 export type { OmittingTypeAnnotationBuilder };
 
-export function omitting_type_annotation(children: Builder): OmittingTypeAnnotationBuilder {
+export function omitting_type_annotation(children: Builder<Type>): OmittingTypeAnnotationBuilder {
   return new OmittingTypeAnnotationBuilder(children);
 }
 
 export interface OmittingTypeAnnotationOptions {
-  children: Builder | (Builder)[];
+  children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace omitting_type_annotation {

@@ -1,13 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ComputedPropertyName, Expression, Pair, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
+import type { ComputedPropertyName, Expression, Number, Pair, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
 
 
 class PairBuilder extends Builder<Pair> {
-  private _key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  private _key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
   private _value!: Builder<Expression>;
 
-  constructor(key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>) {
+  constructor(key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>) {
     super();
     this._key = key;
   }
@@ -46,12 +46,12 @@ class PairBuilder extends Builder<Pair> {
 
 export type { PairBuilder };
 
-export function pair(key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>): PairBuilder {
+export function pair(key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>): PairBuilder {
   return new PairBuilder(key);
 }
 
 export interface PairOptions {
-  key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
   value: Builder<Expression>;
 }
 

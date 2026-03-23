@@ -1,30 +1,26 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AccessibilityModifier, Decorator, Expression, Identifier, OptionalParameter, OverrideModifier, Pattern, This, TypeAnnotation } from '../types.js';
+import type { AccessibilityModifier, Decorator, Expression, OptionalParameter, OverrideModifier, Pattern, This, TypeAnnotation } from '../types.js';
+import { decorator } from './decorator.js';
+import type { DecoratorOptions } from './decorator.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
 
 
 class OptionalParameterBuilder extends Builder<OptionalParameter> {
   private _decorator: Builder<Decorator>[] = [];
-  private _name?: Builder<Identifier>;
-  private _pattern?: Builder<Pattern | This>;
+  private _pattern: Builder<Pattern | This>;
   private _type?: Builder<TypeAnnotation>;
   private _value?: Builder<Expression>;
   private _children: Builder<AccessibilityModifier | OverrideModifier>[] = [];
 
-  constructor() { super(); }
+  constructor(pattern: Builder<Pattern | This>) {
+    super();
+    this._pattern = pattern;
+  }
 
   decorator(...value: Builder<Decorator>[]): this {
     this._decorator = value;
-    return this;
-  }
-
-  name(value: Builder<Identifier>): this {
-    this._name = value;
-    return this;
-  }
-
-  pattern(value: Builder<Pattern | This>): this {
-    this._pattern = value;
     return this;
   }
 
@@ -55,7 +51,6 @@ class OptionalParameterBuilder extends Builder<OptionalParameter> {
       parts.push('=');
       if (this._value) parts.push(this.renderChild(this._value, ctx));
     }
-    if (this._name) parts.push(this.renderChild(this._name, ctx));
     return parts.join(' ');
   }
 
@@ -63,8 +58,7 @@ class OptionalParameterBuilder extends Builder<OptionalParameter> {
     return {
       kind: 'optional_parameter',
       decorator: this._decorator.map(c => c.build(ctx)),
-      name: this._name?.build(ctx),
-      pattern: this._pattern?.build(ctx),
+      pattern: this._pattern.build(ctx),
       type: this._type?.build(ctx),
       value: this._value?.build(ctx),
       children: this._children.map(c => c.build(ctx)),
@@ -87,40 +81,37 @@ class OptionalParameterBuilder extends Builder<OptionalParameter> {
       parts.push({ kind: 'token', text: '=', type: '=' });
       if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     }
-    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     return parts;
   }
 }
 
 export type { OptionalParameterBuilder };
 
-export function optional_parameter(): OptionalParameterBuilder {
-  return new OptionalParameterBuilder();
+export function optional_parameter(pattern: Builder<Pattern | This>): OptionalParameterBuilder {
+  return new OptionalParameterBuilder(pattern);
 }
 
 export interface OptionalParameterOptions {
-  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
-  name?: Builder<Identifier> | string;
-  pattern?: Builder<Pattern | This>;
-  type?: Builder<TypeAnnotation>;
+  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
+  pattern: Builder<Pattern | This> | string;
+  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
   value?: Builder<Expression>;
   children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
 }
 
 export namespace optional_parameter {
   export function from(options: OptionalParameterOptions): OptionalParameterBuilder {
-    const b = new OptionalParameterBuilder();
+    const _ctor = options.pattern;
+    const b = new OptionalParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('this', _ctor) : _ctor);
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr);
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
     }
-    if (options.name !== undefined) {
-      const _v = options.name;
-      b.name(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
     }
-    if (options.pattern !== undefined) b.pattern(options.pattern);
-    if (options.type !== undefined) b.type(options.type);
     if (options.value !== undefined) b.value(options.value);
     if (options.children !== undefined) {
       const _v = options.children;

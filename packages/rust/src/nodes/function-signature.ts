@@ -37,8 +37,7 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
-    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('fn');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
@@ -47,7 +46,6 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
       parts.push('->');
       if (this._returnType) parts.push(this.renderChild(this._returnType, ctx));
     }
-    if (this._children[2]) parts.push(this.renderChild(this._children[2]!, ctx));
     parts.push(';');
     return parts.join(' ');
   }
@@ -67,8 +65,9 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
-    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
     parts.push({ kind: 'token', text: 'fn', type: 'fn' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
@@ -77,7 +76,6 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
       parts.push({ kind: 'token', text: '->', type: '->' });
       if (this._returnType) parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
     }
-    if (this._children[2]) parts.push({ kind: 'builder', builder: this._children[2]! });
     parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }

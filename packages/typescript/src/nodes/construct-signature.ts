@@ -1,25 +1,31 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ConstructSignature, FormalParameters, TypeAnnotation, TypeParameters } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
 
 
 class ConstructSignatureBuilder extends Builder<ConstructSignature> {
+  private _typeParameters?: Builder<TypeParameters>;
   private _parameters: Builder<FormalParameters>;
   private _type?: Builder<TypeAnnotation>;
-  private _typeParameters?: Builder<TypeParameters>;
 
   constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  type(value: Builder<TypeAnnotation>): this {
-    this._type = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  type(value: Builder<TypeAnnotation>): this {
+    this._type = value;
     return this;
   }
 
@@ -35,9 +41,9 @@ class ConstructSignatureBuilder extends Builder<ConstructSignature> {
   build(ctx?: RenderContext): ConstructSignature {
     return {
       kind: 'construct_signature',
+      typeParameters: this._typeParameters?.build(ctx),
       parameters: this._parameters.build(ctx),
       type: this._type?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
     } as ConstructSignature;
   }
 
@@ -60,16 +66,23 @@ export function construct_signature(parameters: Builder<FormalParameters>): Cons
 }
 
 export interface ConstructSignatureOptions {
-  parameters: Builder<FormalParameters>;
-  type?: Builder<TypeAnnotation>;
-  typeParameters?: Builder<TypeParameters>;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
 }
 
 export namespace construct_signature {
   export function from(options: ConstructSignatureOptions): ConstructSignatureBuilder {
-    const b = new ConstructSignatureBuilder(options.parameters);
-    if (options.type !== undefined) b.type(options.type);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    const _ctor = options.parameters;
+    const b = new ConstructSignatureBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+    }
     return b;
   }
 }

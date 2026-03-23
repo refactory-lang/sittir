@@ -1,4 +1,4 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { HashBangLine, Program, Statement } from '../types.js';
 
@@ -44,7 +44,7 @@ export function program(): ProgramBuilder {
 }
 
 export interface ProgramOptions {
-  children?: Builder<HashBangLine | Statement> | (Builder<HashBangLine | Statement>)[];
+  children?: Builder<HashBangLine | Statement> | string | (Builder<HashBangLine | Statement> | string)[];
 }
 
 export namespace program {
@@ -53,7 +53,7 @@ export namespace program {
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('hash_bang_line', _x) : _x));
     }
     return b;
   }

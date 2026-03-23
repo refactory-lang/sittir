@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { VariableDeclaration, VariableDeclarator } from '../types.js';
+import { variable_declarator } from './variable-declarator.js';
+import type { VariableDeclaratorOptions } from './variable-declarator.js';
 
 
 class VariableDeclarationBuilder extends Builder<VariableDeclaration> {
@@ -45,14 +47,14 @@ export function variable_declaration(...children: Builder<VariableDeclarator>[])
 }
 
 export interface VariableDeclarationOptions {
-  children: Builder<VariableDeclarator> | (Builder<VariableDeclarator>)[];
+  children?: Builder<VariableDeclarator> | VariableDeclaratorOptions | (Builder<VariableDeclarator> | VariableDeclaratorOptions)[];
 }
 
 export namespace variable_declaration {
   export function from(options: VariableDeclarationOptions): VariableDeclarationBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new VariableDeclarationBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new VariableDeclarationBuilder(..._arr.map(_v => _v instanceof Builder ? _v : variable_declarator.from(_v as VariableDeclaratorOptions)));
     return b;
   }
 }

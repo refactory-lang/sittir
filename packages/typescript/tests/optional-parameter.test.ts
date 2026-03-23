@@ -3,13 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('optional_parameter', () => {
   it('should build with correct kind', () => {
-    const builder = ir.optionalParameter();
+    const builder = ir.optionalParameter(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('optional_parameter');
+    expect((node as any).pattern).toHaveProperty('kind');
+  });
+
+  it('should render required grammar tokens', () => {
+    const builder = ir.optionalParameter(ir.identifier('test'));
+    const source = builder.renderImpl();
+    expect(source).toContain('?');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.optionalParameter();
+    const builder = ir.optionalParameter(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('optional_parameter');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +25,7 @@ describe('optional_parameter', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.optionalParameter();
+    const builder = ir.optionalParameter(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

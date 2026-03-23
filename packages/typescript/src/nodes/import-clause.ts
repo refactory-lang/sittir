@@ -1,12 +1,12 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, ImportClause, NamedImports, NamespaceImport } from '../types.js';
 
 
 class ImportClauseBuilder extends Builder<ImportClause> {
-  private _children: Builder<Identifier | NamedImports | NamespaceImport>[] = [];
+  private _children: Builder<NamespaceImport | NamedImports | Identifier>[] = [];
 
-  constructor(...children: Builder<Identifier | NamedImports | NamespaceImport>[]) {
+  constructor(...children: Builder<NamespaceImport | NamedImports | Identifier>[]) {
     super();
     this._children = children;
   }
@@ -37,19 +37,19 @@ class ImportClauseBuilder extends Builder<ImportClause> {
 
 export type { ImportClauseBuilder };
 
-export function import_clause(...children: Builder<Identifier | NamedImports | NamespaceImport>[]): ImportClauseBuilder {
+export function import_clause(...children: Builder<NamespaceImport | NamedImports | Identifier>[]): ImportClauseBuilder {
   return new ImportClauseBuilder(...children);
 }
 
 export interface ImportClauseOptions {
-  children: Builder<Identifier | NamedImports | NamespaceImport> | (Builder<Identifier | NamedImports | NamespaceImport>)[];
+  children?: Builder<NamespaceImport | NamedImports | Identifier> | string | (Builder<NamespaceImport | NamedImports | Identifier> | string)[];
 }
 
 export namespace import_clause {
   export function from(options: ImportClauseOptions): ImportClauseBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new ImportClauseBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ImportClauseBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v));
     return b;
   }
 }

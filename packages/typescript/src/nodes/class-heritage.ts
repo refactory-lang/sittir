@@ -42,13 +42,13 @@ export function class_heritage(...children: Builder<ExtendsClause | ImplementsCl
 }
 
 export interface ClassHeritageOptions {
-  children: Builder<ExtendsClause | ImplementsClause> | (Builder<ExtendsClause | ImplementsClause>)[];
+  children?: Builder<ExtendsClause | ImplementsClause> | (Builder<ExtendsClause | ImplementsClause>)[];
 }
 
 export namespace class_heritage {
   export function from(options: ClassHeritageOptions): ClassHeritageBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new ClassHeritageBuilder(..._arr);
     return b;
   }

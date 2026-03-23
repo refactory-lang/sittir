@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LexicalDeclaration, VariableDeclarator } from '../types.js';
+import { variable_declarator } from './variable-declarator.js';
+import type { VariableDeclaratorOptions } from './variable-declarator.js';
 
 
 class LexicalDeclarationBuilder extends Builder<LexicalDeclaration> {
@@ -52,7 +54,7 @@ export function lexical_declaration(kind: Builder): LexicalDeclarationBuilder {
 
 export interface LexicalDeclarationOptions {
   kind: Builder;
-  children?: Builder<VariableDeclarator> | (Builder<VariableDeclarator>)[];
+  children?: Builder<VariableDeclarator> | VariableDeclaratorOptions | (Builder<VariableDeclarator> | VariableDeclaratorOptions)[];
 }
 
 export namespace lexical_declaration {
@@ -61,7 +63,7 @@ export namespace lexical_declaration {
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : variable_declarator.from(_x as VariableDeclaratorOptions)));
     }
     return b;
   }

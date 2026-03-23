@@ -1,4 +1,4 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { BinaryExpression, Expression, PrivatePropertyIdentifier } from '../types.js';
 
@@ -58,14 +58,15 @@ export function binary_expression(left: Builder<Expression | PrivatePropertyIden
 }
 
 export interface BinaryExpressionOptions {
-  left: Builder<Expression | PrivatePropertyIdentifier>;
+  left: Builder<Expression | PrivatePropertyIdentifier> | string;
   operator: Builder;
   right: Builder<Expression>;
 }
 
 export namespace binary_expression {
   export function from(options: BinaryExpressionOptions): BinaryExpressionBuilder {
-    const b = new BinaryExpressionBuilder(options.left);
+    const _ctor = options.left;
+    const b = new BinaryExpressionBuilder(typeof _ctor === 'string' ? new LeafBuilder('private_property_identifier', _ctor) : _ctor);
     if (options.operator !== undefined) b.operator(options.operator);
     if (options.right !== undefined) b.right(options.right);
     return b;

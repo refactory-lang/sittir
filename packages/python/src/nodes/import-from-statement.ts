@@ -28,8 +28,8 @@ class ImportFromStatementBuilder extends Builder<ImportFromStatement> {
     parts.push('from');
     if (this._moduleName) parts.push(this.renderChild(this._moduleName, ctx));
     parts.push('import');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._name.length > 0) parts.push(this.renderChildren(this._name, ', ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -49,11 +49,11 @@ class ImportFromStatementBuilder extends Builder<ImportFromStatement> {
     parts.push({ kind: 'token', text: 'from', type: 'from' });
     if (this._moduleName) parts.push({ kind: 'builder', builder: this._moduleName, fieldName: 'moduleName' });
     parts.push({ kind: 'token', text: 'import', type: 'import' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
     for (const child of this._name) {
       parts.push({ kind: 'builder', builder: child, fieldName: 'name' });
+    }
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
     }
     return parts;
   }

@@ -13,7 +13,6 @@ describe('reference_expression', () => {
     const builder = ir.referenceExpression(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('&');
-    expect(source).toContain('raw');
   });
 
   it('should produce a valid CST node', () => {

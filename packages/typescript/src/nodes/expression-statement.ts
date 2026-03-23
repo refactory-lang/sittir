@@ -6,9 +6,9 @@ import type { Expression, ExpressionStatement, SequenceExpression } from '../typ
 class ExpressionStatementBuilder extends Builder<ExpressionStatement> {
   private _children: Builder<Expression | SequenceExpression>[] = [];
 
-  constructor(children: Builder<Expression | SequenceExpression>) {
+  constructor(...children: Builder<Expression | SequenceExpression>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -20,7 +20,7 @@ class ExpressionStatementBuilder extends Builder<ExpressionStatement> {
   build(ctx?: RenderContext): ExpressionStatement {
     return {
       kind: 'expression_statement',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as ExpressionStatement;
   }
 
@@ -37,18 +37,19 @@ class ExpressionStatementBuilder extends Builder<ExpressionStatement> {
 
 export type { ExpressionStatementBuilder };
 
-export function expression_statement(children: Builder<Expression | SequenceExpression>): ExpressionStatementBuilder {
-  return new ExpressionStatementBuilder(children);
+export function expression_statement(...children: Builder<Expression | SequenceExpression>[]): ExpressionStatementBuilder {
+  return new ExpressionStatementBuilder(...children);
 }
 
 export interface ExpressionStatementOptions {
-  children: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
+  children?: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
 }
 
 export namespace expression_statement {
   export function from(options: ExpressionStatementOptions): ExpressionStatementBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ExpressionStatementBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ExpressionStatementBuilder(..._arr);
     return b;
   }
 }

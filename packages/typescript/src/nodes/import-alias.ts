@@ -1,4 +1,4 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, ImportAlias, NestedIdentifier } from '../types.js';
 
@@ -46,14 +46,14 @@ export function import_alias(...children: Builder<Identifier | NestedIdentifier>
 }
 
 export interface ImportAliasOptions {
-  children: Builder<Identifier | NestedIdentifier> | (Builder<Identifier | NestedIdentifier>)[];
+  children?: Builder<Identifier | NestedIdentifier> | string | (Builder<Identifier | NestedIdentifier> | string)[];
 }
 
 export namespace import_alias {
   export function from(options: ImportAliasOptions): ImportAliasBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new ImportAliasBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ImportAliasBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v));
     return b;
   }
 }

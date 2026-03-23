@@ -1,18 +1,18 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Identifier, This, TypePredicate } from '../types.js';
+import type { Identifier, This, Type, TypePredicate } from '../types.js';
 
 
 class TypePredicateBuilder extends Builder<TypePredicate> {
   private _name: Builder<Identifier | This>;
-  private _type!: Builder;
+  private _type!: Builder<Type>;
 
   constructor(name: Builder<Identifier | This>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
@@ -52,7 +52,7 @@ export function type_predicate(name: Builder<Identifier | This>): TypePredicateB
 
 export interface TypePredicateOptions {
   name: Builder<Identifier | This>;
-  type: Builder;
+  type: Builder<Type>;
 }
 
 export namespace type_predicate {

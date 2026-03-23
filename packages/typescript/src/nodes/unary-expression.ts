@@ -4,8 +4,8 @@ import type { Expression, UnaryExpression } from '../types.js';
 
 
 class UnaryExpressionBuilder extends Builder<UnaryExpression> {
-  private _argument: Builder<Expression>;
   private _operator!: Builder;
+  private _argument: Builder<Expression>;
 
   constructor(argument: Builder<Expression>) {
     super();
@@ -27,8 +27,8 @@ class UnaryExpressionBuilder extends Builder<UnaryExpression> {
   build(ctx?: RenderContext): UnaryExpression {
     return {
       kind: 'unary_expression',
-      argument: this._argument.build(ctx),
       operator: this._operator?.build(ctx),
+      argument: this._argument.build(ctx),
     } as UnaryExpression;
   }
 
@@ -49,8 +49,8 @@ export function unary_expression(argument: Builder<Expression>): UnaryExpression
 }
 
 export interface UnaryExpressionOptions {
-  argument: Builder<Expression>;
   operator: Builder;
+  argument: Builder<Expression>;
 }
 
 export namespace unary_expression {

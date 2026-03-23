@@ -1,13 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ArrayType, GenericType, HigherRankedTraitBound, PointerType, PrimitiveType, ReferenceType, ScopedTypeIdentifier, TraitBounds, TupleType, TypeIdentifier, WherePredicate } from '../types.js';
+import type { ArrayType, GenericType, HigherRankedTraitBound, Lifetime, PointerType, PrimitiveType, ReferenceType, ScopedTypeIdentifier, TraitBounds, TupleType, TypeIdentifier, WherePredicate } from '../types.js';
 
 
 class WherePredicateBuilder extends Builder<WherePredicate> {
   private _bounds!: Builder<TraitBounds>;
-  private _left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
+  private _left: Builder<ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
 
-  constructor(left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>) {
+  constructor(left: Builder<ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>) {
     super();
     this._left = left;
   }
@@ -44,13 +44,13 @@ class WherePredicateBuilder extends Builder<WherePredicate> {
 
 export type { WherePredicateBuilder };
 
-export function where_predicate(left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>): WherePredicateBuilder {
+export function where_predicate(left: Builder<ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>): WherePredicateBuilder {
   return new WherePredicateBuilder(left);
 }
 
 export interface WherePredicateOptions {
   bounds: Builder<TraitBounds>;
-  left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
+  left: Builder<ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
 }
 
 export namespace where_predicate {

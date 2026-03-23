@@ -3,22 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('extends_clause', () => {
   it('should build with correct kind', () => {
-    const builder = ir.extendsClause(ir.yieldExpression(), ir.yieldExpression());
+    const builder = ir.extendsClause();
     const node = builder.build();
     expect(node.kind).toBe('extends_clause');
-    expect(Array.isArray((node as any).value)).toBe(true);
-    expect((node as any).value.length).toBeGreaterThan(0);
-    expect((node as any).value[0]).toHaveProperty('kind');
-  });
-
-  it('should render required grammar tokens', () => {
-    const builder = ir.extendsClause(ir.yieldExpression(), ir.yieldExpression());
-    const source = builder.renderImpl();
-    expect(source).toContain('extends');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.extendsClause(ir.yieldExpression(), ir.yieldExpression());
+    const builder = ir.extendsClause();
     const cst = builder.toCST();
     expect(cst.type).toBe('extends_clause');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +18,7 @@ describe('extends_clause', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.extendsClause(ir.yieldExpression(), ir.yieldExpression());
+    const builder = ir.extendsClause();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

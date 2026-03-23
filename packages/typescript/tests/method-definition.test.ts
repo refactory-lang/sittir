@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('method_definition', () => {
   it('should build with correct kind', () => {
-    const builder = ir.methodDefinition(ir.privatePropertyIdentifier('test'));
+    const builder = ir.methodDefinition(ir.propertyIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('method_definition');
     expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.methodDefinition(ir.privatePropertyIdentifier('test'));
+    const builder = ir.methodDefinition(ir.propertyIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('method_definition');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('method_definition', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.methodDefinition(ir.privatePropertyIdentifier('test'));
+    const builder = ir.methodDefinition(ir.propertyIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

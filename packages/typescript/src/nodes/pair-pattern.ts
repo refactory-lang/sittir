@@ -1,18 +1,18 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AssignmentPattern, ComputedPropertyName, PairPattern, Pattern, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
+import type { AssignmentPattern, ComputedPropertyName, Number, PairPattern, Pattern, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
 
 
 class PairPatternBuilder extends Builder<PairPattern> {
-  private _key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
-  private _value!: Builder<AssignmentPattern | Pattern>;
+  private _key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  private _value!: Builder<Pattern | AssignmentPattern>;
 
-  constructor(key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>) {
+  constructor(key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>) {
     super();
     this._key = key;
   }
 
-  value(value: Builder<AssignmentPattern | Pattern>): this {
+  value(value: Builder<Pattern | AssignmentPattern>): this {
     this._value = value;
     return this;
   }
@@ -46,13 +46,13 @@ class PairPatternBuilder extends Builder<PairPattern> {
 
 export type { PairPatternBuilder };
 
-export function pair_pattern(key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>): PairPatternBuilder {
+export function pair_pattern(key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>): PairPatternBuilder {
   return new PairPatternBuilder(key);
 }
 
 export interface PairPatternOptions {
-  key: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
-  value: Builder<AssignmentPattern | Pattern>;
+  key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  value: Builder<Pattern | AssignmentPattern>;
 }
 
 export namespace pair_pattern {

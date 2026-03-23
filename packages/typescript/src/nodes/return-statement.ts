@@ -23,7 +23,7 @@ class ReturnStatementBuilder extends Builder<ReturnStatement> {
   build(ctx?: RenderContext): ReturnStatement {
     return {
       kind: 'return_statement',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as ReturnStatement;
   }
 

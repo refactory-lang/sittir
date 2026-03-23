@@ -1,10 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Expression, Label, LetChain, LetCondition, WhileExpression } from '../types.js';
+import type { Block, Expression, Label, LetChain, LetCondition, WhileExpression } from '../types.js';
 
 
 class WhileExpressionBuilder extends Builder<WhileExpression> {
-  private _body!: Builder;
+  private _body!: Builder<Block>;
   private _condition: Builder<Expression | LetChain | LetCondition>;
   private _children: Builder<Label>[] = [];
 
@@ -13,7 +13,7 @@ class WhileExpressionBuilder extends Builder<WhileExpression> {
     this._condition = condition;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<Block>): this {
     this._body = value;
     return this;
   }
@@ -62,7 +62,7 @@ export function while_expression(condition: Builder<Expression | LetChain | LetC
 }
 
 export interface WhileExpressionOptions {
-  body: Builder;
+  body: Builder<Block>;
   condition: Builder<Expression | LetChain | LetCondition>;
   children?: Builder<Label> | (Builder<Label>)[];
 }

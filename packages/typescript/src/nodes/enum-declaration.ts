@@ -1,11 +1,13 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { EnumBody, EnumDeclaration, Identifier } from '../types.js';
+import { enum_body } from './enum-body.js';
+import type { EnumBodyOptions } from './enum-body.js';
 
 
 class EnumDeclarationBuilder extends Builder<EnumDeclaration> {
-  private _body!: Builder<EnumBody>;
   private _name: Builder<Identifier>;
+  private _body!: Builder<EnumBody>;
 
   constructor(name: Builder<Identifier>) {
     super();
@@ -28,8 +30,8 @@ class EnumDeclarationBuilder extends Builder<EnumDeclaration> {
   build(ctx?: RenderContext): EnumDeclaration {
     return {
       kind: 'enum_declaration',
-      body: this._body?.build(ctx),
       name: this._name.build(ctx),
+      body: this._body?.build(ctx),
     } as EnumDeclaration;
   }
 
@@ -51,15 +53,18 @@ export function enum_declaration(name: Builder<Identifier>): EnumDeclarationBuil
 }
 
 export interface EnumDeclarationOptions {
-  body: Builder<EnumBody>;
   name: Builder<Identifier> | string;
+  body: Builder<EnumBody> | EnumBodyOptions;
 }
 
 export namespace enum_declaration {
   export function from(options: EnumDeclarationOptions): EnumDeclarationBuilder {
     const _ctor = options.name;
     const b = new EnumDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
-    if (options.body !== undefined) b.body(options.body);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : enum_body.from(_v as EnumBodyOptions));
+    }
     return b;
   }
 }

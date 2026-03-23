@@ -1,10 +1,10 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Expression, LetDeclaration, MutableSpecifier, Pattern, Type } from '../types.js';
+import type { Block, Expression, LetDeclaration, MutableSpecifier, Pattern, Type } from '../types.js';
 
 
 class LetDeclarationBuilder extends Builder<LetDeclaration> {
-  private _alternative?: Builder;
+  private _alternative?: Builder<Block>;
   private _pattern: Builder<Pattern>;
   private _type?: Builder<Type>;
   private _value?: Builder<Expression>;
@@ -15,7 +15,7 @@ class LetDeclarationBuilder extends Builder<LetDeclaration> {
     this._pattern = pattern;
   }
 
-  alternative(value: Builder): this {
+  alternative(value: Builder<Block>): this {
     this._alternative = value;
     return this;
   }
@@ -100,7 +100,7 @@ export function let_declaration(pattern: Builder<Pattern>): LetDeclarationBuilde
 }
 
 export interface LetDeclarationOptions {
-  alternative?: Builder;
+  alternative?: Builder<Block>;
   pattern: Builder<Pattern>;
   type?: Builder<Type>;
   value?: Builder<Expression>;

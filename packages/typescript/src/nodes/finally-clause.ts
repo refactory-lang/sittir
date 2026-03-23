@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FinallyClause, StatementBlock } from '../types.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
 class FinallyClauseBuilder extends Builder<FinallyClause> {
@@ -42,12 +44,13 @@ export function finally_clause(body: Builder<StatementBlock>): FinallyClauseBuil
 }
 
 export interface FinallyClauseOptions {
-  body: Builder<StatementBlock>;
+  body: Builder<StatementBlock> | StatementBlockOptions;
 }
 
 export namespace finally_clause {
   export function from(options: FinallyClauseOptions): FinallyClauseBuilder {
-    const b = new FinallyClauseBuilder(options.body);
+    const _ctor = options.body;
+    const b = new FinallyClauseBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor as StatementBlockOptions));
     return b;
   }
 }

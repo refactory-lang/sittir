@@ -14,6 +14,7 @@ export const NODE_KINDS = [
   'await_expression',
   'base_field_initializer',
   'binary_expression',
+  'block',
   'block_comment',
   'bounded_type',
   'bracketed_type',
@@ -63,6 +64,7 @@ export const NODE_KINDS = [
   'let_chain',
   'let_condition',
   'let_declaration',
+  'lifetime',
   'lifetime_parameter',
   'line_comment',
   'loop_expression',
@@ -178,7 +180,6 @@ export const KEYWORDS = [
   'as',
   'async',
   'await',
-  'block',
   'break',
   'const',
   'continue',
@@ -198,7 +199,6 @@ export const KEYWORDS = [
   'in',
   'item',
   'let',
-  'lifetime',
   'literal',
   'loop',
   'match',
@@ -338,6 +338,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'left', required: true, multiple: false },
     { name: 'operator', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
+  ],
+  'block': [
   ],
   'block_comment': [
     { name: 'doc', required: false, multiple: false },
@@ -509,6 +511,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
+  ],
+  'lifetime': [
   ],
   'lifetime_parameter': [
     { name: 'bounds', required: false, multiple: false },
@@ -736,7 +740,7 @@ export const BOOLEAN_LITERALS = [
   'false',
   'true',
 ] as const;
-export type BooleanLiteral = (typeof BOOLEAN_LITERALS)[number];
+export type BooleanLiteralValue = (typeof BOOLEAN_LITERALS)[number];
 
 /** Valid values for `fragment_specifier` nodes. */
 export const FRAGMENT_SPECIFIERS = [
@@ -756,7 +760,7 @@ export const FRAGMENT_SPECIFIERS = [
   'ty',
   'vis',
 ] as const;
-export type FragmentSpecifier = (typeof FRAGMENT_SPECIFIERS)[number];
+export type FragmentSpecifierValue = (typeof FRAGMENT_SPECIFIERS)[number];
 
 /** Valid values for `primitive_type` nodes. */
 export const PRIMITIVE_TYPES = [
@@ -778,4 +782,4 @@ export const PRIMITIVE_TYPES = [
   'u8',
   'usize',
 ] as const;
-export type PrimitiveType = (typeof PRIMITIVE_TYPES)[number];
+export type PrimitiveTypeValue = (typeof PRIMITIVE_TYPES)[number];

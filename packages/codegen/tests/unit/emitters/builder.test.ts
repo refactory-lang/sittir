@@ -19,14 +19,14 @@ describe('emitBuilder', () => {
     expect(source).toContain(`build(ctx?: RenderContext): StructItem`);
   });
 
-  it('should use wide Builder type for constructor and setters (precise types on .from())', () => {
+  it('should use precise Builder types for constructor and setters', () => {
     const source = emit('struct_item');
-    expect(source).toContain('constructor(name: Builder)');
+    expect(source).toContain('constructor(name: Builder<TypeIdentifier>)');
   });
 
-  it('should generate fluent setters with wide Builder type', () => {
+  it('should generate fluent setters with precise Builder types', () => {
     const source = emit('function_item');
-    expect(source).toContain('returnType(value: Builder): this');
+    expect(source).toContain('returnType(value: Builder<Type>): this');
   });
 
   it('should use rest params for multiple fields', () => {

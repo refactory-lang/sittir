@@ -1,12 +1,18 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ExtendsTypeClause, InterfaceBody, InterfaceDeclaration, TypeIdentifier, TypeParameters } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { interface_body } from './interface-body.js';
+import type { InterfaceBodyOptions } from './interface-body.js';
+import { extends_type_clause } from './extends-type-clause.js';
+import type { ExtendsTypeClauseOptions } from './extends-type-clause.js';
 
 
 class InterfaceDeclarationBuilder extends Builder<InterfaceDeclaration> {
-  private _body!: Builder<InterfaceBody>;
   private _name: Builder<TypeIdentifier>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _body!: Builder<InterfaceBody>;
   private _children: Builder<ExtendsTypeClause>[] = [];
 
   constructor(name: Builder<TypeIdentifier>) {
@@ -14,13 +20,13 @@ class InterfaceDeclarationBuilder extends Builder<InterfaceDeclaration> {
     this._name = name;
   }
 
-  body(value: Builder<InterfaceBody>): this {
-    this._body = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  body(value: Builder<InterfaceBody>): this {
+    this._body = value;
     return this;
   }
 
@@ -42,9 +48,9 @@ class InterfaceDeclarationBuilder extends Builder<InterfaceDeclaration> {
   build(ctx?: RenderContext): InterfaceDeclaration {
     return {
       kind: 'interface_declaration',
-      body: this._body?.build(ctx),
       name: this._name.build(ctx),
       typeParameters: this._typeParameters?.build(ctx),
+      body: this._body?.build(ctx),
       children: this._children[0]?.build(ctx),
     } as InterfaceDeclaration;
   }
@@ -71,22 +77,28 @@ export function interface_declaration(name: Builder<TypeIdentifier>): InterfaceD
 }
 
 export interface InterfaceDeclarationOptions {
-  body: Builder<InterfaceBody>;
   name: Builder<TypeIdentifier> | string;
-  typeParameters?: Builder<TypeParameters>;
-  children?: Builder<ExtendsTypeClause> | (Builder<ExtendsTypeClause>)[];
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  body: Builder<InterfaceBody> | InterfaceBodyOptions;
+  children?: Builder<ExtendsTypeClause> | ExtendsTypeClauseOptions | (Builder<ExtendsTypeClause> | ExtendsTypeClauseOptions)[];
 }
 
 export namespace interface_declaration {
   export function from(options: InterfaceDeclarationOptions): InterfaceDeclarationBuilder {
     const _ctor = options.name;
     const b = new InterfaceDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
-    if (options.body !== undefined) b.body(options.body);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : interface_body.from(_v as InterfaceBodyOptions));
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : extends_type_clause.from(_x as ExtendsTypeClauseOptions)));
     }
     return b;
   }

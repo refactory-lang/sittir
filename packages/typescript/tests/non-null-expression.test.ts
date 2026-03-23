@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('non_null_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.nonNullExpression(ir.yieldExpression());
+    const builder = ir.nonNullExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('non_null_expression');
     expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.nonNullExpression(ir.yieldExpression());
+    const builder = ir.nonNullExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain('!');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.nonNullExpression(ir.yieldExpression());
+    const builder = ir.nonNullExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('non_null_expression');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('non_null_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.nonNullExpression(ir.yieldExpression());
+    const builder = ir.nonNullExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

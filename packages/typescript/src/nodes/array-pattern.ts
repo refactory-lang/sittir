@@ -4,11 +4,11 @@ import type { ArrayPattern, AssignmentPattern, Pattern } from '../types.js';
 
 
 class ArrayPatternBuilder extends Builder<ArrayPattern> {
-  private _children: Builder<AssignmentPattern | Pattern>[] = [];
+  private _children: Builder<Pattern | AssignmentPattern>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<AssignmentPattern | Pattern>[]): this {
+  children(...value: Builder<Pattern | AssignmentPattern>[]): this {
     this._children = value;
     return this;
   }
@@ -54,7 +54,7 @@ export function array_pattern(): ArrayPatternBuilder {
 }
 
 export interface ArrayPatternOptions {
-  children?: Builder<AssignmentPattern | Pattern> | (Builder<AssignmentPattern | Pattern>)[];
+  children?: Builder<Pattern | AssignmentPattern> | (Builder<Pattern | AssignmentPattern>)[];
 }
 
 export namespace array_pattern {

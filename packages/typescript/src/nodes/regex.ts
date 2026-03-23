@@ -4,8 +4,8 @@ import type { Regex, RegexFlags, RegexPattern } from '../types.js';
 
 
 class RegexBuilder extends Builder<Regex> {
-  private _flags?: Builder<RegexFlags>;
   private _pattern: Builder<RegexPattern>;
+  private _flags?: Builder<RegexFlags>;
 
   constructor(pattern: Builder<RegexPattern>) {
     super();
@@ -29,8 +29,8 @@ class RegexBuilder extends Builder<Regex> {
   build(ctx?: RenderContext): Regex {
     return {
       kind: 'regex',
-      flags: this._flags?.build(ctx),
       pattern: this._pattern.build(ctx),
+      flags: this._flags?.build(ctx),
     } as Regex;
   }
 
@@ -53,8 +53,8 @@ export function regex(pattern: Builder<RegexPattern>): RegexBuilder {
 }
 
 export interface RegexOptions {
-  flags?: Builder<RegexFlags> | string;
   pattern: Builder<RegexPattern> | string;
+  flags?: Builder<RegexFlags> | string;
 }
 
 export namespace regex {

@@ -68,6 +68,13 @@ describe('leaf nodes', () => {
     expect(node).toHaveProperty('kind', 'hash_bang_line');
   });
 
+  it('ir.htmlCharacterReference() should build a { kind } object', () => {
+    const builder = ir.htmlCharacterReference('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'html_character_reference');
+  });
+
   it('ir.htmlComment() should build a { kind } object', () => {
     const builder = ir.htmlComment('test');
     const node = builder.build();
@@ -82,6 +89,20 @@ describe('leaf nodes', () => {
     expect(node).toHaveProperty('kind', 'identifier');
   });
 
+  it('ir.import() should build a { kind } object', () => {
+    const builder = ir.import('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'import');
+  });
+
+  it('ir.jsxIdentifier() should build a { kind } object', () => {
+    const builder = ir.jsxIdentifier('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'jsx_identifier');
+  });
+
   it('ir.metaProperty() should build a { kind } object', () => {
     const builder = ir.metaProperty('test');
     const node = builder.build();
@@ -94,6 +115,13 @@ describe('leaf nodes', () => {
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'null');
+  });
+
+  it('ir.number() should build a { kind } object', () => {
+    const builder = ir.number('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'number');
   });
 
   it('ir.optionalChain() should build a { kind } object', () => {
@@ -213,6 +241,34 @@ describe('leaf nodes', () => {
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'undefined');
+  });
+
+  it('ir.unescapedDoubleJsxStringFragment() should build a { kind } object', () => {
+    const builder = ir.unescapedDoubleJsxStringFragment('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'unescaped_double_jsx_string_fragment');
+  });
+
+  it('ir.unescapedDoubleStringFragment() should build a { kind } object', () => {
+    const builder = ir.unescapedDoubleStringFragment('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'unescaped_double_string_fragment');
+  });
+
+  it('ir.unescapedSingleJsxStringFragment() should build a { kind } object', () => {
+    const builder = ir.unescapedSingleJsxStringFragment('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'unescaped_single_jsx_string_fragment');
+  });
+
+  it('ir.unescapedSingleStringFragment() should build a { kind } object', () => {
+    const builder = ir.unescapedSingleStringFragment('test');
+    const node = builder.build();
+    expect(typeof node).toBe('object');
+    expect(node).toHaveProperty('kind', 'unescaped_single_string_fragment');
   });
 
   it('renderImpl() should return the leaf text', () => {

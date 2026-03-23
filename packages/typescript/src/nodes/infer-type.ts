@@ -1,12 +1,12 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { InferType, TypeIdentifier } from '../types.js';
+import type { InferType, Type, TypeIdentifier } from '../types.js';
 
 
 class InferTypeBuilder extends Builder<InferType> {
-  private _children: Builder<TypeIdentifier>[] = [];
+  private _children: Builder<TypeIdentifier | Type>[] = [];
 
-  constructor(...children: Builder<TypeIdentifier>[]) {
+  constructor(...children: Builder<TypeIdentifier | Type>[]) {
     super();
     this._children = children;
   }
@@ -39,19 +39,19 @@ class InferTypeBuilder extends Builder<InferType> {
 
 export type { InferTypeBuilder };
 
-export function infer_type(...children: Builder<TypeIdentifier>[]): InferTypeBuilder {
+export function infer_type(...children: Builder<TypeIdentifier | Type>[]): InferTypeBuilder {
   return new InferTypeBuilder(...children);
 }
 
 export interface InferTypeOptions {
-  children: Builder<TypeIdentifier> | (Builder<TypeIdentifier>)[];
+  children?: Builder<TypeIdentifier | Type> | string | (Builder<TypeIdentifier | Type> | string)[];
 }
 
 export namespace infer_type {
   export function from(options: InferTypeOptions): InferTypeBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new InferTypeBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new InferTypeBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('type_identifier', _v) : _v));
     return b;
   }
 }

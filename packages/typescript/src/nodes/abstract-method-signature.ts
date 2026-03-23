@@ -1,18 +1,27 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AbstractMethodSignature, AccessibilityModifier, AssertsAnnotation, ComputedPropertyName, FormalParameters, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
+import type { AbstractMethodSignature, AccessibilityModifier, AssertsAnnotation, ComputedPropertyName, FormalParameters, Number, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, String, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
 
 
 class AbstractMethodSignatureBuilder extends Builder<AbstractMethodSignature> {
-  private _name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
-  private _parameters!: Builder<FormalParameters>;
-  private _returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  private _name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _parameters!: Builder<FormalParameters>;
+  private _returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
   private _children: Builder<AccessibilityModifier | OverrideModifier>[] = [];
 
-  constructor(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>) {
+  constructor(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>) {
     super();
     this._name = name;
+  }
+
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
+    return this;
   }
 
   parameters(value: Builder<FormalParameters>): this {
@@ -20,13 +29,8 @@ class AbstractMethodSignatureBuilder extends Builder<AbstractMethodSignature> {
     return this;
   }
 
-  returnType(value: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>): this {
+  returnType(value: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>): this {
     this._returnType = value;
-    return this;
-  }
-
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
     return this;
   }
 
@@ -51,9 +55,9 @@ class AbstractMethodSignatureBuilder extends Builder<AbstractMethodSignature> {
     return {
       kind: 'abstract_method_signature',
       name: this._name.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
       parameters: this._parameters?.build(ctx),
       returnType: this._returnType?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
       children: this._children.map(c => c.build(ctx)),
     } as AbstractMethodSignature;
   }
@@ -75,24 +79,30 @@ class AbstractMethodSignatureBuilder extends Builder<AbstractMethodSignature> {
 
 export type { AbstractMethodSignatureBuilder };
 
-export function abstract_method_signature(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>): AbstractMethodSignatureBuilder {
+export function abstract_method_signature(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>): AbstractMethodSignatureBuilder {
   return new AbstractMethodSignatureBuilder(name);
 }
 
 export interface AbstractMethodSignatureOptions {
-  name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
-  parameters: Builder<FormalParameters>;
-  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
-  typeParameters?: Builder<TypeParameters>;
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
   children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
 }
 
 export namespace abstract_method_signature {
   export function from(options: AbstractMethodSignatureOptions): AbstractMethodSignatureBuilder {
     const b = new AbstractMethodSignatureBuilder(options.name);
-    if (options.parameters !== undefined) b.parameters(options.parameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
+    if (options.parameters !== undefined) {
+      const _v = options.parameters;
+      b.parameters(_v instanceof Builder ? _v : formal_parameters.from(_v as FormalParametersOptions));
+    }
     if (options.returnType !== undefined) b.returnType(options.returnType);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];

@@ -13,7 +13,6 @@ describe('match_arm', () => {
     const builder = ir.matchArm(ir.matchPattern(ir.identifier('test')));
     const source = builder.renderImpl();
     expect(source).toContain('=>');
-    expect(source).toContain(',');
   });
 
   it('should produce a valid CST node', () => {

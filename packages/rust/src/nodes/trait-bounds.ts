@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { HigherRankedTraitBound, TraitBounds, Type } from '../types.js';
+import type { HigherRankedTraitBound, Lifetime, TraitBounds, Type } from '../types.js';
 
 
 class TraitBoundsBuilder extends Builder<TraitBounds> {
-  private _children: Builder<Type | HigherRankedTraitBound>[] = [];
+  private _children: Builder<Type | HigherRankedTraitBound | Lifetime>[] = [];
 
-  constructor(...children: Builder<Type | HigherRankedTraitBound>[]) {
+  constructor(...children: Builder<Type | HigherRankedTraitBound | Lifetime>[]) {
     super();
     this._children = children;
   }
@@ -40,12 +40,12 @@ class TraitBoundsBuilder extends Builder<TraitBounds> {
 
 export type { TraitBoundsBuilder };
 
-export function trait_bounds(...children: Builder<Type | HigherRankedTraitBound>[]): TraitBoundsBuilder {
+export function trait_bounds(...children: Builder<Type | HigherRankedTraitBound | Lifetime>[]): TraitBoundsBuilder {
   return new TraitBoundsBuilder(...children);
 }
 
 export interface TraitBoundsOptions {
-  children: Builder<Type | HigherRankedTraitBound> | (Builder<Type | HigherRankedTraitBound>)[];
+  children: Builder<Type | HigherRankedTraitBound | Lifetime> | (Builder<Type | HigherRankedTraitBound | Lifetime>)[];
 }
 
 export namespace trait_bounds {

@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AmbientDeclaration, Declaration, PropertyIdentifier, StatementBlock } from '../types.js';
+import type { AmbientDeclaration, Declaration, PropertyIdentifier, StatementBlock, Type } from '../types.js';
 
 
 class AmbientDeclarationBuilder extends Builder<AmbientDeclaration> {
-  private _children: Builder<Declaration | PropertyIdentifier | StatementBlock>[] = [];
+  private _children: Builder<Declaration | StatementBlock | PropertyIdentifier | Type>[] = [];
 
-  constructor(...children: Builder<Declaration | PropertyIdentifier | StatementBlock>[]) {
+  constructor(...children: Builder<Declaration | StatementBlock | PropertyIdentifier | Type>[]) {
     super();
     this._children = children;
   }
@@ -39,18 +39,18 @@ class AmbientDeclarationBuilder extends Builder<AmbientDeclaration> {
 
 export type { AmbientDeclarationBuilder };
 
-export function ambient_declaration(...children: Builder<Declaration | PropertyIdentifier | StatementBlock>[]): AmbientDeclarationBuilder {
+export function ambient_declaration(...children: Builder<Declaration | StatementBlock | PropertyIdentifier | Type>[]): AmbientDeclarationBuilder {
   return new AmbientDeclarationBuilder(...children);
 }
 
 export interface AmbientDeclarationOptions {
-  children: Builder<Declaration | PropertyIdentifier | StatementBlock> | (Builder<Declaration | PropertyIdentifier | StatementBlock>)[];
+  children?: Builder<Declaration | StatementBlock | PropertyIdentifier | Type> | (Builder<Declaration | StatementBlock | PropertyIdentifier | Type>)[];
 }
 
 export namespace ambient_declaration {
   export function from(options: AmbientDeclarationOptions): AmbientDeclarationBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new AmbientDeclarationBuilder(..._arr);
     return b;
   }

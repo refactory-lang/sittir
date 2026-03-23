@@ -65,14 +65,20 @@ export function emitTypes(config: EmitTypesConfig): string {
   // 7. Supertype union aliases
   if (supertypes.length > 0) {
     lines.push('// Supertype unions');
+
+    // First pass: register all supertype type names so cross-references
+    // resolve regardless of processing order (e.g. Expression → PrimaryExpression)
+    const supertypeEntries: Array<{ st: SupertypeInfo; typeName: string }> = [];
     for (const st of supertypes) {
-      // Strip leading _ from supertype name for the type alias
       const cleanName = st.name.replace(/^_/, '');
       const typeName = toTypeName(cleanName);
       if (generatedTypes.has(typeName)) continue;
       generatedTypes.add(typeName);
+      supertypeEntries.push({ st, typeName });
+    }
 
-      // Resolve each subtype to its type name (only if we have a type for it)
+    // Second pass: generate the union types
+    for (const { st, typeName } of supertypeEntries) {
       const memberTypes = st.subtypes
         .map(sub => toTypeName(sub))
         .filter(t => generatedTypes.has(t));

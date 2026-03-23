@@ -1,11 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AbstractMethodSignature, ClassBody, ClassStaticBlock, Decorator, IndexSignature, MethodDefinition, MethodSignature, PublicFieldDefinition } from '../types.js';
+import { decorator } from './decorator.js';
+import type { DecoratorOptions } from './decorator.js';
 
 
 class ClassBodyBuilder extends Builder<ClassBody> {
   private _decorator: Builder<Decorator>[] = [];
-  private _children: Builder<AbstractMethodSignature | ClassStaticBlock | IndexSignature | MethodDefinition | MethodSignature | PublicFieldDefinition>[] = [];
+  private _children: Builder<MethodDefinition | MethodSignature | ClassStaticBlock | AbstractMethodSignature | IndexSignature | PublicFieldDefinition>[] = [];
 
   constructor() { super(); }
 
@@ -14,7 +16,7 @@ class ClassBodyBuilder extends Builder<ClassBody> {
     return this;
   }
 
-  children(...value: Builder<AbstractMethodSignature | ClassStaticBlock | IndexSignature | MethodDefinition | MethodSignature | PublicFieldDefinition>[]): this {
+  children(...value: Builder<MethodDefinition | MethodSignature | ClassStaticBlock | AbstractMethodSignature | IndexSignature | PublicFieldDefinition>[]): this {
     this._children = value;
     return this;
   }
@@ -59,8 +61,8 @@ export function class_body(): ClassBodyBuilder {
 }
 
 export interface ClassBodyOptions {
-  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
-  children?: Builder<AbstractMethodSignature | ClassStaticBlock | IndexSignature | MethodDefinition | MethodSignature | PublicFieldDefinition> | (Builder<AbstractMethodSignature | ClassStaticBlock | IndexSignature | MethodDefinition | MethodSignature | PublicFieldDefinition>)[];
+  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
+  children?: Builder<MethodDefinition | MethodSignature | ClassStaticBlock | AbstractMethodSignature | IndexSignature | PublicFieldDefinition> | (Builder<MethodDefinition | MethodSignature | ClassStaticBlock | AbstractMethodSignature | IndexSignature | PublicFieldDefinition>)[];
 }
 
 export namespace class_body {
@@ -69,7 +71,7 @@ export namespace class_body {
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr);
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
     }
     if (options.children !== undefined) {
       const _v = options.children;

@@ -1,16 +1,20 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AccessibilityModifier, ComputedPropertyName, Decorator, Expression, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, PublicFieldDefinition, TypeAnnotation } from '../types.js';
+import type { AccessibilityModifier, ComputedPropertyName, Decorator, Expression, Number, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, PublicFieldDefinition, String, TypeAnnotation } from '../types.js';
+import { decorator } from './decorator.js';
+import type { DecoratorOptions } from './decorator.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
 
 
 class PublicFieldDefinitionBuilder extends Builder<PublicFieldDefinition> {
   private _decorator: Builder<Decorator>[] = [];
-  private _name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  private _name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
   private _type?: Builder<TypeAnnotation>;
   private _value?: Builder<Expression>;
   private _children: Builder<AccessibilityModifier | OverrideModifier>[] = [];
 
-  constructor(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>) {
+  constructor(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>) {
     super();
     this._name = name;
   }
@@ -81,14 +85,14 @@ class PublicFieldDefinitionBuilder extends Builder<PublicFieldDefinition> {
 
 export type { PublicFieldDefinitionBuilder };
 
-export function public_field_definition(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>): PublicFieldDefinitionBuilder {
+export function public_field_definition(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>): PublicFieldDefinitionBuilder {
   return new PublicFieldDefinitionBuilder(name);
 }
 
 export interface PublicFieldDefinitionOptions {
-  decorator?: Builder<Decorator> | (Builder<Decorator>)[];
-  name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
-  type?: Builder<TypeAnnotation>;
+  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
   value?: Builder<Expression>;
   children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
 }
@@ -99,9 +103,12 @@ export namespace public_field_definition {
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr);
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
     }
-    if (options.type !== undefined) b.type(options.type);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+    }
     if (options.value !== undefined) b.value(options.value);
     if (options.children !== undefined) {
       const _v = options.children;

@@ -4,11 +4,11 @@ import type { ObjectAssignmentPattern, ObjectPattern, PairPattern, RestPattern, 
 
 
 class ObjectPatternBuilder extends Builder<ObjectPattern> {
-  private _children: Builder<ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern>[] = [];
+  private _children: Builder<PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern>[]): this {
+  children(...value: Builder<PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern>[]): this {
     this._children = value;
     return this;
   }
@@ -54,7 +54,7 @@ export function object_pattern(): ObjectPatternBuilder {
 }
 
 export interface ObjectPatternOptions {
-  children?: Builder<ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern> | (Builder<ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern>)[];
+  children?: Builder<PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern> | (Builder<PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern>)[];
 }
 
 export namespace object_pattern {

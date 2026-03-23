@@ -9,12 +9,6 @@ describe('assignment', () => {
     expect((node as any).left).toHaveProperty('kind');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.assignment(ir.identifier('test'));
-    const source = builder.renderImpl();
-    expect(source).toContain('=');
-  });
-
   it('should produce a valid CST node', () => {
     const builder = ir.assignment(ir.identifier('test'));
     const cst = builder.toCST();

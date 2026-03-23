@@ -1,25 +1,20 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { EmptyStatement, Expression, ForStatement, LexicalDeclaration, SequenceExpression, Statement, VariableDeclaration } from '../types.js';
 
 
 class ForStatementBuilder extends Builder<ForStatement> {
-  private _body!: Builder<Statement>;
-  private _condition: Builder<EmptyStatement | Expression | SequenceExpression>[] = [];
+  private _initializer: Builder<Expression | SequenceExpression | LexicalDeclaration | VariableDeclaration | EmptyStatement>;
+  private _condition!: Builder<Expression | SequenceExpression | EmptyStatement>;
   private _increment?: Builder<Expression | SequenceExpression>;
-  private _initializer: Builder<EmptyStatement | Expression | LexicalDeclaration | SequenceExpression | VariableDeclaration>;
+  private _body!: Builder<Statement>;
 
-  constructor(initializer: Builder<EmptyStatement | Expression | LexicalDeclaration | SequenceExpression | VariableDeclaration>) {
+  constructor(initializer: Builder<Expression | SequenceExpression | LexicalDeclaration | VariableDeclaration | EmptyStatement>) {
     super();
     this._initializer = initializer;
   }
 
-  body(value: Builder<Statement>): this {
-    this._body = value;
-    return this;
-  }
-
-  condition(...value: Builder<EmptyStatement | Expression | SequenceExpression>[]): this {
+  condition(value: Builder<Expression | SequenceExpression | EmptyStatement>): this {
     this._condition = value;
     return this;
   }
@@ -29,12 +24,17 @@ class ForStatementBuilder extends Builder<ForStatement> {
     return this;
   }
 
+  body(value: Builder<Statement>): this {
+    this._body = value;
+    return this;
+  }
+
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('for');
     parts.push('(');
     if (this._initializer) parts.push(this.renderChild(this._initializer, ctx));
-    if (this._condition.length > 0) parts.push(this.renderChildren(this._condition, ', ', ctx));
+    if (this._condition) parts.push(this.renderChild(this._condition, ctx));
     if (this._increment) parts.push(this.renderChild(this._increment, ctx));
     parts.push(')');
     if (this._body) parts.push(this.renderChild(this._body, ctx));
@@ -44,10 +44,10 @@ class ForStatementBuilder extends Builder<ForStatement> {
   build(ctx?: RenderContext): ForStatement {
     return {
       kind: 'for_statement',
-      body: this._body?.build(ctx),
-      condition: this._condition.map(c => c.build(ctx)),
-      increment: this._increment?.build(ctx),
       initializer: this._initializer.build(ctx),
+      condition: this._condition?.build(ctx),
+      increment: this._increment?.build(ctx),
+      body: this._body?.build(ctx),
     } as ForStatement;
   }
 
@@ -58,9 +58,7 @@ class ForStatementBuilder extends Builder<ForStatement> {
     parts.push({ kind: 'token', text: 'for', type: 'for' });
     parts.push({ kind: 'token', text: '(', type: '(' });
     if (this._initializer) parts.push({ kind: 'builder', builder: this._initializer, fieldName: 'initializer' });
-    for (const child of this._condition) {
-      parts.push({ kind: 'builder', builder: child, fieldName: 'condition' });
-    }
+    if (this._condition) parts.push({ kind: 'builder', builder: this._condition, fieldName: 'condition' });
     if (this._increment) parts.push({ kind: 'builder', builder: this._increment, fieldName: 'increment' });
     parts.push({ kind: 'token', text: ')', type: ')' });
     if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
@@ -70,27 +68,26 @@ class ForStatementBuilder extends Builder<ForStatement> {
 
 export type { ForStatementBuilder };
 
-export function for_statement(initializer: Builder<EmptyStatement | Expression | LexicalDeclaration | SequenceExpression | VariableDeclaration>): ForStatementBuilder {
+export function for_statement(initializer: Builder<Expression | SequenceExpression | LexicalDeclaration | VariableDeclaration | EmptyStatement>): ForStatementBuilder {
   return new ForStatementBuilder(initializer);
 }
 
 export interface ForStatementOptions {
-  body: Builder<Statement>;
-  condition: Builder<EmptyStatement | Expression | SequenceExpression> | (Builder<EmptyStatement | Expression | SequenceExpression>)[];
+  initializer: Builder<Expression | SequenceExpression | LexicalDeclaration | VariableDeclaration | EmptyStatement>;
+  condition: Builder<Expression | SequenceExpression | EmptyStatement> | string;
   increment?: Builder<Expression | SequenceExpression>;
-  initializer: Builder<EmptyStatement | Expression | LexicalDeclaration | SequenceExpression | VariableDeclaration>;
+  body: Builder<Statement>;
 }
 
 export namespace for_statement {
   export function from(options: ForStatementOptions): ForStatementBuilder {
     const b = new ForStatementBuilder(options.initializer);
-    if (options.body !== undefined) b.body(options.body);
     if (options.condition !== undefined) {
       const _v = options.condition;
-      const _arr = Array.isArray(_v) ? _v : [_v];
-      b.condition(..._arr);
+      b.condition(typeof _v === 'string' ? new LeafBuilder('empty_statement', _v) : _v);
     }
     if (options.increment !== undefined) b.increment(options.increment);
+    if (options.body !== undefined) b.body(options.body);
     return b;
   }
 }

@@ -1,19 +1,23 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrayPattern, CatchClause, Identifier, ObjectPattern, StatementBlock, TypeAnnotation } from '../types.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
 class CatchClauseBuilder extends Builder<CatchClause> {
-  private _body: Builder<StatementBlock>;
-  private _parameter?: Builder<ArrayPattern | Identifier | ObjectPattern>;
+  private _parameter?: Builder<ObjectPattern | ArrayPattern | Identifier>;
   private _type?: Builder<TypeAnnotation>;
+  private _body: Builder<StatementBlock>;
 
   constructor(body: Builder<StatementBlock>) {
     super();
     this._body = body;
   }
 
-  parameter(value: Builder<ArrayPattern | Identifier | ObjectPattern>): this {
+  parameter(value: Builder<ObjectPattern | ArrayPattern | Identifier>): this {
     this._parameter = value;
     return this;
   }
@@ -39,9 +43,9 @@ class CatchClauseBuilder extends Builder<CatchClause> {
   build(ctx?: RenderContext): CatchClause {
     return {
       kind: 'catch_clause',
-      body: this._body.build(ctx),
       parameter: this._parameter?.build(ctx),
       type: this._type?.build(ctx),
+      body: this._body.build(ctx),
     } as CatchClause;
   }
 
@@ -68,16 +72,23 @@ export function catch_clause(body: Builder<StatementBlock>): CatchClauseBuilder 
 }
 
 export interface CatchClauseOptions {
-  body: Builder<StatementBlock>;
-  parameter?: Builder<ArrayPattern | Identifier | ObjectPattern>;
-  type?: Builder<TypeAnnotation>;
+  parameter?: Builder<ObjectPattern | ArrayPattern | Identifier> | string;
+  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
+  body: Builder<StatementBlock> | StatementBlockOptions;
 }
 
 export namespace catch_clause {
   export function from(options: CatchClauseOptions): CatchClauseBuilder {
-    const b = new CatchClauseBuilder(options.body);
-    if (options.parameter !== undefined) b.parameter(options.parameter);
-    if (options.type !== undefined) b.type(options.type);
+    const _ctor = options.body;
+    const b = new CatchClauseBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor as StatementBlockOptions));
+    if (options.parameter !== undefined) {
+      const _v = options.parameter;
+      b.parameter(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
+    }
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+    }
     return b;
   }
 }

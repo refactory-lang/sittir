@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeArguments } from '../types.js';
+import type { Type, TypeArguments } from '../types.js';
 
 
 class TypeArgumentsBuilder extends Builder<TypeArguments> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Type>[]) {
     super();
     this._children = children;
   }
@@ -42,18 +42,18 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
 
 export type { TypeArgumentsBuilder };
 
-export function type_arguments(...children: Builder[]): TypeArgumentsBuilder {
+export function type_arguments(...children: Builder<Type>[]): TypeArgumentsBuilder {
   return new TypeArgumentsBuilder(...children);
 }
 
 export interface TypeArgumentsOptions {
-  children: Builder | (Builder)[];
+  children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace type_arguments {
   export function from(options: TypeArgumentsOptions): TypeArgumentsBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new TypeArgumentsBuilder(..._arr);
     return b;
   }

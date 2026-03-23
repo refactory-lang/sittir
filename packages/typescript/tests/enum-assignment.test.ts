@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('enum_assignment', () => {
   it('should build with correct kind', () => {
-    const builder = ir.enumAssignment(ir.privatePropertyIdentifier('test'));
+    const builder = ir.enumAssignment(ir.propertyIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('enum_assignment');
     expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.enumAssignment(ir.privatePropertyIdentifier('test'));
+    const builder = ir.enumAssignment(ir.propertyIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('enum_assignment');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('enum_assignment', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.enumAssignment(ir.privatePropertyIdentifier('test'));
+    const builder = ir.enumAssignment(ir.propertyIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

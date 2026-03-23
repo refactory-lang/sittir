@@ -26,9 +26,8 @@ class AssignmentBuilder extends Builder<Assignment> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._left) parts.push(this.renderChild(this._left, ctx));
-    parts.push('=');
-    if (this._right) parts.push(this.renderChild(this._right, ctx));
     if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._right) parts.push(this.renderChild(this._right, ctx));
     return parts.join(' ');
   }
 
@@ -46,9 +45,8 @@ class AssignmentBuilder extends Builder<Assignment> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
-    parts.push({ kind: 'token', text: '=', type: '=' });
-    if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
     return parts;
   }
 }

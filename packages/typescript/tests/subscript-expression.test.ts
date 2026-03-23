@@ -3,21 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('subscript_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.subscriptExpression(ir.yieldExpression());
+    const builder = ir.subscriptExpression(ir.false('test'));
     const node = builder.build();
     expect(node.kind).toBe('subscript_expression');
     expect((node as any).object).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.subscriptExpression(ir.yieldExpression());
+    const builder = ir.subscriptExpression(ir.false('test'));
     const source = builder.renderImpl();
     expect(source).toContain('[');
     expect(source).toContain(']');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.subscriptExpression(ir.yieldExpression());
+    const builder = ir.subscriptExpression(ir.false('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('subscript_expression');
     expect(cst.isNamed).toBe(true);
@@ -26,7 +26,7 @@ describe('subscript_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.subscriptExpression(ir.yieldExpression());
+    const builder = ir.subscriptExpression(ir.false('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

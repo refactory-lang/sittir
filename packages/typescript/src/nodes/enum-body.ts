@@ -1,15 +1,17 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ComputedPropertyName, EnumAssignment, EnumBody, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
+import type { ComputedPropertyName, EnumAssignment, EnumBody, Number, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
+import { enum_assignment } from './enum-assignment.js';
+import type { EnumAssignmentOptions } from './enum-assignment.js';
 
 
 class EnumBodyBuilder extends Builder<EnumBody> {
-  private _name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>[] = [];
+  private _name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>[] = [];
   private _children: Builder<EnumAssignment>[] = [];
 
   constructor() { super(); }
 
-  name(...value: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>[]): this {
+  name(...value: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>[]): this {
     this._name = value;
     return this;
   }
@@ -24,7 +26,9 @@ class EnumBodyBuilder extends Builder<EnumBody> {
     parts.push('{');
     if (this._name.length > 0) {
       if (this._name.length > 0) parts.push(this.renderChildren(this._name, ', ', ctx));
+      if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
       parts.push(',');
+      if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
       parts.push(',');
     }
     parts.push('}');
@@ -48,7 +52,9 @@ class EnumBodyBuilder extends Builder<EnumBody> {
       for (const child of this._name) {
         parts.push({ kind: 'builder', builder: child, fieldName: 'name' });
       }
+      if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
       parts.push({ kind: 'token', text: ',', type: ',' });
+      if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
       parts.push({ kind: 'token', text: ',', type: ',' });
     }
     parts.push({ kind: 'token', text: '}', type: '}' });
@@ -63,8 +69,8 @@ export function enum_body(): EnumBodyBuilder {
 }
 
 export interface EnumBodyOptions {
-  name?: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier> | (Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>)[];
-  children?: Builder<EnumAssignment> | (Builder<EnumAssignment>)[];
+  name?: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | (Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>)[];
+  children?: Builder<EnumAssignment> | EnumAssignmentOptions | (Builder<EnumAssignment> | EnumAssignmentOptions)[];
 }
 
 export namespace enum_body {
@@ -78,7 +84,7 @@ export namespace enum_body {
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : enum_assignment.from(_x as EnumAssignmentOptions)));
     }
     return b;
   }

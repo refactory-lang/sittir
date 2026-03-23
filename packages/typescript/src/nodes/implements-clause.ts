@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImplementsClause } from '../types.js';
+import type { ImplementsClause, Type } from '../types.js';
 
 
 class ImplementsClauseBuilder extends Builder<ImplementsClause> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Type>[]) {
     super();
     this._children = children;
   }
@@ -40,18 +40,18 @@ class ImplementsClauseBuilder extends Builder<ImplementsClause> {
 
 export type { ImplementsClauseBuilder };
 
-export function implements_clause(...children: Builder[]): ImplementsClauseBuilder {
+export function implements_clause(...children: Builder<Type>[]): ImplementsClauseBuilder {
   return new ImplementsClauseBuilder(...children);
 }
 
 export interface ImplementsClauseOptions {
-  children: Builder | (Builder)[];
+  children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace implements_clause {
   export function from(options: ImplementsClauseOptions): ImplementsClauseBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new ImplementsClauseBuilder(..._arr);
     return b;
   }

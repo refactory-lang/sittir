@@ -3,21 +3,23 @@ import { ir } from '../src/builder.js';
 
 describe('template_type', () => {
   it('should build with correct kind', () => {
-    const builder = ir.templateType(ir.existentialType('test'));
+    const builder = ir.templateType(ir.existentialType('test'), ir.existentialType('test'));
     const node = builder.build();
     expect(node.kind).toBe('template_type');
-    expect((node as any).children).toHaveProperty('kind');
+    expect(Array.isArray((node as any).children)).toBe(true);
+    expect((node as any).children.length).toBeGreaterThan(0);
+    expect((node as any).children[0]).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.templateType(ir.existentialType('test'));
+    const builder = ir.templateType(ir.existentialType('test'), ir.existentialType('test'));
     const source = builder.renderImpl();
     expect(source).toContain('${');
     expect(source).toContain('}');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.templateType(ir.existentialType('test'));
+    const builder = ir.templateType(ir.existentialType('test'), ir.existentialType('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('template_type');
     expect(cst.isNamed).toBe(true);
@@ -26,7 +28,7 @@ describe('template_type', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.templateType(ir.existentialType('test'));
+    const builder = ir.templateType(ir.existentialType('test'), ir.existentialType('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

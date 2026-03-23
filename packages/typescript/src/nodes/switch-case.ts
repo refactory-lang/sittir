@@ -4,15 +4,15 @@ import type { Expression, SequenceExpression, Statement, SwitchCase } from '../t
 
 
 class SwitchCaseBuilder extends Builder<SwitchCase> {
-  private _body: Builder<Statement>[] = [];
   private _value: Builder<Expression | SequenceExpression>;
+  private _body!: Builder<Statement>;
 
   constructor(value: Builder<Expression | SequenceExpression>) {
     super();
     this._value = value;
   }
 
-  body(...value: Builder<Statement>[]): this {
+  body(value: Builder<Statement>): this {
     this._body = value;
     return this;
   }
@@ -22,15 +22,15 @@ class SwitchCaseBuilder extends Builder<SwitchCase> {
     parts.push('case');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
     parts.push(':');
-    if (this._body.length > 0) parts.push(this.renderChildren(this._body, ', ', ctx));
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
   build(ctx?: RenderContext): SwitchCase {
     return {
       kind: 'switch_case',
-      body: this._body.map(c => c.build(ctx)),
       value: this._value.build(ctx),
+      body: this._body?.build(ctx),
     } as SwitchCase;
   }
 
@@ -41,9 +41,7 @@ class SwitchCaseBuilder extends Builder<SwitchCase> {
     parts.push({ kind: 'token', text: 'case', type: 'case' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     parts.push({ kind: 'token', text: ':', type: ':' });
-    for (const child of this._body) {
-      parts.push({ kind: 'builder', builder: child, fieldName: 'body' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }
@@ -55,18 +53,14 @@ export function switch_case(value: Builder<Expression | SequenceExpression>): Sw
 }
 
 export interface SwitchCaseOptions {
-  body?: Builder<Statement> | (Builder<Statement>)[];
   value: Builder<Expression | SequenceExpression>;
+  body: Builder<Statement>;
 }
 
 export namespace switch_case {
   export function from(options: SwitchCaseOptions): SwitchCaseBuilder {
     const b = new SwitchCaseBuilder(options.value);
-    if (options.body !== undefined) {
-      const _v = options.body;
-      const _arr = Array.isArray(_v) ? _v : [_v];
-      b.body(..._arr);
-    }
+    if (options.body !== undefined) b.body(options.body);
     return b;
   }
 }

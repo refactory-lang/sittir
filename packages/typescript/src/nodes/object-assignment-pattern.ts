@@ -1,13 +1,13 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrayPattern, Expression, ObjectAssignmentPattern, ObjectPattern, ShorthandPropertyIdentifierPattern } from '../types.js';
 
 
 class ObjectAssignmentPatternBuilder extends Builder<ObjectAssignmentPattern> {
-  private _left: Builder<ArrayPattern | ObjectPattern | ShorthandPropertyIdentifierPattern>;
+  private _left: Builder<ObjectPattern | ArrayPattern | ShorthandPropertyIdentifierPattern>;
   private _right!: Builder<Expression>;
 
-  constructor(left: Builder<ArrayPattern | ObjectPattern | ShorthandPropertyIdentifierPattern>) {
+  constructor(left: Builder<ObjectPattern | ArrayPattern | ShorthandPropertyIdentifierPattern>) {
     super();
     this._left = left;
   }
@@ -46,18 +46,19 @@ class ObjectAssignmentPatternBuilder extends Builder<ObjectAssignmentPattern> {
 
 export type { ObjectAssignmentPatternBuilder };
 
-export function object_assignment_pattern(left: Builder<ArrayPattern | ObjectPattern | ShorthandPropertyIdentifierPattern>): ObjectAssignmentPatternBuilder {
+export function object_assignment_pattern(left: Builder<ObjectPattern | ArrayPattern | ShorthandPropertyIdentifierPattern>): ObjectAssignmentPatternBuilder {
   return new ObjectAssignmentPatternBuilder(left);
 }
 
 export interface ObjectAssignmentPatternOptions {
-  left: Builder<ArrayPattern | ObjectPattern | ShorthandPropertyIdentifierPattern>;
+  left: Builder<ObjectPattern | ArrayPattern | ShorthandPropertyIdentifierPattern> | string;
   right: Builder<Expression>;
 }
 
 export namespace object_assignment_pattern {
   export function from(options: ObjectAssignmentPatternOptions): ObjectAssignmentPatternBuilder {
-    const b = new ObjectAssignmentPatternBuilder(options.left);
+    const _ctor = options.left;
+    const b = new ObjectAssignmentPatternBuilder(typeof _ctor === 'string' ? new LeafBuilder('shorthand_property_identifier_pattern', _ctor) : _ctor);
     if (options.right !== undefined) b.right(options.right);
     return b;
   }

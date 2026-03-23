@@ -21,7 +21,6 @@ class PrintStatementBuilder extends Builder<PrintStatement> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('print');
     if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._argument.length > 0) parts.push(this.renderChildren(this._argument, ', ', ctx));
     return parts.join(' ');
@@ -39,7 +38,6 @@ class PrintStatementBuilder extends Builder<PrintStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'print', type: 'print' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

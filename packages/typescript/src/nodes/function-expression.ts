@@ -1,23 +1,24 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssertsAnnotation, FormalParameters, FunctionExpression, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
 class FunctionExpressionBuilder extends Builder<FunctionExpression> {
-  private _body!: Builder<StatementBlock>;
   private _name?: Builder<Identifier>;
-  private _parameters: Builder<FormalParameters>;
-  private _returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _parameters: Builder<FormalParameters>;
+  private _returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
+  private _body!: Builder<StatementBlock>;
 
   constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
-  }
-
-  body(value: Builder<StatementBlock>): this {
-    this._body = value;
-    return this;
   }
 
   name(value: Builder<Identifier>): this {
@@ -25,13 +26,18 @@ class FunctionExpressionBuilder extends Builder<FunctionExpression> {
     return this;
   }
 
-  returnType(value: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>): this {
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
+    return this;
+  }
+
+  returnType(value: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  body(value: Builder<StatementBlock>): this {
+    this._body = value;
     return this;
   }
 
@@ -49,11 +55,11 @@ class FunctionExpressionBuilder extends Builder<FunctionExpression> {
   build(ctx?: RenderContext): FunctionExpression {
     return {
       kind: 'function_expression',
-      body: this._body?.build(ctx),
       name: this._name?.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
       parameters: this._parameters.build(ctx),
       returnType: this._returnType?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
+      body: this._body?.build(ctx),
     } as FunctionExpression;
   }
 
@@ -78,23 +84,30 @@ export function function_expression(parameters: Builder<FormalParameters>): Func
 }
 
 export interface FunctionExpressionOptions {
-  body: Builder<StatementBlock>;
   name?: Builder<Identifier> | string;
-  parameters: Builder<FormalParameters>;
-  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
-  typeParameters?: Builder<TypeParameters>;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
+  body: Builder<StatementBlock> | StatementBlockOptions;
 }
 
 export namespace function_expression {
   export function from(options: FunctionExpressionOptions): FunctionExpressionBuilder {
-    const b = new FunctionExpressionBuilder(options.parameters);
-    if (options.body !== undefined) b.body(options.body);
+    const _ctor = options.parameters;
+    const b = new FunctionExpressionBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
     if (options.name !== undefined) {
       const _v = options.name;
       b.name(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
     }
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
     if (options.returnType !== undefined) b.returnType(options.returnType);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : statement_block.from(_v as StatementBlockOptions));
+    }
     return b;
   }
 }

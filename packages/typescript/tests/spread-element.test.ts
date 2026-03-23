@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('spread_element', () => {
   it('should build with correct kind', () => {
-    const builder = ir.spreadElement(ir.yieldExpression());
+    const builder = ir.spreadElement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('spread_element');
     expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.spreadElement(ir.yieldExpression());
+    const builder = ir.spreadElement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain('...');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.spreadElement(ir.yieldExpression());
+    const builder = ir.spreadElement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('spread_element');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('spread_element', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.spreadElement(ir.yieldExpression());
+    const builder = ir.spreadElement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

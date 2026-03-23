@@ -1,12 +1,14 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AssertsAnnotation } from '../types.js';
+import type { Asserts, AssertsAnnotation } from '../types.js';
+import { asserts } from './asserts.js';
+import type { AssertsOptions } from './asserts.js';
 
 
 class AssertsAnnotationBuilder extends Builder<AssertsAnnotation> {
-  private _children: Builder[] = [];
+  private _children: Builder<Asserts>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Asserts>) {
     super();
     this._children = [children];
   }
@@ -39,18 +41,18 @@ class AssertsAnnotationBuilder extends Builder<AssertsAnnotation> {
 
 export type { AssertsAnnotationBuilder };
 
-export function asserts_annotation(children: Builder): AssertsAnnotationBuilder {
+export function asserts_annotation(children: Builder<Asserts>): AssertsAnnotationBuilder {
   return new AssertsAnnotationBuilder(children);
 }
 
 export interface AssertsAnnotationOptions {
-  children: Builder | (Builder)[];
+  children: Builder<Asserts> | AssertsOptions | (Builder<Asserts> | AssertsOptions)[];
 }
 
 export namespace asserts_annotation {
   export function from(options: AssertsAnnotationOptions): AssertsAnnotationBuilder {
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new AssertsAnnotationBuilder(_ctor);
+    const b = new AssertsAnnotationBuilder(_ctor instanceof Builder ? _ctor : asserts.from(_ctor as AssertsOptions));
     return b;
   }
 }

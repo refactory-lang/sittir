@@ -1,14 +1,14 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { OptionalParameter, OptionalType, RequiredParameter, RestType, TupleType } from '../types.js';
+import type { OptionalParameter, OptionalType, RequiredParameter, RestType, TupleType, Type } from '../types.js';
 
 
 class TupleTypeBuilder extends Builder<TupleType> {
-  private _children: Builder<OptionalParameter | OptionalType | RequiredParameter | RestType>[] = [];
+  private _children: Builder<RequiredParameter | OptionalParameter | OptionalType | RestType | Type>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<OptionalParameter | OptionalType | RequiredParameter | RestType>[]): this {
+  children(...value: Builder<RequiredParameter | OptionalParameter | OptionalType | RestType | Type>[]): this {
     this._children = value;
     return this;
   }
@@ -54,7 +54,7 @@ export function tuple_type(): TupleTypeBuilder {
 }
 
 export interface TupleTypeOptions {
-  children?: Builder<OptionalParameter | OptionalType | RequiredParameter | RestType> | (Builder<OptionalParameter | OptionalType | RequiredParameter | RestType>)[];
+  children?: Builder<RequiredParameter | OptionalParameter | OptionalType | RestType | Type> | (Builder<RequiredParameter | OptionalParameter | OptionalType | RestType | Type>)[];
 }
 
 export namespace tuple_type {

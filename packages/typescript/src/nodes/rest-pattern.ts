@@ -4,11 +4,11 @@ import type { ArrayPattern, Identifier, MemberExpression, NonNullExpression, Obj
 
 
 class RestPatternBuilder extends Builder<RestPattern> {
-  private _children: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | SubscriptExpression | Undefined>[] = [];
+  private _children: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression>[] = [];
 
-  constructor(children: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | SubscriptExpression | Undefined>) {
+  constructor(...children: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -21,7 +21,7 @@ class RestPatternBuilder extends Builder<RestPattern> {
   build(ctx?: RenderContext): RestPattern {
     return {
       kind: 'rest_pattern',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as RestPattern;
   }
 
@@ -39,18 +39,19 @@ class RestPatternBuilder extends Builder<RestPattern> {
 
 export type { RestPatternBuilder };
 
-export function rest_pattern(children: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | SubscriptExpression | Undefined>): RestPatternBuilder {
-  return new RestPatternBuilder(children);
+export function rest_pattern(...children: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression>[]): RestPatternBuilder {
+  return new RestPatternBuilder(...children);
 }
 
 export interface RestPatternOptions {
-  children: Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | SubscriptExpression | Undefined> | (Builder<ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | SubscriptExpression | Undefined>)[];
+  children?: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression> | (Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression>)[];
 }
 
 export namespace rest_pattern {
   export function from(options: RestPatternOptions): RestPatternBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new RestPatternBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new RestPatternBuilder(..._arr);
     return b;
   }
 }

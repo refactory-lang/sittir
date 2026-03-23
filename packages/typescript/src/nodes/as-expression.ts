@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AsExpression, Expression } from '../types.js';
+import type { AsExpression, Expression, Type } from '../types.js';
 
 
 class AsExpressionBuilder extends Builder<AsExpression> {
-  private _children: Builder<Expression>[] = [];
+  private _children: Builder<Expression | Type>[] = [];
 
-  constructor(...children: Builder<Expression>[]) {
+  constructor(...children: Builder<Expression | Type>[]) {
     super();
     this._children = children;
   }
@@ -39,18 +39,18 @@ class AsExpressionBuilder extends Builder<AsExpression> {
 
 export type { AsExpressionBuilder };
 
-export function as_expression(...children: Builder<Expression>[]): AsExpressionBuilder {
+export function as_expression(...children: Builder<Expression | Type>[]): AsExpressionBuilder {
   return new AsExpressionBuilder(...children);
 }
 
 export interface AsExpressionOptions {
-  children: Builder<Expression> | (Builder<Expression>)[];
+  children?: Builder<Expression | Type> | (Builder<Expression | Type>)[];
 }
 
 export namespace as_expression {
   export function from(options: AsExpressionOptions): AsExpressionBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new AsExpressionBuilder(..._arr);
     return b;
   }

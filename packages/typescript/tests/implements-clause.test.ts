@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('implements_clause', () => {
   it('should build with correct kind', () => {
-    const builder = ir.implementsClause(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.implementsClause(ir.callExpression(ir.import('test')), ir.callExpression(ir.import('test')));
     const node = builder.build();
     expect(node.kind).toBe('implements_clause');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,13 +12,13 @@ describe('implements_clause', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.implementsClause(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.implementsClause(ir.callExpression(ir.import('test')), ir.callExpression(ir.import('test')));
     const source = builder.renderImpl();
     expect(source).toContain('implements');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.implementsClause(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.implementsClause(ir.callExpression(ir.import('test')), ir.callExpression(ir.import('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('implements_clause');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +27,7 @@ describe('implements_clause', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.implementsClause(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.implementsClause(ir.callExpression(ir.import('test')), ir.callExpression(ir.import('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

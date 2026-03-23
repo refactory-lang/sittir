@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DoStatement, ParenthesizedExpression, Statement } from '../types.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
 
 
 class DoStatementBuilder extends Builder<DoStatement> {
@@ -54,13 +56,16 @@ export function do_statement(body: Builder<Statement>): DoStatementBuilder {
 
 export interface DoStatementOptions {
   body: Builder<Statement>;
-  condition: Builder<ParenthesizedExpression>;
+  condition: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
 }
 
 export namespace do_statement {
   export function from(options: DoStatementOptions): DoStatementBuilder {
     const b = new DoStatementBuilder(options.body);
-    if (options.condition !== undefined) b.condition(options.condition);
+    if (options.condition !== undefined) {
+      const _v = options.condition;
+      b.condition(_v instanceof Builder ? _v : parenthesized_expression.from(_v as ParenthesizedExpressionOptions));
+    }
     return b;
   }
 }

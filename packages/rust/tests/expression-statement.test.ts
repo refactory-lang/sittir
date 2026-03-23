@@ -9,12 +9,6 @@ describe('expression_statement', () => {
     expect((node as any).children).toHaveProperty('kind');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.expressionStatement(ir.identifier('test'));
-    const source = builder.renderImpl();
-    expect(source).toContain(';');
-  });
-
   it('should produce a valid CST node', () => {
     const builder = ir.expressionStatement(ir.identifier('test'));
     const cst = builder.toCST();

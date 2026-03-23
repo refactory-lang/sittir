@@ -1,25 +1,29 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssertsAnnotation, CallSignature, FormalParameters, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
 
 
 class CallSignatureBuilder extends Builder<CallSignature> {
-  private _parameters: Builder<FormalParameters>;
-  private _returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _parameters: Builder<FormalParameters>;
+  private _returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
 
   constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>): this {
-    this._returnType = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  returnType(value: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>): this {
+    this._returnType = value;
     return this;
   }
 
@@ -34,9 +38,9 @@ class CallSignatureBuilder extends Builder<CallSignature> {
   build(ctx?: RenderContext): CallSignature {
     return {
       kind: 'call_signature',
+      typeParameters: this._typeParameters?.build(ctx),
       parameters: this._parameters.build(ctx),
       returnType: this._returnType?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
     } as CallSignature;
   }
 
@@ -58,16 +62,20 @@ export function call_signature(parameters: Builder<FormalParameters>): CallSigna
 }
 
 export interface CallSignatureOptions {
-  parameters: Builder<FormalParameters>;
-  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
-  typeParameters?: Builder<TypeParameters>;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
 }
 
 export namespace call_signature {
   export function from(options: CallSignatureOptions): CallSignatureBuilder {
-    const b = new CallSignatureBuilder(options.parameters);
+    const _ctor = options.parameters;
+    const b = new CallSignatureBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
     if (options.returnType !== undefined) b.returnType(options.returnType);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
     return b;
   }
 }

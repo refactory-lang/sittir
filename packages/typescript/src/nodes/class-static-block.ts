@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ClassStaticBlock, StatementBlock } from '../types.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
 class ClassStaticBlockBuilder extends Builder<ClassStaticBlock> {
@@ -42,12 +44,13 @@ export function class_static_block(body: Builder<StatementBlock>): ClassStaticBl
 }
 
 export interface ClassStaticBlockOptions {
-  body: Builder<StatementBlock>;
+  body: Builder<StatementBlock> | StatementBlockOptions;
 }
 
 export namespace class_static_block {
   export function from(options: ClassStaticBlockOptions): ClassStaticBlockBuilder {
-    const b = new ClassStaticBlockBuilder(options.body);
+    const _ctor = options.body;
+    const b = new ClassStaticBlockBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor as StatementBlockOptions));
     return b;
   }
 }

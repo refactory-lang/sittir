@@ -51,13 +51,14 @@ export function nested_identifier(object: Builder<Identifier | MemberExpression>
 }
 
 export interface NestedIdentifierOptions {
-  object: Builder<Identifier | MemberExpression>;
+  object: Builder<Identifier | MemberExpression> | string;
   property: Builder<PropertyIdentifier> | string;
 }
 
 export namespace nested_identifier {
   export function from(options: NestedIdentifierOptions): NestedIdentifierBuilder {
-    const b = new NestedIdentifierBuilder(options.object);
+    const _ctor = options.object;
+    const b = new NestedIdentifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.property !== undefined) {
       const _v = options.property;
       b.property(typeof _v === 'string' ? new LeafBuilder('property_identifier', _v) : _v);

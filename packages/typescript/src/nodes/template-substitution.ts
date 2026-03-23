@@ -6,9 +6,9 @@ import type { Expression, SequenceExpression, TemplateSubstitution } from '../ty
 class TemplateSubstitutionBuilder extends Builder<TemplateSubstitution> {
   private _children: Builder<Expression | SequenceExpression>[] = [];
 
-  constructor(children: Builder<Expression | SequenceExpression>) {
+  constructor(...children: Builder<Expression | SequenceExpression>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -22,7 +22,7 @@ class TemplateSubstitutionBuilder extends Builder<TemplateSubstitution> {
   build(ctx?: RenderContext): TemplateSubstitution {
     return {
       kind: 'template_substitution',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as TemplateSubstitution;
   }
 
@@ -41,18 +41,19 @@ class TemplateSubstitutionBuilder extends Builder<TemplateSubstitution> {
 
 export type { TemplateSubstitutionBuilder };
 
-export function template_substitution(children: Builder<Expression | SequenceExpression>): TemplateSubstitutionBuilder {
-  return new TemplateSubstitutionBuilder(children);
+export function template_substitution(...children: Builder<Expression | SequenceExpression>[]): TemplateSubstitutionBuilder {
+  return new TemplateSubstitutionBuilder(...children);
 }
 
 export interface TemplateSubstitutionOptions {
-  children: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
+  children?: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
 }
 
 export namespace template_substitution {
   export function from(options: TemplateSubstitutionOptions): TemplateSubstitutionBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new TemplateSubstitutionBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new TemplateSubstitutionBuilder(..._arr);
     return b;
   }
 }

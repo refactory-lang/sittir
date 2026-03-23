@@ -1,25 +1,29 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Arguments, NewExpression, PrimaryExpression, TypeArguments } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
+import { arguments_ } from './arguments.js';
+import type { ArgumentsOptions } from './arguments.js';
 
 
 class NewExpressionBuilder extends Builder<NewExpression> {
-  private _arguments?: Builder<Arguments>;
   private _constructor: Builder<PrimaryExpression>;
   private _typeArguments?: Builder<TypeArguments>;
+  private _arguments?: Builder<Arguments>;
 
   constructor(constructor: Builder<PrimaryExpression>) {
     super();
     this._constructor = constructor;
   }
 
-  arguments(value: Builder<Arguments>): this {
-    this._arguments = value;
+  typeArguments(value: Builder<TypeArguments>): this {
+    this._typeArguments = value;
     return this;
   }
 
-  typeArguments(value: Builder<TypeArguments>): this {
-    this._typeArguments = value;
+  arguments(value: Builder<Arguments>): this {
+    this._arguments = value;
     return this;
   }
 
@@ -35,9 +39,9 @@ class NewExpressionBuilder extends Builder<NewExpression> {
   build(ctx?: RenderContext): NewExpression {
     return {
       kind: 'new_expression',
-      arguments: this._arguments?.build(ctx),
       constructor: this._constructor.build(ctx),
       typeArguments: this._typeArguments?.build(ctx),
+      arguments: this._arguments?.build(ctx),
     } as NewExpression;
   }
 
@@ -60,16 +64,22 @@ export function new_expression(constructor: Builder<PrimaryExpression>): NewExpr
 }
 
 export interface NewExpressionOptions {
-  arguments?: Builder<Arguments>;
   constructor: Builder<PrimaryExpression>;
-  typeArguments?: Builder<TypeArguments>;
+  typeArguments?: Builder<TypeArguments> | TypeArgumentsOptions;
+  arguments?: Builder<Arguments> | ArgumentsOptions;
 }
 
 export namespace new_expression {
   export function from(options: NewExpressionOptions): NewExpressionBuilder {
     const b = new NewExpressionBuilder(options.constructor);
-    if (options.arguments !== undefined) b.arguments(options.arguments);
-    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
+    if (options.typeArguments !== undefined) {
+      const _v = options.typeArguments;
+      b.typeArguments(_v instanceof Builder ? _v : type_arguments.from(_v as TypeArgumentsOptions));
+    }
+    if (options.arguments !== undefined) {
+      const _v = options.arguments;
+      b.arguments(_v instanceof Builder ? _v : arguments_.from(_v as ArgumentsOptions));
+    }
     return b;
   }
 }

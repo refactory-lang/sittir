@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('sequence_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.sequenceExpression(ir.yieldExpression(), ir.yieldExpression());
+    const builder = ir.sequenceExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('sequence_expression');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('sequence_expression', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.sequenceExpression(ir.yieldExpression(), ir.yieldExpression());
+    const builder = ir.sequenceExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('sequence_expression');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('sequence_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.sequenceExpression(ir.yieldExpression(), ir.yieldExpression());
+    const builder = ir.sequenceExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

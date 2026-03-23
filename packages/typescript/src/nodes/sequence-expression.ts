@@ -43,13 +43,13 @@ export function sequence_expression(...children: Builder<Expression>[]): Sequenc
 }
 
 export interface SequenceExpressionOptions {
-  children: Builder<Expression> | (Builder<Expression>)[];
+  children?: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace sequence_expression {
   export function from(options: SequenceExpressionOptions): SequenceExpressionBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new SequenceExpressionBuilder(..._arr);
     return b;
   }

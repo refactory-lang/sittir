@@ -1,14 +1,16 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ExtendsTypeClause, GenericType, NestedTypeIdentifier, TypeIdentifier } from '../types.js';
 
 
 class ExtendsTypeClauseBuilder extends Builder<ExtendsTypeClause> {
-  private _type: Builder<GenericType | NestedTypeIdentifier | TypeIdentifier>[] = [];
+  private _type: Builder<TypeIdentifier | NestedTypeIdentifier | GenericType>[] = [];
 
-  constructor(...type_: Builder<GenericType | NestedTypeIdentifier | TypeIdentifier>[]) {
-    super();
-    this._type = type_;
+  constructor() { super(); }
+
+  type(...value: Builder<TypeIdentifier | NestedTypeIdentifier | GenericType>[]): this {
+    this._type = value;
+    return this;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -39,19 +41,22 @@ class ExtendsTypeClauseBuilder extends Builder<ExtendsTypeClause> {
 
 export type { ExtendsTypeClauseBuilder };
 
-export function extends_type_clause(...type_: Builder<GenericType | NestedTypeIdentifier | TypeIdentifier>[]): ExtendsTypeClauseBuilder {
-  return new ExtendsTypeClauseBuilder(...type_);
+export function extends_type_clause(): ExtendsTypeClauseBuilder {
+  return new ExtendsTypeClauseBuilder();
 }
 
 export interface ExtendsTypeClauseOptions {
-  type: Builder<GenericType | NestedTypeIdentifier | TypeIdentifier> | (Builder<GenericType | NestedTypeIdentifier | TypeIdentifier>)[];
+  type?: Builder<TypeIdentifier | NestedTypeIdentifier | GenericType> | string | (Builder<TypeIdentifier | NestedTypeIdentifier | GenericType> | string)[];
 }
 
 export namespace extends_type_clause {
   export function from(options: ExtendsTypeClauseOptions): ExtendsTypeClauseBuilder {
-    const _ctor = options.type;
-    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
-    const b = new ExtendsTypeClauseBuilder(..._arr);
+    const b = new ExtendsTypeClauseBuilder();
+    if (options.type !== undefined) {
+      const _v = options.type;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.type(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('type_identifier', _v) : _v));
+    }
     return b;
   }
 }

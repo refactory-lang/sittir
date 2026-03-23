@@ -17,7 +17,8 @@ Given any tree-sitter grammar, sittir generates:
 | [`@sittir/types`](packages/types) | `Builder<N>`, `LeafBuilder`, `RenderContext`, `Edit`, type projections | [![npm](https://img.shields.io/npm/v/@sittir/types)](https://www.npmjs.com/package/@sittir/types) |
 | [`@sittir/codegen`](packages/codegen) | Reads `tree-sitter-{lang}/src/node-types.json`, generates everything | [![npm](https://img.shields.io/npm/v/@sittir/codegen)](https://www.npmjs.com/package/@sittir/codegen) |
 | [`@sittir/rust`](packages/rust) | 135 generated Rust IR node kinds + builders | [![npm](https://img.shields.io/npm/v/@sittir/rust)](https://www.npmjs.com/package/@sittir/rust) |
-| [`@sittir/typescript`](packages/typescript) | 140 generated TypeScript IR node kinds + builders | [![npm](https://img.shields.io/npm/v/@sittir/typescript)](https://www.npmjs.com/package/@sittir/typescript) |
+| [`@sittir/typescript`](packages/typescript) | 140 TypeScript + 146 TSX IR node kinds + builders | [![npm](https://img.shields.io/npm/v/@sittir/typescript)](https://www.npmjs.com/package/@sittir/typescript) |
+| [`@sittir/python`](packages/python) | 97 generated Python IR node kinds + builders | [![npm](https://img.shields.io/npm/v/@sittir/python)](https://www.npmjs.com/package/@sittir/python) |
 
 ## Quick Start
 
@@ -122,7 +123,8 @@ pnpm -r run build     # build all packages
     │                  Reads node-types.json + grammar.json
     ↓
 @sittir/rust           135 self-contained Rust builders
-@sittir/typescript     140 self-contained TypeScript builders
+@sittir/typescript     140 self-contained TypeScript builders (+146 TSX)
+@sittir/python         97 self-contained Python builders
 ```
 
 ### Builder Architecture

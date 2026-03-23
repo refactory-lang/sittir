@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ElseClause, Expression, IfExpression, LetChain, LetCondition } from '../types.js';
+import type { Block, ElseClause, Expression, IfExpression, LetChain, LetCondition } from '../types.js';
 
 
 class IfExpressionBuilder extends Builder<IfExpression> {
   private _alternative?: Builder<ElseClause>;
   private _condition: Builder<Expression | LetChain | LetCondition>;
-  private _consequence!: Builder;
+  private _consequence!: Builder<Block>;
 
   constructor(condition: Builder<Expression | LetChain | LetCondition>) {
     super();
@@ -18,7 +18,7 @@ class IfExpressionBuilder extends Builder<IfExpression> {
     return this;
   }
 
-  consequence(value: Builder): this {
+  consequence(value: Builder<Block>): this {
     this._consequence = value;
     return this;
   }
@@ -62,7 +62,7 @@ export function if_expression(condition: Builder<Expression | LetChain | LetCond
 export interface IfExpressionOptions {
   alternative?: Builder<ElseClause>;
   condition: Builder<Expression | LetChain | LetCondition>;
-  consequence: Builder;
+  consequence: Builder<Block>;
 }
 
 export namespace if_expression {

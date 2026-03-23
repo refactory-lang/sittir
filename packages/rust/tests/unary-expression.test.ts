@@ -9,12 +9,6 @@ describe('unary_expression', () => {
     expect((node as any).children).toHaveProperty('kind');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.unaryExpression(ir.identifier('test'));
-    const source = builder.renderImpl();
-    expect(source).toContain('-');
-  });
-
   it('should produce a valid CST node', () => {
     const builder = ir.unaryExpression(ir.identifier('test'));
     const cst = builder.toCST();

@@ -1,14 +1,16 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrayPattern, Expression, Identifier, ObjectPattern, TypeAnnotation, VariableDeclarator } from '../types.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
 
 
 class VariableDeclaratorBuilder extends Builder<VariableDeclarator> {
-  private _name: Builder<ArrayPattern | Identifier | ObjectPattern>;
+  private _name: Builder<ObjectPattern | ArrayPattern | Identifier>;
   private _type?: Builder<TypeAnnotation>;
   private _value?: Builder<Expression>;
 
-  constructor(name: Builder<ArrayPattern | Identifier | ObjectPattern>) {
+  constructor(name: Builder<ObjectPattern | ArrayPattern | Identifier>) {
     super();
     this._name = name;
   }
@@ -59,20 +61,24 @@ class VariableDeclaratorBuilder extends Builder<VariableDeclarator> {
 
 export type { VariableDeclaratorBuilder };
 
-export function variable_declarator(name: Builder<ArrayPattern | Identifier | ObjectPattern>): VariableDeclaratorBuilder {
+export function variable_declarator(name: Builder<ObjectPattern | ArrayPattern | Identifier>): VariableDeclaratorBuilder {
   return new VariableDeclaratorBuilder(name);
 }
 
 export interface VariableDeclaratorOptions {
-  name: Builder<ArrayPattern | Identifier | ObjectPattern>;
-  type?: Builder<TypeAnnotation>;
+  name: Builder<ObjectPattern | ArrayPattern | Identifier> | string;
+  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
   value?: Builder<Expression>;
 }
 
 export namespace variable_declarator {
   export function from(options: VariableDeclaratorOptions): VariableDeclaratorBuilder {
-    const b = new VariableDeclaratorBuilder(options.name);
-    if (options.type !== undefined) b.type(options.type);
+    const _ctor = options.name;
+    const b = new VariableDeclaratorBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+    }
     if (options.value !== undefined) b.value(options.value);
     return b;
   }

@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Constraint } from '../types.js';
+import type { Constraint, Type } from '../types.js';
 
 
 class ConstraintBuilder extends Builder<Constraint> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Type>) {
     super();
     this._children = [children];
   }
@@ -39,12 +39,12 @@ class ConstraintBuilder extends Builder<Constraint> {
 
 export type { ConstraintBuilder };
 
-export function constraint(children: Builder): ConstraintBuilder {
+export function constraint(children: Builder<Type>): ConstraintBuilder {
   return new ConstraintBuilder(children);
 }
 
 export interface ConstraintOptions {
-  children: Builder | (Builder)[];
+  children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace constraint {

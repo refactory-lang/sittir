@@ -1,10 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Expression, ForExpression, Label, Pattern } from '../types.js';
+import type { Block, Expression, ForExpression, Label, Pattern } from '../types.js';
 
 
 class ForExpressionBuilder extends Builder<ForExpression> {
-  private _body!: Builder;
+  private _body!: Builder<Block>;
   private _pattern: Builder<Pattern>;
   private _value!: Builder<Expression>;
   private _children: Builder<Label>[] = [];
@@ -14,7 +14,7 @@ class ForExpressionBuilder extends Builder<ForExpression> {
     this._pattern = pattern;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<Block>): this {
     this._body = value;
     return this;
   }
@@ -73,7 +73,7 @@ export function for_expression(pattern: Builder<Pattern>): ForExpressionBuilder 
 }
 
 export interface ForExpressionOptions {
-  body: Builder;
+  body: Builder<Block>;
   pattern: Builder<Pattern>;
   value: Builder<Expression>;
   children?: Builder<Label> | (Builder<Label>)[];

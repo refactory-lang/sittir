@@ -1,21 +1,17 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Expression, Identifier, InstantiationExpression, MemberExpression, SubscriptExpression, TypeArguments } from '../types.js';
+import type { Expression, InstantiationExpression, TypeArguments } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
 
 
 class InstantiationExpressionBuilder extends Builder<InstantiationExpression> {
-  private _function?: Builder<Identifier | MemberExpression | SubscriptExpression>;
   private _typeArguments: Builder<TypeArguments>;
   private _children: Builder<Expression>[] = [];
 
   constructor(typeArguments: Builder<TypeArguments>) {
     super();
     this._typeArguments = typeArguments;
-  }
-
-  function(value: Builder<Identifier | MemberExpression | SubscriptExpression>): this {
-    this._function = value;
-    return this;
   }
 
   children(...value: Builder<Expression>[]): this {
@@ -27,14 +23,12 @@ class InstantiationExpressionBuilder extends Builder<InstantiationExpression> {
     const parts: string[] = [];
     if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
-    if (this._function) parts.push(this.renderChild(this._function, ctx));
     return parts.join(' ');
   }
 
   build(ctx?: RenderContext): InstantiationExpression {
     return {
       kind: 'instantiation_expression',
-      function: this._function?.build(ctx),
       typeArguments: this._typeArguments.build(ctx),
       children: this._children[0]?.build(ctx),
     } as InstantiationExpression;
@@ -48,7 +42,6 @@ class InstantiationExpressionBuilder extends Builder<InstantiationExpression> {
       parts.push({ kind: 'builder', builder: child });
     }
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
-    if (this._function) parts.push({ kind: 'builder', builder: this._function, fieldName: 'function' });
     return parts;
   }
 }
@@ -60,15 +53,14 @@ export function instantiation_expression(typeArguments: Builder<TypeArguments>):
 }
 
 export interface InstantiationExpressionOptions {
-  function?: Builder<Identifier | MemberExpression | SubscriptExpression>;
-  typeArguments: Builder<TypeArguments>;
+  typeArguments: Builder<TypeArguments> | TypeArgumentsOptions;
   children?: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace instantiation_expression {
   export function from(options: InstantiationExpressionOptions): InstantiationExpressionBuilder {
-    const b = new InstantiationExpressionBuilder(options.typeArguments);
-    if (options.function !== undefined) b.function(options.function);
+    const _ctor = options.typeArguments;
+    const b = new InstantiationExpressionBuilder(_ctor instanceof Builder ? _ctor : type_arguments.from(_ctor as TypeArgumentsOptions));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];

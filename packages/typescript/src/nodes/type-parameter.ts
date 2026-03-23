@@ -1,11 +1,15 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Constraint, DefaultType, TypeIdentifier, TypeParameter } from '../types.js';
+import { constraint } from './constraint.js';
+import type { ConstraintOptions } from './constraint.js';
+import { default_type } from './default-type.js';
+import type { DefaultTypeOptions } from './default-type.js';
 
 
 class TypeParameterBuilder extends Builder<TypeParameter> {
-  private _constraint?: Builder<Constraint>;
   private _name: Builder<TypeIdentifier>;
+  private _constraint?: Builder<Constraint>;
   private _value?: Builder<DefaultType>;
 
   constructor(name: Builder<TypeIdentifier>) {
@@ -34,8 +38,8 @@ class TypeParameterBuilder extends Builder<TypeParameter> {
   build(ctx?: RenderContext): TypeParameter {
     return {
       kind: 'type_parameter',
-      constraint: this._constraint?.build(ctx),
       name: this._name.build(ctx),
+      constraint: this._constraint?.build(ctx),
       value: this._value?.build(ctx),
     } as TypeParameter;
   }
@@ -58,17 +62,23 @@ export function type_parameter(name: Builder<TypeIdentifier>): TypeParameterBuil
 }
 
 export interface TypeParameterOptions {
-  constraint?: Builder<Constraint>;
   name: Builder<TypeIdentifier> | string;
-  value?: Builder<DefaultType>;
+  constraint?: Builder<Constraint> | ConstraintOptions;
+  value?: Builder<DefaultType> | DefaultTypeOptions;
 }
 
 export namespace type_parameter {
   export function from(options: TypeParameterOptions): TypeParameterBuilder {
     const _ctor = options.name;
     const b = new TypeParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
-    if (options.constraint !== undefined) b.constraint(options.constraint);
-    if (options.value !== undefined) b.value(options.value);
+    if (options.constraint !== undefined) {
+      const _v = options.constraint;
+      b.constraint(_v instanceof Builder ? _v : constraint.from(_v as ConstraintOptions));
+    }
+    if (options.value !== undefined) {
+      const _v = options.value;
+      b.value(_v instanceof Builder ? _v : default_type.from(_v as DefaultTypeOptions));
+    }
     return b;
   }
 }

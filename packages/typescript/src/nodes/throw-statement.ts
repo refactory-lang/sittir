@@ -6,9 +6,9 @@ import type { Expression, SequenceExpression, ThrowStatement } from '../types.js
 class ThrowStatementBuilder extends Builder<ThrowStatement> {
   private _children: Builder<Expression | SequenceExpression>[] = [];
 
-  constructor(children: Builder<Expression | SequenceExpression>) {
+  constructor(...children: Builder<Expression | SequenceExpression>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -21,7 +21,7 @@ class ThrowStatementBuilder extends Builder<ThrowStatement> {
   build(ctx?: RenderContext): ThrowStatement {
     return {
       kind: 'throw_statement',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as ThrowStatement;
   }
 
@@ -39,18 +39,19 @@ class ThrowStatementBuilder extends Builder<ThrowStatement> {
 
 export type { ThrowStatementBuilder };
 
-export function throw_statement(children: Builder<Expression | SequenceExpression>): ThrowStatementBuilder {
-  return new ThrowStatementBuilder(children);
+export function throw_statement(...children: Builder<Expression | SequenceExpression>[]): ThrowStatementBuilder {
+  return new ThrowStatementBuilder(...children);
 }
 
 export interface ThrowStatementOptions {
-  children: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
+  children?: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
 }
 
 export namespace throw_statement {
   export function from(options: ThrowStatementOptions): ThrowStatementBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ThrowStatementBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ThrowStatementBuilder(..._arr);
     return b;
   }
 }

@@ -37,12 +37,11 @@ class TraitBuilder extends Builder<TraitItem> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('trait');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
     if (this._bounds) parts.push(this.renderChild(this._bounds, ctx));
-    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
@@ -62,12 +61,13 @@ class TraitBuilder extends Builder<TraitItem> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
     parts.push({ kind: 'token', text: 'trait', type: 'trait' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
     if (this._bounds) parts.push({ kind: 'builder', builder: this._bounds, fieldName: 'bounds' });
-    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }

@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('while_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.identifier('test')));
+    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('while_statement');
     expect((node as any).condition).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.identifier('test')));
+    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain('while');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.identifier('test')));
+    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('while_statement');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('while_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.identifier('test')));
+    const builder = ir.whileStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ExportClause, ExportSpecifier } from '../types.js';
+import { export_specifier } from './export-specifier.js';
+import type { ExportSpecifierOptions } from './export-specifier.js';
 
 
 class ExportClauseBuilder extends Builder<ExportClause> {
@@ -54,7 +56,7 @@ export function export_clause(): ExportClauseBuilder {
 }
 
 export interface ExportClauseOptions {
-  children?: Builder<ExportSpecifier> | (Builder<ExportSpecifier>)[];
+  children?: Builder<ExportSpecifier> | ExportSpecifierOptions | (Builder<ExportSpecifier> | ExportSpecifierOptions)[];
 }
 
 export namespace export_clause {
@@ -63,7 +65,7 @@ export namespace export_clause {
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : export_specifier.from(_x as ExportSpecifierOptions)));
     }
     return b;
   }

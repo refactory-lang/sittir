@@ -28,7 +28,6 @@ class ModBuilder extends Builder<ModItem> {
     if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('mod');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    parts.push(';');
     if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
@@ -51,7 +50,6 @@ class ModBuilder extends Builder<ModItem> {
     }
     parts.push({ kind: 'token', text: 'mod', type: 'mod' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    parts.push({ kind: 'token', text: ';', type: ';' });
     if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }

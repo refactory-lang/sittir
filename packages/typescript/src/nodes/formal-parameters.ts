@@ -4,11 +4,11 @@ import type { FormalParameters, OptionalParameter, RequiredParameter } from '../
 
 
 class FormalParametersBuilder extends Builder<FormalParameters> {
-  private _children: Builder<OptionalParameter | RequiredParameter>[] = [];
+  private _children: Builder<RequiredParameter | OptionalParameter>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<OptionalParameter | RequiredParameter>[]): this {
+  children(...value: Builder<RequiredParameter | OptionalParameter>[]): this {
     this._children = value;
     return this;
   }
@@ -54,7 +54,7 @@ export function formal_parameters(): FormalParametersBuilder {
 }
 
 export interface FormalParametersOptions {
-  children?: Builder<OptionalParameter | RequiredParameter> | (Builder<OptionalParameter | RequiredParameter>)[];
+  children?: Builder<RequiredParameter | OptionalParameter> | (Builder<RequiredParameter | OptionalParameter>)[];
 }
 
 export namespace formal_parameters {

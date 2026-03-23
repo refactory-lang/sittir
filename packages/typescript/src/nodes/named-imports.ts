@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ImportSpecifier, NamedImports } from '../types.js';
+import { import_specifier } from './import-specifier.js';
+import type { ImportSpecifierOptions } from './import-specifier.js';
 
 
 class NamedImportsBuilder extends Builder<NamedImports> {
@@ -54,7 +56,7 @@ export function named_imports(): NamedImportsBuilder {
 }
 
 export interface NamedImportsOptions {
-  children?: Builder<ImportSpecifier> | (Builder<ImportSpecifier>)[];
+  children?: Builder<ImportSpecifier> | ImportSpecifierOptions | (Builder<ImportSpecifier> | ImportSpecifierOptions)[];
 }
 
 export namespace named_imports {
@@ -63,7 +65,7 @@ export namespace named_imports {
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : import_specifier.from(_x as ImportSpecifierOptions)));
     }
     return b;
   }

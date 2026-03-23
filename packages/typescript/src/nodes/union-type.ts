@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { UnionType } from '../types.js';
+import type { Type, UnionType } from '../types.js';
 
 
 class UnionTypeBuilder extends Builder<UnionType> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Type>[]) {
     super();
     this._children = children;
   }
@@ -43,18 +43,18 @@ class UnionTypeBuilder extends Builder<UnionType> {
 
 export type { UnionTypeBuilder };
 
-export function union_type(...children: Builder[]): UnionTypeBuilder {
+export function union_type(...children: Builder<Type>[]): UnionTypeBuilder {
   return new UnionTypeBuilder(...children);
 }
 
 export interface UnionTypeOptions {
-  children: Builder | (Builder)[];
+  children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace union_type {
   export function from(options: UnionTypeOptions): UnionTypeBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new UnionTypeBuilder(..._arr);
     return b;
   }

@@ -1,11 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ParenthesizedExpression, Statement, WithStatement } from '../types.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
 
 
 class WithStatementBuilder extends Builder<WithStatement> {
-  private _body!: Builder<Statement>;
   private _object: Builder<ParenthesizedExpression>;
+  private _body!: Builder<Statement>;
 
   constructor(object: Builder<ParenthesizedExpression>) {
     super();
@@ -28,8 +30,8 @@ class WithStatementBuilder extends Builder<WithStatement> {
   build(ctx?: RenderContext): WithStatement {
     return {
       kind: 'with_statement',
-      body: this._body?.build(ctx),
       object: this._object.build(ctx),
+      body: this._body?.build(ctx),
     } as WithStatement;
   }
 
@@ -51,13 +53,14 @@ export function with_statement(object: Builder<ParenthesizedExpression>): WithSt
 }
 
 export interface WithStatementOptions {
+  object: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
   body: Builder<Statement>;
-  object: Builder<ParenthesizedExpression>;
 }
 
 export namespace with_statement {
   export function from(options: WithStatementOptions): WithStatementBuilder {
-    const b = new WithStatementBuilder(options.object);
+    const _ctor = options.object;
+    const b = new WithStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor as ParenthesizedExpressionOptions));
     if (options.body !== undefined) b.body(options.body);
     return b;
   }

@@ -1,12 +1,14 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImportAttribute } from '../types.js';
+import type { ImportAttribute, Object } from '../types.js';
+import { object } from './object.js';
+import type { ObjectOptions } from './object.js';
 
 
 class ImportAttributeBuilder extends Builder<ImportAttribute> {
-  private _children: Builder[] = [];
+  private _children: Builder<Object>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Object>) {
     super();
     this._children = [children];
   }
@@ -39,18 +41,18 @@ class ImportAttributeBuilder extends Builder<ImportAttribute> {
 
 export type { ImportAttributeBuilder };
 
-export function import_attribute(children: Builder): ImportAttributeBuilder {
+export function import_attribute(children: Builder<Object>): ImportAttributeBuilder {
   return new ImportAttributeBuilder(children);
 }
 
 export interface ImportAttributeOptions {
-  children: Builder | (Builder)[];
+  children: Builder<Object> | ObjectOptions | (Builder<Object> | ObjectOptions)[];
 }
 
 export namespace import_attribute {
   export function from(options: ImportAttributeOptions): ImportAttributeBuilder {
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ImportAttributeBuilder(_ctor);
+    const b = new ImportAttributeBuilder(_ctor instanceof Builder ? _ctor : object.from(_ctor as ObjectOptions));
     return b;
   }
 }

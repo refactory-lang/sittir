@@ -4,11 +4,11 @@ import type { CallExpression, Decorator, Identifier, MemberExpression, Parenthes
 
 
 class DecoratorBuilder extends Builder<Decorator> {
-  private _children: Builder<CallExpression | Identifier | MemberExpression | ParenthesizedExpression>[] = [];
+  private _children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>[] = [];
 
-  constructor(children: Builder<CallExpression | Identifier | MemberExpression | ParenthesizedExpression>) {
+  constructor(...children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -21,7 +21,7 @@ class DecoratorBuilder extends Builder<Decorator> {
   build(ctx?: RenderContext): Decorator {
     return {
       kind: 'decorator',
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as Decorator;
   }
 
@@ -39,18 +39,19 @@ class DecoratorBuilder extends Builder<Decorator> {
 
 export type { DecoratorBuilder };
 
-export function decorator(children: Builder<CallExpression | Identifier | MemberExpression | ParenthesizedExpression>): DecoratorBuilder {
-  return new DecoratorBuilder(children);
+export function decorator(...children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>[]): DecoratorBuilder {
+  return new DecoratorBuilder(...children);
 }
 
 export interface DecoratorOptions {
-  children: Builder<CallExpression | Identifier | MemberExpression | ParenthesizedExpression> | (Builder<CallExpression | Identifier | MemberExpression | ParenthesizedExpression>)[];
+  children?: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression> | (Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>)[];
 }
 
 export namespace decorator {
   export function from(options: DecoratorOptions): DecoratorBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new DecoratorBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new DecoratorBuilder(..._arr);
     return b;
   }
 }

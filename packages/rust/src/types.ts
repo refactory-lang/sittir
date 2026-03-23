@@ -39,6 +39,9 @@ export type BaseFieldInitializerConfig = BuilderConfig<RustGrammar, BaseFieldIni
 export type BinaryExpression = NodeType<RustGrammar, 'binary_expression'>;
 export type BinaryExpressionConfig = BuilderConfig<RustGrammar, BinaryExpression>;
 
+export type Block = NodeType<RustGrammar, 'block'>;
+export type BlockConfig = BuilderConfig<RustGrammar, Block>;
+
 export type BlockComment = NodeType<RustGrammar, 'block_comment'>;
 export type BlockCommentConfig = BuilderConfig<RustGrammar, BlockComment>;
 
@@ -185,6 +188,9 @@ export type LetConditionConfig = BuilderConfig<RustGrammar, LetCondition>;
 
 export type LetDeclaration = NodeType<RustGrammar, 'let_declaration'>;
 export type LetDeclarationConfig = BuilderConfig<RustGrammar, LetDeclaration>;
+
+export type Lifetime = NodeType<RustGrammar, 'lifetime'>;
+export type LifetimeConfig = BuilderConfig<RustGrammar, Lifetime>;
 
 export type LifetimeParameter = NodeType<RustGrammar, 'lifetime_parameter'>;
 export type LifetimeParameterConfig = BuilderConfig<RustGrammar, LifetimeParameter>;
@@ -462,11 +468,13 @@ export type DeclarationStatement =
 ;
 
 export type Expression =
+  | Literal
   | ArrayExpression
   | AssignmentExpression
   | AsyncBlock
   | AwaitExpression
   | BinaryExpression
+  | Block
   | BreakExpression
   | CallExpression
   | ClosureExpression
@@ -574,6 +582,7 @@ export type RustIrNode =
   | AwaitExpression
   | BaseFieldInitializer
   | BinaryExpression
+  | Block
   | BlockComment
   | BoundedType
   | BracketedType
@@ -623,6 +632,7 @@ export type RustIrNode =
   | LetChain
   | LetCondition
   | LetDeclaration
+  | Lifetime
   | LifetimeParameter
   | LineComment
   | LoopExpression

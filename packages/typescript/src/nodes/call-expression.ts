@@ -1,25 +1,27 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Arguments, CallExpression, Expression, TemplateString, TypeArguments } from '../types.js';
+import type { Arguments, CallExpression, Expression, Import, NewExpression, PrimaryExpression, TemplateString, TypeArguments } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
 
 
 class CallExpressionBuilder extends Builder<CallExpression> {
-  private _arguments!: Builder<Arguments | TemplateString>;
-  private _function: Builder<Expression>;
+  private _function: Builder<Expression | Import | PrimaryExpression | NewExpression>;
   private _typeArguments?: Builder<TypeArguments>;
+  private _arguments!: Builder<Arguments | TemplateString>;
 
-  constructor(function_: Builder<Expression>) {
+  constructor(function_: Builder<Expression | Import | PrimaryExpression | NewExpression>) {
     super();
     this._function = function_;
   }
 
-  arguments(value: Builder<Arguments | TemplateString>): this {
-    this._arguments = value;
+  typeArguments(value: Builder<TypeArguments>): this {
+    this._typeArguments = value;
     return this;
   }
 
-  typeArguments(value: Builder<TypeArguments>): this {
-    this._typeArguments = value;
+  arguments(value: Builder<Arguments | TemplateString>): this {
+    this._arguments = value;
     return this;
   }
 
@@ -34,9 +36,9 @@ class CallExpressionBuilder extends Builder<CallExpression> {
   build(ctx?: RenderContext): CallExpression {
     return {
       kind: 'call_expression',
-      arguments: this._arguments?.build(ctx),
       function: this._function.build(ctx),
       typeArguments: this._typeArguments?.build(ctx),
+      arguments: this._arguments?.build(ctx),
     } as CallExpression;
   }
 
@@ -53,21 +55,24 @@ class CallExpressionBuilder extends Builder<CallExpression> {
 
 export type { CallExpressionBuilder };
 
-export function call_expression(function_: Builder<Expression>): CallExpressionBuilder {
+export function call_expression(function_: Builder<Expression | Import | PrimaryExpression | NewExpression>): CallExpressionBuilder {
   return new CallExpressionBuilder(function_);
 }
 
 export interface CallExpressionOptions {
+  function: Builder<Expression | Import | PrimaryExpression | NewExpression>;
+  typeArguments?: Builder<TypeArguments> | TypeArgumentsOptions;
   arguments: Builder<Arguments | TemplateString>;
-  function: Builder<Expression>;
-  typeArguments?: Builder<TypeArguments>;
 }
 
 export namespace call_expression {
   export function from(options: CallExpressionOptions): CallExpressionBuilder {
     const b = new CallExpressionBuilder(options.function);
+    if (options.typeArguments !== undefined) {
+      const _v = options.typeArguments;
+      b.typeArguments(_v instanceof Builder ? _v : type_arguments.from(_v as TypeArgumentsOptions));
+    }
     if (options.arguments !== undefined) b.arguments(options.arguments);
-    if (options.typeArguments !== undefined) b.typeArguments(options.typeArguments);
     return b;
   }
 }

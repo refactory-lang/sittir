@@ -1,15 +1,17 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CallExpression, Expression, Identifier, MemberExpression, ParenthesizedExpression, SequenceExpression, TypeAnnotation } from '../types.js';
+import type { Expression, ParenthesizedExpression, SequenceExpression, TypeAnnotation } from '../types.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
 
 
 class ParenthesizedExpressionBuilder extends Builder<ParenthesizedExpression> {
   private _type?: Builder<TypeAnnotation>;
-  private _children: Builder<CallExpression | Expression | Identifier | MemberExpression | SequenceExpression>[] = [];
+  private _children: Builder<Expression | SequenceExpression>[] = [];
 
-  constructor(children: Builder<CallExpression | Expression | Identifier | MemberExpression | SequenceExpression>) {
+  constructor(...children: Builder<Expression | SequenceExpression>[]) {
     super();
-    this._children = [children];
+    this._children = children;
   }
 
   type(value: Builder<TypeAnnotation>): this {
@@ -30,7 +32,7 @@ class ParenthesizedExpressionBuilder extends Builder<ParenthesizedExpression> {
     return {
       kind: 'parenthesized_expression',
       type: this._type?.build(ctx),
-      children: this._children[0]?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as ParenthesizedExpression;
   }
 
@@ -50,20 +52,24 @@ class ParenthesizedExpressionBuilder extends Builder<ParenthesizedExpression> {
 
 export type { ParenthesizedExpressionBuilder };
 
-export function parenthesized_expression(children: Builder<CallExpression | Expression | Identifier | MemberExpression | SequenceExpression>): ParenthesizedExpressionBuilder {
-  return new ParenthesizedExpressionBuilder(children);
+export function parenthesized_expression(...children: Builder<Expression | SequenceExpression>[]): ParenthesizedExpressionBuilder {
+  return new ParenthesizedExpressionBuilder(...children);
 }
 
 export interface ParenthesizedExpressionOptions {
-  type?: Builder<TypeAnnotation>;
-  children: Builder<CallExpression | Expression | Identifier | MemberExpression | SequenceExpression> | (Builder<CallExpression | Expression | Identifier | MemberExpression | SequenceExpression>)[];
+  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
+  children?: Builder<Expression | SequenceExpression> | (Builder<Expression | SequenceExpression>)[];
 }
 
 export namespace parenthesized_expression {
   export function from(options: ParenthesizedExpressionOptions): ParenthesizedExpressionBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ParenthesizedExpressionBuilder(_ctor);
-    if (options.type !== undefined) b.type(options.type);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ParenthesizedExpressionBuilder(..._arr);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+    }
     return b;
   }
 }

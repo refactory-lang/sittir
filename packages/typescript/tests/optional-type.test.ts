@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('optional_type', () => {
   it('should build with correct kind', () => {
-    const builder = ir.optionalType(ir.identifier('test') as any);
+    const builder = ir.optionalType(ir.callExpression(ir.import('test')));
     const node = builder.build();
     expect(node.kind).toBe('optional_type');
     expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.optionalType(ir.identifier('test') as any);
+    const builder = ir.optionalType(ir.callExpression(ir.import('test')));
     const source = builder.renderImpl();
     expect(source).toContain('?');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.optionalType(ir.identifier('test') as any);
+    const builder = ir.optionalType(ir.callExpression(ir.import('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('optional_type');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('optional_type', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.optionalType(ir.identifier('test') as any);
+    const builder = ir.optionalType(ir.callExpression(ir.import('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

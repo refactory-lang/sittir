@@ -1,22 +1,28 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssertsAnnotation, FormalParameters, GeneratorFunctionDeclaration, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
 class GeneratorFunctionDeclarationBuilder extends Builder<GeneratorFunctionDeclaration> {
-  private _body!: Builder<StatementBlock>;
   private _name: Builder<Identifier>;
-  private _parameters!: Builder<FormalParameters>;
-  private _returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _parameters!: Builder<FormalParameters>;
+  private _returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
+  private _body!: Builder<StatementBlock>;
 
   constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder<StatementBlock>): this {
-    this._body = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
@@ -25,13 +31,13 @@ class GeneratorFunctionDeclarationBuilder extends Builder<GeneratorFunctionDecla
     return this;
   }
 
-  returnType(value: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>): this {
+  returnType(value: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  body(value: Builder<StatementBlock>): this {
+    this._body = value;
     return this;
   }
 
@@ -50,11 +56,11 @@ class GeneratorFunctionDeclarationBuilder extends Builder<GeneratorFunctionDecla
   build(ctx?: RenderContext): GeneratorFunctionDeclaration {
     return {
       kind: 'generator_function_declaration',
-      body: this._body?.build(ctx),
       name: this._name.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
       parameters: this._parameters?.build(ctx),
       returnType: this._returnType?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
+      body: this._body?.build(ctx),
     } as GeneratorFunctionDeclaration;
   }
 
@@ -80,21 +86,30 @@ export function generator_function_declaration(name: Builder<Identifier>): Gener
 }
 
 export interface GeneratorFunctionDeclarationOptions {
-  body: Builder<StatementBlock>;
   name: Builder<Identifier> | string;
-  parameters: Builder<FormalParameters>;
-  returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
-  typeParameters?: Builder<TypeParameters>;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
+  body: Builder<StatementBlock> | StatementBlockOptions;
 }
 
 export namespace generator_function_declaration {
   export function from(options: GeneratorFunctionDeclarationOptions): GeneratorFunctionDeclarationBuilder {
     const _ctor = options.name;
     const b = new GeneratorFunctionDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
-    if (options.body !== undefined) b.body(options.body);
-    if (options.parameters !== undefined) b.parameters(options.parameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
+    if (options.parameters !== undefined) {
+      const _v = options.parameters;
+      b.parameters(_v instanceof Builder ? _v : formal_parameters.from(_v as FormalParametersOptions));
+    }
     if (options.returnType !== undefined) b.returnType(options.returnType);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : statement_block.from(_v as StatementBlockOptions));
+    }
     return b;
   }
 }

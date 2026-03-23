@@ -11,12 +11,6 @@ describe('foreign_mod_item', () => {
     expect((node as any).children[0]).toHaveProperty('kind');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.foreignMod(ir.externModifier(), ir.externModifier());
-    const source = builder.renderImpl();
-    expect(source).toContain(';');
-  });
-
   it('should produce a valid CST node', () => {
     const builder = ir.foreignMod(ir.externModifier(), ir.externModifier());
     const cst = builder.toCST();

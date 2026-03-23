@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AsyncBlock } from '../types.js';
+import type { AsyncBlock, Block } from '../types.js';
 
 
 class AsyncBlockBuilder extends Builder<AsyncBlock> {
-  private _children: Builder[] = [];
+  private _children: Builder<Block>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Block>) {
     super();
     this._children = [children];
   }
@@ -39,12 +39,12 @@ class AsyncBlockBuilder extends Builder<AsyncBlock> {
 
 export type { AsyncBlockBuilder };
 
-export function async_block(children: Builder): AsyncBlockBuilder {
+export function async_block(children: Builder<Block>): AsyncBlockBuilder {
   return new AsyncBlockBuilder(children);
 }
 
 export interface AsyncBlockOptions {
-  children: Builder | (Builder)[];
+  children: Builder<Block> | (Builder<Block>)[];
 }
 
 export namespace async_block {

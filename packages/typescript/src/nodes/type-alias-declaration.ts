@@ -1,12 +1,14 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeAliasDeclaration, TypeIdentifier, TypeParameters } from '../types.js';
+import type { Type, TypeAliasDeclaration, TypeIdentifier, TypeParameters } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
 
 
 class TypeAliasDeclarationBuilder extends Builder<TypeAliasDeclaration> {
   private _name: Builder<TypeIdentifier>;
   private _typeParameters?: Builder<TypeParameters>;
-  private _value!: Builder;
+  private _value!: Builder<Type>;
 
   constructor(name: Builder<TypeIdentifier>) {
     super();
@@ -18,7 +20,7 @@ class TypeAliasDeclarationBuilder extends Builder<TypeAliasDeclaration> {
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Type>): this {
     this._value = value;
     return this;
   }
@@ -63,15 +65,18 @@ export function type_alias_declaration(name: Builder<TypeIdentifier>): TypeAlias
 
 export interface TypeAliasDeclarationOptions {
   name: Builder<TypeIdentifier> | string;
-  typeParameters?: Builder<TypeParameters>;
-  value: Builder;
+  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  value: Builder<Type>;
 }
 
 export namespace type_alias_declaration {
   export function from(options: TypeAliasDeclarationOptions): TypeAliasDeclarationBuilder {
     const _ctor = options.name;
     const b = new TypeAliasDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+    }
     if (options.value !== undefined) b.value(options.value);
     return b;
   }

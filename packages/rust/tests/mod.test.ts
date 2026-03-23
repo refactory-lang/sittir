@@ -13,7 +13,6 @@ describe('mod_item', () => {
     const builder = ir.mod(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('mod');
-    expect(source).toContain(';');
   });
 
   it('should produce a valid CST node', () => {

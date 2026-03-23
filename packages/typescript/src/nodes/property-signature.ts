@@ -1,14 +1,16 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AccessibilityModifier, ComputedPropertyName, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, PropertySignature, TypeAnnotation } from '../types.js';
+import type { AccessibilityModifier, ComputedPropertyName, Number, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, PropertySignature, String, TypeAnnotation } from '../types.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
 
 
 class PropertySignatureBuilder extends Builder<PropertySignature> {
-  private _name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
+  private _name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
   private _type?: Builder<TypeAnnotation>;
   private _children: Builder<AccessibilityModifier | OverrideModifier>[] = [];
 
-  constructor(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>) {
+  constructor(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>) {
     super();
     this._name = name;
   }
@@ -55,20 +57,23 @@ class PropertySignatureBuilder extends Builder<PropertySignature> {
 
 export type { PropertySignatureBuilder };
 
-export function property_signature(name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>): PropertySignatureBuilder {
+export function property_signature(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>): PropertySignatureBuilder {
   return new PropertySignatureBuilder(name);
 }
 
 export interface PropertySignatureOptions {
-  name: Builder<ComputedPropertyName | PrivatePropertyIdentifier | PropertyIdentifier>;
-  type?: Builder<TypeAnnotation>;
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
   children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
 }
 
 export namespace property_signature {
   export function from(options: PropertySignatureOptions): PropertySignatureBuilder {
     const b = new PropertySignatureBuilder(options.name);
-    if (options.type !== undefined) b.type(options.type);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];

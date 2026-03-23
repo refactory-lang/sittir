@@ -1,15 +1,19 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, ExtendsClause, TypeArguments } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
 
 
 class ExtendsClauseBuilder extends Builder<ExtendsClause> {
-  private _typeArguments: Builder<TypeArguments>[] = [];
   private _value: Builder<Expression>[] = [];
+  private _typeArguments: Builder<TypeArguments>[] = [];
 
-  constructor(...value: Builder<Expression>[]) {
-    super();
+  constructor() { super(); }
+
+  value(...value: Builder<Expression>[]): this {
     this._value = value;
+    return this;
   }
 
   typeArguments(...value: Builder<TypeArguments>[]): this {
@@ -28,8 +32,8 @@ class ExtendsClauseBuilder extends Builder<ExtendsClause> {
   build(ctx?: RenderContext): ExtendsClause {
     return {
       kind: 'extends_clause',
-      typeArguments: this._typeArguments.map(c => c.build(ctx)),
       value: this._value.map(c => c.build(ctx)),
+      typeArguments: this._typeArguments.map(c => c.build(ctx)),
     } as ExtendsClause;
   }
 
@@ -50,24 +54,27 @@ class ExtendsClauseBuilder extends Builder<ExtendsClause> {
 
 export type { ExtendsClauseBuilder };
 
-export function extends_clause(...value: Builder<Expression>[]): ExtendsClauseBuilder {
-  return new ExtendsClauseBuilder(...value);
+export function extends_clause(): ExtendsClauseBuilder {
+  return new ExtendsClauseBuilder();
 }
 
 export interface ExtendsClauseOptions {
-  typeArguments?: Builder<TypeArguments> | (Builder<TypeArguments>)[];
-  value: Builder<Expression> | (Builder<Expression>)[];
+  value?: Builder<Expression> | (Builder<Expression>)[];
+  typeArguments?: Builder<TypeArguments> | TypeArgumentsOptions | (Builder<TypeArguments> | TypeArgumentsOptions)[];
 }
 
 export namespace extends_clause {
   export function from(options: ExtendsClauseOptions): ExtendsClauseBuilder {
-    const _ctor = options.value;
-    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
-    const b = new ExtendsClauseBuilder(..._arr);
+    const b = new ExtendsClauseBuilder();
+    if (options.value !== undefined) {
+      const _v = options.value;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.value(..._arr);
+    }
     if (options.typeArguments !== undefined) {
       const _v = options.typeArguments;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.typeArguments(..._arr);
+      b.typeArguments(..._arr.map(_v => _v instanceof Builder ? _v : type_arguments.from(_v as TypeArgumentsOptions)));
     }
     return b;
   }

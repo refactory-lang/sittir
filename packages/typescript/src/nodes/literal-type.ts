@@ -1,18 +1,32 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { False, LiteralType, Null, True, UnaryExpression, Undefined } from '../types.js';
+import type { False, LiteralType, Null, Number, String, True, UnaryExpression, Undefined } from '../types.js';
 
 
 class LiteralTypeBuilder extends Builder<LiteralType> {
-  private _children: Builder<False | Null | True | UnaryExpression | Undefined>[] = [];
+  private _operator?: Builder;
+  private _argument?: Builder<Number>;
+  private _children: Builder<UnaryExpression | Number | String | True | False | Null | Undefined>[] = [];
 
-  constructor(children: Builder<False | Null | True | UnaryExpression | Undefined>) {
+  constructor(...children: Builder<UnaryExpression | Number | String | True | False | Null | Undefined>[]) {
     super();
-    this._children = [children];
+    this._children = children;
+  }
+
+  operator(value: Builder): this {
+    this._operator = value;
+    return this;
+  }
+
+  argument(value: Builder<Number>): this {
+    this._argument = value;
+    return this;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    if (this._operator) parts.push(this.renderChild(this._operator, ctx));
+    if (this._argument) parts.push(this.renderChild(this._argument, ctx));
     if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
@@ -20,7 +34,9 @@ class LiteralTypeBuilder extends Builder<LiteralType> {
   build(ctx?: RenderContext): LiteralType {
     return {
       kind: 'literal_type',
-      children: this._children[0]?.build(ctx),
+      operator: this._operator?.build(ctx),
+      argument: this._argument?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
     } as LiteralType;
   }
 
@@ -28,6 +44,8 @@ class LiteralTypeBuilder extends Builder<LiteralType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    if (this._operator) parts.push({ kind: 'builder', builder: this._operator, fieldName: 'operator' });
+    if (this._argument) parts.push({ kind: 'builder', builder: this._argument, fieldName: 'argument' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
@@ -37,18 +55,26 @@ class LiteralTypeBuilder extends Builder<LiteralType> {
 
 export type { LiteralTypeBuilder };
 
-export function literal_type(children: Builder<False | Null | True | UnaryExpression | Undefined>): LiteralTypeBuilder {
-  return new LiteralTypeBuilder(children);
+export function literal_type(...children: Builder<UnaryExpression | Number | String | True | False | Null | Undefined>[]): LiteralTypeBuilder {
+  return new LiteralTypeBuilder(...children);
 }
 
 export interface LiteralTypeOptions {
-  children: Builder<False | Null | True | UnaryExpression | Undefined> | (Builder<False | Null | True | UnaryExpression | Undefined>)[];
+  operator?: Builder;
+  argument?: Builder<Number> | string;
+  children?: Builder<UnaryExpression | Number | String | True | False | Null | Undefined> | (Builder<UnaryExpression | Number | String | True | False | Null | Undefined>)[];
 }
 
 export namespace literal_type {
   export function from(options: LiteralTypeOptions): LiteralTypeBuilder {
-    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new LiteralTypeBuilder(_ctor);
+    const _children = options.children;
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new LiteralTypeBuilder(..._arr);
+    if (options.operator !== undefined) b.operator(options.operator);
+    if (options.argument !== undefined) {
+      const _v = options.argument;
+      b.argument(typeof _v === 'string' ? new LeafBuilder('number', _v) : _v);
+    }
     return b;
   }
 }

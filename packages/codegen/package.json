@@ -43,6 +43,7 @@
     "@sittir/types": "workspace:*"
   },
   "devDependencies": {
+    "@sittir/typescript": "workspace:*",
     "@types/node": "^25.5.0",
     "tree-sitter-go": "^0.25.0",
     "tree-sitter-rust": "^0.24.0",

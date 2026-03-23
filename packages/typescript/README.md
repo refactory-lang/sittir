@@ -1,6 +1,6 @@
 # @sittir/typescript
 
-140 TypeScript IR node kinds with self-contained builders — all generated from the tree-sitter-typescript grammar by `@sittir/codegen`.
+140 TypeScript + 146 TSX IR node kinds with self-contained builders — all generated from the tree-sitter-typescript grammar by `@sittir/codegen`.
 
 ## Installation
 
@@ -67,6 +67,28 @@ import type {
 
 import type { FunctionBuilder } from '@sittir/typescript';
 ```
+
+## TSX
+
+TSX is available as a subpath export, mirroring how `tree-sitter-typescript` structures its grammar (one package, two entry points):
+
+```ts
+import { ir } from '@sittir/typescript/tsx';
+
+const el = ir.jsxElement(ir.jsxOpeningElement(ir.identifier('div')))
+  .closingElement(ir.jsxClosingElement(ir.identifier('div')));
+
+el.renderImpl();  // "< div > < / div >"
+```
+
+TSX includes all 140 TypeScript node kinds plus 6 JSX-specific kinds:
+- `jsx_attribute`
+- `jsx_closing_element`
+- `jsx_element`
+- `jsx_expression`
+- `jsx_namespace_name`
+- `jsx_opening_element`
+- `jsx_self_closing_element`
 
 ## License
 

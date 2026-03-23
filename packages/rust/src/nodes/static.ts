@@ -31,9 +31,8 @@ class StaticBuilder extends Builder<StaticItem> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('static');
-    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     parts.push(':');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
@@ -59,9 +58,10 @@ class StaticBuilder extends Builder<StaticItem> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
     parts.push({ kind: 'token', text: 'static', type: 'static' });
-    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     parts.push({ kind: 'token', text: ':', type: ':' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });

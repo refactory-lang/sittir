@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Literal, TraitBounds, Type, TypeArguments, TypeBinding } from '../types.js';
+import type { Block, Lifetime, Literal, TraitBounds, Type, TypeArguments, TypeBinding } from '../types.js';
 
 
 class TypeArgumentsBuilder extends Builder<TypeArguments> {
-  private _children: Builder<Literal | Type | TraitBounds | TypeBinding>[] = [];
+  private _children: Builder<Literal | Type | Block | Lifetime | TraitBounds | TypeBinding>[] = [];
 
-  constructor(...children: Builder<Literal | Type | TraitBounds | TypeBinding>[]) {
+  constructor(...children: Builder<Literal | Type | Block | Lifetime | TraitBounds | TypeBinding>[]) {
     super();
     this._children = children;
   }
@@ -14,8 +14,7 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('<');
-    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
-    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('>');
     return parts.join(' ');
   }
@@ -32,8 +31,9 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '<', type: '<' });
-    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
-    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
     parts.push({ kind: 'token', text: '>', type: '>' });
     return parts;
   }
@@ -41,12 +41,12 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
 
 export type { TypeArgumentsBuilder };
 
-export function type_arguments(...children: Builder<Literal | Type | TraitBounds | TypeBinding>[]): TypeArgumentsBuilder {
+export function type_arguments(...children: Builder<Literal | Type | Block | Lifetime | TraitBounds | TypeBinding>[]): TypeArgumentsBuilder {
   return new TypeArgumentsBuilder(...children);
 }
 
 export interface TypeArgumentsOptions {
-  children: Builder<Literal | Type | TraitBounds | TypeBinding> | (Builder<Literal | Type | TraitBounds | TypeBinding>)[];
+  children: Builder<Literal | Type | Block | Lifetime | TraitBounds | TypeBinding> | (Builder<Literal | Type | Block | Lifetime | TraitBounds | TypeBinding>)[];
 }
 
 export namespace type_arguments {

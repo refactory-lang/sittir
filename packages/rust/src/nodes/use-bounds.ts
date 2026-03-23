@@ -1,14 +1,14 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeIdentifier, UseBounds } from '../types.js';
+import type { Lifetime, TypeIdentifier, UseBounds } from '../types.js';
 
 
 class UseBoundsBuilder extends Builder<UseBounds> {
-  private _children: Builder<TypeIdentifier>[] = [];
+  private _children: Builder<Lifetime | TypeIdentifier>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<TypeIdentifier>[]): this {
+  children(...value: Builder<Lifetime | TypeIdentifier>[]): this {
     this._children = value;
     return this;
   }
@@ -56,7 +56,7 @@ export function use_bounds(): UseBoundsBuilder {
 }
 
 export interface UseBoundsOptions {
-  children?: Builder<TypeIdentifier> | (Builder<TypeIdentifier>)[];
+  children?: Builder<Lifetime | TypeIdentifier> | (Builder<Lifetime | TypeIdentifier>)[];
 }
 
 export namespace use_bounds {

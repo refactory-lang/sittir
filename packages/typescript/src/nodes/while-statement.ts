@@ -1,11 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ParenthesizedExpression, Statement, WhileStatement } from '../types.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
 
 
 class WhileStatementBuilder extends Builder<WhileStatement> {
-  private _body!: Builder<Statement>;
   private _condition: Builder<ParenthesizedExpression>;
+  private _body!: Builder<Statement>;
 
   constructor(condition: Builder<ParenthesizedExpression>) {
     super();
@@ -28,8 +30,8 @@ class WhileStatementBuilder extends Builder<WhileStatement> {
   build(ctx?: RenderContext): WhileStatement {
     return {
       kind: 'while_statement',
-      body: this._body?.build(ctx),
       condition: this._condition.build(ctx),
+      body: this._body?.build(ctx),
     } as WhileStatement;
   }
 
@@ -51,13 +53,14 @@ export function while_statement(condition: Builder<ParenthesizedExpression>): Wh
 }
 
 export interface WhileStatementOptions {
+  condition: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
   body: Builder<Statement>;
-  condition: Builder<ParenthesizedExpression>;
 }
 
 export namespace while_statement {
   export function from(options: WhileStatementOptions): WhileStatementBuilder {
-    const b = new WhileStatementBuilder(options.condition);
+    const _ctor = options.condition;
+    const b = new WhileStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor as ParenthesizedExpressionOptions));
     if (options.body !== undefined) b.body(options.body);
     return b;
   }
