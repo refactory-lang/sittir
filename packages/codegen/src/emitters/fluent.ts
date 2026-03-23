@@ -4,7 +4,7 @@
  * semantic operator aliases.
  */
 
-import type { NodeMeta } from '../grammar-reader.ts';
+import type { NodeMeta, SupertypeInfo } from '../grammar-reader.ts';
 import { toShortName, toGrammarTypeName, toFactoryName, toFieldName, resolveFileNames } from '../naming.ts';
 
 export interface OperatorContext {
@@ -19,6 +19,7 @@ export interface EmitFluentConfig {
   leafKinds: string[];
   operatorContexts?: OperatorContext[];
   nodes?: NodeMeta[];
+  supertypes?: SupertypeInfo[];
 }
 
 /** Leaf kinds that should accept number | string. */
@@ -147,6 +148,55 @@ export function emitFluent(config: EmitFluentConfig): string {
     lines.push('');
     lines.push('  // Semantic operator aliases');
     lines.push(...opEntries);
+  }
+
+  // Namespace sub-objects from supertypes
+  if (config.supertypes && config.supertypes.length > 0) {
+    // Build kind→import binding map for looking up how each kind was imported
+    const kindToBinding = new Map<string, string>();
+    for (const kind of nodeKinds) {
+      const shortName = toShortName(kind);
+      const isDuplicate = (shortNameCounts.get(shortName) ?? 0) > 1;
+      kindToBinding.set(kind, isDuplicate ? toFactoryName(kind) : shortName);
+    }
+
+    // Build kind→irKey map
+    const kindToIrKey = new Map<string, string>();
+    for (const kind of nodeKinds) {
+      const shortName = toShortName(kind);
+      const isDuplicate = (shortNameCounts.get(shortName) ?? 0) > 1;
+      const key = isDuplicate
+        ? toFactoryName(kind)
+        : shortName.endsWith('_') ? shortName.slice(0, -1) : shortName;
+      kindToIrKey.set(kind, key);
+    }
+
+    lines.push('');
+    lines.push('  // Namespaced access via supertypes');
+
+    for (const st of config.supertypes) {
+      // Clean the supertype name: strip leading _ and trailing _
+      const nsName = toFieldName(st.name.replace(/^_/, ''));
+
+      // Only include subtypes that we have builders for
+      const nsEntries: string[] = [];
+      for (const subtype of st.subtypes) {
+        const binding = kindToBinding.get(subtype);
+        if (!binding) continue; // leaf or not generated
+
+        const irKey = kindToIrKey.get(subtype);
+        if (!irKey) continue;
+
+        // Use the ir key as the namespace property
+        nsEntries.push(`    ${irKey}: ${binding},`);
+      }
+
+      if (nsEntries.length > 0 && !usedPropertyKeys.has(nsName)) {
+        lines.push(`  ${nsName}: {`);
+        lines.push(...nsEntries);
+        lines.push('  },');
+      }
+    }
   }
 
   lines.push(`} as const;`);

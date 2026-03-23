@@ -370,3 +370,30 @@ export function listOperatorTokens(grammar: string): string[] {
 
 	return [...ops].sort();
 }
+
+export interface SupertypeInfo {
+	/** Supertype name (e.g. '_expression', 'declaration') */
+	name: string;
+	/** Named subtypes (concrete node kinds) */
+	subtypes: string[];
+}
+
+/**
+ * List supertype nodes and their subtypes.
+ * Supertypes are grammar entries that have a `subtypes` array — they define
+ * abstract groupings like _expression, _statement, _type.
+ */
+export function listSupertypes(grammar: string): SupertypeInfo[] {
+	const grammarMap = loadGrammar(grammar);
+	const results: SupertypeInfo[] = [];
+
+	for (const [kind, entry] of Object.entries(grammarMap)) {
+		if (!entry.subtypes || entry.subtypes.length === 0) continue;
+		const named = entry.subtypes.filter(s => s.named).map(s => s.type);
+		if (named.length > 0) {
+			results.push({ name: kind, subtypes: named });
+		}
+	}
+
+	return results;
+}

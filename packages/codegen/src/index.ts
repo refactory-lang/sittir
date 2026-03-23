@@ -15,7 +15,7 @@
  *   sittir --grammar rust --all --output src/
  */
 
-import { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens } from './grammar-reader.ts';
+import { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, listSupertypes } from './grammar-reader.ts';
 import { resolveFileNames, toShortName, toFactoryName } from './naming.ts';
 import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
@@ -26,7 +26,7 @@ import { emitTest } from './emitters/test.ts';
 import { emitConfig } from './emitters/config.ts';
 import { emitIndex } from './emitters/index-file.ts';
 
-export { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens } from './grammar-reader.ts';
+export { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes } from './grammar-reader.ts';
 
 export interface CodegenConfig {
 	/** Grammar language (e.g., 'rust', 'typescript', 'python') */
@@ -72,6 +72,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 	const operatorContexts = listOperatorContexts(config.grammar);
 	const keywords = listKeywords(config.grammar);
 	const operatorTokens = listOperatorTokens(config.grammar);
+	const supertypes = listSupertypes(config.grammar);
 
 	const nodes = nodeKinds.map((kind) =>
 		readGrammarNode(config.grammar, kind),
@@ -112,7 +113,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 		grammar: emitGrammar({ grammar: config.grammar }),
 		types: emitTypes({ grammar: config.grammar, nodeKinds }),
 		builders,
-		builder: emitFluent({ grammar: config.grammar, nodeKinds, leafKinds, operatorContexts, nodes }),
+		builder: emitFluent({ grammar: config.grammar, nodeKinds, leafKinds, operatorContexts, nodes, supertypes }),
 		consts: emitConsts({ grammar: config.grammar, nodeKinds, leafKinds, keywords, operators: operatorTokens, nodes }),
 		tests,
 		config: emitConfig({ grammar: config.grammar }),
