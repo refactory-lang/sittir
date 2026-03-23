@@ -20,13 +20,6 @@ class LabeledBuilder extends BaseBuilder<LabeledStatement> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('labeled');
-    if (this._label) parts.push(this.renderChild(this._label, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
     return parts.join(' ');
   }
 
@@ -42,13 +35,6 @@ class LabeledBuilder extends BaseBuilder<LabeledStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'labeled' });
-    if (this._label) parts.push({ kind: 'builder', builder: this._label, fieldName: 'label' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
     return parts;
   }
 }

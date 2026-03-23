@@ -16,7 +16,9 @@ class MatchBlockBuilder extends BaseBuilder<MatchBlock> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('{');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('}');
     return parts.join(' ');
   }
 
@@ -31,9 +33,11 @@ class MatchBlockBuilder extends BaseBuilder<MatchBlock> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '{', type: '{' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
 }

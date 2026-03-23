@@ -20,13 +20,9 @@ class LoopBuilder extends BaseBuilder<LoopExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('loop');
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -42,15 +38,11 @@ class LoopBuilder extends BaseBuilder<LoopExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'loop' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: 'loop', type: 'loop' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

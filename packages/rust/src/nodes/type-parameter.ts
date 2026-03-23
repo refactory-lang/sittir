@@ -28,7 +28,10 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._bounds) parts.push(this.renderChild(this._bounds, ctx));
-    if (this._defaultType) parts.push(this.renderChild(this._defaultType, ctx));
+    if (this._defaultType) {
+      parts.push('=');
+      if (this._defaultType) parts.push(this.renderChild(this._defaultType, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -47,7 +50,10 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._bounds) parts.push({ kind: 'builder', builder: this._bounds, fieldName: 'bounds' });
-    if (this._defaultType) parts.push({ kind: 'builder', builder: this._defaultType, fieldName: 'defaultType' });
+    if (this._defaultType) {
+      parts.push({ kind: 'token', text: '=', type: '=' });
+      if (this._defaultType) parts.push({ kind: 'builder', builder: this._defaultType, fieldName: 'defaultType' });
+    }
     return parts;
   }
 }

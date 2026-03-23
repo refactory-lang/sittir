@@ -26,9 +26,11 @@ class AttributeBuilder extends BaseBuilder<Attribute> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._value) parts.push(this.renderChild(this._value, ctx));
-    if (this._arguments) parts.push(this.renderChild(this._arguments, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._value) {
+      parts.push('=');
+      if (this._value) parts.push(this.renderChild(this._value, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -45,10 +47,12 @@ class AttributeBuilder extends BaseBuilder<Attribute> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
-    if (this._arguments) parts.push({ kind: 'builder', builder: this._arguments, fieldName: 'arguments' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._value) {
+      parts.push({ kind: 'token', text: '=', type: '=' });
+      if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     }
     return parts;
   }

@@ -27,9 +27,9 @@ class NewBuilder extends BaseBuilder<NewExpression> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('new');
-    if (this._arguments) parts.push(this.renderChild(this._arguments, ctx));
     if (this._constructor) parts.push(this.renderChild(this._constructor, ctx));
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
+    if (this._arguments) parts.push(this.renderChild(this._arguments, ctx));
     return parts.join(' ');
   }
 
@@ -46,10 +46,10 @@ class NewBuilder extends BaseBuilder<NewExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'new' });
-    if (this._arguments) parts.push({ kind: 'builder', builder: this._arguments, fieldName: 'arguments' });
+    parts.push({ kind: 'token', text: 'new', type: 'new' });
     if (this._constructor) parts.push({ kind: 'builder', builder: this._constructor, fieldName: 'constructor' });
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
+    if (this._arguments) parts.push({ kind: 'builder', builder: this._arguments, fieldName: 'arguments' });
     return parts;
   }
 }

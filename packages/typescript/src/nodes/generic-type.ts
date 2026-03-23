@@ -20,7 +20,6 @@ class GenericTypeBuilder extends BaseBuilder<GenericType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('generic');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
     return parts.join(' ');
@@ -38,7 +37,6 @@ class GenericTypeBuilder extends BaseBuilder<GenericType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'generic' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
     return parts;

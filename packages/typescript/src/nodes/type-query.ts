@@ -14,7 +14,8 @@ class TypeQueryBuilder extends BaseBuilder<TypeQuery> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    parts.push('typeof');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -29,6 +30,7 @@ class TypeQueryBuilder extends BaseBuilder<TypeQuery> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'typeof', type: 'typeof' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

@@ -39,15 +39,15 @@ class ImplBuilder extends BaseBuilder<ImplItem> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('impl');
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
-    if (this._trait) parts.push(this.renderChild(this._trait, ctx), 'for');
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
+    if (this._trait) {
+      parts.push('!');
+      if (this._trait) parts.push(this.renderChild(this._trait, ctx));
+      parts.push('for');
     }
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -66,21 +66,18 @@ class ImplBuilder extends BaseBuilder<ImplItem> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'impl' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
-    if (this._trait) {
-      parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
-      parts.push({ kind: 'token', text: 'for' });
-    }
+    parts.push({ kind: 'token', text: 'impl', type: 'impl' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
+    if (this._trait) {
+      parts.push({ kind: 'token', text: '!', type: '!' });
+      if (this._trait) parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
+      parts.push({ kind: 'token', text: 'for', type: 'for' });
     }
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

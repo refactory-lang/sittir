@@ -14,8 +14,7 @@ class SequenceBuilder extends BaseBuilder<SequenceExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('sequence');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -30,7 +29,6 @@ class SequenceBuilder extends BaseBuilder<SequenceExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'sequence' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

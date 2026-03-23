@@ -14,8 +14,8 @@ class DynamicTypeBuilder extends BaseBuilder<DynamicType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('dynamic');
-    if (this._trait) parts.push(this.renderChild(this._trait, ctx), 'for');
+    parts.push('dyn');
+    if (this._trait) parts.push(this.renderChild(this._trait, ctx));
     return parts.join(' ');
   }
 
@@ -30,11 +30,8 @@ class DynamicTypeBuilder extends BaseBuilder<DynamicType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'dynamic' });
-    if (this._trait) {
-      parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
-      parts.push({ kind: 'token', text: 'for' });
-    }
+    parts.push({ kind: 'token', text: 'dyn', type: 'dyn' });
+    if (this._trait) parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
     return parts;
   }
 }

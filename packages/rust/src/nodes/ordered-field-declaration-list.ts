@@ -22,8 +22,13 @@ class OrderedFieldDeclarationListBuilder extends BaseBuilder<OrderedFieldDeclara
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._type.length > 0) parts.push(this.renderChildren(this._type, ', ', ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('(');
+    if (this._type.length > 0) {
+      if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+      if (this._type.length > 0) parts.push(this.renderChildren(this._type, ', ', ctx));
+      parts.push(',');
+    }
+    parts.push(')');
     return parts.join(' ');
   }
 
@@ -39,12 +44,17 @@ class OrderedFieldDeclarationListBuilder extends BaseBuilder<OrderedFieldDeclara
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._type) {
-      parts.push({ kind: 'builder', builder: child, fieldName: 'type' });
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    if (this._type.length > 0) {
+      for (const child of this._children) {
+        parts.push({ kind: 'builder', builder: child });
+      }
+      for (const child of this._type) {
+        parts.push({ kind: 'builder', builder: child, fieldName: 'type' });
+      }
+      parts.push({ kind: 'token', text: ',', type: ',' });
     }
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
     return parts;
   }
 }

@@ -26,15 +26,10 @@ class TernaryBuilder extends BaseBuilder<TernaryExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('ternary');
     if (this._condition) parts.push(this.renderChild(this._condition, ctx));
-    if (this._consequence) {
-      parts.push('{', this.renderChild(this._consequence, ctx), '}');
-    }
-    if (this._alternative) {
-      const alt = this.renderChild(this._alternative, ctx);
-      parts.push(alt.startsWith('if ') ? 'else ' + alt : 'else { ' + alt + ' }');
-    }
+    if (this._consequence) parts.push(this.renderChild(this._consequence, ctx));
+    parts.push(':');
+    if (this._alternative) parts.push(this.renderChild(this._alternative, ctx));
     return parts.join(' ');
   }
 
@@ -51,9 +46,9 @@ class TernaryBuilder extends BaseBuilder<TernaryExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'ternary' });
     if (this._condition) parts.push({ kind: 'builder', builder: this._condition, fieldName: 'condition' });
     if (this._consequence) parts.push({ kind: 'builder', builder: this._consequence, fieldName: 'consequence' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
     if (this._alternative) parts.push({ kind: 'builder', builder: this._alternative, fieldName: 'alternative' });
     return parts;
   }

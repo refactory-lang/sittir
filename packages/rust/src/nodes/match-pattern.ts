@@ -20,9 +20,11 @@ class MatchPatternBuilder extends BaseBuilder<MatchPattern> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('match');
-    if (this._condition) parts.push(this.renderChild(this._condition, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._condition) {
+      parts.push('if');
+      if (this._condition) parts.push(this.renderChild(this._condition, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -38,10 +40,12 @@ class MatchPatternBuilder extends BaseBuilder<MatchPattern> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'match' });
-    if (this._condition) parts.push({ kind: 'builder', builder: this._condition, fieldName: 'condition' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._condition) {
+      parts.push({ kind: 'token', text: 'if', type: 'if' });
+      if (this._condition) parts.push({ kind: 'builder', builder: this._condition, fieldName: 'condition' });
     }
     return parts;
   }

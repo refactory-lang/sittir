@@ -26,9 +26,14 @@ class ConstParameterBuilder extends BaseBuilder<ConstParameter> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    parts.push('const');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push(':');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
-    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    if (this._value) {
+      parts.push('=');
+      if (this._value) parts.push(this.renderChild(this._value, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -45,9 +50,14 @@ class ConstParameterBuilder extends BaseBuilder<ConstParameter> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'const', type: 'const' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
-    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    if (this._value) {
+      parts.push({ kind: 'token', text: '=', type: '=' });
+      if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    }
     return parts;
   }
 }

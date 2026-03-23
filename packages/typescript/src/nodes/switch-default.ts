@@ -16,11 +16,9 @@ class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._body.length > 0) {
-      parts.push('{');
-      parts.push(this.renderChildren(this._body, '\n', ctx));
-      parts.push('}');
-    }
+    parts.push('default');
+    parts.push(':');
+    if (this._body.length > 0) parts.push(this.renderChildren(this._body, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -35,12 +33,10 @@ class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._body.length > 0) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      for (const child of this._body) {
-        parts.push({ kind: 'builder', builder: child, fieldName: 'body' });
-      }
-      parts.push({ kind: 'token', text: '}', type: '}' });
+    parts.push({ kind: 'token', text: 'default', type: 'default' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
+    for (const child of this._body) {
+      parts.push({ kind: 'builder', builder: child, fieldName: 'body' });
     }
     return parts;
   }

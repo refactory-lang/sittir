@@ -38,7 +38,7 @@ class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'extends' });
+    parts.push({ kind: 'token', text: 'extends', type: 'extends' });
     for (const child of this._value) {
       parts.push({ kind: 'builder', builder: child, fieldName: 'value' });
     }

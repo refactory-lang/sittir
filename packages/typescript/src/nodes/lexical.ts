@@ -20,9 +20,8 @@ class LexicalBuilder extends BaseBuilder<LexicalDeclaration> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('lexical');
     if (this._kind) parts.push(this.renderChild(this._kind, ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -37,7 +36,6 @@ class LexicalBuilder extends BaseBuilder<LexicalDeclaration> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'lexical' });
     if (this._kind) parts.push({ kind: 'builder', builder: this._kind, fieldName: 'kind' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });

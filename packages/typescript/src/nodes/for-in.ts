@@ -44,17 +44,13 @@ class ForInBuilder extends BaseBuilder<ForInStatement> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('for in');
+    parts.push('for');
+    parts.push('(');
     if (this._left) parts.push(this.renderChild(this._left, ctx));
     if (this._operator) parts.push(this.renderChild(this._operator, ctx));
-    if (this._value) parts.push(this.renderChild(this._value, ctx));
     if (this._right) parts.push(this.renderChild(this._right, ctx));
-    if (this._kind) parts.push(this.renderChild(this._kind, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    parts.push(')');
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -73,17 +69,13 @@ class ForInBuilder extends BaseBuilder<ForInStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'for in' });
+    parts.push({ kind: 'token', text: 'for', type: 'for' });
+    parts.push({ kind: 'token', text: '(', type: '(' });
     if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
     if (this._operator) parts.push({ kind: 'builder', builder: this._operator, fieldName: 'operator' });
-    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
-    if (this._kind) parts.push({ kind: 'builder', builder: this._kind, fieldName: 'kind' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

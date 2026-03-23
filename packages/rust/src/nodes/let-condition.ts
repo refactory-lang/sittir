@@ -20,7 +20,9 @@ class LetConditionBuilder extends BaseBuilder<LetCondition> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    parts.push('let');
     if (this._pattern) parts.push(this.renderChild(this._pattern, ctx));
+    parts.push('=');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
     return parts.join(' ');
   }
@@ -37,7 +39,9 @@ class LetConditionBuilder extends BaseBuilder<LetCondition> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'let', type: 'let' });
     if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
+    parts.push({ kind: 'token', text: '=', type: '=' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     return parts;
   }

@@ -26,7 +26,6 @@ class BinaryBuilder extends BaseBuilder<BinaryExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('binary');
     if (this._left) parts.push(this.renderChild(this._left, ctx));
     if (this._operator) parts.push(this.renderChild(this._operator, ctx));
     if (this._right) parts.push(this.renderChild(this._right, ctx));
@@ -46,7 +45,6 @@ class BinaryBuilder extends BaseBuilder<BinaryExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'binary' });
     if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
     if (this._operator) parts.push({ kind: 'builder', builder: this._operator, fieldName: 'operator' });
     if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });

@@ -23,8 +23,9 @@ class ImportBuilder extends BaseBuilder<ImportStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('import');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('from');
     if (this._source) parts.push(this.renderChild(this._source, ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -40,11 +41,12 @@ class ImportBuilder extends BaseBuilder<ImportStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'import' });
-    if (this._source) parts.push({ kind: 'builder', builder: this._source, fieldName: 'source' });
+    parts.push({ kind: 'token', text: 'import', type: 'import' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: 'from', type: 'from' });
+    if (this._source) parts.push({ kind: 'builder', builder: this._source, fieldName: 'source' });
     return parts;
   }
 }

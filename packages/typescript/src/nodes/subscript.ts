@@ -26,10 +26,11 @@ class SubscriptBuilder extends BaseBuilder<SubscriptExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('subscript');
-    if (this._index) parts.push(this.renderChild(this._index, ctx));
     if (this._object) parts.push(this.renderChild(this._object, ctx));
     if (this._optionalChain) parts.push(this.renderChild(this._optionalChain, ctx));
+    parts.push('[');
+    if (this._index) parts.push(this.renderChild(this._index, ctx));
+    parts.push(']');
     return parts.join(' ');
   }
 
@@ -46,10 +47,11 @@ class SubscriptBuilder extends BaseBuilder<SubscriptExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'subscript' });
-    if (this._index) parts.push({ kind: 'builder', builder: this._index, fieldName: 'index' });
     if (this._object) parts.push({ kind: 'builder', builder: this._object, fieldName: 'object' });
     if (this._optionalChain) parts.push({ kind: 'builder', builder: this._optionalChain, fieldName: 'optionalChain' });
+    parts.push({ kind: 'token', text: '[', type: '[' });
+    if (this._index) parts.push({ kind: 'builder', builder: this._index, fieldName: 'index' });
+    parts.push({ kind: 'token', text: ']', type: ']' });
     return parts;
   }
 }

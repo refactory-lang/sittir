@@ -22,8 +22,8 @@ class RangePatternBuilder extends BaseBuilder<RangePattern> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('range');
     if (this._left) parts.push(this.renderChild(this._left, ctx));
+    parts.push('...');
     if (this._right) parts.push(this.renderChild(this._right, ctx));
     return parts.join(' ');
   }
@@ -40,8 +40,8 @@ class RangePatternBuilder extends BaseBuilder<RangePattern> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'range' });
     if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
+    parts.push({ kind: 'token', text: '...', type: '...' });
     if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
     return parts;
   }

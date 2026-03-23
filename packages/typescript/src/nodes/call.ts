@@ -26,10 +26,9 @@ class CallBuilder extends BaseBuilder<CallExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('call');
-    if (this._arguments) parts.push(this.renderChild(this._arguments, ctx));
     if (this._function) parts.push(this.renderChild(this._function, ctx));
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
+    if (this._arguments) parts.push(this.renderChild(this._arguments, ctx));
     return parts.join(' ');
   }
 
@@ -46,10 +45,9 @@ class CallBuilder extends BaseBuilder<CallExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'call' });
-    if (this._arguments) parts.push({ kind: 'builder', builder: this._arguments, fieldName: 'arguments' });
     if (this._function) parts.push({ kind: 'builder', builder: this._function, fieldName: 'function' });
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
+    if (this._arguments) parts.push({ kind: 'builder', builder: this._arguments, fieldName: 'arguments' });
     return parts;
   }
 }

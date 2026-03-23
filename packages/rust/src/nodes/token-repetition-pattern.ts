@@ -16,8 +16,11 @@ class TokenRepetitionPatternBuilder extends BaseBuilder<TokenRepetitionPattern> 
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('token repetition');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('$');
+    parts.push('(');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(')');
+    parts.push('+');
     return parts.join(' ');
   }
 
@@ -32,10 +35,13 @@ class TokenRepetitionPatternBuilder extends BaseBuilder<TokenRepetitionPattern> 
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'token repetition' });
+    parts.push({ kind: 'token', text: '$', type: '$' });
+    parts.push({ kind: 'token', text: '(', type: '(' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    parts.push({ kind: 'token', text: '+', type: '+' });
     return parts;
   }
 }

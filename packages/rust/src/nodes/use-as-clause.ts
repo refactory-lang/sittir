@@ -20,9 +20,9 @@ class UseAsClauseBuilder extends BaseBuilder<UseAsClause> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('use as');
-    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
     if (this._path) parts.push(this.renderChild(this._path, ctx));
+    parts.push('as');
+    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
     return parts.join(' ');
   }
 
@@ -38,9 +38,9 @@ class UseAsClauseBuilder extends BaseBuilder<UseAsClause> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'use as' });
-    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
     if (this._path) parts.push({ kind: 'builder', builder: this._path, fieldName: 'path' });
+    parts.push({ kind: 'token', text: 'as', type: 'as' });
+    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
     return parts;
   }
 }

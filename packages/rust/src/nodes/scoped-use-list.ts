@@ -20,8 +20,9 @@ class ScopedUseListBuilder extends BaseBuilder<ScopedUseList> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._list) parts.push(this.renderChild(this._list, ctx));
     if (this._path) parts.push(this.renderChild(this._path, ctx));
+    parts.push('::');
+    if (this._list) parts.push(this.renderChild(this._list, ctx));
     return parts.join(' ');
   }
 
@@ -37,8 +38,9 @@ class ScopedUseListBuilder extends BaseBuilder<ScopedUseList> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._list) parts.push({ kind: 'builder', builder: this._list, fieldName: 'list' });
     if (this._path) parts.push({ kind: 'builder', builder: this._path, fieldName: 'path' });
+    parts.push({ kind: 'token', text: '::', type: '::' });
+    if (this._list) parts.push({ kind: 'builder', builder: this._list, fieldName: 'list' });
     return parts;
   }
 }

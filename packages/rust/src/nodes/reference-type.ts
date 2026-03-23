@@ -20,9 +20,9 @@ class ReferenceTypeBuilder extends BaseBuilder<ReferenceType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('reference');
+    parts.push('&');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._type) parts.push(this.renderChild(this._type, ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -38,11 +38,11 @@ class ReferenceTypeBuilder extends BaseBuilder<ReferenceType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'reference' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: '&', type: '&' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }

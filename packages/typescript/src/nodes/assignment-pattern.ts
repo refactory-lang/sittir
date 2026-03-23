@@ -20,8 +20,8 @@ class AssignmentPatternBuilder extends BaseBuilder<AssignmentPattern> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('assignment');
     if (this._left) parts.push(this.renderChild(this._left, ctx));
+    parts.push('=');
     if (this._right) parts.push(this.renderChild(this._right, ctx));
     return parts.join(' ');
   }
@@ -38,8 +38,8 @@ class AssignmentPatternBuilder extends BaseBuilder<AssignmentPattern> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'assignment' });
     if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
+    parts.push({ kind: 'token', text: '=', type: '=' });
     if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
     return parts;
   }

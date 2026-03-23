@@ -20,9 +20,8 @@ class UpdateBuilder extends BaseBuilder<UpdateExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('update');
-    if (this._operator) parts.push(this.renderChild(this._operator, ctx));
     if (this._argument) parts.push(this.renderChild(this._argument, ctx));
+    if (this._operator) parts.push(this.renderChild(this._operator, ctx));
     return parts.join(' ');
   }
 
@@ -38,9 +37,8 @@ class UpdateBuilder extends BaseBuilder<UpdateExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'update' });
-    if (this._operator) parts.push({ kind: 'builder', builder: this._operator, fieldName: 'operator' });
     if (this._argument) parts.push({ kind: 'builder', builder: this._argument, fieldName: 'argument' });
+    if (this._operator) parts.push({ kind: 'builder', builder: this._operator, fieldName: 'operator' });
     return parts;
   }
 }

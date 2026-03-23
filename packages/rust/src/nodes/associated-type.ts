@@ -32,13 +32,12 @@ class AssociatedTypeBuilder extends BaseBuilder<AssociatedType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
-    }
-    parts.push('associated');
+    parts.push('type');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
     if (this._bounds) parts.push(this.renderChild(this._bounds, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(';');
     return parts.join(' ');
   }
 
@@ -56,13 +55,14 @@ class AssociatedTypeBuilder extends BaseBuilder<AssociatedType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
-    parts.push({ kind: 'token', text: 'associated' });
+    parts.push({ kind: 'token', text: 'type', type: 'type' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
     if (this._bounds) parts.push({ kind: 'builder', builder: this._bounds, fieldName: 'bounds' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }
 }

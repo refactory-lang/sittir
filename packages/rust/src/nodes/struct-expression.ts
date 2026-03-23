@@ -20,13 +20,8 @@ class StructBuilder extends BaseBuilder<StructExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('struct');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -42,13 +37,8 @@ class StructBuilder extends BaseBuilder<StructExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'struct' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

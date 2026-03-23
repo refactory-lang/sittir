@@ -32,16 +32,13 @@ class ConditionalTypeBuilder extends BaseBuilder<ConditionalType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('conditional');
     if (this._left) parts.push(this.renderChild(this._left, ctx));
-    if (this._consequence) {
-      parts.push('{', this.renderChild(this._consequence, ctx), '}');
-    }
-    if (this._alternative) {
-      const alt = this.renderChild(this._alternative, ctx);
-      parts.push(alt.startsWith('if ') ? 'else ' + alt : 'else { ' + alt + ' }');
-    }
+    parts.push('extends');
     if (this._right) parts.push(this.renderChild(this._right, ctx));
+    parts.push('?');
+    if (this._consequence) parts.push(this.renderChild(this._consequence, ctx));
+    parts.push(':');
+    if (this._alternative) parts.push(this.renderChild(this._alternative, ctx));
     return parts.join(' ');
   }
 
@@ -59,11 +56,13 @@ class ConditionalTypeBuilder extends BaseBuilder<ConditionalType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'conditional' });
     if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
-    if (this._consequence) parts.push({ kind: 'builder', builder: this._consequence, fieldName: 'consequence' });
-    if (this._alternative) parts.push({ kind: 'builder', builder: this._alternative, fieldName: 'alternative' });
+    parts.push({ kind: 'token', text: 'extends', type: 'extends' });
     if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
+    parts.push({ kind: 'token', text: '?', type: '?' });
+    if (this._consequence) parts.push({ kind: 'builder', builder: this._consequence, fieldName: 'consequence' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
+    if (this._alternative) parts.push({ kind: 'builder', builder: this._alternative, fieldName: 'alternative' });
     return parts;
   }
 }

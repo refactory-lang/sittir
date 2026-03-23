@@ -15,7 +15,9 @@ class SourceFileBuilder extends BaseBuilder<SourceFile> {
   }
 
   renderImpl(ctx?: RenderContext): string {
-    return this.renderChildren(this._children, '\n\n', ctx);
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
   }
 
   build(ctx?: RenderContext): SourceFile {

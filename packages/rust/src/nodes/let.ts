@@ -39,14 +39,21 @@ class LetBuilder extends BaseBuilder<LetDeclaration> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('let');
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._pattern) parts.push(this.renderChild(this._pattern, ctx));
-    if (this._value) parts.push(this.renderChild(this._value, ctx));
-    if (this._alternative) {
-      const alt = this.renderChild(this._alternative, ctx);
-      parts.push(alt.startsWith('if ') ? 'else ' + alt : 'else { ' + alt + ' }');
+    if (this._type) {
+      parts.push(':');
+      if (this._type) parts.push(this.renderChild(this._type, ctx));
     }
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._value) {
+      parts.push('=');
+      if (this._value) parts.push(this.renderChild(this._value, ctx));
+    }
+    if (this._alternative) {
+      parts.push('else');
+      if (this._alternative) parts.push(this.renderChild(this._alternative, ctx));
+    }
+    parts.push(';');
     return parts.join(' ');
   }
 
@@ -65,14 +72,24 @@ class LetBuilder extends BaseBuilder<LetDeclaration> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'let' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
-    if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
-    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
-    if (this._alternative) parts.push({ kind: 'builder', builder: this._alternative, fieldName: 'alternative' });
+    parts.push({ kind: 'token', text: 'let', type: 'let' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
+    if (this._type) {
+      parts.push({ kind: 'token', text: ':', type: ':' });
+      if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    }
+    if (this._value) {
+      parts.push({ kind: 'token', text: '=', type: '=' });
+      if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    }
+    if (this._alternative) {
+      parts.push({ kind: 'token', text: 'else', type: 'else' });
+      if (this._alternative) parts.push({ kind: 'builder', builder: this._alternative, fieldName: 'alternative' });
+    }
+    parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }
 }

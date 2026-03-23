@@ -20,9 +20,9 @@ class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('type cast');
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
     if (this._value) parts.push(this.renderChild(this._value, ctx));
+    parts.push('as');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
 
@@ -38,9 +38,9 @@ class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'type cast' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    parts.push({ kind: 'token', text: 'as', type: 'as' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }

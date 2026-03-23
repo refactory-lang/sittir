@@ -26,10 +26,8 @@ class InstantiationBuilder extends BaseBuilder<InstantiationExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('instantiation');
-    if (this._function) parts.push(this.renderChild(this._function, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
     return parts.join(' ');
   }
 
@@ -46,12 +44,10 @@ class InstantiationBuilder extends BaseBuilder<InstantiationExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'instantiation' });
-    if (this._function) parts.push({ kind: 'builder', builder: this._function, fieldName: 'function' });
-    if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
     return parts;
   }
 }

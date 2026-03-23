@@ -38,14 +38,16 @@ class FunctionSignatureBuilder extends BaseBuilder<FunctionSignatureItem> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
-    }
-    parts.push('function signature');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('fn');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
-    parts.push('(' + (this._parameters ? this.renderChild(this._parameters, ctx) : '') + ')');
-    if (this._returnType) parts.push('->', this.renderChild(this._returnType, ctx));
+    if (this._parameters) parts.push(this.renderChild(this._parameters, ctx));
+    if (this._returnType) {
+      parts.push('->');
+      if (this._returnType) parts.push(this.renderChild(this._returnType, ctx));
+    }
+    parts.push(';');
     return parts.join(' ');
   }
 
@@ -67,16 +69,15 @@ class FunctionSignatureBuilder extends BaseBuilder<FunctionSignatureItem> {
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
-    parts.push({ kind: 'token', text: 'function signature' });
+    parts.push({ kind: 'token', text: 'fn', type: 'fn' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
-    parts.push({ kind: 'token', text: '(', type: '(' });
     if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
-    parts.push({ kind: 'token', text: ')', type: ')' });
     if (this._returnType) {
       parts.push({ kind: 'token', text: '->', type: '->' });
-      parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
+      if (this._returnType) parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
     }
+    parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }
 }

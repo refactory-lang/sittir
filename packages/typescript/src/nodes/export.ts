@@ -41,11 +41,10 @@ class ExportBuilder extends BaseBuilder<ExportStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('export');
-    if (this._value) parts.push(this.renderChild(this._value, ctx));
-    if (this._declaration) parts.push(this.renderChild(this._declaration, ctx));
-    if (this._decorator.length > 0) parts.push(this.renderChildren(this._decorator, ', ', ctx));
+    parts.push('*');
+    parts.push('from');
     if (this._source) parts.push(this.renderChild(this._source, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -64,12 +63,9 @@ class ExportBuilder extends BaseBuilder<ExportStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'export' });
-    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
-    if (this._declaration) parts.push({ kind: 'builder', builder: this._declaration, fieldName: 'declaration' });
-    for (const child of this._decorator) {
-      parts.push({ kind: 'builder', builder: child, fieldName: 'decorator' });
-    }
+    parts.push({ kind: 'token', text: 'export', type: 'export' });
+    parts.push({ kind: 'token', text: '*', type: '*' });
+    parts.push({ kind: 'token', text: 'from', type: 'from' });
     if (this._source) parts.push({ kind: 'builder', builder: this._source, fieldName: 'source' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });

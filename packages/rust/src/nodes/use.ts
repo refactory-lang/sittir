@@ -20,9 +20,10 @@ class UseBuilder extends BaseBuilder<UseDeclaration> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('use');
     if (this._argument) parts.push(this.renderChild(this._argument, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    parts.push(';');
     return parts.join(' ');
   }
 
@@ -38,11 +39,12 @@ class UseBuilder extends BaseBuilder<UseDeclaration> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'use' });
-    if (this._argument) parts.push({ kind: 'builder', builder: this._argument, fieldName: 'argument' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: 'use', type: 'use' });
+    if (this._argument) parts.push({ kind: 'builder', builder: this._argument, fieldName: 'argument' });
+    parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }
 }

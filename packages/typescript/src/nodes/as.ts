@@ -14,8 +14,9 @@ class AsBuilder extends BaseBuilder<AsExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('as');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('const');
     return parts.join(' ');
   }
 
@@ -30,10 +31,11 @@ class AsBuilder extends BaseBuilder<AsExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'as' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: 'as', type: 'as' });
+    parts.push({ kind: 'token', text: 'const', type: 'const' });
     return parts;
   }
 }

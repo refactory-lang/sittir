@@ -22,11 +22,7 @@ class EnumBuilder extends BaseBuilder<EnumDeclaration> {
     const parts: string[] = [];
     parts.push('enum');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -42,13 +38,9 @@ class EnumBuilder extends BaseBuilder<EnumDeclaration> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'enum' });
+    parts.push({ kind: 'token', text: 'enum', type: 'enum' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

@@ -26,9 +26,7 @@ class PropertySignatureBuilder extends BaseBuilder<PropertySignature> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');

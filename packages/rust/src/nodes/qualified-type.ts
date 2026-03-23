@@ -20,8 +20,8 @@ class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('qualified');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push('as');
     if (this._alias) parts.push(this.renderChild(this._alias, ctx));
     return parts.join(' ');
   }
@@ -38,8 +38,8 @@ class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'qualified' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: 'as', type: 'as' });
     if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
     return parts;
   }

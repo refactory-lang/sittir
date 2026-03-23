@@ -27,13 +27,13 @@ class CatchClauseBuilder extends BaseBuilder<CatchClause> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('catch');
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
-    if (this._parameter) parts.push(this.renderChild(this._parameter, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
+    if (this._parameter) {
+      parts.push('(');
+      if (this._parameter) parts.push(this.renderChild(this._parameter, ctx));
+      if (this._type) parts.push(this.renderChild(this._type, ctx));
+      parts.push(')');
     }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -50,14 +50,14 @@ class CatchClauseBuilder extends BaseBuilder<CatchClause> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'catch' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
-    if (this._parameter) parts.push({ kind: 'builder', builder: this._parameter, fieldName: 'parameter' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
+    parts.push({ kind: 'token', text: 'catch', type: 'catch' });
+    if (this._parameter) {
+      parts.push({ kind: 'token', text: '(', type: '(' });
+      if (this._parameter) parts.push({ kind: 'builder', builder: this._parameter, fieldName: 'parameter' });
+      if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+      parts.push({ kind: 'token', text: ')', type: ')' });
     }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

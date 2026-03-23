@@ -32,17 +32,11 @@ class StructBuilder extends BaseBuilder<StructItem> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('struct');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -63,14 +57,10 @@ class StructBuilder extends BaseBuilder<StructItem> {
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
-    parts.push({ kind: 'token', text: 'struct' });
+    parts.push({ kind: 'token', text: 'struct', type: 'struct' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

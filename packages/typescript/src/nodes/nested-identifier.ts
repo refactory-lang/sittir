@@ -21,6 +21,7 @@ class NestedIdentifierBuilder extends BaseBuilder<NestedIdentifier> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._object) parts.push(this.renderChild(this._object, ctx));
+    parts.push('.');
     if (this._property) parts.push(this.renderChild(this._property, ctx));
     return parts.join(' ');
   }
@@ -38,6 +39,7 @@ class NestedIdentifierBuilder extends BaseBuilder<NestedIdentifier> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._object) parts.push({ kind: 'builder', builder: this._object, fieldName: 'object' });
+    parts.push({ kind: 'token', text: '.', type: '.' });
     if (this._property) parts.push({ kind: 'builder', builder: this._property, fieldName: 'property' });
     return parts;
   }

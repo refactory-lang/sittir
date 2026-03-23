@@ -26,11 +26,9 @@ class FieldBuilder extends BaseBuilder<FieldDeclaration> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
-    }
-    parts.push('field');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push(':');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
@@ -51,8 +49,8 @@ class FieldBuilder extends BaseBuilder<FieldDeclaration> {
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
-    parts.push({ kind: 'token', text: 'field' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }

@@ -20,12 +20,10 @@ class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    parts.push('case');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
-    if (this._body.length > 0) {
-      parts.push('{');
-      parts.push(this.renderChildren(this._body, '\n', ctx));
-      parts.push('}');
-    }
+    parts.push(':');
+    if (this._body.length > 0) parts.push(this.renderChildren(this._body, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -41,13 +39,11 @@ class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'case', type: 'case' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
-    if (this._body.length > 0) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      for (const child of this._body) {
-        parts.push({ kind: 'builder', builder: child, fieldName: 'body' });
-      }
-      parts.push({ kind: 'token', text: '}', type: '}' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
+    for (const child of this._body) {
+      parts.push({ kind: 'builder', builder: child, fieldName: 'body' });
     }
     return parts;
   }

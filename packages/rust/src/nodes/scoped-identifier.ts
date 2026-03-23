@@ -20,8 +20,9 @@ class ScopedIdentifierBuilder extends BaseBuilder<ScopedIdentifier> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._path) parts.push(this.renderChild(this._path, ctx));
+    parts.push('::');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
     return parts.join(' ');
   }
 
@@ -37,8 +38,9 @@ class ScopedIdentifierBuilder extends BaseBuilder<ScopedIdentifier> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._path) parts.push({ kind: 'builder', builder: this._path, fieldName: 'path' });
+    parts.push({ kind: 'token', text: '::', type: '::' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     return parts;
   }
 }

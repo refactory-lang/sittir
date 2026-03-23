@@ -28,7 +28,10 @@ class VariableDeclaratorBuilder extends BaseBuilder<VariableDeclarator> {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._type) parts.push(this.renderChild(this._type, ctx));
-    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    if (this._value) {
+      parts.push('=');
+      if (this._value) parts.push(this.renderChild(this._value, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -47,7 +50,10 @@ class VariableDeclaratorBuilder extends BaseBuilder<VariableDeclarator> {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
-    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    if (this._value) {
+      parts.push({ kind: 'token', text: '=', type: '=' });
+      if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    }
     return parts;
   }
 }

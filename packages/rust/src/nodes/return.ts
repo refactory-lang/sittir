@@ -17,7 +17,7 @@ class ReturnBuilder extends BaseBuilder<ReturnExpression> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('return');
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -32,7 +32,7 @@ class ReturnBuilder extends BaseBuilder<ReturnExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'return' });
+    parts.push({ kind: 'token', text: 'return', type: 'return' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

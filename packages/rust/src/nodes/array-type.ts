@@ -20,9 +20,13 @@ class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('array');
+    parts.push('[');
     if (this._element) parts.push(this.renderChild(this._element, ctx));
-    if (this._length) parts.push(this.renderChild(this._length, ctx));
+    if (this._length) {
+      parts.push(';');
+      if (this._length) parts.push(this.renderChild(this._length, ctx));
+    }
+    parts.push(']');
     return parts.join(' ');
   }
 
@@ -38,9 +42,13 @@ class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'array' });
+    parts.push({ kind: 'token', text: '[', type: '[' });
     if (this._element) parts.push({ kind: 'builder', builder: this._element, fieldName: 'element' });
-    if (this._length) parts.push({ kind: 'builder', builder: this._length, fieldName: 'length' });
+    if (this._length) {
+      parts.push({ kind: 'token', text: ';', type: ';' });
+      if (this._length) parts.push({ kind: 'builder', builder: this._length, fieldName: 'length' });
+    }
+    parts.push({ kind: 'token', text: ']', type: ']' });
     return parts;
   }
 }

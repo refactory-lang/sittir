@@ -20,8 +20,9 @@ class MacroInvocationBuilder extends BaseBuilder<MacroInvocation> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._macro) parts.push(this.renderChild(this._macro, ctx) + '!');
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._macro) parts.push(this.renderChild(this._macro, ctx));
+    parts.push('!');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -37,10 +38,8 @@ class MacroInvocationBuilder extends BaseBuilder<MacroInvocation> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._macro) {
-      parts.push({ kind: 'builder', builder: this._macro, fieldName: 'macro' });
-      parts.push({ kind: 'token', text: '!', type: '!' });
-    }
+    if (this._macro) parts.push({ kind: 'builder', builder: this._macro, fieldName: 'macro' });
+    parts.push({ kind: 'token', text: '!', type: '!' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

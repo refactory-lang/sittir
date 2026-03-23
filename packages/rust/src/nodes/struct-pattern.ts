@@ -20,9 +20,10 @@ class StructPatternBuilder extends BaseBuilder<StructPattern> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('struct');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('{');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('}');
     return parts.join(' ');
   }
 
@@ -38,11 +39,12 @@ class StructPatternBuilder extends BaseBuilder<StructPattern> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'struct' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: '{', type: '{' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
 }

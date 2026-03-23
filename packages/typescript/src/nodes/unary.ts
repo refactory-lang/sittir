@@ -20,7 +20,6 @@ class UnaryBuilder extends BaseBuilder<UnaryExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('unary');
     if (this._operator) parts.push(this.renderChild(this._operator, ctx));
     if (this._argument) parts.push(this.renderChild(this._argument, ctx));
     return parts.join(' ');
@@ -38,7 +37,6 @@ class UnaryBuilder extends BaseBuilder<UnaryExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'unary' });
     if (this._operator) parts.push({ kind: 'builder', builder: this._operator, fieldName: 'operator' });
     if (this._argument) parts.push({ kind: 'builder', builder: this._argument, fieldName: 'argument' });
     return parts;

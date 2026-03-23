@@ -14,8 +14,8 @@ class AmbientBuilder extends BaseBuilder<AmbientDeclaration> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('ambient');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('declare');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -30,7 +30,7 @@ class AmbientBuilder extends BaseBuilder<AmbientDeclaration> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'ambient' });
+    parts.push({ kind: 'token', text: 'declare', type: 'declare' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

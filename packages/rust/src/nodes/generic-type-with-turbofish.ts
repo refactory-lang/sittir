@@ -21,6 +21,7 @@ class GenericTypeWithTurbofishBuilder extends BaseBuilder<GenericTypeWithTurbofi
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push('::');
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
     return parts.join(' ');
   }
@@ -38,6 +39,7 @@ class GenericTypeWithTurbofishBuilder extends BaseBuilder<GenericTypeWithTurbofi
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: '::', type: '::' });
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
     return parts;
   }

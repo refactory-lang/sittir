@@ -14,7 +14,7 @@ class ExtendsTypeClauseBuilder extends BaseBuilder<ExtendsTypeClause> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('extends type');
+    parts.push('extends');
     if (this._type.length > 0) parts.push(this.renderChildren(this._type, ', ', ctx));
     return parts.join(' ');
   }
@@ -30,7 +30,7 @@ class ExtendsTypeClauseBuilder extends BaseBuilder<ExtendsTypeClause> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'extends type' });
+    parts.push({ kind: 'token', text: 'extends', type: 'extends' });
     for (const child of this._type) {
       parts.push({ kind: 'builder', builder: child, fieldName: 'type' });
     }

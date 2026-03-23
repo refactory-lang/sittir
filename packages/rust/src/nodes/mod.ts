@@ -26,16 +26,10 @@ class ModBuilder extends BaseBuilder<ModItem> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     parts.push('mod');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    parts.push(';');
     return parts.join(' ');
   }
 
@@ -55,13 +49,9 @@ class ModBuilder extends BaseBuilder<ModItem> {
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
-    parts.push({ kind: 'token', text: 'mod' });
+    parts.push({ kind: 'token', text: 'mod', type: 'mod' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }
 }

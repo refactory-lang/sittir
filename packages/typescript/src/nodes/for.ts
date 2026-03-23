@@ -33,14 +33,12 @@ class ForBuilder extends BaseBuilder<ForStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('for');
+    parts.push('(');
+    if (this._initializer) parts.push(this.renderChild(this._initializer, ctx));
     if (this._condition.length > 0) parts.push(this.renderChildren(this._condition, ', ', ctx));
     if (this._increment) parts.push(this.renderChild(this._increment, ctx));
-    if (this._initializer) parts.push(this.renderChild(this._initializer, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    parts.push(')');
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -58,17 +56,15 @@ class ForBuilder extends BaseBuilder<ForStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'for' });
+    parts.push({ kind: 'token', text: 'for', type: 'for' });
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    if (this._initializer) parts.push({ kind: 'builder', builder: this._initializer, fieldName: 'initializer' });
     for (const child of this._condition) {
       parts.push({ kind: 'builder', builder: child, fieldName: 'condition' });
     }
     if (this._increment) parts.push({ kind: 'builder', builder: this._increment, fieldName: 'increment' });
-    if (this._initializer) parts.push({ kind: 'builder', builder: this._initializer, fieldName: 'initializer' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

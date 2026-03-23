@@ -13,9 +13,7 @@ class LetChainBuilder extends BaseBuilder<LetChain> {
   }
 
   renderImpl(ctx?: RenderContext): string {
-    const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
-    return parts.join(' ');
+    return this._children ? this.renderChildren(this._children, ' ', ctx) : '';
   }
 
   build(ctx?: RenderContext): LetChain {

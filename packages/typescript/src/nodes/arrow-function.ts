@@ -38,15 +38,9 @@ class ArrowFunctionBuilder extends BaseBuilder<ArrowFunction> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
-    parts.push('(' + (this._parameters ? this.renderChild(this._parameters, ctx) : '') + ')');
-    if (this._returnType) parts.push('->', this.renderChild(this._returnType, ctx));
     if (this._parameter) parts.push(this.renderChild(this._parameter, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    parts.push('=>');
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -65,20 +59,9 @@ class ArrowFunctionBuilder extends BaseBuilder<ArrowFunction> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
-    parts.push({ kind: 'token', text: '(', type: '(' });
-    if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
-    parts.push({ kind: 'token', text: ')', type: ')' });
-    if (this._returnType) {
-      parts.push({ kind: 'token', text: '->', type: '->' });
-      parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
-    }
     if (this._parameter) parts.push({ kind: 'builder', builder: this._parameter, fieldName: 'parameter' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    parts.push({ kind: 'token', text: '=>', type: '=>' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

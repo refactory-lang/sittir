@@ -21,6 +21,7 @@ class GenericFunctionBuilder extends BaseBuilder<GenericFunction> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._function) parts.push(this.renderChild(this._function, ctx));
+    parts.push('::');
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
     return parts.join(' ');
   }
@@ -38,6 +39,7 @@ class GenericFunctionBuilder extends BaseBuilder<GenericFunction> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._function) parts.push({ kind: 'builder', builder: this._function, fieldName: 'function' });
+    parts.push({ kind: 'token', text: '::', type: '::' });
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
     return parts;
   }

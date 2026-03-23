@@ -20,11 +20,12 @@ class MacroDefinitionBuilder extends BaseBuilder<MacroDefinition> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
-    }
-    parts.push('macro');
+    parts.push('macro_rules!');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push('(');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(')');
+    parts.push(';');
     return parts.join(' ');
   }
 
@@ -40,11 +41,14 @@ class MacroDefinitionBuilder extends BaseBuilder<MacroDefinition> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'macro_rules!', type: 'macro_rules!' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: '(', type: '(' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
-    parts.push({ kind: 'token', text: 'macro' });
-    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }
 }

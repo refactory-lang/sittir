@@ -14,11 +14,8 @@ class ClassStaticBlockBuilder extends BaseBuilder<ClassStaticBlock> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    parts.push('static');
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -33,11 +30,8 @@ class ClassStaticBlockBuilder extends BaseBuilder<ClassStaticBlock> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    parts.push({ kind: 'token', text: 'static', type: 'static' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

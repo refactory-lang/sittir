@@ -20,9 +20,9 @@ class AbstractTypeBuilder extends BaseBuilder<AbstractType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('abstract');
-    if (this._trait) parts.push(this.renderChild(this._trait, ctx), 'for');
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    parts.push('impl');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._trait) parts.push(this.renderChild(this._trait, ctx));
     return parts.join(' ');
   }
 
@@ -38,14 +38,11 @@ class AbstractTypeBuilder extends BaseBuilder<AbstractType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'abstract' });
-    if (this._trait) {
-      parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
-      parts.push({ kind: 'token', text: 'for' });
-    }
+    parts.push({ kind: 'token', text: 'impl', type: 'impl' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    if (this._trait) parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
     return parts;
   }
 }

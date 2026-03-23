@@ -32,11 +32,13 @@ class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('function');
-    if (this._trait) parts.push(this.renderChild(this._trait, ctx), 'for');
-    parts.push('(' + (this._parameters ? this.renderChild(this._parameters, ctx) : '') + ')');
-    if (this._returnType) parts.push('->', this.renderChild(this._returnType, ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._trait) parts.push(this.renderChild(this._trait, ctx));
+    if (this._parameters) parts.push(this.renderChild(this._parameters, ctx));
+    if (this._returnType) {
+      parts.push('->');
+      if (this._returnType) parts.push(this.renderChild(this._returnType, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -54,20 +56,14 @@ class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'function' });
-    if (this._trait) {
-      parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
-      parts.push({ kind: 'token', text: 'for' });
-    }
-    parts.push({ kind: 'token', text: '(', type: '(' });
-    if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
-    parts.push({ kind: 'token', text: ')', type: ')' });
-    if (this._returnType) {
-      parts.push({ kind: 'token', text: '->', type: '->' });
-      parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
-    }
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._trait) parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
+    if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
+    if (this._returnType) {
+      parts.push({ kind: 'token', text: '->', type: '->' });
+      if (this._returnType) parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
     }
     return parts;
   }

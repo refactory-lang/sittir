@@ -26,10 +26,11 @@ class ConstructorTypeBuilder extends BaseBuilder<ConstructorType> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('constructor');
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push('new');
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
-    parts.push('(' + (this._parameters ? this.renderChild(this._parameters, ctx) : '') + ')');
+    if (this._parameters) parts.push(this.renderChild(this._parameters, ctx));
+    parts.push('=>');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
 
@@ -46,12 +47,11 @@ class ConstructorTypeBuilder extends BaseBuilder<ConstructorType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'constructor' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: 'new', type: 'new' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
-    parts.push({ kind: 'token', text: '(', type: '(' });
     if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
-    parts.push({ kind: 'token', text: ')', type: ')' });
+    parts.push({ kind: 'token', text: '=>', type: '=>' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }

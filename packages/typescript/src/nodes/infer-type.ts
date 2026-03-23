@@ -15,7 +15,7 @@ class InferTypeBuilder extends BaseBuilder<InferType> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('infer');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -30,7 +30,7 @@ class InferTypeBuilder extends BaseBuilder<InferType> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'infer' });
+    parts.push({ kind: 'token', text: 'infer', type: 'infer' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

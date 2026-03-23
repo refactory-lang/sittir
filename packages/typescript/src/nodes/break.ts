@@ -32,7 +32,7 @@ class BreakBuilder extends BaseBuilder<BreakStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'break' });
+    parts.push({ kind: 'token', text: 'break', type: 'break' });
     if (this._label) parts.push({ kind: 'builder', builder: this._label, fieldName: 'label' });
     return parts;
   }

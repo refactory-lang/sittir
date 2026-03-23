@@ -20,7 +20,9 @@ class RegexBuilder extends BaseBuilder<Regex> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
+    parts.push('/');
     if (this._pattern) parts.push(this.renderChild(this._pattern, ctx));
+    parts.push('/');
     if (this._flags) parts.push(this.renderChild(this._flags, ctx));
     return parts.join(' ');
   }
@@ -37,7 +39,9 @@ class RegexBuilder extends BaseBuilder<Regex> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '/', type: '/' });
     if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
+    parts.push({ kind: 'token', text: '/', type: '/' });
     if (this._flags) parts.push({ kind: 'builder', builder: this._flags, fieldName: 'flags' });
     return parts;
   }

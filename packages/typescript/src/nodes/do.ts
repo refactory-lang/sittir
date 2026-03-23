@@ -21,12 +21,9 @@ class DoBuilder extends BaseBuilder<DoStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('do');
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
+    parts.push('while');
     if (this._condition) parts.push(this.renderChild(this._condition, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
     return parts.join(' ');
   }
 
@@ -42,13 +39,10 @@ class DoBuilder extends BaseBuilder<DoStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'do' });
+    parts.push({ kind: 'token', text: 'do', type: 'do' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+    parts.push({ kind: 'token', text: 'while', type: 'while' });
     if (this._condition) parts.push({ kind: 'builder', builder: this._condition, fieldName: 'condition' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
     return parts;
   }
 }

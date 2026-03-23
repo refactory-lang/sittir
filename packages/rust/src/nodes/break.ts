@@ -17,7 +17,7 @@ class BreakBuilder extends BaseBuilder<BreakExpression> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('break');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -32,7 +32,7 @@ class BreakBuilder extends BaseBuilder<BreakExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'break' });
+    parts.push({ kind: 'token', text: 'break', type: 'break' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

@@ -22,11 +22,7 @@ class WithBuilder extends BaseBuilder<WithStatement> {
     const parts: string[] = [];
     parts.push('with');
     if (this._object) parts.push(this.renderChild(this._object, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -42,13 +38,9 @@ class WithBuilder extends BaseBuilder<WithStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'with' });
+    parts.push({ kind: 'token', text: 'with', type: 'with' });
     if (this._object) parts.push({ kind: 'builder', builder: this._object, fieldName: 'object' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

@@ -21,6 +21,7 @@ class TypePredicateBuilder extends BaseBuilder<TypePredicate> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push('is');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
@@ -38,6 +39,7 @@ class TypePredicateBuilder extends BaseBuilder<TypePredicate> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: 'is', type: 'is' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }

@@ -21,6 +21,7 @@ class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push('=');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
     return parts.join(' ');
   }
@@ -38,6 +39,7 @@ class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: '=', type: '=' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     return parts;
   }

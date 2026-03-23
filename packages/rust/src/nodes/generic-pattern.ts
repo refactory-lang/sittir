@@ -20,9 +20,9 @@ class GenericPatternBuilder extends BaseBuilder<GenericPattern> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('generic');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('::');
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
     return parts.join(' ');
   }
 
@@ -38,11 +38,11 @@ class GenericPatternBuilder extends BaseBuilder<GenericPattern> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'generic' });
-    if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: '::', type: '::' });
+    if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
     return parts;
   }
 }

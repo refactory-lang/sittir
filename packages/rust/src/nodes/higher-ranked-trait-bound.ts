@@ -20,8 +20,9 @@ class HigherRankedTraitBoundBuilder extends BaseBuilder<HigherRankedTraitBound> 
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push('for');
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
 
@@ -37,8 +38,9 @@ class HigherRankedTraitBoundBuilder extends BaseBuilder<HigherRankedTraitBound> 
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: 'for', type: 'for' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }

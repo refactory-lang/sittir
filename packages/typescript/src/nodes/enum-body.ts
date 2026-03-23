@@ -22,10 +22,13 @@ class EnumBodyBuilder extends BaseBuilder<EnumBody> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('{');
+    if (this._name.length > 0) {
+      if (this._name.length > 0) parts.push(this.renderChildren(this._name, ', ', ctx));
+      parts.push(',');
+      parts.push(',');
     }
-    if (this._name.length > 0) parts.push(this.renderChildren(this._name, ', ', ctx));
+    parts.push('}');
     return parts.join(' ');
   }
 
@@ -41,12 +44,15 @@ class EnumBodyBuilder extends BaseBuilder<EnumBody> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    parts.push({ kind: 'token', text: '{', type: '{' });
+    if (this._name.length > 0) {
+      for (const child of this._name) {
+        parts.push({ kind: 'builder', builder: child, fieldName: 'name' });
+      }
+      parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'token', text: ',', type: ',' });
     }
-    for (const child of this._name) {
-      parts.push({ kind: 'builder', builder: child, fieldName: 'name' });
-    }
+    parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
 }

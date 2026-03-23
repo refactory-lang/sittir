@@ -38,13 +38,16 @@ class IndexSignatureBuilder extends BaseBuilder<IndexSignature> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) {
-      parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._sign) {
+      if (this._sign) parts.push(this.renderChild(this._sign, ctx));
+      parts.push('readonly');
     }
+    parts.push('[');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push(':');
     if (this._indexType) parts.push(this.renderChild(this._indexType, ctx));
-    if (this._sign) parts.push(this.renderChild(this._sign, ctx));
+    parts.push(']');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
 
@@ -63,13 +66,16 @@ class IndexSignatureBuilder extends BaseBuilder<IndexSignature> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    if (this._sign) {
+      if (this._sign) parts.push({ kind: 'builder', builder: this._sign, fieldName: 'sign' });
+      parts.push({ kind: 'token', text: 'readonly', type: 'readonly' });
     }
+    parts.push({ kind: 'token', text: '[', type: '[' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
     if (this._indexType) parts.push({ kind: 'builder', builder: this._indexType, fieldName: 'indexType' });
-    if (this._sign) parts.push({ kind: 'builder', builder: this._sign, fieldName: 'sign' });
+    parts.push({ kind: 'token', text: ']', type: ']' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }

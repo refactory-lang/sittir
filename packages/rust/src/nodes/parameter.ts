@@ -26,9 +26,10 @@ class ParameterBuilder extends BaseBuilder<Parameter> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     if (this._pattern) parts.push(this.renderChild(this._pattern, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    parts.push(':');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
 
@@ -45,11 +46,12 @@ class ParameterBuilder extends BaseBuilder<Parameter> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
-    if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }

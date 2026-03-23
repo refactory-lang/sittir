@@ -14,8 +14,8 @@ class ReferencePatternBuilder extends BaseBuilder<ReferencePattern> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('reference');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('&');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -30,7 +30,7 @@ class ReferencePatternBuilder extends BaseBuilder<ReferencePattern> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'reference' });
+    parts.push({ kind: 'token', text: '&', type: '&' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

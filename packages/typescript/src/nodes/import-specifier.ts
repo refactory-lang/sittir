@@ -21,7 +21,6 @@ class ImportSpecifierBuilder extends BaseBuilder<ImportSpecifier> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
     return parts.join(' ');
   }
 
@@ -38,7 +37,6 @@ class ImportSpecifierBuilder extends BaseBuilder<ImportSpecifier> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
     return parts;
   }
 }

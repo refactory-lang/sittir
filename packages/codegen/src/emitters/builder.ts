@@ -3,11 +3,15 @@
  *
  * Each builder extends BaseBuilder and owns its render logic —
  * no central switch statement needed.
+ *
+ * Rendering is driven by grammar.json rules, not heuristics.
+ * The grammar rule's SEQ structure determines the exact token
+ * order, keywords, and punctuation for each node kind.
  */
 
-import type { NodeMeta, FieldMeta } from '../grammar-reader.ts';
+import type { NodeMeta, FieldMeta, GrammarRule } from '../grammar-reader.ts';
+import { readGrammarRule } from '../grammar-reader.ts';
 import {
-  toFactoryName,
   toTypeName,
   toBuilderClassName,
   toShortName,
@@ -21,7 +25,7 @@ export interface EmitBuilderConfig {
 }
 
 // ---------------------------------------------------------------------------
-// Constructor param selection (unchanged from previous version)
+// Constructor param selection
 // ---------------------------------------------------------------------------
 
 function selectConstructorField(node: NodeMeta): { name: string; source: 'field' | 'children' } | null {
@@ -40,127 +44,242 @@ function selectConstructorField(node: NodeMeta): { name: string; source: 'field'
 }
 
 // ---------------------------------------------------------------------------
-// Render heuristics (absorbed from render-scaffold.ts)
+// Grammar-rule-driven rendering
 // ---------------------------------------------------------------------------
 
-const RENDER_SUFFIXES = [
-  '_item', '_expression', '_statement', '_declaration',
-  '_definition', '_type', '_pattern', '_literal', '_clause',
-];
+/**
+ * A render element extracted from a grammar.json rule.
+ * Tokens that are siblings of fields in an optional group
+ * are bundled into 'group' elements so they render together.
+ */
+type RenderElement =
+  | { kind: 'token'; value: string; optional: boolean }
+  | { kind: 'field'; name: string; optional: boolean }
+  | { kind: 'symbol'; name: string; optional: boolean }
+  | { kind: 'group'; elements: RenderElement[]; optional: boolean };
 
-function kindToKeyword(kind: string): string | null {
-  for (const suffix of RENDER_SUFFIXES) {
-    if (kind.endsWith(suffix)) {
-      return kind.slice(0, -suffix.length).replace(/_/g, ' ').trim();
+/**
+ * Flatten a grammar.json rule into a sequence of render elements.
+ * When an optional SEQ contains both STRING and FIELD nodes,
+ * they're grouped so the tokens render conditionally on the field's presence.
+ */
+function flattenRule(
+  rule: GrammarRule,
+  fieldMeta: Map<string, FieldMeta>,
+  grammar: string,
+  optional: boolean = false,
+): RenderElement[] {
+  switch (rule.type) {
+    case 'SEQ': {
+      const members: RenderElement[] = [];
+      for (const member of rule.members) {
+        members.push(...flattenRule(member, fieldMeta, grammar, optional));
+      }
+      return members;
     }
+
+    case 'STRING':
+      return [{ kind: 'token', value: rule.value, optional }];
+
+    case 'FIELD':
+      return [{
+        kind: 'field',
+        name: rule.name,
+        optional: optional || !fieldMeta.get(rule.name)?.required,
+      }];
+
+    case 'SYMBOL': {
+      // Inline _-prefixed abstract symbols (e.g. _call_signature)
+      // that contain fields belonging to this node
+      if (rule.name.startsWith('_')) {
+        const subRule = readGrammarRule(grammar, rule.name);
+        if (subRule) {
+          const inlined = flattenRule(subRule, fieldMeta, grammar, optional);
+          // Only use inlined result if it produced fields that match our metadata
+          const hasRelevantFields = inlined.some(
+            el => el.kind === 'field' && fieldMeta.has(el.name),
+          );
+          if (hasRelevantFields) return inlined;
+        }
+      }
+      return [{ kind: 'symbol', name: rule.name, optional }];
+    }
+
+    case 'BLANK':
+      return [];
+
+    case 'CHOICE': {
+      const hasBlank = rule.members.some(m => m.type === 'BLANK');
+      const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
+
+      if (hasBlank && nonBlank.length >= 1) {
+        // Optional content — flatten and wrap in group if mixed tokens+fields
+        const inner = flattenRule(nonBlank[0]!, fieldMeta, grammar, true);
+        const hasToken = inner.some(e => e.kind === 'token');
+        const hasField = inner.some(e => e.kind === 'field');
+
+        if (hasToken && hasField && inner.length > 1) {
+          // Group tokens with their fields so they render conditionally together
+          return [{ kind: 'group', elements: inner, optional: true }];
+        }
+        return inner;
+      }
+      // Non-optional CHOICE — use first variant as representative
+      return flattenRule(rule.members[0]!, fieldMeta, grammar, optional);
+    }
+
+    case 'PREC':
+    case 'PREC_LEFT':
+    case 'PREC_RIGHT':
+      return flattenRule(rule.content, fieldMeta, grammar, optional);
+
+    case 'REPEAT':
+      return flattenRule(rule.content, fieldMeta, grammar, true);
+
+    case 'REPEAT1':
+      return flattenRule(rule.content, fieldMeta, grammar, optional);
+
+    case 'ALIAS':
+      return flattenRule(rule.content, fieldMeta, grammar, optional);
+
+    case 'TOKEN':
+    case 'IMMEDIATE_TOKEN':
+      return flattenRule(rule.content, fieldMeta, grammar, optional);
+
+    case 'PATTERN':
+      return [];
+
+    default:
+      // Unknown rule type — skip gracefully
+      return [];
   }
-  return null;
-}
-
-const FIELD_PRIORITY: Record<string, number> = {
-  macro: 0, left: 1, operator: 2, name: 3, type: 4, trait: 5,
-  type_parameters: 6, parameters: 7, return_type: 8, argument: 9,
-  pattern: 10, value: 11, condition: 12, consequence: 13,
-  alternative: 14, right: 15, body: 100,
-};
-
-function orderFields(fields: FieldMeta[]): FieldMeta[] {
-  return [...fields].sort((a, b) => {
-    const pa = FIELD_PRIORITY[a.name] ?? 50;
-    const pb = FIELD_PRIORITY[b.name] ?? 50;
-    return pa - pb;
-  });
 }
 
 /**
- * Generate the body lines for a builder's renderImpl() method.
- * Each line uses `this._fieldName` and `this.renderChild(...)`.
+ * Deduplicate render elements:
+ * - Each field appears only once (first occurrence wins)
+ * - Symbols (unnamed children) appear only once
  */
-function generateRenderSilentBody(node: NodeMeta): string[] {
-  const lines: string[] = [];
-  const fieldSet = new Set(node.fields.map((f) => f.name));
-  const keyword = kindToKeyword(node.kind);
+function deduplicateElements(elements: RenderElement[]): RenderElement[] {
+  const seenFields = new Set<string>();
+  let seenChildren = false;
+  const result: RenderElement[] = [];
 
-  // Special case: source_file — just render children
-  if (node.kind === 'source_file') {
-    lines.push(`    return this.renderChildren(this._children, '\\n\\n', ctx);`);
-    return lines;
+  for (const el of elements) {
+    if (el.kind === 'field') {
+      if (seenFields.has(el.name)) continue;
+      seenFields.add(el.name);
+    } else if (el.kind === 'symbol') {
+      if (seenChildren) continue;
+      seenChildren = true;
+    } else if (el.kind === 'group') {
+      // Deduplicate within group too
+      const deduped = deduplicateElements(el.elements);
+      // Skip group if all fields already seen
+      const groupFields = deduped.filter(e => e.kind === 'field');
+      const allSeen = groupFields.every(f => f.kind === 'field' && seenFields.has(f.name));
+      if (allSeen && groupFields.length > 0) continue;
+      for (const ge of deduped) {
+        if (ge.kind === 'field') seenFields.add(ge.name);
+      }
+      result.push({ ...el, elements: deduped });
+      continue;
+    }
+    result.push(el);
   }
 
+  return result;
+}
+
+function escapeString(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+/**
+ * Generate renderImpl() lines for a single render element.
+ */
+function emitRenderElement(
+  el: RenderElement,
+  fieldMeta: Map<string, FieldMeta>,
+  lines: string[],
+  indent: string = '    ',
+): void {
+  switch (el.kind) {
+    case 'token':
+      if (el.optional) {
+        // Optional standalone tokens are rare — skip them in render
+        // (they'll be in groups when paired with fields)
+      } else {
+        lines.push(`${indent}parts.push('${escapeString(el.value)}');`);
+      }
+      break;
+
+    case 'field': {
+      const fn = toFieldName(el.name);
+      const priv = `this._${fn}`;
+      const meta = fieldMeta.get(el.name);
+
+      if (meta?.multiple) {
+        lines.push(`${indent}if (${priv}.length > 0) parts.push(this.renderChildren(${priv}, ', ', ctx));`);
+      } else {
+        lines.push(`${indent}if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
+      }
+      break;
+    }
+
+    case 'symbol':
+      lines.push(`${indent}if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));`);
+      break;
+
+    case 'group': {
+      // Find the field(s) to guard on
+      const guardField = el.elements.find(e => e.kind === 'field');
+      if (guardField && guardField.kind === 'field') {
+        const fn = toFieldName(guardField.name);
+        const priv = `this._${fn}`;
+        const meta = fieldMeta.get(guardField.name);
+        const isMultiple = meta?.multiple;
+        const guard = isMultiple ? `${priv}.length > 0` : priv;
+
+        lines.push(`${indent}if (${guard}) {`);
+        for (const ge of el.elements) {
+          if (ge.kind === 'token') {
+            lines.push(`${indent}  parts.push('${escapeString(ge.value)}');`);
+          } else {
+            emitRenderElement(ge, fieldMeta, lines, indent + '  ');
+          }
+        }
+        lines.push(`${indent}}`);
+      } else {
+        // No field to guard on — emit all elements
+        for (const ge of el.elements) {
+          emitRenderElement(ge, fieldMeta, lines, indent);
+        }
+      }
+      break;
+    }
+  }
+}
+
+/**
+ * Generate renderImpl() body from grammar.json rule.
+ */
+function generateRenderBody(
+  node: NodeMeta,
+  rule: GrammarRule,
+  grammar: string,
+): string[] {
+  const fieldMeta = new Map(node.fields.map(f => [f.name, f]));
+  const rawElements = flattenRule(rule, fieldMeta, grammar);
+  const deduped = deduplicateElements(rawElements);
+  // Skip symbol (children) elements if node has no children in metadata
+  const elements = node.hasChildren ? deduped : deduped.filter(el => el.kind !== 'symbol');
+
+  const lines: string[] = [];
   lines.push('    const parts: string[] = [];');
 
-  // 1. Children as visibility/modifier prefix (common in Rust: struct, fn, enum, etc.)
-  if (node.hasChildren && fieldSet.has('name')) {
-    lines.push('    if (this._children.length > 0) {');
-    lines.push(`      parts.push(this.renderChildren(this._children, ' ', ctx));`);
-    lines.push('    }');
-  }
-
-  // 2. Keyword from kind name
-  if (keyword) {
-    lines.push(`    parts.push('${keyword}');`);
-  }
-
-  // 3. Render fields in heuristic order
-  const orderedFields = orderFields(node.fields);
-
-  for (const field of orderedFields) {
-    const fn = toFieldName(field.name);
-    const priv = `this._${fn}`;
-
-    // For fields with special rendering, check multiple first and fall through
-    // to the generic multiple handler if needed.
-    if (field.name === 'body' && !field.multiple) {
-      lines.push(`    if (${priv}) {`);
-      lines.push(`      parts.push('{');`);
-      lines.push(`      parts.push(this.renderChild(${priv}, ctx));`);
-      lines.push(`      parts.push('}');`);
-      lines.push('    }');
-    } else if (field.name === 'body' && field.multiple) {
-      lines.push(`    if (${priv}.length > 0) {`);
-      lines.push(`      parts.push('{');`);
-      lines.push(`      parts.push(this.renderChildren(${priv}, '\\n', ctx));`);
-      lines.push(`      parts.push('}');`);
-      lines.push('    }');
-    } else if (field.name === 'parameters' && !field.multiple) {
-      lines.push(`    parts.push('(' + (${priv} ? this.renderChild(${priv}, ctx) : '') + ')');`);
-    } else if (field.name === 'return_type' && !field.multiple) {
-      lines.push(`    if (${priv}) parts.push('->', this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'type_parameters' && !field.multiple) {
-      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'condition' && !field.multiple) {
-      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'consequence' && !field.multiple) {
-      lines.push(`    if (${priv}) {`);
-      lines.push(`      parts.push('{', this.renderChild(${priv}, ctx), '}');`);
-      lines.push('    }');
-    } else if (field.name === 'alternative' && !field.multiple) {
-      lines.push(`    if (${priv}) {`);
-      lines.push(`      const alt = this.renderChild(${priv}, ctx);`);
-      lines.push(`      parts.push(alt.startsWith('if ') ? 'else ' + alt : 'else { ' + alt + ' }');`);
-      lines.push('    }');
-    } else if (['left', 'right', 'operator', 'value', 'argument'].includes(field.name) && !field.multiple) {
-      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'trait' && !field.multiple) {
-      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx), 'for');`);
-    } else if (field.name === 'macro' && !field.multiple) {
-      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx) + '!');`);
-    } else if (field.multiple) {
-      lines.push(`    if (${priv}.length > 0) parts.push(this.renderChildren(${priv}, ', ', ctx));`);
-    } else if (field.required) {
-      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    } else {
-      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    }
-  }
-
-  // 4. Children (when not used as visibility prefix above)
-  if (node.hasChildren && !fieldSet.has('name')) {
-    if (node.children?.multiple) {
-      lines.push(`    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));`);
-    } else {
-      lines.push(`    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));`);
-    }
+  for (const el of elements) {
+    emitRenderElement(el, fieldMeta, lines);
   }
 
   lines.push(`    return parts.join(' ');`);
@@ -168,93 +287,89 @@ function generateRenderSilentBody(node: NodeMeta): string[] {
 }
 
 /**
- * Generate the body lines for a builder's toCSTChildren() method.
- * Mirrors renderImpl but produces CSTChild[] for position-tracked CST construction.
+ * Generate toCSTChildren() lines for a single render element.
  */
-function generateToCSTChildrenBody(node: NodeMeta): string[] {
-  const lines: string[] = [];
-  const fieldSet = new Set(node.fields.map((f) => f.name));
-  const keyword = kindToKeyword(node.kind);
+function emitCSTElement(
+  el: RenderElement,
+  fieldMeta: Map<string, FieldMeta>,
+  lines: string[],
+  indent: string = '    ',
+): void {
+  switch (el.kind) {
+    case 'token':
+      if (!el.optional) {
+        lines.push(`${indent}parts.push({ kind: 'token', text: '${escapeString(el.value)}', type: '${escapeString(el.value)}' });`);
+      }
+      break;
 
-  // Special case: source_file
-  if (node.kind === 'source_file') {
-    lines.push('    const parts: CSTChild[] = [];');
-    lines.push('    for (const child of this._children) {');
-    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
-    lines.push('    }');
-    lines.push('    return parts;');
-    return lines;
-  }
+    case 'field': {
+      const fn = toFieldName(el.name);
+      const priv = `this._${fn}`;
+      const meta = fieldMeta.get(el.name);
+      const fieldNameStr = `'${fn}'`;
 
-  lines.push('    const parts: CSTChild[] = [];');
+      if (meta?.multiple) {
+        lines.push(`${indent}for (const child of ${priv}) {`);
+        lines.push(`${indent}  parts.push({ kind: 'builder', builder: child, fieldName: ${fieldNameStr} });`);
+        lines.push(`${indent}}`);
+      } else {
+        lines.push(`${indent}if (${priv}) parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+      }
+      break;
+    }
 
-  // 1. Children as visibility/modifier prefix
-  if (node.hasChildren && fieldSet.has('name')) {
-    lines.push('    for (const child of this._children) {');
-    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
-    lines.push('    }');
-  }
+    case 'symbol':
+      lines.push(`${indent}for (const child of this._children) {`);
+      lines.push(`${indent}  parts.push({ kind: 'builder', builder: child });`);
+      lines.push(`${indent}}`);
+      break;
 
-  // 2. Keyword
-  if (keyword) {
-    lines.push(`    parts.push({ kind: 'token', text: '${keyword}' });`);
-  }
+    case 'group': {
+      const guardField = el.elements.find(e => e.kind === 'field');
+      if (guardField && guardField.kind === 'field') {
+        const fn = toFieldName(guardField.name);
+        const priv = `this._${fn}`;
+        const meta = fieldMeta.get(guardField.name);
+        const isMultiple = meta?.multiple;
+        const guard = isMultiple ? `${priv}.length > 0` : priv;
 
-  // 3. Fields in heuristic order
-  const orderedFields = orderFields(node.fields);
-
-  for (const field of orderedFields) {
-    const fn = toFieldName(field.name);
-    const priv = `this._${fn}`;
-    const fieldNameStr = `'${fn}'`;
-
-    if (field.name === 'body' && !field.multiple) {
-      lines.push(`    if (${priv}) {`);
-      lines.push(`      parts.push({ kind: 'token', text: '{', type: '{' });`);
-      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
-      lines.push(`      parts.push({ kind: 'token', text: '}', type: '}' });`);
-      lines.push('    }');
-    } else if (field.name === 'body' && field.multiple) {
-      lines.push(`    if (${priv}.length > 0) {`);
-      lines.push(`      parts.push({ kind: 'token', text: '{', type: '{' });`);
-      lines.push(`      for (const child of ${priv}) {`);
-      lines.push(`        parts.push({ kind: 'builder', builder: child, fieldName: ${fieldNameStr} });`);
-      lines.push('      }');
-      lines.push(`      parts.push({ kind: 'token', text: '}', type: '}' });`);
-      lines.push('    }');
-    } else if (field.name === 'parameters') {
-      lines.push(`    parts.push({ kind: 'token', text: '(', type: '(' });`);
-      lines.push(`    if (${priv}) parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
-      lines.push(`    parts.push({ kind: 'token', text: ')', type: ')' });`);
-    } else if (field.name === 'return_type') {
-      lines.push(`    if (${priv}) {`);
-      lines.push(`      parts.push({ kind: 'token', text: '->', type: '->' });`);
-      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
-      lines.push('    }');
-    } else if (field.name === 'trait') {
-      lines.push(`    if (${priv}) {`);
-      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
-      lines.push(`      parts.push({ kind: 'token', text: 'for' });`);
-      lines.push('    }');
-    } else if (field.name === 'macro') {
-      lines.push(`    if (${priv}) {`);
-      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
-      lines.push(`      parts.push({ kind: 'token', text: '!', type: '!' });`);
-      lines.push('    }');
-    } else if (field.multiple) {
-      lines.push(`    for (const child of ${priv}) {`);
-      lines.push(`      parts.push({ kind: 'builder', builder: child, fieldName: ${fieldNameStr} });`);
-      lines.push('    }');
-    } else {
-      lines.push(`    if (${priv}) parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+        lines.push(`${indent}if (${guard}) {`);
+        for (const ge of el.elements) {
+          if (ge.kind === 'token') {
+            lines.push(`${indent}  parts.push({ kind: 'token', text: '${escapeString(ge.value)}', type: '${escapeString(ge.value)}' });`);
+          } else {
+            emitCSTElement(ge, fieldMeta, lines, indent + '  ');
+          }
+        }
+        lines.push(`${indent}}`);
+      } else {
+        for (const ge of el.elements) {
+          emitCSTElement(ge, fieldMeta, lines, indent);
+        }
+      }
+      break;
     }
   }
+}
 
-  // 4. Children (when not used as visibility prefix)
-  if (node.hasChildren && !fieldSet.has('name')) {
-    lines.push('    for (const child of this._children) {');
-    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
-    lines.push('    }');
+/**
+ * Generate toCSTChildren() body from grammar.json rule.
+ */
+function generateCSTBody(
+  node: NodeMeta,
+  rule: GrammarRule,
+  grammar: string,
+): string[] {
+  const fieldMeta = new Map(node.fields.map(f => [f.name, f]));
+  const rawElements = flattenRule(rule, fieldMeta, grammar);
+  const deduped = deduplicateElements(rawElements);
+  const elements = node.hasChildren ? deduped : deduped.filter(el => el.kind !== 'symbol');
+
+  const lines: string[] = [];
+  lines.push('    const parts: CSTChild[] = [];');
+
+  for (const el of elements) {
+    emitCSTElement(el, fieldMeta, lines);
   }
 
   lines.push('    return parts;');
@@ -266,7 +381,7 @@ function generateToCSTChildrenBody(node: NodeMeta): string[] {
 // ---------------------------------------------------------------------------
 
 export function emitBuilder(config: EmitBuilderConfig): string {
-  const { node } = config;
+  const { grammar, node } = config;
   const kind = node.kind;
 
   const typeName = toTypeName(kind);
@@ -274,6 +389,9 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   const shortName = toShortName(kind);
 
   const constructorParam = selectConstructorField(node);
+
+  // Try to load grammar rule for this node kind
+  const rule = readGrammarRule(grammar, kind);
 
   // Determine which fields are setters (not the constructor param)
   const setterFields = node.fields.filter((f) => {
@@ -302,8 +420,6 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     if (field.multiple) {
       lines.push(`  private _${fieldName}: Child[] = [];`);
     } else if (field.required) {
-      // Required non-constructor fields get initialized with a placeholder
-      // Constructor field is set in constructor
       if (constructorParam?.source === 'field' && constructorParam.name === field.name) {
         lines.push(`  private _${fieldName}: Child;`);
       } else {
@@ -330,7 +446,6 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       ? 'children'
       : toParamName(constructorParam.name);
 
-    // Determine if multiple
     let isMultiple = false;
     if (constructorParam.source === 'children' && node.children?.multiple) {
       isMultiple = true;
@@ -377,9 +492,14 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // --- renderImpl() ---
   lines.push('  renderImpl(ctx?: RenderContext): string {');
-  const renderBody = generateRenderSilentBody(node);
-  for (const line of renderBody) {
-    lines.push(line);
+  if (rule) {
+    const renderBody = generateRenderBody(node, rule, grammar);
+    for (const line of renderBody) {
+      lines.push(line);
+    }
+  } else {
+    // Fallback: no grammar rule available — render children
+    lines.push(`    return this._children ? this.renderChildren(this._children, ' ', ctx) : '';`);
   }
   lines.push('  }');
   lines.push('');
@@ -414,9 +534,17 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // --- toCSTChildren() ---
   lines.push('  override toCSTChildren(ctx?: RenderContext): CSTChild[] {');
-  const cstBody = generateToCSTChildrenBody(node);
-  for (const line of cstBody) {
-    lines.push(line);
+  if (rule) {
+    const cstBody = generateCSTBody(node, rule, grammar);
+    for (const line of cstBody) {
+      lines.push(line);
+    }
+  } else {
+    lines.push('    const parts: CSTChild[] = [];');
+    lines.push('    for (const child of this._children) {');
+    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
+    lines.push('    }');
+    lines.push('    return parts;');
   }
   lines.push('  }');
 

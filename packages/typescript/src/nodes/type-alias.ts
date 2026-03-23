@@ -26,9 +26,10 @@ class TypeAliasBuilder extends BaseBuilder<TypeAliasDeclaration> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('type alias');
+    parts.push('type');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
+    parts.push('=');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
     return parts.join(' ');
   }
@@ -46,9 +47,10 @@ class TypeAliasBuilder extends BaseBuilder<TypeAliasDeclaration> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'type alias' });
+    parts.push({ kind: 'token', text: 'type', type: 'type' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
+    parts.push({ kind: 'token', text: '=', type: '=' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     return parts;
   }

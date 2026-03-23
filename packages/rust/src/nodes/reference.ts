@@ -20,9 +20,10 @@ class ReferenceBuilder extends BaseBuilder<ReferenceExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('reference');
+    parts.push('&');
+    parts.push('raw');
+    parts.push('const');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
     return parts.join(' ');
   }
 
@@ -38,11 +39,10 @@ class ReferenceBuilder extends BaseBuilder<ReferenceExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'reference' });
+    parts.push({ kind: 'token', text: '&', type: '&' });
+    parts.push({ kind: 'token', text: 'raw', type: 'raw' });
+    parts.push({ kind: 'token', text: 'const', type: 'const' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
     return parts;
   }
 }

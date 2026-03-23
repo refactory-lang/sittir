@@ -26,10 +26,13 @@ class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('mapped type');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push('in');
     if (this._type) parts.push(this.renderChild(this._type, ctx));
-    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
+    if (this._alias) {
+      parts.push('as');
+      if (this._alias) parts.push(this.renderChild(this._alias, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -46,10 +49,13 @@ class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'mapped type' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: 'in', type: 'in' });
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
-    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
+    if (this._alias) {
+      parts.push({ kind: 'token', text: 'as', type: 'as' });
+      if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
+    }
     return parts;
   }
 }

@@ -22,11 +22,7 @@ class WhileBuilder extends BaseBuilder<WhileStatement> {
     const parts: string[] = [];
     parts.push('while');
     if (this._condition) parts.push(this.renderChild(this._condition, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -42,13 +38,9 @@ class WhileBuilder extends BaseBuilder<WhileStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'while' });
+    parts.push({ kind: 'token', text: 'while', type: 'while' });
     if (this._condition) parts.push({ kind: 'builder', builder: this._condition, fieldName: 'condition' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

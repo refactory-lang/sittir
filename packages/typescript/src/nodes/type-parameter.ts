@@ -27,8 +27,8 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._value) parts.push(this.renderChild(this._value, ctx));
     if (this._constraint) parts.push(this.renderChild(this._constraint, ctx));
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
     return parts.join(' ');
   }
 
@@ -46,8 +46,8 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     if (this._constraint) parts.push({ kind: 'builder', builder: this._constraint, fieldName: 'constraint' });
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     return parts;
   }
 }

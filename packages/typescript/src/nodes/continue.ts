@@ -32,7 +32,7 @@ class ContinueBuilder extends BaseBuilder<ContinueStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'continue' });
+    parts.push({ kind: 'token', text: 'continue', type: 'continue' });
     if (this._label) parts.push({ kind: 'builder', builder: this._label, fieldName: 'label' });
     return parts;
   }

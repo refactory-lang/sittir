@@ -20,8 +20,8 @@ class FieldBuilder extends BaseBuilder<FieldExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('field');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
+    parts.push('.');
     if (this._field) parts.push(this.renderChild(this._field, ctx));
     return parts.join(' ');
   }
@@ -38,8 +38,8 @@ class FieldBuilder extends BaseBuilder<FieldExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'field' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    parts.push({ kind: 'token', text: '.', type: '.' });
     if (this._field) parts.push({ kind: 'builder', builder: this._field, fieldName: 'field' });
     return parts;
   }

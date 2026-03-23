@@ -14,7 +14,10 @@ class ForLifetimesBuilder extends BaseBuilder<ForLifetimes> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    parts.push('for');
+    parts.push('<');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('>');
     return parts.join(' ');
   }
 
@@ -29,9 +32,12 @@ class ForLifetimesBuilder extends BaseBuilder<ForLifetimes> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'for', type: 'for' });
+    parts.push({ kind: 'token', text: '<', type: '<' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }
+    parts.push({ kind: 'token', text: '>', type: '>' });
     return parts;
   }
 }

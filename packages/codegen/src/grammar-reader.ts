@@ -40,10 +40,35 @@ interface RawNodeEntry {
 
 type GrammarMap = Record<string, RawNodeEntry>;
 
+// --- grammar.json rule types ---
+
+export type GrammarRule =
+	| { type: 'SEQ'; members: GrammarRule[] }
+	| { type: 'CHOICE'; members: GrammarRule[] }
+	| { type: 'STRING'; value: string }
+	| { type: 'FIELD'; name: string; content: GrammarRule }
+	| { type: 'SYMBOL'; name: string }
+	| { type: 'BLANK' }
+	| { type: 'REPEAT'; content: GrammarRule }
+	| { type: 'REPEAT1'; content: GrammarRule }
+	| { type: 'PREC'; value: number; content: GrammarRule }
+	| { type: 'PREC_LEFT'; value: number; content: GrammarRule }
+	| { type: 'PREC_RIGHT'; value: number; content: GrammarRule }
+	| { type: 'ALIAS'; content: GrammarRule; named: boolean; value: string }
+	| { type: 'TOKEN'; content: GrammarRule }
+	| { type: 'IMMEDIATE_TOKEN'; content: GrammarRule }
+	| { type: 'PATTERN'; value: string };
+
+interface GrammarJson {
+	name: string;
+	rules: Record<string, GrammarRule>;
+}
+
 // --- Cache ---
 
 const require = createRequire(import.meta.url);
 const grammarCache = new Map<string, GrammarMap>();
+const grammarJsonCache = new Map<string, GrammarJson>();
 
 /**
  * Well-known node-types.json paths for grammars with non-standard layouts.
@@ -61,6 +86,41 @@ const explicitPaths = new Map<string, string>();
 export function registerGrammarPath(grammar: string, nodeTypesPath: string): void {
 	explicitPaths.set(grammar, nodeTypesPath);
 	grammarCache.delete(grammar); // invalidate cache
+}
+
+/** Resolve the src/ directory for a grammar. */
+function resolveGrammarSrcDir(grammar: string): string {
+	const explicitPath = explicitPaths.get(grammar);
+	if (explicitPath) {
+		const { dirname } = require('node:path') as typeof import('node:path');
+		return dirname(explicitPath);
+	}
+	const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
+	const nodeTypesPath = require.resolve(modulePath);
+	const { dirname } = require('node:path') as typeof import('node:path');
+	return dirname(nodeTypesPath);
+}
+
+/** Load the compiled grammar.json for rule-driven rendering. */
+function loadGrammarJson(grammar: string): GrammarJson {
+	const cached = grammarJsonCache.get(grammar);
+	if (cached) return cached;
+
+	const { join } = require('node:path') as typeof import('node:path');
+	const srcDir = resolveGrammarSrcDir(grammar);
+	const grammarJson: GrammarJson = require(join(srcDir, 'grammar.json'));
+
+	grammarJsonCache.set(grammar, grammarJson);
+	return grammarJson;
+}
+
+/**
+ * Read the grammar.json rule for a specific node kind.
+ * Returns null if the kind has no rule (rare — e.g., implicit nodes).
+ */
+export function readGrammarRule(grammar: string, nodeKind: string): GrammarRule | null {
+	const gj = loadGrammarJson(grammar);
+	return gj.rules[nodeKind] ?? null;
 }
 
 /** Load raw node-types.json entries for the grammar emitter. */

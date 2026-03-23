@@ -26,9 +26,8 @@ class MemberBuilder extends BaseBuilder<MemberExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('member');
     if (this._object) parts.push(this.renderChild(this._object, ctx));
-    if (this._optionalChain) parts.push(this.renderChild(this._optionalChain, ctx));
+    parts.push('.');
     if (this._property) parts.push(this.renderChild(this._property, ctx));
     return parts.join(' ');
   }
@@ -46,9 +45,8 @@ class MemberBuilder extends BaseBuilder<MemberExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'member' });
     if (this._object) parts.push({ kind: 'builder', builder: this._object, fieldName: 'object' });
-    if (this._optionalChain) parts.push({ kind: 'builder', builder: this._optionalChain, fieldName: 'optionalChain' });
+    parts.push({ kind: 'token', text: '.', type: '.' });
     if (this._property) parts.push({ kind: 'builder', builder: this._property, fieldName: 'property' });
     return parts;
   }

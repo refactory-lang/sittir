@@ -14,7 +14,8 @@ class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    parts.push('async');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
     return parts.join(' ');
   }
 
@@ -29,6 +30,7 @@ class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'async', type: 'async' });
     for (const child of this._children) {
       parts.push({ kind: 'builder', builder: child });
     }

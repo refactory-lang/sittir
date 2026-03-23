@@ -26,14 +26,12 @@ class ClosureBuilder extends BaseBuilder<ClosureExpression> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    parts.push('closure');
-    parts.push('(' + (this._parameters ? this.renderChild(this._parameters, ctx) : '') + ')');
-    if (this._returnType) parts.push('->', this.renderChild(this._returnType, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
+    if (this._parameters) parts.push(this.renderChild(this._parameters, ctx));
+    if (this._returnType) {
+      parts.push('->');
+      if (this._returnType) parts.push(this.renderChild(this._returnType, ctx));
     }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -50,19 +48,12 @@ class ClosureBuilder extends BaseBuilder<ClosureExpression> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'closure' });
-    parts.push({ kind: 'token', text: '(', type: '(' });
     if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
-    parts.push({ kind: 'token', text: ')', type: ')' });
     if (this._returnType) {
       parts.push({ kind: 'token', text: '->', type: '->' });
-      parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
+      if (this._returnType) parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
     }
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

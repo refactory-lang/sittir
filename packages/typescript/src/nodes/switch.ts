@@ -22,11 +22,7 @@ class SwitchBuilder extends BaseBuilder<SwitchStatement> {
     const parts: string[] = [];
     parts.push('switch');
     if (this._value) parts.push(this.renderChild(this._value, ctx));
-    if (this._body) {
-      parts.push('{');
-      parts.push(this.renderChild(this._body, ctx));
-      parts.push('}');
-    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
     return parts.join(' ');
   }
 
@@ -42,13 +38,9 @@ class SwitchBuilder extends BaseBuilder<SwitchStatement> {
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    parts.push({ kind: 'token', text: 'switch' });
+    parts.push({ kind: 'token', text: 'switch', type: 'switch' });
     if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
-    if (this._body) {
-      parts.push({ kind: 'token', text: '{', type: '{' });
-      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
-      parts.push({ kind: 'token', text: '}', type: '}' });
-    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
     return parts;
   }
 }

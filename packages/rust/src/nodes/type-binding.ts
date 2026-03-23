@@ -27,8 +27,9 @@ class TypeBindingBuilder extends BaseBuilder<TypeBinding> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._type) parts.push(this.renderChild(this._type, ctx));
     if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
+    parts.push('=');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
     return parts.join(' ');
   }
 
@@ -46,8 +47,9 @@ class TypeBindingBuilder extends BaseBuilder<TypeBinding> {
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
+    parts.push({ kind: 'token', text: '=', type: '=' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     return parts;
   }
 }
