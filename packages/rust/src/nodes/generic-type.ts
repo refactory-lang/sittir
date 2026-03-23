@@ -1,44 +1,47 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { GenericType, GenericTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { GenericType } from '../types.js';
 
-export function genericType(config: GenericTypeConfig): GenericType {
-  return {
-    kind: 'generic_type',
-    ...config,
-  } as GenericType;
-}
 
-class GenericTypeBuilder implements BuilderTerminal<GenericType> {
-  private _type: string = '';
-  private _typeArguments: string = '';
+class GenericTypeBuilder extends BaseBuilder<GenericType> {
+  private _type: BaseBuilder;
+  private _typeArguments!: BaseBuilder;
 
-  constructor(type_: string) {
+  constructor(type_: BaseBuilder) {
+    super();
     this._type = type_;
   }
 
-  typeArguments(value: string): this {
+  typeArguments(value: BaseBuilder): this {
     this._typeArguments = value;
     return this;
   }
 
-  build(): GenericType {
-    return genericType({
-      type: this._type,
-      typeArguments: this._typeArguments,
-    } as GenericTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): GenericType {
+    return {
+      kind: 'generic_type',
+      type: this.renderChild(this._type, ctx),
+      typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
+    } as unknown as GenericType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'generic_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
+    return parts;
   }
 }
 
-export function generic_type(type_: string): GenericTypeBuilder {
+export function generic_type(type_: BaseBuilder): GenericTypeBuilder {
   return new GenericTypeBuilder(type_);
 }

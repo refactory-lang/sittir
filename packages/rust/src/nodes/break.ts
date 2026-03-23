@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { BreakExpression, BreakExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { BreakExpression } from '../types.js';
 
-export function breakExpression(config: BreakExpressionConfig): BreakExpression {
-  return {
-    kind: 'break_expression',
-    ...config,
-  } as BreakExpression;
-}
 
-class BreakBuilder implements BuilderTerminal<BreakExpression> {
-  private _children: string[] = [];
+class BreakBuilder extends BaseBuilder<BreakExpression> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): BreakExpression {
-    return breakExpression({
-      children: this._children,
-    } as BreakExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('break');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): BreakExpression {
+    return {
+      kind: 'break_expression',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as BreakExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'break_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'break', type: 'break' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

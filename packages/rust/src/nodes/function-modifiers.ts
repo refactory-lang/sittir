@@ -1,37 +1,37 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { FunctionModifiers, FunctionModifiersConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { FunctionModifiers } from '../types.js';
 
-export function functionModifiers(config: FunctionModifiersConfig): FunctionModifiers {
-  return {
-    kind: 'function_modifiers',
-    ...config,
-  } as FunctionModifiers;
-}
 
-class FunctionModifiersBuilder implements BuilderTerminal<FunctionModifiers> {
-  private _children: string[] = [];
+class FunctionModifiersBuilder extends BaseBuilder<FunctionModifiers> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): FunctionModifiers {
-    return functionModifiers({
-      children: this._children,
-    } as FunctionModifiersConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('async');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): FunctionModifiers {
+    return {
+      kind: 'function_modifiers',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as FunctionModifiers;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'function_modifiers'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'async', type: 'async' });
+    return parts;
   }
 }
 

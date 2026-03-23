@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TokenTree, TokenTreeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TokenTree } from '../types.js';
 
-export function tokenTree(config: TokenTreeConfig): TokenTree {
-  return {
-    kind: 'token_tree',
-    ...config,
-  } as TokenTree;
-}
 
-class TokenTreeBuilder implements BuilderTerminal<TokenTree> {
-  private _children: string[] = [];
+class TokenTreeBuilder extends BaseBuilder<TokenTree> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): TokenTree {
-    return tokenTree({
-      children: this._children,
-    } as TokenTreeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('(');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(')');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TokenTree {
+    return {
+      kind: 'token_tree',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TokenTree;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'token_tree'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    return parts;
   }
 }
 

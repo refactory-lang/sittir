@@ -1,44 +1,47 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { CallExpression, CallExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { CallExpression } from '../types.js';
 
-export function callExpression(config: CallExpressionConfig): CallExpression {
-  return {
-    kind: 'call_expression',
-    ...config,
-  } as CallExpression;
-}
 
-class CallBuilder implements BuilderTerminal<CallExpression> {
-  private _arguments: string = '';
-  private _function: string = '';
+class CallBuilder extends BaseBuilder<CallExpression> {
+  private _arguments: BaseBuilder;
+  private _function!: BaseBuilder;
 
-  constructor(arguments_: string) {
+  constructor(arguments_: BaseBuilder) {
+    super();
     this._arguments = arguments_;
   }
 
-  function(value: string): this {
+  function(value: BaseBuilder): this {
     this._function = value;
     return this;
   }
 
-  build(): CallExpression {
-    return callExpression({
-      arguments: this._arguments,
-      function: this._function,
-    } as CallExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._function) parts.push(this.renderChild(this._function, ctx));
+    if (this._arguments) parts.push(this.renderChild(this._arguments, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): CallExpression {
+    return {
+      kind: 'call_expression',
+      arguments: this.renderChild(this._arguments, ctx),
+      function: this._function ? this.renderChild(this._function, ctx) : undefined,
+    } as unknown as CallExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'call_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._function) parts.push({ kind: 'builder', builder: this._function, fieldName: 'function' });
+    if (this._arguments) parts.push({ kind: 'builder', builder: this._arguments, fieldName: 'arguments' });
+    return parts;
   }
 }
 
-export function call(arguments_: string): CallBuilder {
+export function call(arguments_: BaseBuilder): CallBuilder {
   return new CallBuilder(arguments_);
 }

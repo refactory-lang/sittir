@@ -124,7 +124,7 @@ export function resolveFileNames(kinds: string[]): Map<string, string> {
   const result = new Map<string, string>();
   for (const [stripped, colliding] of strippedToKinds) {
     if (colliding.length === 1) {
-      result.set(colliding[0], stripped);
+      result.set(colliding[0]!, stripped);
     } else {
       for (const kind of colliding) {
         result.set(kind, kind.replace(/_/g, '-'));

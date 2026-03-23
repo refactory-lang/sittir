@@ -1,58 +1,69 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { EnumItem, EnumItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { EnumItem } from '../types.js';
 
-export function enumItem(config: EnumItemConfig): EnumItem {
-  return {
-    kind: 'enum_item',
-    ...config,
-  } as EnumItem;
-}
 
-class EnumBuilder implements BuilderTerminal<EnumItem> {
-  private _body: string = '';
-  private _name: string = '';
-  private _typeParameters?: string;
-  private _children: string[] = [];
+class EnumBuilder extends BaseBuilder<EnumItem> {
+  private _body!: BaseBuilder;
+  private _name: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: string) {
+  constructor(name: BaseBuilder) {
+    super();
     this._name = name;
   }
 
-  body(value: string): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  typeParameters(value: string): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): EnumItem {
-    return enumItem({
-      body: this._body,
-      name: this._name,
-      typeParameters: this._typeParameters,
-      children: this._children,
-    } as EnumItemConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('enum');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): EnumItem {
+    return {
+      kind: 'enum_item',
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      name: this.renderChild(this._name, ctx),
+      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as EnumItem;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'enum_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'enum', type: 'enum' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+    return parts;
   }
 }
 
-export function enum_(name: string): EnumBuilder {
+export function enum_(name: BaseBuilder): EnumBuilder {
   return new EnumBuilder(name);
 }

@@ -1,37 +1,46 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TupleExpression, TupleExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TupleExpression } from '../types.js';
 
-export function tupleExpression(config: TupleExpressionConfig): TupleExpression {
-  return {
-    kind: 'tuple_expression',
-    ...config,
-  } as TupleExpression;
-}
 
-class TupleBuilder implements BuilderTerminal<TupleExpression> {
-  private _children: string[] = [];
+class TupleBuilder extends BaseBuilder<TupleExpression> {
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: BaseBuilder[]) {
+    super();
     this._children = children;
   }
 
-  build(): TupleExpression {
-    return tupleExpression({
-      children: this._children,
-    } as TupleExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('(');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(',');
+    parts.push(')');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TupleExpression {
+    return {
+      kind: 'tuple_expression',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TupleExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'tuple_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: ',', type: ',' });
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    return parts;
   }
 }
 
-export function tuple(children: string[]): TupleBuilder {
+export function tuple(children: BaseBuilder[]): TupleBuilder {
   return new TupleBuilder(children);
 }

@@ -1,37 +1,44 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { BracketedType, BracketedTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { BracketedType } from '../types.js';
 
-export function bracketedType(config: BracketedTypeConfig): BracketedType {
-  return {
-    kind: 'bracketed_type',
-    ...config,
-  } as BracketedType;
+
+class BracketedTypeBuilder extends BaseBuilder<BracketedType> {
+  private _children: BaseBuilder[] = [];
+
+  constructor(children: BaseBuilder) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('<');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('>');
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): BracketedType {
+    return {
+      kind: 'bracketed_type',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as BracketedType;
+  }
+
+  override get nodeKind(): string { return 'bracketed_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '<', type: '<' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: '>', type: '>' });
+    return parts;
+  }
 }
 
-class BracketedTypeBuilder implements BuilderTerminal<BracketedType> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): BracketedType {
-    return bracketedType({
-      children: this._children,
-    } as BracketedTypeConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function bracketed_type(children: string): BracketedTypeBuilder {
+export function bracketed_type(children: BaseBuilder): BracketedTypeBuilder {
   return new BracketedTypeBuilder(children);
 }

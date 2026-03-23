@@ -22,16 +22,16 @@ export function emitTypes(config: EmitTypesConfig): string {
 
   const lines: string[] = [];
 
-  // 1. Import grammar type
-  lines.push(`import type ${grammarTypeName} from '@codemod.com/jssg-types/langs/${grammar}';`);
+  // 1. Import grammar type from generated grammar.ts
+  lines.push(`import type { ${grammarAlias} } from './grammar.js';`);
 
   // 2. Import from @sittir/types
   lines.push(`import type { NodeType, BuilderConfig, ValidationResult } from '@sittir/types';`);
 
   lines.push('');
 
-  // 3. Grammar type alias
-  lines.push(`export type ${grammarAlias} = ${grammarTypeName};`);
+  // 3. Re-export grammar type for consumers
+  lines.push(`export type { ${grammarAlias} };`);
 
   lines.push('');
 

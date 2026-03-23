@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { NegativeLiteral, NegativeLiteralConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { NegativeLiteral } from '../types.js';
 
-export function negativeLiteral(config: NegativeLiteralConfig): NegativeLiteral {
-  return {
-    kind: 'negative_literal',
-    ...config,
-  } as NegativeLiteral;
+
+class NegativeLiteralBuilder extends BaseBuilder<NegativeLiteral> {
+  private _children: BaseBuilder[] = [];
+
+  constructor(children: BaseBuilder) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('-');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): NegativeLiteral {
+    return {
+      kind: 'negative_literal',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as NegativeLiteral;
+  }
+
+  override get nodeKind(): string { return 'negative_literal'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '-', type: '-' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class NegativeLiteralBuilder implements BuilderTerminal<NegativeLiteral> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): NegativeLiteral {
-    return negativeLiteral({
-      children: this._children,
-    } as NegativeLiteralConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function negative_literal(children: string): NegativeLiteralBuilder {
+export function negative_literal(children: BaseBuilder): NegativeLiteralBuilder {
   return new NegativeLiteralBuilder(children);
 }

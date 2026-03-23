@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TypeCastExpression, TypeCastExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TypeCastExpression } from '../types.js';
 
-export function typeCastExpression(config: TypeCastExpressionConfig): TypeCastExpression {
-  return {
-    kind: 'type_cast_expression',
-    ...config,
-  } as TypeCastExpression;
-}
 
-class TypeCastBuilder implements BuilderTerminal<TypeCastExpression> {
-  private _type: string = '';
-  private _value: string = '';
+class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
+  private _type: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(type_: string) {
+  constructor(type_: BaseBuilder) {
+    super();
     this._type = type_;
   }
 
-  value(value: string): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  build(): TypeCastExpression {
-    return typeCastExpression({
-      type: this._type,
-      value: this._value,
-    } as TypeCastExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    parts.push('as');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TypeCastExpression {
+    return {
+      kind: 'type_cast_expression',
+      type: this.renderChild(this._type, ctx),
+      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+    } as unknown as TypeCastExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'type_cast_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    parts.push({ kind: 'token', text: 'as', type: 'as' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    return parts;
   }
 }
 
-export function type_cast(type_: string): TypeCastBuilder {
+export function type_cast(type_: BaseBuilder): TypeCastBuilder {
   return new TypeCastBuilder(type_);
 }

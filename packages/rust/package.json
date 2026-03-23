@@ -29,6 +29,8 @@
     "dist"
   ],
   "scripts": {
+    "generate": "node ../codegen/dist/cli.js --grammar rust --all --output src/",
+    "regenerate": "rm -rf src tests vitest.config.ts && pnpm generate && pnpm build && pnpm test",
     "build": "tsgo -p tsconfig.build.json",
     "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
     "dev": "tsgo -p tsconfig.build.json --watch",

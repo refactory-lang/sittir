@@ -1,44 +1,51 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ReferenceType, ReferenceTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ReferenceType } from '../types.js';
 
-export function referenceType(config: ReferenceTypeConfig): ReferenceType {
-  return {
-    kind: 'reference_type',
-    ...config,
-  } as ReferenceType;
-}
 
-class ReferenceTypeBuilder implements BuilderTerminal<ReferenceType> {
-  private _type: string = '';
-  private _children: string[] = [];
+class ReferenceTypeBuilder extends BaseBuilder<ReferenceType> {
+  private _type: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(type_: string) {
+  constructor(type_: BaseBuilder) {
+    super();
     this._type = type_;
   }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): ReferenceType {
-    return referenceType({
-      type: this._type,
-      children: this._children,
-    } as ReferenceTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('&');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ReferenceType {
+    return {
+      kind: 'reference_type',
+      type: this.renderChild(this._type, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ReferenceType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'reference_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '&', type: '&' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    return parts;
   }
 }
 
-export function reference_type(type_: string): ReferenceTypeBuilder {
+export function reference_type(type_: BaseBuilder): ReferenceTypeBuilder {
   return new ReferenceTypeBuilder(type_);
 }

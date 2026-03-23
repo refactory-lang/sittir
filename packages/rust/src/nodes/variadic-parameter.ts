@@ -1,44 +1,56 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { VariadicParameter, VariadicParameterConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { VariadicParameter } from '../types.js';
 
-export function variadicParameter(config: VariadicParameterConfig): VariadicParameter {
-  return {
-    kind: 'variadic_parameter',
-    ...config,
-  } as VariadicParameter;
-}
 
-class VariadicParameterBuilder implements BuilderTerminal<VariadicParameter> {
-  private _pattern?: string;
-  private _children?: string;
+class VariadicParameterBuilder extends BaseBuilder<VariadicParameter> {
+  private _pattern?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  pattern(value: string): this {
+  pattern(value: BaseBuilder): this {
     this._pattern = value;
     return this;
   }
 
-  children(value: string): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): VariadicParameter {
-    return variadicParameter({
-      pattern: this._pattern,
-      children: this._children,
-    } as VariadicParameterConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._pattern) {
+      if (this._pattern) parts.push(this.renderChild(this._pattern, ctx));
+      parts.push(':');
+    }
+    parts.push('...');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): VariadicParameter {
+    return {
+      kind: 'variadic_parameter',
+      pattern: this._pattern ? this.renderChild(this._pattern, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as VariadicParameter;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'variadic_parameter'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._pattern) {
+      if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
+      parts.push({ kind: 'token', text: ':', type: ':' });
+    }
+    parts.push({ kind: 'token', text: '...', type: '...' });
+    return parts;
   }
 }
 

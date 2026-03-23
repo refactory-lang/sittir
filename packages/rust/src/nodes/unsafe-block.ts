@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { UnsafeBlock, UnsafeBlockConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { UnsafeBlock } from '../types.js';
 
-export function unsafeBlock(config: UnsafeBlockConfig): UnsafeBlock {
-  return {
-    kind: 'unsafe_block',
-    ...config,
-  } as UnsafeBlock;
+
+class UnsafeBlockBuilder extends BaseBuilder<UnsafeBlock> {
+  private _children: BaseBuilder[] = [];
+
+  constructor(children: BaseBuilder) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('unsafe');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): UnsafeBlock {
+    return {
+      kind: 'unsafe_block',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as UnsafeBlock;
+  }
+
+  override get nodeKind(): string { return 'unsafe_block'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'unsafe', type: 'unsafe' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class UnsafeBlockBuilder implements BuilderTerminal<UnsafeBlock> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): UnsafeBlock {
-    return unsafeBlock({
-      children: this._children,
-    } as UnsafeBlockConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function unsafe_block(children: string): UnsafeBlockBuilder {
+export function unsafe_block(children: BaseBuilder): UnsafeBlockBuilder {
   return new UnsafeBlockBuilder(children);
 }

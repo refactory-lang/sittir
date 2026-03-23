@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { UseAsClause, UseAsClauseConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { UseAsClause } from '../types.js';
 
-export function useAsClause(config: UseAsClauseConfig): UseAsClause {
-  return {
-    kind: 'use_as_clause',
-    ...config,
-  } as UseAsClause;
-}
 
-class UseAsClauseBuilder implements BuilderTerminal<UseAsClause> {
-  private _alias: string = '';
-  private _path: string = '';
+class UseAsClauseBuilder extends BaseBuilder<UseAsClause> {
+  private _alias: BaseBuilder;
+  private _path!: BaseBuilder;
 
-  constructor(alias: string) {
+  constructor(alias: BaseBuilder) {
+    super();
     this._alias = alias;
   }
 
-  path(value: string): this {
+  path(value: BaseBuilder): this {
     this._path = value;
     return this;
   }
 
-  build(): UseAsClause {
-    return useAsClause({
-      alias: this._alias,
-      path: this._path,
-    } as UseAsClauseConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._path) parts.push(this.renderChild(this._path, ctx));
+    parts.push('as');
+    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): UseAsClause {
+    return {
+      kind: 'use_as_clause',
+      alias: this.renderChild(this._alias, ctx),
+      path: this._path ? this.renderChild(this._path, ctx) : undefined,
+    } as unknown as UseAsClause;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'use_as_clause'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._path) parts.push({ kind: 'builder', builder: this._path, fieldName: 'path' });
+    parts.push({ kind: 'token', text: 'as', type: 'as' });
+    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
+    return parts;
   }
 }
 
-export function use_as_clause(alias: string): UseAsClauseBuilder {
+export function use_as_clause(alias: BaseBuilder): UseAsClauseBuilder {
   return new UseAsClauseBuilder(alias);
 }

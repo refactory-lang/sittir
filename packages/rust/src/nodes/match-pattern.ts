@@ -1,44 +1,55 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { MatchPattern, MatchPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { MatchPattern } from '../types.js';
 
-export function matchPattern(config: MatchPatternConfig): MatchPattern {
-  return {
-    kind: 'match_pattern',
-    ...config,
-  } as MatchPattern;
-}
 
-class MatchPatternBuilder implements BuilderTerminal<MatchPattern> {
-  private _condition?: string;
-  private _children: string;
+class MatchPatternBuilder extends BaseBuilder<MatchPattern> {
+  private _condition?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: string) {
-    this._children = children;
+  constructor(children: BaseBuilder) {
+    super();
+    this._children = [children];
   }
 
-  condition(value: string): this {
+  condition(value: BaseBuilder): this {
     this._condition = value;
     return this;
   }
 
-  build(): MatchPattern {
-    return matchPattern({
-      condition: this._condition,
-      children: this._children,
-    } as MatchPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._condition) {
+      parts.push('if');
+      if (this._condition) parts.push(this.renderChild(this._condition, ctx));
+    }
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): MatchPattern {
+    return {
+      kind: 'match_pattern',
+      condition: this._condition ? this.renderChild(this._condition, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as MatchPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'match_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._condition) {
+      parts.push({ kind: 'token', text: 'if', type: 'if' });
+      if (this._condition) parts.push({ kind: 'builder', builder: this._condition, fieldName: 'condition' });
+    }
+    return parts;
   }
 }
 
-export function match_pattern(children: string): MatchPatternBuilder {
+export function match_pattern(children: BaseBuilder): MatchPatternBuilder {
   return new MatchPatternBuilder(children);
 }

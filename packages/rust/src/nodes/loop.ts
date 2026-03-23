@@ -1,44 +1,51 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { LoopExpression, LoopExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { LoopExpression } from '../types.js';
 
-export function loopExpression(config: LoopExpressionConfig): LoopExpression {
-  return {
-    kind: 'loop_expression',
-    ...config,
-  } as LoopExpression;
-}
 
-class LoopBuilder implements BuilderTerminal<LoopExpression> {
-  private _body: string = '';
-  private _children?: string;
+class LoopBuilder extends BaseBuilder<LoopExpression> {
+  private _body: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(body: string) {
+  constructor(body: BaseBuilder) {
+    super();
     this._body = body;
   }
 
-  children(value: string): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): LoopExpression {
-    return loopExpression({
-      body: this._body,
-      children: this._children,
-    } as LoopExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('loop');
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): LoopExpression {
+    return {
+      kind: 'loop_expression',
+      body: this.renderChild(this._body, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as LoopExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'loop_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'loop', type: 'loop' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+    return parts;
   }
 }
 
-export function loop(body: string): LoopBuilder {
+export function loop(body: BaseBuilder): LoopBuilder {
   return new LoopBuilder(body);
 }

@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { YieldExpression, YieldExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { YieldExpression } from '../types.js';
 
-export function yieldExpression(config: YieldExpressionConfig): YieldExpression {
-  return {
-    kind: 'yield_expression',
-    ...config,
-  } as YieldExpression;
-}
 
-class YieldBuilder implements BuilderTerminal<YieldExpression> {
-  private _children?: string;
+class YieldBuilder extends BaseBuilder<YieldExpression> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): YieldExpression {
-    return yieldExpression({
-      children: this._children,
-    } as YieldExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('yield');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): YieldExpression {
+    return {
+      kind: 'yield_expression',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as YieldExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'yield_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'yield', type: 'yield' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

@@ -1,44 +1,51 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { AbstractType, AbstractTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { AbstractType } from '../types.js';
 
-export function abstractType(config: AbstractTypeConfig): AbstractType {
-  return {
-    kind: 'abstract_type',
-    ...config,
-  } as AbstractType;
-}
 
-class AbstractTypeBuilder implements BuilderTerminal<AbstractType> {
-  private _trait: string = '';
-  private _children?: string;
+class AbstractTypeBuilder extends BaseBuilder<AbstractType> {
+  private _trait: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(trait: string) {
+  constructor(trait: BaseBuilder) {
+    super();
     this._trait = trait;
   }
 
-  children(value: string): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): AbstractType {
-    return abstractType({
-      trait: this._trait,
-      children: this._children,
-    } as AbstractTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('impl');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._trait) parts.push(this.renderChild(this._trait, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): AbstractType {
+    return {
+      kind: 'abstract_type',
+      trait: this.renderChild(this._trait, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as AbstractType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'abstract_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'impl', type: 'impl' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._trait) parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
+    return parts;
   }
 }
 
-export function abstract_type(trait: string): AbstractTypeBuilder {
+export function abstract_type(trait: BaseBuilder): AbstractTypeBuilder {
   return new AbstractTypeBuilder(trait);
 }

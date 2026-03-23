@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { EnumVariantList, EnumVariantListConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { EnumVariantList } from '../types.js';
 
-export function enumVariantList(config: EnumVariantListConfig): EnumVariantList {
-  return {
-    kind: 'enum_variant_list',
-    ...config,
-  } as EnumVariantList;
-}
 
-class EnumVariantListBuilder implements BuilderTerminal<EnumVariantList> {
-  private _children: string[] = [];
+class EnumVariantListBuilder extends BaseBuilder<EnumVariantList> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): EnumVariantList {
-    return enumVariantList({
-      children: this._children,
-    } as EnumVariantListConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('{');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('}');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): EnumVariantList {
+    return {
+      kind: 'enum_variant_list',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as EnumVariantList;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'enum_variant_list'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '{', type: '{' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: '}', type: '}' });
+    return parts;
   }
 }
 

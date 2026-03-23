@@ -1,58 +1,73 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TypeItem, TypeItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TypeItem } from '../types.js';
 
-export function typeItem(config: TypeItemConfig): TypeItem {
-  return {
-    kind: 'type_item',
-    ...config,
-  } as TypeItem;
-}
 
-class TypeBuilder implements BuilderTerminal<TypeItem> {
-  private _name: string = '';
-  private _type: string = '';
-  private _typeParameters?: string;
-  private _children: string[] = [];
+class TypeBuilder extends BaseBuilder<TypeItem> {
+  private _name: BaseBuilder;
+  private _type!: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: string) {
+  constructor(name: BaseBuilder) {
+    super();
     this._name = name;
   }
 
-  type(value: string): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  typeParameters(value: string): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): TypeItem {
-    return typeItem({
-      name: this._name,
-      type: this._type,
-      typeParameters: this._typeParameters,
-      children: this._children,
-    } as TypeItemConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('type');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
+    parts.push('=');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push(';');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TypeItem {
+    return {
+      kind: 'type_item',
+      name: this.renderChild(this._name, ctx),
+      type: this._type ? this.renderChild(this._type, ctx) : undefined,
+      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TypeItem;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'type_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'type', type: 'type' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
+    parts.push({ kind: 'token', text: '=', type: '=' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: ';', type: ';' });
+    return parts;
   }
 }
 
-export function type_(name: string): TypeBuilder {
+export function type_(name: BaseBuilder): TypeBuilder {
   return new TypeBuilder(name);
 }

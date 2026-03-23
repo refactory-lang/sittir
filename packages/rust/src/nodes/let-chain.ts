@@ -1,37 +1,38 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { LetChain, LetChainConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { LetChain } from '../types.js';
 
-export function letChain(config: LetChainConfig): LetChain {
-  return {
-    kind: 'let_chain',
-    ...config,
-  } as LetChain;
-}
 
-class LetChainBuilder implements BuilderTerminal<LetChain> {
-  private _children: string[] = [];
+class LetChainBuilder extends BaseBuilder<LetChain> {
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: BaseBuilder[]) {
+    super();
     this._children = children;
   }
 
-  build(): LetChain {
-    return letChain({
-      children: this._children,
-    } as LetChainConfig);
+  renderImpl(ctx?: RenderContext): string {
+    return this._children ? this.renderChildren(this._children, ' ', ctx) : '';
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): LetChain {
+    return {
+      kind: 'let_chain',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as LetChain;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'let_chain'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function let_chain(children: string[]): LetChainBuilder {
+export function let_chain(children: BaseBuilder[]): LetChainBuilder {
   return new LetChainBuilder(children);
 }

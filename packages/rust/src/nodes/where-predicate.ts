@@ -1,44 +1,47 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { WherePredicate, WherePredicateConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { WherePredicate } from '../types.js';
 
-export function wherePredicate(config: WherePredicateConfig): WherePredicate {
-  return {
-    kind: 'where_predicate',
-    ...config,
-  } as WherePredicate;
-}
 
-class WherePredicateBuilder implements BuilderTerminal<WherePredicate> {
-  private _bounds: string = '';
-  private _left: string = '';
+class WherePredicateBuilder extends BaseBuilder<WherePredicate> {
+  private _bounds: BaseBuilder;
+  private _left!: BaseBuilder;
 
-  constructor(bounds: string) {
+  constructor(bounds: BaseBuilder) {
+    super();
     this._bounds = bounds;
   }
 
-  left(value: string): this {
+  left(value: BaseBuilder): this {
     this._left = value;
     return this;
   }
 
-  build(): WherePredicate {
-    return wherePredicate({
-      bounds: this._bounds,
-      left: this._left,
-    } as WherePredicateConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._left) parts.push(this.renderChild(this._left, ctx));
+    if (this._bounds) parts.push(this.renderChild(this._bounds, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): WherePredicate {
+    return {
+      kind: 'where_predicate',
+      bounds: this.renderChild(this._bounds, ctx),
+      left: this._left ? this.renderChild(this._left, ctx) : undefined,
+    } as unknown as WherePredicate;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'where_predicate'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
+    if (this._bounds) parts.push({ kind: 'builder', builder: this._bounds, fieldName: 'bounds' });
+    return parts;
   }
 }
 
-export function where_predicate(bounds: string): WherePredicateBuilder {
+export function where_predicate(bounds: BaseBuilder): WherePredicateBuilder {
   return new WherePredicateBuilder(bounds);
 }

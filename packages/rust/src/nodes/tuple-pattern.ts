@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TuplePattern, TuplePatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TuplePattern } from '../types.js';
 
-export function tuplePattern(config: TuplePatternConfig): TuplePattern {
-  return {
-    kind: 'tuple_pattern',
-    ...config,
-  } as TuplePattern;
-}
 
-class TuplePatternBuilder implements BuilderTerminal<TuplePattern> {
-  private _children: string[] = [];
+class TuplePatternBuilder extends BaseBuilder<TuplePattern> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): TuplePattern {
-    return tuplePattern({
-      children: this._children,
-    } as TuplePatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('(');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(')');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TuplePattern {
+    return {
+      kind: 'tuple_pattern',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TuplePattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'tuple_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    return parts;
   }
 }
 

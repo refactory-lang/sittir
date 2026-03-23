@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { GenericTypeWithTurbofish, GenericTypeWithTurbofishConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { GenericTypeWithTurbofish } from '../types.js';
 
-export function genericTypeWithTurbofish(config: GenericTypeWithTurbofishConfig): GenericTypeWithTurbofish {
-  return {
-    kind: 'generic_type_with_turbofish',
-    ...config,
-  } as GenericTypeWithTurbofish;
-}
 
-class GenericTypeWithTurbofishBuilder implements BuilderTerminal<GenericTypeWithTurbofish> {
-  private _type: string = '';
-  private _typeArguments: string = '';
+class GenericTypeWithTurbofishBuilder extends BaseBuilder<GenericTypeWithTurbofish> {
+  private _type: BaseBuilder;
+  private _typeArguments!: BaseBuilder;
 
-  constructor(type_: string) {
+  constructor(type_: BaseBuilder) {
+    super();
     this._type = type_;
   }
 
-  typeArguments(value: string): this {
+  typeArguments(value: BaseBuilder): this {
     this._typeArguments = value;
     return this;
   }
 
-  build(): GenericTypeWithTurbofish {
-    return genericTypeWithTurbofish({
-      type: this._type,
-      typeArguments: this._typeArguments,
-    } as GenericTypeWithTurbofishConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push('::');
+    if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): GenericTypeWithTurbofish {
+    return {
+      kind: 'generic_type_with_turbofish',
+      type: this.renderChild(this._type, ctx),
+      typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
+    } as unknown as GenericTypeWithTurbofish;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'generic_type_with_turbofish'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: '::', type: '::' });
+    if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
+    return parts;
   }
 }
 
-export function generic_type_with_turbofish(type_: string): GenericTypeWithTurbofishBuilder {
+export function generic_type_with_turbofish(type_: BaseBuilder): GenericTypeWithTurbofishBuilder {
   return new GenericTypeWithTurbofishBuilder(type_);
 }

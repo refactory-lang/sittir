@@ -1,37 +1,44 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { IndexExpression, IndexExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { IndexExpression } from '../types.js';
 
-export function indexExpression(config: IndexExpressionConfig): IndexExpression {
-  return {
-    kind: 'index_expression',
-    ...config,
-  } as IndexExpression;
-}
 
-class IndexBuilder implements BuilderTerminal<IndexExpression> {
-  private _children: string[] = [];
+class IndexBuilder extends BaseBuilder<IndexExpression> {
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: BaseBuilder[]) {
+    super();
     this._children = children;
   }
 
-  build(): IndexExpression {
-    return indexExpression({
-      children: this._children,
-    } as IndexExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('[');
+    parts.push(']');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): IndexExpression {
+    return {
+      kind: 'index_expression',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as IndexExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'index_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: '[', type: '[' });
+    parts.push({ kind: 'token', text: ']', type: ']' });
+    return parts;
   }
 }
 
-export function index(children: string[]): IndexBuilder {
+export function index(children: BaseBuilder[]): IndexBuilder {
   return new IndexBuilder(children);
 }

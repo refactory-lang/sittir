@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TokenBindingPattern, TokenBindingPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TokenBindingPattern } from '../types.js';
 
-export function tokenBindingPattern(config: TokenBindingPatternConfig): TokenBindingPattern {
-  return {
-    kind: 'token_binding_pattern',
-    ...config,
-  } as TokenBindingPattern;
-}
 
-class TokenBindingPatternBuilder implements BuilderTerminal<TokenBindingPattern> {
-  private _name: string = '';
-  private _type: string = '';
+class TokenBindingPatternBuilder extends BaseBuilder<TokenBindingPattern> {
+  private _name: BaseBuilder;
+  private _type!: BaseBuilder;
 
-  constructor(name: string) {
+  constructor(name: BaseBuilder) {
+    super();
     this._name = name;
   }
 
-  type(value: string): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  build(): TokenBindingPattern {
-    return tokenBindingPattern({
-      name: this._name,
-      type: this._type,
-    } as TokenBindingPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push(':');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TokenBindingPattern {
+    return {
+      kind: 'token_binding_pattern',
+      name: this.renderChild(this._name, ctx),
+      type: this._type ? this.renderChild(this._type, ctx) : undefined,
+    } as unknown as TokenBindingPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'token_binding_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: ':', type: ':' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    return parts;
   }
 }
 
-export function token_binding_pattern(name: string): TokenBindingPatternBuilder {
+export function token_binding_pattern(name: BaseBuilder): TokenBindingPatternBuilder {
   return new TokenBindingPatternBuilder(name);
 }

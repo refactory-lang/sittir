@@ -1,7 +1,7 @@
-import type { NodeType, BuilderConfig, ValidationResult } from '@sittir/types';
 import type { RustGrammar } from './grammar.js';
+import type { NodeType, BuilderConfig, ValidationResult } from '@sittir/types';
 
-export type { RustGrammar } from './grammar.js';
+export type { RustGrammar };
 
 export type AbstractType = NodeType<RustGrammar, 'abstract_type'>;
 export type AbstractTypeConfig = BuilderConfig<RustGrammar, AbstractType>;
@@ -39,9 +39,6 @@ export type BaseFieldInitializerConfig = BuilderConfig<RustGrammar, BaseFieldIni
 export type BinaryExpression = NodeType<RustGrammar, 'binary_expression'>;
 export type BinaryExpressionConfig = BuilderConfig<RustGrammar, BinaryExpression>;
 
-export type Block = NodeType<RustGrammar, 'block'>;
-export type BlockConfig = BuilderConfig<RustGrammar, Block>;
-
 export type BlockComment = NodeType<RustGrammar, 'block_comment'>;
 export type BlockCommentConfig = BuilderConfig<RustGrammar, BlockComment>;
 
@@ -77,9 +74,6 @@ export type ConstItemConfig = BuilderConfig<RustGrammar, ConstItem>;
 
 export type ConstParameter = NodeType<RustGrammar, 'const_parameter'>;
 export type ConstParameterConfig = BuilderConfig<RustGrammar, ConstParameter>;
-
-export type ConstrainedTypeParameter = NodeType<RustGrammar, 'constrained_type_parameter'>;
-export type ConstrainedTypeParameterConfig = BuilderConfig<RustGrammar, ConstrainedTypeParameter>;
 
 export type ContinueExpression = NodeType<RustGrammar, 'continue_expression'>;
 export type ContinueExpressionConfig = BuilderConfig<RustGrammar, ContinueExpression>;
@@ -150,8 +144,14 @@ export type FunctionSignatureItemConfig = BuilderConfig<RustGrammar, FunctionSig
 export type FunctionType = NodeType<RustGrammar, 'function_type'>;
 export type FunctionTypeConfig = BuilderConfig<RustGrammar, FunctionType>;
 
+export type GenBlock = NodeType<RustGrammar, 'gen_block'>;
+export type GenBlockConfig = BuilderConfig<RustGrammar, GenBlock>;
+
 export type GenericFunction = NodeType<RustGrammar, 'generic_function'>;
 export type GenericFunctionConfig = BuilderConfig<RustGrammar, GenericFunction>;
+
+export type GenericPattern = NodeType<RustGrammar, 'generic_pattern'>;
+export type GenericPatternConfig = BuilderConfig<RustGrammar, GenericPattern>;
 
 export type GenericType = NodeType<RustGrammar, 'generic_type'>;
 export type GenericTypeConfig = BuilderConfig<RustGrammar, GenericType>;
@@ -186,8 +186,8 @@ export type LetConditionConfig = BuilderConfig<RustGrammar, LetCondition>;
 export type LetDeclaration = NodeType<RustGrammar, 'let_declaration'>;
 export type LetDeclarationConfig = BuilderConfig<RustGrammar, LetDeclaration>;
 
-export type Lifetime = NodeType<RustGrammar, 'lifetime'>;
-export type LifetimeConfig = BuilderConfig<RustGrammar, Lifetime>;
+export type LifetimeParameter = NodeType<RustGrammar, 'lifetime_parameter'>;
+export type LifetimeParameterConfig = BuilderConfig<RustGrammar, LifetimeParameter>;
 
 export type LineComment = NodeType<RustGrammar, 'line_comment'>;
 export type LineCommentConfig = BuilderConfig<RustGrammar, LineComment>;
@@ -224,9 +224,6 @@ export type MutPatternConfig = BuilderConfig<RustGrammar, MutPattern>;
 
 export type NegativeLiteral = NodeType<RustGrammar, 'negative_literal'>;
 export type NegativeLiteralConfig = BuilderConfig<RustGrammar, NegativeLiteral>;
-
-export type OptionalTypeParameter = NodeType<RustGrammar, 'optional_type_parameter'>;
-export type OptionalTypeParameterConfig = BuilderConfig<RustGrammar, OptionalTypeParameter>;
 
 export type OrPattern = NodeType<RustGrammar, 'or_pattern'>;
 export type OrPatternConfig = BuilderConfig<RustGrammar, OrPattern>;
@@ -363,6 +360,9 @@ export type TypeCastExpressionConfig = BuilderConfig<RustGrammar, TypeCastExpres
 export type TypeItem = NodeType<RustGrammar, 'type_item'>;
 export type TypeItemConfig = BuilderConfig<RustGrammar, TypeItem>;
 
+export type TypeParameter = NodeType<RustGrammar, 'type_parameter'>;
+export type TypeParameterConfig = BuilderConfig<RustGrammar, TypeParameter>;
+
 export type TypeParameters = NodeType<RustGrammar, 'type_parameters'>;
 export type TypeParametersConfig = BuilderConfig<RustGrammar, TypeParameters>;
 
@@ -377,6 +377,9 @@ export type UnsafeBlockConfig = BuilderConfig<RustGrammar, UnsafeBlock>;
 
 export type UseAsClause = NodeType<RustGrammar, 'use_as_clause'>;
 export type UseAsClauseConfig = BuilderConfig<RustGrammar, UseAsClause>;
+
+export type UseBounds = NodeType<RustGrammar, 'use_bounds'>;
+export type UseBoundsConfig = BuilderConfig<RustGrammar, UseBounds>;
 
 export type UseDeclaration = NodeType<RustGrammar, 'use_declaration'>;
 export type UseDeclarationConfig = BuilderConfig<RustGrammar, UseDeclaration>;
@@ -418,7 +421,6 @@ export type RustIrNode =
   | AwaitExpression
   | BaseFieldInitializer
   | BinaryExpression
-  | Block
   | BlockComment
   | BoundedType
   | BracketedType
@@ -431,7 +433,6 @@ export type RustIrNode =
   | ConstBlock
   | ConstItem
   | ConstParameter
-  | ConstrainedTypeParameter
   | ContinueExpression
   | DeclarationList
   | DynamicType
@@ -455,7 +456,9 @@ export type RustIrNode =
   | FunctionModifiers
   | FunctionSignatureItem
   | FunctionType
+  | GenBlock
   | GenericFunction
+  | GenericPattern
   | GenericType
   | GenericTypeWithTurbofish
   | HigherRankedTraitBound
@@ -467,7 +470,7 @@ export type RustIrNode =
   | LetChain
   | LetCondition
   | LetDeclaration
-  | Lifetime
+  | LifetimeParameter
   | LineComment
   | LoopExpression
   | MacroDefinition
@@ -480,7 +483,6 @@ export type RustIrNode =
   | ModItem
   | MutPattern
   | NegativeLiteral
-  | OptionalTypeParameter
   | OrPattern
   | OrderedFieldDeclarationList
   | Parameter
@@ -526,11 +528,13 @@ export type RustIrNode =
   | TypeBinding
   | TypeCastExpression
   | TypeItem
+  | TypeParameter
   | TypeParameters
   | UnaryExpression
   | UnionItem
   | UnsafeBlock
   | UseAsClause
+  | UseBounds
   | UseDeclaration
   | UseList
   | UseWildcard

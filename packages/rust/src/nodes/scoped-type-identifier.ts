@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ScopedTypeIdentifier, ScopedTypeIdentifierConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ScopedTypeIdentifier } from '../types.js';
 
-export function scopedTypeIdentifier(config: ScopedTypeIdentifierConfig): ScopedTypeIdentifier {
-  return {
-    kind: 'scoped_type_identifier',
-    ...config,
-  } as ScopedTypeIdentifier;
-}
 
-class ScopedTypeIdentifierBuilder implements BuilderTerminal<ScopedTypeIdentifier> {
-  private _name: string = '';
-  private _path?: string;
+class ScopedTypeIdentifierBuilder extends BaseBuilder<ScopedTypeIdentifier> {
+  private _name: BaseBuilder;
+  private _path?: BaseBuilder;
 
-  constructor(name: string) {
+  constructor(name: BaseBuilder) {
+    super();
     this._name = name;
   }
 
-  path(value: string): this {
+  path(value: BaseBuilder): this {
     this._path = value;
     return this;
   }
 
-  build(): ScopedTypeIdentifier {
-    return scopedTypeIdentifier({
-      name: this._name,
-      path: this._path,
-    } as ScopedTypeIdentifierConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._path) parts.push(this.renderChild(this._path, ctx));
+    parts.push('::');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ScopedTypeIdentifier {
+    return {
+      kind: 'scoped_type_identifier',
+      name: this.renderChild(this._name, ctx),
+      path: this._path ? this.renderChild(this._path, ctx) : undefined,
+    } as unknown as ScopedTypeIdentifier;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'scoped_type_identifier'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._path) parts.push({ kind: 'builder', builder: this._path, fieldName: 'path' });
+    parts.push({ kind: 'token', text: '::', type: '::' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    return parts;
   }
 }
 
-export function scoped_type_identifier(name: string): ScopedTypeIdentifierBuilder {
+export function scoped_type_identifier(name: BaseBuilder): ScopedTypeIdentifierBuilder {
   return new ScopedTypeIdentifierBuilder(name);
 }

@@ -1,44 +1,57 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { MacroDefinition, MacroDefinitionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { MacroDefinition } from '../types.js';
 
-export function macroDefinition(config: MacroDefinitionConfig): MacroDefinition {
-  return {
-    kind: 'macro_definition',
-    ...config,
-  } as MacroDefinition;
-}
 
-class MacroDefinitionBuilder implements BuilderTerminal<MacroDefinition> {
-  private _name: string = '';
-  private _children: string[] = [];
+class MacroDefinitionBuilder extends BaseBuilder<MacroDefinition> {
+  private _name: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: string) {
+  constructor(name: BaseBuilder) {
+    super();
     this._name = name;
   }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): MacroDefinition {
-    return macroDefinition({
-      name: this._name,
-      children: this._children,
-    } as MacroDefinitionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('macro_rules!');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push('(');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(')');
+    parts.push(';');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): MacroDefinition {
+    return {
+      kind: 'macro_definition',
+      name: this.renderChild(this._name, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as MacroDefinition;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'macro_definition'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'macro_rules!', type: 'macro_rules!' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    parts.push({ kind: 'token', text: ';', type: ';' });
+    return parts;
   }
 }
 
-export function macro_definition(name: string): MacroDefinitionBuilder {
+export function macro_definition(name: BaseBuilder): MacroDefinitionBuilder {
   return new MacroDefinitionBuilder(name);
 }

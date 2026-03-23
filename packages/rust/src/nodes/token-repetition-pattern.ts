@@ -1,37 +1,47 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TokenRepetitionPattern, TokenRepetitionPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TokenRepetitionPattern } from '../types.js';
 
-export function tokenRepetitionPattern(config: TokenRepetitionPatternConfig): TokenRepetitionPattern {
-  return {
-    kind: 'token_repetition_pattern',
-    ...config,
-  } as TokenRepetitionPattern;
-}
 
-class TokenRepetitionPatternBuilder implements BuilderTerminal<TokenRepetitionPattern> {
-  private _children: string[] = [];
+class TokenRepetitionPatternBuilder extends BaseBuilder<TokenRepetitionPattern> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): TokenRepetitionPattern {
-    return tokenRepetitionPattern({
-      children: this._children,
-    } as TokenRepetitionPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('$');
+    parts.push('(');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(')');
+    parts.push('+');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TokenRepetitionPattern {
+    return {
+      kind: 'token_repetition_pattern',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TokenRepetitionPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'token_repetition_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '$', type: '$' });
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    parts.push({ kind: 'token', text: '+', type: '+' });
+    return parts;
   }
 }
 
