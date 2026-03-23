@@ -88,9 +88,9 @@ if (!cliArgs.all && (!cliArgs.nodes || cliArgs.nodes.length === 0)) {
 }
 
 const config: CodegenConfig = {
-	grammar: cliArgs.grammar,
+	grammar: cliArgs.grammar!,
 	nodes: cliArgs.all ? undefined : cliArgs.nodes,
-	outputDir: cliArgs.outputDir,
+	outputDir: cliArgs.outputDir!,
 };
 
 console.log(`Generating ${config.grammar} IR...`);

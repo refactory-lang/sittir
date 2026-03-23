@@ -45,15 +45,49 @@ type GrammarMap = Record<string, RawNodeEntry>;
 const require = createRequire(import.meta.url);
 const grammarCache = new Map<string, GrammarMap>();
 
+/**
+ * Well-known node-types.json paths for grammars with non-standard layouts.
+ * Most grammars use `tree-sitter-{grammar}/src/node-types.json`.
+ */
+const GRAMMAR_PATHS: Record<string, string> = {
+	typescript: `tree-sitter-typescript/typescript/src/node-types.json`,
+	tsx: `tree-sitter-typescript/tsx/src/node-types.json`,
+};
+
+/** Registry of explicit node-types.json paths (set via registerGrammarPath). */
+const explicitPaths = new Map<string, string>();
+
+/** Register an explicit file path for a grammar's node-types.json. */
+export function registerGrammarPath(grammar: string, nodeTypesPath: string): void {
+	explicitPaths.set(grammar, nodeTypesPath);
+	grammarCache.delete(grammar); // invalidate cache
+}
+
+/** Load raw node-types.json entries for the grammar emitter. */
+export function loadRawEntries(grammar: string): RawNodeEntry[] {
+	const explicitPath = explicitPaths.get(grammar);
+	if (explicitPath) {
+		return require(explicitPath);
+	}
+	const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
+	const nodeTypesPath = require.resolve(modulePath);
+	return require(nodeTypesPath);
+}
+
 function loadGrammar(grammar: string): GrammarMap {
 	const cached = grammarCache.get(grammar);
 	if (cached) return cached;
 
-	// Resolve node-types.json directly from tree-sitter-{grammar}
-	const nodeTypesPath = require.resolve(
-		`tree-sitter-${grammar}/src/node-types.json`,
-	);
-	const entries: RawNodeEntry[] = require(nodeTypesPath);
+	let entries: RawNodeEntry[];
+
+	const explicitPath = explicitPaths.get(grammar);
+	if (explicitPath) {
+		entries = require(explicitPath);
+	} else {
+		const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
+		const nodeTypesPath = require.resolve(modulePath);
+		entries = require(nodeTypesPath);
+	}
 
 	// Convert array to map keyed by type name
 	const parsed: GrammarMap = {};
@@ -118,7 +152,7 @@ export function listNodeKinds(grammar: string): string[] {
 		// Skip abstract types prefixed with _
 		if (key.startsWith('_')) return false;
 
-		const entry = grammarMap[key];
+		const entry = grammarMap[key]!;
 
 		// Skip entries that only have subtypes (no fields, no children)
 		const hasFields =
@@ -139,7 +173,7 @@ export function listLeafKinds(grammar: string): string[] {
 	return Object.keys(grammarMap).filter((key) => {
 		if (key.startsWith('_')) return false;
 
-		const entry = grammarMap[key];
+		const entry = grammarMap[key]!;
 		if (!entry.named) return false;
 		if (entry.subtypes) return false;
 

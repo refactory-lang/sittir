@@ -1,0 +1,78 @@
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ForStatement } from '../types.js';
+
+type Child = BaseBuilder<{ kind: string }>;
+
+class ForBuilder extends BaseBuilder<ForStatement> {
+  private _body: Child;
+  private _condition: Child[] = [];
+  private _increment?: Child;
+  private _initializer!: Child;
+
+  constructor(body: Child) {
+    super();
+    this._body = body;
+  }
+
+  condition(value: Child[]): this {
+    this._condition = value;
+    return this;
+  }
+
+  increment(value: Child): this {
+    this._increment = value;
+    return this;
+  }
+
+  initializer(value: Child): this {
+    this._initializer = value;
+    return this;
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('for');
+    if (this._condition.length > 0) parts.push(this.renderChildren(this._condition, ', ', ctx));
+    if (this._increment) parts.push(this.renderChild(this._increment, ctx));
+    if (this._initializer) parts.push(this.renderChild(this._initializer, ctx));
+    if (this._body) {
+      parts.push('{');
+      parts.push(this.renderChild(this._body, ctx));
+      parts.push('}');
+    }
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): ForStatement {
+    return {
+      kind: 'for_statement',
+      body: this.renderChild(this._body, ctx),
+      condition: this._condition.map(c => this.renderChild(c, ctx)),
+      increment: this._increment ? this.renderChild(this._increment, ctx) : undefined,
+      initializer: this._initializer ? this.renderChild(this._initializer, ctx) : undefined,
+    } as unknown as ForStatement;
+  }
+
+  override get nodeKind(): string { return 'for_statement'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'for' });
+    for (const child of this._condition) {
+      parts.push({ kind: 'builder', builder: child, fieldName: 'condition' });
+    }
+    if (this._increment) parts.push({ kind: 'builder', builder: this._increment, fieldName: 'increment' });
+    if (this._initializer) parts.push({ kind: 'builder', builder: this._initializer, fieldName: 'initializer' });
+    if (this._body) {
+      parts.push({ kind: 'token', text: '{', type: '{' });
+      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+      parts.push({ kind: 'token', text: '}', type: '}' });
+    }
+    return parts;
+  }
+}
+
+export function for_(body: Child): ForBuilder {
+  return new ForBuilder(body);
+}

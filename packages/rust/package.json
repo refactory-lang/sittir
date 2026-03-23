@@ -29,6 +29,7 @@
     "dist"
   ],
   "scripts": {
+    "generate": "node ../codegen/src/cli.ts --grammar rust --all --output src/",
     "build": "tsgo -p tsconfig.build.json",
     "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
     "dev": "tsgo -p tsconfig.build.json --watch",

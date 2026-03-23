@@ -108,34 +108,42 @@ function generateRenderSilentBody(node: NodeMeta): string[] {
     const fn = toFieldName(field.name);
     const priv = `this._${fn}`;
 
-    if (field.name === 'body') {
+    // For fields with special rendering, check multiple first and fall through
+    // to the generic multiple handler if needed.
+    if (field.name === 'body' && !field.multiple) {
       lines.push(`    if (${priv}) {`);
       lines.push(`      parts.push('{');`);
       lines.push(`      parts.push(this.renderChild(${priv}, ctx));`);
       lines.push(`      parts.push('}');`);
       lines.push('    }');
-    } else if (field.name === 'parameters') {
+    } else if (field.name === 'body' && field.multiple) {
+      lines.push(`    if (${priv}.length > 0) {`);
+      lines.push(`      parts.push('{');`);
+      lines.push(`      parts.push(this.renderChildren(${priv}, '\\n', ctx));`);
+      lines.push(`      parts.push('}');`);
+      lines.push('    }');
+    } else if (field.name === 'parameters' && !field.multiple) {
       lines.push(`    parts.push('(' + (${priv} ? this.renderChild(${priv}, ctx) : '') + ')');`);
-    } else if (field.name === 'return_type') {
+    } else if (field.name === 'return_type' && !field.multiple) {
       lines.push(`    if (${priv}) parts.push('->', this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'type_parameters') {
+    } else if (field.name === 'type_parameters' && !field.multiple) {
       lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'condition') {
+    } else if (field.name === 'condition' && !field.multiple) {
       lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'consequence') {
+    } else if (field.name === 'consequence' && !field.multiple) {
       lines.push(`    if (${priv}) {`);
       lines.push(`      parts.push('{', this.renderChild(${priv}, ctx), '}');`);
       lines.push('    }');
-    } else if (field.name === 'alternative') {
+    } else if (field.name === 'alternative' && !field.multiple) {
       lines.push(`    if (${priv}) {`);
       lines.push(`      const alt = this.renderChild(${priv}, ctx);`);
       lines.push(`      parts.push(alt.startsWith('if ') ? 'else ' + alt : 'else { ' + alt + ' }');`);
       lines.push('    }');
-    } else if (['left', 'right', 'operator', 'value', 'argument'].includes(field.name)) {
+    } else if (['left', 'right', 'operator', 'value', 'argument'].includes(field.name) && !field.multiple) {
       lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
-    } else if (field.name === 'trait') {
+    } else if (field.name === 'trait' && !field.multiple) {
       lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx), 'for');`);
-    } else if (field.name === 'macro') {
+    } else if (field.name === 'macro' && !field.multiple) {
       lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx) + '!');`);
     } else if (field.multiple) {
       lines.push(`    if (${priv}.length > 0) parts.push(this.renderChildren(${priv}, ', ', ctx));`);
@@ -200,10 +208,18 @@ function generateToCSTChildrenBody(node: NodeMeta): string[] {
     const priv = `this._${fn}`;
     const fieldNameStr = `'${fn}'`;
 
-    if (field.name === 'body') {
+    if (field.name === 'body' && !field.multiple) {
       lines.push(`    if (${priv}) {`);
       lines.push(`      parts.push({ kind: 'token', text: '{', type: '{' });`);
       lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+      lines.push(`      parts.push({ kind: 'token', text: '}', type: '}' });`);
+      lines.push('    }');
+    } else if (field.name === 'body' && field.multiple) {
+      lines.push(`    if (${priv}.length > 0) {`);
+      lines.push(`      parts.push({ kind: 'token', text: '{', type: '{' });`);
+      lines.push(`      for (const child of ${priv}) {`);
+      lines.push(`        parts.push({ kind: 'builder', builder: child, fieldName: ${fieldNameStr} });`);
+      lines.push('      }');
       lines.push(`      parts.push({ kind: 'token', text: '}', type: '}' });`);
       lines.push('    }');
     } else if (field.name === 'parameters') {
@@ -373,6 +389,8 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   lines.push(`    return {`);
   lines.push(`      kind: '${kind}',`);
   for (const field of node.fields) {
+    // Skip fields named "kind" — would collide with the kind discriminant above
+    if (field.name === 'kind') continue;
     const fieldName = toFieldName(field.name);
     const isCtorField = constructorParam?.source === 'field' && constructorParam.name === field.name;
     if (field.multiple) {

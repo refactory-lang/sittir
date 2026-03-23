@@ -1,0 +1,48 @@
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { NestedTypeIdentifier } from '../types.js';
+
+type Child = BaseBuilder<{ kind: string }>;
+
+class NestedTypeIdentifierBuilder extends BaseBuilder<NestedTypeIdentifier> {
+  private _module!: Child;
+  private _name: Child;
+
+  constructor(name: Child) {
+    super();
+    this._name = name;
+  }
+
+  module(value: Child): this {
+    this._module = value;
+    return this;
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._module) parts.push(this.renderChild(this._module, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): NestedTypeIdentifier {
+    return {
+      kind: 'nested_type_identifier',
+      module: this._module ? this.renderChild(this._module, ctx) : undefined,
+      name: this.renderChild(this._name, ctx),
+    } as unknown as NestedTypeIdentifier;
+  }
+
+  override get nodeKind(): string { return 'nested_type_identifier'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._module) parts.push({ kind: 'builder', builder: this._module, fieldName: 'module' });
+    return parts;
+  }
+}
+
+export function nested_type_identifier(name: Child): NestedTypeIdentifierBuilder {
+  return new NestedTypeIdentifierBuilder(name);
+}

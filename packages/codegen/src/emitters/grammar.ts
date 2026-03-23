@@ -3,10 +3,8 @@
  * derived from tree-sitter's node-types.json.
  */
 
-import { createRequire } from 'node:module';
 import { toGrammarTypeName } from '../naming.ts';
-
-const require = createRequire(import.meta.url);
+import { loadRawEntries } from '../grammar-reader.ts';
 
 export interface EmitGrammarConfig {
   grammar: string;
@@ -26,10 +24,7 @@ export function emitGrammar(config: EmitGrammarConfig): string {
   const grammarPrefix = grammarTypeName.slice(0, -5);
   const grammarAlias = `${grammarPrefix}Grammar`;
 
-  const nodeTypesPath = require.resolve(
-    `tree-sitter-${grammar}/src/node-types.json`,
-  );
-  const entries: RawNodeEntry[] = require(nodeTypesPath);
+  const entries: RawNodeEntry[] = loadRawEntries(grammar);
 
   const lines: string[] = [];
 
