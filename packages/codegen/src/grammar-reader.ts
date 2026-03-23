@@ -123,6 +123,64 @@ export function readGrammarRule(grammar: string, nodeKind: string): GrammarRule 
 	return gj.rules[nodeKind] ?? null;
 }
 
+/**
+ * Collect non-optional STRING tokens from a grammar rule.
+ * These are the fixed keywords/punctuation that always appear in the rendered output.
+ */
+export function collectRequiredTokens(grammar: string, nodeKind: string): string[] {
+	const rule = readGrammarRule(grammar, nodeKind);
+	if (!rule) return [];
+	const tokens: string[] = [];
+	walkForTokens(rule, false, tokens);
+	return tokens;
+}
+
+function walkForTokens(rule: GrammarRule, optional: boolean, tokens: string[]): void {
+	switch (rule.type) {
+		case 'SEQ':
+			for (const member of rule.members) {
+				walkForTokens(member, optional, tokens);
+			}
+			break;
+		case 'STRING':
+			if (!optional) tokens.push(rule.value);
+			break;
+		case 'CHOICE': {
+			const hasBlank = rule.members.some(m => m.type === 'BLANK');
+			if (hasBlank) {
+				// Everything inside is optional
+				for (const member of rule.members) {
+					walkForTokens(member, true, tokens);
+				}
+			} else {
+				// Non-optional CHOICE — use first variant
+				walkForTokens(rule.members[0]!, optional, tokens);
+			}
+			break;
+		}
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		case 'REPEAT':
+			walkForTokens(rule.content, true, tokens);
+			break;
+		case 'REPEAT1':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		case 'ALIAS':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		default:
+			break;
+	}
+}
+
 /** Load raw node-types.json entries for the grammar emitter. */
 export function loadRawEntries(grammar: string): RawNodeEntry[] {
 	const explicitPath = explicitPaths.get(grammar);

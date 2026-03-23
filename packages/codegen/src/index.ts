@@ -26,7 +26,7 @@ import { emitTest } from './emitters/test.ts';
 import { emitConfig } from './emitters/config.ts';
 import { emitIndex } from './emitters/index-file.ts';
 
-export { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, loadRawEntries, registerGrammarPath } from './grammar-reader.ts';
+export { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens } from './grammar-reader.ts';
 
 export interface CodegenConfig {
 	/** Grammar language (e.g., 'rust', 'typescript', 'python') */

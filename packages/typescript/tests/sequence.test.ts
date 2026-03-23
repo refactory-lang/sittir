@@ -2,15 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { ir } from '../src/builder.js';
 
 describe('sequence_expression', () => {
-  it('should create a sequence_expression node via builder', () => {
+  it('should build with correct kind', () => {
     const builder = ir.sequence([ir.identifier('test')]);
     const node = builder.build();
     expect(node.kind).toBe('sequence_expression');
   });
 
-  it('should render without throwing', () => {
+  it('should produce a valid CST node', () => {
     const builder = ir.sequence([ir.identifier('test')]);
-    const source = builder.renderImpl();
-    expect(typeof source).toBe('string');
+    const cst = builder.toCST();
+    expect(cst.type).toBe('sequence_expression');
+    expect(cst.isNamed).toBe(true);
+    expect(cst.startIndex).toBe(0);
+    expect(cst.endIndex).toBe(cst.text.length);
+  });
+
+  it('should pass fast validation', () => {
+    const builder = ir.sequence([ir.identifier('test')]);
+    expect(() => builder.render('fast')).not.toThrow();
   });
 });

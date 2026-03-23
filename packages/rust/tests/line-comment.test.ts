@@ -2,15 +2,29 @@ import { describe, it, expect } from 'vitest';
 import { ir } from '../src/builder.js';
 
 describe('line_comment', () => {
-  it('should create a line_comment node via builder', () => {
+  it('should build with correct kind', () => {
     const builder = ir.line_comment();
     const node = builder.build();
     expect(node.kind).toBe('line_comment');
   });
 
-  it('should render without throwing', () => {
+  it('should render required grammar tokens', () => {
     const builder = ir.line_comment();
     const source = builder.renderImpl();
-    expect(typeof source).toBe('string');
+    expect(source).toContain('//');
+  });
+
+  it('should produce a valid CST node', () => {
+    const builder = ir.line_comment();
+    const cst = builder.toCST();
+    expect(cst.type).toBe('line_comment');
+    expect(cst.isNamed).toBe(true);
+    expect(cst.startIndex).toBe(0);
+    expect(cst.endIndex).toBe(cst.text.length);
+  });
+
+  it('should pass fast validation', () => {
+    const builder = ir.line_comment();
+    expect(() => builder.render('fast')).not.toThrow();
   });
 });

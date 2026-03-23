@@ -2,15 +2,29 @@ import { describe, it, expect } from 'vitest';
 import { ir } from '../src/builder.js';
 
 describe('optional_parameter', () => {
-  it('should create a optional_parameter node via builder', () => {
+  it('should build with correct kind', () => {
     const builder = ir.optional_parameter();
     const node = builder.build();
     expect(node.kind).toBe('optional_parameter');
   });
 
-  it('should render without throwing', () => {
+  it('should render required grammar tokens', () => {
     const builder = ir.optional_parameter();
     const source = builder.renderImpl();
-    expect(typeof source).toBe('string');
+    expect(source).toContain('?');
+  });
+
+  it('should produce a valid CST node', () => {
+    const builder = ir.optional_parameter();
+    const cst = builder.toCST();
+    expect(cst.type).toBe('optional_parameter');
+    expect(cst.isNamed).toBe(true);
+    expect(cst.startIndex).toBe(0);
+    expect(cst.endIndex).toBe(cst.text.length);
+  });
+
+  it('should pass fast validation', () => {
+    const builder = ir.optional_parameter();
+    expect(() => builder.render('fast')).not.toThrow();
   });
 });
