@@ -4,27 +4,27 @@ import type { Type, TypeIdentifier, TypeItem, TypeParameters, VisibilityModifier
 
 
 class TypeBuilder extends Builder<TypeItem> {
-  private _name: Builder;
-  private _type!: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+  private _name: Builder<TypeIdentifier>;
+  private _type!: Builder<Type>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<VisibilityModifier | WhereClause>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier | WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -46,11 +46,11 @@ class TypeBuilder extends Builder<TypeItem> {
   build(ctx?: RenderContext): TypeItem {
     return {
       kind: 'type_item',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TypeItem;
+      name: this._name.build(ctx),
+      type: this._type?.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as TypeItem;
   }
 
   override get nodeKind(): string { return 'type_item'; }
@@ -72,7 +72,7 @@ class TypeBuilder extends Builder<TypeItem> {
 
 export type { TypeBuilder };
 
-export function type_(name: Builder): TypeBuilder {
+export function type_(name: Builder<TypeIdentifier>): TypeBuilder {
   return new TypeBuilder(name);
 }
 

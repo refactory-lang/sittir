@@ -4,15 +4,15 @@ import type { AbstractType, BoundedType, FunctionType, GenericType, RemovedTrait
 
 
 class AbstractTypeBuilder extends Builder<AbstractType> {
-  private _trait: Builder;
-  private _children: Builder[] = [];
+  private _trait: Builder<BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
+  private _children: Builder<TypeParameters>[] = [];
 
-  constructor(trait: Builder) {
+  constructor(trait: Builder<BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>) {
     super();
     this._trait = trait;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<TypeParameters>[]): this {
     this._children = value;
     return this;
   }
@@ -28,9 +28,9 @@ class AbstractTypeBuilder extends Builder<AbstractType> {
   build(ctx?: RenderContext): AbstractType {
     return {
       kind: 'abstract_type',
-      trait: this.renderChild(this._trait, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as AbstractType;
+      trait: this._trait.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as AbstractType;
   }
 
   override get nodeKind(): string { return 'abstract_type'; }
@@ -48,7 +48,7 @@ class AbstractTypeBuilder extends Builder<AbstractType> {
 
 export type { AbstractTypeBuilder };
 
-export function abstract_type(trait: Builder): AbstractTypeBuilder {
+export function abstract_type(trait: Builder<BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>): AbstractTypeBuilder {
   return new AbstractTypeBuilder(trait);
 }
 

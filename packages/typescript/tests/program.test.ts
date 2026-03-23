@@ -3,13 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('program', () => {
   it('should build with correct kind', () => {
-    const builder = ir.file();
+    const builder = ir.program();
     const node = builder.build();
     expect(node.kind).toBe('program');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.file();
+    const builder = ir.program();
     const cst = builder.toCST();
     expect(cst.type).toBe('program');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +18,7 @@ describe('program', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.file();
+    const builder = ir.program();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -4,17 +4,17 @@ import type { AttributeItem, OrderedFieldDeclarationList, Type, VisibilityModifi
 
 
 class OrderedFieldDeclarationListBuilder extends Builder<OrderedFieldDeclarationList> {
-  private _type: Builder[] = [];
-  private _children: Builder[] = [];
+  private _type: Builder<Type>[] = [];
+  private _children: Builder<AttributeItem | VisibilityModifier>[] = [];
 
   constructor() { super(); }
 
-  type(...value: Builder[]): this {
+  type(...value: Builder<Type>[]): this {
     this._type = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<AttributeItem | VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -37,9 +37,9 @@ class OrderedFieldDeclarationListBuilder extends Builder<OrderedFieldDeclaration
   build(ctx?: RenderContext): OrderedFieldDeclarationList {
     return {
       kind: 'ordered_field_declaration_list',
-      type: this._type.map(c => this.renderChild(c, ctx)),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as OrderedFieldDeclarationList;
+      type: this._type.map(c => c.build(ctx)),
+      children: this._children.map(c => c.build(ctx)),
+    } as OrderedFieldDeclarationList;
   }
 
   override get nodeKind(): string { return 'ordered_field_declaration_list'; }

@@ -15,18 +15,18 @@
  *   sittir --grammar rust --all --output src/
  */
 
-import { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, listSupertypes } from './grammar-reader.ts';
-import { resolveFileNames, toShortName, toFactoryName } from './naming.ts';
+import { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, listSupertypes, listEnumValues } from './grammar-reader.ts';
+import { resolveFileNames, toIrKey, toFactoryName } from './naming.ts';
 import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
 import { emitBuilder } from './emitters/builder.ts';
 import { emitFluent } from './emitters/fluent.ts';
 import { emitConsts } from './emitters/consts.ts';
-import { emitTest } from './emitters/test.ts';
+import { emitTest, emitLeafTests } from './emitters/test.ts';
 import { emitConfig } from './emitters/config.ts';
 import { emitIndex } from './emitters/index-file.ts';
 
-export { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes } from './grammar-reader.ts';
+export { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listEnumValues } from './grammar-reader.ts';
 
 export interface CodegenConfig {
 	/** Grammar language (e.g., 'rust', 'typescript', 'python') */
@@ -39,6 +39,8 @@ export interface CodegenConfig {
 	aliases?: Record<string, Record<string, string>>;
 	/** Fields that should be optional in builder config */
 	defaultableFields?: string[];
+	/** Import path for the builder module in generated tests (default: '../src/builder.js') */
+	testSourceImportPath?: string;
 }
 
 export interface GeneratedFiles {
@@ -52,6 +54,8 @@ export interface GeneratedFiles {
 	builder: string;
 	/** node kind -> test .ts source */
 	tests: Map<string, string>;
+	/** leaf-nodes.test.ts — leaf builder regression tests */
+	leafTests: string;
 	/** vitest.config.ts source */
 	config: string;
 	/** consts.ts — discoverable arrays and maps */
@@ -74,6 +78,11 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 	const operatorTokens = listOperatorTokens(config.grammar);
 	const supertypes = listSupertypes(config.grammar);
 
+	// Discover enum-like leaf kinds (nodes with a fixed set of string values)
+	const enumKinds = leafKinds
+		.map(kind => ({ kind, values: listEnumValues(config.grammar, kind) }))
+		.filter(ek => ek.values.length > 0);
+
 	const nodes = nodeKinds.map((kind) =>
 		readGrammarNode(config.grammar, kind),
 	);
@@ -81,19 +90,16 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 	const fileNames = resolveFileNames(nodeKinds);
 
 	// Compute ir namespace property keys (mirrors fluent emitter logic)
-	const shortNameCounts = new Map<string, number>();
+	const irKeyCounts = new Map<string, number>();
 	for (const kind of nodeKinds) {
-		const short = toShortName(kind);
-		shortNameCounts.set(short, (shortNameCounts.get(short) ?? 0) + 1);
+		const key = toIrKey(kind);
+		irKeyCounts.set(key, (irKeyCounts.get(key) ?? 0) + 1);
 	}
 	const irPropertyKeys = new Map<string, string>();
 	for (const kind of nodeKinds) {
-		const short = toShortName(kind);
-		const isDuplicate = (shortNameCounts.get(short) ?? 0) > 1;
-		const key = isDuplicate
-			? toFactoryName(kind)
-			: short.endsWith('_') ? short.slice(0, -1) : short;
-		irPropertyKeys.set(kind, key);
+		const key = toIrKey(kind);
+		const isDuplicate = (irKeyCounts.get(key) ?? 0) > 1;
+		irPropertyKeys.set(kind, isDuplicate ? toFactoryName(kind) : key);
 	}
 
 	const builders = new Map<string, string>();
@@ -106,6 +112,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 			node,
 			fileName: fileNames.get(node.kind),
 			irPropertyKey: irPropertyKeys.get(node.kind),
+			sourceImportPath: config.testSourceImportPath,
 		}));
 	}
 
@@ -114,8 +121,9 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 		types: emitTypes({ grammar: config.grammar, nodeKinds, leafKinds, supertypes }),
 		builders,
 		builder: emitFluent({ grammar: config.grammar, nodeKinds, leafKinds, operatorContexts, nodes, supertypes }),
-		consts: emitConsts({ grammar: config.grammar, nodeKinds, leafKinds, keywords, operators: operatorTokens, nodes }),
+		consts: emitConsts({ grammar: config.grammar, nodeKinds, leafKinds, keywords, operators: operatorTokens, nodes, enumKinds }),
 		tests,
+		leafTests: emitLeafTests({ leafKinds, nodeKinds, sourceImportPath: config.testSourceImportPath }),
 		config: emitConfig({ grammar: config.grammar }),
 		index: emitIndex({ grammar: config.grammar, nodeKinds }),
 	};

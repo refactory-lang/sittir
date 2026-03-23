@@ -4,15 +4,15 @@ import type { Arguments, ArrayExpression, AssignmentExpression, AsyncBlock, Awai
 
 
 class CallBuilder extends Builder<CallExpression> {
-  private _arguments!: Builder;
-  private _function: Builder;
+  private _arguments!: Builder<Arguments>;
+  private _function: Builder<Literal | ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression>;
 
-  constructor(function_: Builder) {
+  constructor(function_: Builder<Literal | ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression>) {
     super();
     this._function = function_;
   }
 
-  arguments(value: Builder): this {
+  arguments(value: Builder<Arguments>): this {
     this._arguments = value;
     return this;
   }
@@ -27,9 +27,9 @@ class CallBuilder extends Builder<CallExpression> {
   build(ctx?: RenderContext): CallExpression {
     return {
       kind: 'call_expression',
-      arguments: this._arguments ? this.renderChild(this._arguments, ctx) : undefined,
-      function: this.renderChild(this._function, ctx),
-    } as unknown as CallExpression;
+      arguments: this._arguments?.build(ctx),
+      function: this._function.build(ctx),
+    } as CallExpression;
   }
 
   override get nodeKind(): string { return 'call_expression'; }
@@ -44,7 +44,7 @@ class CallBuilder extends Builder<CallExpression> {
 
 export type { CallBuilder };
 
-export function call(function_: Builder): CallBuilder {
+export function call(function_: Builder<Literal | ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression>): CallBuilder {
   return new CallBuilder(function_);
 }
 

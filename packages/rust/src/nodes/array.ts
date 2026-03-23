@@ -4,17 +4,17 @@ import type { ArrayExpression, AttributeItem, Expression } from '../types.js';
 
 
 class ArrayBuilder extends Builder<ArrayExpression> {
-  private _length?: Builder;
-  private _children: Builder[] = [];
+  private _length?: Builder<Expression>;
+  private _children: Builder<Expression | AttributeItem>[] = [];
 
   constructor() { super(); }
 
-  length(value: Builder): this {
+  length(value: Builder<Expression>): this {
     this._length = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Expression | AttributeItem>[]): this {
     this._children = value;
     return this;
   }
@@ -32,9 +32,9 @@ class ArrayBuilder extends Builder<ArrayExpression> {
   build(ctx?: RenderContext): ArrayExpression {
     return {
       kind: 'array_expression',
-      length: this._length ? this.renderChild(this._length, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ArrayExpression;
+      length: this._length?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as ArrayExpression;
   }
 
   override get nodeKind(): string { return 'array_expression'; }

@@ -6,6 +6,7 @@ describe('mod_item', () => {
     const builder = ir.mod(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('mod_item');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {

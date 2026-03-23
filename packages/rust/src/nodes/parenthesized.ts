@@ -4,9 +4,9 @@ import type { Expression, ParenthesizedExpression } from '../types.js';
 
 
 class ParenthesizedBuilder extends Builder<ParenthesizedExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -22,8 +22,8 @@ class ParenthesizedBuilder extends Builder<ParenthesizedExpression> {
   build(ctx?: RenderContext): ParenthesizedExpression {
     return {
       kind: 'parenthesized_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ParenthesizedExpression;
+      children: this._children[0]?.build(ctx),
+    } as ParenthesizedExpression;
   }
 
   override get nodeKind(): string { return 'parenthesized_expression'; }
@@ -41,7 +41,7 @@ class ParenthesizedBuilder extends Builder<ParenthesizedExpression> {
 
 export type { ParenthesizedBuilder };
 
-export function parenthesized(children: Builder): ParenthesizedBuilder {
+export function parenthesized(children: Builder<Expression>): ParenthesizedBuilder {
   return new ParenthesizedBuilder(children);
 }
 

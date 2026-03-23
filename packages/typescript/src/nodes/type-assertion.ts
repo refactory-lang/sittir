@@ -4,9 +4,9 @@ import type { Expression, TypeArguments, TypeAssertion } from '../types.js';
 
 
 class TypeAssertionBuilder extends Builder<TypeAssertion> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression | TypeArguments>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Expression | TypeArguments>[]) {
     super();
     this._children = children;
   }
@@ -21,8 +21,8 @@ class TypeAssertionBuilder extends Builder<TypeAssertion> {
   build(ctx?: RenderContext): TypeAssertion {
     return {
       kind: 'type_assertion',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TypeAssertion;
+      children: this._children.map(c => c.build(ctx)),
+    } as TypeAssertion;
   }
 
   override get nodeKind(): string { return 'type_assertion'; }
@@ -37,7 +37,7 @@ class TypeAssertionBuilder extends Builder<TypeAssertion> {
 
 export type { TypeAssertionBuilder };
 
-export function type_assertion(...children: Builder[]): TypeAssertionBuilder {
+export function type_assertion(...children: Builder<Expression | TypeArguments>[]): TypeAssertionBuilder {
   return new TypeAssertionBuilder(...children);
 }
 

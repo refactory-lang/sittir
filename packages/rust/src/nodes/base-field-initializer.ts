@@ -4,9 +4,9 @@ import type { BaseFieldInitializer, Expression } from '../types.js';
 
 
 class BaseFieldInitializerBuilder extends Builder<BaseFieldInitializer> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class BaseFieldInitializerBuilder extends Builder<BaseFieldInitializer> {
   build(ctx?: RenderContext): BaseFieldInitializer {
     return {
       kind: 'base_field_initializer',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as BaseFieldInitializer;
+      children: this._children[0]?.build(ctx),
+    } as BaseFieldInitializer;
   }
 
   override get nodeKind(): string { return 'base_field_initializer'; }
@@ -39,7 +39,7 @@ class BaseFieldInitializerBuilder extends Builder<BaseFieldInitializer> {
 
 export type { BaseFieldInitializerBuilder };
 
-export function base_field_initializer(children: Builder): BaseFieldInitializerBuilder {
+export function base_field_initializer(children: Builder<Expression>): BaseFieldInitializerBuilder {
   return new BaseFieldInitializerBuilder(children);
 }
 

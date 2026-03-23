@@ -4,21 +4,21 @@ import type { Crate, ExternCrateDeclaration, Identifier, VisibilityModifier } fr
 
 
 class ExternCrateBuilder extends Builder<ExternCrateDeclaration> {
-  private _alias?: Builder;
-  private _name: Builder;
-  private _children: Builder[] = [];
+  private _alias?: Builder<Identifier>;
+  private _name: Builder<Identifier>;
+  private _children: Builder<Crate | VisibilityModifier>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  alias(value: Builder): this {
+  alias(value: Builder<Identifier>): this {
     this._alias = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Crate | VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -40,10 +40,10 @@ class ExternCrateBuilder extends Builder<ExternCrateDeclaration> {
   build(ctx?: RenderContext): ExternCrateDeclaration {
     return {
       kind: 'extern_crate_declaration',
-      alias: this._alias ? this.renderChild(this._alias, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ExternCrateDeclaration;
+      alias: this._alias?.build(ctx),
+      name: this._name.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as ExternCrateDeclaration;
   }
 
   override get nodeKind(): string { return 'extern_crate_declaration'; }
@@ -65,7 +65,7 @@ class ExternCrateBuilder extends Builder<ExternCrateDeclaration> {
 
 export type { ExternCrateBuilder };
 
-export function extern_crate(name: Builder): ExternCrateBuilder {
+export function extern_crate(name: Builder<Identifier>): ExternCrateBuilder {
   return new ExternCrateBuilder(name);
 }
 

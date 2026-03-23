@@ -4,11 +4,11 @@ import type { ExternModifier, FunctionModifiers } from '../types.js';
 
 
 class FunctionModifiersBuilder extends Builder<FunctionModifiers> {
-  private _children: Builder[] = [];
+  private _children: Builder<ExternModifier>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<ExternModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -22,8 +22,8 @@ class FunctionModifiersBuilder extends Builder<FunctionModifiers> {
   build(ctx?: RenderContext): FunctionModifiers {
     return {
       kind: 'function_modifiers',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FunctionModifiers;
+      children: this._children.map(c => c.build(ctx)),
+    } as FunctionModifiers;
   }
 
   override get nodeKind(): string { return 'function_modifiers'; }

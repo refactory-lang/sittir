@@ -4,11 +4,11 @@ import type { ContinueExpression, Label } from '../types.js';
 
 
 class ContinueBuilder extends Builder<ContinueExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Label>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Label>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class ContinueBuilder extends Builder<ContinueExpression> {
   build(ctx?: RenderContext): ContinueExpression {
     return {
       kind: 'continue_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ContinueExpression;
+      children: this._children[0]?.build(ctx),
+    } as ContinueExpression;
   }
 
   override get nodeKind(): string { return 'continue_expression'; }

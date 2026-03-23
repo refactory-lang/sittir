@@ -4,9 +4,9 @@ import type { Attribute, AttributeItem } from '../types.js';
 
 
 class AttributeBuilder extends Builder<AttributeItem> {
-  private _children: Builder[] = [];
+  private _children: Builder<Attribute>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Attribute>) {
     super();
     this._children = [children];
   }
@@ -23,8 +23,8 @@ class AttributeBuilder extends Builder<AttributeItem> {
   build(ctx?: RenderContext): AttributeItem {
     return {
       kind: 'attribute_item',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as AttributeItem;
+      children: this._children[0]?.build(ctx),
+    } as AttributeItem;
   }
 
   override get nodeKind(): string { return 'attribute_item'; }
@@ -43,7 +43,7 @@ class AttributeBuilder extends Builder<AttributeItem> {
 
 export type { AttributeBuilder };
 
-export function attribute(children: Builder): AttributeBuilder {
+export function attribute(children: Builder<Attribute>): AttributeBuilder {
   return new AttributeBuilder(children);
 }
 

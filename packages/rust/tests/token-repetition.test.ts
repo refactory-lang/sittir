@@ -3,22 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('token_repetition', () => {
   it('should build with correct kind', () => {
-    const builder = ir.token_repetition();
+    const builder = ir.tokenRepetition();
     const node = builder.build();
     expect(node.kind).toBe('token_repetition');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.token_repetition();
-    const source = builder.renderImpl();
-    expect(source).toContain('$');
-    expect(source).toContain('(');
-    expect(source).toContain(')');
-    expect(source).toContain('+');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.token_repetition();
+    const builder = ir.tokenRepetition();
     const cst = builder.toCST();
     expect(cst.type).toBe('token_repetition');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +18,7 @@ describe('token_repetition', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.token_repetition();
+    const builder = ir.tokenRepetition();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

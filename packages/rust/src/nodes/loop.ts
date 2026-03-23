@@ -5,14 +5,14 @@ import type { Label, LoopExpression } from '../types.js';
 
 class LoopBuilder extends Builder<LoopExpression> {
   private _body: Builder;
-  private _children: Builder[] = [];
+  private _children: Builder<Label>[] = [];
 
   constructor(body: Builder) {
     super();
     this._body = body;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Label>[]): this {
     this._children = value;
     return this;
   }
@@ -28,9 +28,9 @@ class LoopBuilder extends Builder<LoopExpression> {
   build(ctx?: RenderContext): LoopExpression {
     return {
       kind: 'loop_expression',
-      body: this.renderChild(this._body, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as LoopExpression;
+      body: this._body.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as LoopExpression;
   }
 
   override get nodeKind(): string { return 'loop_expression'; }

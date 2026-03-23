@@ -3,19 +3,22 @@ import { ir } from '../src/builder.js';
 
 describe('captured_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.captured_pattern(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.capturedPattern(ir.identifier('test'), ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('captured_pattern');
+    expect(Array.isArray((node as any).children)).toBe(true);
+    expect((node as any).children.length).toBeGreaterThan(0);
+    expect((node as any).children[0]).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.captured_pattern(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.capturedPattern(ir.identifier('test'), ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('@');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.captured_pattern(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.capturedPattern(ir.identifier('test'), ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('captured_pattern');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +27,7 @@ describe('captured_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.captured_pattern(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.capturedPattern(ir.identifier('test'), ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

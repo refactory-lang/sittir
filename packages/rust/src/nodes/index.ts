@@ -4,9 +4,9 @@ import type { Expression, IndexExpression } from '../types.js';
 
 
 class IndexBuilder extends Builder<IndexExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Expression>[]) {
     super();
     this._children = children;
   }
@@ -22,8 +22,8 @@ class IndexBuilder extends Builder<IndexExpression> {
   build(ctx?: RenderContext): IndexExpression {
     return {
       kind: 'index_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as IndexExpression;
+      children: this._children.map(c => c.build(ctx)),
+    } as IndexExpression;
   }
 
   override get nodeKind(): string { return 'index_expression'; }
@@ -41,7 +41,7 @@ class IndexBuilder extends Builder<IndexExpression> {
 
 export type { IndexBuilder };
 
-export function index(...children: Builder[]): IndexBuilder {
+export function index(...children: Builder<Expression>[]): IndexBuilder {
   return new IndexBuilder(...children);
 }
 

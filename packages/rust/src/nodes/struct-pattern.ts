@@ -4,15 +4,15 @@ import type { FieldPattern, RemainingFieldPattern, ScopedTypeIdentifier, StructP
 
 
 class StructPatternBuilder extends Builder<StructPattern> {
-  private _type: Builder;
-  private _children: Builder[] = [];
+  private _type: Builder<ScopedTypeIdentifier | TypeIdentifier>;
+  private _children: Builder<FieldPattern | RemainingFieldPattern>[] = [];
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<ScopedTypeIdentifier | TypeIdentifier>) {
     super();
     this._type = type_;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<FieldPattern | RemainingFieldPattern>[]): this {
     this._children = value;
     return this;
   }
@@ -34,9 +34,9 @@ class StructPatternBuilder extends Builder<StructPattern> {
   build(ctx?: RenderContext): StructPattern {
     return {
       kind: 'struct_pattern',
-      type: this.renderChild(this._type, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as StructPattern;
+      type: this._type.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as StructPattern;
   }
 
   override get nodeKind(): string { return 'struct_pattern'; }
@@ -56,7 +56,7 @@ class StructPatternBuilder extends Builder<StructPattern> {
 
 export type { StructPatternBuilder };
 
-export function struct_pattern(type_: Builder): StructPatternBuilder {
+export function struct_pattern(type_: Builder<ScopedTypeIdentifier | TypeIdentifier>): StructPatternBuilder {
   return new StructPatternBuilder(type_);
 }
 

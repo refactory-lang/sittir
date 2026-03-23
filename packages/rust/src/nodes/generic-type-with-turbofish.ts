@@ -4,15 +4,15 @@ import type { GenericTypeWithTurbofish, ScopedIdentifier, TypeArguments, TypeIde
 
 
 class GenericTypeWithTurbofishBuilder extends Builder<GenericTypeWithTurbofish> {
-  private _type: Builder;
-  private _typeArguments!: Builder;
+  private _type: Builder<ScopedIdentifier | TypeIdentifier>;
+  private _typeArguments!: Builder<TypeArguments>;
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<ScopedIdentifier | TypeIdentifier>) {
     super();
     this._type = type_;
   }
 
-  typeArguments(value: Builder): this {
+  typeArguments(value: Builder<TypeArguments>): this {
     this._typeArguments = value;
     return this;
   }
@@ -28,9 +28,9 @@ class GenericTypeWithTurbofishBuilder extends Builder<GenericTypeWithTurbofish> 
   build(ctx?: RenderContext): GenericTypeWithTurbofish {
     return {
       kind: 'generic_type_with_turbofish',
-      type: this.renderChild(this._type, ctx),
-      typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
-    } as unknown as GenericTypeWithTurbofish;
+      type: this._type.build(ctx),
+      typeArguments: this._typeArguments?.build(ctx),
+    } as GenericTypeWithTurbofish;
   }
 
   override get nodeKind(): string { return 'generic_type_with_turbofish'; }
@@ -46,7 +46,7 @@ class GenericTypeWithTurbofishBuilder extends Builder<GenericTypeWithTurbofish> 
 
 export type { GenericTypeWithTurbofishBuilder };
 
-export function generic_type_with_turbofish(type_: Builder): GenericTypeWithTurbofishBuilder {
+export function generic_type_with_turbofish(type_: Builder<ScopedIdentifier | TypeIdentifier>): GenericTypeWithTurbofishBuilder {
   return new GenericTypeWithTurbofishBuilder(type_);
 }
 

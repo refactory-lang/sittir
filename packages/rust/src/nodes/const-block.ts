@@ -21,8 +21,8 @@ class ConstBlockBuilder extends Builder<ConstBlock> {
   build(ctx?: RenderContext): ConstBlock {
     return {
       kind: 'const_block',
-      body: this.renderChild(this._body, ctx),
-    } as unknown as ConstBlock;
+      body: this._body.build(ctx),
+    } as ConstBlock;
   }
 
   override get nodeKind(): string { return 'const_block'; }

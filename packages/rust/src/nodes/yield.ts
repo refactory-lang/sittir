@@ -4,11 +4,11 @@ import type { Expression, YieldExpression } from '../types.js';
 
 
 class YieldBuilder extends Builder<YieldExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Expression>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class YieldBuilder extends Builder<YieldExpression> {
   build(ctx?: RenderContext): YieldExpression {
     return {
       kind: 'yield_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as YieldExpression;
+      children: this._children[0]?.build(ctx),
+    } as YieldExpression;
   }
 
   override get nodeKind(): string { return 'yield_expression'; }

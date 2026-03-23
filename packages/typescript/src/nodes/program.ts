@@ -4,11 +4,11 @@ import type { HashBangLine, Program, Statement } from '../types.js';
 
 
 class ProgramBuilder extends Builder<Program> {
-  private _children: Builder[] = [];
+  private _children: Builder<HashBangLine | Statement>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<HashBangLine | Statement>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class ProgramBuilder extends Builder<Program> {
   build(ctx?: RenderContext): Program {
     return {
       kind: 'program',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Program;
+      children: this._children.map(c => c.build(ctx)),
+    } as Program;
   }
 
   override get nodeKind(): string { return 'program'; }
@@ -39,7 +39,7 @@ class ProgramBuilder extends Builder<Program> {
 
 export type { ProgramBuilder };
 
-export function file(): ProgramBuilder {
+export function program(): ProgramBuilder {
   return new ProgramBuilder();
 }
 
@@ -47,7 +47,7 @@ export interface ProgramOptions {
   children?: Builder<HashBangLine | Statement> | (Builder<HashBangLine | Statement>)[];
 }
 
-export namespace file {
+export namespace program {
   export function from(options: ProgramOptions): ProgramBuilder {
     const b = new ProgramBuilder();
     if (options.children !== undefined) {

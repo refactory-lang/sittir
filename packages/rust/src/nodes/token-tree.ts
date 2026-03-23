@@ -4,11 +4,11 @@ import type { Crate, Identifier, Literal, Metavariable, MutableSpecifier, Primit
 
 
 class TokenTreeBuilder extends Builder<TokenTree> {
-  private _children: Builder[] = [];
+  private _children: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree>[]): this {
     this._children = value;
     return this;
   }
@@ -24,8 +24,8 @@ class TokenTreeBuilder extends Builder<TokenTree> {
   build(ctx?: RenderContext): TokenTree {
     return {
       kind: 'token_tree',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TokenTree;
+      children: this._children.map(c => c.build(ctx)),
+    } as TokenTree;
   }
 
   override get nodeKind(): string { return 'token_tree'; }

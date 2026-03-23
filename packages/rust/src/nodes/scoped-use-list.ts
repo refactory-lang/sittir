@@ -4,15 +4,15 @@ import type { Crate, Identifier, Metavariable, ScopedIdentifier, ScopedUseList, 
 
 
 class ScopedUseListBuilder extends Builder<ScopedUseList> {
-  private _list: Builder;
-  private _path?: Builder;
+  private _list: Builder<UseList>;
+  private _path?: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
 
-  constructor(list: Builder) {
+  constructor(list: Builder<UseList>) {
     super();
     this._list = list;
   }
 
-  path(value: Builder): this {
+  path(value: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>): this {
     this._path = value;
     return this;
   }
@@ -28,9 +28,9 @@ class ScopedUseListBuilder extends Builder<ScopedUseList> {
   build(ctx?: RenderContext): ScopedUseList {
     return {
       kind: 'scoped_use_list',
-      list: this.renderChild(this._list, ctx),
-      path: this._path ? this.renderChild(this._path, ctx) : undefined,
-    } as unknown as ScopedUseList;
+      list: this._list.build(ctx),
+      path: this._path?.build(ctx),
+    } as ScopedUseList;
   }
 
   override get nodeKind(): string { return 'scoped_use_list'; }
@@ -46,7 +46,7 @@ class ScopedUseListBuilder extends Builder<ScopedUseList> {
 
 export type { ScopedUseListBuilder };
 
-export function scoped_use_list(list: Builder): ScopedUseListBuilder {
+export function scoped_use_list(list: Builder<UseList>): ScopedUseListBuilder {
   return new ScopedUseListBuilder(list);
 }
 

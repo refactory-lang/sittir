@@ -4,11 +4,11 @@ import type { Pattern, SlicePattern } from '../types.js';
 
 
 class SlicePatternBuilder extends Builder<SlicePattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Pattern>[]): this {
     this._children = value;
     return this;
   }
@@ -29,8 +29,8 @@ class SlicePatternBuilder extends Builder<SlicePattern> {
   build(ctx?: RenderContext): SlicePattern {
     return {
       kind: 'slice_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as SlicePattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as SlicePattern;
   }
 
   override get nodeKind(): string { return 'slice_pattern'; }

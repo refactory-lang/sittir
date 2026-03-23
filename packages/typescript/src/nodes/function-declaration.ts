@@ -3,34 +3,34 @@ import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssertsAnnotation, FormalParameters, FunctionDeclaration, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class FunctionBuilder extends Builder<FunctionDeclaration> {
-  private _body!: Builder;
-  private _name: Builder;
-  private _parameters!: Builder;
-  private _returnType?: Builder;
-  private _typeParameters?: Builder;
+class FunctionDeclarationBuilder extends Builder<FunctionDeclaration> {
+  private _body!: Builder<StatementBlock>;
+  private _name: Builder<Identifier>;
+  private _parameters!: Builder<FormalParameters>;
+  private _returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  private _typeParameters?: Builder<TypeParameters>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<StatementBlock>): this {
     this._body = value;
     return this;
   }
 
-  parameters(value: Builder): this {
+  parameters(value: Builder<FormalParameters>): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
@@ -49,12 +49,12 @@ class FunctionBuilder extends Builder<FunctionDeclaration> {
   build(ctx?: RenderContext): FunctionDeclaration {
     return {
       kind: 'function_declaration',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-    } as unknown as FunctionDeclaration;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+      parameters: this._parameters?.build(ctx),
+      returnType: this._returnType?.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+    } as FunctionDeclaration;
   }
 
   override get nodeKind(): string { return 'function_declaration'; }
@@ -71,10 +71,10 @@ class FunctionBuilder extends Builder<FunctionDeclaration> {
   }
 }
 
-export type { FunctionBuilder };
+export type { FunctionDeclarationBuilder };
 
-export function function_(name: Builder): FunctionBuilder {
-  return new FunctionBuilder(name);
+export function function_declaration(name: Builder<Identifier>): FunctionDeclarationBuilder {
+  return new FunctionDeclarationBuilder(name);
 }
 
 export interface FunctionDeclarationOptions {
@@ -85,10 +85,10 @@ export interface FunctionDeclarationOptions {
   typeParameters?: Builder<TypeParameters>;
 }
 
-export namespace function_ {
-  export function from(options: FunctionDeclarationOptions): FunctionBuilder {
+export namespace function_declaration {
+  export function from(options: FunctionDeclarationOptions): FunctionDeclarationBuilder {
     const _ctor = options.name;
-    const b = new FunctionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    const b = new FunctionDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.body !== undefined) b.body(options.body);
     if (options.parameters !== undefined) b.parameters(options.parameters);
     if (options.returnType !== undefined) b.returnType(options.returnType);

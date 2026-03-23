@@ -4,11 +4,11 @@ import type { CompoundAssignmentExpr, Expression } from '../types.js';
 
 
 class CompoundAssignmentExprBuilder extends Builder<CompoundAssignmentExpr> {
-  private _left: Builder;
+  private _left: Builder<Expression>;
   private _operator!: Builder;
-  private _right!: Builder;
+  private _right!: Builder<Expression>;
 
-  constructor(left: Builder) {
+  constructor(left: Builder<Expression>) {
     super();
     this._left = left;
   }
@@ -18,7 +18,7 @@ class CompoundAssignmentExprBuilder extends Builder<CompoundAssignmentExpr> {
     return this;
   }
 
-  right(value: Builder): this {
+  right(value: Builder<Expression>): this {
     this._right = value;
     return this;
   }
@@ -34,10 +34,10 @@ class CompoundAssignmentExprBuilder extends Builder<CompoundAssignmentExpr> {
   build(ctx?: RenderContext): CompoundAssignmentExpr {
     return {
       kind: 'compound_assignment_expr',
-      left: this.renderChild(this._left, ctx),
-      operator: this._operator ? this.renderChild(this._operator, ctx) : undefined,
-      right: this._right ? this.renderChild(this._right, ctx) : undefined,
-    } as unknown as CompoundAssignmentExpr;
+      left: this._left.build(ctx),
+      operator: this._operator?.build(ctx),
+      right: this._right?.build(ctx),
+    } as CompoundAssignmentExpr;
   }
 
   override get nodeKind(): string { return 'compound_assignment_expr'; }
@@ -53,7 +53,7 @@ class CompoundAssignmentExprBuilder extends Builder<CompoundAssignmentExpr> {
 
 export type { CompoundAssignmentExprBuilder };
 
-export function compound_assignment_expr(left: Builder): CompoundAssignmentExprBuilder {
+export function compound_assignment_expr(left: Builder<Expression>): CompoundAssignmentExprBuilder {
   return new CompoundAssignmentExprBuilder(left);
 }
 

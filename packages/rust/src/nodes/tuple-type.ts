@@ -4,9 +4,9 @@ import type { TupleType, Type } from '../types.js';
 
 
 class TupleTypeBuilder extends Builder<TupleType> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Type>[]) {
     super();
     this._children = children;
   }
@@ -22,8 +22,8 @@ class TupleTypeBuilder extends Builder<TupleType> {
   build(ctx?: RenderContext): TupleType {
     return {
       kind: 'tuple_type',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TupleType;
+      children: this._children.map(c => c.build(ctx)),
+    } as TupleType;
   }
 
   override get nodeKind(): string { return 'tuple_type'; }
@@ -42,7 +42,7 @@ class TupleTypeBuilder extends Builder<TupleType> {
 
 export type { TupleTypeBuilder };
 
-export function tuple_type(...children: Builder[]): TupleTypeBuilder {
+export function tuple_type(...children: Builder<Type>[]): TupleTypeBuilder {
   return new TupleTypeBuilder(...children);
 }
 

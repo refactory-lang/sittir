@@ -4,15 +4,15 @@ import type { FragmentSpecifier, Metavariable, TokenBindingPattern } from '../ty
 
 
 class TokenBindingPatternBuilder extends Builder<TokenBindingPattern> {
-  private _name: Builder;
-  private _type!: Builder;
+  private _name: Builder<Metavariable>;
+  private _type!: Builder<FragmentSpecifier>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Metavariable>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<FragmentSpecifier>): this {
     this._type = value;
     return this;
   }
@@ -28,9 +28,9 @@ class TokenBindingPatternBuilder extends Builder<TokenBindingPattern> {
   build(ctx?: RenderContext): TokenBindingPattern {
     return {
       kind: 'token_binding_pattern',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-    } as unknown as TokenBindingPattern;
+      name: this._name.build(ctx),
+      type: this._type?.build(ctx),
+    } as TokenBindingPattern;
   }
 
   override get nodeKind(): string { return 'token_binding_pattern'; }
@@ -46,7 +46,7 @@ class TokenBindingPatternBuilder extends Builder<TokenBindingPattern> {
 
 export type { TokenBindingPatternBuilder };
 
-export function token_binding_pattern(name: Builder): TokenBindingPatternBuilder {
+export function token_binding_pattern(name: Builder<Metavariable>): TokenBindingPatternBuilder {
   return new TokenBindingPatternBuilder(name);
 }
 

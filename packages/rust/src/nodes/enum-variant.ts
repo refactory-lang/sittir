@@ -4,27 +4,27 @@ import type { EnumVariant, Expression, FieldDeclarationList, Identifier, Ordered
 
 
 class EnumVariantBuilder extends Builder<EnumVariant> {
-  private _body?: Builder;
-  private _name: Builder;
-  private _value?: Builder;
-  private _children: Builder[] = [];
+  private _body?: Builder<FieldDeclarationList | OrderedFieldDeclarationList>;
+  private _name: Builder<Identifier>;
+  private _value?: Builder<Expression>;
+  private _children: Builder<VisibilityModifier>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<FieldDeclarationList | OrderedFieldDeclarationList>): this {
     this._body = value;
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -44,11 +44,11 @@ class EnumVariantBuilder extends Builder<EnumVariant> {
   build(ctx?: RenderContext): EnumVariant {
     return {
       kind: 'enum_variant',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as EnumVariant;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as EnumVariant;
   }
 
   override get nodeKind(): string { return 'enum_variant'; }
@@ -70,7 +70,7 @@ class EnumVariantBuilder extends Builder<EnumVariant> {
 
 export type { EnumVariantBuilder };
 
-export function enum_variant(name: Builder): EnumVariantBuilder {
+export function enum_variant(name: Builder<Identifier>): EnumVariantBuilder {
   return new EnumVariantBuilder(name);
 }
 

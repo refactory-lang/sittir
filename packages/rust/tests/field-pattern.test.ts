@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('field_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.field_pattern(ir.identifier('test'));
+    const builder = ir.fieldPattern(ir.fieldIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('field_pattern');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.field_pattern(ir.identifier('test'));
+    const builder = ir.fieldPattern(ir.fieldIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('field_pattern');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('field_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.field_pattern(ir.identifier('test'));
+    const builder = ir.fieldPattern(ir.fieldIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

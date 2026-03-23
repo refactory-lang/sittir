@@ -4,21 +4,21 @@ import type { AttributeItem, Expression, InnerAttributeItem, MatchArm, MatchPatt
 
 
 class MatchArmBuilder extends Builder<MatchArm> {
-  private _pattern: Builder;
-  private _value!: Builder;
-  private _children: Builder[] = [];
+  private _pattern: Builder<MatchPattern>;
+  private _value!: Builder<Expression>;
+  private _children: Builder<AttributeItem | InnerAttributeItem>[] = [];
 
-  constructor(pattern: Builder) {
+  constructor(pattern: Builder<MatchPattern>) {
     super();
     this._pattern = pattern;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<AttributeItem | InnerAttributeItem>[]): this {
     this._children = value;
     return this;
   }
@@ -36,10 +36,10 @@ class MatchArmBuilder extends Builder<MatchArm> {
   build(ctx?: RenderContext): MatchArm {
     return {
       kind: 'match_arm',
-      pattern: this.renderChild(this._pattern, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as MatchArm;
+      pattern: this._pattern.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as MatchArm;
   }
 
   override get nodeKind(): string { return 'match_arm'; }
@@ -59,7 +59,7 @@ class MatchArmBuilder extends Builder<MatchArm> {
 
 export type { MatchArmBuilder };
 
-export function match_arm(pattern: Builder): MatchArmBuilder {
+export function match_arm(pattern: Builder<MatchPattern>): MatchArmBuilder {
   return new MatchArmBuilder(pattern);
 }
 

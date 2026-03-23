@@ -4,11 +4,11 @@ import type { Crate, Identifier, Literal, Metavariable, MutableSpecifier, Primit
 
 
 class TokenTreePatternBuilder extends Builder<TokenTreePattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern>[]): this {
     this._children = value;
     return this;
   }
@@ -24,8 +24,8 @@ class TokenTreePatternBuilder extends Builder<TokenTreePattern> {
   build(ctx?: RenderContext): TokenTreePattern {
     return {
       kind: 'token_tree_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TokenTreePattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as TokenTreePattern;
   }
 
   override get nodeKind(): string { return 'token_tree_pattern'; }

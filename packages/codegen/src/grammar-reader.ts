@@ -128,6 +128,80 @@ export function readGrammarRule(grammar: string, nodeKind: string): GrammarRule 
 }
 
 /**
+ * Extract the set of valid string values for an enum-like leaf kind.
+ * Handles two patterns:
+ *   1. Direct CHOICE rule (e.g., TypeScript's `predefined_type` → `any | number | boolean | ...`)
+ *   2. ALIAS rule (e.g., Rust's `primitive_type` is defined via ALIAS in other rules)
+ * Returns an empty array if the kind isn't an enum-like node.
+ */
+export function listEnumValues(grammar: string, nodeKind: string): string[] {
+	// Try direct rule first — only use if it's a pure CHOICE of STRINGs
+	const rule = readGrammarRule(grammar, nodeKind);
+	if (rule) {
+		const values = extractChoiceStrings(rule);
+		if (values.length > 0) return values.sort();
+		// Has a rule but it's not a pure enum — don't fall through to ALIAS search
+		return [];
+	}
+
+	// No direct rule — search all rules for ALIAS nodes producing this kind.
+	// This handles cases like Rust's `primitive_type` which is only defined via ALIAS.
+	const gj = loadGrammarJson(grammar);
+	for (const ruleName of Object.keys(gj.rules)) {
+		const aliasContent = findAliasContent(gj.rules[ruleName]!, nodeKind);
+		if (aliasContent) {
+			const values = extractChoiceStrings(aliasContent);
+			if (values.length > 0) return values.sort();
+		}
+	}
+
+	return [];
+}
+
+/** Extract STRING values from a CHOICE rule, unwrapping precedence wrappers. */
+function extractChoiceStrings(rule: GrammarRule): string[] {
+	// Unwrap precedence/token wrappers
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT'
+		|| rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN') {
+		return extractChoiceStrings(rule.content);
+	}
+	if (rule.type !== 'CHOICE') return [];
+
+	const values: string[] = [];
+	for (const member of rule.members) {
+		if (member.type === 'STRING') {
+			values.push(member.value);
+		} else if (member.type === 'ALIAS' && member.content.type === 'STRING') {
+			// ALIAS wrapping a STRING (e.g., TypeScript's `unique symbol`)
+			values.push(member.value);
+		} else if (member.type === 'CHOICE') {
+			// Nested CHOICE — recurse
+			values.push(...extractChoiceStrings(member));
+		}
+		// Skip BLANK, SYMBOL, etc.
+	}
+	return values;
+}
+
+/** Walk a rule tree to find an ALIAS node with the given value. Returns the alias's content. */
+function findAliasContent(rule: GrammarRule, aliasValue: string): GrammarRule | null {
+	if (rule.type === 'ALIAS' && rule.named && rule.value === aliasValue) {
+		return rule.content;
+	}
+	// Recurse into containers
+	if ('members' in rule) {
+		for (const member of rule.members) {
+			const found = findAliasContent(member, aliasValue);
+			if (found) return found;
+		}
+	}
+	if ('content' in rule) {
+		return findAliasContent(rule.content, aliasValue);
+	}
+	return null;
+}
+
+/**
  * Collect non-optional STRING tokens from a grammar rule.
  * These are the fixed keywords/punctuation that always appear in the rendered output.
  */

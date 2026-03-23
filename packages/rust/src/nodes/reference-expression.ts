@@ -1,0 +1,72 @@
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { Expression, MutableSpecifier, ReferenceExpression } from '../types.js';
+
+
+class ReferenceExpressionBuilder extends Builder<ReferenceExpression> {
+  private _value: Builder<Expression>;
+  private _children: Builder<MutableSpecifier>[] = [];
+
+  constructor(value: Builder<Expression>) {
+    super();
+    this._value = value;
+  }
+
+  children(...value: Builder<MutableSpecifier>[]): this {
+    this._children = value;
+    return this;
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('&');
+    parts.push('raw');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): ReferenceExpression {
+    return {
+      kind: 'reference_expression',
+      value: this._value.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as ReferenceExpression;
+  }
+
+  override get nodeKind(): string { return 'reference_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '&', type: '&' });
+    parts.push({ kind: 'token', text: 'raw', type: 'raw' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    return parts;
+  }
+}
+
+export type { ReferenceExpressionBuilder };
+
+export function reference_expression(value: Builder<Expression>): ReferenceExpressionBuilder {
+  return new ReferenceExpressionBuilder(value);
+}
+
+export interface ReferenceExpressionOptions {
+  value: Builder<Expression>;
+  children?: Builder<MutableSpecifier> | string | (Builder<MutableSpecifier> | string)[];
+}
+
+export namespace reference_expression {
+  export function from(options: ReferenceExpressionOptions): ReferenceExpressionBuilder {
+    const b = new ReferenceExpressionBuilder(options.value);
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('mutable_specifier', _x) : _x));
+    }
+    return b;
+  }
+}

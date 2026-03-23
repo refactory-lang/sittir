@@ -4,15 +4,15 @@ import type { ArrayType, GenericType, HigherRankedTraitBound, PointerType, Primi
 
 
 class WherePredicateBuilder extends Builder<WherePredicate> {
-  private _bounds!: Builder;
-  private _left: Builder;
+  private _bounds!: Builder<TraitBounds>;
+  private _left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
 
-  constructor(left: Builder) {
+  constructor(left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>) {
     super();
     this._left = left;
   }
 
-  bounds(value: Builder): this {
+  bounds(value: Builder<TraitBounds>): this {
     this._bounds = value;
     return this;
   }
@@ -27,9 +27,9 @@ class WherePredicateBuilder extends Builder<WherePredicate> {
   build(ctx?: RenderContext): WherePredicate {
     return {
       kind: 'where_predicate',
-      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
-      left: this.renderChild(this._left, ctx),
-    } as unknown as WherePredicate;
+      bounds: this._bounds?.build(ctx),
+      left: this._left.build(ctx),
+    } as WherePredicate;
   }
 
   override get nodeKind(): string { return 'where_predicate'; }
@@ -44,7 +44,7 @@ class WherePredicateBuilder extends Builder<WherePredicate> {
 
 export type { WherePredicateBuilder };
 
-export function where_predicate(left: Builder): WherePredicateBuilder {
+export function where_predicate(left: Builder<ArrayType | GenericType | HigherRankedTraitBound | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier>): WherePredicateBuilder {
   return new WherePredicateBuilder(left);
 }
 

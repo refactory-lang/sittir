@@ -4,33 +4,33 @@ import type { FunctionModifiers, FunctionSignatureItem, Identifier, Metavariable
 
 
 class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
-  private _name: Builder;
-  private _parameters!: Builder;
-  private _returnType?: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+  private _name: Builder<Identifier | Metavariable>;
+  private _parameters!: Builder<Parameters>;
+  private _returnType?: Builder<Type>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<FunctionModifiers | VisibilityModifier | WhereClause>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier | Metavariable>) {
     super();
     this._name = name;
   }
 
-  parameters(value: Builder): this {
+  parameters(value: Builder<Parameters>): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<Type>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<FunctionModifiers | VisibilityModifier | WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -55,12 +55,12 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
   build(ctx?: RenderContext): FunctionSignatureItem {
     return {
       kind: 'function_signature_item',
-      name: this.renderChild(this._name, ctx),
-      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FunctionSignatureItem;
+      name: this._name.build(ctx),
+      parameters: this._parameters?.build(ctx),
+      returnType: this._returnType?.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as FunctionSignatureItem;
   }
 
   override get nodeKind(): string { return 'function_signature_item'; }
@@ -85,7 +85,7 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
 
 export type { FunctionSignatureBuilder };
 
-export function function_signature(name: Builder): FunctionSignatureBuilder {
+export function function_signature(name: Builder<Identifier | Metavariable>): FunctionSignatureBuilder {
   return new FunctionSignatureBuilder(name);
 }
 

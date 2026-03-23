@@ -3,16 +3,16 @@ import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, FieldExpression, FieldIdentifier, IntegerLiteral } from '../types.js';
 
 
-class FieldBuilder extends Builder<FieldExpression> {
-  private _field!: Builder;
-  private _value: Builder;
+class FieldExpressionBuilder extends Builder<FieldExpression> {
+  private _field!: Builder<FieldIdentifier | IntegerLiteral>;
+  private _value: Builder<Expression>;
 
-  constructor(value: Builder) {
+  constructor(value: Builder<Expression>) {
     super();
     this._value = value;
   }
 
-  field(value: Builder): this {
+  field(value: Builder<FieldIdentifier | IntegerLiteral>): this {
     this._field = value;
     return this;
   }
@@ -28,9 +28,9 @@ class FieldBuilder extends Builder<FieldExpression> {
   build(ctx?: RenderContext): FieldExpression {
     return {
       kind: 'field_expression',
-      field: this._field ? this.renderChild(this._field, ctx) : undefined,
-      value: this.renderChild(this._value, ctx),
-    } as unknown as FieldExpression;
+      field: this._field?.build(ctx),
+      value: this._value.build(ctx),
+    } as FieldExpression;
   }
 
   override get nodeKind(): string { return 'field_expression'; }
@@ -44,10 +44,10 @@ class FieldBuilder extends Builder<FieldExpression> {
   }
 }
 
-export type { FieldBuilder };
+export type { FieldExpressionBuilder };
 
-export function field(value: Builder): FieldBuilder {
-  return new FieldBuilder(value);
+export function field_expression(value: Builder<Expression>): FieldExpressionBuilder {
+  return new FieldExpressionBuilder(value);
 }
 
 export interface FieldExpressionOptions {
@@ -55,9 +55,9 @@ export interface FieldExpressionOptions {
   value: Builder<Expression>;
 }
 
-export namespace field {
-  export function from(options: FieldExpressionOptions): FieldBuilder {
-    const b = new FieldBuilder(options.value);
+export namespace field_expression {
+  export function from(options: FieldExpressionOptions): FieldExpressionBuilder {
+    const b = new FieldExpressionBuilder(options.value);
     if (options.field !== undefined) b.field(options.field);
     return b;
   }

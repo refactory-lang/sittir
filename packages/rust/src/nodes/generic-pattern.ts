@@ -4,15 +4,15 @@ import type { GenericPattern, Identifier, ScopedIdentifier, TypeArguments } from
 
 
 class GenericPatternBuilder extends Builder<GenericPattern> {
-  private _typeArguments: Builder;
-  private _children: Builder[] = [];
+  private _typeArguments: Builder<TypeArguments>;
+  private _children: Builder<Identifier | ScopedIdentifier>[] = [];
 
-  constructor(typeArguments: Builder) {
+  constructor(typeArguments: Builder<TypeArguments>) {
     super();
     this._typeArguments = typeArguments;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Identifier | ScopedIdentifier>[]): this {
     this._children = value;
     return this;
   }
@@ -28,9 +28,9 @@ class GenericPatternBuilder extends Builder<GenericPattern> {
   build(ctx?: RenderContext): GenericPattern {
     return {
       kind: 'generic_pattern',
-      typeArguments: this.renderChild(this._typeArguments, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as GenericPattern;
+      typeArguments: this._typeArguments.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as GenericPattern;
   }
 
   override get nodeKind(): string { return 'generic_pattern'; }
@@ -48,7 +48,7 @@ class GenericPatternBuilder extends Builder<GenericPattern> {
 
 export type { GenericPatternBuilder };
 
-export function generic_pattern(typeArguments: Builder): GenericPatternBuilder {
+export function generic_pattern(typeArguments: Builder<TypeArguments>): GenericPatternBuilder {
   return new GenericPatternBuilder(typeArguments);
 }
 

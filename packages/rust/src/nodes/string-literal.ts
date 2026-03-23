@@ -4,11 +4,11 @@ import type { EscapeSequence, StringContent, StringLiteral } from '../types.js';
 
 
 class StringLiteralBuilder extends Builder<StringLiteral> {
-  private _children: Builder[] = [];
+  private _children: Builder<EscapeSequence | StringContent>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<EscapeSequence | StringContent>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class StringLiteralBuilder extends Builder<StringLiteral> {
   build(ctx?: RenderContext): StringLiteral {
     return {
       kind: 'string_literal',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as StringLiteral;
+      children: this._children.map(c => c.build(ctx)),
+    } as StringLiteral;
   }
 
   override get nodeKind(): string { return 'string_literal'; }

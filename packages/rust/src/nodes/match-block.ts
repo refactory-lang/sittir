@@ -4,11 +4,11 @@ import type { MatchArm, MatchBlock } from '../types.js';
 
 
 class MatchBlockBuilder extends Builder<MatchBlock> {
-  private _children: Builder[] = [];
+  private _children: Builder<MatchArm>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MatchArm>[]): this {
     this._children = value;
     return this;
   }
@@ -25,8 +25,8 @@ class MatchBlockBuilder extends Builder<MatchBlock> {
   build(ctx?: RenderContext): MatchBlock {
     return {
       kind: 'match_block',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as MatchBlock;
+      children: this._children.map(c => c.build(ctx)),
+    } as MatchBlock;
   }
 
   override get nodeKind(): string { return 'match_block'; }

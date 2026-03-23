@@ -4,9 +4,9 @@ import type { MutableSpecifier, Pattern, ReferencePattern } from '../types.js';
 
 
 class ReferencePatternBuilder extends Builder<ReferencePattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern | MutableSpecifier>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Pattern | MutableSpecifier>[]) {
     super();
     this._children = children;
   }
@@ -21,8 +21,8 @@ class ReferencePatternBuilder extends Builder<ReferencePattern> {
   build(ctx?: RenderContext): ReferencePattern {
     return {
       kind: 'reference_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ReferencePattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as ReferencePattern;
   }
 
   override get nodeKind(): string { return 'reference_pattern'; }
@@ -39,7 +39,7 @@ class ReferencePatternBuilder extends Builder<ReferencePattern> {
 
 export type { ReferencePatternBuilder };
 
-export function reference_pattern(...children: Builder[]): ReferencePatternBuilder {
+export function reference_pattern(...children: Builder<Pattern | MutableSpecifier>[]): ReferencePatternBuilder {
   return new ReferencePatternBuilder(...children);
 }
 

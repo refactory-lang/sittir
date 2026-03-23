@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('construct_signature', () => {
   it('should build with correct kind', () => {
-    const builder = ir.construct_signature(ir.identifier('test'));
+    const builder = ir.constructSignature(ir.formalParameters());
     const node = builder.build();
     expect(node.kind).toBe('construct_signature');
+    expect((node as any).parameters).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.construct_signature(ir.identifier('test'));
+    const builder = ir.constructSignature(ir.formalParameters());
     const source = builder.renderImpl();
     expect(source).toContain('new');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.construct_signature(ir.identifier('test'));
+    const builder = ir.constructSignature(ir.formalParameters());
     const cst = builder.toCST();
     expect(cst.type).toBe('construct_signature');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('construct_signature', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.construct_signature(ir.identifier('test'));
+    const builder = ir.constructSignature(ir.formalParameters());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

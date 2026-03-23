@@ -4,9 +4,9 @@ import type { RawStringLiteral, StringContent } from '../types.js';
 
 
 class RawStringLiteralBuilder extends Builder<RawStringLiteral> {
-  private _children: Builder[] = [];
+  private _children: Builder<StringContent>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<StringContent>) {
     super();
     this._children = [children];
   }
@@ -20,8 +20,8 @@ class RawStringLiteralBuilder extends Builder<RawStringLiteral> {
   build(ctx?: RenderContext): RawStringLiteral {
     return {
       kind: 'raw_string_literal',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as RawStringLiteral;
+      children: this._children[0]?.build(ctx),
+    } as RawStringLiteral;
   }
 
   override get nodeKind(): string { return 'raw_string_literal'; }
@@ -37,7 +37,7 @@ class RawStringLiteralBuilder extends Builder<RawStringLiteral> {
 
 export type { RawStringLiteralBuilder };
 
-export function raw_string_literal(children: Builder): RawStringLiteralBuilder {
+export function raw_string_literal(children: Builder<StringContent>): RawStringLiteralBuilder {
   return new RawStringLiteralBuilder(children);
 }
 

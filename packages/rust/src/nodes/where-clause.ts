@@ -4,11 +4,11 @@ import type { WhereClause, WherePredicate } from '../types.js';
 
 
 class WhereClauseBuilder extends Builder<WhereClause> {
-  private _children: Builder[] = [];
+  private _children: Builder<WherePredicate>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<WherePredicate>[]): this {
     this._children = value;
     return this;
   }
@@ -28,8 +28,8 @@ class WhereClauseBuilder extends Builder<WhereClause> {
   build(ctx?: RenderContext): WhereClause {
     return {
       kind: 'where_clause',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as WhereClause;
+      children: this._children.map(c => c.build(ctx)),
+    } as WhereClause;
   }
 
   override get nodeKind(): string { return 'where_clause'; }

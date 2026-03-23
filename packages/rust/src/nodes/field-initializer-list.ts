@@ -4,11 +4,11 @@ import type { BaseFieldInitializer, FieldInitializer, FieldInitializerList, Shor
 
 
 class FieldInitializerListBuilder extends Builder<FieldInitializerList> {
-  private _children: Builder[] = [];
+  private _children: Builder<BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer>[]): this {
     this._children = value;
     return this;
   }
@@ -29,8 +29,8 @@ class FieldInitializerListBuilder extends Builder<FieldInitializerList> {
   build(ctx?: RenderContext): FieldInitializerList {
     return {
       kind: 'field_initializer_list',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FieldInitializerList;
+      children: this._children.map(c => c.build(ctx)),
+    } as FieldInitializerList;
   }
 
   override get nodeKind(): string { return 'field_initializer_list'; }

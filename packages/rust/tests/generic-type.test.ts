@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('generic_type', () => {
   it('should build with correct kind', () => {
-    const builder = ir.generic_type(ir.identifier('test'));
+    const builder = ir.genericType(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('generic_type');
+    expect((node as any).type).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.generic_type(ir.identifier('test'));
+    const builder = ir.genericType(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('generic_type');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('generic_type', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.generic_type(ir.identifier('test'));
+    const builder = ir.genericType(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

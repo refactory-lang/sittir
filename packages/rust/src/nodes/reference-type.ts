@@ -4,15 +4,15 @@ import type { MutableSpecifier, ReferenceType, Type } from '../types.js';
 
 
 class ReferenceTypeBuilder extends Builder<ReferenceType> {
-  private _type: Builder;
-  private _children: Builder[] = [];
+  private _type: Builder<Type>;
+  private _children: Builder<MutableSpecifier>[] = [];
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<Type>) {
     super();
     this._type = type_;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MutableSpecifier>[]): this {
     this._children = value;
     return this;
   }
@@ -29,9 +29,9 @@ class ReferenceTypeBuilder extends Builder<ReferenceType> {
   build(ctx?: RenderContext): ReferenceType {
     return {
       kind: 'reference_type',
-      type: this.renderChild(this._type, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ReferenceType;
+      type: this._type.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as ReferenceType;
   }
 
   override get nodeKind(): string { return 'reference_type'; }
@@ -48,7 +48,7 @@ class ReferenceTypeBuilder extends Builder<ReferenceType> {
 
 export type { ReferenceTypeBuilder };
 
-export function reference_type(type_: Builder): ReferenceTypeBuilder {
+export function reference_type(type_: Builder<Type>): ReferenceTypeBuilder {
   return new ReferenceTypeBuilder(type_);
 }
 

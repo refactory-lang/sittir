@@ -4,9 +4,9 @@ import type { AwaitExpression, Expression } from '../types.js';
 
 
 class AwaitBuilder extends Builder<AwaitExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -22,8 +22,8 @@ class AwaitBuilder extends Builder<AwaitExpression> {
   build(ctx?: RenderContext): AwaitExpression {
     return {
       kind: 'await_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as AwaitExpression;
+      children: this._children[0]?.build(ctx),
+    } as AwaitExpression;
   }
 
   override get nodeKind(): string { return 'await_expression'; }
@@ -41,7 +41,7 @@ class AwaitBuilder extends Builder<AwaitExpression> {
 
 export type { AwaitBuilder };
 
-export function await_(children: Builder): AwaitBuilder {
+export function await_(children: Builder<Expression>): AwaitBuilder {
   return new AwaitBuilder(children);
 }
 

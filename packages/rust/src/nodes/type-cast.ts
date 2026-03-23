@@ -4,15 +4,15 @@ import type { Expression, Type, TypeCastExpression } from '../types.js';
 
 
 class TypeCastBuilder extends Builder<TypeCastExpression> {
-  private _type!: Builder;
-  private _value: Builder;
+  private _type!: Builder<Type>;
+  private _value: Builder<Expression>;
 
-  constructor(value: Builder) {
+  constructor(value: Builder<Expression>) {
     super();
     this._value = value;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
@@ -28,9 +28,9 @@ class TypeCastBuilder extends Builder<TypeCastExpression> {
   build(ctx?: RenderContext): TypeCastExpression {
     return {
       kind: 'type_cast_expression',
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      value: this.renderChild(this._value, ctx),
-    } as unknown as TypeCastExpression;
+      type: this._type?.build(ctx),
+      value: this._value.build(ctx),
+    } as TypeCastExpression;
   }
 
   override get nodeKind(): string { return 'type_cast_expression'; }
@@ -46,7 +46,7 @@ class TypeCastBuilder extends Builder<TypeCastExpression> {
 
 export type { TypeCastBuilder };
 
-export function type_cast(value: Builder): TypeCastBuilder {
+export function type_cast(value: Builder<Expression>): TypeCastBuilder {
   return new TypeCastBuilder(value);
 }
 

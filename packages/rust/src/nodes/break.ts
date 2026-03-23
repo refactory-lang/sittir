@@ -4,11 +4,11 @@ import type { BreakExpression, Expression, Label } from '../types.js';
 
 
 class BreakBuilder extends Builder<BreakExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression | Label>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Expression | Label>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class BreakBuilder extends Builder<BreakExpression> {
   build(ctx?: RenderContext): BreakExpression {
     return {
       kind: 'break_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as BreakExpression;
+      children: this._children.map(c => c.build(ctx)),
+    } as BreakExpression;
   }
 
   override get nodeKind(): string { return 'break_expression'; }

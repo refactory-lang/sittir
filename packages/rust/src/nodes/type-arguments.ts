@@ -4,9 +4,9 @@ import type { Literal, TraitBounds, Type, TypeArguments, TypeBinding } from '../
 
 
 class TypeArgumentsBuilder extends Builder<TypeArguments> {
-  private _children: Builder[] = [];
+  private _children: Builder<Literal | Type | TraitBounds | TypeBinding>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Literal | Type | TraitBounds | TypeBinding>[]) {
     super();
     this._children = children;
   }
@@ -23,8 +23,8 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
   build(ctx?: RenderContext): TypeArguments {
     return {
       kind: 'type_arguments',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TypeArguments;
+      children: this._children.map(c => c.build(ctx)),
+    } as TypeArguments;
   }
 
   override get nodeKind(): string { return 'type_arguments'; }
@@ -41,7 +41,7 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
 
 export type { TypeArgumentsBuilder };
 
-export function type_arguments(...children: Builder[]): TypeArgumentsBuilder {
+export function type_arguments(...children: Builder<Literal | Type | TraitBounds | TypeBinding>[]): TypeArgumentsBuilder {
   return new TypeArgumentsBuilder(...children);
 }
 

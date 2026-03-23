@@ -4,9 +4,9 @@ import type { Identifier, Label } from '../types.js';
 
 
 class LabelBuilder extends Builder<Label> {
-  private _children: Builder[] = [];
+  private _children: Builder<Identifier>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Identifier>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class LabelBuilder extends Builder<Label> {
   build(ctx?: RenderContext): Label {
     return {
       kind: 'label',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Label;
+      children: this._children[0]?.build(ctx),
+    } as Label;
   }
 
   override get nodeKind(): string { return 'label'; }
@@ -39,7 +39,7 @@ class LabelBuilder extends Builder<Label> {
 
 export type { LabelBuilder };
 
-export function label(children: Builder): LabelBuilder {
+export function label(children: Builder<Identifier>): LabelBuilder {
   return new LabelBuilder(children);
 }
 

@@ -4,21 +4,21 @@ import type { TraitBounds, Type, TypeIdentifier, TypeParameter } from '../types.
 
 
 class TypeParameterBuilder extends Builder<TypeParameter> {
-  private _bounds?: Builder;
-  private _defaultType?: Builder;
-  private _name: Builder;
+  private _bounds?: Builder<TraitBounds>;
+  private _defaultType?: Builder<Type>;
+  private _name: Builder<TypeIdentifier>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  bounds(value: Builder): this {
+  bounds(value: Builder<TraitBounds>): this {
     this._bounds = value;
     return this;
   }
 
-  defaultType(value: Builder): this {
+  defaultType(value: Builder<Type>): this {
     this._defaultType = value;
     return this;
   }
@@ -37,10 +37,10 @@ class TypeParameterBuilder extends Builder<TypeParameter> {
   build(ctx?: RenderContext): TypeParameter {
     return {
       kind: 'type_parameter',
-      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
-      defaultType: this._defaultType ? this.renderChild(this._defaultType, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-    } as unknown as TypeParameter;
+      bounds: this._bounds?.build(ctx),
+      defaultType: this._defaultType?.build(ctx),
+      name: this._name.build(ctx),
+    } as TypeParameter;
   }
 
   override get nodeKind(): string { return 'type_parameter'; }
@@ -59,7 +59,7 @@ class TypeParameterBuilder extends Builder<TypeParameter> {
 
 export type { TypeParameterBuilder };
 
-export function type_parameter(name: Builder): TypeParameterBuilder {
+export function type_parameter(name: Builder<TypeIdentifier>): TypeParameterBuilder {
   return new TypeParameterBuilder(name);
 }
 

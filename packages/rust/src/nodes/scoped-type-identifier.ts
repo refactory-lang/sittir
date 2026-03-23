@@ -4,15 +4,15 @@ import type { BracketedType, Crate, GenericType, Identifier, Metavariable, Scope
 
 
 class ScopedTypeIdentifierBuilder extends Builder<ScopedTypeIdentifier> {
-  private _name: Builder;
-  private _path?: Builder;
+  private _name: Builder<TypeIdentifier>;
+  private _path?: Builder<BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  path(value: Builder): this {
+  path(value: Builder<BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super>): this {
     this._path = value;
     return this;
   }
@@ -28,9 +28,9 @@ class ScopedTypeIdentifierBuilder extends Builder<ScopedTypeIdentifier> {
   build(ctx?: RenderContext): ScopedTypeIdentifier {
     return {
       kind: 'scoped_type_identifier',
-      name: this.renderChild(this._name, ctx),
-      path: this._path ? this.renderChild(this._path, ctx) : undefined,
-    } as unknown as ScopedTypeIdentifier;
+      name: this._name.build(ctx),
+      path: this._path?.build(ctx),
+    } as ScopedTypeIdentifier;
   }
 
   override get nodeKind(): string { return 'scoped_type_identifier'; }
@@ -46,7 +46,7 @@ class ScopedTypeIdentifierBuilder extends Builder<ScopedTypeIdentifier> {
 
 export type { ScopedTypeIdentifierBuilder };
 
-export function scoped_type_identifier(name: Builder): ScopedTypeIdentifierBuilder {
+export function scoped_type_identifier(name: Builder<TypeIdentifier>): ScopedTypeIdentifierBuilder {
   return new ScopedTypeIdentifierBuilder(name);
 }
 

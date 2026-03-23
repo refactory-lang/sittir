@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('removed_trait_bound', () => {
   it('should build with correct kind', () => {
-    const builder = ir.removed_trait_bound(ir.identifier('test'));
+    const builder = ir.removedTraitBound(ir.metavariable('test'));
     const node = builder.build();
     expect(node.kind).toBe('removed_trait_bound');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.removed_trait_bound(ir.identifier('test'));
+    const builder = ir.removedTraitBound(ir.metavariable('test'));
     const source = builder.renderImpl();
     expect(source).toContain('?');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.removed_trait_bound(ir.identifier('test'));
+    const builder = ir.removedTraitBound(ir.metavariable('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('removed_trait_bound');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('removed_trait_bound', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.removed_trait_bound(ir.identifier('test'));
+    const builder = ir.removedTraitBound(ir.metavariable('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

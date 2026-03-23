@@ -4,9 +4,9 @@ import type { Pattern, RefPattern } from '../types.js';
 
 
 class RefPatternBuilder extends Builder<RefPattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Pattern>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class RefPatternBuilder extends Builder<RefPattern> {
   build(ctx?: RenderContext): RefPattern {
     return {
       kind: 'ref_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as RefPattern;
+      children: this._children[0]?.build(ctx),
+    } as RefPattern;
   }
 
   override get nodeKind(): string { return 'ref_pattern'; }
@@ -39,7 +39,7 @@ class RefPatternBuilder extends Builder<RefPattern> {
 
 export type { RefPatternBuilder };
 
-export function ref_pattern(children: Builder): RefPatternBuilder {
+export function ref_pattern(children: Builder<Pattern>): RefPatternBuilder {
   return new RefPatternBuilder(children);
 }
 

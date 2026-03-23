@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('gen_block', () => {
   it('should build with correct kind', () => {
-    const builder = ir.gen_block(ir.identifier('test'));
+    const builder = ir.genBlock(ir.identifier('test') as any);
     const node = builder.build();
     expect(node.kind).toBe('gen_block');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.gen_block(ir.identifier('test'));
+    const builder = ir.genBlock(ir.identifier('test') as any);
     const source = builder.renderImpl();
     expect(source).toContain('gen');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.gen_block(ir.identifier('test'));
+    const builder = ir.genBlock(ir.identifier('test') as any);
     const cst = builder.toCST();
     expect(cst.type).toBe('gen_block');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('gen_block', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.gen_block(ir.identifier('test'));
+    const builder = ir.genBlock(ir.identifier('test') as any);
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

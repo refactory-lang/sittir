@@ -4,7 +4,7 @@ import type { LifetimeParameter, TraitBounds } from '../types.js';
 
 
 class LifetimeParameterBuilder extends Builder<LifetimeParameter> {
-  private _bounds?: Builder;
+  private _bounds?: Builder<TraitBounds>;
   private _name: Builder;
 
   constructor(name: Builder) {
@@ -12,7 +12,7 @@ class LifetimeParameterBuilder extends Builder<LifetimeParameter> {
     this._name = name;
   }
 
-  bounds(value: Builder): this {
+  bounds(value: Builder<TraitBounds>): this {
     this._bounds = value;
     return this;
   }
@@ -27,9 +27,9 @@ class LifetimeParameterBuilder extends Builder<LifetimeParameter> {
   build(ctx?: RenderContext): LifetimeParameter {
     return {
       kind: 'lifetime_parameter',
-      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-    } as unknown as LifetimeParameter;
+      bounds: this._bounds?.build(ctx),
+      name: this._name.build(ctx),
+    } as LifetimeParameter;
   }
 
   override get nodeKind(): string { return 'lifetime_parameter'; }

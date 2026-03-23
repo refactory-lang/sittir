@@ -4,11 +4,11 @@ import type { Crate, Identifier, Metavariable, ScopedIdentifier, Self, Super, Us
 
 
 class UseWildcardBuilder extends Builder<UseWildcard> {
-  private _children: Builder[] = [];
+  private _children: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class UseWildcardBuilder extends Builder<UseWildcard> {
   build(ctx?: RenderContext): UseWildcard {
     return {
       kind: 'use_wildcard',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as UseWildcard;
+      children: this._children[0]?.build(ctx),
+    } as UseWildcard;
   }
 
   override get nodeKind(): string { return 'use_wildcard'; }

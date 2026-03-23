@@ -4,15 +4,15 @@ import type { Identifier, MacroDefinition, MacroRule } from '../types.js';
 
 
 class MacroDefinitionBuilder extends Builder<MacroDefinition> {
-  private _name: Builder;
-  private _children: Builder[] = [];
+  private _name: Builder<Identifier>;
+  private _children: Builder<MacroRule>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MacroRule>[]): this {
     this._children = value;
     return this;
   }
@@ -36,9 +36,9 @@ class MacroDefinitionBuilder extends Builder<MacroDefinition> {
   build(ctx?: RenderContext): MacroDefinition {
     return {
       kind: 'macro_definition',
-      name: this.renderChild(this._name, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as MacroDefinition;
+      name: this._name.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as MacroDefinition;
   }
 
   override get nodeKind(): string { return 'macro_definition'; }
@@ -60,7 +60,7 @@ class MacroDefinitionBuilder extends Builder<MacroDefinition> {
 
 export type { MacroDefinitionBuilder };
 
-export function macro_definition(name: Builder): MacroDefinitionBuilder {
+export function macro_definition(name: Builder<Identifier>): MacroDefinitionBuilder {
   return new MacroDefinitionBuilder(name);
 }
 

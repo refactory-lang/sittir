@@ -3,20 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('struct_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.struct_pattern(ir.identifier('test'));
+    const builder = ir.structPattern(ir.typeIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('struct_pattern');
+    expect((node as any).type).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.struct_pattern(ir.identifier('test'));
+    const builder = ir.structPattern(ir.typeIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('{');
     expect(source).toContain('}');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.struct_pattern(ir.identifier('test'));
+    const builder = ir.structPattern(ir.typeIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('struct_pattern');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +26,7 @@ describe('struct_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.struct_pattern(ir.identifier('test'));
+    const builder = ir.structPattern(ir.typeIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -4,9 +4,9 @@ import type { MutPattern, MutableSpecifier, Pattern } from '../types.js';
 
 
 class MutPatternBuilder extends Builder<MutPattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern | MutableSpecifier>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Pattern | MutableSpecifier>[]) {
     super();
     this._children = children;
   }
@@ -20,8 +20,8 @@ class MutPatternBuilder extends Builder<MutPattern> {
   build(ctx?: RenderContext): MutPattern {
     return {
       kind: 'mut_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as MutPattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as MutPattern;
   }
 
   override get nodeKind(): string { return 'mut_pattern'; }
@@ -37,7 +37,7 @@ class MutPatternBuilder extends Builder<MutPattern> {
 
 export type { MutPatternBuilder };
 
-export function mut_pattern(...children: Builder[]): MutPatternBuilder {
+export function mut_pattern(...children: Builder<Pattern | MutableSpecifier>[]): MutPatternBuilder {
   return new MutPatternBuilder(...children);
 }
 

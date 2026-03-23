@@ -4,15 +4,15 @@ import type { FieldExpression, GenericFunction, Identifier, ScopedIdentifier, Ty
 
 
 class GenericFunctionBuilder extends Builder<GenericFunction> {
-  private _function: Builder;
-  private _typeArguments!: Builder;
+  private _function: Builder<FieldExpression | Identifier | ScopedIdentifier>;
+  private _typeArguments!: Builder<TypeArguments>;
 
-  constructor(function_: Builder) {
+  constructor(function_: Builder<FieldExpression | Identifier | ScopedIdentifier>) {
     super();
     this._function = function_;
   }
 
-  typeArguments(value: Builder): this {
+  typeArguments(value: Builder<TypeArguments>): this {
     this._typeArguments = value;
     return this;
   }
@@ -28,9 +28,9 @@ class GenericFunctionBuilder extends Builder<GenericFunction> {
   build(ctx?: RenderContext): GenericFunction {
     return {
       kind: 'generic_function',
-      function: this.renderChild(this._function, ctx),
-      typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
-    } as unknown as GenericFunction;
+      function: this._function.build(ctx),
+      typeArguments: this._typeArguments?.build(ctx),
+    } as GenericFunction;
   }
 
   override get nodeKind(): string { return 'generic_function'; }
@@ -46,7 +46,7 @@ class GenericFunctionBuilder extends Builder<GenericFunction> {
 
 export type { GenericFunctionBuilder };
 
-export function generic_function(function_: Builder): GenericFunctionBuilder {
+export function generic_function(function_: Builder<FieldExpression | Identifier | ScopedIdentifier>): GenericFunctionBuilder {
   return new GenericFunctionBuilder(function_);
 }
 

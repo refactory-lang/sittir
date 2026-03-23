@@ -5,12 +5,12 @@ import type { Expression, LetDeclaration, MutableSpecifier, Pattern, Type } from
 
 class LetBuilder extends Builder<LetDeclaration> {
   private _alternative?: Builder;
-  private _pattern: Builder;
-  private _type?: Builder;
-  private _value?: Builder;
-  private _children: Builder[] = [];
+  private _pattern: Builder<Pattern>;
+  private _type?: Builder<Type>;
+  private _value?: Builder<Expression>;
+  private _children: Builder<MutableSpecifier>[] = [];
 
-  constructor(pattern: Builder) {
+  constructor(pattern: Builder<Pattern>) {
     super();
     this._pattern = pattern;
   }
@@ -20,17 +20,17 @@ class LetBuilder extends Builder<LetDeclaration> {
     return this;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MutableSpecifier>[]): this {
     this._children = value;
     return this;
   }
@@ -59,12 +59,12 @@ class LetBuilder extends Builder<LetDeclaration> {
   build(ctx?: RenderContext): LetDeclaration {
     return {
       kind: 'let_declaration',
-      alternative: this._alternative ? this.renderChild(this._alternative, ctx) : undefined,
-      pattern: this.renderChild(this._pattern, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as LetDeclaration;
+      alternative: this._alternative?.build(ctx),
+      pattern: this._pattern.build(ctx),
+      type: this._type?.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as LetDeclaration;
   }
 
   override get nodeKind(): string { return 'let_declaration'; }
@@ -95,7 +95,7 @@ class LetBuilder extends Builder<LetDeclaration> {
 
 export type { LetBuilder };
 
-export function let_(pattern: Builder): LetBuilder {
+export function let_(pattern: Builder<Pattern>): LetBuilder {
   return new LetBuilder(pattern);
 }
 

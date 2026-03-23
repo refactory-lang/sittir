@@ -4,9 +4,9 @@ import type { Attribute, InnerAttributeItem } from '../types.js';
 
 
 class InnerAttributeBuilder extends Builder<InnerAttributeItem> {
-  private _children: Builder[] = [];
+  private _children: Builder<Attribute>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Attribute>) {
     super();
     this._children = [children];
   }
@@ -24,8 +24,8 @@ class InnerAttributeBuilder extends Builder<InnerAttributeItem> {
   build(ctx?: RenderContext): InnerAttributeItem {
     return {
       kind: 'inner_attribute_item',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as InnerAttributeItem;
+      children: this._children[0]?.build(ctx),
+    } as InnerAttributeItem;
   }
 
   override get nodeKind(): string { return 'inner_attribute_item'; }
@@ -45,7 +45,7 @@ class InnerAttributeBuilder extends Builder<InnerAttributeItem> {
 
 export type { InnerAttributeBuilder };
 
-export function inner_attribute(children: Builder): InnerAttributeBuilder {
+export function inner_attribute(children: Builder<Attribute>): InnerAttributeBuilder {
   return new InnerAttributeBuilder(children);
 }
 

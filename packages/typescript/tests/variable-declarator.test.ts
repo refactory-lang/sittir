@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('variable_declarator', () => {
   it('should build with correct kind', () => {
-    const builder = ir.variable_declarator(ir.identifier('test'));
+    const builder = ir.variableDeclarator(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('variable_declarator');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.variable_declarator(ir.identifier('test'));
+    const builder = ir.variableDeclarator(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('variable_declarator');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('variable_declarator', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.variable_declarator(ir.identifier('test'));
+    const builder = ir.variableDeclarator(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -4,15 +4,15 @@ import type { DeclarationList, ExternModifier, ForeignModItem, VisibilityModifie
 
 
 class ForeignModBuilder extends Builder<ForeignModItem> {
-  private _body?: Builder;
-  private _children: Builder[] = [];
+  private _body?: Builder<DeclarationList>;
+  private _children: Builder<ExternModifier | VisibilityModifier>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<ExternModifier | VisibilityModifier>[]) {
     super();
     this._children = children;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<DeclarationList>): this {
     this._body = value;
     return this;
   }
@@ -29,9 +29,9 @@ class ForeignModBuilder extends Builder<ForeignModItem> {
   build(ctx?: RenderContext): ForeignModItem {
     return {
       kind: 'foreign_mod_item',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ForeignModItem;
+      body: this._body?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as ForeignModItem;
   }
 
   override get nodeKind(): string { return 'foreign_mod_item'; }
@@ -48,7 +48,7 @@ class ForeignModBuilder extends Builder<ForeignModItem> {
 
 export type { ForeignModBuilder };
 
-export function foreign_mod(...children: Builder[]): ForeignModBuilder {
+export function foreign_mod(...children: Builder<ExternModifier | VisibilityModifier>[]): ForeignModBuilder {
   return new ForeignModBuilder(...children);
 }
 

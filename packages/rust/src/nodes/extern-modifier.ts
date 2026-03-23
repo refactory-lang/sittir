@@ -4,11 +4,11 @@ import type { ExternModifier, StringLiteral } from '../types.js';
 
 
 class ExternModifierBuilder extends Builder<ExternModifier> {
-  private _children: Builder[] = [];
+  private _children: Builder<StringLiteral>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<StringLiteral>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class ExternModifierBuilder extends Builder<ExternModifier> {
   build(ctx?: RenderContext): ExternModifier {
     return {
       kind: 'extern_modifier',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ExternModifier;
+      children: this._children[0]?.build(ctx),
+    } as ExternModifier;
   }
 
   override get nodeKind(): string { return 'extern_modifier'; }

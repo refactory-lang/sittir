@@ -5,11 +5,11 @@ import type { Expression, ForExpression, Label, Pattern } from '../types.js';
 
 class ForBuilder extends Builder<ForExpression> {
   private _body!: Builder;
-  private _pattern: Builder;
-  private _value!: Builder;
-  private _children: Builder[] = [];
+  private _pattern: Builder<Pattern>;
+  private _value!: Builder<Expression>;
+  private _children: Builder<Label>[] = [];
 
-  constructor(pattern: Builder) {
+  constructor(pattern: Builder<Pattern>) {
     super();
     this._pattern = pattern;
   }
@@ -19,12 +19,12 @@ class ForBuilder extends Builder<ForExpression> {
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Label>[]): this {
     this._children = value;
     return this;
   }
@@ -43,11 +43,11 @@ class ForBuilder extends Builder<ForExpression> {
   build(ctx?: RenderContext): ForExpression {
     return {
       kind: 'for_expression',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      pattern: this.renderChild(this._pattern, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ForExpression;
+      body: this._body?.build(ctx),
+      pattern: this._pattern.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as ForExpression;
   }
 
   override get nodeKind(): string { return 'for_expression'; }
@@ -68,7 +68,7 @@ class ForBuilder extends Builder<ForExpression> {
 
 export type { ForBuilder };
 
-export function for_(pattern: Builder): ForBuilder {
+export function for_(pattern: Builder<Pattern>): ForBuilder {
   return new ForBuilder(pattern);
 }
 

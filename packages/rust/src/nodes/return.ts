@@ -4,11 +4,11 @@ import type { Expression, ReturnExpression } from '../types.js';
 
 
 class ReturnBuilder extends Builder<ReturnExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Expression>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class ReturnBuilder extends Builder<ReturnExpression> {
   build(ctx?: RenderContext): ReturnExpression {
     return {
       kind: 'return_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ReturnExpression;
+      children: this._children[0]?.build(ctx),
+    } as ReturnExpression;
   }
 
   override get nodeKind(): string { return 'return_expression'; }

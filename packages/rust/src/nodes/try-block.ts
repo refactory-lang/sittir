@@ -21,8 +21,8 @@ class TryBlockBuilder extends Builder<TryBlock> {
   build(ctx?: RenderContext): TryBlock {
     return {
       kind: 'try_block',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TryBlock;
+      children: this._children[0]?.build(ctx),
+    } as TryBlock;
   }
 
   override get nodeKind(): string { return 'try_block'; }

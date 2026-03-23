@@ -3,34 +3,34 @@ import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssertsAnnotation, FormalParameters, FunctionExpression, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class FunctionBuilder extends Builder<FunctionExpression> {
-  private _body!: Builder;
-  private _name?: Builder;
-  private _parameters: Builder;
-  private _returnType?: Builder;
-  private _typeParameters?: Builder;
+class FunctionExpressionBuilder extends Builder<FunctionExpression> {
+  private _body!: Builder<StatementBlock>;
+  private _name?: Builder<Identifier>;
+  private _parameters: Builder<FormalParameters>;
+  private _returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  private _typeParameters?: Builder<TypeParameters>;
 
-  constructor(parameters: Builder) {
+  constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<StatementBlock>): this {
     this._body = value;
     return this;
   }
 
-  name(value: Builder): this {
+  name(value: Builder<Identifier>): this {
     this._name = value;
     return this;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
@@ -49,12 +49,12 @@ class FunctionBuilder extends Builder<FunctionExpression> {
   build(ctx?: RenderContext): FunctionExpression {
     return {
       kind: 'function_expression',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this._name ? this.renderChild(this._name, ctx) : undefined,
-      parameters: this.renderChild(this._parameters, ctx),
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-    } as unknown as FunctionExpression;
+      body: this._body?.build(ctx),
+      name: this._name?.build(ctx),
+      parameters: this._parameters.build(ctx),
+      returnType: this._returnType?.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+    } as FunctionExpression;
   }
 
   override get nodeKind(): string { return 'function_expression'; }
@@ -71,10 +71,10 @@ class FunctionBuilder extends Builder<FunctionExpression> {
   }
 }
 
-export type { FunctionBuilder };
+export type { FunctionExpressionBuilder };
 
-export function function_(parameters: Builder): FunctionBuilder {
-  return new FunctionBuilder(parameters);
+export function function_expression(parameters: Builder<FormalParameters>): FunctionExpressionBuilder {
+  return new FunctionExpressionBuilder(parameters);
 }
 
 export interface FunctionExpressionOptions {
@@ -85,9 +85,9 @@ export interface FunctionExpressionOptions {
   typeParameters?: Builder<TypeParameters>;
 }
 
-export namespace function_ {
-  export function from(options: FunctionExpressionOptions): FunctionBuilder {
-    const b = new FunctionBuilder(options.parameters);
+export namespace function_expression {
+  export function from(options: FunctionExpressionOptions): FunctionExpressionBuilder {
+    const b = new FunctionExpressionBuilder(options.parameters);
     if (options.body !== undefined) b.body(options.body);
     if (options.name !== undefined) {
       const _v = options.name;

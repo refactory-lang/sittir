@@ -4,15 +4,15 @@ import type { MacroRule, TokenTree, TokenTreePattern } from '../types.js';
 
 
 class MacroRuleBuilder extends Builder<MacroRule> {
-  private _left: Builder;
-  private _right!: Builder;
+  private _left: Builder<TokenTreePattern>;
+  private _right!: Builder<TokenTree>;
 
-  constructor(left: Builder) {
+  constructor(left: Builder<TokenTreePattern>) {
     super();
     this._left = left;
   }
 
-  right(value: Builder): this {
+  right(value: Builder<TokenTree>): this {
     this._right = value;
     return this;
   }
@@ -28,9 +28,9 @@ class MacroRuleBuilder extends Builder<MacroRule> {
   build(ctx?: RenderContext): MacroRule {
     return {
       kind: 'macro_rule',
-      left: this.renderChild(this._left, ctx),
-      right: this._right ? this.renderChild(this._right, ctx) : undefined,
-    } as unknown as MacroRule;
+      left: this._left.build(ctx),
+      right: this._right?.build(ctx),
+    } as MacroRule;
   }
 
   override get nodeKind(): string { return 'macro_rule'; }
@@ -46,7 +46,7 @@ class MacroRuleBuilder extends Builder<MacroRule> {
 
 export type { MacroRuleBuilder };
 
-export function macro_rule(left: Builder): MacroRuleBuilder {
+export function macro_rule(left: Builder<TokenTreePattern>): MacroRuleBuilder {
   return new MacroRuleBuilder(left);
 }
 

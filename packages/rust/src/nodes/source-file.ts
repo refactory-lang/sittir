@@ -4,11 +4,11 @@ import type { DeclarationStatement, ExpressionStatement, Shebang, SourceFile } f
 
 
 class SourceFileBuilder extends Builder<SourceFile> {
-  private _children: Builder[] = [];
+  private _children: Builder<DeclarationStatement | ExpressionStatement | Shebang>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<DeclarationStatement | ExpressionStatement | Shebang>[]): this {
     this._children = value;
     return this;
   }
@@ -22,8 +22,8 @@ class SourceFileBuilder extends Builder<SourceFile> {
   build(ctx?: RenderContext): SourceFile {
     return {
       kind: 'source_file',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as SourceFile;
+      children: this._children.map(c => c.build(ctx)),
+    } as SourceFile;
   }
 
   override get nodeKind(): string { return 'source_file'; }
@@ -39,7 +39,7 @@ class SourceFileBuilder extends Builder<SourceFile> {
 
 export type { SourceFileBuilder };
 
-export function file(): SourceFileBuilder {
+export function source_file(): SourceFileBuilder {
   return new SourceFileBuilder();
 }
 
@@ -47,7 +47,7 @@ export interface SourceFileOptions {
   children?: Builder<DeclarationStatement | ExpressionStatement | Shebang> | (Builder<DeclarationStatement | ExpressionStatement | Shebang>)[];
 }
 
-export namespace file {
+export namespace source_file {
   export function from(options: SourceFileOptions): SourceFileBuilder {
     const b = new SourceFileBuilder();
     if (options.children !== undefined) {

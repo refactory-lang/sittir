@@ -4,9 +4,9 @@ import type { ElseClause, IfExpression } from '../types.js';
 
 
 class ElseClauseBuilder extends Builder<ElseClause> {
-  private _children: Builder[] = [];
+  private _children: Builder<IfExpression>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<IfExpression>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class ElseClauseBuilder extends Builder<ElseClause> {
   build(ctx?: RenderContext): ElseClause {
     return {
       kind: 'else_clause',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ElseClause;
+      children: this._children[0]?.build(ctx),
+    } as ElseClause;
   }
 
   override get nodeKind(): string { return 'else_clause'; }
@@ -39,7 +39,7 @@ class ElseClauseBuilder extends Builder<ElseClause> {
 
 export type { ElseClauseBuilder };
 
-export function else_clause(children: Builder): ElseClauseBuilder {
+export function else_clause(children: Builder<IfExpression>): ElseClauseBuilder {
   return new ElseClauseBuilder(children);
 }
 

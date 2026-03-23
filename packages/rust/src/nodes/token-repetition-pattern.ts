@@ -4,11 +4,11 @@ import type { Crate, Identifier, Literal, Metavariable, MutableSpecifier, Primit
 
 
 class TokenRepetitionPatternBuilder extends Builder<TokenRepetitionPattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Literal | Crate | Identifier | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern>[]): this {
     this._children = value;
     return this;
   }
@@ -26,8 +26,8 @@ class TokenRepetitionPatternBuilder extends Builder<TokenRepetitionPattern> {
   build(ctx?: RenderContext): TokenRepetitionPattern {
     return {
       kind: 'token_repetition_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TokenRepetitionPattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as TokenRepetitionPattern;
   }
 
   override get nodeKind(): string { return 'token_repetition_pattern'; }

@@ -4,9 +4,9 @@ import type { OrPattern, Pattern } from '../types.js';
 
 
 class OrPatternBuilder extends Builder<OrPattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Pattern>[]) {
     super();
     this._children = children;
   }
@@ -21,8 +21,8 @@ class OrPatternBuilder extends Builder<OrPattern> {
   build(ctx?: RenderContext): OrPattern {
     return {
       kind: 'or_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as OrPattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as OrPattern;
   }
 
   override get nodeKind(): string { return 'or_pattern'; }
@@ -39,7 +39,7 @@ class OrPatternBuilder extends Builder<OrPattern> {
 
 export type { OrPatternBuilder };
 
-export function or_pattern(...children: Builder[]): OrPatternBuilder {
+export function or_pattern(...children: Builder<Pattern>[]): OrPatternBuilder {
   return new OrPatternBuilder(...children);
 }
 

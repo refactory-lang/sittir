@@ -4,9 +4,9 @@ import type { FloatLiteral, IntegerLiteral, NegativeLiteral } from '../types.js'
 
 
 class NegativeLiteralBuilder extends Builder<NegativeLiteral> {
-  private _children: Builder[] = [];
+  private _children: Builder<FloatLiteral | IntegerLiteral>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<FloatLiteral | IntegerLiteral>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class NegativeLiteralBuilder extends Builder<NegativeLiteral> {
   build(ctx?: RenderContext): NegativeLiteral {
     return {
       kind: 'negative_literal',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as NegativeLiteral;
+      children: this._children[0]?.build(ctx),
+    } as NegativeLiteral;
   }
 
   override get nodeKind(): string { return 'negative_literal'; }
@@ -39,7 +39,7 @@ class NegativeLiteralBuilder extends Builder<NegativeLiteral> {
 
 export type { NegativeLiteralBuilder };
 
-export function negative_literal(children: Builder): NegativeLiteralBuilder {
+export function negative_literal(children: Builder<FloatLiteral | IntegerLiteral>): NegativeLiteralBuilder {
   return new NegativeLiteralBuilder(children);
 }
 

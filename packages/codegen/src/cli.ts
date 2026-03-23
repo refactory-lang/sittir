@@ -18,6 +18,8 @@ interface CliArgs {
 	nodes?: string[];
 	outputDir?: string;
 	all?: boolean;
+	testsDir?: string;
+	testsImportPath?: string;
 }
 
 function parseArgs(args: string[]): CliArgs {
@@ -42,6 +44,14 @@ function parseArgs(args: string[]): CliArgs {
 				break;
 			case '--all':
 				config.all = true;
+				break;
+			case '--tests-dir':
+				config.testsDir = next;
+				i++;
+				break;
+			case '--tests-import-path':
+				config.testsImportPath = next;
+				i++;
 				break;
 			case '--help':
 				console.log(`
@@ -91,6 +101,7 @@ const config: CodegenConfig = {
 	grammar: cliArgs.grammar!,
 	nodes: cliArgs.all ? undefined : cliArgs.nodes,
 	outputDir: cliArgs.outputDir!,
+	testSourceImportPath: cliArgs.testsImportPath,
 };
 
 console.log(`Generating ${config.grammar} IR...`);
@@ -115,11 +126,12 @@ for (const [kind, source] of result.builders) {
 }
 
 // Write test files
-const testsDir = join(dirname(outDir), 'tests');
+const testsDir = cliArgs.testsDir ?? join(dirname(outDir), 'tests');
 for (const [kind, source] of result.tests) {
 	const fileName = fileNames.get(kind)!;
 	writeFile(join(testsDir, `${fileName}.test.ts`), source);
 }
+writeFile(join(testsDir, 'leaf-nodes.test.ts'), result.leafTests);
 
 // Write vitest config
 writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);

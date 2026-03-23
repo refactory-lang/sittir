@@ -4,15 +4,15 @@ import type { AssignmentExpression, Expression } from '../types.js';
 
 
 class AssignmentBuilder extends Builder<AssignmentExpression> {
-  private _left: Builder;
-  private _right!: Builder;
+  private _left: Builder<Expression>;
+  private _right!: Builder<Expression>;
 
-  constructor(left: Builder) {
+  constructor(left: Builder<Expression>) {
     super();
     this._left = left;
   }
 
-  right(value: Builder): this {
+  right(value: Builder<Expression>): this {
     this._right = value;
     return this;
   }
@@ -28,9 +28,9 @@ class AssignmentBuilder extends Builder<AssignmentExpression> {
   build(ctx?: RenderContext): AssignmentExpression {
     return {
       kind: 'assignment_expression',
-      left: this.renderChild(this._left, ctx),
-      right: this._right ? this.renderChild(this._right, ctx) : undefined,
-    } as unknown as AssignmentExpression;
+      left: this._left.build(ctx),
+      right: this._right?.build(ctx),
+    } as AssignmentExpression;
   }
 
   override get nodeKind(): string { return 'assignment_expression'; }
@@ -46,7 +46,7 @@ class AssignmentBuilder extends Builder<AssignmentExpression> {
 
 export type { AssignmentBuilder };
 
-export function assignment(left: Builder): AssignmentBuilder {
+export function assignment(left: Builder<Expression>): AssignmentBuilder {
   return new AssignmentBuilder(left);
 }
 

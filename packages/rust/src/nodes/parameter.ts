@@ -4,21 +4,21 @@ import type { MutableSpecifier, Parameter, Pattern, Self, Type } from '../types.
 
 
 class ParameterBuilder extends Builder<Parameter> {
-  private _pattern: Builder;
-  private _type!: Builder;
-  private _children: Builder[] = [];
+  private _pattern: Builder<Pattern | Self>;
+  private _type!: Builder<Type>;
+  private _children: Builder<MutableSpecifier>[] = [];
 
-  constructor(pattern: Builder) {
+  constructor(pattern: Builder<Pattern | Self>) {
     super();
     this._pattern = pattern;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MutableSpecifier>[]): this {
     this._children = value;
     return this;
   }
@@ -35,10 +35,10 @@ class ParameterBuilder extends Builder<Parameter> {
   build(ctx?: RenderContext): Parameter {
     return {
       kind: 'parameter',
-      pattern: this.renderChild(this._pattern, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Parameter;
+      pattern: this._pattern.build(ctx),
+      type: this._type?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as Parameter;
   }
 
   override get nodeKind(): string { return 'parameter'; }
@@ -57,7 +57,7 @@ class ParameterBuilder extends Builder<Parameter> {
 
 export type { ParameterBuilder };
 
-export function parameter(pattern: Builder): ParameterBuilder {
+export function parameter(pattern: Builder<Pattern | Self>): ParameterBuilder {
   return new ParameterBuilder(pattern);
 }
 

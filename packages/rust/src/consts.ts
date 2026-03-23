@@ -730,3 +730,52 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'yield_expression': [
   ],
 };
+
+/** Valid values for `boolean_literal` nodes. */
+export const BOOLEAN_LITERALS = [
+  'false',
+  'true',
+] as const;
+export type BooleanLiteral = (typeof BOOLEAN_LITERALS)[number];
+
+/** Valid values for `fragment_specifier` nodes. */
+export const FRAGMENT_SPECIFIERS = [
+  'block',
+  'expr',
+  'expr_2021',
+  'ident',
+  'item',
+  'lifetime',
+  'literal',
+  'meta',
+  'pat',
+  'pat_param',
+  'path',
+  'stmt',
+  'tt',
+  'ty',
+  'vis',
+] as const;
+export type FragmentSpecifier = (typeof FRAGMENT_SPECIFIERS)[number];
+
+/** Valid values for `primitive_type` nodes. */
+export const PRIMITIVE_TYPES = [
+  'bool',
+  'char',
+  'f32',
+  'f64',
+  'i128',
+  'i16',
+  'i32',
+  'i64',
+  'i8',
+  'isize',
+  'str',
+  'u128',
+  'u16',
+  'u32',
+  'u64',
+  'u8',
+  'usize',
+] as const;
+export type PrimitiveType = (typeof PRIMITIVE_TYPES)[number];

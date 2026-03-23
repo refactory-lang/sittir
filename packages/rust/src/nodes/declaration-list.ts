@@ -4,11 +4,11 @@ import type { DeclarationList, DeclarationStatement } from '../types.js';
 
 
 class DeclarationListBuilder extends Builder<DeclarationList> {
-  private _children: Builder[] = [];
+  private _children: Builder<DeclarationStatement>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<DeclarationStatement>[]): this {
     this._children = value;
     return this;
   }
@@ -24,8 +24,8 @@ class DeclarationListBuilder extends Builder<DeclarationList> {
   build(ctx?: RenderContext): DeclarationList {
     return {
       kind: 'declaration_list',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as DeclarationList;
+      children: this._children.map(c => c.build(ctx)),
+    } as DeclarationList;
   }
 
   override get nodeKind(): string { return 'declaration_list'; }

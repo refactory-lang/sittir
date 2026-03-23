@@ -4,11 +4,11 @@ import type { AttributeItem, Parameter, Parameters, SelfParameter, Type, Variadi
 
 
 class ParametersBuilder extends Builder<Parameters> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type | AttributeItem | Parameter | SelfParameter | VariadicParameter>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Type | AttributeItem | Parameter | SelfParameter | VariadicParameter>[]): this {
     this._children = value;
     return this;
   }
@@ -27,8 +27,8 @@ class ParametersBuilder extends Builder<Parameters> {
   build(ctx?: RenderContext): Parameters {
     return {
       kind: 'parameters',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Parameters;
+      children: this._children.map(c => c.build(ctx)),
+    } as Parameters;
   }
 
   override get nodeKind(): string { return 'parameters'; }

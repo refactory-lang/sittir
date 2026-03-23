@@ -90,16 +90,20 @@ export type Contains<Visited extends string[], T extends string> = Visited exten
 type LeafBrand<K extends string> = TextBrand<K>;
 
 /**
- * Expand a single child kind into a structured node or a branded-string leaf.
+ * Expand a single child kind into a structured node.
  * Uses the visited set for cycle detection.
+ * Supertypes (with `subtypes`) are expanded into unions of their concrete kinds.
+ * Leaf kinds (no fields, no subtypes) produce `{ readonly kind: K }`.
  */
 export type ExpandOneKind<G, K extends string, Visited extends string[]> = K extends NodeKind<G>
 	? G[K] extends { fields: object }
 		? Contains<Visited, K> extends true
-			? LeafBrand<K>
+			? Readonly<{ kind: K }>
 			: ExpandNode<G, K, Visited>
-		: LeafBrand<K>
-	: LeafBrand<K>;
+		: G[K] extends { subtypes: readonly NodeBasicInfo[] }
+			? ExpandOneKind<G, ResolveType<G, K>, Visited>
+			: Readonly<{ kind: K }>
+	: Readonly<{ kind: K }>;
 
 /**
  * Expand a grammar slot into structured nodes, stopping at cycles.
@@ -138,7 +142,7 @@ export type OptionalFieldName<G, K extends NodeKind<G>> = Exclude<
 >;
 
 /** Extract the kind strings from a field's slot types. */
-type FieldKinds<G, K extends NodeKind<G>, F extends FieldName<G, K>> = SlotKinds<
+export type FieldKinds<G, K extends NodeKind<G>, F extends FieldName<G, K>> = SlotKinds<
 	FieldInfo<G, K, F>
 >;
 
@@ -595,6 +599,9 @@ export interface Edit {
 	endPos: number;
 	insertedText: string;
 }
+
+/** Transform function for edit() — receives a builder typed to the input node and returns one. */
+export type NodeTransform<N extends { kind: string } = { kind: string }> = (input: Builder<N>) => Builder<N>;
 
 
 // ---------------------------------------------------------------------------

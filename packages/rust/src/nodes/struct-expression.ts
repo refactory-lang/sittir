@@ -3,16 +3,16 @@ import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FieldInitializerList, GenericTypeWithTurbofish, ScopedTypeIdentifier, StructExpression, TypeIdentifier } from '../types.js';
 
 
-class StructBuilder extends Builder<StructExpression> {
-  private _body!: Builder;
-  private _name: Builder;
+class StructExpressionBuilder extends Builder<StructExpression> {
+  private _body!: Builder<FieldInitializerList>;
+  private _name: Builder<GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<FieldInitializerList>): this {
     this._body = value;
     return this;
   }
@@ -27,9 +27,9 @@ class StructBuilder extends Builder<StructExpression> {
   build(ctx?: RenderContext): StructExpression {
     return {
       kind: 'struct_expression',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-    } as unknown as StructExpression;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+    } as StructExpression;
   }
 
   override get nodeKind(): string { return 'struct_expression'; }
@@ -42,10 +42,10 @@ class StructBuilder extends Builder<StructExpression> {
   }
 }
 
-export type { StructBuilder };
+export type { StructExpressionBuilder };
 
-export function struct_(name: Builder): StructBuilder {
-  return new StructBuilder(name);
+export function struct_expression(name: Builder<GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier>): StructExpressionBuilder {
+  return new StructExpressionBuilder(name);
 }
 
 export interface StructExpressionOptions {
@@ -53,9 +53,9 @@ export interface StructExpressionOptions {
   name: Builder<GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier>;
 }
 
-export namespace struct_ {
-  export function from(options: StructExpressionOptions): StructBuilder {
-    const b = new StructBuilder(options.name);
+export namespace struct_expression {
+  export function from(options: StructExpressionOptions): StructExpressionBuilder {
+    const b = new StructExpressionBuilder(options.name);
     if (options.body !== undefined) b.body(options.body);
     return b;
   }

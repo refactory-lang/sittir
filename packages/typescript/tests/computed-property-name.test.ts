@@ -3,20 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('computed_property_name', () => {
   it('should build with correct kind', () => {
-    const builder = ir.computed_property_name(ir.identifier('test'));
+    const builder = ir.computedPropertyName(ir.yieldExpression());
     const node = builder.build();
     expect(node.kind).toBe('computed_property_name');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.computed_property_name(ir.identifier('test'));
+    const builder = ir.computedPropertyName(ir.yieldExpression());
     const source = builder.renderImpl();
     expect(source).toContain('[');
     expect(source).toContain(']');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.computed_property_name(ir.identifier('test'));
+    const builder = ir.computedPropertyName(ir.yieldExpression());
     const cst = builder.toCST();
     expect(cst.type).toBe('computed_property_name');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +26,7 @@ describe('computed_property_name', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.computed_property_name(ir.identifier('test'));
+    const builder = ir.computedPropertyName(ir.yieldExpression());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

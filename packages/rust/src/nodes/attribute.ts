@@ -4,21 +4,21 @@ import type { Attribute, Crate, Expression, Identifier, Metavariable, ScopedIden
 
 
 class AttributeBuilder extends Builder<Attribute> {
-  private _arguments?: Builder;
-  private _value?: Builder;
-  private _children: Builder[] = [];
+  private _arguments?: Builder<TokenTree>;
+  private _value?: Builder<Expression>;
+  private _children: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>) {
     super();
     this._children = [children];
   }
 
-  arguments(value: Builder): this {
+  arguments(value: Builder<TokenTree>): this {
     this._arguments = value;
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
@@ -37,10 +37,10 @@ class AttributeBuilder extends Builder<Attribute> {
   build(ctx?: RenderContext): Attribute {
     return {
       kind: 'attribute',
-      arguments: this._arguments ? this.renderChild(this._arguments, ctx) : undefined,
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Attribute;
+      arguments: this._arguments?.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as Attribute;
   }
 
   override get nodeKind(): string { return 'attribute'; }
@@ -61,7 +61,7 @@ class AttributeBuilder extends Builder<Attribute> {
 
 export type { AttributeBuilder };
 
-export function attribute(children: Builder): AttributeBuilder {
+export function attribute(children: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>): AttributeBuilder {
   return new AttributeBuilder(children);
 }
 

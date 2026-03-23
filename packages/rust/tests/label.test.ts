@@ -6,6 +6,7 @@ describe('label', () => {
     const builder = ir.label(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('label');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {

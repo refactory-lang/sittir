@@ -4,11 +4,11 @@ import type { ClosureExpression, Pattern, TuplePattern } from '../types.js';
 
 
 class TuplePatternBuilder extends Builder<TuplePattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern | ClosureExpression>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Pattern | ClosureExpression>[]): this {
     this._children = value;
     return this;
   }
@@ -29,8 +29,8 @@ class TuplePatternBuilder extends Builder<TuplePattern> {
   build(ctx?: RenderContext): TuplePattern {
     return {
       kind: 'tuple_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TuplePattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as TuplePattern;
   }
 
   override get nodeKind(): string { return 'tuple_pattern'; }

@@ -4,9 +4,9 @@ import type { BracketedType, QualifiedType, Type } from '../types.js';
 
 
 class BracketedTypeBuilder extends Builder<BracketedType> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type | QualifiedType>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Type | QualifiedType>) {
     super();
     this._children = [children];
   }
@@ -22,8 +22,8 @@ class BracketedTypeBuilder extends Builder<BracketedType> {
   build(ctx?: RenderContext): BracketedType {
     return {
       kind: 'bracketed_type',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as BracketedType;
+      children: this._children[0]?.build(ctx),
+    } as BracketedType;
   }
 
   override get nodeKind(): string { return 'bracketed_type'; }
@@ -41,7 +41,7 @@ class BracketedTypeBuilder extends Builder<BracketedType> {
 
 export type { BracketedTypeBuilder };
 
-export function bracketed_type(children: Builder): BracketedTypeBuilder {
+export function bracketed_type(children: Builder<Type | QualifiedType>): BracketedTypeBuilder {
   return new BracketedTypeBuilder(children);
 }
 

@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('macro_invocation', () => {
   it('should build with correct kind', () => {
-    const builder = ir.macro_invocation(ir.identifier('test'));
+    const builder = ir.macroInvocation(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('macro_invocation');
+    expect((node as any).macro).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.macro_invocation(ir.identifier('test'));
+    const builder = ir.macroInvocation(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('!');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.macro_invocation(ir.identifier('test'));
+    const builder = ir.macroInvocation(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('macro_invocation');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('macro_invocation', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.macro_invocation(ir.identifier('test'));
+    const builder = ir.macroInvocation(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

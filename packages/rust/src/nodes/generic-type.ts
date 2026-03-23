@@ -4,15 +4,15 @@ import type { GenericType, Identifier, ScopedIdentifier, ScopedTypeIdentifier, T
 
 
 class GenericTypeBuilder extends Builder<GenericType> {
-  private _type: Builder;
-  private _typeArguments!: Builder;
+  private _type: Builder<Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier>;
+  private _typeArguments!: Builder<TypeArguments>;
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier>) {
     super();
     this._type = type_;
   }
 
-  typeArguments(value: Builder): this {
+  typeArguments(value: Builder<TypeArguments>): this {
     this._typeArguments = value;
     return this;
   }
@@ -27,9 +27,9 @@ class GenericTypeBuilder extends Builder<GenericType> {
   build(ctx?: RenderContext): GenericType {
     return {
       kind: 'generic_type',
-      type: this.renderChild(this._type, ctx),
-      typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
-    } as unknown as GenericType;
+      type: this._type.build(ctx),
+      typeArguments: this._typeArguments?.build(ctx),
+    } as GenericType;
   }
 
   override get nodeKind(): string { return 'generic_type'; }
@@ -44,7 +44,7 @@ class GenericTypeBuilder extends Builder<GenericType> {
 
 export type { GenericTypeBuilder };
 
-export function generic_type(type_: Builder): GenericTypeBuilder {
+export function generic_type(type_: Builder<Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier>): GenericTypeBuilder {
   return new GenericTypeBuilder(type_);
 }
 

@@ -827,3 +827,26 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'yield_expression': [
   ],
 };
+
+/** Valid values for `accessibility_modifier` nodes. */
+export const ACCESSIBILITY_MODIFIERS = [
+  'private',
+  'protected',
+  'public',
+] as const;
+export type AccessibilityModifier = (typeof ACCESSIBILITY_MODIFIERS)[number];
+
+/** Valid values for `predefined_type` nodes. */
+export const PREDEFINED_TYPES = [
+  'any',
+  'boolean',
+  'never',
+  'number',
+  'object',
+  'string',
+  'string',
+  'symbol',
+  'unknown',
+  'void',
+] as const;
+export type PredefinedType = (typeof PREDEFINED_TYPES)[number];

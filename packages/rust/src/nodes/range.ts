@@ -4,11 +4,11 @@ import type { Expression, RangeExpression } from '../types.js';
 
 
 class RangeBuilder extends Builder<RangeExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Expression>[]): this {
     this._children = value;
     return this;
   }
@@ -23,8 +23,8 @@ class RangeBuilder extends Builder<RangeExpression> {
   build(ctx?: RenderContext): RangeExpression {
     return {
       kind: 'range_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as RangeExpression;
+      children: this._children.map(c => c.build(ctx)),
+    } as RangeExpression;
   }
 
   override get nodeKind(): string { return 'range_expression'; }

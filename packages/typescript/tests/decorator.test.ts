@@ -6,6 +6,7 @@ describe('decorator', () => {
     const builder = ir.decorator(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('decorator');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {

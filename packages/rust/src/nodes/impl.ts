@@ -4,33 +4,33 @@ import type { DeclarationList, GenericType, ImplItem, ScopedTypeIdentifier, Type
 
 
 class ImplBuilder extends Builder<ImplItem> {
-  private _body?: Builder;
-  private _trait?: Builder;
-  private _type: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+  private _body?: Builder<DeclarationList>;
+  private _trait?: Builder<GenericType | ScopedTypeIdentifier | TypeIdentifier>;
+  private _type: Builder<Type>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<WhereClause>[] = [];
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<Type>) {
     super();
     this._type = type_;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<DeclarationList>): this {
     this._body = value;
     return this;
   }
 
-  trait(value: Builder): this {
+  trait(value: Builder<GenericType | ScopedTypeIdentifier | TypeIdentifier>): this {
     this._trait = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -53,12 +53,12 @@ class ImplBuilder extends Builder<ImplItem> {
   build(ctx?: RenderContext): ImplItem {
     return {
       kind: 'impl_item',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      trait: this._trait ? this.renderChild(this._trait, ctx) : undefined,
-      type: this.renderChild(this._type, ctx),
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ImplItem;
+      body: this._body?.build(ctx),
+      trait: this._trait?.build(ctx),
+      type: this._type.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as ImplItem;
   }
 
   override get nodeKind(): string { return 'impl_item'; }
@@ -83,7 +83,7 @@ class ImplBuilder extends Builder<ImplItem> {
 
 export type { ImplBuilder };
 
-export function impl(type_: Builder): ImplBuilder {
+export function impl(type_: Builder<Type>): ImplBuilder {
   return new ImplBuilder(type_);
 }
 

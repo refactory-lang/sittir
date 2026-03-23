@@ -6,6 +6,7 @@ describe('const_item', () => {
     const builder = ir.const(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('const_item');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {

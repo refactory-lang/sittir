@@ -4,27 +4,27 @@ import type { ConstItem, Expression, Identifier, Type, VisibilityModifier } from
 
 
 class ConstBuilder extends Builder<ConstItem> {
-  private _name: Builder;
-  private _type!: Builder;
-  private _value?: Builder;
-  private _children: Builder[] = [];
+  private _name: Builder<Identifier>;
+  private _type!: Builder<Type>;
+  private _value?: Builder<Expression>;
+  private _children: Builder<VisibilityModifier>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -47,11 +47,11 @@ class ConstBuilder extends Builder<ConstItem> {
   build(ctx?: RenderContext): ConstItem {
     return {
       kind: 'const_item',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ConstItem;
+      name: this._name.build(ctx),
+      type: this._type?.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as ConstItem;
   }
 
   override get nodeKind(): string { return 'const_item'; }
@@ -76,7 +76,7 @@ class ConstBuilder extends Builder<ConstItem> {
 
 export type { ConstBuilder };
 
-export function const_(name: Builder): ConstBuilder {
+export function const_(name: Builder<Identifier>): ConstBuilder {
   return new ConstBuilder(name);
 }
 

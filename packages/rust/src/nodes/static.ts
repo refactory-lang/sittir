@@ -4,27 +4,27 @@ import type { Expression, Identifier, MutableSpecifier, StaticItem, Type, Visibi
 
 
 class StaticBuilder extends Builder<StaticItem> {
-  private _name: Builder;
-  private _type!: Builder;
-  private _value?: Builder;
-  private _children: Builder[] = [];
+  private _name: Builder<Identifier>;
+  private _type!: Builder<Type>;
+  private _value?: Builder<Expression>;
+  private _children: Builder<MutableSpecifier | VisibilityModifier>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MutableSpecifier | VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -48,11 +48,11 @@ class StaticBuilder extends Builder<StaticItem> {
   build(ctx?: RenderContext): StaticItem {
     return {
       kind: 'static_item',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as StaticItem;
+      name: this._name.build(ctx),
+      type: this._type?.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as StaticItem;
   }
 
   override get nodeKind(): string { return 'static_item'; }
@@ -76,7 +76,7 @@ class StaticBuilder extends Builder<StaticItem> {
 
 export type { StaticBuilder };
 
-export function static_(name: Builder): StaticBuilder {
+export function static_(name: Builder<Identifier>): StaticBuilder {
   return new StaticBuilder(name);
 }
 

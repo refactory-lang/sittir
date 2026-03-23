@@ -5,10 +5,10 @@ import type { Expression, Label, LetChain, LetCondition, WhileExpression } from 
 
 class WhileBuilder extends Builder<WhileExpression> {
   private _body!: Builder;
-  private _condition: Builder;
-  private _children: Builder[] = [];
+  private _condition: Builder<Expression | LetChain | LetCondition>;
+  private _children: Builder<Label>[] = [];
 
-  constructor(condition: Builder) {
+  constructor(condition: Builder<Expression | LetChain | LetCondition>) {
     super();
     this._condition = condition;
   }
@@ -18,7 +18,7 @@ class WhileBuilder extends Builder<WhileExpression> {
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Label>[]): this {
     this._children = value;
     return this;
   }
@@ -35,10 +35,10 @@ class WhileBuilder extends Builder<WhileExpression> {
   build(ctx?: RenderContext): WhileExpression {
     return {
       kind: 'while_expression',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      condition: this.renderChild(this._condition, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as WhileExpression;
+      body: this._body?.build(ctx),
+      condition: this._condition.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as WhileExpression;
   }
 
   override get nodeKind(): string { return 'while_expression'; }
@@ -57,7 +57,7 @@ class WhileBuilder extends Builder<WhileExpression> {
 
 export type { WhileBuilder };
 
-export function while_(condition: Builder): WhileBuilder {
+export function while_(condition: Builder<Expression | LetChain | LetCondition>): WhileBuilder {
   return new WhileBuilder(condition);
 }
 

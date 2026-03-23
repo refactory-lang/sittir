@@ -4,11 +4,11 @@ import type { Arguments, AttributeItem, Expression } from '../types.js';
 
 
 class ArgumentsBuilder extends Builder<Arguments> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression | AttributeItem>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Expression | AttributeItem>[]): this {
     this._children = value;
     return this;
   }
@@ -25,8 +25,8 @@ class ArgumentsBuilder extends Builder<Arguments> {
   build(ctx?: RenderContext): Arguments {
     return {
       kind: 'arguments',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Arguments;
+      children: this._children.map(c => c.build(ctx)),
+    } as Arguments;
   }
 
   override get nodeKind(): string { return 'arguments'; }

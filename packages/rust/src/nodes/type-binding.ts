@@ -4,21 +4,21 @@ import type { Type, TypeArguments, TypeBinding, TypeIdentifier } from '../types.
 
 
 class TypeBindingBuilder extends Builder<TypeBinding> {
-  private _name: Builder;
-  private _type!: Builder;
-  private _typeArguments?: Builder;
+  private _name: Builder<TypeIdentifier>;
+  private _type!: Builder<Type>;
+  private _typeArguments?: Builder<TypeArguments>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  typeArguments(value: Builder): this {
+  typeArguments(value: Builder<TypeArguments>): this {
     this._typeArguments = value;
     return this;
   }
@@ -35,10 +35,10 @@ class TypeBindingBuilder extends Builder<TypeBinding> {
   build(ctx?: RenderContext): TypeBinding {
     return {
       kind: 'type_binding',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
-    } as unknown as TypeBinding;
+      name: this._name.build(ctx),
+      type: this._type?.build(ctx),
+      typeArguments: this._typeArguments?.build(ctx),
+    } as TypeBinding;
   }
 
   override get nodeKind(): string { return 'type_binding'; }
@@ -55,7 +55,7 @@ class TypeBindingBuilder extends Builder<TypeBinding> {
 
 export type { TypeBindingBuilder };
 
-export function type_binding(name: Builder): TypeBindingBuilder {
+export function type_binding(name: Builder<TypeIdentifier>): TypeBindingBuilder {
   return new TypeBindingBuilder(name);
 }
 

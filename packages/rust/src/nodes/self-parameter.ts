@@ -4,9 +4,9 @@ import type { MutableSpecifier, Self, SelfParameter } from '../types.js';
 
 
 class SelfParameterBuilder extends Builder<SelfParameter> {
-  private _children: Builder[] = [];
+  private _children: Builder<MutableSpecifier | Self>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<MutableSpecifier | Self>[]) {
     super();
     this._children = children;
   }
@@ -22,8 +22,8 @@ class SelfParameterBuilder extends Builder<SelfParameter> {
   build(ctx?: RenderContext): SelfParameter {
     return {
       kind: 'self_parameter',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as SelfParameter;
+      children: this._children.map(c => c.build(ctx)),
+    } as SelfParameter;
   }
 
   override get nodeKind(): string { return 'self_parameter'; }
@@ -39,7 +39,7 @@ class SelfParameterBuilder extends Builder<SelfParameter> {
 
 export type { SelfParameterBuilder };
 
-export function self_parameter(...children: Builder[]): SelfParameterBuilder {
+export function self_parameter(...children: Builder<MutableSpecifier | Self>[]): SelfParameterBuilder {
   return new SelfParameterBuilder(...children);
 }
 

@@ -21,8 +21,8 @@ class GenBlockBuilder extends Builder<GenBlock> {
   build(ctx?: RenderContext): GenBlock {
     return {
       kind: 'gen_block',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as GenBlock;
+      children: this._children[0]?.build(ctx),
+    } as GenBlock;
   }
 
   override get nodeKind(): string { return 'gen_block'; }

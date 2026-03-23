@@ -3,7 +3,7 @@
  * to TypeScript identifiers.
  */
 
-const SUFFIXES = ['_item', '_declaration', '_statement', '_expression'] as const;
+const SUFFIXES = ['_item'] as const;
 
 const JS_RESERVED = new Set([
   'if', 'for', 'while', 'class', 'import', 'export', 'type', 'in', 'do',
@@ -16,9 +16,6 @@ const JS_RESERVED = new Set([
 ]);
 
 const SHORT_NAME_ALIASES: Record<string, string> = {
-  function_item: 'fn',
-  source_file: 'file',
-  program: 'file',
 };
 
 /** Convert snake_case to camelCase */
@@ -75,6 +72,17 @@ export function toShortName(kind: string): string {
     return shortName + '_';
   }
   return shortName;
+}
+
+/**
+ * CamelCase ir namespace property key.
+ * Strips suffixes, applies aliases, converts to camelCase.
+ * `struct_item` -> `struct`, `array_type` -> `arrayType`, `function_item` -> `fn`
+ */
+export function toIrKey(kind: string): string {
+  const short = toShortName(kind);
+  const base = short.endsWith('_') ? short.slice(0, -1) : short;
+  return snakeToCamel(base);
 }
 
 /** kebab-case without suffix: `struct_item` -> `struct` */

@@ -6,6 +6,7 @@ describe('field_expression', () => {
     const builder = ir.fieldExpression(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('field_expression');
+    expect((node as any).value).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {

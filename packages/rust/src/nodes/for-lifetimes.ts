@@ -23,8 +23,8 @@ class ForLifetimesBuilder extends Builder<ForLifetimes> {
   build(ctx?: RenderContext): ForLifetimes {
     return {
       kind: 'for_lifetimes',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ForLifetimes;
+      children: this._children.map(c => c.build(ctx)),
+    } as ForLifetimes;
   }
 
   override get nodeKind(): string { return 'for_lifetimes'; }

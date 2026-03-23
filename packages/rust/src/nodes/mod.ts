@@ -4,21 +4,21 @@ import type { DeclarationList, Identifier, ModItem, VisibilityModifier } from '.
 
 
 class ModBuilder extends Builder<ModItem> {
-  private _body?: Builder;
-  private _name: Builder;
-  private _children: Builder[] = [];
+  private _body?: Builder<DeclarationList>;
+  private _name: Builder<Identifier>;
+  private _children: Builder<VisibilityModifier>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<DeclarationList>): this {
     this._body = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -36,10 +36,10 @@ class ModBuilder extends Builder<ModItem> {
   build(ctx?: RenderContext): ModItem {
     return {
       kind: 'mod_item',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ModItem;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as ModItem;
   }
 
   override get nodeKind(): string { return 'mod_item'; }
@@ -59,7 +59,7 @@ class ModBuilder extends Builder<ModItem> {
 
 export type { ModBuilder };
 
-export function mod(name: Builder): ModBuilder {
+export function mod(name: Builder<Identifier>): ModBuilder {
   return new ModBuilder(name);
 }
 

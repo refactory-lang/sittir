@@ -4,15 +4,15 @@ import type { Crate, Identifier, Metavariable, ScopedIdentifier, ScopedUseList, 
 
 
 class UseBuilder extends Builder<UseDeclaration> {
-  private _argument: Builder;
-  private _children: Builder[] = [];
+  private _argument: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard>;
+  private _children: Builder<VisibilityModifier>[] = [];
 
-  constructor(argument: Builder) {
+  constructor(argument: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard>) {
     super();
     this._argument = argument;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -29,9 +29,9 @@ class UseBuilder extends Builder<UseDeclaration> {
   build(ctx?: RenderContext): UseDeclaration {
     return {
       kind: 'use_declaration',
-      argument: this.renderChild(this._argument, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as UseDeclaration;
+      argument: this._argument.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as UseDeclaration;
   }
 
   override get nodeKind(): string { return 'use_declaration'; }
@@ -50,7 +50,7 @@ class UseBuilder extends Builder<UseDeclaration> {
 
 export type { UseBuilder };
 
-export function use_(argument: Builder): UseBuilder {
+export function use_(argument: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard>): UseBuilder {
   return new UseBuilder(argument);
 }
 

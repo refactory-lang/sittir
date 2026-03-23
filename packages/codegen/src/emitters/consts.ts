@@ -11,7 +11,13 @@
  */
 
 import type { NodeMeta } from '../grammar-reader.ts';
+import { listEnumValues } from '../grammar-reader.ts';
 import { toFieldName } from '../naming.ts';
+
+export interface EnumKind {
+  kind: string;
+  values: string[];
+}
 
 export interface EmitConstsConfig {
   grammar: string;
@@ -20,6 +26,7 @@ export interface EmitConstsConfig {
   keywords: string[];
   operators: string[];
   nodes: NodeMeta[];
+  enumKinds?: EnumKind[];
 }
 
 export function emitConsts(config: EmitConstsConfig): string {
@@ -96,6 +103,25 @@ export function emitConsts(config: EmitConstsConfig): string {
   }
   lines.push('};');
   lines.push('');
+
+  // Enum-like leaf kinds (e.g., primitive_type → ['bool', 'char', 'i32', ...])
+  if (config.enumKinds && config.enumKinds.length > 0) {
+    for (const ek of config.enumKinds) {
+      // primitive_type → PRIMITIVE_TYPES, predefined_type → PREDEFINED_TYPES
+      const constName = ek.kind.toUpperCase() + 'S';
+      // primitive_type → PrimitiveType
+      const typeName = ek.kind.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+
+      lines.push(`/** Valid values for \`${ek.kind}\` nodes. */`);
+      lines.push(`export const ${constName} = [`);
+      for (const v of ek.values) {
+        lines.push(`  '${v.replace(/'/g, "\\'")}',`);
+      }
+      lines.push('] as const;');
+      lines.push(`export type ${typeName} = (typeof ${constName})[number];`);
+      lines.push('');
+    }
+  }
 
   return lines.join('\n');
 }

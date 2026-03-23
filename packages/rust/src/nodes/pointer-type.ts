@@ -4,15 +4,15 @@ import type { MutableSpecifier, PointerType, Type } from '../types.js';
 
 
 class PointerTypeBuilder extends Builder<PointerType> {
-  private _type: Builder;
-  private _children: Builder[] = [];
+  private _type: Builder<Type>;
+  private _children: Builder<MutableSpecifier>[] = [];
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<Type>) {
     super();
     this._type = type_;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MutableSpecifier>[]): this {
     this._children = value;
     return this;
   }
@@ -28,9 +28,9 @@ class PointerTypeBuilder extends Builder<PointerType> {
   build(ctx?: RenderContext): PointerType {
     return {
       kind: 'pointer_type',
-      type: this.renderChild(this._type, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as PointerType;
+      type: this._type.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as PointerType;
   }
 
   override get nodeKind(): string { return 'pointer_type'; }
@@ -48,7 +48,7 @@ class PointerTypeBuilder extends Builder<PointerType> {
 
 export type { PointerTypeBuilder };
 
-export function pointer_type(type_: Builder): PointerTypeBuilder {
+export function pointer_type(type_: Builder<Type>): PointerTypeBuilder {
   return new PointerTypeBuilder(type_);
 }
 

@@ -4,15 +4,15 @@ import type { Expression, MutableSpecifier, ReferenceExpression } from '../types
 
 
 class ReferenceBuilder extends Builder<ReferenceExpression> {
-  private _value: Builder;
-  private _children: Builder[] = [];
+  private _value: Builder<Expression>;
+  private _children: Builder<MutableSpecifier>[] = [];
 
-  constructor(value: Builder) {
+  constructor(value: Builder<Expression>) {
     super();
     this._value = value;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MutableSpecifier>[]): this {
     this._children = value;
     return this;
   }
@@ -29,9 +29,9 @@ class ReferenceBuilder extends Builder<ReferenceExpression> {
   build(ctx?: RenderContext): ReferenceExpression {
     return {
       kind: 'reference_expression',
-      value: this.renderChild(this._value, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ReferenceExpression;
+      value: this._value.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as ReferenceExpression;
   }
 
   override get nodeKind(): string { return 'reference_expression'; }
@@ -50,7 +50,7 @@ class ReferenceBuilder extends Builder<ReferenceExpression> {
 
 export type { ReferenceBuilder };
 
-export function reference(value: Builder): ReferenceBuilder {
+export function reference(value: Builder<Expression>): ReferenceBuilder {
   return new ReferenceBuilder(value);
 }
 

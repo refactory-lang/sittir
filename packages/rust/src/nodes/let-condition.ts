@@ -4,15 +4,15 @@ import type { Expression, LetCondition, Pattern } from '../types.js';
 
 
 class LetConditionBuilder extends Builder<LetCondition> {
-  private _pattern: Builder;
-  private _value!: Builder;
+  private _pattern: Builder<Pattern>;
+  private _value!: Builder<Expression>;
 
-  constructor(pattern: Builder) {
+  constructor(pattern: Builder<Pattern>) {
     super();
     this._pattern = pattern;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
@@ -29,9 +29,9 @@ class LetConditionBuilder extends Builder<LetCondition> {
   build(ctx?: RenderContext): LetCondition {
     return {
       kind: 'let_condition',
-      pattern: this.renderChild(this._pattern, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-    } as unknown as LetCondition;
+      pattern: this._pattern.build(ctx),
+      value: this._value?.build(ctx),
+    } as LetCondition;
   }
 
   override get nodeKind(): string { return 'let_condition'; }
@@ -48,7 +48,7 @@ class LetConditionBuilder extends Builder<LetCondition> {
 
 export type { LetConditionBuilder };
 
-export function let_condition(pattern: Builder): LetConditionBuilder {
+export function let_condition(pattern: Builder<Pattern>): LetConditionBuilder {
   return new LetConditionBuilder(pattern);
 }
 

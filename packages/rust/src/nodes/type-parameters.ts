@@ -4,9 +4,9 @@ import type { AttributeItem, ConstParameter, LifetimeParameter, Metavariable, Ty
 
 
 class TypeParametersBuilder extends Builder<TypeParameters> {
-  private _children: Builder[] = [];
+  private _children: Builder<AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter>[]) {
     super();
     this._children = children;
   }
@@ -25,8 +25,8 @@ class TypeParametersBuilder extends Builder<TypeParameters> {
   build(ctx?: RenderContext): TypeParameters {
     return {
       kind: 'type_parameters',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TypeParameters;
+      children: this._children.map(c => c.build(ctx)),
+    } as TypeParameters;
   }
 
   override get nodeKind(): string { return 'type_parameters'; }
@@ -45,7 +45,7 @@ class TypeParametersBuilder extends Builder<TypeParameters> {
 
 export type { TypeParametersBuilder };
 
-export function type_parameters(...children: Builder[]): TypeParametersBuilder {
+export function type_parameters(...children: Builder<AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter>[]): TypeParametersBuilder {
   return new TypeParametersBuilder(...children);
 }
 

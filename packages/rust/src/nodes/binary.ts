@@ -4,11 +4,11 @@ import type { BinaryExpression, Expression } from '../types.js';
 
 
 class BinaryBuilder extends Builder<BinaryExpression> {
-  private _left: Builder;
+  private _left: Builder<Expression>;
   private _operator!: Builder;
-  private _right!: Builder;
+  private _right!: Builder<Expression>;
 
-  constructor(left: Builder) {
+  constructor(left: Builder<Expression>) {
     super();
     this._left = left;
   }
@@ -18,7 +18,7 @@ class BinaryBuilder extends Builder<BinaryExpression> {
     return this;
   }
 
-  right(value: Builder): this {
+  right(value: Builder<Expression>): this {
     this._right = value;
     return this;
   }
@@ -34,10 +34,10 @@ class BinaryBuilder extends Builder<BinaryExpression> {
   build(ctx?: RenderContext): BinaryExpression {
     return {
       kind: 'binary_expression',
-      left: this.renderChild(this._left, ctx),
-      operator: this._operator ? this.renderChild(this._operator, ctx) : undefined,
-      right: this._right ? this.renderChild(this._right, ctx) : undefined,
-    } as unknown as BinaryExpression;
+      left: this._left.build(ctx),
+      operator: this._operator?.build(ctx),
+      right: this._right?.build(ctx),
+    } as BinaryExpression;
   }
 
   override get nodeKind(): string { return 'binary_expression'; }
@@ -53,7 +53,7 @@ class BinaryBuilder extends Builder<BinaryExpression> {
 
 export type { BinaryBuilder };
 
-export function binary(left: Builder): BinaryBuilder {
+export function binary(left: Builder<Expression>): BinaryBuilder {
   return new BinaryBuilder(left);
 }
 

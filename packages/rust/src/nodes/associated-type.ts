@@ -4,27 +4,27 @@ import type { AssociatedType, TraitBounds, TypeIdentifier, TypeParameters, Where
 
 
 class AssociatedTypeBuilder extends Builder<AssociatedType> {
-  private _bounds?: Builder;
-  private _name: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+  private _bounds?: Builder<TraitBounds>;
+  private _name: Builder<TypeIdentifier>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<WhereClause>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  bounds(value: Builder): this {
+  bounds(value: Builder<TraitBounds>): this {
     this._bounds = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -43,11 +43,11 @@ class AssociatedTypeBuilder extends Builder<AssociatedType> {
   build(ctx?: RenderContext): AssociatedType {
     return {
       kind: 'associated_type',
-      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as AssociatedType;
+      bounds: this._bounds?.build(ctx),
+      name: this._name.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as AssociatedType;
   }
 
   override get nodeKind(): string { return 'associated_type'; }
@@ -68,7 +68,7 @@ class AssociatedTypeBuilder extends Builder<AssociatedType> {
 
 export type { AssociatedTypeBuilder };
 
-export function associated_type(name: Builder): AssociatedTypeBuilder {
+export function associated_type(name: Builder<TypeIdentifier>): AssociatedTypeBuilder {
   return new AssociatedTypeBuilder(name);
 }
 

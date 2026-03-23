@@ -3,20 +3,23 @@ import { ir } from '../src/builder.js';
 
 describe('import_alias', () => {
   it('should build with correct kind', () => {
-    const builder = ir.import_alias(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.importAlias(ir.identifier('test'), ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('import_alias');
+    expect(Array.isArray((node as any).children)).toBe(true);
+    expect((node as any).children.length).toBeGreaterThan(0);
+    expect((node as any).children[0]).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.import_alias(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.importAlias(ir.identifier('test'), ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('import');
     expect(source).toContain('=');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.import_alias(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.importAlias(ir.identifier('test'), ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('import_alias');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +28,7 @@ describe('import_alias', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.import_alias(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.importAlias(ir.identifier('test'), ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

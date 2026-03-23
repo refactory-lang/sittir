@@ -4,9 +4,9 @@ import type { RemovedTraitBound, Type } from '../types.js';
 
 
 class RemovedTraitBoundBuilder extends Builder<RemovedTraitBound> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Type>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class RemovedTraitBoundBuilder extends Builder<RemovedTraitBound> {
   build(ctx?: RenderContext): RemovedTraitBound {
     return {
       kind: 'removed_trait_bound',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as RemovedTraitBound;
+      children: this._children[0]?.build(ctx),
+    } as RemovedTraitBound;
   }
 
   override get nodeKind(): string { return 'removed_trait_bound'; }
@@ -39,7 +39,7 @@ class RemovedTraitBoundBuilder extends Builder<RemovedTraitBound> {
 
 export type { RemovedTraitBoundBuilder };
 
-export function removed_trait_bound(children: Builder): RemovedTraitBoundBuilder {
+export function removed_trait_bound(children: Builder<Type>): RemovedTraitBoundBuilder {
   return new RemovedTraitBoundBuilder(children);
 }
 

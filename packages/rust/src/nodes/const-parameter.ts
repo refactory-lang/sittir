@@ -4,21 +4,21 @@ import type { ConstParameter, Identifier, Literal, NegativeLiteral, Type } from 
 
 
 class ConstParameterBuilder extends Builder<ConstParameter> {
-  private _name: Builder;
-  private _type!: Builder;
-  private _value?: Builder;
+  private _name: Builder<Identifier>;
+  private _type!: Builder<Type>;
+  private _value?: Builder<Literal | Identifier | NegativeLiteral>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Literal | Identifier | NegativeLiteral>): this {
     this._value = value;
     return this;
   }
@@ -39,10 +39,10 @@ class ConstParameterBuilder extends Builder<ConstParameter> {
   build(ctx?: RenderContext): ConstParameter {
     return {
       kind: 'const_parameter',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-    } as unknown as ConstParameter;
+      name: this._name.build(ctx),
+      type: this._type?.build(ctx),
+      value: this._value?.build(ctx),
+    } as ConstParameter;
   }
 
   override get nodeKind(): string { return 'const_parameter'; }
@@ -63,7 +63,7 @@ class ConstParameterBuilder extends Builder<ConstParameter> {
 
 export type { ConstParameterBuilder };
 
-export function const_parameter(name: Builder): ConstParameterBuilder {
+export function const_parameter(name: Builder<Identifier>): ConstParameterBuilder {
   return new ConstParameterBuilder(name);
 }
 

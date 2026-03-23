@@ -4,11 +4,11 @@ import type { AttributeItem, EnumVariant, EnumVariantList } from '../types.js';
 
 
 class EnumVariantListBuilder extends Builder<EnumVariantList> {
-  private _children: Builder[] = [];
+  private _children: Builder<AttributeItem | EnumVariant>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<AttributeItem | EnumVariant>[]): this {
     this._children = value;
     return this;
   }
@@ -27,8 +27,8 @@ class EnumVariantListBuilder extends Builder<EnumVariantList> {
   build(ctx?: RenderContext): EnumVariantList {
     return {
       kind: 'enum_variant_list',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as EnumVariantList;
+      children: this._children.map(c => c.build(ctx)),
+    } as EnumVariantList;
   }
 
   override get nodeKind(): string { return 'enum_variant_list'; }

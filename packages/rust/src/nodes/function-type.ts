@@ -4,27 +4,27 @@ import type { ForLifetimes, FunctionModifiers, FunctionType, Parameters, ScopedT
 
 
 class FunctionTypeBuilder extends Builder<FunctionType> {
-  private _parameters: Builder;
-  private _returnType?: Builder;
-  private _trait?: Builder;
-  private _children: Builder[] = [];
+  private _parameters: Builder<Parameters>;
+  private _returnType?: Builder<Type>;
+  private _trait?: Builder<ScopedTypeIdentifier | TypeIdentifier>;
+  private _children: Builder<ForLifetimes | FunctionModifiers>[] = [];
 
-  constructor(parameters: Builder) {
+  constructor(parameters: Builder<Parameters>) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<Type>): this {
     this._returnType = value;
     return this;
   }
 
-  trait(value: Builder): this {
+  trait(value: Builder<ScopedTypeIdentifier | TypeIdentifier>): this {
     this._trait = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<ForLifetimes | FunctionModifiers>[]): this {
     this._children = value;
     return this;
   }
@@ -44,11 +44,11 @@ class FunctionTypeBuilder extends Builder<FunctionType> {
   build(ctx?: RenderContext): FunctionType {
     return {
       kind: 'function_type',
-      parameters: this.renderChild(this._parameters, ctx),
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      trait: this._trait ? this.renderChild(this._trait, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FunctionType;
+      parameters: this._parameters.build(ctx),
+      returnType: this._returnType?.build(ctx),
+      trait: this._trait?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as FunctionType;
   }
 
   override get nodeKind(): string { return 'function_type'; }
@@ -70,7 +70,7 @@ class FunctionTypeBuilder extends Builder<FunctionType> {
 
 export type { FunctionTypeBuilder };
 
-export function function_type(parameters: Builder): FunctionTypeBuilder {
+export function function_type(parameters: Builder<Parameters>): FunctionTypeBuilder {
   return new FunctionTypeBuilder(parameters);
 }
 

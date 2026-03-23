@@ -4,11 +4,11 @@ import type { Crate, Identifier, Metavariable, ScopedIdentifier, ScopedUseList, 
 
 
 class UseListBuilder extends Builder<UseList> {
-  private _children: Builder[] = [];
+  private _children: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard>[]): this {
     this._children = value;
     return this;
   }
@@ -29,8 +29,8 @@ class UseListBuilder extends Builder<UseList> {
   build(ctx?: RenderContext): UseList {
     return {
       kind: 'use_list',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as UseList;
+      children: this._children.map(c => c.build(ctx)),
+    } as UseList;
   }
 
   override get nodeKind(): string { return 'use_list'; }

@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('generic_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.generic_pattern(ir.identifier('test'));
+    const builder = ir.genericPattern(ir.typeArguments(ir.booleanLiteral('test')));
     const node = builder.build();
     expect(node.kind).toBe('generic_pattern');
+    expect((node as any).typeArguments).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.generic_pattern(ir.identifier('test'));
+    const builder = ir.genericPattern(ir.typeArguments(ir.booleanLiteral('test')));
     const source = builder.renderImpl();
     expect(source).toContain('::');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.generic_pattern(ir.identifier('test'));
+    const builder = ir.genericPattern(ir.typeArguments(ir.booleanLiteral('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('generic_pattern');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('generic_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.generic_pattern(ir.identifier('test'));
+    const builder = ir.genericPattern(ir.typeArguments(ir.booleanLiteral('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

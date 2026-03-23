@@ -4,15 +4,15 @@ import type { Expression, MatchBlock, MatchExpression } from '../types.js';
 
 
 class MatchBuilder extends Builder<MatchExpression> {
-  private _body!: Builder;
-  private _value: Builder;
+  private _body!: Builder<MatchBlock>;
+  private _value: Builder<Expression>;
 
-  constructor(value: Builder) {
+  constructor(value: Builder<Expression>) {
     super();
     this._value = value;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<MatchBlock>): this {
     this._body = value;
     return this;
   }
@@ -28,9 +28,9 @@ class MatchBuilder extends Builder<MatchExpression> {
   build(ctx?: RenderContext): MatchExpression {
     return {
       kind: 'match_expression',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      value: this.renderChild(this._value, ctx),
-    } as unknown as MatchExpression;
+      body: this._body?.build(ctx),
+      value: this._value.build(ctx),
+    } as MatchExpression;
   }
 
   override get nodeKind(): string { return 'match_expression'; }
@@ -46,7 +46,7 @@ class MatchBuilder extends Builder<MatchExpression> {
 
 export type { MatchBuilder };
 
-export function match(value: Builder): MatchBuilder {
+export function match(value: Builder<Expression>): MatchBuilder {
   return new MatchBuilder(value);
 }
 

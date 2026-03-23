@@ -21,8 +21,8 @@ class UnsafeBlockBuilder extends Builder<UnsafeBlock> {
   build(ctx?: RenderContext): UnsafeBlock {
     return {
       kind: 'unsafe_block',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as UnsafeBlock;
+      children: this._children[0]?.build(ctx),
+    } as UnsafeBlock;
   }
 
   override get nodeKind(): string { return 'unsafe_block'; }

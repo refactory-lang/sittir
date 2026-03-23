@@ -4,9 +4,9 @@ import type { AttributeItem, Identifier, ShorthandFieldInitializer } from '../ty
 
 
 class ShorthandFieldInitializerBuilder extends Builder<ShorthandFieldInitializer> {
-  private _children: Builder[] = [];
+  private _children: Builder<AttributeItem | Identifier>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<AttributeItem | Identifier>[]) {
     super();
     this._children = children;
   }
@@ -21,8 +21,8 @@ class ShorthandFieldInitializerBuilder extends Builder<ShorthandFieldInitializer
   build(ctx?: RenderContext): ShorthandFieldInitializer {
     return {
       kind: 'shorthand_field_initializer',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ShorthandFieldInitializer;
+      children: this._children.map(c => c.build(ctx)),
+    } as ShorthandFieldInitializer;
   }
 
   override get nodeKind(): string { return 'shorthand_field_initializer'; }
@@ -37,7 +37,7 @@ class ShorthandFieldInitializerBuilder extends Builder<ShorthandFieldInitializer
 
 export type { ShorthandFieldInitializerBuilder };
 
-export function shorthand_field_initializer(...children: Builder[]): ShorthandFieldInitializerBuilder {
+export function shorthand_field_initializer(...children: Builder<AttributeItem | Identifier>[]): ShorthandFieldInitializerBuilder {
   return new ShorthandFieldInitializerBuilder(...children);
 }
 

@@ -3,20 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('template_substitution', () => {
   it('should build with correct kind', () => {
-    const builder = ir.template_substitution(ir.identifier('test'));
+    const builder = ir.templateSubstitution(ir.yieldExpression());
     const node = builder.build();
     expect(node.kind).toBe('template_substitution');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.template_substitution(ir.identifier('test'));
+    const builder = ir.templateSubstitution(ir.yieldExpression());
     const source = builder.renderImpl();
     expect(source).toContain('${');
     expect(source).toContain('}');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.template_substitution(ir.identifier('test'));
+    const builder = ir.templateSubstitution(ir.yieldExpression());
     const cst = builder.toCST();
     expect(cst.type).toBe('template_substitution');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +26,7 @@ describe('template_substitution', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.template_substitution(ir.identifier('test'));
+    const builder = ir.templateSubstitution(ir.yieldExpression());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

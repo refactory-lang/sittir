@@ -4,15 +4,15 @@ import type { ArrayType, Expression, Type } from '../types.js';
 
 
 class ArrayTypeBuilder extends Builder<ArrayType> {
-  private _element: Builder;
-  private _length?: Builder;
+  private _element: Builder<Type>;
+  private _length?: Builder<Expression>;
 
-  constructor(element: Builder) {
+  constructor(element: Builder<Type>) {
     super();
     this._element = element;
   }
 
-  length(value: Builder): this {
+  length(value: Builder<Expression>): this {
     this._length = value;
     return this;
   }
@@ -32,9 +32,9 @@ class ArrayTypeBuilder extends Builder<ArrayType> {
   build(ctx?: RenderContext): ArrayType {
     return {
       kind: 'array_type',
-      element: this.renderChild(this._element, ctx),
-      length: this._length ? this.renderChild(this._length, ctx) : undefined,
-    } as unknown as ArrayType;
+      element: this._element.build(ctx),
+      length: this._length?.build(ctx),
+    } as ArrayType;
   }
 
   override get nodeKind(): string { return 'array_type'; }
@@ -54,7 +54,7 @@ class ArrayTypeBuilder extends Builder<ArrayType> {
 
 export type { ArrayTypeBuilder };
 
-export function array_type(element: Builder): ArrayTypeBuilder {
+export function array_type(element: Builder<Type>): ArrayTypeBuilder {
   return new ArrayTypeBuilder(element);
 }
 

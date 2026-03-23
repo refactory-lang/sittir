@@ -4,9 +4,9 @@ import type { DynamicType, FunctionType, GenericType, HigherRankedTraitBound, Sc
 
 
 class DynamicTypeBuilder extends Builder<DynamicType> {
-  private _trait: Builder;
+  private _trait: Builder<FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>;
 
-  constructor(trait: Builder) {
+  constructor(trait: Builder<FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>) {
     super();
     this._trait = trait;
   }
@@ -21,8 +21,8 @@ class DynamicTypeBuilder extends Builder<DynamicType> {
   build(ctx?: RenderContext): DynamicType {
     return {
       kind: 'dynamic_type',
-      trait: this.renderChild(this._trait, ctx),
-    } as unknown as DynamicType;
+      trait: this._trait.build(ctx),
+    } as DynamicType;
   }
 
   override get nodeKind(): string { return 'dynamic_type'; }
@@ -37,7 +37,7 @@ class DynamicTypeBuilder extends Builder<DynamicType> {
 
 export type { DynamicTypeBuilder };
 
-export function dynamic_type(trait: Builder): DynamicTypeBuilder {
+export function dynamic_type(trait: Builder<FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier>): DynamicTypeBuilder {
   return new DynamicTypeBuilder(trait);
 }
 

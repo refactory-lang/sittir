@@ -4,15 +4,15 @@ import type { GenericType, Identifier, Pattern, ScopedIdentifier, TupleStructPat
 
 
 class TupleStructPatternBuilder extends Builder<TupleStructPattern> {
-  private _type: Builder;
-  private _children: Builder[] = [];
+  private _type: Builder<GenericType | Identifier | ScopedIdentifier>;
+  private _children: Builder<Pattern>[] = [];
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<GenericType | Identifier | ScopedIdentifier>) {
     super();
     this._type = type_;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Pattern>[]): this {
     this._children = value;
     return this;
   }
@@ -34,9 +34,9 @@ class TupleStructPatternBuilder extends Builder<TupleStructPattern> {
   build(ctx?: RenderContext): TupleStructPattern {
     return {
       kind: 'tuple_struct_pattern',
-      type: this.renderChild(this._type, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TupleStructPattern;
+      type: this._type.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as TupleStructPattern;
   }
 
   override get nodeKind(): string { return 'tuple_struct_pattern'; }
@@ -56,7 +56,7 @@ class TupleStructPatternBuilder extends Builder<TupleStructPattern> {
 
 export type { TupleStructPatternBuilder };
 
-export function tuple_struct_pattern(type_: Builder): TupleStructPatternBuilder {
+export function tuple_struct_pattern(type_: Builder<GenericType | Identifier | ScopedIdentifier>): TupleStructPatternBuilder {
   return new TupleStructPatternBuilder(type_);
 }
 

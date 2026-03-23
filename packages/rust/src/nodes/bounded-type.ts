@@ -4,9 +4,9 @@ import type { BoundedType, Type, UseBounds } from '../types.js';
 
 
 class BoundedTypeBuilder extends Builder<BoundedType> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type | UseBounds>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Type | UseBounds>[]) {
     super();
     this._children = children;
   }
@@ -22,8 +22,8 @@ class BoundedTypeBuilder extends Builder<BoundedType> {
   build(ctx?: RenderContext): BoundedType {
     return {
       kind: 'bounded_type',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as BoundedType;
+      children: this._children.map(c => c.build(ctx)),
+    } as BoundedType;
   }
 
   override get nodeKind(): string { return 'bounded_type'; }
@@ -39,7 +39,7 @@ class BoundedTypeBuilder extends Builder<BoundedType> {
 
 export type { BoundedTypeBuilder };
 
-export function bounded_type(...children: Builder[]): BoundedTypeBuilder {
+export function bounded_type(...children: Builder<Type | UseBounds>[]): BoundedTypeBuilder {
   return new BoundedTypeBuilder(...children);
 }
 

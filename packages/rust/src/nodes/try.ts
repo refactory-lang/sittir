@@ -4,9 +4,9 @@ import type { Expression, TryExpression } from '../types.js';
 
 
 class TryBuilder extends Builder<TryExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class TryBuilder extends Builder<TryExpression> {
   build(ctx?: RenderContext): TryExpression {
     return {
       kind: 'try_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TryExpression;
+      children: this._children[0]?.build(ctx),
+    } as TryExpression;
   }
 
   override get nodeKind(): string { return 'try_expression'; }
@@ -39,7 +39,7 @@ class TryBuilder extends Builder<TryExpression> {
 
 export type { TryBuilder };
 
-export function try_(children: Builder): TryBuilder {
+export function try_(children: Builder<Expression>): TryBuilder {
   return new TryBuilder(children);
 }
 

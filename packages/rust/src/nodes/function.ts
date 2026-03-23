@@ -5,13 +5,13 @@ import type { FunctionItem, FunctionModifiers, Identifier, Metavariable, Paramet
 
 class FunctionBuilder extends Builder<FunctionItem> {
   private _body!: Builder;
-  private _name: Builder;
-  private _parameters!: Builder;
-  private _returnType?: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+  private _name: Builder<Identifier | Metavariable>;
+  private _parameters!: Builder<Parameters>;
+  private _returnType?: Builder<Type>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<FunctionModifiers | VisibilityModifier | WhereClause>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier | Metavariable>) {
     super();
     this._name = name;
   }
@@ -21,22 +21,22 @@ class FunctionBuilder extends Builder<FunctionItem> {
     return this;
   }
 
-  parameters(value: Builder): this {
+  parameters(value: Builder<Parameters>): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<Type>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<FunctionModifiers | VisibilityModifier | WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -61,13 +61,13 @@ class FunctionBuilder extends Builder<FunctionItem> {
   build(ctx?: RenderContext): FunctionItem {
     return {
       kind: 'function_item',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FunctionItem;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+      parameters: this._parameters?.build(ctx),
+      returnType: this._returnType?.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as FunctionItem;
   }
 
   override get nodeKind(): string { return 'function_item'; }
@@ -92,7 +92,7 @@ class FunctionBuilder extends Builder<FunctionItem> {
 
 export type { FunctionBuilder };
 
-export function fn(name: Builder): FunctionBuilder {
+export function function_(name: Builder<Identifier | Metavariable>): FunctionBuilder {
   return new FunctionBuilder(name);
 }
 
@@ -105,7 +105,7 @@ export interface FunctionItemOptions {
   children?: Builder<FunctionModifiers | VisibilityModifier | WhereClause> | (Builder<FunctionModifiers | VisibilityModifier | WhereClause>)[];
 }
 
-export namespace fn {
+export namespace function_ {
   export function from(options: FunctionItemOptions): FunctionBuilder {
     const b = new FunctionBuilder(options.name);
     if (options.body !== undefined) b.body(options.body);

@@ -4,21 +4,21 @@ import type { AttributeItem, Expression, FieldIdentifier, FieldInitializer, Inte
 
 
 class FieldInitializerBuilder extends Builder<FieldInitializer> {
-  private _field: Builder;
-  private _value!: Builder;
-  private _children: Builder[] = [];
+  private _field: Builder<FieldIdentifier | IntegerLiteral>;
+  private _value!: Builder<Expression>;
+  private _children: Builder<AttributeItem>[] = [];
 
-  constructor(field: Builder) {
+  constructor(field: Builder<FieldIdentifier | IntegerLiteral>) {
     super();
     this._field = field;
   }
 
-  value(value: Builder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<AttributeItem>[]): this {
     this._children = value;
     return this;
   }
@@ -35,10 +35,10 @@ class FieldInitializerBuilder extends Builder<FieldInitializer> {
   build(ctx?: RenderContext): FieldInitializer {
     return {
       kind: 'field_initializer',
-      field: this.renderChild(this._field, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FieldInitializer;
+      field: this._field.build(ctx),
+      value: this._value?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as FieldInitializer;
   }
 
   override get nodeKind(): string { return 'field_initializer'; }
@@ -57,7 +57,7 @@ class FieldInitializerBuilder extends Builder<FieldInitializer> {
 
 export type { FieldInitializerBuilder };
 
-export function field_initializer(field: Builder): FieldInitializerBuilder {
+export function field_initializer(field: Builder<FieldIdentifier | IntegerLiteral>): FieldInitializerBuilder {
   return new FieldInitializerBuilder(field);
 }
 

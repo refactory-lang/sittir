@@ -4,22 +4,24 @@ import type { Expression, LetChain, LetCondition } from '../types.js';
 
 
 class LetChainBuilder extends Builder<LetChain> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression | LetCondition>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Expression | LetCondition>[]) {
     super();
     this._children = children;
   }
 
   renderImpl(ctx?: RenderContext): string {
-    return this._children ? this.renderChildren(this._children, ' ', ctx) : '';
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
   }
 
   build(ctx?: RenderContext): LetChain {
     return {
       kind: 'let_chain',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as LetChain;
+      children: this._children.map(c => c.build(ctx)),
+    } as LetChain;
   }
 
   override get nodeKind(): string { return 'let_chain'; }
@@ -35,7 +37,7 @@ class LetChainBuilder extends Builder<LetChain> {
 
 export type { LetChainBuilder };
 
-export function let_chain(...children: Builder[]): LetChainBuilder {
+export function let_chain(...children: Builder<Expression | LetCondition>[]): LetChainBuilder {
   return new LetChainBuilder(...children);
 }
 

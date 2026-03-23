@@ -678,25 +678,27 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // --- Builder class ---
   lines.push(`class ${builderClassName} extends Builder<${typeName}> {`);
 
-  // Private fields (use wide Builder type for internal storage — compatible with fromCST)
+  // Private fields (with precise Builder<T> types)
   for (const field of node.fields) {
     const fieldName = toFieldName(field.name);
+    const bt = builderType(field.name);
     if (field.multiple) {
-      lines.push(`  private _${fieldName}: Builder[] = [];`);
+      lines.push(`  private _${fieldName}: ${bt}[] = [];`);
     } else if (field.required) {
       if (constructorParam?.source === 'field' && constructorParam.name === field.name) {
-        lines.push(`  private _${fieldName}: Builder;`);
+        lines.push(`  private _${fieldName}: ${bt};`);
       } else {
-        lines.push(`  private _${fieldName}!: Builder;`);
+        lines.push(`  private _${fieldName}!: ${bt};`);
       }
     } else {
-      lines.push(`  private _${fieldName}?: Builder;`);
+      lines.push(`  private _${fieldName}?: ${bt};`);
     }
   }
 
   // Children field
   if (node.hasChildren) {
-    lines.push(`  private _children: Builder[] = [];`);
+    const ct = childBuilderType();
+    lines.push(`  private _children: ${ct}[] = [];`);
   }
 
   lines.push('');
@@ -718,8 +720,11 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       if (ctorField?.multiple) isMultiple = true;
     }
 
+    const ctorType = constructorParam.source === 'children'
+      ? childBuilderType()
+      : builderType(constructorParam.name);
     if (isMultiple) {
-      lines.push(`  constructor(...${ctorParamName}: Builder[]) {`);
+      lines.push(`  constructor(...${ctorParamName}: ${ctorType}[]) {`);
       lines.push('    super();');
       if (constructorParam.source === 'children') {
         lines.push(`    this._children = ${ctorParamName};`);
@@ -727,7 +732,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
         lines.push(`    this._${ctorFieldName} = ${ctorParamName};`);
       }
     } else {
-      lines.push(`  constructor(${ctorParamName}: Builder) {`);
+      lines.push(`  constructor(${ctorParamName}: ${ctorType}) {`);
       lines.push('    super();');
       if (constructorParam.source === 'children') {
         lines.push(`    this._children = [${ctorParamName}];`);
@@ -742,14 +747,15 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   lines.push('');
 
-  // Fluent setters for non-constructor fields
+  // Fluent setters for non-constructor fields (with precise types)
   for (const field of setterFields) {
     const fieldName = toFieldName(field.name);
+    const bt = builderType(field.name);
     if (field.multiple) {
-      lines.push(`  ${fieldName}(...value: Builder[]): this {`);
+      lines.push(`  ${fieldName}(...value: ${bt}[]): this {`);
       lines.push(`    this._${fieldName} = value;`);
     } else {
-      lines.push(`  ${fieldName}(value: Builder): this {`);
+      lines.push(`  ${fieldName}(value: ${bt}): this {`);
       lines.push(`    this._${fieldName} = value;`);
     }
     lines.push('    return this;');
@@ -759,7 +765,8 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // Children setter if applicable and not constructor param
   if (node.hasChildren && constructorParam?.source !== 'children') {
-    lines.push('  children(...value: Builder[]): this {');
+    const ct = childBuilderType();
+    lines.push(`  children(...value: ${ct}[]): this {`);
     lines.push('    this._children = value;');
     lines.push('    return this;');
     lines.push('  }');
@@ -774,8 +781,22 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       lines.push(line);
     }
   } else {
-    // Fallback: no grammar rule available — render children
-    lines.push(`    return this._children ? this.renderChildren(this._children, ' ', ctx) : '';`);
+    // Fallback: no grammar rule available — render fields then children
+    lines.push(`    const parts: string[] = [];`);
+    for (const field of node.fields) {
+      const fieldName = toFieldName(field.name);
+      if (field.multiple) {
+        lines.push(`    if (this._${fieldName}.length > 0) parts.push(this.renderChildren(this._${fieldName}, ' ', ctx));`);
+      } else if (field.required) {
+        lines.push(`    if (this._${fieldName}) parts.push(this.renderChild(this._${fieldName}, ctx));`);
+      } else {
+        lines.push(`    if (this._${fieldName}) parts.push(this.renderChild(this._${fieldName}, ctx));`);
+      }
+    }
+    if (node.hasChildren) {
+      lines.push(`    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));`);
+    }
+    lines.push(`    return parts.join(' ');`);
   }
   lines.push('  }');
   lines.push('');
@@ -790,17 +811,21 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     const fieldName = toFieldName(field.name);
     const isCtorField = constructorParam?.source === 'field' && constructorParam.name === field.name;
     if (field.multiple) {
-      lines.push(`      ${fieldName}: this._${fieldName}.map(c => this.renderChild(c, ctx)),`);
+      lines.push(`      ${fieldName}: this._${fieldName}.map(c => c.build(ctx)),`);
     } else if (field.required && isCtorField) {
-      lines.push(`      ${fieldName}: this.renderChild(this._${fieldName}, ctx),`);
+      lines.push(`      ${fieldName}: this._${fieldName}.build(ctx),`);
     } else {
-      lines.push(`      ${fieldName}: this._${fieldName} ? this.renderChild(this._${fieldName}, ctx) : undefined,`);
+      lines.push(`      ${fieldName}: this._${fieldName}?.build(ctx),`);
     }
   }
   if (node.hasChildren) {
-    lines.push(`      children: this._children.map(c => this.renderChild(c, ctx)),`);
+    if (node.children?.multiple) {
+      lines.push(`      children: this._children.map(c => c.build(ctx)),`);
+    } else {
+      lines.push(`      children: this._children[0]?.build(ctx),`);
+    }
   }
-  lines.push(`    } as unknown as ${typeName};`);
+  lines.push(`    } as ${typeName};`);
   lines.push('  }');
   lines.push('');
 
@@ -817,9 +842,23 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     }
   } else {
     lines.push('    const parts: CSTChild[] = [];');
-    lines.push('    for (const child of this._children) {');
-    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
-    lines.push('    }');
+    for (const field of node.fields) {
+      const fieldName = toFieldName(field.name);
+      if (field.multiple) {
+        lines.push(`    for (const child of this._${fieldName}) {`);
+        lines.push(`      parts.push({ kind: 'builder', builder: child });`);
+        lines.push('    }');
+      } else if (field.required) {
+        lines.push(`    parts.push({ kind: 'builder', builder: this._${fieldName} });`);
+      } else {
+        lines.push(`    if (this._${fieldName}) parts.push({ kind: 'builder', builder: this._${fieldName} });`);
+      }
+    }
+    if (node.hasChildren) {
+      lines.push('    for (const child of this._children) {');
+      lines.push(`      parts.push({ kind: 'builder', builder: child });`);
+      lines.push('    }');
+    }
     lines.push('    return parts;');
   }
   lines.push('  }');
@@ -845,12 +884,15 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       if (ctorField?.multiple) isMultiple = true;
     }
 
+    const factoryType = constructorParam.source === 'children'
+      ? childBuilderType()
+      : builderType(constructorParam.name);
     if (isMultiple) {
-      lines.push(`export function ${shortName}(...${shortParamName}: Builder[]): ${builderClassName} {`);
+      lines.push(`export function ${shortName}(...${shortParamName}: ${factoryType}[]): ${builderClassName} {`);
       lines.push(`  return new ${builderClassName}(...${shortParamName});`);
       lines.push('}');
     } else {
-      lines.push(`export function ${shortName}(${shortParamName}: Builder): ${builderClassName} {`);
+      lines.push(`export function ${shortName}(${shortParamName}: ${factoryType}): ${builderClassName} {`);
       lines.push(`  return new ${builderClassName}(${shortParamName});`);
       lines.push('}');
     }

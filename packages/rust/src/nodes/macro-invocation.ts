@@ -4,15 +4,15 @@ import type { Identifier, MacroInvocation, ScopedIdentifier, TokenTree } from '.
 
 
 class MacroInvocationBuilder extends Builder<MacroInvocation> {
-  private _macro: Builder;
-  private _children: Builder[] = [];
+  private _macro: Builder<Identifier | ScopedIdentifier>;
+  private _children: Builder<TokenTree>[] = [];
 
-  constructor(macro: Builder) {
+  constructor(macro: Builder<Identifier | ScopedIdentifier>) {
     super();
     this._macro = macro;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<TokenTree>[]): this {
     this._children = value;
     return this;
   }
@@ -28,9 +28,9 @@ class MacroInvocationBuilder extends Builder<MacroInvocation> {
   build(ctx?: RenderContext): MacroInvocation {
     return {
       kind: 'macro_invocation',
-      macro: this.renderChild(this._macro, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as MacroInvocation;
+      macro: this._macro.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as MacroInvocation;
   }
 
   override get nodeKind(): string { return 'macro_invocation'; }
@@ -48,7 +48,7 @@ class MacroInvocationBuilder extends Builder<MacroInvocation> {
 
 export type { MacroInvocationBuilder };
 
-export function macro_invocation(macro: Builder): MacroInvocationBuilder {
+export function macro_invocation(macro: Builder<Identifier | ScopedIdentifier>): MacroInvocationBuilder {
   return new MacroInvocationBuilder(macro);
 }
 

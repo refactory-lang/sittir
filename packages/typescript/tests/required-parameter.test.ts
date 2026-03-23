@@ -3,13 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('required_parameter', () => {
   it('should build with correct kind', () => {
-    const builder = ir.required_parameter();
+    const builder = ir.requiredParameter();
     const node = builder.build();
     expect(node.kind).toBe('required_parameter');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.required_parameter();
+    const builder = ir.requiredParameter();
     const cst = builder.toCST();
     expect(cst.type).toBe('required_parameter');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +18,7 @@ describe('required_parameter', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.required_parameter();
+    const builder = ir.requiredParameter();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

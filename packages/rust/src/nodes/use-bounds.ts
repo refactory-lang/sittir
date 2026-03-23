@@ -4,11 +4,11 @@ import type { TypeIdentifier, UseBounds } from '../types.js';
 
 
 class UseBoundsBuilder extends Builder<UseBounds> {
-  private _children: Builder[] = [];
+  private _children: Builder<TypeIdentifier>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<TypeIdentifier>[]): this {
     this._children = value;
     return this;
   }
@@ -30,8 +30,8 @@ class UseBoundsBuilder extends Builder<UseBounds> {
   build(ctx?: RenderContext): UseBounds {
     return {
       kind: 'use_bounds',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as UseBounds;
+      children: this._children.map(c => c.build(ctx)),
+    } as UseBounds;
   }
 
   override get nodeKind(): string { return 'use_bounds'; }

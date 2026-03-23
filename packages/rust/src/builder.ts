@@ -3,48 +3,48 @@
 import { LeafBuilder } from '@sittir/types';
 import { abstract_type } from './nodes/abstract-type.js';
 import { arguments_ } from './nodes/arguments.js';
-import { array } from './nodes/array.js';
+import { array_expression } from './nodes/array-expression.js';
 import { array_type } from './nodes/array-type.js';
-import { assignment } from './nodes/assignment.js';
+import { assignment_expression } from './nodes/assignment-expression.js';
 import { associated_type } from './nodes/associated-type.js';
 import { async_block } from './nodes/async-block.js';
 import { attribute } from './nodes/attribute.js';
 import { attribute as attributeItem } from './nodes/attribute-item.js';
-import { await_ } from './nodes/await.js';
+import { await_expression } from './nodes/await-expression.js';
 import { base_field_initializer } from './nodes/base-field-initializer.js';
-import { binary } from './nodes/binary.js';
+import { binary_expression } from './nodes/binary-expression.js';
 import { block_comment } from './nodes/block-comment.js';
 import { bounded_type } from './nodes/bounded-type.js';
 import { bracketed_type } from './nodes/bracketed-type.js';
-import { break_ } from './nodes/break.js';
-import { call } from './nodes/call.js';
+import { break_expression } from './nodes/break-expression.js';
+import { call_expression } from './nodes/call-expression.js';
 import { captured_pattern } from './nodes/captured-pattern.js';
-import { closure } from './nodes/closure.js';
+import { closure_expression } from './nodes/closure-expression.js';
 import { closure_parameters } from './nodes/closure-parameters.js';
 import { compound_assignment_expr } from './nodes/compound-assignment-expr.js';
 import { const_block } from './nodes/const-block.js';
 import { const_ } from './nodes/const.js';
 import { const_parameter } from './nodes/const-parameter.js';
-import { continue_ } from './nodes/continue.js';
+import { continue_expression } from './nodes/continue-expression.js';
 import { declaration_list } from './nodes/declaration-list.js';
 import { dynamic_type } from './nodes/dynamic-type.js';
 import { else_clause } from './nodes/else-clause.js';
 import { enum_ } from './nodes/enum.js';
 import { enum_variant } from './nodes/enum-variant.js';
 import { enum_variant_list } from './nodes/enum-variant-list.js';
-import { expression } from './nodes/expression.js';
-import { extern_crate } from './nodes/extern-crate.js';
+import { expression_statement } from './nodes/expression-statement.js';
+import { extern_crate_declaration } from './nodes/extern-crate-declaration.js';
 import { extern_modifier } from './nodes/extern-modifier.js';
-import { field as fieldDeclaration } from './nodes/field-declaration.js';
+import { field_declaration } from './nodes/field-declaration.js';
 import { field_declaration_list } from './nodes/field-declaration-list.js';
-import { field as fieldExpression } from './nodes/field-expression.js';
+import { field_expression } from './nodes/field-expression.js';
 import { field_initializer } from './nodes/field-initializer.js';
 import { field_initializer_list } from './nodes/field-initializer-list.js';
 import { field_pattern } from './nodes/field-pattern.js';
-import { for_ } from './nodes/for.js';
+import { for_expression } from './nodes/for-expression.js';
 import { for_lifetimes } from './nodes/for-lifetimes.js';
 import { foreign_mod } from './nodes/foreign-mod.js';
-import { fn } from './nodes/function.js';
+import { function_ } from './nodes/function.js';
 import { function_modifiers } from './nodes/function-modifiers.js';
 import { function_signature } from './nodes/function-signature.js';
 import { function_type } from './nodes/function-type.js';
@@ -54,23 +54,23 @@ import { generic_pattern } from './nodes/generic-pattern.js';
 import { generic_type } from './nodes/generic-type.js';
 import { generic_type_with_turbofish } from './nodes/generic-type-with-turbofish.js';
 import { higher_ranked_trait_bound } from './nodes/higher-ranked-trait-bound.js';
-import { if_ } from './nodes/if.js';
+import { if_expression } from './nodes/if-expression.js';
 import { impl } from './nodes/impl.js';
-import { index } from './nodes/index.js';
+import { index_expression } from './nodes/index-expression.js';
 import { inner_attribute } from './nodes/inner-attribute.js';
 import { label } from './nodes/label.js';
 import { let_chain } from './nodes/let-chain.js';
 import { let_condition } from './nodes/let-condition.js';
-import { let_ } from './nodes/let.js';
+import { let_declaration } from './nodes/let-declaration.js';
 import { lifetime_parameter } from './nodes/lifetime-parameter.js';
 import { line_comment } from './nodes/line-comment.js';
-import { loop } from './nodes/loop.js';
+import { loop_expression } from './nodes/loop-expression.js';
 import { macro_definition } from './nodes/macro-definition.js';
 import { macro_invocation } from './nodes/macro-invocation.js';
 import { macro_rule } from './nodes/macro-rule.js';
 import { match_arm } from './nodes/match-arm.js';
 import { match_block } from './nodes/match-block.js';
-import { match } from './nodes/match.js';
+import { match_expression } from './nodes/match-expression.js';
 import { match_pattern } from './nodes/match-pattern.js';
 import { mod } from './nodes/mod.js';
 import { mut_pattern } from './nodes/mut-pattern.js';
@@ -79,29 +79,29 @@ import { or_pattern } from './nodes/or-pattern.js';
 import { ordered_field_declaration_list } from './nodes/ordered-field-declaration-list.js';
 import { parameter } from './nodes/parameter.js';
 import { parameters } from './nodes/parameters.js';
-import { parenthesized } from './nodes/parenthesized.js';
+import { parenthesized_expression } from './nodes/parenthesized-expression.js';
 import { pointer_type } from './nodes/pointer-type.js';
 import { qualified_type } from './nodes/qualified-type.js';
-import { range } from './nodes/range.js';
+import { range_expression } from './nodes/range-expression.js';
 import { range_pattern } from './nodes/range-pattern.js';
 import { raw_string_literal } from './nodes/raw-string-literal.js';
 import { ref_pattern } from './nodes/ref-pattern.js';
-import { reference } from './nodes/reference.js';
+import { reference_expression } from './nodes/reference-expression.js';
 import { reference_pattern } from './nodes/reference-pattern.js';
 import { reference_type } from './nodes/reference-type.js';
 import { removed_trait_bound } from './nodes/removed-trait-bound.js';
-import { return_ } from './nodes/return.js';
+import { return_expression } from './nodes/return-expression.js';
 import { scoped_identifier } from './nodes/scoped-identifier.js';
 import { scoped_type_identifier } from './nodes/scoped-type-identifier.js';
 import { scoped_use_list } from './nodes/scoped-use-list.js';
 import { self_parameter } from './nodes/self-parameter.js';
 import { shorthand_field_initializer } from './nodes/shorthand-field-initializer.js';
 import { slice_pattern } from './nodes/slice-pattern.js';
-import { file } from './nodes/source-file.js';
+import { source_file } from './nodes/source-file.js';
 import { static_ } from './nodes/static.js';
 import { string_literal } from './nodes/string-literal.js';
-import { struct_ as structExpression } from './nodes/struct-expression.js';
-import { struct_ as structItem } from './nodes/struct-item.js';
+import { struct_expression } from './nodes/struct-expression.js';
+import { struct_ } from './nodes/struct.js';
 import { struct_pattern } from './nodes/struct-pattern.js';
 import { token_binding_pattern } from './nodes/token-binding-pattern.js';
 import { token_repetition } from './nodes/token-repetition.js';
@@ -111,168 +111,168 @@ import { token_tree_pattern } from './nodes/token-tree-pattern.js';
 import { trait_bounds } from './nodes/trait-bounds.js';
 import { trait } from './nodes/trait.js';
 import { try_block } from './nodes/try-block.js';
-import { try_ } from './nodes/try.js';
-import { tuple } from './nodes/tuple.js';
+import { try_expression } from './nodes/try-expression.js';
+import { tuple_expression } from './nodes/tuple-expression.js';
 import { tuple_pattern } from './nodes/tuple-pattern.js';
 import { tuple_struct_pattern } from './nodes/tuple-struct-pattern.js';
 import { tuple_type } from './nodes/tuple-type.js';
 import { type_arguments } from './nodes/type-arguments.js';
 import { type_binding } from './nodes/type-binding.js';
-import { type_cast } from './nodes/type-cast.js';
+import { type_cast_expression } from './nodes/type-cast-expression.js';
 import { type_ } from './nodes/type.js';
 import { type_parameter } from './nodes/type-parameter.js';
 import { type_parameters } from './nodes/type-parameters.js';
-import { unary } from './nodes/unary.js';
+import { unary_expression } from './nodes/unary-expression.js';
 import { union } from './nodes/union.js';
 import { unsafe_block } from './nodes/unsafe-block.js';
 import { use_as_clause } from './nodes/use-as-clause.js';
 import { use_bounds } from './nodes/use-bounds.js';
-import { use_ } from './nodes/use.js';
+import { use_declaration } from './nodes/use-declaration.js';
 import { use_list } from './nodes/use-list.js';
 import { use_wildcard } from './nodes/use-wildcard.js';
 import { variadic_parameter } from './nodes/variadic-parameter.js';
 import { visibility_modifier } from './nodes/visibility-modifier.js';
 import { where_clause } from './nodes/where-clause.js';
 import { where_predicate } from './nodes/where-predicate.js';
-import { while_ } from './nodes/while.js';
-import { yield_ } from './nodes/yield.js';
+import { while_expression } from './nodes/while-expression.js';
+import { yield_expression } from './nodes/yield-expression.js';
 
 export const ir = {
-  abstract_type,
+  abstractType: abstract_type,
   arguments: arguments_,
-  array,
-  array_type,
-  assignment,
-  associated_type,
-  async_block,
+  arrayExpression: array_expression,
+  arrayType: array_type,
+  assignmentExpression: assignment_expression,
+  associatedType: associated_type,
+  asyncBlock: async_block,
   attribute,
   attributeItem,
-  await: await_,
-  base_field_initializer,
-  binary,
-  block_comment,
-  bounded_type,
-  bracketed_type,
-  break: break_,
-  call,
-  captured_pattern,
-  closure,
-  closure_parameters,
-  compound_assignment_expr,
-  const_block,
+  awaitExpression: await_expression,
+  baseFieldInitializer: base_field_initializer,
+  binaryExpression: binary_expression,
+  blockComment: block_comment,
+  boundedType: bounded_type,
+  bracketedType: bracketed_type,
+  breakExpression: break_expression,
+  callExpression: call_expression,
+  capturedPattern: captured_pattern,
+  closureExpression: closure_expression,
+  closureParameters: closure_parameters,
+  compoundAssignmentExpr: compound_assignment_expr,
+  constBlock: const_block,
   const: const_,
-  const_parameter,
-  continue: continue_,
-  declaration_list,
-  dynamic_type,
-  else_clause,
+  constParameter: const_parameter,
+  continueExpression: continue_expression,
+  declarationList: declaration_list,
+  dynamicType: dynamic_type,
+  elseClause: else_clause,
   enum: enum_,
-  enum_variant,
-  enum_variant_list,
-  expression,
-  extern_crate,
-  extern_modifier,
-  fieldDeclaration,
-  field_declaration_list,
-  fieldExpression,
-  field_initializer,
-  field_initializer_list,
-  field_pattern,
-  for: for_,
-  for_lifetimes,
-  foreign_mod,
-  fn,
-  function_modifiers,
-  function_signature,
-  function_type,
-  gen_block,
-  generic_function,
-  generic_pattern,
-  generic_type,
-  generic_type_with_turbofish,
-  higher_ranked_trait_bound,
-  if: if_,
+  enumVariant: enum_variant,
+  enumVariantList: enum_variant_list,
+  expressionStatement: expression_statement,
+  externCrateDeclaration: extern_crate_declaration,
+  externModifier: extern_modifier,
+  fieldDeclaration: field_declaration,
+  fieldDeclarationList: field_declaration_list,
+  fieldExpression: field_expression,
+  fieldInitializer: field_initializer,
+  fieldInitializerList: field_initializer_list,
+  fieldPattern: field_pattern,
+  forExpression: for_expression,
+  forLifetimes: for_lifetimes,
+  foreignMod: foreign_mod,
+  function: function_,
+  functionModifiers: function_modifiers,
+  functionSignature: function_signature,
+  functionType: function_type,
+  genBlock: gen_block,
+  genericFunction: generic_function,
+  genericPattern: generic_pattern,
+  genericType: generic_type,
+  genericTypeWithTurbofish: generic_type_with_turbofish,
+  higherRankedTraitBound: higher_ranked_trait_bound,
+  ifExpression: if_expression,
   impl,
-  index,
-  inner_attribute,
+  indexExpression: index_expression,
+  innerAttribute: inner_attribute,
   label,
-  let_chain,
-  let_condition,
-  let: let_,
-  lifetime_parameter,
-  line_comment,
-  loop,
-  macro_definition,
-  macro_invocation,
-  macro_rule,
-  match_arm,
-  match_block,
-  match,
-  match_pattern,
+  letChain: let_chain,
+  letCondition: let_condition,
+  letDeclaration: let_declaration,
+  lifetimeParameter: lifetime_parameter,
+  lineComment: line_comment,
+  loopExpression: loop_expression,
+  macroDefinition: macro_definition,
+  macroInvocation: macro_invocation,
+  macroRule: macro_rule,
+  matchArm: match_arm,
+  matchBlock: match_block,
+  matchExpression: match_expression,
+  matchPattern: match_pattern,
   mod,
-  mut_pattern,
-  negative_literal,
-  or_pattern,
-  ordered_field_declaration_list,
+  mutPattern: mut_pattern,
+  negativeLiteral: negative_literal,
+  orPattern: or_pattern,
+  orderedFieldDeclarationList: ordered_field_declaration_list,
   parameter,
   parameters,
-  parenthesized,
-  pointer_type,
-  qualified_type,
-  range,
-  range_pattern,
-  raw_string_literal,
-  ref_pattern,
-  reference,
-  reference_pattern,
-  reference_type,
-  removed_trait_bound,
-  return: return_,
-  scoped_identifier,
-  scoped_type_identifier,
-  scoped_use_list,
-  self_parameter,
-  shorthand_field_initializer,
-  slice_pattern,
-  file,
+  parenthesizedExpression: parenthesized_expression,
+  pointerType: pointer_type,
+  qualifiedType: qualified_type,
+  rangeExpression: range_expression,
+  rangePattern: range_pattern,
+  rawStringLiteral: raw_string_literal,
+  refPattern: ref_pattern,
+  referenceExpression: reference_expression,
+  referencePattern: reference_pattern,
+  referenceType: reference_type,
+  removedTraitBound: removed_trait_bound,
+  returnExpression: return_expression,
+  scopedIdentifier: scoped_identifier,
+  scopedTypeIdentifier: scoped_type_identifier,
+  scopedUseList: scoped_use_list,
+  selfParameter: self_parameter,
+  shorthandFieldInitializer: shorthand_field_initializer,
+  slicePattern: slice_pattern,
+  sourceFile: source_file,
   static: static_,
-  string_literal,
-  structExpression,
-  structItem,
-  struct_pattern,
-  token_binding_pattern,
-  token_repetition,
-  token_repetition_pattern,
-  token_tree,
-  token_tree_pattern,
-  trait_bounds,
+  stringLiteral: string_literal,
+  structExpression: struct_expression,
+  struct: struct_,
+  structPattern: struct_pattern,
+  tokenBindingPattern: token_binding_pattern,
+  tokenRepetition: token_repetition,
+  tokenRepetitionPattern: token_repetition_pattern,
+  tokenTree: token_tree,
+  tokenTreePattern: token_tree_pattern,
+  traitBounds: trait_bounds,
   trait,
-  try_block,
-  try: try_,
-  tuple,
-  tuple_pattern,
-  tuple_struct_pattern,
-  tuple_type,
-  type_arguments,
-  type_binding,
-  type_cast,
+  tryBlock: try_block,
+  tryExpression: try_expression,
+  tupleExpression: tuple_expression,
+  tuplePattern: tuple_pattern,
+  tupleStructPattern: tuple_struct_pattern,
+  tupleType: tuple_type,
+  typeArguments: type_arguments,
+  typeBinding: type_binding,
+  typeCastExpression: type_cast_expression,
   type: type_,
-  type_parameter,
-  type_parameters,
-  unary,
+  typeParameter: type_parameter,
+  typeParameters: type_parameters,
+  unaryExpression: unary_expression,
   union,
-  unsafe_block,
-  use_as_clause,
-  use_bounds,
-  use: use_,
-  use_list,
-  use_wildcard,
-  variadic_parameter,
-  visibility_modifier,
-  where_clause,
-  where_predicate,
-  while: while_,
-  yield: yield_,
+  unsafeBlock: unsafe_block,
+  useAsClause: use_as_clause,
+  useBounds: use_bounds,
+  useDeclaration: use_declaration,
+  useList: use_list,
+  useWildcard: use_wildcard,
+  variadicParameter: variadic_parameter,
+  visibilityModifier: visibility_modifier,
+  whereClause: where_clause,
+  wherePredicate: where_predicate,
+  whileExpression: while_expression,
+  yieldExpression: yield_expression,
 
   // Leaf node builders
   booleanLiteral: (text: string) => new LeafBuilder('boolean_literal', text),
@@ -333,1191 +333,1365 @@ export const ir = {
 
   // Namespaced access via supertypes
   declarationStatement: {
-    associated_type: associated_type,
+    associatedType: associated_type,
     attributeItem: attributeItem,
     const: const_,
     enum: enum_,
-    extern_crate: extern_crate,
-    foreign_mod: foreign_mod,
-    fn: fn,
-    function_signature: function_signature,
+    externCrateDeclaration: extern_crate_declaration,
+    foreignMod: foreign_mod,
+    function: function_,
+    functionSignature: function_signature,
     impl: impl,
-    inner_attribute: inner_attribute,
-    let: let_,
-    macro_definition: macro_definition,
-    macro_invocation: macro_invocation,
+    innerAttribute: inner_attribute,
+    letDeclaration: let_declaration,
+    macroDefinition: macro_definition,
+    macroInvocation: macro_invocation,
     mod: mod,
     static: static_,
-    structItem: structItem,
+    struct: struct_,
     trait: trait,
     type: type_,
     union: union,
-    use: use_,
+    useDeclaration: use_declaration,
+  },
+  expression: {
+    array: array_expression,
+    assignment: assignment_expression,
+    asyncBlock: async_block,
+    await: await_expression,
+    binary: binary_expression,
+    break: break_expression,
+    call: call_expression,
+    closure: closure_expression,
+    compoundAssignmentExpr: compound_assignment_expr,
+    constBlock: const_block,
+    continue: continue_expression,
+    field: field_expression,
+    for: for_expression,
+    genBlock: gen_block,
+    genericFunction: generic_function,
+    if: if_expression,
+    index: index_expression,
+    loop: loop_expression,
+    macroInvocation: macro_invocation,
+    match: match_expression,
+    parenthesized: parenthesized_expression,
+    range: range_expression,
+    reference: reference_expression,
+    return: return_expression,
+    scopedIdentifier: scoped_identifier,
+    struct: struct_expression,
+    tryBlock: try_block,
+    try: try_expression,
+    tuple: tuple_expression,
+    typeCast: type_cast_expression,
+    unary: unary_expression,
+    unsafeBlock: unsafe_block,
+    while: while_expression,
+    yield: yield_expression,
   },
   literal: {
-    raw_string_literal: raw_string_literal,
-    string_literal: string_literal,
+    rawString: raw_string_literal,
+    string: string_literal,
   },
   literalPattern: {
-    negative_literal: negative_literal,
-    raw_string_literal: raw_string_literal,
-    string_literal: string_literal,
+    negativeLiteral: negative_literal,
+    rawStringLiteral: raw_string_literal,
+    stringLiteral: string_literal,
   },
   pattern: {
-    captured_pattern: captured_pattern,
-    const_block: const_block,
-    generic_pattern: generic_pattern,
-    macro_invocation: macro_invocation,
-    mut_pattern: mut_pattern,
-    or_pattern: or_pattern,
-    range_pattern: range_pattern,
-    ref_pattern: ref_pattern,
-    reference_pattern: reference_pattern,
-    scoped_identifier: scoped_identifier,
-    slice_pattern: slice_pattern,
-    struct_pattern: struct_pattern,
-    tuple_pattern: tuple_pattern,
-    tuple_struct_pattern: tuple_struct_pattern,
+    captured: captured_pattern,
+    constBlock: const_block,
+    generic: generic_pattern,
+    macroInvocation: macro_invocation,
+    mut: mut_pattern,
+    or: or_pattern,
+    range: range_pattern,
+    ref: ref_pattern,
+    reference: reference_pattern,
+    scopedIdentifier: scoped_identifier,
+    slice: slice_pattern,
+    struct: struct_pattern,
+    tuple: tuple_pattern,
+    tupleStruct: tuple_struct_pattern,
   },
 } as const;
 
 export type RustIr = typeof ir;
 
-import type { Builder, Edit } from '@sittir/types';
+import type { Builder, Edit, FieldKinds, FieldName, NodeTransform, NodeType } from '@sittir/types';
+import type { RustGrammar } from './types.js';
 
-/** Tree-sitter CST node interface (minimal shape). */
-interface CSTInput {
-  type: string;
+/** Tree-sitter CST node interface, parameterized by grammar node kind. */
+export interface CSTNode<K extends keyof RustGrammar = keyof RustGrammar> {
+  type: K;
   text: string;
   isNamed: boolean;
   startIndex: number;
   endIndex: number;
-  namedChildren: CSTInput[];
-  childForFieldName(name: string): CSTInput | null;
-  childrenForFieldName(name: string): CSTInput[];
+  namedChildren: CSTNode<keyof RustGrammar>[];
+  childForFieldName<F extends FieldName<RustGrammar, K & string>>(name: F): CSTNode<FieldKinds<RustGrammar, K & string, F> & keyof RustGrammar> | null;
+  childForFieldName(name: string): CSTNode<keyof RustGrammar> | null;
+  childrenForFieldName<F extends FieldName<RustGrammar, K & string>>(name: F): CSTNode<FieldKinds<RustGrammar, K & string, F> & keyof RustGrammar>[];
+  childrenForFieldName(name: string): CSTNode<keyof RustGrammar>[];
 }
 
 /**
  * Hydrate a tree-sitter CST node into a builder tree.
  * Walks the CST recursively — no parsing needed.
  */
-export function fromCST(node: CSTInput): Builder<{ kind: string }> {
+export function fromCST<K extends keyof RustGrammar>(node: CSTNode<K>): Builder<NodeType<RustGrammar, K>> {
   // Leaf / unknown nodes → LeafBuilder
   const builder = resolveBuilder(node);
-  if (!builder) return new LeafBuilder(node.type, node.text);
-  return builder;
+  if (!builder) return new LeafBuilder(node.type, node.text) as any;
+  return builder as any;
 }
 
-function resolveBuilder(node: CSTInput): Builder<{ kind: string }> | null {
+function resolveBuilder(node: CSTNode): Builder | null {
   switch (node.type) {
     case 'abstract_type': {
-      const ctorChild = node.childForFieldName('trait');
-      const b = ir.abstract_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('trait', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'abstract_type'>;
+      const ctorChild = n.childForFieldName('trait');
+      const b = ir.abstractType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('trait', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['trait'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'arguments': {
+      const n = node as CSTNode<'arguments'>;
       const b = ir.arguments();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'array_expression': {
-      const b = ir.array();
-      const lengthChild = node.childForFieldName('length');
-      if (lengthChild) b.length(fromCST(lengthChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'array_expression'>;
+      const b = ir.arrayExpression();
+      const lengthChild = n.childForFieldName('length');
+      if (lengthChild) b.length(fromCST(lengthChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['length'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'array_type': {
-      const ctorChild = node.childForFieldName('element');
-      const b = ir.array_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('element', ''));
-      const lengthChild = node.childForFieldName('length');
-      if (lengthChild) b.length(fromCST(lengthChild));
+      const n = node as CSTNode<'array_type'>;
+      const ctorChild = n.childForFieldName('element');
+      const b = ir.arrayType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('element', '') as any);
+      const lengthChild = n.childForFieldName('length');
+      if (lengthChild) b.length(fromCST(lengthChild) as any);
       return b;
     }
     case 'assignment_expression': {
-      const ctorChild = node.childForFieldName('left');
-      const b = ir.assignment(ctorChild ? fromCST(ctorChild) : new LeafBuilder('left', ''));
-      const rightChild = node.childForFieldName('right');
-      if (rightChild) b.right(fromCST(rightChild));
+      const n = node as CSTNode<'assignment_expression'>;
+      const ctorChild = n.childForFieldName('left');
+      const b = ir.assignmentExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('left', '') as any);
+      const rightChild = n.childForFieldName('right');
+      if (rightChild) b.right(fromCST(rightChild) as any);
       return b;
     }
     case 'associated_type': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.associated_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const boundsChild = node.childForFieldName('bounds');
-      if (boundsChild) b.bounds(fromCST(boundsChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'associated_type'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.associatedType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const boundsChild = n.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['bounds', 'name', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'async_block': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.async_block(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'async_block'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.asyncBlock(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'attribute': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.attribute(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
-      const argumentsChild = node.childForFieldName('arguments');
-      if (argumentsChild) b.arguments(fromCST(argumentsChild));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
+      const n = node as CSTNode<'attribute'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.attribute(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
+      const argumentsChild = n.childForFieldName('arguments');
+      if (argumentsChild) b.arguments(fromCST(argumentsChild) as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
       return b;
     }
     case 'attribute_item': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.attributeItem(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'attribute_item'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.attributeItem(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'await_expression': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.await(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'await_expression'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.awaitExpression(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'base_field_initializer': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.base_field_initializer(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'base_field_initializer'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.baseFieldInitializer(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'binary_expression': {
-      const ctorChild = node.childForFieldName('left');
-      const b = ir.binary(ctorChild ? fromCST(ctorChild) : new LeafBuilder('left', ''));
-      const operatorChild = node.childForFieldName('operator');
-      if (operatorChild) b.operator(fromCST(operatorChild));
-      const rightChild = node.childForFieldName('right');
-      if (rightChild) b.right(fromCST(rightChild));
+      const n = node as CSTNode<'binary_expression'>;
+      const ctorChild = n.childForFieldName('left');
+      const b = ir.binaryExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('left', '') as any);
+      const operatorChild = n.childForFieldName('operator');
+      if (operatorChild) b.operator(fromCST(operatorChild) as any);
+      const rightChild = n.childForFieldName('right');
+      if (rightChild) b.right(fromCST(rightChild) as any);
       return b;
     }
     case 'block_comment': {
-      const b = ir.block_comment();
-      const docChild = node.childForFieldName('doc');
-      if (docChild) b.doc(fromCST(docChild));
-      const innerChild = node.childForFieldName('inner');
-      if (innerChild) b.inner(fromCST(innerChild));
-      const outerChild = node.childForFieldName('outer');
-      if (outerChild) b.outer(fromCST(outerChild));
+      const n = node as CSTNode<'block_comment'>;
+      const b = ir.blockComment();
+      const docChild = n.childForFieldName('doc');
+      if (docChild) b.doc(fromCST(docChild) as any);
+      const innerChild = n.childForFieldName('inner');
+      if (innerChild) b.inner(fromCST(innerChild) as any);
+      const outerChild = n.childForFieldName('outer');
+      if (outerChild) b.outer(fromCST(outerChild) as any);
       return b;
     }
     case 'bounded_type': {
-      const b = ir.bounded_type(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'bounded_type'>;
+      const b = ir.boundedType(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'bracketed_type': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.bracketed_type(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'bracketed_type'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.bracketedType(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'break_expression': {
-      const b = ir.break();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'break_expression'>;
+      const b = ir.breakExpression();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'call_expression': {
-      const ctorChild = node.childForFieldName('function');
-      const b = ir.call(ctorChild ? fromCST(ctorChild) : new LeafBuilder('function', ''));
-      const argumentsChild = node.childForFieldName('arguments');
-      if (argumentsChild) b.arguments(fromCST(argumentsChild));
+      const n = node as CSTNode<'call_expression'>;
+      const ctorChild = n.childForFieldName('function');
+      const b = ir.callExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('function', '') as any);
+      const argumentsChild = n.childForFieldName('arguments');
+      if (argumentsChild) b.arguments(fromCST(argumentsChild) as any);
       return b;
     }
     case 'captured_pattern': {
-      const b = ir.captured_pattern(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'captured_pattern'>;
+      const b = ir.capturedPattern(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'closure_expression': {
-      const ctorChild = node.childForFieldName('parameters');
-      const b = ir.closure(ctorChild ? fromCST(ctorChild) : new LeafBuilder('parameters', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const returnTypeChild = node.childForFieldName('return_type');
-      if (returnTypeChild) b.returnType(fromCST(returnTypeChild));
+      const n = node as CSTNode<'closure_expression'>;
+      const ctorChild = n.childForFieldName('parameters');
+      const b = ir.closureExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('parameters', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const returnTypeChild = n.childForFieldName('return_type');
+      if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
       return b;
     }
     case 'closure_parameters': {
-      const b = ir.closure_parameters();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'closure_parameters'>;
+      const b = ir.closureParameters();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'compound_assignment_expr': {
-      const ctorChild = node.childForFieldName('left');
-      const b = ir.compound_assignment_expr(ctorChild ? fromCST(ctorChild) : new LeafBuilder('left', ''));
-      const operatorChild = node.childForFieldName('operator');
-      if (operatorChild) b.operator(fromCST(operatorChild));
-      const rightChild = node.childForFieldName('right');
-      if (rightChild) b.right(fromCST(rightChild));
+      const n = node as CSTNode<'compound_assignment_expr'>;
+      const ctorChild = n.childForFieldName('left');
+      const b = ir.compoundAssignmentExpr(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('left', '') as any);
+      const operatorChild = n.childForFieldName('operator');
+      if (operatorChild) b.operator(fromCST(operatorChild) as any);
+      const rightChild = n.childForFieldName('right');
+      if (rightChild) b.right(fromCST(rightChild) as any);
       return b;
     }
     case 'const_block': {
-      const ctorChild = node.childForFieldName('body');
-      const b = ir.const_block(ctorChild ? fromCST(ctorChild) : new LeafBuilder('body', ''));
+      const n = node as CSTNode<'const_block'>;
+      const ctorChild = n.childForFieldName('body');
+      const b = ir.constBlock(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('body', '') as any);
       return b;
     }
     case 'const_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.const(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'const_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.const(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['name', 'type', 'value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'const_parameter': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.const_parameter(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
+      const n = node as CSTNode<'const_parameter'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.constParameter(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
       return b;
     }
     case 'continue_expression': {
-      const b = ir.continue();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'continue_expression'>;
+      const b = ir.continueExpression();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'declaration_list': {
-      const b = ir.declaration_list();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'declaration_list'>;
+      const b = ir.declarationList();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'dynamic_type': {
-      const ctorChild = node.childForFieldName('trait');
-      const b = ir.dynamic_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('trait', ''));
+      const n = node as CSTNode<'dynamic_type'>;
+      const ctorChild = n.childForFieldName('trait');
+      const b = ir.dynamicType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('trait', '') as any);
       return b;
     }
     case 'else_clause': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.else_clause(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'else_clause'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.elseClause(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'enum_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.enum(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'enum_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.enum(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'name', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'enum_variant': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.enum_variant(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'enum_variant'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.enumVariant(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'name', 'value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'enum_variant_list': {
-      const b = ir.enum_variant_list();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'enum_variant_list'>;
+      const b = ir.enumVariantList();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'expression_statement': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.expression(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'expression_statement'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.expressionStatement(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'extern_crate_declaration': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.extern_crate(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const aliasChild = node.childForFieldName('alias');
-      if (aliasChild) b.alias(fromCST(aliasChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'extern_crate_declaration'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.externCrateDeclaration(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const aliasChild = n.childForFieldName('alias');
+      if (aliasChild) b.alias(fromCST(aliasChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['alias', 'name'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'extern_modifier': {
-      const b = ir.extern_modifier();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'extern_modifier'>;
+      const b = ir.externModifier();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'field_declaration': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.fieldDeclaration(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'field_declaration'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.fieldDeclaration(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['name', 'type'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'field_declaration_list': {
-      const b = ir.field_declaration_list();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'field_declaration_list'>;
+      const b = ir.fieldDeclarationList();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'field_expression': {
-      const ctorChild = node.childForFieldName('value');
-      const b = ir.fieldExpression(ctorChild ? fromCST(ctorChild) : new LeafBuilder('value', ''));
-      const fieldChild = node.childForFieldName('field');
-      if (fieldChild) b.field(fromCST(fieldChild));
+      const n = node as CSTNode<'field_expression'>;
+      const ctorChild = n.childForFieldName('value');
+      const b = ir.fieldExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('value', '') as any);
+      const fieldChild = n.childForFieldName('field');
+      if (fieldChild) b.field(fromCST(fieldChild) as any);
       return b;
     }
     case 'field_initializer': {
-      const ctorChild = node.childForFieldName('field');
-      const b = ir.field_initializer(ctorChild ? fromCST(ctorChild) : new LeafBuilder('field', ''));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'field_initializer'>;
+      const ctorChild = n.childForFieldName('field');
+      const b = ir.fieldInitializer(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('field', '') as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['field', 'value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'field_initializer_list': {
-      const b = ir.field_initializer_list();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'field_initializer_list'>;
+      const b = ir.fieldInitializerList();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'field_pattern': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.field_pattern(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const patternChild = node.childForFieldName('pattern');
-      if (patternChild) b.pattern(fromCST(patternChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'field_pattern'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.fieldPattern(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const patternChild = n.childForFieldName('pattern');
+      if (patternChild) b.pattern(fromCST(patternChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['name', 'pattern'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'for_expression': {
-      const ctorChild = node.childForFieldName('pattern');
-      const b = ir.for(ctorChild ? fromCST(ctorChild) : new LeafBuilder('pattern', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'for_expression'>;
+      const ctorChild = n.childForFieldName('pattern');
+      const b = ir.forExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('pattern', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'pattern', 'value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'for_lifetimes': {
-      const b = ir.for_lifetimes(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'for_lifetimes'>;
+      const b = ir.forLifetimes(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'foreign_mod_item': {
-      const b = ir.foreign_mod(...node.namedChildren.map(c => fromCST(c)));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
+      const n = node as CSTNode<'foreign_mod_item'>;
+      const b = ir.foreignMod(...n.namedChildren.map(c => fromCST(c) as any));
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       return b;
     }
     case 'function_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.fn(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const parametersChild = node.childForFieldName('parameters');
-      if (parametersChild) b.parameters(fromCST(parametersChild));
-      const returnTypeChild = node.childForFieldName('return_type');
-      if (returnTypeChild) b.returnType(fromCST(returnTypeChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'function_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.function(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const parametersChild = n.childForFieldName('parameters');
+      if (parametersChild) b.parameters(fromCST(parametersChild) as any);
+      const returnTypeChild = n.childForFieldName('return_type');
+      if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'name', 'parameters', 'return_type', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'function_modifiers': {
-      const b = ir.function_modifiers();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'function_modifiers'>;
+      const b = ir.functionModifiers();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'function_signature_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.function_signature(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const parametersChild = node.childForFieldName('parameters');
-      if (parametersChild) b.parameters(fromCST(parametersChild));
-      const returnTypeChild = node.childForFieldName('return_type');
-      if (returnTypeChild) b.returnType(fromCST(returnTypeChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'function_signature_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.functionSignature(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const parametersChild = n.childForFieldName('parameters');
+      if (parametersChild) b.parameters(fromCST(parametersChild) as any);
+      const returnTypeChild = n.childForFieldName('return_type');
+      if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['name', 'parameters', 'return_type', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'function_type': {
-      const ctorChild = node.childForFieldName('parameters');
-      const b = ir.function_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('parameters', ''));
-      const returnTypeChild = node.childForFieldName('return_type');
-      if (returnTypeChild) b.returnType(fromCST(returnTypeChild));
-      const traitChild = node.childForFieldName('trait');
-      if (traitChild) b.trait(fromCST(traitChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'function_type'>;
+      const ctorChild = n.childForFieldName('parameters');
+      const b = ir.functionType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('parameters', '') as any);
+      const returnTypeChild = n.childForFieldName('return_type');
+      if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
+      const traitChild = n.childForFieldName('trait');
+      if (traitChild) b.trait(fromCST(traitChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['parameters', 'return_type', 'trait'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'gen_block': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.gen_block(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'gen_block'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.genBlock(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'generic_function': {
-      const ctorChild = node.childForFieldName('function');
-      const b = ir.generic_function(ctorChild ? fromCST(ctorChild) : new LeafBuilder('function', ''));
-      const typeArgumentsChild = node.childForFieldName('type_arguments');
-      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild));
+      const n = node as CSTNode<'generic_function'>;
+      const ctorChild = n.childForFieldName('function');
+      const b = ir.genericFunction(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('function', '') as any);
+      const typeArgumentsChild = n.childForFieldName('type_arguments');
+      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild) as any);
       return b;
     }
     case 'generic_pattern': {
-      const ctorChild = node.childForFieldName('type_arguments');
-      const b = ir.generic_pattern(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type_arguments', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'generic_pattern'>;
+      const ctorChild = n.childForFieldName('type_arguments');
+      const b = ir.genericPattern(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type_arguments', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['type_arguments'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'generic_type': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.generic_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const typeArgumentsChild = node.childForFieldName('type_arguments');
-      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild));
+      const n = node as CSTNode<'generic_type'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.genericType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const typeArgumentsChild = n.childForFieldName('type_arguments');
+      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild) as any);
       return b;
     }
     case 'generic_type_with_turbofish': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.generic_type_with_turbofish(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const typeArgumentsChild = node.childForFieldName('type_arguments');
-      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild));
+      const n = node as CSTNode<'generic_type_with_turbofish'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.genericTypeWithTurbofish(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const typeArgumentsChild = n.childForFieldName('type_arguments');
+      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild) as any);
       return b;
     }
     case 'higher_ranked_trait_bound': {
-      const ctorChild = node.childForFieldName('type_parameters');
-      const b = ir.higher_ranked_trait_bound(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type_parameters', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
+      const n = node as CSTNode<'higher_ranked_trait_bound'>;
+      const ctorChild = n.childForFieldName('type_parameters');
+      const b = ir.higherRankedTraitBound(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type_parameters', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
       return b;
     }
     case 'if_expression': {
-      const ctorChild = node.childForFieldName('condition');
-      const b = ir.if(ctorChild ? fromCST(ctorChild) : new LeafBuilder('condition', ''));
-      const alternativeChild = node.childForFieldName('alternative');
-      if (alternativeChild) b.alternative(fromCST(alternativeChild));
-      const consequenceChild = node.childForFieldName('consequence');
-      if (consequenceChild) b.consequence(fromCST(consequenceChild));
+      const n = node as CSTNode<'if_expression'>;
+      const ctorChild = n.childForFieldName('condition');
+      const b = ir.ifExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('condition', '') as any);
+      const alternativeChild = n.childForFieldName('alternative');
+      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
+      const consequenceChild = n.childForFieldName('consequence');
+      if (consequenceChild) b.consequence(fromCST(consequenceChild) as any);
       return b;
     }
     case 'impl_item': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.impl(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const traitChild = node.childForFieldName('trait');
-      if (traitChild) b.trait(fromCST(traitChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'impl_item'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.impl(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const traitChild = n.childForFieldName('trait');
+      if (traitChild) b.trait(fromCST(traitChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'trait', 'type', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'index_expression': {
-      const b = ir.index(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'index_expression'>;
+      const b = ir.indexExpression(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'inner_attribute_item': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.inner_attribute(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'inner_attribute_item'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.innerAttribute(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'label': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.label(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'label'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.label(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'let_chain': {
-      const b = ir.let_chain(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'let_chain'>;
+      const b = ir.letChain(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'let_condition': {
-      const ctorChild = node.childForFieldName('pattern');
-      const b = ir.let_condition(ctorChild ? fromCST(ctorChild) : new LeafBuilder('pattern', ''));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
+      const n = node as CSTNode<'let_condition'>;
+      const ctorChild = n.childForFieldName('pattern');
+      const b = ir.letCondition(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('pattern', '') as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
       return b;
     }
     case 'let_declaration': {
-      const ctorChild = node.childForFieldName('pattern');
-      const b = ir.let(ctorChild ? fromCST(ctorChild) : new LeafBuilder('pattern', ''));
-      const alternativeChild = node.childForFieldName('alternative');
-      if (alternativeChild) b.alternative(fromCST(alternativeChild));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'let_declaration'>;
+      const ctorChild = n.childForFieldName('pattern');
+      const b = ir.letDeclaration(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('pattern', '') as any);
+      const alternativeChild = n.childForFieldName('alternative');
+      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['alternative', 'pattern', 'type', 'value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'lifetime_parameter': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.lifetime_parameter(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const boundsChild = node.childForFieldName('bounds');
-      if (boundsChild) b.bounds(fromCST(boundsChild));
+      const n = node as CSTNode<'lifetime_parameter'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.lifetimeParameter(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const boundsChild = n.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
       return b;
     }
     case 'line_comment': {
-      const b = ir.line_comment();
-      const docChild = node.childForFieldName('doc');
-      if (docChild) b.doc(fromCST(docChild));
-      const innerChild = node.childForFieldName('inner');
-      if (innerChild) b.inner(fromCST(innerChild));
-      const outerChild = node.childForFieldName('outer');
-      if (outerChild) b.outer(fromCST(outerChild));
+      const n = node as CSTNode<'line_comment'>;
+      const b = ir.lineComment();
+      const docChild = n.childForFieldName('doc');
+      if (docChild) b.doc(fromCST(docChild) as any);
+      const innerChild = n.childForFieldName('inner');
+      if (innerChild) b.inner(fromCST(innerChild) as any);
+      const outerChild = n.childForFieldName('outer');
+      if (outerChild) b.outer(fromCST(outerChild) as any);
       return b;
     }
     case 'loop_expression': {
-      const ctorChild = node.childForFieldName('body');
-      const b = ir.loop(ctorChild ? fromCST(ctorChild) : new LeafBuilder('body', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'loop_expression'>;
+      const ctorChild = n.childForFieldName('body');
+      const b = ir.loopExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('body', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'macro_definition': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.macro_definition(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'macro_definition'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.macroDefinition(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['name'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'macro_invocation': {
-      const ctorChild = node.childForFieldName('macro');
-      const b = ir.macro_invocation(ctorChild ? fromCST(ctorChild) : new LeafBuilder('macro', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'macro_invocation'>;
+      const ctorChild = n.childForFieldName('macro');
+      const b = ir.macroInvocation(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('macro', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['macro'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'macro_rule': {
-      const ctorChild = node.childForFieldName('left');
-      const b = ir.macro_rule(ctorChild ? fromCST(ctorChild) : new LeafBuilder('left', ''));
-      const rightChild = node.childForFieldName('right');
-      if (rightChild) b.right(fromCST(rightChild));
+      const n = node as CSTNode<'macro_rule'>;
+      const ctorChild = n.childForFieldName('left');
+      const b = ir.macroRule(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('left', '') as any);
+      const rightChild = n.childForFieldName('right');
+      if (rightChild) b.right(fromCST(rightChild) as any);
       return b;
     }
     case 'match_arm': {
-      const ctorChild = node.childForFieldName('pattern');
-      const b = ir.match_arm(ctorChild ? fromCST(ctorChild) : new LeafBuilder('pattern', ''));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'match_arm'>;
+      const ctorChild = n.childForFieldName('pattern');
+      const b = ir.matchArm(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('pattern', '') as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['pattern', 'value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'match_block': {
-      const b = ir.match_block();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'match_block'>;
+      const b = ir.matchBlock();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'match_expression': {
-      const ctorChild = node.childForFieldName('value');
-      const b = ir.match(ctorChild ? fromCST(ctorChild) : new LeafBuilder('value', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
+      const n = node as CSTNode<'match_expression'>;
+      const ctorChild = n.childForFieldName('value');
+      const b = ir.matchExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('value', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       return b;
     }
     case 'match_pattern': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.match_pattern(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
-      const conditionChild = node.childForFieldName('condition');
-      if (conditionChild) b.condition(fromCST(conditionChild));
+      const n = node as CSTNode<'match_pattern'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.matchPattern(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
+      const conditionChild = n.childForFieldName('condition');
+      if (conditionChild) b.condition(fromCST(conditionChild) as any);
       return b;
     }
     case 'mod_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.mod(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'mod_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.mod(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'name'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'mut_pattern': {
-      const b = ir.mut_pattern(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'mut_pattern'>;
+      const b = ir.mutPattern(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'negative_literal': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.negative_literal(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'negative_literal'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.negativeLiteral(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'or_pattern': {
-      const b = ir.or_pattern(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'or_pattern'>;
+      const b = ir.orPattern(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'ordered_field_declaration_list': {
-      const b = ir.ordered_field_declaration_list();
-      const typeChildren = node.childrenForFieldName('type');
-      if (typeChildren.length > 0) b.type(...typeChildren.map(c => fromCST(c)));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'ordered_field_declaration_list'>;
+      const b = ir.orderedFieldDeclarationList();
+      const typeChildren = n.childrenForFieldName('type');
+      if (typeChildren.length > 0) b.type(...typeChildren.map(c => fromCST(c) as any));
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['type'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'parameter': {
-      const ctorChild = node.childForFieldName('pattern');
-      const b = ir.parameter(ctorChild ? fromCST(ctorChild) : new LeafBuilder('pattern', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'parameter'>;
+      const ctorChild = n.childForFieldName('pattern');
+      const b = ir.parameter(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('pattern', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['pattern', 'type'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'parameters': {
+      const n = node as CSTNode<'parameters'>;
       const b = ir.parameters();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'parenthesized_expression': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.parenthesized(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'parenthesized_expression'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.parenthesizedExpression(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'pointer_type': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.pointer_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'pointer_type'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.pointerType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['type'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'qualified_type': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.qualified_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const aliasChild = node.childForFieldName('alias');
-      if (aliasChild) b.alias(fromCST(aliasChild));
+      const n = node as CSTNode<'qualified_type'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.qualifiedType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const aliasChild = n.childForFieldName('alias');
+      if (aliasChild) b.alias(fromCST(aliasChild) as any);
       return b;
     }
     case 'range_expression': {
-      const b = ir.range();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'range_expression'>;
+      const b = ir.rangeExpression();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'range_pattern': {
-      const b = ir.range_pattern();
-      const leftChild = node.childForFieldName('left');
-      if (leftChild) b.left(fromCST(leftChild));
-      const rightChild = node.childForFieldName('right');
-      if (rightChild) b.right(fromCST(rightChild));
+      const n = node as CSTNode<'range_pattern'>;
+      const b = ir.rangePattern();
+      const leftChild = n.childForFieldName('left');
+      if (leftChild) b.left(fromCST(leftChild) as any);
+      const rightChild = n.childForFieldName('right');
+      if (rightChild) b.right(fromCST(rightChild) as any);
       return b;
     }
     case 'raw_string_literal': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.raw_string_literal(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'raw_string_literal'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.rawStringLiteral(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'ref_pattern': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.ref_pattern(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'ref_pattern'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.refPattern(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'reference_expression': {
-      const ctorChild = node.childForFieldName('value');
-      const b = ir.reference(ctorChild ? fromCST(ctorChild) : new LeafBuilder('value', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'reference_expression'>;
+      const ctorChild = n.childForFieldName('value');
+      const b = ir.referenceExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('value', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'reference_pattern': {
-      const b = ir.reference_pattern(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'reference_pattern'>;
+      const b = ir.referencePattern(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'reference_type': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.reference_type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'reference_type'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.referenceType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['type'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'removed_trait_bound': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.removed_trait_bound(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'removed_trait_bound'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.removedTraitBound(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'return_expression': {
-      const b = ir.return();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'return_expression'>;
+      const b = ir.returnExpression();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'scoped_identifier': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.scoped_identifier(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const pathChild = node.childForFieldName('path');
-      if (pathChild) b.path(fromCST(pathChild));
+      const n = node as CSTNode<'scoped_identifier'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.scopedIdentifier(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const pathChild = n.childForFieldName('path');
+      if (pathChild) b.path(fromCST(pathChild) as any);
       return b;
     }
     case 'scoped_type_identifier': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.scoped_type_identifier(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const pathChild = node.childForFieldName('path');
-      if (pathChild) b.path(fromCST(pathChild));
+      const n = node as CSTNode<'scoped_type_identifier'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.scopedTypeIdentifier(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const pathChild = n.childForFieldName('path');
+      if (pathChild) b.path(fromCST(pathChild) as any);
       return b;
     }
     case 'scoped_use_list': {
-      const ctorChild = node.childForFieldName('list');
-      const b = ir.scoped_use_list(ctorChild ? fromCST(ctorChild) : new LeafBuilder('list', ''));
-      const pathChild = node.childForFieldName('path');
-      if (pathChild) b.path(fromCST(pathChild));
+      const n = node as CSTNode<'scoped_use_list'>;
+      const ctorChild = n.childForFieldName('list');
+      const b = ir.scopedUseList(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('list', '') as any);
+      const pathChild = n.childForFieldName('path');
+      if (pathChild) b.path(fromCST(pathChild) as any);
       return b;
     }
     case 'self_parameter': {
-      const b = ir.self_parameter(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'self_parameter'>;
+      const b = ir.selfParameter(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'shorthand_field_initializer': {
-      const b = ir.shorthand_field_initializer(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'shorthand_field_initializer'>;
+      const b = ir.shorthandFieldInitializer(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'slice_pattern': {
-      const b = ir.slice_pattern();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'slice_pattern'>;
+      const b = ir.slicePattern();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'source_file': {
-      const b = ir.file();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'source_file'>;
+      const b = ir.sourceFile();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'static_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.static(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const valueChild = node.childForFieldName('value');
-      if (valueChild) b.value(fromCST(valueChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'static_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.static(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const valueChild = n.childForFieldName('value');
+      if (valueChild) b.value(fromCST(valueChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['name', 'type', 'value'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'string_literal': {
-      const b = ir.string_literal();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'string_literal'>;
+      const b = ir.stringLiteral();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'struct_expression': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.structExpression(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
+      const n = node as CSTNode<'struct_expression'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.structExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       return b;
     }
     case 'struct_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.structItem(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'struct_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.struct(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'name', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'struct_pattern': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.struct_pattern(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'struct_pattern'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.structPattern(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['type'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'token_binding_pattern': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.token_binding_pattern(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
+      const n = node as CSTNode<'token_binding_pattern'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.tokenBindingPattern(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
       return b;
     }
     case 'token_repetition': {
-      const b = ir.token_repetition();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'token_repetition'>;
+      const b = ir.tokenRepetition();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'token_repetition_pattern': {
-      const b = ir.token_repetition_pattern();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'token_repetition_pattern'>;
+      const b = ir.tokenRepetitionPattern();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'token_tree': {
-      const b = ir.token_tree();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'token_tree'>;
+      const b = ir.tokenTree();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'token_tree_pattern': {
-      const b = ir.token_tree_pattern();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'token_tree_pattern'>;
+      const b = ir.tokenTreePattern();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'trait_bounds': {
-      const b = ir.trait_bounds(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'trait_bounds'>;
+      const b = ir.traitBounds(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'trait_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.trait(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const boundsChild = node.childForFieldName('bounds');
-      if (boundsChild) b.bounds(fromCST(boundsChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'trait_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.trait(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const boundsChild = n.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'bounds', 'name', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'try_block': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.try_block(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'try_block'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.tryBlock(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'try_expression': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.try(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'try_expression'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.tryExpression(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'tuple_expression': {
-      const b = ir.tuple(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'tuple_expression'>;
+      const b = ir.tupleExpression(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'tuple_pattern': {
-      const b = ir.tuple_pattern();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'tuple_pattern'>;
+      const b = ir.tuplePattern();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'tuple_struct_pattern': {
-      const ctorChild = node.childForFieldName('type');
-      const b = ir.tuple_struct_pattern(ctorChild ? fromCST(ctorChild) : new LeafBuilder('type', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'tuple_struct_pattern'>;
+      const ctorChild = n.childForFieldName('type');
+      const b = ir.tupleStructPattern(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['type'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'tuple_type': {
-      const b = ir.tuple_type(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'tuple_type'>;
+      const b = ir.tupleType(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'type_arguments': {
-      const b = ir.type_arguments(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'type_arguments'>;
+      const b = ir.typeArguments(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'type_binding': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.type_binding(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const typeArgumentsChild = node.childForFieldName('type_arguments');
-      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild));
+      const n = node as CSTNode<'type_binding'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.typeBinding(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const typeArgumentsChild = n.childForFieldName('type_arguments');
+      if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild) as any);
       return b;
     }
     case 'type_cast_expression': {
-      const ctorChild = node.childForFieldName('value');
-      const b = ir.type_cast(ctorChild ? fromCST(ctorChild) : new LeafBuilder('value', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
+      const n = node as CSTNode<'type_cast_expression'>;
+      const ctorChild = n.childForFieldName('value');
+      const b = ir.typeCastExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('value', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
       return b;
     }
     case 'type_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.type(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const typeChild = node.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'type_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.type(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['name', 'type', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'type_parameter': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.type_parameter(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const boundsChild = node.childForFieldName('bounds');
-      if (boundsChild) b.bounds(fromCST(boundsChild));
-      const defaultTypeChild = node.childForFieldName('default_type');
-      if (defaultTypeChild) b.defaultType(fromCST(defaultTypeChild));
+      const n = node as CSTNode<'type_parameter'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.typeParameter(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const boundsChild = n.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
+      const defaultTypeChild = n.childForFieldName('default_type');
+      if (defaultTypeChild) b.defaultType(fromCST(defaultTypeChild) as any);
       return b;
     }
     case 'type_parameters': {
-      const b = ir.type_parameters(...node.namedChildren.map(c => fromCST(c)));
+      const n = node as CSTNode<'type_parameters'>;
+      const b = ir.typeParameters(...n.namedChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'unary_expression': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.unary(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'unary_expression'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.unaryExpression(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'union_item': {
-      const ctorChild = node.childForFieldName('name');
-      const b = ir.union(ctorChild ? fromCST(ctorChild) : new LeafBuilder('name', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const typeParametersChild = node.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'union_item'>;
+      const ctorChild = n.childForFieldName('name');
+      const b = ir.union(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'name', 'type_parameters'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'unsafe_block': {
-      const firstChild = node.namedChildren[0];
-      const b = ir.unsafe_block(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));
+      const n = node as CSTNode<'unsafe_block'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.unsafeBlock(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
       return b;
     }
     case 'use_as_clause': {
-      const ctorChild = node.childForFieldName('path');
-      const b = ir.use_as_clause(ctorChild ? fromCST(ctorChild) : new LeafBuilder('path', ''));
-      const aliasChild = node.childForFieldName('alias');
-      if (aliasChild) b.alias(fromCST(aliasChild));
+      const n = node as CSTNode<'use_as_clause'>;
+      const ctorChild = n.childForFieldName('path');
+      const b = ir.useAsClause(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('path', '') as any);
+      const aliasChild = n.childForFieldName('alias');
+      if (aliasChild) b.alias(fromCST(aliasChild) as any);
       return b;
     }
     case 'use_bounds': {
-      const b = ir.use_bounds();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'use_bounds'>;
+      const b = ir.useBounds();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'use_declaration': {
-      const ctorChild = node.childForFieldName('argument');
-      const b = ir.use(ctorChild ? fromCST(ctorChild) : new LeafBuilder('argument', ''));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'use_declaration'>;
+      const ctorChild = n.childForFieldName('argument');
+      const b = ir.useDeclaration(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('argument', '') as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['argument'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'use_list': {
-      const b = ir.use_list();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'use_list'>;
+      const b = ir.useList();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'use_wildcard': {
-      const b = ir.use_wildcard();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'use_wildcard'>;
+      const b = ir.useWildcard();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'variadic_parameter': {
-      const b = ir.variadic_parameter();
-      const patternChild = node.childForFieldName('pattern');
-      if (patternChild) b.pattern(fromCST(patternChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'variadic_parameter'>;
+      const b = ir.variadicParameter();
+      const patternChild = n.childForFieldName('pattern');
+      if (patternChild) b.pattern(fromCST(patternChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['pattern'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'visibility_modifier': {
-      const b = ir.visibility_modifier();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'visibility_modifier'>;
+      const b = ir.visibilityModifier();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'where_clause': {
-      const b = ir.where_clause();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'where_clause'>;
+      const b = ir.whereClause();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'where_predicate': {
-      const ctorChild = node.childForFieldName('left');
-      const b = ir.where_predicate(ctorChild ? fromCST(ctorChild) : new LeafBuilder('left', ''));
-      const boundsChild = node.childForFieldName('bounds');
-      if (boundsChild) b.bounds(fromCST(boundsChild));
+      const n = node as CSTNode<'where_predicate'>;
+      const ctorChild = n.childForFieldName('left');
+      const b = ir.wherePredicate(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('left', '') as any);
+      const boundsChild = n.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
       return b;
     }
     case 'while_expression': {
-      const ctorChild = node.childForFieldName('condition');
-      const b = ir.while(ctorChild ? fromCST(ctorChild) : new LeafBuilder('condition', ''));
-      const bodyChild = node.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild));
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'while_expression'>;
+      const ctorChild = n.childForFieldName('condition');
+      const b = ir.whileExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('condition', '') as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body', 'condition'];
-        return !fieldNames.some(fn => node.childForFieldName(fn) === c);
+        return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'yield_expression': {
-      const b = ir.yield();
-      const remainingChildren = node.namedChildren.filter(c => {
+      const n = node as CSTNode<'yield_expression'>;
+      const b = ir.yieldExpression();
+      const remainingChildren = n.namedChildren.filter(c => {
         return true;
       });
-      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c)));
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
     default: return null;
@@ -1529,9 +1703,9 @@ function resolveBuilder(node: CSTInput): Builder<{ kind: string }> | null {
  * Hydrates the node into a builder, passes it to the transform,
  * then renders the result and wraps it with byte positions.
  */
-export function edit(
-  node: CSTInput,
-  transform: (builder: Builder) => Builder,
+export function edit<K extends keyof RustGrammar>(
+  node: CSTNode<K>,
+  transform: NodeTransform<NodeType<RustGrammar, K>>,
 ): Edit {
   const builder = fromCST(node);
   const result = transform(builder);

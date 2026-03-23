@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('internal_module', () => {
   it('should build with correct kind', () => {
-    const builder = ir.internal_module(ir.identifier('test'));
+    const builder = ir.internalModule(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('internal_module');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.internal_module(ir.identifier('test'));
+    const builder = ir.internalModule(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('namespace');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.internal_module(ir.identifier('test'));
+    const builder = ir.internalModule(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('internal_module');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('internal_module', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.internal_module(ir.identifier('test'));
+    const builder = ir.internalModule(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

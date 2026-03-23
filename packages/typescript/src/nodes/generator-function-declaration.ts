@@ -3,34 +3,34 @@ import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssertsAnnotation, FormalParameters, GeneratorFunctionDeclaration, Identifier, StatementBlock, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
 
 
-class GeneratorFunctionBuilder extends Builder<GeneratorFunctionDeclaration> {
-  private _body!: Builder;
-  private _name: Builder;
-  private _parameters!: Builder;
-  private _returnType?: Builder;
-  private _typeParameters?: Builder;
+class GeneratorFunctionDeclarationBuilder extends Builder<GeneratorFunctionDeclaration> {
+  private _body!: Builder<StatementBlock>;
+  private _name: Builder<Identifier>;
+  private _parameters!: Builder<FormalParameters>;
+  private _returnType?: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>;
+  private _typeParameters?: Builder<TypeParameters>;
 
-  constructor(name: Builder) {
+  constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<StatementBlock>): this {
     this._body = value;
     return this;
   }
 
-  parameters(value: Builder): this {
+  parameters(value: Builder<FormalParameters>): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
@@ -50,12 +50,12 @@ class GeneratorFunctionBuilder extends Builder<GeneratorFunctionDeclaration> {
   build(ctx?: RenderContext): GeneratorFunctionDeclaration {
     return {
       kind: 'generator_function_declaration',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-    } as unknown as GeneratorFunctionDeclaration;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+      parameters: this._parameters?.build(ctx),
+      returnType: this._returnType?.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+    } as GeneratorFunctionDeclaration;
   }
 
   override get nodeKind(): string { return 'generator_function_declaration'; }
@@ -73,10 +73,10 @@ class GeneratorFunctionBuilder extends Builder<GeneratorFunctionDeclaration> {
   }
 }
 
-export type { GeneratorFunctionBuilder };
+export type { GeneratorFunctionDeclarationBuilder };
 
-export function generator_function(name: Builder): GeneratorFunctionBuilder {
-  return new GeneratorFunctionBuilder(name);
+export function generator_function_declaration(name: Builder<Identifier>): GeneratorFunctionDeclarationBuilder {
+  return new GeneratorFunctionDeclarationBuilder(name);
 }
 
 export interface GeneratorFunctionDeclarationOptions {
@@ -87,10 +87,10 @@ export interface GeneratorFunctionDeclarationOptions {
   typeParameters?: Builder<TypeParameters>;
 }
 
-export namespace generator_function {
-  export function from(options: GeneratorFunctionDeclarationOptions): GeneratorFunctionBuilder {
+export namespace generator_function_declaration {
+  export function from(options: GeneratorFunctionDeclarationOptions): GeneratorFunctionDeclarationBuilder {
     const _ctor = options.name;
-    const b = new GeneratorFunctionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    const b = new GeneratorFunctionDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.body !== undefined) b.body(options.body);
     if (options.parameters !== undefined) b.parameters(options.parameters);
     if (options.returnType !== undefined) b.returnType(options.returnType);

@@ -4,17 +4,17 @@ import type { MutableSpecifier, Pattern, VariadicParameter } from '../types.js';
 
 
 class VariadicParameterBuilder extends Builder<VariadicParameter> {
-  private _pattern?: Builder;
-  private _children: Builder[] = [];
+  private _pattern?: Builder<Pattern>;
+  private _children: Builder<MutableSpecifier>[] = [];
 
   constructor() { super(); }
 
-  pattern(value: Builder): this {
+  pattern(value: Builder<Pattern>): this {
     this._pattern = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<MutableSpecifier>[]): this {
     this._children = value;
     return this;
   }
@@ -33,9 +33,9 @@ class VariadicParameterBuilder extends Builder<VariadicParameter> {
   build(ctx?: RenderContext): VariadicParameter {
     return {
       kind: 'variadic_parameter',
-      pattern: this._pattern ? this.renderChild(this._pattern, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as VariadicParameter;
+      pattern: this._pattern?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as VariadicParameter;
   }
 
   override get nodeKind(): string { return 'variadic_parameter'; }

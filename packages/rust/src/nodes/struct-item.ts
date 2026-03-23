@@ -3,28 +3,28 @@ import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FieldDeclarationList, OrderedFieldDeclarationList, StructItem, TypeIdentifier, TypeParameters, VisibilityModifier, WhereClause } from '../types.js';
 
 
-class StructBuilder extends Builder<StructItem> {
-  private _body?: Builder;
-  private _name: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+class StructItemBuilder extends Builder<StructItem> {
+  private _body?: Builder<FieldDeclarationList | OrderedFieldDeclarationList>;
+  private _name: Builder<TypeIdentifier>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<VisibilityModifier | WhereClause>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<FieldDeclarationList | OrderedFieldDeclarationList>): this {
     this._body = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier | WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -43,11 +43,11 @@ class StructBuilder extends Builder<StructItem> {
   build(ctx?: RenderContext): StructItem {
     return {
       kind: 'struct_item',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as StructItem;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as StructItem;
   }
 
   override get nodeKind(): string { return 'struct_item'; }
@@ -64,10 +64,10 @@ class StructBuilder extends Builder<StructItem> {
   }
 }
 
-export type { StructBuilder };
+export type { StructItemBuilder };
 
-export function struct_(name: Builder): StructBuilder {
-  return new StructBuilder(name);
+export function struct_item(name: Builder<TypeIdentifier>): StructItemBuilder {
+  return new StructItemBuilder(name);
 }
 
 export interface StructItemOptions {
@@ -77,10 +77,10 @@ export interface StructItemOptions {
   children?: Builder<VisibilityModifier | WhereClause> | (Builder<VisibilityModifier | WhereClause>)[];
 }
 
-export namespace struct_ {
-  export function from(options: StructItemOptions): StructBuilder {
+export namespace struct_item {
+  export function from(options: StructItemOptions): StructItemBuilder {
     const _ctor = options.name;
-    const b = new StructBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    const b = new StructItemBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
     if (options.body !== undefined) b.body(options.body);
     if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
     if (options.children !== undefined) {

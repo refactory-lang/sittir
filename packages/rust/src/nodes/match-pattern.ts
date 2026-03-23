@@ -4,15 +4,15 @@ import type { Expression, LetChain, LetCondition, MatchPattern, Pattern } from '
 
 
 class MatchPatternBuilder extends Builder<MatchPattern> {
-  private _condition?: Builder;
-  private _children: Builder[] = [];
+  private _condition?: Builder<Expression | LetChain | LetCondition>;
+  private _children: Builder<Pattern>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Pattern>) {
     super();
     this._children = [children];
   }
 
-  condition(value: Builder): this {
+  condition(value: Builder<Expression | LetChain | LetCondition>): this {
     this._condition = value;
     return this;
   }
@@ -30,9 +30,9 @@ class MatchPatternBuilder extends Builder<MatchPattern> {
   build(ctx?: RenderContext): MatchPattern {
     return {
       kind: 'match_pattern',
-      condition: this._condition ? this.renderChild(this._condition, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as MatchPattern;
+      condition: this._condition?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as MatchPattern;
   }
 
   override get nodeKind(): string { return 'match_pattern'; }
@@ -52,7 +52,7 @@ class MatchPatternBuilder extends Builder<MatchPattern> {
 
 export type { MatchPatternBuilder };
 
-export function match_pattern(children: Builder): MatchPatternBuilder {
+export function match_pattern(children: Builder<Pattern>): MatchPatternBuilder {
   return new MatchPatternBuilder(children);
 }
 

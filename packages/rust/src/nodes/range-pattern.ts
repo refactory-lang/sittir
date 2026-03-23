@@ -4,17 +4,17 @@ import type { Crate, Identifier, LiteralPattern, Metavariable, RangePattern, Sco
 
 
 class RangePatternBuilder extends Builder<RangePattern> {
-  private _left?: Builder;
-  private _right?: Builder;
+  private _left?: Builder<LiteralPattern | Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
+  private _right?: Builder<LiteralPattern | Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
 
   constructor() { super(); }
 
-  left(value: Builder): this {
+  left(value: Builder<LiteralPattern | Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>): this {
     this._left = value;
     return this;
   }
 
-  right(value: Builder): this {
+  right(value: Builder<LiteralPattern | Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>): this {
     this._right = value;
     return this;
   }
@@ -30,9 +30,9 @@ class RangePatternBuilder extends Builder<RangePattern> {
   build(ctx?: RenderContext): RangePattern {
     return {
       kind: 'range_pattern',
-      left: this._left ? this.renderChild(this._left, ctx) : undefined,
-      right: this._right ? this.renderChild(this._right, ctx) : undefined,
-    } as unknown as RangePattern;
+      left: this._left?.build(ctx),
+      right: this._right?.build(ctx),
+    } as RangePattern;
   }
 
   override get nodeKind(): string { return 'range_pattern'; }

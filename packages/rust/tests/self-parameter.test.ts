@@ -3,13 +3,16 @@ import { ir } from '../src/builder.js';
 
 describe('self_parameter', () => {
   it('should build with correct kind', () => {
-    const builder = ir.self_parameter(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.selfParameter(ir.mutableSpecifier('test'), ir.mutableSpecifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('self_parameter');
+    expect(Array.isArray((node as any).children)).toBe(true);
+    expect((node as any).children.length).toBeGreaterThan(0);
+    expect((node as any).children[0]).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.self_parameter(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.selfParameter(ir.mutableSpecifier('test'), ir.mutableSpecifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('self_parameter');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +21,7 @@ describe('self_parameter', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.self_parameter(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.selfParameter(ir.mutableSpecifier('test'), ir.mutableSpecifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

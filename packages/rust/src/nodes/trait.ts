@@ -4,33 +4,33 @@ import type { DeclarationList, TraitBounds, TraitItem, TypeIdentifier, TypeParam
 
 
 class TraitBuilder extends Builder<TraitItem> {
-  private _body!: Builder;
-  private _bounds?: Builder;
-  private _name: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+  private _body!: Builder<DeclarationList>;
+  private _bounds?: Builder<TraitBounds>;
+  private _name: Builder<TypeIdentifier>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<VisibilityModifier | WhereClause>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<DeclarationList>): this {
     this._body = value;
     return this;
   }
 
-  bounds(value: Builder): this {
+  bounds(value: Builder<TraitBounds>): this {
     this._bounds = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier | WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -50,12 +50,12 @@ class TraitBuilder extends Builder<TraitItem> {
   build(ctx?: RenderContext): TraitItem {
     return {
       kind: 'trait_item',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TraitItem;
+      body: this._body?.build(ctx),
+      bounds: this._bounds?.build(ctx),
+      name: this._name.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as TraitItem;
   }
 
   override get nodeKind(): string { return 'trait_item'; }
@@ -75,7 +75,7 @@ class TraitBuilder extends Builder<TraitItem> {
 
 export type { TraitBuilder };
 
-export function trait(name: Builder): TraitBuilder {
+export function trait(name: Builder<TypeIdentifier>): TraitBuilder {
   return new TraitBuilder(name);
 }
 

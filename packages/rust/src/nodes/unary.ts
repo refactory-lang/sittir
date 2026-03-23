@@ -4,9 +4,9 @@ import type { Expression, UnaryExpression } from '../types.js';
 
 
 class UnaryBuilder extends Builder<UnaryExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class UnaryBuilder extends Builder<UnaryExpression> {
   build(ctx?: RenderContext): UnaryExpression {
     return {
       kind: 'unary_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as UnaryExpression;
+      children: this._children[0]?.build(ctx),
+    } as UnaryExpression;
   }
 
   override get nodeKind(): string { return 'unary_expression'; }
@@ -39,7 +39,7 @@ class UnaryBuilder extends Builder<UnaryExpression> {
 
 export type { UnaryBuilder };
 
-export function unary(children: Builder): UnaryBuilder {
+export function unary(children: Builder<Expression>): UnaryBuilder {
   return new UnaryBuilder(children);
 }
 

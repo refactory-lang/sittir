@@ -4,23 +4,23 @@ import type { BlockComment, DocComment, InnerDocCommentMarker, OuterDocCommentMa
 
 
 class BlockCommentBuilder extends Builder<BlockComment> {
-  private _doc?: Builder;
-  private _inner?: Builder;
-  private _outer?: Builder;
+  private _doc?: Builder<DocComment>;
+  private _inner?: Builder<InnerDocCommentMarker>;
+  private _outer?: Builder<OuterDocCommentMarker>;
 
   constructor() { super(); }
 
-  doc(value: Builder): this {
+  doc(value: Builder<DocComment>): this {
     this._doc = value;
     return this;
   }
 
-  inner(value: Builder): this {
+  inner(value: Builder<InnerDocCommentMarker>): this {
     this._inner = value;
     return this;
   }
 
-  outer(value: Builder): this {
+  outer(value: Builder<OuterDocCommentMarker>): this {
     this._outer = value;
     return this;
   }
@@ -38,10 +38,10 @@ class BlockCommentBuilder extends Builder<BlockComment> {
   build(ctx?: RenderContext): BlockComment {
     return {
       kind: 'block_comment',
-      doc: this._doc ? this.renderChild(this._doc, ctx) : undefined,
-      inner: this._inner ? this.renderChild(this._inner, ctx) : undefined,
-      outer: this._outer ? this.renderChild(this._outer, ctx) : undefined,
-    } as unknown as BlockComment;
+      doc: this._doc?.build(ctx),
+      inner: this._inner?.build(ctx),
+      outer: this._outer?.build(ctx),
+    } as BlockComment;
   }
 
   override get nodeKind(): string { return 'block_comment'; }

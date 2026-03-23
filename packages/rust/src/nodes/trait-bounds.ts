@@ -4,9 +4,9 @@ import type { HigherRankedTraitBound, TraitBounds, Type } from '../types.js';
 
 
 class TraitBoundsBuilder extends Builder<TraitBounds> {
-  private _children: Builder[] = [];
+  private _children: Builder<Type | HigherRankedTraitBound>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Type | HigherRankedTraitBound>[]) {
     super();
     this._children = children;
   }
@@ -21,8 +21,8 @@ class TraitBoundsBuilder extends Builder<TraitBounds> {
   build(ctx?: RenderContext): TraitBounds {
     return {
       kind: 'trait_bounds',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TraitBounds;
+      children: this._children.map(c => c.build(ctx)),
+    } as TraitBounds;
   }
 
   override get nodeKind(): string { return 'trait_bounds'; }
@@ -40,7 +40,7 @@ class TraitBoundsBuilder extends Builder<TraitBounds> {
 
 export type { TraitBoundsBuilder };
 
-export function trait_bounds(...children: Builder[]): TraitBoundsBuilder {
+export function trait_bounds(...children: Builder<Type | HigherRankedTraitBound>[]): TraitBoundsBuilder {
   return new TraitBoundsBuilder(...children);
 }
 

@@ -4,9 +4,9 @@ import type { CapturedPattern, Pattern } from '../types.js';
 
 
 class CapturedPatternBuilder extends Builder<CapturedPattern> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Pattern>[]) {
     super();
     this._children = children;
   }
@@ -21,8 +21,8 @@ class CapturedPatternBuilder extends Builder<CapturedPattern> {
   build(ctx?: RenderContext): CapturedPattern {
     return {
       kind: 'captured_pattern',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as CapturedPattern;
+      children: this._children.map(c => c.build(ctx)),
+    } as CapturedPattern;
   }
 
   override get nodeKind(): string { return 'captured_pattern'; }
@@ -39,7 +39,7 @@ class CapturedPatternBuilder extends Builder<CapturedPattern> {
 
 export type { CapturedPatternBuilder };
 
-export function captured_pattern(...children: Builder[]): CapturedPatternBuilder {
+export function captured_pattern(...children: Builder<Pattern>[]): CapturedPatternBuilder {
   return new CapturedPatternBuilder(...children);
 }
 

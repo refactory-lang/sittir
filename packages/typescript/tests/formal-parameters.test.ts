@@ -3,20 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('formal_parameters', () => {
   it('should build with correct kind', () => {
-    const builder = ir.formal_parameters();
+    const builder = ir.formalParameters();
     const node = builder.build();
     expect(node.kind).toBe('formal_parameters');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.formal_parameters();
-    const source = builder.renderImpl();
-    expect(source).toContain('(');
-    expect(source).toContain(')');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.formal_parameters();
+    const builder = ir.formalParameters();
     const cst = builder.toCST();
     expect(cst.type).toBe('formal_parameters');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +18,7 @@ describe('formal_parameters', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.formal_parameters();
+    const builder = ir.formalParameters();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

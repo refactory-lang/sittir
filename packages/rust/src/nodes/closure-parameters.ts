@@ -4,11 +4,11 @@ import type { ClosureParameters, Parameter, Pattern } from '../types.js';
 
 
 class ClosureParametersBuilder extends Builder<ClosureParameters> {
-  private _children: Builder[] = [];
+  private _children: Builder<Pattern | Parameter>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Pattern | Parameter>[]): this {
     this._children = value;
     return this;
   }
@@ -29,8 +29,8 @@ class ClosureParametersBuilder extends Builder<ClosureParameters> {
   build(ctx?: RenderContext): ClosureParameters {
     return {
       kind: 'closure_parameters',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ClosureParameters;
+      children: this._children.map(c => c.build(ctx)),
+    } as ClosureParameters;
   }
 
   override get nodeKind(): string { return 'closure_parameters'; }

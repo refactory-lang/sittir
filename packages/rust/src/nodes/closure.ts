@@ -4,21 +4,21 @@ import type { ClosureExpression, ClosureParameters, Expression, Type } from '../
 
 
 class ClosureBuilder extends Builder<ClosureExpression> {
-  private _body!: Builder;
-  private _parameters: Builder;
-  private _returnType?: Builder;
+  private _body!: Builder<Expression>;
+  private _parameters: Builder<ClosureParameters>;
+  private _returnType?: Builder<Type>;
 
-  constructor(parameters: Builder) {
+  constructor(parameters: Builder<ClosureParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<Expression>): this {
     this._body = value;
     return this;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<Type>): this {
     this._returnType = value;
     return this;
   }
@@ -37,10 +37,10 @@ class ClosureBuilder extends Builder<ClosureExpression> {
   build(ctx?: RenderContext): ClosureExpression {
     return {
       kind: 'closure_expression',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      parameters: this.renderChild(this._parameters, ctx),
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-    } as unknown as ClosureExpression;
+      body: this._body?.build(ctx),
+      parameters: this._parameters.build(ctx),
+      returnType: this._returnType?.build(ctx),
+    } as ClosureExpression;
   }
 
   override get nodeKind(): string { return 'closure_expression'; }
@@ -59,7 +59,7 @@ class ClosureBuilder extends Builder<ClosureExpression> {
 
 export type { ClosureBuilder };
 
-export function closure(parameters: Builder): ClosureBuilder {
+export function closure(parameters: Builder<ClosureParameters>): ClosureBuilder {
   return new ClosureBuilder(parameters);
 }
 

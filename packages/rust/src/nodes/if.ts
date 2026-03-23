@@ -4,16 +4,16 @@ import type { ElseClause, Expression, IfExpression, LetChain, LetCondition } fro
 
 
 class IfBuilder extends Builder<IfExpression> {
-  private _alternative?: Builder;
-  private _condition: Builder;
+  private _alternative?: Builder<ElseClause>;
+  private _condition: Builder<Expression | LetChain | LetCondition>;
   private _consequence!: Builder;
 
-  constructor(condition: Builder) {
+  constructor(condition: Builder<Expression | LetChain | LetCondition>) {
     super();
     this._condition = condition;
   }
 
-  alternative(value: Builder): this {
+  alternative(value: Builder<ElseClause>): this {
     this._alternative = value;
     return this;
   }
@@ -35,10 +35,10 @@ class IfBuilder extends Builder<IfExpression> {
   build(ctx?: RenderContext): IfExpression {
     return {
       kind: 'if_expression',
-      alternative: this._alternative ? this.renderChild(this._alternative, ctx) : undefined,
-      condition: this.renderChild(this._condition, ctx),
-      consequence: this._consequence ? this.renderChild(this._consequence, ctx) : undefined,
-    } as unknown as IfExpression;
+      alternative: this._alternative?.build(ctx),
+      condition: this._condition.build(ctx),
+      consequence: this._consequence?.build(ctx),
+    } as IfExpression;
   }
 
   override get nodeKind(): string { return 'if_expression'; }
@@ -55,7 +55,7 @@ class IfBuilder extends Builder<IfExpression> {
 
 export type { IfBuilder };
 
-export function if_(condition: Builder): IfBuilder {
+export function if_(condition: Builder<Expression | LetChain | LetCondition>): IfBuilder {
   return new IfBuilder(condition);
 }
 

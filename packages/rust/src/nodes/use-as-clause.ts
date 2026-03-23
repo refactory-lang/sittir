@@ -4,15 +4,15 @@ import type { Crate, Identifier, Metavariable, ScopedIdentifier, Self, Super, Us
 
 
 class UseAsClauseBuilder extends Builder<UseAsClause> {
-  private _alias!: Builder;
-  private _path: Builder;
+  private _alias!: Builder<Identifier>;
+  private _path: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
 
-  constructor(path: Builder) {
+  constructor(path: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>) {
     super();
     this._path = path;
   }
 
-  alias(value: Builder): this {
+  alias(value: Builder<Identifier>): this {
     this._alias = value;
     return this;
   }
@@ -28,9 +28,9 @@ class UseAsClauseBuilder extends Builder<UseAsClause> {
   build(ctx?: RenderContext): UseAsClause {
     return {
       kind: 'use_as_clause',
-      alias: this._alias ? this.renderChild(this._alias, ctx) : undefined,
-      path: this.renderChild(this._path, ctx),
-    } as unknown as UseAsClause;
+      alias: this._alias?.build(ctx),
+      path: this._path.build(ctx),
+    } as UseAsClause;
   }
 
   override get nodeKind(): string { return 'use_as_clause'; }
@@ -46,7 +46,7 @@ class UseAsClauseBuilder extends Builder<UseAsClause> {
 
 export type { UseAsClauseBuilder };
 
-export function use_as_clause(path: Builder): UseAsClauseBuilder {
+export function use_as_clause(path: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>): UseAsClauseBuilder {
   return new UseAsClauseBuilder(path);
 }
 

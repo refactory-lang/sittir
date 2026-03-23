@@ -4,15 +4,15 @@ import type { QualifiedType, Type } from '../types.js';
 
 
 class QualifiedTypeBuilder extends Builder<QualifiedType> {
-  private _alias!: Builder;
-  private _type: Builder;
+  private _alias!: Builder<Type>;
+  private _type: Builder<Type>;
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<Type>) {
     super();
     this._type = type_;
   }
 
-  alias(value: Builder): this {
+  alias(value: Builder<Type>): this {
     this._alias = value;
     return this;
   }
@@ -28,9 +28,9 @@ class QualifiedTypeBuilder extends Builder<QualifiedType> {
   build(ctx?: RenderContext): QualifiedType {
     return {
       kind: 'qualified_type',
-      alias: this._alias ? this.renderChild(this._alias, ctx) : undefined,
-      type: this.renderChild(this._type, ctx),
-    } as unknown as QualifiedType;
+      alias: this._alias?.build(ctx),
+      type: this._type.build(ctx),
+    } as QualifiedType;
   }
 
   override get nodeKind(): string { return 'qualified_type'; }
@@ -46,7 +46,7 @@ class QualifiedTypeBuilder extends Builder<QualifiedType> {
 
 export type { QualifiedTypeBuilder };
 
-export function qualified_type(type_: Builder): QualifiedTypeBuilder {
+export function qualified_type(type_: Builder<Type>): QualifiedTypeBuilder {
   return new QualifiedTypeBuilder(type_);
 }
 

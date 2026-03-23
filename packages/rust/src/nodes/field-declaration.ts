@@ -3,22 +3,22 @@ import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FieldDeclaration, FieldIdentifier, Type, VisibilityModifier } from '../types.js';
 
 
-class FieldBuilder extends Builder<FieldDeclaration> {
-  private _name: Builder;
-  private _type!: Builder;
-  private _children: Builder[] = [];
+class FieldDeclarationBuilder extends Builder<FieldDeclaration> {
+  private _name: Builder<FieldIdentifier>;
+  private _type!: Builder<Type>;
+  private _children: Builder<VisibilityModifier>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<FieldIdentifier>) {
     super();
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier>[]): this {
     this._children = value;
     return this;
   }
@@ -35,10 +35,10 @@ class FieldBuilder extends Builder<FieldDeclaration> {
   build(ctx?: RenderContext): FieldDeclaration {
     return {
       kind: 'field_declaration',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FieldDeclaration;
+      name: this._name.build(ctx),
+      type: this._type?.build(ctx),
+      children: this._children[0]?.build(ctx),
+    } as FieldDeclaration;
   }
 
   override get nodeKind(): string { return 'field_declaration'; }
@@ -55,10 +55,10 @@ class FieldBuilder extends Builder<FieldDeclaration> {
   }
 }
 
-export type { FieldBuilder };
+export type { FieldDeclarationBuilder };
 
-export function field(name: Builder): FieldBuilder {
-  return new FieldBuilder(name);
+export function field_declaration(name: Builder<FieldIdentifier>): FieldDeclarationBuilder {
+  return new FieldDeclarationBuilder(name);
 }
 
 export interface FieldDeclarationOptions {
@@ -67,10 +67,10 @@ export interface FieldDeclarationOptions {
   children?: Builder<VisibilityModifier> | (Builder<VisibilityModifier>)[];
 }
 
-export namespace field {
-  export function from(options: FieldDeclarationOptions): FieldBuilder {
+export namespace field_declaration {
+  export function from(options: FieldDeclarationOptions): FieldDeclarationBuilder {
     const _ctor = options.name;
-    const b = new FieldBuilder(typeof _ctor === 'string' ? new LeafBuilder('field_identifier', _ctor) : _ctor);
+    const b = new FieldDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('field_identifier', _ctor) : _ctor);
     if (options.type !== undefined) b.type(options.type);
     if (options.children !== undefined) {
       const _v = options.children;

@@ -4,9 +4,9 @@ import type { Expression, ExpressionStatement } from '../types.js';
 
 
 class ExpressionBuilder extends Builder<ExpressionStatement> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: Builder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -21,8 +21,8 @@ class ExpressionBuilder extends Builder<ExpressionStatement> {
   build(ctx?: RenderContext): ExpressionStatement {
     return {
       kind: 'expression_statement',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ExpressionStatement;
+      children: this._children[0]?.build(ctx),
+    } as ExpressionStatement;
   }
 
   override get nodeKind(): string { return 'expression_statement'; }
@@ -39,7 +39,7 @@ class ExpressionBuilder extends Builder<ExpressionStatement> {
 
 export type { ExpressionBuilder };
 
-export function expression(children: Builder): ExpressionBuilder {
+export function expression(children: Builder<Expression>): ExpressionBuilder {
   return new ExpressionBuilder(children);
 }
 

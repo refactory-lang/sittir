@@ -4,15 +4,15 @@ import type { HigherRankedTraitBound, Type, TypeParameters } from '../types.js';
 
 
 class HigherRankedTraitBoundBuilder extends Builder<HigherRankedTraitBound> {
-  private _type!: Builder;
-  private _typeParameters: Builder;
+  private _type!: Builder<Type>;
+  private _typeParameters: Builder<TypeParameters>;
 
-  constructor(typeParameters: Builder) {
+  constructor(typeParameters: Builder<TypeParameters>) {
     super();
     this._typeParameters = typeParameters;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
@@ -28,9 +28,9 @@ class HigherRankedTraitBoundBuilder extends Builder<HigherRankedTraitBound> {
   build(ctx?: RenderContext): HigherRankedTraitBound {
     return {
       kind: 'higher_ranked_trait_bound',
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      typeParameters: this.renderChild(this._typeParameters, ctx),
-    } as unknown as HigherRankedTraitBound;
+      type: this._type?.build(ctx),
+      typeParameters: this._typeParameters.build(ctx),
+    } as HigherRankedTraitBound;
   }
 
   override get nodeKind(): string { return 'higher_ranked_trait_bound'; }
@@ -46,7 +46,7 @@ class HigherRankedTraitBoundBuilder extends Builder<HigherRankedTraitBound> {
 
 export type { HigherRankedTraitBoundBuilder };
 
-export function higher_ranked_trait_bound(typeParameters: Builder): HigherRankedTraitBoundBuilder {
+export function higher_ranked_trait_bound(typeParameters: Builder<TypeParameters>): HigherRankedTraitBoundBuilder {
   return new HigherRankedTraitBoundBuilder(typeParameters);
 }
 

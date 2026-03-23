@@ -3,13 +3,16 @@ import { ir } from '../src/builder.js';
 
 describe('class_heritage', () => {
   it('should build with correct kind', () => {
-    const builder = ir.class_heritage(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.classHeritage(ir.extendsClause(ir.yieldExpression()), ir.extendsClause(ir.yieldExpression()));
     const node = builder.build();
     expect(node.kind).toBe('class_heritage');
+    expect(Array.isArray((node as any).children)).toBe(true);
+    expect((node as any).children.length).toBeGreaterThan(0);
+    expect((node as any).children[0]).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.class_heritage(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.classHeritage(ir.extendsClause(ir.yieldExpression()), ir.extendsClause(ir.yieldExpression()));
     const cst = builder.toCST();
     expect(cst.type).toBe('class_heritage');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +21,7 @@ describe('class_heritage', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.class_heritage(ir.identifier('a'), ir.identifier('b'));
+    const builder = ir.classHeritage(ir.extendsClause(ir.yieldExpression()), ir.extendsClause(ir.yieldExpression()));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

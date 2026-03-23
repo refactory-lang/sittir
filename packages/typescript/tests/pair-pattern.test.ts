@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('pair_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.pair_pattern(ir.identifier('test'));
+    const builder = ir.pairPattern(ir.privatePropertyIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('pair_pattern');
+    expect((node as any).key).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.pair_pattern(ir.identifier('test'));
+    const builder = ir.pairPattern(ir.privatePropertyIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain(':');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.pair_pattern(ir.identifier('test'));
+    const builder = ir.pairPattern(ir.privatePropertyIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('pair_pattern');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('pair_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.pair_pattern(ir.identifier('test'));
+    const builder = ir.pairPattern(ir.privatePropertyIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

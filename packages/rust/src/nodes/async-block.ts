@@ -21,8 +21,8 @@ class AsyncBlockBuilder extends Builder<AsyncBlock> {
   build(ctx?: RenderContext): AsyncBlock {
     return {
       kind: 'async_block',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as AsyncBlock;
+      children: this._children[0]?.build(ctx),
+    } as AsyncBlock;
   }
 
   override get nodeKind(): string { return 'async_block'; }

@@ -4,9 +4,9 @@ import type { AttributeItem, Expression, TupleExpression } from '../types.js';
 
 
 class TupleBuilder extends Builder<TupleExpression> {
-  private _children: Builder[] = [];
+  private _children: Builder<Expression | AttributeItem>[] = [];
 
-  constructor(...children: Builder[]) {
+  constructor(...children: Builder<Expression | AttributeItem>[]) {
     super();
     this._children = children;
   }
@@ -22,8 +22,8 @@ class TupleBuilder extends Builder<TupleExpression> {
   build(ctx?: RenderContext): TupleExpression {
     return {
       kind: 'tuple_expression',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TupleExpression;
+      children: this._children.map(c => c.build(ctx)),
+    } as TupleExpression;
   }
 
   override get nodeKind(): string { return 'tuple_expression'; }
@@ -42,7 +42,7 @@ class TupleBuilder extends Builder<TupleExpression> {
 
 export type { TupleBuilder };
 
-export function tuple(...children: Builder[]): TupleBuilder {
+export function tuple(...children: Builder<Expression | AttributeItem>[]): TupleBuilder {
   return new TupleBuilder(...children);
 }
 

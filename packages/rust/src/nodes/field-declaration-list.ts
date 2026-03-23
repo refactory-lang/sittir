@@ -4,11 +4,11 @@ import type { AttributeItem, FieldDeclaration, FieldDeclarationList } from '../t
 
 
 class FieldDeclarationListBuilder extends Builder<FieldDeclarationList> {
-  private _children: Builder[] = [];
+  private _children: Builder<AttributeItem | FieldDeclaration>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<AttributeItem | FieldDeclaration>[]): this {
     this._children = value;
     return this;
   }
@@ -27,8 +27,8 @@ class FieldDeclarationListBuilder extends Builder<FieldDeclarationList> {
   build(ctx?: RenderContext): FieldDeclarationList {
     return {
       kind: 'field_declaration_list',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as FieldDeclarationList;
+      children: this._children.map(c => c.build(ctx)),
+    } as FieldDeclarationList;
   }
 
   override get nodeKind(): string { return 'field_declaration_list'; }

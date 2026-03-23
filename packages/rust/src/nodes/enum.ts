@@ -4,27 +4,27 @@ import type { EnumItem, EnumVariantList, TypeIdentifier, TypeParameters, Visibil
 
 
 class EnumBuilder extends Builder<EnumItem> {
-  private _body!: Builder;
-  private _name: Builder;
-  private _typeParameters?: Builder;
-  private _children: Builder[] = [];
+  private _body!: Builder<EnumVariantList>;
+  private _name: Builder<TypeIdentifier>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _children: Builder<VisibilityModifier | WhereClause>[] = [];
 
-  constructor(name: Builder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder): this {
+  body(value: Builder<EnumVariantList>): this {
     this._body = value;
     return this;
   }
 
-  typeParameters(value: Builder): this {
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<VisibilityModifier | WhereClause>[]): this {
     this._children = value;
     return this;
   }
@@ -43,11 +43,11 @@ class EnumBuilder extends Builder<EnumItem> {
   build(ctx?: RenderContext): EnumItem {
     return {
       kind: 'enum_item',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as EnumItem;
+      body: this._body?.build(ctx),
+      name: this._name.build(ctx),
+      typeParameters: this._typeParameters?.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as EnumItem;
   }
 
   override get nodeKind(): string { return 'enum_item'; }
@@ -66,7 +66,7 @@ class EnumBuilder extends Builder<EnumItem> {
 
 export type { EnumBuilder };
 
-export function enum_(name: Builder): EnumBuilder {
+export function enum_(name: Builder<TypeIdentifier>): EnumBuilder {
   return new EnumBuilder(name);
 }
 

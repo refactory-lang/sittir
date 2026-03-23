@@ -4,11 +4,11 @@ import type { Crate, Identifier, Metavariable, ScopedIdentifier, Self, Super, Vi
 
 
 class VisibilityModifierBuilder extends Builder<VisibilityModifier> {
-  private _children: Builder[] = [];
+  private _children: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder[]): this {
+  children(...value: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>[]): this {
     this._children = value;
     return this;
   }
@@ -22,8 +22,8 @@ class VisibilityModifierBuilder extends Builder<VisibilityModifier> {
   build(ctx?: RenderContext): VisibilityModifier {
     return {
       kind: 'visibility_modifier',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as VisibilityModifier;
+      children: this._children[0]?.build(ctx),
+    } as VisibilityModifier;
   }
 
   override get nodeKind(): string { return 'visibility_modifier'; }
