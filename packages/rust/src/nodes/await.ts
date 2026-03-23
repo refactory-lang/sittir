@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AwaitExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AwaitBuilder extends BaseBuilder<AwaitExpression> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -40,6 +39,6 @@ class AwaitBuilder extends BaseBuilder<AwaitExpression> {
   }
 }
 
-export function await_(children: Child): AwaitBuilder {
+export function await_(children: BaseBuilder): AwaitBuilder {
   return new AwaitBuilder(children);
 }

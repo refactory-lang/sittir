@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { EnumAssignment } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
-  private _name: Child;
-  private _value!: Child;
+  private _name: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -45,6 +44,6 @@ class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
   }
 }
 
-export function enum_assignment(name: Child): EnumAssignmentBuilder {
+export function enum_assignment(name: BaseBuilder): EnumAssignmentBuilder {
   return new EnumAssignmentBuilder(name);
 }

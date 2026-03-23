@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ModItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ModBuilder extends BaseBuilder<ModItem> {
-  private _body?: Child;
-  private _name: Child;
-  private _children: Child[] = [];
+  private _body?: BaseBuilder;
+  private _name: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -56,6 +55,6 @@ class ModBuilder extends BaseBuilder<ModItem> {
   }
 }
 
-export function mod(name: Child): ModBuilder {
+export function mod(name: BaseBuilder): ModBuilder {
   return new ModBuilder(name);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MutPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class MutPatternBuilder extends BaseBuilder<MutPattern> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -36,6 +35,6 @@ class MutPatternBuilder extends BaseBuilder<MutPattern> {
   }
 }
 
-export function mut_pattern(children: Child[]): MutPatternBuilder {
+export function mut_pattern(children: BaseBuilder[]): MutPatternBuilder {
   return new MutPatternBuilder(children);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ForLifetimes } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ForLifetimesBuilder extends BaseBuilder<ForLifetimes> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -42,6 +41,6 @@ class ForLifetimesBuilder extends BaseBuilder<ForLifetimes> {
   }
 }
 
-export function for_lifetimes(children: Child[]): ForLifetimesBuilder {
+export function for_lifetimes(children: BaseBuilder[]): ForLifetimesBuilder {
   return new ForLifetimesBuilder(children);
 }

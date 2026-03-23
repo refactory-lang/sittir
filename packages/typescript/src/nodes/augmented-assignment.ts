@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AugmentedAssignmentExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AugmentedAssignmentBuilder extends BaseBuilder<AugmentedAssignmentExpression> {
-  private _left: Child;
-  private _operator!: Child;
-  private _right!: Child;
+  private _left: BaseBuilder;
+  private _operator!: BaseBuilder;
+  private _right!: BaseBuilder;
 
-  constructor(left: Child) {
+  constructor(left: BaseBuilder) {
     super();
     this._left = left;
   }
 
-  operator(value: Child): this {
+  operator(value: BaseBuilder): this {
     this._operator = value;
     return this;
   }
 
-  right(value: Child): this {
+  right(value: BaseBuilder): this {
     this._right = value;
     return this;
   }
@@ -52,6 +51,6 @@ class AugmentedAssignmentBuilder extends BaseBuilder<AugmentedAssignmentExpressi
   }
 }
 
-export function augmented_assignment(left: Child): AugmentedAssignmentBuilder {
+export function augmented_assignment(left: BaseBuilder): AugmentedAssignmentBuilder {
   return new AugmentedAssignmentBuilder(left);
 }

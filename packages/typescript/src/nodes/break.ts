@@ -2,14 +2,13 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { BreakStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class BreakBuilder extends BaseBuilder<BreakStatement> {
-  private _label?: Child;
+  private _label?: BaseBuilder;
 
   constructor() { super(); }
 
-  label(value: Child): this {
+  label(value: BaseBuilder): this {
     this._label = value;
     return this;
   }

@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LoopExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LoopBuilder extends BaseBuilder<LoopExpression> {
-  private _body: Child;
-  private _children: Child[] = [];
+  private _body: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -47,6 +46,6 @@ class LoopBuilder extends BaseBuilder<LoopExpression> {
   }
 }
 
-export function loop(body: Child): LoopBuilder {
+export function loop(body: BaseBuilder): LoopBuilder {
   return new LoopBuilder(body);
 }

@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ScopedUseList } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ScopedUseListBuilder extends BaseBuilder<ScopedUseList> {
-  private _list: Child;
-  private _path?: Child;
+  private _list: BaseBuilder;
+  private _path?: BaseBuilder;
 
-  constructor(list: Child) {
+  constructor(list: BaseBuilder) {
     super();
     this._list = list;
   }
 
-  path(value: Child): this {
+  path(value: BaseBuilder): this {
     this._path = value;
     return this;
   }
@@ -45,6 +44,6 @@ class ScopedUseListBuilder extends BaseBuilder<ScopedUseList> {
   }
 }
 
-export function scoped_use_list(list: Child): ScopedUseListBuilder {
+export function scoped_use_list(list: BaseBuilder): ScopedUseListBuilder {
   return new ScopedUseListBuilder(list);
 }

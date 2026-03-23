@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TryExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TryBuilder extends BaseBuilder<TryExpression> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class TryBuilder extends BaseBuilder<TryExpression> {
   }
 }
 
-export function try_(children: Child): TryBuilder {
+export function try_(children: BaseBuilder): TryBuilder {
   return new TryBuilder(children);
 }

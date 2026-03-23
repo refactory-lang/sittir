@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { BracketedType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class BracketedTypeBuilder extends BaseBuilder<BracketedType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -40,6 +39,6 @@ class BracketedTypeBuilder extends BaseBuilder<BracketedType> {
   }
 }
 
-export function bracketed_type(children: Child): BracketedTypeBuilder {
+export function bracketed_type(children: BaseBuilder): BracketedTypeBuilder {
   return new BracketedTypeBuilder(children);
 }

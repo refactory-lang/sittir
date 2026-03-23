@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { StructExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class StructBuilder extends BaseBuilder<StructExpression> {
-  private _body!: Child;
-  private _name: Child;
+  private _body!: BaseBuilder;
+  private _name: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
@@ -43,6 +42,6 @@ class StructBuilder extends BaseBuilder<StructExpression> {
   }
 }
 
-export function struct_(name: Child): StructBuilder {
+export function struct_(name: BaseBuilder): StructBuilder {
   return new StructBuilder(name);
 }

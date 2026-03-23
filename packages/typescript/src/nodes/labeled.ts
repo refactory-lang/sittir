@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LabeledStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LabeledBuilder extends BaseBuilder<LabeledStatement> {
-  private _body: Child;
-  private _label!: Child;
+  private _body: BaseBuilder;
+  private _label!: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  label(value: Child): this {
+  label(value: BaseBuilder): this {
     this._label = value;
     return this;
   }
@@ -39,6 +38,6 @@ class LabeledBuilder extends BaseBuilder<LabeledStatement> {
   }
 }
 
-export function labeled(body: Child): LabeledBuilder {
+export function labeled(body: BaseBuilder): LabeledBuilder {
   return new LabeledBuilder(body);
 }

@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrayType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
-  private _element: Child;
-  private _length?: Child;
+  private _element: BaseBuilder;
+  private _length?: BaseBuilder;
 
-  constructor(element: Child) {
+  constructor(element: BaseBuilder) {
     super();
     this._element = element;
   }
 
-  length(value: Child): this {
+  length(value: BaseBuilder): this {
     this._length = value;
     return this;
   }
@@ -53,6 +52,6 @@ class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
   }
 }
 
-export function array_type(element: Child): ArrayTypeBuilder {
+export function array_type(element: BaseBuilder): ArrayTypeBuilder {
   return new ArrayTypeBuilder(element);
 }

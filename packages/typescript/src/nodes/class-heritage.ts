@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ClassHeritage } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ClassHeritageBuilder extends BaseBuilder<ClassHeritage> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -36,6 +35,6 @@ class ClassHeritageBuilder extends BaseBuilder<ClassHeritage> {
   }
 }
 
-export function class_heritage(children: Child[]): ClassHeritageBuilder {
+export function class_heritage(children: BaseBuilder[]): ClassHeritageBuilder {
   return new ClassHeritageBuilder(children);
 }

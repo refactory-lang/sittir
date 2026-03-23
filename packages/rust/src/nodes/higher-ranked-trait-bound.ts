@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { HigherRankedTraitBound } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class HigherRankedTraitBoundBuilder extends BaseBuilder<HigherRankedTraitBound> {
-  private _type: Child;
-  private _typeParameters!: Child;
+  private _type: BaseBuilder;
+  private _typeParameters!: BaseBuilder;
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
@@ -45,6 +44,6 @@ class HigherRankedTraitBoundBuilder extends BaseBuilder<HigherRankedTraitBound> 
   }
 }
 
-export function higher_ranked_trait_bound(type_: Child): HigherRankedTraitBoundBuilder {
+export function higher_ranked_trait_bound(type_: BaseBuilder): HigherRankedTraitBoundBuilder {
   return new HigherRankedTraitBoundBuilder(type_);
 }

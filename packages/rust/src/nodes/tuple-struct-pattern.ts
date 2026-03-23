@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TupleStructPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TupleStructPatternBuilder extends BaseBuilder<TupleStructPattern> {
-  private _type: Child;
-  private _children: Child[] = [];
+  private _type: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -49,6 +48,6 @@ class TupleStructPatternBuilder extends BaseBuilder<TupleStructPattern> {
   }
 }
 
-export function tuple_struct_pattern(type_: Child): TupleStructPatternBuilder {
+export function tuple_struct_pattern(type_: BaseBuilder): TupleStructPatternBuilder {
   return new TupleStructPatternBuilder(type_);
 }

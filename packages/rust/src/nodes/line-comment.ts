@@ -2,26 +2,25 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LineComment } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LineCommentBuilder extends BaseBuilder<LineComment> {
-  private _doc?: Child;
-  private _inner?: Child;
-  private _outer?: Child;
+  private _doc?: BaseBuilder;
+  private _inner?: BaseBuilder;
+  private _outer?: BaseBuilder;
 
   constructor() { super(); }
 
-  doc(value: Child): this {
+  doc(value: BaseBuilder): this {
     this._doc = value;
     return this;
   }
 
-  inner(value: Child): this {
+  inner(value: BaseBuilder): this {
     this._inner = value;
     return this;
   }
 
-  outer(value: Child): this {
+  outer(value: BaseBuilder): this {
     this._outer = value;
     return this;
   }

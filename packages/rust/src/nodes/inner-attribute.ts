@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { InnerAttributeItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class InnerAttributeBuilder extends BaseBuilder<InnerAttributeItem> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -44,6 +43,6 @@ class InnerAttributeBuilder extends BaseBuilder<InnerAttributeItem> {
   }
 }
 
-export function inner_attribute(children: Child): InnerAttributeBuilder {
+export function inner_attribute(children: BaseBuilder): InnerAttributeBuilder {
   return new InnerAttributeBuilder(children);
 }

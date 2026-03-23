@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { IntersectionType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class IntersectionTypeBuilder extends BaseBuilder<IntersectionType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class IntersectionTypeBuilder extends BaseBuilder<IntersectionType> {
   }
 }
 
-export function intersection_type(children: Child[]): IntersectionTypeBuilder {
+export function intersection_type(children: BaseBuilder[]): IntersectionTypeBuilder {
   return new IntersectionTypeBuilder(children);
 }

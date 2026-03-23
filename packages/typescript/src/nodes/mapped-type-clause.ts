@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MappedTypeClause } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
-  private _alias?: Child;
-  private _name: Child;
-  private _type!: Child;
+  private _alias?: BaseBuilder;
+  private _name: BaseBuilder;
+  private _type!: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  alias(value: Child): this {
+  alias(value: BaseBuilder): this {
     this._alias = value;
     return this;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
@@ -60,6 +59,6 @@ class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
   }
 }
 
-export function mapped_type_clause(name: Child): MappedTypeClauseBuilder {
+export function mapped_type_clause(name: BaseBuilder): MappedTypeClauseBuilder {
   return new MappedTypeClauseBuilder(name);
 }

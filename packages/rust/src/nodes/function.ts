@@ -2,42 +2,41 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FunctionItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class FunctionBuilder extends BaseBuilder<FunctionItem> {
-  private _body!: Child;
-  private _name: Child;
-  private _parameters!: Child;
-  private _returnType?: Child;
-  private _typeParameters?: Child;
-  private _children: Child[] = [];
+  private _body!: BaseBuilder;
+  private _name: BaseBuilder;
+  private _parameters!: BaseBuilder;
+  private _returnType?: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  parameters(value: Child): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Child): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -89,6 +88,6 @@ class FunctionBuilder extends BaseBuilder<FunctionItem> {
   }
 }
 
-export function fn(name: Child): FunctionBuilder {
+export function fn(name: BaseBuilder): FunctionBuilder {
   return new FunctionBuilder(name);
 }

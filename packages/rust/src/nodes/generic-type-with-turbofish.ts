@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GenericTypeWithTurbofish } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class GenericTypeWithTurbofishBuilder extends BaseBuilder<GenericTypeWithTurbofish> {
-  private _type: Child;
-  private _typeArguments!: Child;
+  private _type: BaseBuilder;
+  private _typeArguments!: BaseBuilder;
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  typeArguments(value: Child): this {
+  typeArguments(value: BaseBuilder): this {
     this._typeArguments = value;
     return this;
   }
@@ -45,6 +44,6 @@ class GenericTypeWithTurbofishBuilder extends BaseBuilder<GenericTypeWithTurbofi
   }
 }
 
-export function generic_type_with_turbofish(type_: Child): GenericTypeWithTurbofishBuilder {
+export function generic_type_with_turbofish(type_: BaseBuilder): GenericTypeWithTurbofishBuilder {
   return new GenericTypeWithTurbofishBuilder(type_);
 }

@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GeneratorFunctionDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class GeneratorFunctionBuilder extends BaseBuilder<GeneratorFunctionDeclaration> {
-  private _body!: Child;
-  private _name: Child;
-  private _parameters!: Child;
-  private _returnType?: Child;
-  private _typeParameters?: Child;
+  private _body!: BaseBuilder;
+  private _name: BaseBuilder;
+  private _parameters!: BaseBuilder;
+  private _returnType?: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  parameters(value: Child): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Child): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
@@ -74,6 +73,6 @@ class GeneratorFunctionBuilder extends BaseBuilder<GeneratorFunctionDeclaration>
   }
 }
 
-export function generator_function(name: Child): GeneratorFunctionBuilder {
+export function generator_function(name: BaseBuilder): GeneratorFunctionBuilder {
   return new GeneratorFunctionBuilder(name);
 }

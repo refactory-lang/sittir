@@ -2,30 +2,29 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ForStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ForBuilder extends BaseBuilder<ForStatement> {
-  private _body: Child;
-  private _condition: Child[] = [];
-  private _increment?: Child;
-  private _initializer!: Child;
+  private _body: BaseBuilder;
+  private _condition: BaseBuilder[] = [];
+  private _increment?: BaseBuilder;
+  private _initializer!: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  condition(value: Child[]): this {
+  condition(value: BaseBuilder[]): this {
     this._condition = value;
     return this;
   }
 
-  increment(value: Child): this {
+  increment(value: BaseBuilder): this {
     this._increment = value;
     return this;
   }
 
-  initializer(value: Child): this {
+  initializer(value: BaseBuilder): this {
     this._initializer = value;
     return this;
   }
@@ -69,6 +68,6 @@ class ForBuilder extends BaseBuilder<ForStatement> {
   }
 }
 
-export function for_(body: Child): ForBuilder {
+export function for_(body: BaseBuilder): ForBuilder {
   return new ForBuilder(body);
 }

@@ -2,20 +2,19 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ClassBody } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ClassBodyBuilder extends BaseBuilder<ClassBody> {
-  private _decorator: Child[] = [];
-  private _children: Child[] = [];
+  private _decorator: BaseBuilder[] = [];
+  private _children: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  decorator(value: Child[]): this {
+  decorator(value: BaseBuilder[]): this {
     this._decorator = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }

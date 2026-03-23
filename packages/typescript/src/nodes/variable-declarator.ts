@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { VariableDeclarator } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class VariableDeclaratorBuilder extends BaseBuilder<VariableDeclarator> {
-  private _name: Child;
-  private _type?: Child;
-  private _value?: Child;
+  private _name: BaseBuilder;
+  private _type?: BaseBuilder;
+  private _value?: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -58,6 +57,6 @@ class VariableDeclaratorBuilder extends BaseBuilder<VariableDeclarator> {
   }
 }
 
-export function variable_declarator(name: Child): VariableDeclaratorBuilder {
+export function variable_declarator(name: BaseBuilder): VariableDeclaratorBuilder {
   return new VariableDeclaratorBuilder(name);
 }

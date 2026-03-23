@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ElseClause } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ElseClauseBuilder extends BaseBuilder<ElseClause> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class ElseClauseBuilder extends BaseBuilder<ElseClause> {
   }
 }
 
-export function else_clause(children: Child): ElseClauseBuilder {
+export function else_clause(children: BaseBuilder): ElseClauseBuilder {
   return new ElseClauseBuilder(children);
 }

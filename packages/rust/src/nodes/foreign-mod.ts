@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ForeignModItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ForeignModBuilder extends BaseBuilder<ForeignModItem> {
-  private _body?: Child;
-  private _children: Child[] = [];
+  private _body?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
@@ -45,6 +44,6 @@ class ForeignModBuilder extends BaseBuilder<ForeignModItem> {
   }
 }
 
-export function foreign_mod(children: Child[]): ForeignModBuilder {
+export function foreign_mod(children: BaseBuilder[]): ForeignModBuilder {
   return new ForeignModBuilder(children);
 }

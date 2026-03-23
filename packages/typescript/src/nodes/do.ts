@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DoStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class DoBuilder extends BaseBuilder<DoStatement> {
-  private _body: Child;
-  private _condition!: Child;
+  private _body: BaseBuilder;
+  private _condition!: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  condition(value: Child): this {
+  condition(value: BaseBuilder): this {
     this._condition = value;
     return this;
   }
@@ -47,6 +46,6 @@ class DoBuilder extends BaseBuilder<DoStatement> {
   }
 }
 
-export function do_(body: Child): DoBuilder {
+export function do_(body: BaseBuilder): DoBuilder {
   return new DoBuilder(body);
 }

@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { NestedTypeIdentifier } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class NestedTypeIdentifierBuilder extends BaseBuilder<NestedTypeIdentifier> {
-  private _module!: Child;
-  private _name: Child;
+  private _module!: BaseBuilder;
+  private _name: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  module(value: Child): this {
+  module(value: BaseBuilder): this {
     this._module = value;
     return this;
   }
@@ -45,6 +44,6 @@ class NestedTypeIdentifierBuilder extends BaseBuilder<NestedTypeIdentifier> {
   }
 }
 
-export function nested_type_identifier(name: Child): NestedTypeIdentifierBuilder {
+export function nested_type_identifier(name: BaseBuilder): NestedTypeIdentifierBuilder {
   return new NestedTypeIdentifierBuilder(name);
 }

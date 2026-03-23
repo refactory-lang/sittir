@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GenericPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class GenericPatternBuilder extends BaseBuilder<GenericPattern> {
-  private _typeArguments: Child;
-  private _children: Child[] = [];
+  private _typeArguments: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(typeArguments: Child) {
+  constructor(typeArguments: BaseBuilder) {
     super();
     this._typeArguments = typeArguments;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -47,6 +46,6 @@ class GenericPatternBuilder extends BaseBuilder<GenericPattern> {
   }
 }
 
-export function generic_pattern(typeArguments: Child): GenericPatternBuilder {
+export function generic_pattern(typeArguments: BaseBuilder): GenericPatternBuilder {
   return new GenericPatternBuilder(typeArguments);
 }

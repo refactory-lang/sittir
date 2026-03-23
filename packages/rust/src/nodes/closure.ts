@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ClosureExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ClosureBuilder extends BaseBuilder<ClosureExpression> {
-  private _body: Child;
-  private _parameters!: Child;
-  private _returnType?: Child;
+  private _body: BaseBuilder;
+  private _parameters!: BaseBuilder;
+  private _returnType?: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  parameters(value: Child): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Child): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
@@ -58,6 +57,6 @@ class ClosureBuilder extends BaseBuilder<ClosureExpression> {
   }
 }
 
-export function closure(body: Child): ClosureBuilder {
+export function closure(body: BaseBuilder): ClosureBuilder {
   return new ClosureBuilder(body);
 }

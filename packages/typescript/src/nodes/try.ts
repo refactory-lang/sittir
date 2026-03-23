@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TryStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TryBuilder extends BaseBuilder<TryStatement> {
-  private _body: Child;
-  private _finalizer?: Child;
-  private _handler?: Child;
+  private _body: BaseBuilder;
+  private _finalizer?: BaseBuilder;
+  private _handler?: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  finalizer(value: Child): this {
+  finalizer(value: BaseBuilder): this {
     this._finalizer = value;
     return this;
   }
 
-  handler(value: Child): this {
+  handler(value: BaseBuilder): this {
     this._handler = value;
     return this;
   }
@@ -54,6 +53,6 @@ class TryBuilder extends BaseBuilder<TryStatement> {
   }
 }
 
-export function try_(body: Child): TryBuilder {
+export function try_(body: BaseBuilder): TryBuilder {
   return new TryBuilder(body);
 }

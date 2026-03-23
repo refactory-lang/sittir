@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { RefPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class RefPatternBuilder extends BaseBuilder<RefPattern> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class RefPatternBuilder extends BaseBuilder<RefPattern> {
   }
 }
 
-export function ref_pattern(children: Child): RefPatternBuilder {
+export function ref_pattern(children: BaseBuilder): RefPatternBuilder {
   return new RefPatternBuilder(children);
 }

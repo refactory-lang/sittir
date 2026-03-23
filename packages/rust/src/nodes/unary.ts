@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { UnaryExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class UnaryBuilder extends BaseBuilder<UnaryExpression> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class UnaryBuilder extends BaseBuilder<UnaryExpression> {
   }
 }
 
-export function unary(children: Child): UnaryBuilder {
+export function unary(children: BaseBuilder): UnaryBuilder {
   return new UnaryBuilder(children);
 }

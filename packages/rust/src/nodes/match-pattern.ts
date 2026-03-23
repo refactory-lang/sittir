@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MatchPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class MatchPatternBuilder extends BaseBuilder<MatchPattern> {
-  private _condition?: Child;
-  private _children: Child[] = [];
+  private _condition?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
 
-  condition(value: Child): this {
+  condition(value: BaseBuilder): this {
     this._condition = value;
     return this;
   }
@@ -51,6 +50,6 @@ class MatchPatternBuilder extends BaseBuilder<MatchPattern> {
   }
 }
 
-export function match_pattern(children: Child): MatchPatternBuilder {
+export function match_pattern(children: BaseBuilder): MatchPatternBuilder {
   return new MatchPatternBuilder(children);
 }

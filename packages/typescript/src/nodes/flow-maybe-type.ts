@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FlowMaybeType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class FlowMaybeTypeBuilder extends BaseBuilder<FlowMaybeType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class FlowMaybeTypeBuilder extends BaseBuilder<FlowMaybeType> {
   }
 }
 
-export function flow_maybe_type(children: Child): FlowMaybeTypeBuilder {
+export function flow_maybe_type(children: BaseBuilder): FlowMaybeTypeBuilder {
   return new FlowMaybeTypeBuilder(children);
 }

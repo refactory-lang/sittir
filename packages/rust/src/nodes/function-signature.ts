@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FunctionSignatureItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class FunctionSignatureBuilder extends BaseBuilder<FunctionSignatureItem> {
-  private _name: Child;
-  private _parameters!: Child;
-  private _returnType?: Child;
-  private _typeParameters?: Child;
-  private _children: Child[] = [];
+  private _name: BaseBuilder;
+  private _parameters!: BaseBuilder;
+  private _returnType?: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  parameters(value: Child): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Child): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -82,6 +81,6 @@ class FunctionSignatureBuilder extends BaseBuilder<FunctionSignatureItem> {
   }
 }
 
-export function function_signature(name: Child): FunctionSignatureBuilder {
+export function function_signature(name: BaseBuilder): FunctionSignatureBuilder {
   return new FunctionSignatureBuilder(name);
 }

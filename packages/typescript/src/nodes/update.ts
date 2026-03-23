@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { UpdateExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class UpdateBuilder extends BaseBuilder<UpdateExpression> {
-  private _argument: Child;
-  private _operator!: Child;
+  private _argument: BaseBuilder;
+  private _operator!: BaseBuilder;
 
-  constructor(argument: Child) {
+  constructor(argument: BaseBuilder) {
     super();
     this._argument = argument;
   }
 
-  operator(value: Child): this {
+  operator(value: BaseBuilder): this {
     this._operator = value;
     return this;
   }
@@ -43,6 +42,6 @@ class UpdateBuilder extends BaseBuilder<UpdateExpression> {
   }
 }
 
-export function update(argument: Child): UpdateBuilder {
+export function update(argument: BaseBuilder): UpdateBuilder {
   return new UpdateBuilder(argument);
 }

@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TernaryExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TernaryBuilder extends BaseBuilder<TernaryExpression> {
-  private _alternative: Child;
-  private _condition!: Child;
-  private _consequence!: Child;
+  private _alternative: BaseBuilder;
+  private _condition!: BaseBuilder;
+  private _consequence!: BaseBuilder;
 
-  constructor(alternative: Child) {
+  constructor(alternative: BaseBuilder) {
     super();
     this._alternative = alternative;
   }
 
-  condition(value: Child): this {
+  condition(value: BaseBuilder): this {
     this._condition = value;
     return this;
   }
 
-  consequence(value: Child): this {
+  consequence(value: BaseBuilder): this {
     this._consequence = value;
     return this;
   }
@@ -54,6 +53,6 @@ class TernaryBuilder extends BaseBuilder<TernaryExpression> {
   }
 }
 
-export function ternary(alternative: Child): TernaryBuilder {
+export function ternary(alternative: BaseBuilder): TernaryBuilder {
   return new TernaryBuilder(alternative);
 }

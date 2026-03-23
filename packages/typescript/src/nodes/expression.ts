@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ExpressionStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ExpressionBuilder extends BaseBuilder<ExpressionStatement> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -36,6 +35,6 @@ class ExpressionBuilder extends BaseBuilder<ExpressionStatement> {
   }
 }
 
-export function expression(children: Child): ExpressionBuilder {
+export function expression(children: BaseBuilder): ExpressionBuilder {
   return new ExpressionBuilder(children);
 }

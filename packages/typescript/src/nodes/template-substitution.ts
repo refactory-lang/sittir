@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TemplateSubstitution } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TemplateSubstitutionBuilder extends BaseBuilder<TemplateSubstitution> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -40,6 +39,6 @@ class TemplateSubstitutionBuilder extends BaseBuilder<TemplateSubstitution> {
   }
 }
 
-export function template_substitution(children: Child): TemplateSubstitutionBuilder {
+export function template_substitution(children: BaseBuilder): TemplateSubstitutionBuilder {
   return new TemplateSubstitutionBuilder(children);
 }

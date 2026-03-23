@@ -2,30 +2,29 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { UnionItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class UnionBuilder extends BaseBuilder<UnionItem> {
-  private _body!: Child;
-  private _name: Child;
-  private _typeParameters?: Child;
-  private _children: Child[] = [];
+  private _body!: BaseBuilder;
+  private _name: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -65,6 +64,6 @@ class UnionBuilder extends BaseBuilder<UnionItem> {
   }
 }
 
-export function union(name: Child): UnionBuilder {
+export function union(name: BaseBuilder): UnionBuilder {
   return new UnionBuilder(name);
 }

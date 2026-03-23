@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MacroDefinition } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class MacroDefinitionBuilder extends BaseBuilder<MacroDefinition> {
-  private _name: Child;
-  private _children: Child[] = [];
+  private _name: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -53,6 +52,6 @@ class MacroDefinitionBuilder extends BaseBuilder<MacroDefinition> {
   }
 }
 
-export function macro_definition(name: Child): MacroDefinitionBuilder {
+export function macro_definition(name: BaseBuilder): MacroDefinitionBuilder {
   return new MacroDefinitionBuilder(name);
 }

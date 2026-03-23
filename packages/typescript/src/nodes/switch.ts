@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SwitchStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SwitchBuilder extends BaseBuilder<SwitchStatement> {
-  private _body: Child;
-  private _value!: Child;
+  private _body: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -45,6 +44,6 @@ class SwitchBuilder extends BaseBuilder<SwitchStatement> {
   }
 }
 
-export function switch_(body: Child): SwitchBuilder {
+export function switch_(body: BaseBuilder): SwitchBuilder {
   return new SwitchBuilder(body);
 }

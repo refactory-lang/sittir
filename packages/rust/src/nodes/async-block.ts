@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AsyncBlock } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
   }
 }
 
-export function async_block(children: Child): AsyncBlockBuilder {
+export function async_block(children: BaseBuilder): AsyncBlockBuilder {
   return new AsyncBlockBuilder(children);
 }

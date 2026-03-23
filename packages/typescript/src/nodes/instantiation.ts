@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { InstantiationExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class InstantiationBuilder extends BaseBuilder<InstantiationExpression> {
-  private _function?: Child;
-  private _typeArguments: Child;
-  private _children: Child[] = [];
+  private _function?: BaseBuilder;
+  private _typeArguments: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(typeArguments: Child) {
+  constructor(typeArguments: BaseBuilder) {
     super();
     this._typeArguments = typeArguments;
   }
 
-  function(value: Child): this {
+  function(value: BaseBuilder): this {
     this._function = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -52,6 +51,6 @@ class InstantiationBuilder extends BaseBuilder<InstantiationExpression> {
   }
 }
 
-export function instantiation(typeArguments: Child): InstantiationBuilder {
+export function instantiation(typeArguments: BaseBuilder): InstantiationBuilder {
   return new InstantiationBuilder(typeArguments);
 }

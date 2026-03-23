@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { NewExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class NewBuilder extends BaseBuilder<NewExpression> {
-  private _arguments?: Child;
-  private _constructor: Child;
-  private _typeArguments?: Child;
+  private _arguments?: BaseBuilder;
+  private _constructor: BaseBuilder;
+  private _typeArguments?: BaseBuilder;
 
-  constructor(constructor: Child) {
+  constructor(constructor: BaseBuilder) {
     super();
     this._constructor = constructor;
   }
 
-  arguments(value: Child): this {
+  arguments(value: BaseBuilder): this {
     this._arguments = value;
     return this;
   }
 
-  typeArguments(value: Child): this {
+  typeArguments(value: BaseBuilder): this {
     this._typeArguments = value;
     return this;
   }
@@ -54,6 +53,6 @@ class NewBuilder extends BaseBuilder<NewExpression> {
   }
 }
 
-export function new_(constructor: Child): NewBuilder {
+export function new_(constructor: BaseBuilder): NewBuilder {
   return new NewBuilder(constructor);
 }

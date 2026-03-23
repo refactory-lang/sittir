@@ -2,14 +2,13 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ContinueStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ContinueBuilder extends BaseBuilder<ContinueStatement> {
-  private _label?: Child;
+  private _label?: BaseBuilder;
 
   constructor() { super(); }
 
-  label(value: Child): this {
+  label(value: BaseBuilder): this {
     this._label = value;
     return this;
   }

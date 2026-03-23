@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LiteralType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LiteralTypeBuilder extends BaseBuilder<LiteralType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -36,6 +35,6 @@ class LiteralTypeBuilder extends BaseBuilder<LiteralType> {
   }
 }
 
-export function literal_type(children: Child): LiteralTypeBuilder {
+export function literal_type(children: BaseBuilder): LiteralTypeBuilder {
   return new LiteralTypeBuilder(children);
 }

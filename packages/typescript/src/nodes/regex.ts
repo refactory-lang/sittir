@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Regex } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class RegexBuilder extends BaseBuilder<Regex> {
-  private _flags?: Child;
-  private _pattern: Child;
+  private _flags?: BaseBuilder;
+  private _pattern: BaseBuilder;
 
-  constructor(pattern: Child) {
+  constructor(pattern: BaseBuilder) {
     super();
     this._pattern = pattern;
   }
 
-  flags(value: Child): this {
+  flags(value: BaseBuilder): this {
     this._flags = value;
     return this;
   }
@@ -47,6 +46,6 @@ class RegexBuilder extends BaseBuilder<Regex> {
   }
 }
 
-export function regex(pattern: Child): RegexBuilder {
+export function regex(pattern: BaseBuilder): RegexBuilder {
   return new RegexBuilder(pattern);
 }

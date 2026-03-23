@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ExtendsClause } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
-  private _typeArguments: Child[] = [];
-  private _value: Child[] = [];
+  private _typeArguments: BaseBuilder[] = [];
+  private _value: BaseBuilder[] = [];
 
-  constructor(value: Child[]) {
+  constructor(value: BaseBuilder[]) {
     super();
     this._value = value;
   }
 
-  typeArguments(value: Child[]): this {
+  typeArguments(value: BaseBuilder[]): this {
     this._typeArguments = value;
     return this;
   }
@@ -49,6 +48,6 @@ class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
   }
 }
 
-export function extends_clause(value: Child[]): ExtendsClauseBuilder {
+export function extends_clause(value: BaseBuilder[]): ExtendsClauseBuilder {
   return new ExtendsClauseBuilder(value);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LookupType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LookupTypeBuilder extends BaseBuilder<LookupType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -40,6 +39,6 @@ class LookupTypeBuilder extends BaseBuilder<LookupType> {
   }
 }
 
-export function lookup_type(children: Child[]): LookupTypeBuilder {
+export function lookup_type(children: BaseBuilder[]): LookupTypeBuilder {
   return new LookupTypeBuilder(children);
 }

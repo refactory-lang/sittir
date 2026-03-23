@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AsExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AsBuilder extends BaseBuilder<AsExpression> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -40,6 +39,6 @@ class AsBuilder extends BaseBuilder<AsExpression> {
   }
 }
 
-export function as(children: Child[]): AsBuilder {
+export function as(children: BaseBuilder[]): AsBuilder {
   return new AsBuilder(children);
 }

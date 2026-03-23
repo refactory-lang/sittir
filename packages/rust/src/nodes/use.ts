@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { UseDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class UseBuilder extends BaseBuilder<UseDeclaration> {
-  private _argument: Child;
-  private _children: Child[] = [];
+  private _argument: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(argument: Child) {
+  constructor(argument: BaseBuilder) {
     super();
     this._argument = argument;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -49,6 +48,6 @@ class UseBuilder extends BaseBuilder<UseDeclaration> {
   }
 }
 
-export function use_(argument: Child): UseBuilder {
+export function use_(argument: BaseBuilder): UseBuilder {
   return new UseBuilder(argument);
 }

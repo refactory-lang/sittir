@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypePredicate } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TypePredicateBuilder extends BaseBuilder<TypePredicate> {
-  private _name: Child;
-  private _type!: Child;
+  private _name: BaseBuilder;
+  private _type!: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
@@ -45,6 +44,6 @@ class TypePredicateBuilder extends BaseBuilder<TypePredicate> {
   }
 }
 
-export function type_predicate(name: Child): TypePredicateBuilder {
+export function type_predicate(name: BaseBuilder): TypePredicateBuilder {
   return new TypePredicateBuilder(name);
 }

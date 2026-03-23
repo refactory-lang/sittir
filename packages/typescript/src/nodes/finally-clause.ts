@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FinallyClause } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class FinallyClauseBuilder extends BaseBuilder<FinallyClause> {
-  private _body: Child;
+  private _body: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
@@ -36,6 +35,6 @@ class FinallyClauseBuilder extends BaseBuilder<FinallyClause> {
   }
 }
 
-export function finally_clause(body: Child): FinallyClauseBuilder {
+export function finally_clause(body: BaseBuilder): FinallyClauseBuilder {
   return new FinallyClauseBuilder(body);
 }

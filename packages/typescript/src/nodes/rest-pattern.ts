@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { RestPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class RestPatternBuilder extends BaseBuilder<RestPattern> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class RestPatternBuilder extends BaseBuilder<RestPattern> {
   }
 }
 
-export function rest_pattern(children: Child): RestPatternBuilder {
+export function rest_pattern(children: BaseBuilder): RestPatternBuilder {
   return new RestPatternBuilder(children);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssertsAnnotation } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AssertsAnnotationBuilder extends BaseBuilder<AssertsAnnotation> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class AssertsAnnotationBuilder extends BaseBuilder<AssertsAnnotation> {
   }
 }
 
-export function asserts_annotation(children: Child): AssertsAnnotationBuilder {
+export function asserts_annotation(children: BaseBuilder): AssertsAnnotationBuilder {
   return new AssertsAnnotationBuilder(children);
 }

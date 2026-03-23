@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { PairPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class PairPatternBuilder extends BaseBuilder<PairPattern> {
-  private _key: Child;
-  private _value!: Child;
+  private _key: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(key: Child) {
+  constructor(key: BaseBuilder) {
     super();
     this._key = key;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -45,6 +44,6 @@ class PairPatternBuilder extends BaseBuilder<PairPattern> {
   }
 }
 
-export function pair_pattern(key: Child): PairPatternBuilder {
+export function pair_pattern(key: BaseBuilder): PairPatternBuilder {
   return new PairPatternBuilder(key);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { RawStringLiteral } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class RawStringLiteralBuilder extends BaseBuilder<RawStringLiteral> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -36,6 +35,6 @@ class RawStringLiteralBuilder extends BaseBuilder<RawStringLiteral> {
   }
 }
 
-export function raw_string_literal(children: Child): RawStringLiteralBuilder {
+export function raw_string_literal(children: BaseBuilder): RawStringLiteralBuilder {
   return new RawStringLiteralBuilder(children);
 }

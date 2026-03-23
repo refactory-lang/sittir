@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DynamicType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class DynamicTypeBuilder extends BaseBuilder<DynamicType> {
-  private _trait: Child;
+  private _trait: BaseBuilder;
 
-  constructor(trait: Child) {
+  constructor(trait: BaseBuilder) {
     super();
     this._trait = trait;
   }
@@ -36,6 +35,6 @@ class DynamicTypeBuilder extends BaseBuilder<DynamicType> {
   }
 }
 
-export function dynamic_type(trait: Child): DynamicTypeBuilder {
+export function dynamic_type(trait: BaseBuilder): DynamicTypeBuilder {
   return new DynamicTypeBuilder(trait);
 }

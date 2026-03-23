@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { VariableDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class VariableBuilder extends BaseBuilder<VariableDeclaration> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class VariableBuilder extends BaseBuilder<VariableDeclaration> {
   }
 }
 
-export function variable(children: Child[]): VariableBuilder {
+export function variable(children: BaseBuilder[]): VariableBuilder {
   return new VariableBuilder(children);
 }

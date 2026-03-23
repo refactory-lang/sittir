@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeQuery } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TypeQueryBuilder extends BaseBuilder<TypeQuery> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class TypeQueryBuilder extends BaseBuilder<TypeQuery> {
   }
 }
 
-export function type_query(children: Child): TypeQueryBuilder {
+export function type_query(children: BaseBuilder): TypeQueryBuilder {
   return new TypeQueryBuilder(children);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeAssertion } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TypeAssertionBuilder extends BaseBuilder<TypeAssertion> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -36,6 +35,6 @@ class TypeAssertionBuilder extends BaseBuilder<TypeAssertion> {
   }
 }
 
-export function type_assertion(children: Child[]): TypeAssertionBuilder {
+export function type_assertion(children: BaseBuilder[]): TypeAssertionBuilder {
   return new TypeAssertionBuilder(children);
 }

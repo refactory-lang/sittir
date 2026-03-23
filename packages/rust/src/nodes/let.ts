@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LetDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LetBuilder extends BaseBuilder<LetDeclaration> {
-  private _alternative?: Child;
-  private _pattern: Child;
-  private _type?: Child;
-  private _value?: Child;
-  private _children: Child[] = [];
+  private _alternative?: BaseBuilder;
+  private _pattern: BaseBuilder;
+  private _type?: BaseBuilder;
+  private _value?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(pattern: Child) {
+  constructor(pattern: BaseBuilder) {
     super();
     this._pattern = pattern;
   }
 
-  alternative(value: Child): this {
+  alternative(value: BaseBuilder): this {
     this._alternative = value;
     return this;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -94,6 +93,6 @@ class LetBuilder extends BaseBuilder<LetDeclaration> {
   }
 }
 
-export function let_(pattern: Child): LetBuilder {
+export function let_(pattern: BaseBuilder): LetBuilder {
   return new LetBuilder(pattern);
 }

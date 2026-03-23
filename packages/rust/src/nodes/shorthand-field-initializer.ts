@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ShorthandFieldInitializer } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ShorthandFieldInitializerBuilder extends BaseBuilder<ShorthandFieldInitializer> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -36,6 +35,6 @@ class ShorthandFieldInitializerBuilder extends BaseBuilder<ShorthandFieldInitial
   }
 }
 
-export function shorthand_field_initializer(children: Child[]): ShorthandFieldInitializerBuilder {
+export function shorthand_field_initializer(children: BaseBuilder[]): ShorthandFieldInitializerBuilder {
   return new ShorthandFieldInitializerBuilder(children);
 }

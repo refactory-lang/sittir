@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ScopedTypeIdentifier } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ScopedTypeIdentifierBuilder extends BaseBuilder<ScopedTypeIdentifier> {
-  private _name: Child;
-  private _path?: Child;
+  private _name: BaseBuilder;
+  private _path?: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  path(value: Child): this {
+  path(value: BaseBuilder): this {
     this._path = value;
     return this;
   }
@@ -45,6 +44,6 @@ class ScopedTypeIdentifierBuilder extends BaseBuilder<ScopedTypeIdentifier> {
   }
 }
 
-export function scoped_type_identifier(name: Child): ScopedTypeIdentifierBuilder {
+export function scoped_type_identifier(name: BaseBuilder): ScopedTypeIdentifierBuilder {
   return new ScopedTypeIdentifierBuilder(name);
 }

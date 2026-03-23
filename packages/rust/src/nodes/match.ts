@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MatchExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class MatchBuilder extends BaseBuilder<MatchExpression> {
-  private _body: Child;
-  private _value!: Child;
+  private _body: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -45,6 +44,6 @@ class MatchBuilder extends BaseBuilder<MatchExpression> {
   }
 }
 
-export function match(body: Child): MatchBuilder {
+export function match(body: BaseBuilder): MatchBuilder {
   return new MatchBuilder(body);
 }

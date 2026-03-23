@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ConstBlock } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ConstBlockBuilder extends BaseBuilder<ConstBlock> {
-  private _body: Child;
+  private _body: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
@@ -36,6 +35,6 @@ class ConstBlockBuilder extends BaseBuilder<ConstBlock> {
   }
 }
 
-export function const_block(body: Child): ConstBlockBuilder {
+export function const_block(body: BaseBuilder): ConstBlockBuilder {
   return new ConstBlockBuilder(body);
 }

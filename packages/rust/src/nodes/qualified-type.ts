@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { QualifiedType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
-  private _alias: Child;
-  private _type!: Child;
+  private _alias: BaseBuilder;
+  private _type!: BaseBuilder;
 
-  constructor(alias: Child) {
+  constructor(alias: BaseBuilder) {
     super();
     this._alias = alias;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
@@ -45,6 +44,6 @@ class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
   }
 }
 
-export function qualified_type(alias: Child): QualifiedTypeBuilder {
+export function qualified_type(alias: BaseBuilder): QualifiedTypeBuilder {
   return new QualifiedTypeBuilder(alias);
 }

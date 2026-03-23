@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { PointerType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class PointerTypeBuilder extends BaseBuilder<PointerType> {
-  private _type: Child;
-  private _children: Child[] = [];
+  private _type: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -45,6 +44,6 @@ class PointerTypeBuilder extends BaseBuilder<PointerType> {
   }
 }
 
-export function pointer_type(type_: Child): PointerTypeBuilder {
+export function pointer_type(type_: BaseBuilder): PointerTypeBuilder {
   return new PointerTypeBuilder(type_);
 }

@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { IfStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class IfBuilder extends BaseBuilder<IfStatement> {
-  private _alternative?: Child;
-  private _condition: Child;
-  private _consequence!: Child;
+  private _alternative?: BaseBuilder;
+  private _condition: BaseBuilder;
+  private _consequence!: BaseBuilder;
 
-  constructor(condition: Child) {
+  constructor(condition: BaseBuilder) {
     super();
     this._condition = condition;
   }
 
-  alternative(value: Child): this {
+  alternative(value: BaseBuilder): this {
     this._alternative = value;
     return this;
   }
 
-  consequence(value: Child): this {
+  consequence(value: BaseBuilder): this {
     this._consequence = value;
     return this;
   }
@@ -54,6 +53,6 @@ class IfBuilder extends BaseBuilder<IfStatement> {
   }
 }
 
-export function if_(condition: Child): IfBuilder {
+export function if_(condition: BaseBuilder): IfBuilder {
   return new IfBuilder(condition);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AttributeItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AttributeBuilder extends BaseBuilder<AttributeItem> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -42,6 +41,6 @@ class AttributeBuilder extends BaseBuilder<AttributeItem> {
   }
 }
 
-export function attribute(children: Child): AttributeBuilder {
+export function attribute(children: BaseBuilder): AttributeBuilder {
   return new AttributeBuilder(children);
 }

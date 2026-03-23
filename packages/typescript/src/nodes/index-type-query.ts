@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { IndexTypeQuery } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class IndexTypeQueryBuilder extends BaseBuilder<IndexTypeQuery> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class IndexTypeQueryBuilder extends BaseBuilder<IndexTypeQuery> {
   }
 }
 
-export function index_type_query(children: Child): IndexTypeQueryBuilder {
+export function index_type_query(children: BaseBuilder): IndexTypeQueryBuilder {
   return new IndexTypeQueryBuilder(children);
 }

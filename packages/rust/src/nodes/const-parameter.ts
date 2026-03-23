@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ConstParameter } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ConstParameterBuilder extends BaseBuilder<ConstParameter> {
-  private _name: Child;
-  private _type!: Child;
-  private _value?: Child;
+  private _name: BaseBuilder;
+  private _type!: BaseBuilder;
+  private _value?: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -62,6 +61,6 @@ class ConstParameterBuilder extends BaseBuilder<ConstParameter> {
   }
 }
 
-export function const_parameter(name: Child): ConstParameterBuilder {
+export function const_parameter(name: BaseBuilder): ConstParameterBuilder {
   return new ConstParameterBuilder(name);
 }

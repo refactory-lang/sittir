@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { CatchClause } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class CatchClauseBuilder extends BaseBuilder<CatchClause> {
-  private _body: Child;
-  private _parameter?: Child;
-  private _type?: Child;
+  private _body: BaseBuilder;
+  private _parameter?: BaseBuilder;
+  private _type?: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  parameter(value: Child): this {
+  parameter(value: BaseBuilder): this {
     this._parameter = value;
     return this;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
@@ -62,6 +61,6 @@ class CatchClauseBuilder extends BaseBuilder<CatchClause> {
   }
 }
 
-export function catch_clause(body: Child): CatchClauseBuilder {
+export function catch_clause(body: BaseBuilder): CatchClauseBuilder {
   return new CatchClauseBuilder(body);
 }

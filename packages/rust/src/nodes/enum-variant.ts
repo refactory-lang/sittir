@@ -2,30 +2,29 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { EnumVariant } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class EnumVariantBuilder extends BaseBuilder<EnumVariant> {
-  private _body?: Child;
-  private _name: Child;
-  private _value?: Child;
-  private _children: Child[] = [];
+  private _body?: BaseBuilder;
+  private _name: BaseBuilder;
+  private _value?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -69,6 +68,6 @@ class EnumVariantBuilder extends BaseBuilder<EnumVariant> {
   }
 }
 
-export function enum_variant(name: Child): EnumVariantBuilder {
+export function enum_variant(name: BaseBuilder): EnumVariantBuilder {
   return new EnumVariantBuilder(name);
 }

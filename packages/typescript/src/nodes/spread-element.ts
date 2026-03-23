@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SpreadElement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SpreadElementBuilder extends BaseBuilder<SpreadElement> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class SpreadElementBuilder extends BaseBuilder<SpreadElement> {
   }
 }
 
-export function spread_element(children: Child): SpreadElementBuilder {
+export function spread_element(children: BaseBuilder): SpreadElementBuilder {
   return new SpreadElementBuilder(children);
 }

@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { WithStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class WithBuilder extends BaseBuilder<WithStatement> {
-  private _body: Child;
-  private _object!: Child;
+  private _body: BaseBuilder;
+  private _object!: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  object(value: Child): this {
+  object(value: BaseBuilder): this {
     this._object = value;
     return this;
   }
@@ -45,6 +44,6 @@ class WithBuilder extends BaseBuilder<WithStatement> {
   }
 }
 
-export function with_(body: Child): WithBuilder {
+export function with_(body: BaseBuilder): WithBuilder {
   return new WithBuilder(body);
 }

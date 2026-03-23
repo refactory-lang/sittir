@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MemberExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class MemberBuilder extends BaseBuilder<MemberExpression> {
-  private _object: Child;
-  private _optionalChain?: Child;
-  private _property!: Child;
+  private _object: BaseBuilder;
+  private _optionalChain?: BaseBuilder;
+  private _property!: BaseBuilder;
 
-  constructor(object: Child) {
+  constructor(object: BaseBuilder) {
     super();
     this._object = object;
   }
 
-  optionalChain(value: Child): this {
+  optionalChain(value: BaseBuilder): this {
     this._optionalChain = value;
     return this;
   }
 
-  property(value: Child): this {
+  property(value: BaseBuilder): this {
     this._property = value;
     return this;
   }
@@ -52,6 +51,6 @@ class MemberBuilder extends BaseBuilder<MemberExpression> {
   }
 }
 
-export function member(object: Child): MemberBuilder {
+export function member(object: BaseBuilder): MemberBuilder {
   return new MemberBuilder(object);
 }

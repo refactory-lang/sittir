@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { WherePredicate } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class WherePredicateBuilder extends BaseBuilder<WherePredicate> {
-  private _bounds: Child;
-  private _left!: Child;
+  private _bounds: BaseBuilder;
+  private _left!: BaseBuilder;
 
-  constructor(bounds: Child) {
+  constructor(bounds: BaseBuilder) {
     super();
     this._bounds = bounds;
   }
 
-  left(value: Child): this {
+  left(value: BaseBuilder): this {
     this._left = value;
     return this;
   }
@@ -43,6 +42,6 @@ class WherePredicateBuilder extends BaseBuilder<WherePredicate> {
   }
 }
 
-export function where_predicate(bounds: Child): WherePredicateBuilder {
+export function where_predicate(bounds: BaseBuilder): WherePredicateBuilder {
   return new WherePredicateBuilder(bounds);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SelfParameter } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SelfParameterBuilder extends BaseBuilder<SelfParameter> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -36,6 +35,6 @@ class SelfParameterBuilder extends BaseBuilder<SelfParameter> {
   }
 }
 
-export function self_parameter(children: Child[]): SelfParameterBuilder {
+export function self_parameter(children: BaseBuilder[]): SelfParameterBuilder {
   return new SelfParameterBuilder(children);
 }

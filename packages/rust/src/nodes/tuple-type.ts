@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TupleType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TupleTypeBuilder extends BaseBuilder<TupleType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -40,6 +39,6 @@ class TupleTypeBuilder extends BaseBuilder<TupleType> {
   }
 }
 
-export function tuple_type(children: Child[]): TupleTypeBuilder {
+export function tuple_type(children: BaseBuilder[]): TupleTypeBuilder {
   return new TupleTypeBuilder(children);
 }

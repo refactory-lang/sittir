@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ImportRequireClause } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ImportRequireClauseBuilder extends BaseBuilder<ImportRequireClause> {
-  private _source: Child;
-  private _children: Child[] = [];
+  private _source: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(source: Child) {
+  constructor(source: BaseBuilder) {
     super();
     this._source = source;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -53,6 +52,6 @@ class ImportRequireClauseBuilder extends BaseBuilder<ImportRequireClause> {
   }
 }
 
-export function import_require_clause(source: Child): ImportRequireClauseBuilder {
+export function import_require_clause(source: BaseBuilder): ImportRequireClauseBuilder {
   return new ImportRequireClauseBuilder(source);
 }

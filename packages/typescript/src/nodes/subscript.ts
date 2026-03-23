@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SubscriptExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SubscriptBuilder extends BaseBuilder<SubscriptExpression> {
-  private _index: Child;
-  private _object!: Child;
-  private _optionalChain?: Child;
+  private _index: BaseBuilder;
+  private _object!: BaseBuilder;
+  private _optionalChain?: BaseBuilder;
 
-  constructor(index: Child) {
+  constructor(index: BaseBuilder) {
     super();
     this._index = index;
   }
 
-  object(value: Child): this {
+  object(value: BaseBuilder): this {
     this._object = value;
     return this;
   }
 
-  optionalChain(value: Child): this {
+  optionalChain(value: BaseBuilder): this {
     this._optionalChain = value;
     return this;
   }
@@ -56,6 +55,6 @@ class SubscriptBuilder extends BaseBuilder<SubscriptExpression> {
   }
 }
 
-export function subscript(index: Child): SubscriptBuilder {
+export function subscript(index: BaseBuilder): SubscriptBuilder {
   return new SubscriptBuilder(index);
 }

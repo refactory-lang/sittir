@@ -2,30 +2,29 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ForExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ForBuilder extends BaseBuilder<ForExpression> {
-  private _body: Child;
-  private _pattern!: Child;
-  private _value!: Child;
-  private _children: Child[] = [];
+  private _body: BaseBuilder;
+  private _pattern!: BaseBuilder;
+  private _value!: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  pattern(value: Child): this {
+  pattern(value: BaseBuilder): this {
     this._pattern = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -67,6 +66,6 @@ class ForBuilder extends BaseBuilder<ForExpression> {
   }
 }
 
-export function for_(body: Child): ForBuilder {
+export function for_(body: BaseBuilder): ForBuilder {
   return new ForBuilder(body);
 }

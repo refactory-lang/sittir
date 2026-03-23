@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { StructPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class StructPatternBuilder extends BaseBuilder<StructPattern> {
-  private _type: Child;
-  private _children: Child[] = [];
+  private _type: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -49,6 +48,6 @@ class StructPatternBuilder extends BaseBuilder<StructPattern> {
   }
 }
 
-export function struct_pattern(type_: Child): StructPatternBuilder {
+export function struct_pattern(type_: BaseBuilder): StructPatternBuilder {
   return new StructPatternBuilder(type_);
 }

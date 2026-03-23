@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ObjectAssignmentPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ObjectAssignmentPatternBuilder extends BaseBuilder<ObjectAssignmentPattern> {
-  private _left: Child;
-  private _right!: Child;
+  private _left: BaseBuilder;
+  private _right!: BaseBuilder;
 
-  constructor(left: Child) {
+  constructor(left: BaseBuilder) {
     super();
     this._left = left;
   }
 
-  right(value: Child): this {
+  right(value: BaseBuilder): this {
     this._right = value;
     return this;
   }
@@ -45,6 +44,6 @@ class ObjectAssignmentPatternBuilder extends BaseBuilder<ObjectAssignmentPattern
   }
 }
 
-export function object_assignment_pattern(left: Child): ObjectAssignmentPatternBuilder {
+export function object_assignment_pattern(left: BaseBuilder): ObjectAssignmentPatternBuilder {
   return new ObjectAssignmentPatternBuilder(left);
 }

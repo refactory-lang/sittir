@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ComputedPropertyName } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ComputedPropertyNameBuilder extends BaseBuilder<ComputedPropertyName> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -40,6 +39,6 @@ class ComputedPropertyNameBuilder extends BaseBuilder<ComputedPropertyName> {
   }
 }
 
-export function computed_property_name(children: Child): ComputedPropertyNameBuilder {
+export function computed_property_name(children: BaseBuilder): ComputedPropertyNameBuilder {
   return new ComputedPropertyNameBuilder(children);
 }

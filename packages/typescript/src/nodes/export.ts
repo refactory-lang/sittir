@@ -2,38 +2,37 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ExportStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ExportBuilder extends BaseBuilder<ExportStatement> {
-  private _declaration?: Child;
-  private _decorator: Child[] = [];
-  private _source?: Child;
-  private _value?: Child;
-  private _children: Child[] = [];
+  private _declaration?: BaseBuilder;
+  private _decorator: BaseBuilder[] = [];
+  private _source?: BaseBuilder;
+  private _value?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  declaration(value: Child): this {
+  declaration(value: BaseBuilder): this {
     this._declaration = value;
     return this;
   }
 
-  decorator(value: Child[]): this {
+  decorator(value: BaseBuilder[]): this {
     this._decorator = value;
     return this;
   }
 
-  source(value: Child): this {
+  source(value: BaseBuilder): this {
     this._source = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }

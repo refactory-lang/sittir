@@ -2,20 +2,19 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { OrderedFieldDeclarationList } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class OrderedFieldDeclarationListBuilder extends BaseBuilder<OrderedFieldDeclarationList> {
-  private _type: Child[] = [];
-  private _children: Child[] = [];
+  private _type: BaseBuilder[] = [];
+  private _children: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  type(value: Child[]): this {
+  type(value: BaseBuilder[]): this {
     this._type = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }

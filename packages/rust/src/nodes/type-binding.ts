@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeBinding } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TypeBindingBuilder extends BaseBuilder<TypeBinding> {
-  private _name: Child;
-  private _type!: Child;
-  private _typeArguments?: Child;
+  private _name: BaseBuilder;
+  private _type!: BaseBuilder;
+  private _typeArguments?: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  typeArguments(value: Child): this {
+  typeArguments(value: BaseBuilder): this {
     this._typeArguments = value;
     return this;
   }
@@ -54,6 +53,6 @@ class TypeBindingBuilder extends BaseBuilder<TypeBinding> {
   }
 }
 
-export function type_binding(name: Child): TypeBindingBuilder {
+export function type_binding(name: BaseBuilder): TypeBindingBuilder {
   return new TypeBindingBuilder(name);
 }

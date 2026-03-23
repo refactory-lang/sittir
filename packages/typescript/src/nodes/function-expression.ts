@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FunctionExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class FunctionBuilder extends BaseBuilder<FunctionExpression> {
-  private _body: Child;
-  private _name?: Child;
-  private _parameters!: Child;
-  private _returnType?: Child;
-  private _typeParameters?: Child;
+  private _body: BaseBuilder;
+  private _name?: BaseBuilder;
+  private _parameters!: BaseBuilder;
+  private _returnType?: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  name(value: Child): this {
+  name(value: BaseBuilder): this {
     this._name = value;
     return this;
   }
 
-  parameters(value: Child): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Child): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
@@ -72,6 +71,6 @@ class FunctionBuilder extends BaseBuilder<FunctionExpression> {
   }
 }
 
-export function function_(body: Child): FunctionBuilder {
+export function function_(body: BaseBuilder): FunctionBuilder {
   return new FunctionBuilder(body);
 }

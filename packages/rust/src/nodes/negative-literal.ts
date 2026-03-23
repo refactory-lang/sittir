@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { NegativeLiteral } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class NegativeLiteralBuilder extends BaseBuilder<NegativeLiteral> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class NegativeLiteralBuilder extends BaseBuilder<NegativeLiteral> {
   }
 }
 
-export function negative_literal(children: Child): NegativeLiteralBuilder {
+export function negative_literal(children: BaseBuilder): NegativeLiteralBuilder {
   return new NegativeLiteralBuilder(children);
 }

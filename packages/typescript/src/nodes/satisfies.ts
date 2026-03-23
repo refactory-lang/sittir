@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SatisfiesExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SatisfiesBuilder extends BaseBuilder<SatisfiesExpression> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class SatisfiesBuilder extends BaseBuilder<SatisfiesExpression> {
   }
 }
 
-export function satisfies(children: Child[]): SatisfiesBuilder {
+export function satisfies(children: BaseBuilder[]): SatisfiesBuilder {
   return new SatisfiesBuilder(children);
 }

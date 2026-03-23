@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { OptingTypeAnnotation } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class OptingTypeAnnotationBuilder extends BaseBuilder<OptingTypeAnnotation> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class OptingTypeAnnotationBuilder extends BaseBuilder<OptingTypeAnnotation> {
   }
 }
 
-export function opting_type_annotation(children: Child): OptingTypeAnnotationBuilder {
+export function opting_type_annotation(children: BaseBuilder): OptingTypeAnnotationBuilder {
   return new OptingTypeAnnotationBuilder(children);
 }

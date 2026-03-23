@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { IndexSignature } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class IndexSignatureBuilder extends BaseBuilder<IndexSignature> {
-  private _indexType?: Child;
-  private _name?: Child;
-  private _sign?: Child;
-  private _type: Child;
-  private _children: Child[] = [];
+  private _indexType?: BaseBuilder;
+  private _name?: BaseBuilder;
+  private _sign?: BaseBuilder;
+  private _type: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  indexType(value: Child): this {
+  indexType(value: BaseBuilder): this {
     this._indexType = value;
     return this;
   }
 
-  name(value: Child): this {
+  name(value: BaseBuilder): this {
     this._name = value;
     return this;
   }
 
-  sign(value: Child): this {
+  sign(value: BaseBuilder): this {
     this._sign = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -80,6 +79,6 @@ class IndexSignatureBuilder extends BaseBuilder<IndexSignature> {
   }
 }
 
-export function index_signature(type_: Child): IndexSignatureBuilder {
+export function index_signature(type_: BaseBuilder): IndexSignatureBuilder {
   return new IndexSignatureBuilder(type_);
 }

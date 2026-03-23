@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Decorator } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class DecoratorBuilder extends BaseBuilder<Decorator> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class DecoratorBuilder extends BaseBuilder<Decorator> {
   }
 }
 
-export function decorator(children: Child): DecoratorBuilder {
+export function decorator(children: BaseBuilder): DecoratorBuilder {
   return new DecoratorBuilder(children);
 }

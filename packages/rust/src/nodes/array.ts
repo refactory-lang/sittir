@@ -2,20 +2,19 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrayExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ArrayBuilder extends BaseBuilder<ArrayExpression> {
-  private _length?: Child;
-  private _children: Child[] = [];
+  private _length?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  length(value: Child): this {
+  length(value: BaseBuilder): this {
     this._length = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }

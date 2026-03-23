@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ExternCrateDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ExternCrateBuilder extends BaseBuilder<ExternCrateDeclaration> {
-  private _alias?: Child;
-  private _name: Child;
-  private _children: Child[] = [];
+  private _alias?: BaseBuilder;
+  private _name: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  alias(value: Child): this {
+  alias(value: BaseBuilder): this {
     this._alias = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -64,6 +63,6 @@ class ExternCrateBuilder extends BaseBuilder<ExternCrateDeclaration> {
   }
 }
 
-export function extern_crate(name: Child): ExternCrateBuilder {
+export function extern_crate(name: BaseBuilder): ExternCrateBuilder {
   return new ExternCrateBuilder(name);
 }

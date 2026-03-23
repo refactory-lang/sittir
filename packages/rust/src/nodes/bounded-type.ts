@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { BoundedType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class BoundedTypeBuilder extends BaseBuilder<BoundedType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class BoundedTypeBuilder extends BaseBuilder<BoundedType> {
   }
 }
 
-export function bounded_type(children: Child[]): BoundedTypeBuilder {
+export function bounded_type(children: BaseBuilder[]): BoundedTypeBuilder {
   return new BoundedTypeBuilder(children);
 }

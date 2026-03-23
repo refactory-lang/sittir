@@ -2,14 +2,13 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { EnumVariantList } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class EnumVariantListBuilder extends BaseBuilder<EnumVariantList> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }

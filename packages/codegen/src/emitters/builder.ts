@@ -408,7 +408,6 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   lines.push(`import type { RenderContext, CSTChild } from '@sittir/types';`);
   lines.push(`import type { ${typeName} } from '../types.js';`);
   lines.push('');
-  lines.push(`type Child = BaseBuilder<{ kind: string }>;`);
   lines.push('');
 
   // --- Builder class ---
@@ -418,21 +417,21 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   for (const field of node.fields) {
     const fieldName = toFieldName(field.name);
     if (field.multiple) {
-      lines.push(`  private _${fieldName}: Child[] = [];`);
+      lines.push(`  private _${fieldName}: BaseBuilder[] = [];`);
     } else if (field.required) {
       if (constructorParam?.source === 'field' && constructorParam.name === field.name) {
-        lines.push(`  private _${fieldName}: Child;`);
+        lines.push(`  private _${fieldName}: BaseBuilder;`);
       } else {
-        lines.push(`  private _${fieldName}!: Child;`);
+        lines.push(`  private _${fieldName}!: BaseBuilder;`);
       }
     } else {
-      lines.push(`  private _${fieldName}?: Child;`);
+      lines.push(`  private _${fieldName}?: BaseBuilder;`);
     }
   }
 
   // Children field
   if (node.hasChildren) {
-    lines.push(`  private _children: Child[] = [];`);
+    lines.push(`  private _children: BaseBuilder[] = [];`);
   }
 
   lines.push('');
@@ -454,7 +453,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       if (ctorField?.multiple) isMultiple = true;
     }
 
-    const paramType = isMultiple ? 'Child[]' : 'Child';
+    const paramType = isMultiple ? 'BaseBuilder[]' : 'BaseBuilder';
 
     lines.push(`  constructor(${ctorParamName}: ${paramType}) {`);
     lines.push('    super();');
@@ -473,7 +472,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // Fluent setters for non-constructor fields
   for (const field of setterFields) {
     const fieldName = toFieldName(field.name);
-    const paramType = field.multiple ? 'Child[]' : 'Child';
+    const paramType = field.multiple ? 'BaseBuilder[]' : 'BaseBuilder';
     lines.push(`  ${fieldName}(value: ${paramType}): this {`);
     lines.push(`    this._${fieldName} = value;`);
     lines.push('    return this;');
@@ -483,7 +482,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // Children setter if applicable and not constructor param
   if (node.hasChildren && constructorParam?.source !== 'children') {
-    lines.push('  children(value: Child[]): this {');
+    lines.push('  children(value: BaseBuilder[]): this {');
     lines.push('    this._children = value;');
     lines.push('    return this;');
     lines.push('  }');
@@ -565,7 +564,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       if (ctorField?.multiple) isMultiple = true;
     }
 
-    const paramType = isMultiple ? 'Child[]' : 'Child';
+    const paramType = isMultiple ? 'BaseBuilder[]' : 'BaseBuilder';
     lines.push(`export function ${shortName}(${shortParamName}: ${paramType}): ${builderClassName} {`);
     lines.push(`  return new ${builderClassName}(${shortParamName});`);
     lines.push('}');

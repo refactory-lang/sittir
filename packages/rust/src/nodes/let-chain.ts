@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LetChain } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LetChainBuilder extends BaseBuilder<LetChain> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -34,6 +33,6 @@ class LetChainBuilder extends BaseBuilder<LetChain> {
   }
 }
 
-export function let_chain(children: Child[]): LetChainBuilder {
+export function let_chain(children: BaseBuilder[]): LetChainBuilder {
   return new LetChainBuilder(children);
 }

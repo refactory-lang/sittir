@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Parameter } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ParameterBuilder extends BaseBuilder<Parameter> {
-  private _pattern: Child;
-  private _type!: Child;
-  private _children: Child[] = [];
+  private _pattern: BaseBuilder;
+  private _type!: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(pattern: Child) {
+  constructor(pattern: BaseBuilder) {
     super();
     this._pattern = pattern;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -56,6 +55,6 @@ class ParameterBuilder extends BaseBuilder<Parameter> {
   }
 }
 
-export function parameter(pattern: Child): ParameterBuilder {
+export function parameter(pattern: BaseBuilder): ParameterBuilder {
   return new ParameterBuilder(pattern);
 }

@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MacroInvocation } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class MacroInvocationBuilder extends BaseBuilder<MacroInvocation> {
-  private _macro: Child;
-  private _children: Child[] = [];
+  private _macro: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(macro: Child) {
+  constructor(macro: BaseBuilder) {
     super();
     this._macro = macro;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -47,6 +46,6 @@ class MacroInvocationBuilder extends BaseBuilder<MacroInvocation> {
   }
 }
 
-export function macro_invocation(macro: Child): MacroInvocationBuilder {
+export function macro_invocation(macro: BaseBuilder): MacroInvocationBuilder {
   return new MacroInvocationBuilder(macro);
 }

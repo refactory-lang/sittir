@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LexicalDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LexicalBuilder extends BaseBuilder<LexicalDeclaration> {
-  private _kind: Child;
-  private _children: Child[] = [];
+  private _kind: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(kind: Child) {
+  constructor(kind: BaseBuilder) {
     super();
     this._kind = kind;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -44,6 +43,6 @@ class LexicalBuilder extends BaseBuilder<LexicalDeclaration> {
   }
 }
 
-export function lexical(kind: Child): LexicalBuilder {
+export function lexical(kind: BaseBuilder): LexicalBuilder {
   return new LexicalBuilder(kind);
 }

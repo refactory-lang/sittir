@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FieldPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class FieldPatternBuilder extends BaseBuilder<FieldPattern> {
-  private _name: Child;
-  private _pattern?: Child;
-  private _children: Child[] = [];
+  private _name: BaseBuilder;
+  private _pattern?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  pattern(value: Child): this {
+  pattern(value: BaseBuilder): this {
     this._pattern = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -52,6 +51,6 @@ class FieldPatternBuilder extends BaseBuilder<FieldPattern> {
   }
 }
 
-export function field_pattern(name: Child): FieldPatternBuilder {
+export function field_pattern(name: BaseBuilder): FieldPatternBuilder {
   return new FieldPatternBuilder(name);
 }

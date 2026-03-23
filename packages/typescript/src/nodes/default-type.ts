@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DefaultType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class DefaultTypeBuilder extends BaseBuilder<DefaultType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class DefaultTypeBuilder extends BaseBuilder<DefaultType> {
   }
 }
 
-export function default_type(children: Child): DefaultTypeBuilder {
+export function default_type(children: BaseBuilder): DefaultTypeBuilder {
   return new DefaultTypeBuilder(children);
 }

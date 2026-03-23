@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AmbientDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AmbientBuilder extends BaseBuilder<AmbientDeclaration> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class AmbientBuilder extends BaseBuilder<AmbientDeclaration> {
   }
 }
 
-export function ambient(children: Child[]): AmbientBuilder {
+export function ambient(children: BaseBuilder[]): AmbientBuilder {
   return new AmbientBuilder(children);
 }

@@ -2,20 +2,19 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { RangePattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class RangePatternBuilder extends BaseBuilder<RangePattern> {
-  private _left?: Child;
-  private _right?: Child;
+  private _left?: BaseBuilder;
+  private _right?: BaseBuilder;
 
   constructor() { super(); }
 
-  left(value: Child): this {
+  left(value: BaseBuilder): this {
     this._left = value;
     return this;
   }
 
-  right(value: Child): this {
+  right(value: BaseBuilder): this {
     this._right = value;
     return this;
   }

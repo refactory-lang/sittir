@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ImplItem } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ImplBuilder extends BaseBuilder<ImplItem> {
-  private _body?: Child;
-  private _trait?: Child;
-  private _type: Child;
-  private _typeParameters?: Child;
-  private _children: Child[] = [];
+  private _body?: BaseBuilder;
+  private _trait?: BaseBuilder;
+  private _type: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  trait(value: Child): this {
+  trait(value: BaseBuilder): this {
     this._trait = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -82,6 +81,6 @@ class ImplBuilder extends BaseBuilder<ImplItem> {
   }
 }
 
-export function impl(type_: Child): ImplBuilder {
+export function impl(type_: BaseBuilder): ImplBuilder {
   return new ImplBuilder(type_);
 }

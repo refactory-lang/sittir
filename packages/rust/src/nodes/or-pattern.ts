@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { OrPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class OrPatternBuilder extends BaseBuilder<OrPattern> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class OrPatternBuilder extends BaseBuilder<OrPattern> {
   }
 }
 
-export function or_pattern(children: Child[]): OrPatternBuilder {
+export function or_pattern(children: BaseBuilder[]): OrPatternBuilder {
   return new OrPatternBuilder(children);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { NamespaceExport } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class NamespaceExportBuilder extends BaseBuilder<NamespaceExport> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -40,6 +39,6 @@ class NamespaceExportBuilder extends BaseBuilder<NamespaceExport> {
   }
 }
 
-export function namespace_export(children: Child): NamespaceExportBuilder {
+export function namespace_export(children: BaseBuilder): NamespaceExportBuilder {
   return new NamespaceExportBuilder(children);
 }

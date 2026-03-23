@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrowFunction } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ArrowFunctionBuilder extends BaseBuilder<ArrowFunction> {
-  private _body: Child;
-  private _parameter?: Child;
-  private _parameters?: Child;
-  private _returnType?: Child;
-  private _typeParameters?: Child;
+  private _body: BaseBuilder;
+  private _parameter?: BaseBuilder;
+  private _parameters?: BaseBuilder;
+  private _returnType?: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  parameter(value: Child): this {
+  parameter(value: BaseBuilder): this {
     this._parameter = value;
     return this;
   }
 
-  parameters(value: Child): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: Child): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
@@ -66,6 +65,6 @@ class ArrowFunctionBuilder extends BaseBuilder<ArrowFunction> {
   }
 }
 
-export function arrow_function(body: Child): ArrowFunctionBuilder {
+export function arrow_function(body: BaseBuilder): ArrowFunctionBuilder {
   return new ArrowFunctionBuilder(body);
 }

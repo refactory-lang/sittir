@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { BaseFieldInitializer } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class BaseFieldInitializerBuilder extends BaseBuilder<BaseFieldInitializer> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class BaseFieldInitializerBuilder extends BaseBuilder<BaseFieldInitializer> {
   }
 }
 
-export function base_field_initializer(children: Child): BaseFieldInitializerBuilder {
+export function base_field_initializer(children: BaseBuilder): BaseFieldInitializerBuilder {
   return new BaseFieldInitializerBuilder(children);
 }

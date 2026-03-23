@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ReferenceType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ReferenceTypeBuilder extends BaseBuilder<ReferenceType> {
-  private _type: Child;
-  private _children: Child[] = [];
+  private _type: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -47,6 +46,6 @@ class ReferenceTypeBuilder extends BaseBuilder<ReferenceType> {
   }
 }
 
-export function reference_type(type_: Child): ReferenceTypeBuilder {
+export function reference_type(type_: BaseBuilder): ReferenceTypeBuilder {
   return new ReferenceTypeBuilder(type_);
 }

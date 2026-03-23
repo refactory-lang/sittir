@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GenericType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class GenericTypeBuilder extends BaseBuilder<GenericType> {
-  private _type: Child;
-  private _typeArguments!: Child;
+  private _type: BaseBuilder;
+  private _typeArguments!: BaseBuilder;
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  typeArguments(value: Child): this {
+  typeArguments(value: BaseBuilder): this {
     this._typeArguments = value;
     return this;
   }
@@ -43,6 +42,6 @@ class GenericTypeBuilder extends BaseBuilder<GenericType> {
   }
 }
 
-export function generic_type(type_: Child): GenericTypeBuilder {
+export function generic_type(type_: BaseBuilder): GenericTypeBuilder {
   return new GenericTypeBuilder(type_);
 }

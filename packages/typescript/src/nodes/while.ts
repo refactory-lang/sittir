@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { WhileStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class WhileBuilder extends BaseBuilder<WhileStatement> {
-  private _body: Child;
-  private _condition!: Child;
+  private _body: BaseBuilder;
+  private _condition!: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  condition(value: Child): this {
+  condition(value: BaseBuilder): this {
     this._condition = value;
     return this;
   }
@@ -45,6 +44,6 @@ class WhileBuilder extends BaseBuilder<WhileStatement> {
   }
 }
 
-export function while_(body: Child): WhileBuilder {
+export function while_(body: BaseBuilder): WhileBuilder {
   return new WhileBuilder(body);
 }

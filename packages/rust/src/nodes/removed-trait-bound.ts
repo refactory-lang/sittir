@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { RemovedTraitBound } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class RemovedTraitBoundBuilder extends BaseBuilder<RemovedTraitBound> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class RemovedTraitBoundBuilder extends BaseBuilder<RemovedTraitBound> {
   }
 }
 
-export function removed_trait_bound(children: Child): RemovedTraitBoundBuilder {
+export function removed_trait_bound(children: BaseBuilder): RemovedTraitBoundBuilder {
   return new RemovedTraitBoundBuilder(children);
 }

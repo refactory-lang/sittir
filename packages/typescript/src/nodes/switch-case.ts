@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SwitchCase } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
-  private _body: Child[] = [];
-  private _value: Child;
+  private _body: BaseBuilder[] = [];
+  private _value: BaseBuilder;
 
-  constructor(value: Child) {
+  constructor(value: BaseBuilder) {
     super();
     this._value = value;
   }
 
-  body(value: Child[]): this {
+  body(value: BaseBuilder[]): this {
     this._body = value;
     return this;
   }
@@ -49,6 +48,6 @@ class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
   }
 }
 
-export function switch_case(value: Child): SwitchCaseBuilder {
+export function switch_case(value: BaseBuilder): SwitchCaseBuilder {
   return new SwitchCaseBuilder(value);
 }

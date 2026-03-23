@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeAliasDeclaration } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TypeAliasBuilder extends BaseBuilder<TypeAliasDeclaration> {
-  private _name: Child;
-  private _typeParameters?: Child;
-  private _value!: Child;
+  private _name: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -56,6 +55,6 @@ class TypeAliasBuilder extends BaseBuilder<TypeAliasDeclaration> {
   }
 }
 
-export function type_alias(name: Child): TypeAliasBuilder {
+export function type_alias(name: BaseBuilder): TypeAliasBuilder {
   return new TypeAliasBuilder(name);
 }

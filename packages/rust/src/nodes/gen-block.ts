@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GenBlock } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class GenBlockBuilder extends BaseBuilder<GenBlock> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class GenBlockBuilder extends BaseBuilder<GenBlock> {
   }
 }
 
-export function gen_block(children: Child): GenBlockBuilder {
+export function gen_block(children: BaseBuilder): GenBlockBuilder {
   return new GenBlockBuilder(children);
 }

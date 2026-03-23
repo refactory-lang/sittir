@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { UnionType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class UnionTypeBuilder extends BaseBuilder<UnionType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class UnionTypeBuilder extends BaseBuilder<UnionType> {
   }
 }
 
-export function union_type(children: Child[]): UnionTypeBuilder {
+export function union_type(children: BaseBuilder[]): UnionTypeBuilder {
   return new UnionTypeBuilder(children);
 }

@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ThrowStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ThrowBuilder extends BaseBuilder<ThrowStatement> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -38,6 +37,6 @@ class ThrowBuilder extends BaseBuilder<ThrowStatement> {
   }
 }
 
-export function throw_(children: Child): ThrowBuilder {
+export function throw_(children: BaseBuilder): ThrowBuilder {
   return new ThrowBuilder(children);
 }

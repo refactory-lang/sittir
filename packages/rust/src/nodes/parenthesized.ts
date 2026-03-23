@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ParenthesizedExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ParenthesizedBuilder extends BaseBuilder<ParenthesizedExpression> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child) {
+  constructor(children: BaseBuilder) {
     super();
     this._children = [children];
   }
@@ -40,6 +39,6 @@ class ParenthesizedBuilder extends BaseBuilder<ParenthesizedExpression> {
   }
 }
 
-export function parenthesized(children: Child): ParenthesizedBuilder {
+export function parenthesized(children: BaseBuilder): ParenthesizedBuilder {
   return new ParenthesizedBuilder(children);
 }

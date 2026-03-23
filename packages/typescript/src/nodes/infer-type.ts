@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { InferType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class InferTypeBuilder extends BaseBuilder<InferType> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -38,6 +37,6 @@ class InferTypeBuilder extends BaseBuilder<InferType> {
   }
 }
 
-export function infer_type(children: Child[]): InferTypeBuilder {
+export function infer_type(children: BaseBuilder[]): InferTypeBuilder {
   return new InferTypeBuilder(children);
 }

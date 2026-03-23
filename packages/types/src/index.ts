@@ -370,7 +370,7 @@ export interface CSTNode {
  * (named node) or an anonymous token (keyword/punctuation/separator).
  */
 export type CSTChild =
-	| { kind: 'builder'; builder: BaseBuilder<{ kind: string }>; fieldName?: string }
+	| { kind: 'builder'; builder: BaseBuilder; fieldName?: string }
 	| { kind: 'token'; text: string; type?: string }
 	| { kind: 'sep'; text: string };
 
@@ -395,7 +395,7 @@ function offsetToPosition(offset: number, fullText: string, baseOffset: number):
  *
  * @typeParam N - The IR node type produced by this builder.
  */
-export abstract class BaseBuilder<N extends { kind: string }> {
+export abstract class BaseBuilder<N extends { kind: string } = { kind: string }> {
 	/** Render this node to source text (no validation). Override in subclasses. */
 	abstract renderImpl(ctx?: RenderContext): string;
 
@@ -414,13 +414,13 @@ export abstract class BaseBuilder<N extends { kind: string }> {
 	}
 
 	/** Render a single child builder. */
-	protected renderChild(child: BaseBuilder<{ kind: string }>, ctx?: RenderContext): string {
+	protected renderChild(child: BaseBuilder, ctx?: RenderContext): string {
 		return child.renderImpl(ctx);
 	}
 
 	/** Render an array of child builders, joined by separator. */
 	protected renderChildren(
-		children: BaseBuilder<{ kind: string }>[],
+		children: BaseBuilder[],
 		sep: string,
 		ctx?: RenderContext,
 	): string {

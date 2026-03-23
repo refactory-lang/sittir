@@ -2,14 +2,13 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SwitchDefault } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
-  private _body: Child[] = [];
+  private _body: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  body(value: Child[]): this {
+  body(value: BaseBuilder[]): this {
     this._body = value;
     return this;
   }

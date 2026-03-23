@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { InternalModule } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class InternalModuleBuilder extends BaseBuilder<InternalModule> {
-  private _body?: Child;
-  private _name: Child;
+  private _body?: BaseBuilder;
+  private _name: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  body(value: Child): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
@@ -45,6 +44,6 @@ class InternalModuleBuilder extends BaseBuilder<InternalModule> {
   }
 }
 
-export function internal_module(name: Child): InternalModuleBuilder {
+export function internal_module(name: BaseBuilder): InternalModuleBuilder {
   return new InternalModuleBuilder(name);
 }

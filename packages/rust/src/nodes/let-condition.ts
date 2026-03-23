@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { LetCondition } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class LetConditionBuilder extends BaseBuilder<LetCondition> {
-  private _pattern: Child;
-  private _value!: Child;
+  private _pattern: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(pattern: Child) {
+  constructor(pattern: BaseBuilder) {
     super();
     this._pattern = pattern;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -47,6 +46,6 @@ class LetConditionBuilder extends BaseBuilder<LetCondition> {
   }
 }
 
-export function let_condition(pattern: Child): LetConditionBuilder {
+export function let_condition(pattern: BaseBuilder): LetConditionBuilder {
   return new LetConditionBuilder(pattern);
 }

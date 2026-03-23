@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeParameter } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
-  private _bounds?: Child;
-  private _defaultType?: Child;
-  private _name: Child;
+  private _bounds?: BaseBuilder;
+  private _defaultType?: BaseBuilder;
+  private _name: BaseBuilder;
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  bounds(value: Child): this {
+  bounds(value: BaseBuilder): this {
     this._bounds = value;
     return this;
   }
 
-  defaultType(value: Child): this {
+  defaultType(value: BaseBuilder): this {
     this._defaultType = value;
     return this;
   }
@@ -58,6 +57,6 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
   }
 }
 
-export function type_parameter(name: Child): TypeParameterBuilder {
+export function type_parameter(name: BaseBuilder): TypeParameterBuilder {
   return new TypeParameterBuilder(name);
 }

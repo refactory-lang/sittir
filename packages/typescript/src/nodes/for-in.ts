@@ -2,42 +2,41 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ForInStatement } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ForInBuilder extends BaseBuilder<ForInStatement> {
-  private _body: Child;
-  private _kind?: Child;
-  private _left!: Child;
-  private _operator!: Child;
-  private _right!: Child;
-  private _value?: Child;
+  private _body: BaseBuilder;
+  private _kind?: BaseBuilder;
+  private _left!: BaseBuilder;
+  private _operator!: BaseBuilder;
+  private _right!: BaseBuilder;
+  private _value?: BaseBuilder;
 
-  constructor(body: Child) {
+  constructor(body: BaseBuilder) {
     super();
     this._body = body;
   }
 
-  kind(value: Child): this {
+  kind(value: BaseBuilder): this {
     this._kind = value;
     return this;
   }
 
-  left(value: Child): this {
+  left(value: BaseBuilder): this {
     this._left = value;
     return this;
   }
 
-  operator(value: Child): this {
+  operator(value: BaseBuilder): this {
     this._operator = value;
     return this;
   }
 
-  right(value: Child): this {
+  right(value: BaseBuilder): this {
     this._right = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -80,6 +79,6 @@ class ForInBuilder extends BaseBuilder<ForInStatement> {
   }
 }
 
-export function for_in(body: Child): ForInBuilder {
+export function for_in(body: BaseBuilder): ForInBuilder {
   return new ForInBuilder(body);
 }

@@ -2,30 +2,29 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ConditionalType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ConditionalTypeBuilder extends BaseBuilder<ConditionalType> {
-  private _alternative: Child;
-  private _consequence!: Child;
-  private _left!: Child;
-  private _right!: Child;
+  private _alternative: BaseBuilder;
+  private _consequence!: BaseBuilder;
+  private _left!: BaseBuilder;
+  private _right!: BaseBuilder;
 
-  constructor(alternative: Child) {
+  constructor(alternative: BaseBuilder) {
     super();
     this._alternative = alternative;
   }
 
-  consequence(value: Child): this {
+  consequence(value: BaseBuilder): this {
     this._consequence = value;
     return this;
   }
 
-  left(value: Child): this {
+  left(value: BaseBuilder): this {
     this._left = value;
     return this;
   }
 
-  right(value: Child): this {
+  right(value: BaseBuilder): this {
     this._right = value;
     return this;
   }
@@ -67,6 +66,6 @@ class ConditionalTypeBuilder extends BaseBuilder<ConditionalType> {
   }
 }
 
-export function conditional_type(alternative: Child): ConditionalTypeBuilder {
+export function conditional_type(alternative: BaseBuilder): ConditionalTypeBuilder {
   return new ConditionalTypeBuilder(alternative);
 }

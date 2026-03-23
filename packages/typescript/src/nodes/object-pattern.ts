@@ -2,14 +2,13 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ObjectPattern } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ObjectPatternBuilder extends BaseBuilder<ObjectPattern> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }

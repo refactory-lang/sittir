@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { TypeCastExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
-  private _type: Child;
-  private _value!: Child;
+  private _type: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(type_: Child) {
+  constructor(type_: BaseBuilder) {
     super();
     this._type = type_;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -45,6 +44,6 @@ class TypeCastBuilder extends BaseBuilder<TypeCastExpression> {
   }
 }
 
-export function type_cast(type_: Child): TypeCastBuilder {
+export function type_cast(type_: BaseBuilder): TypeCastBuilder {
   return new TypeCastBuilder(type_);
 }

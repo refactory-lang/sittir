@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { UseAsClause } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class UseAsClauseBuilder extends BaseBuilder<UseAsClause> {
-  private _alias: Child;
-  private _path!: Child;
+  private _alias: BaseBuilder;
+  private _path!: BaseBuilder;
 
-  constructor(alias: Child) {
+  constructor(alias: BaseBuilder) {
     super();
     this._alias = alias;
   }
 
-  path(value: Child): this {
+  path(value: BaseBuilder): this {
     this._path = value;
     return this;
   }
@@ -45,6 +44,6 @@ class UseAsClauseBuilder extends BaseBuilder<UseAsClause> {
   }
 }
 
-export function use_as_clause(alias: Child): UseAsClauseBuilder {
+export function use_as_clause(alias: BaseBuilder): UseAsClauseBuilder {
   return new UseAsClauseBuilder(alias);
 }

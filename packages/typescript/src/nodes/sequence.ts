@@ -2,12 +2,11 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { SequenceExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class SequenceBuilder extends BaseBuilder<SequenceExpression> {
-  private _children: Child[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: Child[]) {
+  constructor(children: BaseBuilder[]) {
     super();
     this._children = children;
   }
@@ -36,6 +35,6 @@ class SequenceBuilder extends BaseBuilder<SequenceExpression> {
   }
 }
 
-export function sequence(children: Child[]): SequenceBuilder {
+export function sequence(children: BaseBuilder[]): SequenceBuilder {
   return new SequenceBuilder(children);
 }

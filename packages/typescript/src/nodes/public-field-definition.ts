@@ -2,36 +2,35 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { PublicFieldDefinition } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class PublicFieldDefinitionBuilder extends BaseBuilder<PublicFieldDefinition> {
-  private _decorator: Child[] = [];
-  private _name: Child;
-  private _type?: Child;
-  private _value?: Child;
-  private _children: Child[] = [];
+  private _decorator: BaseBuilder[] = [];
+  private _name: BaseBuilder;
+  private _type?: BaseBuilder;
+  private _value?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: Child) {
+  constructor(name: BaseBuilder) {
     super();
     this._name = name;
   }
 
-  decorator(value: Child[]): this {
+  decorator(value: BaseBuilder[]): this {
     this._decorator = value;
     return this;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -80,6 +79,6 @@ class PublicFieldDefinitionBuilder extends BaseBuilder<PublicFieldDefinition> {
   }
 }
 
-export function public_field_definition(name: Child): PublicFieldDefinitionBuilder {
+export function public_field_definition(name: BaseBuilder): PublicFieldDefinitionBuilder {
   return new PublicFieldDefinitionBuilder(name);
 }

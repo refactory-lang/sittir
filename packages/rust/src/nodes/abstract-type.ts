@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AbstractType } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class AbstractTypeBuilder extends BaseBuilder<AbstractType> {
-  private _trait: Child;
-  private _children: Child[] = [];
+  private _trait: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(trait: Child) {
+  constructor(trait: BaseBuilder) {
     super();
     this._trait = trait;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
@@ -47,6 +46,6 @@ class AbstractTypeBuilder extends BaseBuilder<AbstractType> {
   }
 }
 
-export function abstract_type(trait: Child): AbstractTypeBuilder {
+export function abstract_type(trait: BaseBuilder): AbstractTypeBuilder {
   return new AbstractTypeBuilder(trait);
 }

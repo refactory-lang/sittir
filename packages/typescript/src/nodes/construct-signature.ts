@@ -2,24 +2,23 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ConstructSignature } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class ConstructSignatureBuilder extends BaseBuilder<ConstructSignature> {
-  private _parameters: Child;
-  private _type?: Child;
-  private _typeParameters?: Child;
+  private _parameters: BaseBuilder;
+  private _type?: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
 
-  constructor(parameters: Child) {
+  constructor(parameters: BaseBuilder) {
     super();
     this._parameters = parameters;
   }
 
-  type(value: Child): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  typeParameters(value: Child): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
@@ -54,6 +53,6 @@ class ConstructSignatureBuilder extends BaseBuilder<ConstructSignature> {
   }
 }
 
-export function construct_signature(parameters: Child): ConstructSignatureBuilder {
+export function construct_signature(parameters: BaseBuilder): ConstructSignatureBuilder {
   return new ConstructSignatureBuilder(parameters);
 }

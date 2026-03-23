@@ -2,20 +2,19 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { VariadicParameter } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class VariadicParameterBuilder extends BaseBuilder<VariadicParameter> {
-  private _pattern?: Child;
-  private _children: Child[] = [];
+  private _pattern?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
   constructor() { super(); }
 
-  pattern(value: Child): this {
+  pattern(value: BaseBuilder): this {
     this._pattern = value;
     return this;
   }
 
-  children(value: Child[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }

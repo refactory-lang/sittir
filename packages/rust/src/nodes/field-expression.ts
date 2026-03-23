@@ -2,18 +2,17 @@ import { BaseBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FieldExpression } from '../types.js';
 
-type Child = BaseBuilder<{ kind: string }>;
 
 class FieldBuilder extends BaseBuilder<FieldExpression> {
-  private _field: Child;
-  private _value!: Child;
+  private _field: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(field: Child) {
+  constructor(field: BaseBuilder) {
     super();
     this._field = field;
   }
 
-  value(value: Child): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
@@ -45,6 +44,6 @@ class FieldBuilder extends BaseBuilder<FieldExpression> {
   }
 }
 
-export function field(field: Child): FieldBuilder {
+export function field(field: BaseBuilder): FieldBuilder {
   return new FieldBuilder(field);
 }
