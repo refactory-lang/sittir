@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { SelfParameter, SelfParameterConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { SelfParameter } from '../types.js';
 
-export function selfParameter(config: SelfParameterConfig): SelfParameter {
-  return {
-    kind: 'self_parameter',
-    ...config,
-  } as SelfParameter;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class SelfParameterBuilder implements BuilderTerminal<SelfParameter> {
-  private _children: string[] = [];
+class SelfParameterBuilder extends BaseBuilder<SelfParameter> {
+  private _children: Child[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: Child[]) {
+    super();
     this._children = children;
   }
 
-  build(): SelfParameter {
-    return selfParameter({
-      children: this._children,
-    } as SelfParameterConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): SelfParameter {
+    return {
+      kind: 'self_parameter',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as SelfParameter;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'self_parameter'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function self_parameter(children: string[]): SelfParameterBuilder {
+export function self_parameter(children: Child[]): SelfParameterBuilder {
   return new SelfParameterBuilder(children);
 }

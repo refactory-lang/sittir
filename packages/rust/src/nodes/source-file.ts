@@ -1,37 +1,38 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { SourceFile, SourceFileConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { SourceFile } from '../types.js';
 
-export function sourceFile(config: SourceFileConfig): SourceFile {
-  return {
-    kind: 'source_file',
-    ...config,
-  } as SourceFile;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class SourceFileBuilder implements BuilderTerminal<SourceFile> {
-  private _children: string[] = [];
+class SourceFileBuilder extends BaseBuilder<SourceFile> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): SourceFile {
-    return sourceFile({
-      children: this._children,
-    } as SourceFileConfig);
+  renderImpl(ctx?: RenderContext): string {
+    return this.renderChildren(this._children, '\n\n', ctx);
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): SourceFile {
+    return {
+      kind: 'source_file',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as SourceFile;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'source_file'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

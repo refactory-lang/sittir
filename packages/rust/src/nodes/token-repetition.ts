@@ -1,37 +1,40 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TokenRepetition, TokenRepetitionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TokenRepetition } from '../types.js';
 
-export function tokenRepetition(config: TokenRepetitionConfig): TokenRepetition {
-  return {
-    kind: 'token_repetition',
-    ...config,
-  } as TokenRepetition;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class TokenRepetitionBuilder implements BuilderTerminal<TokenRepetition> {
-  private _children: string[] = [];
+class TokenRepetitionBuilder extends BaseBuilder<TokenRepetition> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): TokenRepetition {
-    return tokenRepetition({
-      children: this._children,
-    } as TokenRepetitionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TokenRepetition {
+    return {
+      kind: 'token_repetition',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TokenRepetition;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'token_repetition'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

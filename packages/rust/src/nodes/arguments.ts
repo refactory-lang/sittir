@@ -1,37 +1,40 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { Arguments, ArgumentsConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { Arguments } from '../types.js';
 
-function createArguments(config: ArgumentsConfig): Arguments {
-  return {
-    kind: 'arguments',
-    ...config,
-  } as Arguments;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class ArgumentsBuilder implements BuilderTerminal<Arguments> {
-  private _children: string[] = [];
+class ArgumentsBuilder extends BaseBuilder<Arguments> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): Arguments {
-    return createArguments({
-      children: this._children,
-    } as ArgumentsConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): Arguments {
+    return {
+      kind: 'arguments',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as Arguments;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'arguments'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

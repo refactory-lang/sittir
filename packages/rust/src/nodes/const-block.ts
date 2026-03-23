@@ -1,37 +1,47 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ConstBlock, ConstBlockConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ConstBlock } from '../types.js';
 
-export function constBlock(config: ConstBlockConfig): ConstBlock {
-  return {
-    kind: 'const_block',
-    ...config,
-  } as ConstBlock;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class ConstBlockBuilder implements BuilderTerminal<ConstBlock> {
-  private _body: string = '';
+class ConstBlockBuilder extends BaseBuilder<ConstBlock> {
+  private _body: Child;
 
-  constructor(body: string) {
+  constructor(body: Child) {
+    super();
     this._body = body;
   }
 
-  build(): ConstBlock {
-    return constBlock({
-      body: this._body,
-    } as ConstBlockConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._body) {
+      parts.push('{');
+      parts.push(this.renderChild(this._body, ctx));
+      parts.push('}');
+    }
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ConstBlock {
+    return {
+      kind: 'const_block',
+      body: this.renderChild(this._body, ctx),
+    } as unknown as ConstBlock;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'const_block'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._body) {
+      parts.push({ kind: 'token', text: '{', type: '{' });
+      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+      parts.push({ kind: 'token', text: '}', type: '}' });
+    }
+    return parts;
   }
 }
 
-export function const_block(body: string): ConstBlockBuilder {
+export function const_block(body: Child): ConstBlockBuilder {
   return new ConstBlockBuilder(body);
 }

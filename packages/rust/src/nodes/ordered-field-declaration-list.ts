@@ -1,44 +1,51 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { OrderedFieldDeclarationList, OrderedFieldDeclarationListConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { OrderedFieldDeclarationList } from '../types.js';
 
-export function orderedFieldDeclarationList(config: OrderedFieldDeclarationListConfig): OrderedFieldDeclarationList {
-  return {
-    kind: 'ordered_field_declaration_list',
-    ...config,
-  } as OrderedFieldDeclarationList;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class OrderedFieldDeclarationListBuilder implements BuilderTerminal<OrderedFieldDeclarationList> {
-  private _type: string[] = [];
-  private _children: string[] = [];
+class OrderedFieldDeclarationListBuilder extends BaseBuilder<OrderedFieldDeclarationList> {
+  private _type: Child[] = [];
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  type(value: string[]): this {
+  type(value: Child[]): this {
     this._type = value;
     return this;
   }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): OrderedFieldDeclarationList {
-    return orderedFieldDeclarationList({
-      type: this._type,
-      children: this._children,
-    } as OrderedFieldDeclarationListConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._type.length > 0) parts.push(this.renderChildren(this._type, ', ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): OrderedFieldDeclarationList {
+    return {
+      kind: 'ordered_field_declaration_list',
+      type: this._type.map(c => this.renderChild(c, ctx)),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as OrderedFieldDeclarationList;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'ordered_field_declaration_list'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._type) {
+      parts.push({ kind: 'builder', builder: child, fieldName: 'type' });
+    }
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

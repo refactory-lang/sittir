@@ -1,51 +1,63 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { FieldPattern, FieldPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { FieldPattern } from '../types.js';
 
-export function fieldPattern(config: FieldPatternConfig): FieldPattern {
-  return {
-    kind: 'field_pattern',
-    ...config,
-  } as FieldPattern;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class FieldPatternBuilder implements BuilderTerminal<FieldPattern> {
-  private _name: string = '';
-  private _pattern?: string;
-  private _children?: string;
+class FieldPatternBuilder extends BaseBuilder<FieldPattern> {
+  private _name: Child;
+  private _pattern?: Child;
+  private _children: Child[] = [];
 
-  constructor(name: string) {
+  constructor(name: Child) {
+    super();
     this._name = name;
   }
 
-  pattern(value: string): this {
+  pattern(value: Child): this {
     this._pattern = value;
     return this;
   }
 
-  children(value: string): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): FieldPattern {
-    return fieldPattern({
-      name: this._name,
-      pattern: this._pattern,
-      children: this._children,
-    } as FieldPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) {
+      parts.push(this.renderChildren(this._children, ' ', ctx));
+    }
+    parts.push('field');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._pattern) parts.push(this.renderChild(this._pattern, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): FieldPattern {
+    return {
+      kind: 'field_pattern',
+      name: this.renderChild(this._name, ctx),
+      pattern: this._pattern ? this.renderChild(this._pattern, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as FieldPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'field_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'field' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
+    return parts;
   }
 }
 
-export function field_pattern(name: string): FieldPatternBuilder {
+export function field_pattern(name: Child): FieldPatternBuilder {
   return new FieldPatternBuilder(name);
 }

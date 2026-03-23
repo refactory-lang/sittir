@@ -1,51 +1,63 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ExternCrateDeclaration, ExternCrateDeclarationConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ExternCrateDeclaration } from '../types.js';
 
-export function externCrateDeclaration(config: ExternCrateDeclarationConfig): ExternCrateDeclaration {
-  return {
-    kind: 'extern_crate_declaration',
-    ...config,
-  } as ExternCrateDeclaration;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class ExternCrateBuilder implements BuilderTerminal<ExternCrateDeclaration> {
-  private _alias?: string;
-  private _name: string = '';
-  private _children: string[] = [];
+class ExternCrateBuilder extends BaseBuilder<ExternCrateDeclaration> {
+  private _alias?: Child;
+  private _name: Child;
+  private _children: Child[] = [];
 
-  constructor(name: string) {
+  constructor(name: Child) {
+    super();
     this._name = name;
   }
 
-  alias(value: string): this {
+  alias(value: Child): this {
     this._alias = value;
     return this;
   }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): ExternCrateDeclaration {
-    return externCrateDeclaration({
-      alias: this._alias,
-      name: this._name,
-      children: this._children,
-    } as ExternCrateDeclarationConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) {
+      parts.push(this.renderChildren(this._children, ' ', ctx));
+    }
+    parts.push('extern crate');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ExternCrateDeclaration {
+    return {
+      kind: 'extern_crate_declaration',
+      alias: this._alias ? this.renderChild(this._alias, ctx) : undefined,
+      name: this.renderChild(this._name, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ExternCrateDeclaration;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'extern_crate_declaration'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'extern crate' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
+    return parts;
   }
 }
 
-export function extern_crate(name: string): ExternCrateBuilder {
+export function extern_crate(name: Child): ExternCrateBuilder {
   return new ExternCrateBuilder(name);
 }

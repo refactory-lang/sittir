@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { AttributeItem, AttributeItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { AttributeItem } from '../types.js';
 
-export function attributeItem(config: AttributeItemConfig): AttributeItem {
-  return {
-    kind: 'attribute_item',
-    ...config,
-  } as AttributeItem;
+type Child = BaseBuilder<{ kind: string }>;
+
+class AttributeBuilder extends BaseBuilder<AttributeItem> {
+  private _children: Child[] = [];
+
+  constructor(children: Child) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('attribute');
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): AttributeItem {
+    return {
+      kind: 'attribute_item',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as AttributeItem;
+  }
+
+  override get nodeKind(): string { return 'attribute_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'attribute' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class AttributeBuilder implements BuilderTerminal<AttributeItem> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): AttributeItem {
-    return attributeItem({
-      children: this._children,
-    } as AttributeItemConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function attribute(children: string): AttributeBuilder {
+export function attribute(children: Child): AttributeBuilder {
   return new AttributeBuilder(children);
 }

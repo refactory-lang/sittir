@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { OrPattern, OrPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { OrPattern } from '../types.js';
 
-export function orPattern(config: OrPatternConfig): OrPattern {
-  return {
-    kind: 'or_pattern',
-    ...config,
-  } as OrPattern;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class OrPatternBuilder implements BuilderTerminal<OrPattern> {
-  private _children: string[] = [];
+class OrPatternBuilder extends BaseBuilder<OrPattern> {
+  private _children: Child[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: Child[]) {
+    super();
     this._children = children;
   }
 
-  build(): OrPattern {
-    return orPattern({
-      children: this._children,
-    } as OrPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('or');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): OrPattern {
+    return {
+      kind: 'or_pattern',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as OrPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'or_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'or' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function or_pattern(children: string[]): OrPatternBuilder {
+export function or_pattern(children: Child[]): OrPatternBuilder {
   return new OrPatternBuilder(children);
 }

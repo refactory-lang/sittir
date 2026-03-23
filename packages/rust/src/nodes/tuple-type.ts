@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TupleType, TupleTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TupleType } from '../types.js';
 
-export function tupleType(config: TupleTypeConfig): TupleType {
-  return {
-    kind: 'tuple_type',
-    ...config,
-  } as TupleType;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class TupleTypeBuilder implements BuilderTerminal<TupleType> {
-  private _children: string[] = [];
+class TupleTypeBuilder extends BaseBuilder<TupleType> {
+  private _children: Child[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: Child[]) {
+    super();
     this._children = children;
   }
 
-  build(): TupleType {
-    return tupleType({
-      children: this._children,
-    } as TupleTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('tuple');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TupleType {
+    return {
+      kind: 'tuple_type',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TupleType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'tuple_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'tuple' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function tuple_type(children: string[]): TupleTypeBuilder {
+export function tuple_type(children: Child[]): TupleTypeBuilder {
   return new TupleTypeBuilder(children);
 }

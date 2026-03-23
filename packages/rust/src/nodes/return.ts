@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ReturnExpression, ReturnExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ReturnExpression } from '../types.js';
 
-export function returnExpression(config: ReturnExpressionConfig): ReturnExpression {
-  return {
-    kind: 'return_expression',
-    ...config,
-  } as ReturnExpression;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class ReturnBuilder implements BuilderTerminal<ReturnExpression> {
-  private _children?: string;
+class ReturnBuilder extends BaseBuilder<ReturnExpression> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): ReturnExpression {
-    return returnExpression({
-      children: this._children,
-    } as ReturnExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('return');
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ReturnExpression {
+    return {
+      kind: 'return_expression',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ReturnExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'return_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'return' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

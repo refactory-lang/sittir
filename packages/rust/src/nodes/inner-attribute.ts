@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { InnerAttributeItem, InnerAttributeItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { InnerAttributeItem } from '../types.js';
 
-export function innerAttributeItem(config: InnerAttributeItemConfig): InnerAttributeItem {
-  return {
-    kind: 'inner_attribute_item',
-    ...config,
-  } as InnerAttributeItem;
+type Child = BaseBuilder<{ kind: string }>;
+
+class InnerAttributeBuilder extends BaseBuilder<InnerAttributeItem> {
+  private _children: Child[] = [];
+
+  constructor(children: Child) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('inner attribute');
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): InnerAttributeItem {
+    return {
+      kind: 'inner_attribute_item',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as InnerAttributeItem;
+  }
+
+  override get nodeKind(): string { return 'inner_attribute_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'inner attribute' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class InnerAttributeBuilder implements BuilderTerminal<InnerAttributeItem> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): InnerAttributeItem {
-    return innerAttributeItem({
-      children: this._children,
-    } as InnerAttributeItemConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function inner_attribute(children: string): InnerAttributeBuilder {
+export function inner_attribute(children: Child): InnerAttributeBuilder {
   return new InnerAttributeBuilder(children);
 }

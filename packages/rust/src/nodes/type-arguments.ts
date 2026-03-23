@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TypeArguments, TypeArgumentsConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TypeArguments } from '../types.js';
 
-export function typeArguments(config: TypeArgumentsConfig): TypeArguments {
-  return {
-    kind: 'type_arguments',
-    ...config,
-  } as TypeArguments;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class TypeArgumentsBuilder implements BuilderTerminal<TypeArguments> {
-  private _children: string[] = [];
+class TypeArgumentsBuilder extends BaseBuilder<TypeArguments> {
+  private _children: Child[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: Child[]) {
+    super();
     this._children = children;
   }
 
-  build(): TypeArguments {
-    return typeArguments({
-      children: this._children,
-    } as TypeArgumentsConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TypeArguments {
+    return {
+      kind: 'type_arguments',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TypeArguments;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'type_arguments'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function type_arguments(children: string[]): TypeArgumentsBuilder {
+export function type_arguments(children: Child[]): TypeArgumentsBuilder {
   return new TypeArgumentsBuilder(children);
 }

@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TryExpression, TryExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TryExpression } from '../types.js';
 
-export function tryExpression(config: TryExpressionConfig): TryExpression {
-  return {
-    kind: 'try_expression',
-    ...config,
-  } as TryExpression;
+type Child = BaseBuilder<{ kind: string }>;
+
+class TryBuilder extends BaseBuilder<TryExpression> {
+  private _children: Child[] = [];
+
+  constructor(children: Child) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('try');
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): TryExpression {
+    return {
+      kind: 'try_expression',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TryExpression;
+  }
+
+  override get nodeKind(): string { return 'try_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'try' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class TryBuilder implements BuilderTerminal<TryExpression> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): TryExpression {
-    return tryExpression({
-      children: this._children,
-    } as TryExpressionConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function try_(children: string): TryBuilder {
+export function try_(children: Child): TryBuilder {
   return new TryBuilder(children);
 }

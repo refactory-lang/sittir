@@ -1,51 +1,59 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { Attribute, AttributeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { Attribute } from '../types.js';
 
-function createAttribute(config: AttributeConfig): Attribute {
-  return {
-    kind: 'attribute',
-    ...config,
-  } as Attribute;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class AttributeBuilder implements BuilderTerminal<Attribute> {
-  private _arguments?: string;
-  private _value?: string;
-  private _children: string;
+class AttributeBuilder extends BaseBuilder<Attribute> {
+  private _arguments?: Child;
+  private _value?: Child;
+  private _children: Child[] = [];
 
-  constructor(children: string) {
-    this._children = children;
+  constructor(children: Child) {
+    super();
+    this._children = [children];
   }
 
-  arguments(value: string): this {
+  arguments(value: Child): this {
     this._arguments = value;
     return this;
   }
 
-  value(value: string): this {
+  value(value: Child): this {
     this._value = value;
     return this;
   }
 
-  build(): Attribute {
-    return createAttribute({
-      arguments: this._arguments,
-      value: this._value,
-      children: this._children,
-    } as AttributeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    if (this._arguments) parts.push(this.renderChild(this._arguments, ctx));
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): Attribute {
+    return {
+      kind: 'attribute',
+      arguments: this._arguments ? this.renderChild(this._arguments, ctx) : undefined,
+      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as Attribute;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'attribute'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    if (this._arguments) parts.push({ kind: 'builder', builder: this._arguments, fieldName: 'arguments' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function attribute(children: string): AttributeBuilder {
+export function attribute(children: Child): AttributeBuilder {
   return new AttributeBuilder(children);
 }

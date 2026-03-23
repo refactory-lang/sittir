@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { SlicePattern, SlicePatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { SlicePattern } from '../types.js';
 
-export function slicePattern(config: SlicePatternConfig): SlicePattern {
-  return {
-    kind: 'slice_pattern',
-    ...config,
-  } as SlicePattern;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class SlicePatternBuilder implements BuilderTerminal<SlicePattern> {
-  private _children: string[] = [];
+class SlicePatternBuilder extends BaseBuilder<SlicePattern> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): SlicePattern {
-    return slicePattern({
-      children: this._children,
-    } as SlicePatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('slice');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): SlicePattern {
+    return {
+      kind: 'slice_pattern',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as SlicePattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'slice_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'slice' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

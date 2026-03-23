@@ -1,37 +1,40 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { EnumVariantList, EnumVariantListConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { EnumVariantList } from '../types.js';
 
-export function enumVariantList(config: EnumVariantListConfig): EnumVariantList {
-  return {
-    kind: 'enum_variant_list',
-    ...config,
-  } as EnumVariantList;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class EnumVariantListBuilder implements BuilderTerminal<EnumVariantList> {
-  private _children: string[] = [];
+class EnumVariantListBuilder extends BaseBuilder<EnumVariantList> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): EnumVariantList {
-    return enumVariantList({
-      children: this._children,
-    } as EnumVariantListConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): EnumVariantList {
+    return {
+      kind: 'enum_variant_list',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as EnumVariantList;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'enum_variant_list'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

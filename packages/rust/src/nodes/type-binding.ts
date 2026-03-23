@@ -1,51 +1,57 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TypeBinding, TypeBindingConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TypeBinding } from '../types.js';
 
-export function typeBinding(config: TypeBindingConfig): TypeBinding {
-  return {
-    kind: 'type_binding',
-    ...config,
-  } as TypeBinding;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class TypeBindingBuilder implements BuilderTerminal<TypeBinding> {
-  private _name: string = '';
-  private _type: string = '';
-  private _typeArguments?: string;
+class TypeBindingBuilder extends BaseBuilder<TypeBinding> {
+  private _name: Child;
+  private _type!: Child;
+  private _typeArguments?: Child;
 
-  constructor(name: string) {
+  constructor(name: Child) {
+    super();
     this._name = name;
   }
 
-  type(value: string): this {
+  type(value: Child): this {
     this._type = value;
     return this;
   }
 
-  typeArguments(value: string): this {
+  typeArguments(value: Child): this {
     this._typeArguments = value;
     return this;
   }
 
-  build(): TypeBinding {
-    return typeBinding({
-      name: this._name,
-      type: this._type,
-      typeArguments: this._typeArguments,
-    } as TypeBindingConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._typeArguments) parts.push(this.renderChild(this._typeArguments, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TypeBinding {
+    return {
+      kind: 'type_binding',
+      name: this.renderChild(this._name, ctx),
+      type: this._type ? this.renderChild(this._type, ctx) : undefined,
+      typeArguments: this._typeArguments ? this.renderChild(this._typeArguments, ctx) : undefined,
+    } as unknown as TypeBinding;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'type_binding'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    if (this._typeArguments) parts.push({ kind: 'builder', builder: this._typeArguments, fieldName: 'typeArguments' });
+    return parts;
   }
 }
 
-export function type_binding(name: string): TypeBindingBuilder {
+export function type_binding(name: Child): TypeBindingBuilder {
   return new TypeBindingBuilder(name);
 }

@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ExpressionStatement, ExpressionStatementConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ExpressionStatement } from '../types.js';
 
-export function expressionStatement(config: ExpressionStatementConfig): ExpressionStatement {
-  return {
-    kind: 'expression_statement',
-    ...config,
-  } as ExpressionStatement;
+type Child = BaseBuilder<{ kind: string }>;
+
+class ExpressionBuilder extends BaseBuilder<ExpressionStatement> {
+  private _children: Child[] = [];
+
+  constructor(children: Child) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('expression');
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): ExpressionStatement {
+    return {
+      kind: 'expression_statement',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ExpressionStatement;
+  }
+
+  override get nodeKind(): string { return 'expression_statement'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'expression' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class ExpressionBuilder implements BuilderTerminal<ExpressionStatement> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): ExpressionStatement {
-    return expressionStatement({
-      children: this._children,
-    } as ExpressionStatementConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function expression(children: string): ExpressionBuilder {
+export function expression(children: Child): ExpressionBuilder {
   return new ExpressionBuilder(children);
 }

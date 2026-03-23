@@ -1,58 +1,80 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { UnionItem, UnionItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { UnionItem } from '../types.js';
 
-export function unionItem(config: UnionItemConfig): UnionItem {
-  return {
-    kind: 'union_item',
-    ...config,
-  } as UnionItem;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class UnionBuilder implements BuilderTerminal<UnionItem> {
-  private _body: string = '';
-  private _name: string = '';
-  private _typeParameters?: string;
-  private _children: string[] = [];
+class UnionBuilder extends BaseBuilder<UnionItem> {
+  private _body!: Child;
+  private _name: Child;
+  private _typeParameters?: Child;
+  private _children: Child[] = [];
 
-  constructor(name: string) {
+  constructor(name: Child) {
+    super();
     this._name = name;
   }
 
-  body(value: string): this {
+  body(value: Child): this {
     this._body = value;
     return this;
   }
 
-  typeParameters(value: string): this {
+  typeParameters(value: Child): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): UnionItem {
-    return unionItem({
-      body: this._body,
-      name: this._name,
-      typeParameters: this._typeParameters,
-      children: this._children,
-    } as UnionItemConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) {
+      parts.push(this.renderChildren(this._children, ' ', ctx));
+    }
+    parts.push('union');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
+    if (this._body) {
+      parts.push('{');
+      parts.push(this.renderChild(this._body, ctx));
+      parts.push('}');
+    }
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): UnionItem {
+    return {
+      kind: 'union_item',
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      name: this.renderChild(this._name, ctx),
+      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as UnionItem;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'union_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'union' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
+    if (this._body) {
+      parts.push({ kind: 'token', text: '{', type: '{' });
+      parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+      parts.push({ kind: 'token', text: '}', type: '}' });
+    }
+    return parts;
   }
 }
 
-export function union(name: string): UnionBuilder {
+export function union(name: Child): UnionBuilder {
   return new UnionBuilder(name);
 }

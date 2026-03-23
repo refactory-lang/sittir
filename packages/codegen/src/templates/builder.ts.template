@@ -7,7 +7,7 @@
 
 import type { NodeType, BuilderConfig, BuilderTerminal } from '@sittir/types';
 import type {{GRAMMAR_TYPE}} from '@codemod.com/jssg-types/langs/{{GRAMMAR}}';
-import { renderSilent, assertValid } from '../render.ts';
+import { renderImpl, assertValid } from '../render.ts';
 
 export type {{TYPE_NAME}} = NodeType<{{GRAMMAR_TYPE}}, '{{NODE_KIND}}'>;
 export type {{TYPE_NAME}}Config = BuilderConfig<{{GRAMMAR_TYPE}}, {{TYPE_NAME}}>;
@@ -39,11 +39,11 @@ class {{BUILDER_CLASS_NAME}} implements BuilderTerminal<{{TYPE_NAME}}> {
 	}
 
 	render(): string {
-		return assertValid(renderSilent(this.build()));
+		return assertValid(renderImpl(this.build()));
 	}
 
-	renderSilent(): string {
-		return renderSilent(this.build());
+	renderImpl(): string {
+		return renderImpl(this.build());
 	}
 }
 

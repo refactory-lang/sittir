@@ -1,44 +1,48 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { LetCondition, LetConditionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { LetCondition } from '../types.js';
 
-export function letCondition(config: LetConditionConfig): LetCondition {
-  return {
-    kind: 'let_condition',
-    ...config,
-  } as LetCondition;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class LetConditionBuilder implements BuilderTerminal<LetCondition> {
-  private _pattern: string = '';
-  private _value: string = '';
+class LetConditionBuilder extends BaseBuilder<LetCondition> {
+  private _pattern: Child;
+  private _value!: Child;
 
-  constructor(pattern: string) {
+  constructor(pattern: Child) {
+    super();
     this._pattern = pattern;
   }
 
-  value(value: string): this {
+  value(value: Child): this {
     this._value = value;
     return this;
   }
 
-  build(): LetCondition {
-    return letCondition({
-      pattern: this._pattern,
-      value: this._value,
-    } as LetConditionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._pattern) parts.push(this.renderChild(this._pattern, ctx));
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): LetCondition {
+    return {
+      kind: 'let_condition',
+      pattern: this.renderChild(this._pattern, ctx),
+      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+    } as unknown as LetCondition;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'let_condition'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._pattern) parts.push({ kind: 'builder', builder: this._pattern, fieldName: 'pattern' });
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    return parts;
   }
 }
 
-export function let_condition(pattern: string): LetConditionBuilder {
+export function let_condition(pattern: Child): LetConditionBuilder {
   return new LetConditionBuilder(pattern);
 }

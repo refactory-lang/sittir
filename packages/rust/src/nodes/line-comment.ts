@@ -1,51 +1,56 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { LineComment, LineCommentConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { LineComment } from '../types.js';
 
-export function lineComment(config: LineCommentConfig): LineComment {
-  return {
-    kind: 'line_comment',
-    ...config,
-  } as LineComment;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class LineCommentBuilder implements BuilderTerminal<LineComment> {
-  private _doc?: string;
-  private _inner?: string;
-  private _outer?: string;
+class LineCommentBuilder extends BaseBuilder<LineComment> {
+  private _doc?: Child;
+  private _inner?: Child;
+  private _outer?: Child;
 
-  constructor() {}
+  constructor() { super(); }
 
-  doc(value: string): this {
+  doc(value: Child): this {
     this._doc = value;
     return this;
   }
 
-  inner(value: string): this {
+  inner(value: Child): this {
     this._inner = value;
     return this;
   }
 
-  outer(value: string): this {
+  outer(value: Child): this {
     this._outer = value;
     return this;
   }
 
-  build(): LineComment {
-    return lineComment({
-      doc: this._doc,
-      inner: this._inner,
-      outer: this._outer,
-    } as LineCommentConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._doc) parts.push(this.renderChild(this._doc, ctx));
+    if (this._inner) parts.push(this.renderChild(this._inner, ctx));
+    if (this._outer) parts.push(this.renderChild(this._outer, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): LineComment {
+    return {
+      kind: 'line_comment',
+      doc: this._doc ? this.renderChild(this._doc, ctx) : undefined,
+      inner: this._inner ? this.renderChild(this._inner, ctx) : undefined,
+      outer: this._outer ? this.renderChild(this._outer, ctx) : undefined,
+    } as unknown as LineComment;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'line_comment'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._doc) parts.push({ kind: 'builder', builder: this._doc, fieldName: 'doc' });
+    if (this._inner) parts.push({ kind: 'builder', builder: this._inner, fieldName: 'inner' });
+    if (this._outer) parts.push({ kind: 'builder', builder: this._outer, fieldName: 'outer' });
+    return parts;
   }
 }
 

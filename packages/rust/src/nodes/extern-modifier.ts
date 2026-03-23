@@ -1,37 +1,40 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ExternModifier, ExternModifierConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ExternModifier } from '../types.js';
 
-export function externModifier(config: ExternModifierConfig): ExternModifier {
-  return {
-    kind: 'extern_modifier',
-    ...config,
-  } as ExternModifier;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class ExternModifierBuilder implements BuilderTerminal<ExternModifier> {
-  private _children?: string;
+class ExternModifierBuilder extends BaseBuilder<ExternModifier> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): ExternModifier {
-    return externModifier({
-      children: this._children,
-    } as ExternModifierConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ExternModifier {
+    return {
+      kind: 'extern_modifier',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ExternModifier;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'extern_modifier'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

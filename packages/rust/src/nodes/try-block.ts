@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TryBlock, TryBlockConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TryBlock } from '../types.js';
 
-export function tryBlock(config: TryBlockConfig): TryBlock {
-  return {
-    kind: 'try_block',
-    ...config,
-  } as TryBlock;
+type Child = BaseBuilder<{ kind: string }>;
+
+class TryBlockBuilder extends BaseBuilder<TryBlock> {
+  private _children: Child[] = [];
+
+  constructor(children: Child) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): TryBlock {
+    return {
+      kind: 'try_block',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TryBlock;
+  }
+
+  override get nodeKind(): string { return 'try_block'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class TryBlockBuilder implements BuilderTerminal<TryBlock> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): TryBlock {
-    return tryBlock({
-      children: this._children,
-    } as TryBlockConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function try_block(children: string): TryBlockBuilder {
+export function try_block(children: Child): TryBlockBuilder {
   return new TryBlockBuilder(children);
 }

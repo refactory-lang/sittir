@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TypeParameters, TypeParametersConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TypeParameters } from '../types.js';
 
-export function typeParameters(config: TypeParametersConfig): TypeParameters {
-  return {
-    kind: 'type_parameters',
-    ...config,
-  } as TypeParameters;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class TypeParametersBuilder implements BuilderTerminal<TypeParameters> {
-  private _children: string[] = [];
+class TypeParametersBuilder extends BaseBuilder<TypeParameters> {
+  private _children: Child[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: Child[]) {
+    super();
     this._children = children;
   }
 
-  build(): TypeParameters {
-    return typeParameters({
-      children: this._children,
-    } as TypeParametersConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TypeParameters {
+    return {
+      kind: 'type_parameters',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TypeParameters;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'type_parameters'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function type_parameters(children: string[]): TypeParametersBuilder {
+export function type_parameters(children: Child[]): TypeParametersBuilder {
   return new TypeParametersBuilder(children);
 }

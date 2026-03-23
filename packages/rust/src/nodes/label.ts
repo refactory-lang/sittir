@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { Label, LabelConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { Label } from '../types.js';
 
-function createLabel(config: LabelConfig): Label {
-  return {
-    kind: 'label',
-    ...config,
-  } as Label;
+type Child = BaseBuilder<{ kind: string }>;
+
+class LabelBuilder extends BaseBuilder<Label> {
+  private _children: Child[] = [];
+
+  constructor(children: Child) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): Label {
+    return {
+      kind: 'label',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as Label;
+  }
+
+  override get nodeKind(): string { return 'label'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class LabelBuilder implements BuilderTerminal<Label> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): Label {
-    return createLabel({
-      children: this._children,
-    } as LabelConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function label(children: string): LabelBuilder {
+export function label(children: Child): LabelBuilder {
   return new LabelBuilder(children);
 }

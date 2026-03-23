@@ -1,44 +1,52 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { StructPattern, StructPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { StructPattern } from '../types.js';
 
-export function structPattern(config: StructPatternConfig): StructPattern {
-  return {
-    kind: 'struct_pattern',
-    ...config,
-  } as StructPattern;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class StructPatternBuilder implements BuilderTerminal<StructPattern> {
-  private _type: string = '';
-  private _children: string[] = [];
+class StructPatternBuilder extends BaseBuilder<StructPattern> {
+  private _type: Child;
+  private _children: Child[] = [];
 
-  constructor(type_: string) {
+  constructor(type_: Child) {
+    super();
     this._type = type_;
   }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): StructPattern {
-    return structPattern({
-      type: this._type,
-      children: this._children,
-    } as StructPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('struct');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): StructPattern {
+    return {
+      kind: 'struct_pattern',
+      type: this.renderChild(this._type, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as StructPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'struct_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'struct' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function struct_pattern(type_: string): StructPatternBuilder {
+export function struct_pattern(type_: Child): StructPatternBuilder {
   return new StructPatternBuilder(type_);
 }

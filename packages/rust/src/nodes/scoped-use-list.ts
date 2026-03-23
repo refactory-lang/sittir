@@ -1,44 +1,48 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ScopedUseList, ScopedUseListConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ScopedUseList } from '../types.js';
 
-export function scopedUseList(config: ScopedUseListConfig): ScopedUseList {
-  return {
-    kind: 'scoped_use_list',
-    ...config,
-  } as ScopedUseList;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class ScopedUseListBuilder implements BuilderTerminal<ScopedUseList> {
-  private _list: string = '';
-  private _path?: string;
+class ScopedUseListBuilder extends BaseBuilder<ScopedUseList> {
+  private _list: Child;
+  private _path?: Child;
 
-  constructor(list: string) {
+  constructor(list: Child) {
+    super();
     this._list = list;
   }
 
-  path(value: string): this {
+  path(value: Child): this {
     this._path = value;
     return this;
   }
 
-  build(): ScopedUseList {
-    return scopedUseList({
-      list: this._list,
-      path: this._path,
-    } as ScopedUseListConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._list) parts.push(this.renderChild(this._list, ctx));
+    if (this._path) parts.push(this.renderChild(this._path, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ScopedUseList {
+    return {
+      kind: 'scoped_use_list',
+      list: this.renderChild(this._list, ctx),
+      path: this._path ? this.renderChild(this._path, ctx) : undefined,
+    } as unknown as ScopedUseList;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'scoped_use_list'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._list) parts.push({ kind: 'builder', builder: this._list, fieldName: 'list' });
+    if (this._path) parts.push({ kind: 'builder', builder: this._path, fieldName: 'path' });
+    return parts;
   }
 }
 
-export function scoped_use_list(list: string): ScopedUseListBuilder {
+export function scoped_use_list(list: Child): ScopedUseListBuilder {
   return new ScopedUseListBuilder(list);
 }

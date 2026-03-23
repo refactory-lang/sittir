@@ -1,44 +1,52 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { TupleStructPattern, TupleStructPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { TupleStructPattern } from '../types.js';
 
-export function tupleStructPattern(config: TupleStructPatternConfig): TupleStructPattern {
-  return {
-    kind: 'tuple_struct_pattern',
-    ...config,
-  } as TupleStructPattern;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class TupleStructPatternBuilder implements BuilderTerminal<TupleStructPattern> {
-  private _type: string = '';
-  private _children: string[] = [];
+class TupleStructPatternBuilder extends BaseBuilder<TupleStructPattern> {
+  private _type: Child;
+  private _children: Child[] = [];
 
-  constructor(type_: string) {
+  constructor(type_: Child) {
+    super();
     this._type = type_;
   }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): TupleStructPattern {
-    return tupleStructPattern({
-      type: this._type,
-      children: this._children,
-    } as TupleStructPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('tuple struct');
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): TupleStructPattern {
+    return {
+      kind: 'tuple_struct_pattern',
+      type: this.renderChild(this._type, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as TupleStructPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'tuple_struct_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'tuple struct' });
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function tuple_struct_pattern(type_: string): TupleStructPatternBuilder {
+export function tuple_struct_pattern(type_: Child): TupleStructPatternBuilder {
   return new TupleStructPatternBuilder(type_);
 }

@@ -1,44 +1,50 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { AssignmentExpression, AssignmentExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { AssignmentExpression } from '../types.js';
 
-export function assignmentExpression(config: AssignmentExpressionConfig): AssignmentExpression {
-  return {
-    kind: 'assignment_expression',
-    ...config,
-  } as AssignmentExpression;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class AssignmentBuilder implements BuilderTerminal<AssignmentExpression> {
-  private _left: string = '';
-  private _right: string = '';
+class AssignmentBuilder extends BaseBuilder<AssignmentExpression> {
+  private _left: Child;
+  private _right!: Child;
 
-  constructor(left: string) {
+  constructor(left: Child) {
+    super();
     this._left = left;
   }
 
-  right(value: string): this {
+  right(value: Child): this {
     this._right = value;
     return this;
   }
 
-  build(): AssignmentExpression {
-    return assignmentExpression({
-      left: this._left,
-      right: this._right,
-    } as AssignmentExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('assignment');
+    if (this._left) parts.push(this.renderChild(this._left, ctx));
+    if (this._right) parts.push(this.renderChild(this._right, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): AssignmentExpression {
+    return {
+      kind: 'assignment_expression',
+      left: this.renderChild(this._left, ctx),
+      right: this._right ? this.renderChild(this._right, ctx) : undefined,
+    } as unknown as AssignmentExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'assignment_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'assignment' });
+    if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
+    if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
+    return parts;
   }
 }
 
-export function assignment(left: string): AssignmentBuilder {
+export function assignment(left: Child): AssignmentBuilder {
   return new AssignmentBuilder(left);
 }

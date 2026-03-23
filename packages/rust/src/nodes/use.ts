@@ -1,44 +1,52 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { UseDeclaration, UseDeclarationConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { UseDeclaration } from '../types.js';
 
-export function useDeclaration(config: UseDeclarationConfig): UseDeclaration {
-  return {
-    kind: 'use_declaration',
-    ...config,
-  } as UseDeclaration;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class UseBuilder implements BuilderTerminal<UseDeclaration> {
-  private _argument: string = '';
-  private _children?: string;
+class UseBuilder extends BaseBuilder<UseDeclaration> {
+  private _argument: Child;
+  private _children: Child[] = [];
 
-  constructor(argument: string) {
+  constructor(argument: Child) {
+    super();
     this._argument = argument;
   }
 
-  children(value: string): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): UseDeclaration {
-    return useDeclaration({
-      argument: this._argument,
-      children: this._children,
-    } as UseDeclarationConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('use');
+    if (this._argument) parts.push(this.renderChild(this._argument, ctx));
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): UseDeclaration {
+    return {
+      kind: 'use_declaration',
+      argument: this.renderChild(this._argument, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as UseDeclaration;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'use_declaration'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'use' });
+    if (this._argument) parts.push({ kind: 'builder', builder: this._argument, fieldName: 'argument' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function use_(argument: string): UseBuilder {
+export function use_(argument: Child): UseBuilder {
   return new UseBuilder(argument);
 }

@@ -1,37 +1,40 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { MatchBlock, MatchBlockConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { MatchBlock } from '../types.js';
 
-export function matchBlock(config: MatchBlockConfig): MatchBlock {
-  return {
-    kind: 'match_block',
-    ...config,
-  } as MatchBlock;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class MatchBlockBuilder implements BuilderTerminal<MatchBlock> {
-  private _children: string[] = [];
+class MatchBlockBuilder extends BaseBuilder<MatchBlock> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): MatchBlock {
-    return matchBlock({
-      children: this._children,
-    } as MatchBlockConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): MatchBlock {
+    return {
+      kind: 'match_block',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as MatchBlock;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'match_block'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

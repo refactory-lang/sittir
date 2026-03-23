@@ -1,44 +1,53 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { MacroInvocation, MacroInvocationConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { MacroInvocation } from '../types.js';
 
-export function macroInvocation(config: MacroInvocationConfig): MacroInvocation {
-  return {
-    kind: 'macro_invocation',
-    ...config,
-  } as MacroInvocation;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class MacroInvocationBuilder implements BuilderTerminal<MacroInvocation> {
-  private _macro: string = '';
-  private _children?: string;
+class MacroInvocationBuilder extends BaseBuilder<MacroInvocation> {
+  private _macro: Child;
+  private _children: Child[] = [];
 
-  constructor(macro: string) {
+  constructor(macro: Child) {
+    super();
     this._macro = macro;
   }
 
-  children(value: string): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): MacroInvocation {
-    return macroInvocation({
-      macro: this._macro,
-      children: this._children,
-    } as MacroInvocationConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._macro) parts.push(this.renderChild(this._macro, ctx) + '!');
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): MacroInvocation {
+    return {
+      kind: 'macro_invocation',
+      macro: this.renderChild(this._macro, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as MacroInvocation;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'macro_invocation'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._macro) {
+      parts.push({ kind: 'builder', builder: this._macro, fieldName: 'macro' });
+      parts.push({ kind: 'token', text: '!', type: '!' });
+    }
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function macro_invocation(macro: string): MacroInvocationBuilder {
+export function macro_invocation(macro: Child): MacroInvocationBuilder {
   return new MacroInvocationBuilder(macro);
 }

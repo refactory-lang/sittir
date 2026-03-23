@@ -1,51 +1,56 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { BlockComment, BlockCommentConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { BlockComment } from '../types.js';
 
-export function blockComment(config: BlockCommentConfig): BlockComment {
-  return {
-    kind: 'block_comment',
-    ...config,
-  } as BlockComment;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class BlockCommentBuilder implements BuilderTerminal<BlockComment> {
-  private _doc?: string;
-  private _inner?: string;
-  private _outer?: string;
+class BlockCommentBuilder extends BaseBuilder<BlockComment> {
+  private _doc?: Child;
+  private _inner?: Child;
+  private _outer?: Child;
 
-  constructor() {}
+  constructor() { super(); }
 
-  doc(value: string): this {
+  doc(value: Child): this {
     this._doc = value;
     return this;
   }
 
-  inner(value: string): this {
+  inner(value: Child): this {
     this._inner = value;
     return this;
   }
 
-  outer(value: string): this {
+  outer(value: Child): this {
     this._outer = value;
     return this;
   }
 
-  build(): BlockComment {
-    return blockComment({
-      doc: this._doc,
-      inner: this._inner,
-      outer: this._outer,
-    } as BlockCommentConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._doc) parts.push(this.renderChild(this._doc, ctx));
+    if (this._inner) parts.push(this.renderChild(this._inner, ctx));
+    if (this._outer) parts.push(this.renderChild(this._outer, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): BlockComment {
+    return {
+      kind: 'block_comment',
+      doc: this._doc ? this.renderChild(this._doc, ctx) : undefined,
+      inner: this._inner ? this.renderChild(this._inner, ctx) : undefined,
+      outer: this._outer ? this.renderChild(this._outer, ctx) : undefined,
+    } as unknown as BlockComment;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'block_comment'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._doc) parts.push({ kind: 'builder', builder: this._doc, fieldName: 'doc' });
+    if (this._inner) parts.push({ kind: 'builder', builder: this._inner, fieldName: 'inner' });
+    if (this._outer) parts.push({ kind: 'builder', builder: this._outer, fieldName: 'outer' });
+    return parts;
   }
 }
 

@@ -128,3 +128,93 @@ export function listNodeKinds(grammar: string): string[] {
 		return hasFields || hasChildren;
 	});
 }
+
+/**
+ * List all named leaf node kinds — no fields, no children, not abstract.
+ * These become LeafBuilder entries in the ir namespace.
+ */
+export function listLeafKinds(grammar: string): string[] {
+	const grammarMap = loadGrammar(grammar);
+
+	return Object.keys(grammarMap).filter((key) => {
+		if (key.startsWith('_')) return false;
+
+		const entry = grammarMap[key];
+		if (!entry.named) return false;
+		if (entry.subtypes) return false;
+
+		const hasFields =
+			entry.fields != null && Object.keys(entry.fields).length > 0;
+		const hasChildren = entry.children != null;
+
+		return !hasFields && !hasChildren;
+	});
+}
+
+export interface OperatorContext {
+	parentKind: string;
+	field: string;
+	tokens: string[];
+}
+
+/**
+ * Discover anonymous tokens that appear as field values in named nodes.
+ * Returns per-(parentKind, field) groupings of operator tokens.
+ */
+export function listOperatorContexts(grammar: string): OperatorContext[] {
+	const grammarMap = loadGrammar(grammar);
+	const results: OperatorContext[] = [];
+
+	for (const [kind, entry] of Object.entries(grammarMap)) {
+		if (!entry.named || kind.startsWith('_')) continue;
+		if (!entry.fields) continue;
+
+		for (const [fieldName, fieldInfo] of Object.entries(entry.fields)) {
+			const anonTokens = fieldInfo.types
+				.filter((t) => !t.named)
+				.map((t) => t.type);
+
+			if (anonTokens.length > 0) {
+				results.push({ parentKind: kind, field: fieldName, tokens: anonTokens });
+			}
+		}
+	}
+
+	return results;
+}
+
+/**
+ * List all keywords (anonymous tokens that are alphabetic) from the grammar.
+ */
+export function listKeywords(grammar: string): string[] {
+	const grammarMap = loadGrammar(grammar);
+	const keywords = new Set<string>();
+
+	for (const entry of Object.values(grammarMap)) {
+		if (!entry.named) {
+			if (/^[a-z_]+$/i.test(entry.type)) {
+				keywords.add(entry.type);
+			}
+		}
+	}
+
+	return [...keywords].sort();
+}
+
+/**
+ * List all operator tokens (non-alphabetic anonymous tokens) from the grammar.
+ */
+export function listOperatorTokens(grammar: string): string[] {
+	const grammarMap = loadGrammar(grammar);
+	const ops = new Set<string>();
+
+	for (const entry of Object.values(grammarMap)) {
+		if (!entry.named) {
+			if (!/^[a-z_]+$/i.test(entry.type) && entry.type !== '"' && entry.type !== "'") {
+				ops.add(entry.type);
+			}
+		}
+	}
+
+	return [...ops].sort();
+}

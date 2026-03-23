@@ -1,44 +1,48 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { MacroRule, MacroRuleConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { MacroRule } from '../types.js';
 
-export function macroRule(config: MacroRuleConfig): MacroRule {
-  return {
-    kind: 'macro_rule',
-    ...config,
-  } as MacroRule;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class MacroRuleBuilder implements BuilderTerminal<MacroRule> {
-  private _left: string = '';
-  private _right: string = '';
+class MacroRuleBuilder extends BaseBuilder<MacroRule> {
+  private _left: Child;
+  private _right!: Child;
 
-  constructor(left: string) {
+  constructor(left: Child) {
+    super();
     this._left = left;
   }
 
-  right(value: string): this {
+  right(value: Child): this {
     this._right = value;
     return this;
   }
 
-  build(): MacroRule {
-    return macroRule({
-      left: this._left,
-      right: this._right,
-    } as MacroRuleConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._left) parts.push(this.renderChild(this._left, ctx));
+    if (this._right) parts.push(this.renderChild(this._right, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): MacroRule {
+    return {
+      kind: 'macro_rule',
+      left: this.renderChild(this._left, ctx),
+      right: this._right ? this.renderChild(this._right, ctx) : undefined,
+    } as unknown as MacroRule;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'macro_rule'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
+    if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
+    return parts;
   }
 }
 
-export function macro_rule(left: string): MacroRuleBuilder {
+export function macro_rule(left: Child): MacroRuleBuilder {
   return new MacroRuleBuilder(left);
 }

@@ -1,6 +1,8 @@
 /**
- * Emits a complete TypeScript source string for a single builder file
- * containing a factory function, a fluent Builder class, and a short-name export.
+ * Emits a self-contained builder file for a single node kind.
+ *
+ * Each builder extends BaseBuilder and owns its render logic —
+ * no central switch statement needed.
  */
 
 import type { NodeMeta, FieldMeta } from '../grammar-reader.ts';
@@ -18,54 +20,242 @@ export interface EmitBuilderConfig {
   node: NodeMeta;
 }
 
-/**
- * Select the "primary" field to use as the constructor parameter.
- * Priority: required field named 'name' > required field named 'argument' > first required field.
- * If no fields but required children, use 'children'.
- * Returns null if nothing qualifies.
- */
+// ---------------------------------------------------------------------------
+// Constructor param selection (unchanged from previous version)
+// ---------------------------------------------------------------------------
+
 function selectConstructorField(node: NodeMeta): { name: string; source: 'field' | 'children' } | null {
   const requiredFields = node.fields.filter((f) => f.required);
-
-  // Look for 'name' first
   const nameField = requiredFields.find((f) => f.name === 'name');
   if (nameField) return { name: nameField.name, source: 'field' };
-
-  // Look for 'argument'
   const argField = requiredFields.find((f) => f.name === 'argument');
   if (argField) return { name: argField.name, source: 'field' };
-
-  // First required field
   if (requiredFields.length > 0) {
-    return { name: requiredFields[0].name, source: 'field' };
+    return { name: requiredFields[0]!.name, source: 'field' };
   }
-
-  // No fields but required children
   if (node.hasChildren && node.children?.required) {
     return { name: 'children', source: 'children' };
   }
-
   return null;
 }
 
-/**
- * Determine the TypeScript type for a field's setter parameter.
- * All setter parameters use `string` — grammar-types BuilderConfig handles the loosening.
- */
-function fieldTsType(field: FieldMeta): string {
-  const base = 'string';
-  return field.multiple ? `${base}[]` : base;
+// ---------------------------------------------------------------------------
+// Render heuristics (absorbed from render-scaffold.ts)
+// ---------------------------------------------------------------------------
+
+const RENDER_SUFFIXES = [
+  '_item', '_expression', '_statement', '_declaration',
+  '_definition', '_type', '_pattern', '_literal', '_clause',
+];
+
+function kindToKeyword(kind: string): string | null {
+  for (const suffix of RENDER_SUFFIXES) {
+    if (kind.endsWith(suffix)) {
+      return kind.slice(0, -suffix.length).replace(/_/g, ' ').trim();
+    }
+  }
+  return null;
 }
 
+const FIELD_PRIORITY: Record<string, number> = {
+  macro: 0, left: 1, operator: 2, name: 3, type: 4, trait: 5,
+  type_parameters: 6, parameters: 7, return_type: 8, argument: 9,
+  pattern: 10, value: 11, condition: 12, consequence: 13,
+  alternative: 14, right: 15, body: 100,
+};
+
+function orderFields(fields: FieldMeta[]): FieldMeta[] {
+  return [...fields].sort((a, b) => {
+    const pa = FIELD_PRIORITY[a.name] ?? 50;
+    const pb = FIELD_PRIORITY[b.name] ?? 50;
+    return pa - pb;
+  });
+}
+
+/**
+ * Generate the body lines for a builder's renderImpl() method.
+ * Each line uses `this._fieldName` and `this.renderChild(...)`.
+ */
+function generateRenderSilentBody(node: NodeMeta): string[] {
+  const lines: string[] = [];
+  const fieldSet = new Set(node.fields.map((f) => f.name));
+  const keyword = kindToKeyword(node.kind);
+
+  // Special case: source_file — just render children
+  if (node.kind === 'source_file') {
+    lines.push(`    return this.renderChildren(this._children, '\\n\\n', ctx);`);
+    return lines;
+  }
+
+  lines.push('    const parts: string[] = [];');
+
+  // 1. Children as visibility/modifier prefix (common in Rust: struct, fn, enum, etc.)
+  if (node.hasChildren && fieldSet.has('name')) {
+    lines.push('    if (this._children.length > 0) {');
+    lines.push(`      parts.push(this.renderChildren(this._children, ' ', ctx));`);
+    lines.push('    }');
+  }
+
+  // 2. Keyword from kind name
+  if (keyword) {
+    lines.push(`    parts.push('${keyword}');`);
+  }
+
+  // 3. Render fields in heuristic order
+  const orderedFields = orderFields(node.fields);
+
+  for (const field of orderedFields) {
+    const fn = toFieldName(field.name);
+    const priv = `this._${fn}`;
+
+    if (field.name === 'body') {
+      lines.push(`    if (${priv}) {`);
+      lines.push(`      parts.push('{');`);
+      lines.push(`      parts.push(this.renderChild(${priv}, ctx));`);
+      lines.push(`      parts.push('}');`);
+      lines.push('    }');
+    } else if (field.name === 'parameters') {
+      lines.push(`    parts.push('(' + (${priv} ? this.renderChild(${priv}, ctx) : '') + ')');`);
+    } else if (field.name === 'return_type') {
+      lines.push(`    if (${priv}) parts.push('->', this.renderChild(${priv}, ctx));`);
+    } else if (field.name === 'type_parameters') {
+      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
+    } else if (field.name === 'condition') {
+      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
+    } else if (field.name === 'consequence') {
+      lines.push(`    if (${priv}) {`);
+      lines.push(`      parts.push('{', this.renderChild(${priv}, ctx), '}');`);
+      lines.push('    }');
+    } else if (field.name === 'alternative') {
+      lines.push(`    if (${priv}) {`);
+      lines.push(`      const alt = this.renderChild(${priv}, ctx);`);
+      lines.push(`      parts.push(alt.startsWith('if ') ? 'else ' + alt : 'else { ' + alt + ' }');`);
+      lines.push('    }');
+    } else if (['left', 'right', 'operator', 'value', 'argument'].includes(field.name)) {
+      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
+    } else if (field.name === 'trait') {
+      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx), 'for');`);
+    } else if (field.name === 'macro') {
+      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx) + '!');`);
+    } else if (field.multiple) {
+      lines.push(`    if (${priv}.length > 0) parts.push(this.renderChildren(${priv}, ', ', ctx));`);
+    } else if (field.required) {
+      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
+    } else {
+      lines.push(`    if (${priv}) parts.push(this.renderChild(${priv}, ctx));`);
+    }
+  }
+
+  // 4. Children (when not used as visibility prefix above)
+  if (node.hasChildren && !fieldSet.has('name')) {
+    if (node.children?.multiple) {
+      lines.push(`    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));`);
+    } else {
+      lines.push(`    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));`);
+    }
+  }
+
+  lines.push(`    return parts.join(' ');`);
+  return lines;
+}
+
+/**
+ * Generate the body lines for a builder's toCSTChildren() method.
+ * Mirrors renderImpl but produces CSTChild[] for position-tracked CST construction.
+ */
+function generateToCSTChildrenBody(node: NodeMeta): string[] {
+  const lines: string[] = [];
+  const fieldSet = new Set(node.fields.map((f) => f.name));
+  const keyword = kindToKeyword(node.kind);
+
+  // Special case: source_file
+  if (node.kind === 'source_file') {
+    lines.push('    const parts: CSTChild[] = [];');
+    lines.push('    for (const child of this._children) {');
+    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
+    lines.push('    }');
+    lines.push('    return parts;');
+    return lines;
+  }
+
+  lines.push('    const parts: CSTChild[] = [];');
+
+  // 1. Children as visibility/modifier prefix
+  if (node.hasChildren && fieldSet.has('name')) {
+    lines.push('    for (const child of this._children) {');
+    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
+    lines.push('    }');
+  }
+
+  // 2. Keyword
+  if (keyword) {
+    lines.push(`    parts.push({ kind: 'token', text: '${keyword}' });`);
+  }
+
+  // 3. Fields in heuristic order
+  const orderedFields = orderFields(node.fields);
+
+  for (const field of orderedFields) {
+    const fn = toFieldName(field.name);
+    const priv = `this._${fn}`;
+    const fieldNameStr = `'${fn}'`;
+
+    if (field.name === 'body') {
+      lines.push(`    if (${priv}) {`);
+      lines.push(`      parts.push({ kind: 'token', text: '{', type: '{' });`);
+      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+      lines.push(`      parts.push({ kind: 'token', text: '}', type: '}' });`);
+      lines.push('    }');
+    } else if (field.name === 'parameters') {
+      lines.push(`    parts.push({ kind: 'token', text: '(', type: '(' });`);
+      lines.push(`    if (${priv}) parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+      lines.push(`    parts.push({ kind: 'token', text: ')', type: ')' });`);
+    } else if (field.name === 'return_type') {
+      lines.push(`    if (${priv}) {`);
+      lines.push(`      parts.push({ kind: 'token', text: '->', type: '->' });`);
+      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+      lines.push('    }');
+    } else if (field.name === 'trait') {
+      lines.push(`    if (${priv}) {`);
+      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+      lines.push(`      parts.push({ kind: 'token', text: 'for' });`);
+      lines.push('    }');
+    } else if (field.name === 'macro') {
+      lines.push(`    if (${priv}) {`);
+      lines.push(`      parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+      lines.push(`      parts.push({ kind: 'token', text: '!', type: '!' });`);
+      lines.push('    }');
+    } else if (field.multiple) {
+      lines.push(`    for (const child of ${priv}) {`);
+      lines.push(`      parts.push({ kind: 'builder', builder: child, fieldName: ${fieldNameStr} });`);
+      lines.push('    }');
+    } else {
+      lines.push(`    if (${priv}) parts.push({ kind: 'builder', builder: ${priv}, fieldName: ${fieldNameStr} });`);
+    }
+  }
+
+  // 4. Children (when not used as visibility prefix)
+  if (node.hasChildren && !fieldSet.has('name')) {
+    lines.push('    for (const child of this._children) {');
+    lines.push(`      parts.push({ kind: 'builder', builder: child });`);
+    lines.push('    }');
+  }
+
+  lines.push('    return parts;');
+  return lines;
+}
+
+// ---------------------------------------------------------------------------
+// Main emitter
+// ---------------------------------------------------------------------------
+
 export function emitBuilder(config: EmitBuilderConfig): string {
-  const { grammar, node } = config;
+  const { node } = config;
   const kind = node.kind;
 
-  const factoryName = toFactoryName(kind);         // e.g. structItem
-  const typeName = toTypeName(kind);               // e.g. StructItem
-  const configTypeName = `${typeName}Config`;      // e.g. StructItemConfig
-  const builderClassName = toBuilderClassName(kind); // e.g. StructBuilder
-  const shortName = toShortName(kind);             // e.g. struct_
+  const typeName = toTypeName(kind);
+  const builderClassName = toBuilderClassName(kind);
+  const shortName = toShortName(kind);
 
   const constructorParam = selectConstructorField(node);
 
@@ -80,52 +270,37 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   const lines: string[] = [];
 
   // --- Imports ---
-  lines.push(`import type { BuilderTerminal } from '@sittir/types';`);
-  lines.push(`import type { ${typeName}, ${configTypeName} } from '../types.js';`);
-  lines.push(`import { renderSilent } from '../render.js';`);
-  lines.push(`import { assertValid } from '../validate-fast.js';`);
+  lines.push(`import { BaseBuilder } from '@sittir/types';`);
+  lines.push(`import type { RenderContext, CSTChild } from '@sittir/types';`);
+  lines.push(`import type { ${typeName} } from '../types.js';`);
   lines.push('');
-
-  // --- Factory function ---
-  // When factory name collides with short name, use an internal name and don't export
-  const hasNameCollision = factoryName === shortName;
-  const internalFactoryName = hasNameCollision ? `create${typeName}` : factoryName;
-  const factoryExport = hasNameCollision ? '' : 'export ';
-  lines.push(`${factoryExport}function ${internalFactoryName}(config: ${configTypeName}): ${typeName} {`);
-  lines.push(`  return {`);
-  lines.push(`    kind: '${kind}',`);
-  lines.push(`    ...config,`);
-  lines.push(`  } as ${typeName};`);
-  lines.push(`}`);
+  lines.push(`type Child = BaseBuilder<{ kind: string }>;`);
   lines.push('');
 
   // --- Builder class ---
-  lines.push(`class ${builderClassName} implements BuilderTerminal<${typeName}> {`);
+  lines.push(`class ${builderClassName} extends BaseBuilder<${typeName}> {`);
 
   // Private fields
   for (const field of node.fields) {
-    const tsType = fieldTsType(field);
     const fieldName = toFieldName(field.name);
     if (field.multiple) {
-      lines.push(`  private _${fieldName}: ${tsType} = [];`);
+      lines.push(`  private _${fieldName}: Child[] = [];`);
     } else if (field.required) {
-      lines.push(`  private _${fieldName}: ${tsType} = '';`);
+      // Required non-constructor fields get initialized with a placeholder
+      // Constructor field is set in constructor
+      if (constructorParam?.source === 'field' && constructorParam.name === field.name) {
+        lines.push(`  private _${fieldName}: Child;`);
+      } else {
+        lines.push(`  private _${fieldName}!: Child;`);
+      }
     } else {
-      lines.push(`  private _${fieldName}?: ${tsType};`);
+      lines.push(`  private _${fieldName}?: Child;`);
     }
   }
 
-  // Children field if applicable
+  // Children field
   if (node.hasChildren) {
-    if (node.children?.multiple) {
-      lines.push(`  private _children: string[] = [];`);
-    } else {
-      if (constructorParam?.source === 'children') {
-        lines.push(`  private _children: string;`);
-      } else {
-        lines.push(`  private _children?: string;`);
-      }
-    }
+    lines.push(`  private _children: Child[] = [];`);
   }
 
   lines.push('');
@@ -138,19 +313,28 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     const ctorParamName = constructorParam.source === 'children'
       ? 'children'
       : toParamName(constructorParam.name);
-    // Determine the constructor parameter type
-    let ctorParamType = 'string';
+
+    // Determine if multiple
+    let isMultiple = false;
     if (constructorParam.source === 'children' && node.children?.multiple) {
-      ctorParamType = 'string[]';
+      isMultiple = true;
     } else if (constructorParam.source === 'field') {
       const ctorField = node.fields.find((f) => f.name === constructorParam.name);
-      if (ctorField?.multiple) ctorParamType = 'string[]';
+      if (ctorField?.multiple) isMultiple = true;
     }
-    lines.push(`  constructor(${ctorParamName}: ${ctorParamType}) {`);
-    lines.push(`    this._${ctorFieldName} = ${ctorParamName};`);
-    lines.push(`  }`);
+
+    const paramType = isMultiple ? 'Child[]' : 'Child';
+
+    lines.push(`  constructor(${ctorParamName}: ${paramType}) {`);
+    lines.push('    super();');
+    if (constructorParam.source === 'children') {
+      lines.push(`    this._children = ${isMultiple ? ctorParamName : `[${ctorParamName}]`};`);
+    } else {
+      lines.push(`    this._${ctorFieldName} = ${ctorParamName};`);
+    }
+    lines.push('  }');
   } else {
-    lines.push(`  constructor() {}`);
+    lines.push('  constructor() { super(); }');
   }
 
   lines.push('');
@@ -158,53 +342,67 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // Fluent setters for non-constructor fields
   for (const field of setterFields) {
     const fieldName = toFieldName(field.name);
-    const tsType = fieldTsType(field);
-    lines.push(`  ${fieldName}(value: ${tsType}): this {`);
+    const paramType = field.multiple ? 'Child[]' : 'Child';
+    lines.push(`  ${fieldName}(value: ${paramType}): this {`);
     lines.push(`    this._${fieldName} = value;`);
-    lines.push(`    return this;`);
-    lines.push(`  }`);
+    lines.push('    return this;');
+    lines.push('  }');
     lines.push('');
   }
 
   // Children setter if applicable and not constructor param
   if (node.hasChildren && constructorParam?.source !== 'children') {
-    if (node.children?.multiple) {
-      lines.push(`  children(value: string[]): this {`);
-    } else {
-      lines.push(`  children(value: string): this {`);
-    }
-    lines.push(`    this._children = value;`);
-    lines.push(`    return this;`);
-    lines.push(`  }`);
+    lines.push('  children(value: Child[]): this {');
+    lines.push('    this._children = value;');
+    lines.push('    return this;');
+    lines.push('  }');
     lines.push('');
   }
 
-  // build()
-  lines.push(`  build(): ${typeName} {`);
-  lines.push(`    return ${internalFactoryName}({`);
+  // --- renderImpl() ---
+  lines.push('  renderImpl(ctx?: RenderContext): string {');
+  const renderBody = generateRenderSilentBody(node);
+  for (const line of renderBody) {
+    lines.push(line);
+  }
+  lines.push('  }');
+  lines.push('');
+
+  // --- build() ---
+  lines.push(`  build(ctx?: RenderContext): ${typeName} {`);
+  lines.push(`    return {`);
+  lines.push(`      kind: '${kind}',`);
   for (const field of node.fields) {
     const fieldName = toFieldName(field.name);
-    lines.push(`      ${fieldName}: this._${fieldName},`);
+    const isCtorField = constructorParam?.source === 'field' && constructorParam.name === field.name;
+    if (field.multiple) {
+      lines.push(`      ${fieldName}: this._${fieldName}.map(c => this.renderChild(c, ctx)),`);
+    } else if (field.required && isCtorField) {
+      lines.push(`      ${fieldName}: this.renderChild(this._${fieldName}, ctx),`);
+    } else {
+      lines.push(`      ${fieldName}: this._${fieldName} ? this.renderChild(this._${fieldName}, ctx) : undefined,`);
+    }
   }
   if (node.hasChildren) {
-    lines.push(`      children: this._children,`);
+    lines.push(`      children: this._children.map(c => this.renderChild(c, ctx)),`);
   }
-  lines.push(`    } as ${configTypeName});`);
-  lines.push(`  }`);
+  lines.push(`    } as unknown as ${typeName};`);
+  lines.push('  }');
   lines.push('');
 
-  // render()
-  lines.push(`  render(): string {`);
-  lines.push(`    return assertValid(renderSilent(this.build()));`);
-  lines.push(`  }`);
+  // --- nodeKind getter ---
+  lines.push(`  override get nodeKind(): string { return '${kind}'; }`);
   lines.push('');
 
-  // renderSilent()
-  lines.push(`  renderSilent(): string {`);
-  lines.push(`    return renderSilent(this.build());`);
-  lines.push(`  }`);
+  // --- toCSTChildren() ---
+  lines.push('  override toCSTChildren(ctx?: RenderContext): CSTChild[] {');
+  const cstBody = generateToCSTChildrenBody(node);
+  for (const line of cstBody) {
+    lines.push(line);
+  }
+  lines.push('  }');
 
-  lines.push(`}`);
+  lines.push('}');
   lines.push('');
 
   // --- Short-name export ---
@@ -212,21 +410,23 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     const shortParamName = constructorParam.source === 'children'
       ? 'children'
       : toParamName(constructorParam.name);
-    // Match the constructor parameter type
-    let shortParamType = 'string';
+
+    let isMultiple = false;
     if (constructorParam.source === 'children' && node.children?.multiple) {
-      shortParamType = 'string[]';
+      isMultiple = true;
     } else if (constructorParam.source === 'field') {
       const ctorField = node.fields.find((f) => f.name === constructorParam.name);
-      if (ctorField?.multiple) shortParamType = 'string[]';
+      if (ctorField?.multiple) isMultiple = true;
     }
-    lines.push(`export function ${shortName}(${shortParamName}: ${shortParamType}): ${builderClassName} {`);
+
+    const paramType = isMultiple ? 'Child[]' : 'Child';
+    lines.push(`export function ${shortName}(${shortParamName}: ${paramType}): ${builderClassName} {`);
     lines.push(`  return new ${builderClassName}(${shortParamName});`);
-    lines.push(`}`);
+    lines.push('}');
   } else {
     lines.push(`export function ${shortName}(): ${builderClassName} {`);
     lines.push(`  return new ${builderClassName}();`);
-    lines.push(`}`);
+    lines.push('}');
   }
 
   lines.push('');

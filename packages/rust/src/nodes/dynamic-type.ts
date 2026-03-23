@@ -1,37 +1,44 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { DynamicType, DynamicTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { DynamicType } from '../types.js';
 
-export function dynamicType(config: DynamicTypeConfig): DynamicType {
-  return {
-    kind: 'dynamic_type',
-    ...config,
-  } as DynamicType;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class DynamicTypeBuilder implements BuilderTerminal<DynamicType> {
-  private _trait: string = '';
+class DynamicTypeBuilder extends BaseBuilder<DynamicType> {
+  private _trait: Child;
 
-  constructor(trait: string) {
+  constructor(trait: Child) {
+    super();
     this._trait = trait;
   }
 
-  build(): DynamicType {
-    return dynamicType({
-      trait: this._trait,
-    } as DynamicTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('dynamic');
+    if (this._trait) parts.push(this.renderChild(this._trait, ctx), 'for');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): DynamicType {
+    return {
+      kind: 'dynamic_type',
+      trait: this.renderChild(this._trait, ctx),
+    } as unknown as DynamicType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'dynamic_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'dynamic' });
+    if (this._trait) {
+      parts.push({ kind: 'builder', builder: this._trait, fieldName: 'trait' });
+      parts.push({ kind: 'token', text: 'for' });
+    }
+    return parts;
   }
 }
 
-export function dynamic_type(trait: string): DynamicTypeBuilder {
+export function dynamic_type(trait: Child): DynamicTypeBuilder {
   return new DynamicTypeBuilder(trait);
 }

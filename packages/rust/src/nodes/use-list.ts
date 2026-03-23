@@ -1,37 +1,40 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { UseList, UseListConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { UseList } from '../types.js';
 
-export function useList(config: UseListConfig): UseList {
-  return {
-    kind: 'use_list',
-    ...config,
-  } as UseList;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class UseListBuilder implements BuilderTerminal<UseList> {
-  private _children: string[] = [];
+class UseListBuilder extends BaseBuilder<UseList> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): UseList {
-    return useList({
-      children: this._children,
-    } as UseListConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): UseList {
+    return {
+      kind: 'use_list',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as UseList;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'use_list'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

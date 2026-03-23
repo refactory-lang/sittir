@@ -1,58 +1,72 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { AssociatedType, AssociatedTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { AssociatedType } from '../types.js';
 
-export function associatedType(config: AssociatedTypeConfig): AssociatedType {
-  return {
-    kind: 'associated_type',
-    ...config,
-  } as AssociatedType;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class AssociatedTypeBuilder implements BuilderTerminal<AssociatedType> {
-  private _bounds?: string;
-  private _name: string = '';
-  private _typeParameters?: string;
-  private _children?: string;
+class AssociatedTypeBuilder extends BaseBuilder<AssociatedType> {
+  private _bounds?: Child;
+  private _name: Child;
+  private _typeParameters?: Child;
+  private _children: Child[] = [];
 
-  constructor(name: string) {
+  constructor(name: Child) {
+    super();
     this._name = name;
   }
 
-  bounds(value: string): this {
+  bounds(value: Child): this {
     this._bounds = value;
     return this;
   }
 
-  typeParameters(value: string): this {
+  typeParameters(value: Child): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: string): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): AssociatedType {
-    return associatedType({
-      bounds: this._bounds,
-      name: this._name,
-      typeParameters: this._typeParameters,
-      children: this._children,
-    } as AssociatedTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) {
+      parts.push(this.renderChildren(this._children, ' ', ctx));
+    }
+    parts.push('associated');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
+    if (this._bounds) parts.push(this.renderChild(this._bounds, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): AssociatedType {
+    return {
+      kind: 'associated_type',
+      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
+      name: this.renderChild(this._name, ctx),
+      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as AssociatedType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'associated_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'associated' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
+    if (this._bounds) parts.push({ kind: 'builder', builder: this._bounds, fieldName: 'bounds' });
+    return parts;
   }
 }
 
-export function associated_type(name: string): AssociatedTypeBuilder {
+export function associated_type(name: Child): AssociatedTypeBuilder {
   return new AssociatedTypeBuilder(name);
 }

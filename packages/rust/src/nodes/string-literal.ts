@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { StringLiteral, StringLiteralConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { StringLiteral } from '../types.js';
 
-export function stringLiteral(config: StringLiteralConfig): StringLiteral {
-  return {
-    kind: 'string_literal',
-    ...config,
-  } as StringLiteral;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class StringLiteralBuilder implements BuilderTerminal<StringLiteral> {
-  private _children: string[] = [];
+class StringLiteralBuilder extends BaseBuilder<StringLiteral> {
+  private _children: Child[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: Child[]): this {
     this._children = value;
     return this;
   }
 
-  build(): StringLiteral {
-    return stringLiteral({
-      children: this._children,
-    } as StringLiteralConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('string');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): StringLiteral {
+    return {
+      kind: 'string_literal',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as StringLiteral;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'string_literal'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'string' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 

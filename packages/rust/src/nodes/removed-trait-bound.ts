@@ -1,37 +1,41 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { RemovedTraitBound, RemovedTraitBoundConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { RemovedTraitBound } from '../types.js';
 
-export function removedTraitBound(config: RemovedTraitBoundConfig): RemovedTraitBound {
-  return {
-    kind: 'removed_trait_bound',
-    ...config,
-  } as RemovedTraitBound;
+type Child = BaseBuilder<{ kind: string }>;
+
+class RemovedTraitBoundBuilder extends BaseBuilder<RemovedTraitBound> {
+  private _children: Child[] = [];
+
+  constructor(children: Child) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChild(this._children[0]!, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): RemovedTraitBound {
+    return {
+      kind: 'removed_trait_bound',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as RemovedTraitBound;
+  }
+
+  override get nodeKind(): string { return 'removed_trait_bound'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class RemovedTraitBoundBuilder implements BuilderTerminal<RemovedTraitBound> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): RemovedTraitBound {
-    return removedTraitBound({
-      children: this._children,
-    } as RemovedTraitBoundConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function removed_trait_bound(children: string): RemovedTraitBoundBuilder {
+export function removed_trait_bound(children: Child): RemovedTraitBoundBuilder {
   return new RemovedTraitBoundBuilder(children);
 }

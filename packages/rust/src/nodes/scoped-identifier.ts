@@ -1,44 +1,48 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ScopedIdentifier, ScopedIdentifierConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ScopedIdentifier } from '../types.js';
 
-export function scopedIdentifier(config: ScopedIdentifierConfig): ScopedIdentifier {
-  return {
-    kind: 'scoped_identifier',
-    ...config,
-  } as ScopedIdentifier;
-}
+type Child = BaseBuilder<{ kind: string }>;
 
-class ScopedIdentifierBuilder implements BuilderTerminal<ScopedIdentifier> {
-  private _name: string = '';
-  private _path?: string;
+class ScopedIdentifierBuilder extends BaseBuilder<ScopedIdentifier> {
+  private _name: Child;
+  private _path?: Child;
 
-  constructor(name: string) {
+  constructor(name: Child) {
+    super();
     this._name = name;
   }
 
-  path(value: string): this {
+  path(value: Child): this {
     this._path = value;
     return this;
   }
 
-  build(): ScopedIdentifier {
-    return scopedIdentifier({
-      name: this._name,
-      path: this._path,
-    } as ScopedIdentifierConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._path) parts.push(this.renderChild(this._path, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ScopedIdentifier {
+    return {
+      kind: 'scoped_identifier',
+      name: this.renderChild(this._name, ctx),
+      path: this._path ? this.renderChild(this._path, ctx) : undefined,
+    } as unknown as ScopedIdentifier;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'scoped_identifier'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._path) parts.push({ kind: 'builder', builder: this._path, fieldName: 'path' });
+    return parts;
   }
 }
 
-export function scoped_identifier(name: string): ScopedIdentifierBuilder {
+export function scoped_identifier(name: Child): ScopedIdentifierBuilder {
   return new ScopedIdentifierBuilder(name);
 }
