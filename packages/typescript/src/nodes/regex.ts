@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Regex } from '../types.js';
+import type { Regex, RegexFlags, RegexPattern } from '../types.js';
 
 
-class RegexBuilder extends BaseBuilder<Regex> {
-  private _flags?: BaseBuilder;
-  private _pattern: BaseBuilder;
+class RegexBuilder extends Builder<Regex> {
+  private _pattern: Builder<RegexPattern>;
+  private _flags?: Builder<RegexFlags>;
 
-  constructor(pattern: BaseBuilder) {
+  constructor(pattern: Builder<RegexPattern>) {
     super();
     this._pattern = pattern;
   }
 
-  flags(value: BaseBuilder): this {
+  flags(value: Builder<RegexFlags>): this {
     this._flags = value;
     return this;
   }
@@ -29,12 +29,12 @@ class RegexBuilder extends BaseBuilder<Regex> {
   build(ctx?: RenderContext): Regex {
     return {
       kind: 'regex',
-      flags: this._flags ? this.renderChild(this._flags, ctx) : undefined,
-      pattern: this.renderChild(this._pattern, ctx),
-    } as unknown as Regex;
+      pattern: this._pattern.build(ctx),
+      flags: this._flags ? this._flags.build(ctx) : undefined,
+    } as Regex;
   }
 
-  override get nodeKind(): string { return 'regex'; }
+  override get nodeKind(): 'regex' { return 'regex'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,6 +46,26 @@ class RegexBuilder extends BaseBuilder<Regex> {
   }
 }
 
-export function regex(pattern: BaseBuilder): RegexBuilder {
+export type { RegexBuilder };
+
+export function regex(pattern: Builder<RegexPattern>): RegexBuilder {
   return new RegexBuilder(pattern);
+}
+
+export interface RegexOptions {
+  nodeKind: 'regex';
+  pattern: Builder<RegexPattern> | string;
+  flags?: Builder<RegexFlags> | string;
+}
+
+export namespace regex {
+  export function from(options: Omit<RegexOptions, 'nodeKind'>): RegexBuilder {
+    const _ctor = options.pattern;
+    const b = new RegexBuilder(typeof _ctor === 'string' ? new LeafBuilder('regex_pattern', _ctor) : _ctor);
+    if (options.flags !== undefined) {
+      const _v = options.flags;
+      b.flags(typeof _v === 'string' ? new LeafBuilder('regex_flags', _v) : _v);
+    }
+    return b;
+  }
 }

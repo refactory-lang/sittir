@@ -1,25 +1,35 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CallSignature } from '../types.js';
+import type { AssertsAnnotation, CallSignature, FormalParameters, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
+import { asserts_annotation } from './asserts-annotation.js';
+import type { AssertsAnnotationOptions } from './asserts-annotation.js';
+import { type_predicate_annotation } from './type-predicate-annotation.js';
+import type { TypePredicateAnnotationOptions } from './type-predicate-annotation.js';
 
 
-class CallSignatureBuilder extends BaseBuilder<CallSignature> {
-  private _parameters: BaseBuilder;
-  private _returnType?: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class CallSignatureBuilder extends Builder<CallSignature> {
+  private _typeParameters?: Builder<TypeParameters>;
+  private _parameters: Builder<FormalParameters>;
+  private _returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: BaseBuilder): this {
-    this._returnType = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
-    this._typeParameters = value;
+  returnType(value: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>): this {
+    this._returnType = value;
     return this;
   }
 
@@ -34,13 +44,13 @@ class CallSignatureBuilder extends BaseBuilder<CallSignature> {
   build(ctx?: RenderContext): CallSignature {
     return {
       kind: 'call_signature',
-      parameters: this.renderChild(this._parameters, ctx),
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-    } as unknown as CallSignature;
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      parameters: this._parameters.build(ctx),
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
+    } as CallSignature;
   }
 
-  override get nodeKind(): string { return 'call_signature'; }
+  override get nodeKind(): 'call_signature' { return 'call_signature'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,6 +61,39 @@ class CallSignatureBuilder extends BaseBuilder<CallSignature> {
   }
 }
 
-export function call_signature(parameters: BaseBuilder): CallSignatureBuilder {
+export type { CallSignatureBuilder };
+
+export function call_signature(parameters: Builder<FormalParameters>): CallSignatureBuilder {
   return new CallSignatureBuilder(parameters);
+}
+
+export interface CallSignatureOptions {
+  nodeKind: 'call_signature';
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation> | TypeAnnotationOptions | AssertsAnnotationOptions | TypePredicateAnnotationOptions;
+}
+
+export namespace call_signature {
+  export function from(options: Omit<CallSignatureOptions, 'nodeKind'>): CallSignatureBuilder {
+    const _ctor = options.parameters;
+    const b = new CallSignatureBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor));
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
+    }
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      if (_v instanceof Builder) {
+        b.returnType(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'type_annotation': b.returnType(type_annotation.from(_v)); break;
+          case 'asserts_annotation': b.returnType(asserts_annotation.from(_v)); break;
+          case 'type_predicate_annotation': b.returnType(type_predicate_annotation.from(_v)); break;
+        }
+      }
+    }
+    return b;
+  }
 }

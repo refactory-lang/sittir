@@ -1,12 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ClassStaticBlock } from '../types.js';
+import type { ClassStaticBlock, StatementBlock } from '../types.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
-class ClassStaticBlockBuilder extends BaseBuilder<ClassStaticBlock> {
-  private _body: BaseBuilder;
+class ClassStaticBlockBuilder extends Builder<ClassStaticBlock> {
+  private _body: Builder<StatementBlock>;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder<StatementBlock>) {
     super();
     this._body = body;
   }
@@ -21,11 +23,11 @@ class ClassStaticBlockBuilder extends BaseBuilder<ClassStaticBlock> {
   build(ctx?: RenderContext): ClassStaticBlock {
     return {
       kind: 'class_static_block',
-      body: this.renderChild(this._body, ctx),
-    } as unknown as ClassStaticBlock;
+      body: this._body.build(ctx),
+    } as ClassStaticBlock;
   }
 
-  override get nodeKind(): string { return 'class_static_block'; }
+  override get nodeKind(): 'class_static_block' { return 'class_static_block'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -35,6 +37,24 @@ class ClassStaticBlockBuilder extends BaseBuilder<ClassStaticBlock> {
   }
 }
 
-export function class_static_block(body: BaseBuilder): ClassStaticBlockBuilder {
+export type { ClassStaticBlockBuilder };
+
+export function class_static_block(body: Builder<StatementBlock>): ClassStaticBlockBuilder {
   return new ClassStaticBlockBuilder(body);
+}
+
+export interface ClassStaticBlockOptions {
+  nodeKind: 'class_static_block';
+  body: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
+}
+
+export namespace class_static_block {
+  export function from(input: Omit<ClassStaticBlockOptions, 'nodeKind'> | Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>): ClassStaticBlockBuilder {
+    const options: Omit<ClassStaticBlockOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'body' in input
+      ? input as Omit<ClassStaticBlockOptions, 'nodeKind'>
+      : { body: input } as Omit<ClassStaticBlockOptions, 'nodeKind'>;
+    const _ctor = options.body;
+    const b = new ClassStaticBlockBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor));
+    return b;
+  }
 }

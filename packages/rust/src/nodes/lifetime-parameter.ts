@@ -1,18 +1,22 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { LifetimeParameter } from '../types.js';
+import type { Lifetime, LifetimeParameter, TraitBounds } from '../types.js';
+import { lifetime } from './lifetime.js';
+import type { LifetimeOptions } from './lifetime.js';
+import { trait_bounds } from './trait-bounds.js';
+import type { TraitBoundsOptions } from './trait-bounds.js';
 
 
-class LifetimeParameterBuilder extends BaseBuilder<LifetimeParameter> {
-  private _bounds?: BaseBuilder;
-  private _name: BaseBuilder;
+class LifetimeParameterBuilder extends Builder<LifetimeParameter> {
+  private _name: Builder<Lifetime>;
+  private _bounds?: Builder<TraitBounds>;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder<Lifetime>) {
     super();
     this._name = name;
   }
 
-  bounds(value: BaseBuilder): this {
+  bounds(value: Builder<TraitBounds>): this {
     this._bounds = value;
     return this;
   }
@@ -27,12 +31,12 @@ class LifetimeParameterBuilder extends BaseBuilder<LifetimeParameter> {
   build(ctx?: RenderContext): LifetimeParameter {
     return {
       kind: 'lifetime_parameter',
-      bounds: this._bounds ? this.renderChild(this._bounds, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-    } as unknown as LifetimeParameter;
+      name: this._name.build(ctx),
+      bounds: this._bounds ? this._bounds.build(ctx) : undefined,
+    } as LifetimeParameter;
   }
 
-  override get nodeKind(): string { return 'lifetime_parameter'; }
+  override get nodeKind(): 'lifetime_parameter' { return 'lifetime_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,6 +46,26 @@ class LifetimeParameterBuilder extends BaseBuilder<LifetimeParameter> {
   }
 }
 
-export function lifetime_parameter(name: BaseBuilder): LifetimeParameterBuilder {
+export type { LifetimeParameterBuilder };
+
+export function lifetime_parameter(name: Builder<Lifetime>): LifetimeParameterBuilder {
   return new LifetimeParameterBuilder(name);
+}
+
+export interface LifetimeParameterOptions {
+  nodeKind: 'lifetime_parameter';
+  name: Builder<Lifetime> | Omit<LifetimeOptions, 'nodeKind'>;
+  bounds?: Builder<TraitBounds> | Omit<TraitBoundsOptions, 'nodeKind'>;
+}
+
+export namespace lifetime_parameter {
+  export function from(options: Omit<LifetimeParameterOptions, 'nodeKind'>): LifetimeParameterBuilder {
+    const _ctor = options.name;
+    const b = new LifetimeParameterBuilder(_ctor instanceof Builder ? _ctor : lifetime.from(_ctor));
+    if (options.bounds !== undefined) {
+      const _v = options.bounds;
+      b.bounds(_v instanceof Builder ? _v : trait_bounds.from(_v));
+    }
+    return b;
+  }
 }

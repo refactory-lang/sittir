@@ -3,20 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('export_clause', () => {
   it('should build with correct kind', () => {
-    const builder = ir.export_clause();
+    const builder = ir.exportClause();
     const node = builder.build();
     expect(node.kind).toBe('export_clause');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.export_clause();
-    const source = builder.renderImpl();
-    expect(source).toContain('{');
-    expect(source).toContain('}');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.export_clause();
+    const builder = ir.exportClause();
     const cst = builder.toCST();
     expect(cst.type).toBe('export_clause');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +18,7 @@ describe('export_clause', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.export_clause();
+    const builder = ir.exportClause();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -1,31 +1,31 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConditionalType } from '../types.js';
+import type { ConditionalType, Type } from '../types.js';
 
 
-class ConditionalTypeBuilder extends BaseBuilder<ConditionalType> {
-  private _alternative: BaseBuilder;
-  private _consequence!: BaseBuilder;
-  private _left!: BaseBuilder;
-  private _right!: BaseBuilder;
+class ConditionalTypeBuilder extends Builder<ConditionalType> {
+  private _left: Builder<Type>;
+  private _right!: Builder<Type>;
+  private _consequence!: Builder<Type>;
+  private _alternative!: Builder<Type>;
 
-  constructor(alternative: BaseBuilder) {
+  constructor(left: Builder<Type>) {
     super();
-    this._alternative = alternative;
+    this._left = left;
   }
 
-  consequence(value: BaseBuilder): this {
+  right(value: Builder<Type>): this {
+    this._right = value;
+    return this;
+  }
+
+  consequence(value: Builder<Type>): this {
     this._consequence = value;
     return this;
   }
 
-  left(value: BaseBuilder): this {
-    this._left = value;
-    return this;
-  }
-
-  right(value: BaseBuilder): this {
-    this._right = value;
+  alternative(value: Builder<Type>): this {
+    this._alternative = value;
     return this;
   }
 
@@ -44,14 +44,14 @@ class ConditionalTypeBuilder extends BaseBuilder<ConditionalType> {
   build(ctx?: RenderContext): ConditionalType {
     return {
       kind: 'conditional_type',
-      alternative: this.renderChild(this._alternative, ctx),
-      consequence: this._consequence ? this.renderChild(this._consequence, ctx) : undefined,
-      left: this._left ? this.renderChild(this._left, ctx) : undefined,
-      right: this._right ? this.renderChild(this._right, ctx) : undefined,
-    } as unknown as ConditionalType;
+      left: this._left.build(ctx),
+      right: this._right ? this._right.build(ctx) : undefined,
+      consequence: this._consequence ? this._consequence.build(ctx) : undefined,
+      alternative: this._alternative ? this._alternative.build(ctx) : undefined,
+    } as ConditionalType;
   }
 
-  override get nodeKind(): string { return 'conditional_type'; }
+  override get nodeKind(): 'conditional_type' { return 'conditional_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -66,6 +66,26 @@ class ConditionalTypeBuilder extends BaseBuilder<ConditionalType> {
   }
 }
 
-export function conditional_type(alternative: BaseBuilder): ConditionalTypeBuilder {
-  return new ConditionalTypeBuilder(alternative);
+export type { ConditionalTypeBuilder };
+
+export function conditional_type(left: Builder<Type>): ConditionalTypeBuilder {
+  return new ConditionalTypeBuilder(left);
+}
+
+export interface ConditionalTypeOptions {
+  nodeKind: 'conditional_type';
+  left: Builder<Type>;
+  right: Builder<Type>;
+  consequence: Builder<Type>;
+  alternative: Builder<Type>;
+}
+
+export namespace conditional_type {
+  export function from(options: Omit<ConditionalTypeOptions, 'nodeKind'>): ConditionalTypeBuilder {
+    const b = new ConditionalTypeBuilder(options.left);
+    if (options.right !== undefined) b.right(options.right);
+    if (options.consequence !== undefined) b.consequence(options.consequence);
+    if (options.alternative !== undefined) b.alternative(options.alternative);
+    return b;
+  }
 }

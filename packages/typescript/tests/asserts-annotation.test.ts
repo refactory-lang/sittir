@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('asserts_annotation', () => {
   it('should build with correct kind', () => {
-    const builder = ir.asserts_annotation(ir.identifier('test'));
+    const builder = ir.assertsAnnotation(ir.asserts(ir.identifier('test')));
     const node = builder.build();
     expect(node.kind).toBe('asserts_annotation');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.asserts_annotation(ir.identifier('test'));
+    const builder = ir.assertsAnnotation(ir.asserts(ir.identifier('test')));
     const source = builder.renderImpl();
     expect(source).toContain(':');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.asserts_annotation(ir.identifier('test'));
+    const builder = ir.assertsAnnotation(ir.asserts(ir.identifier('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('asserts_annotation');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('asserts_annotation', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.asserts_annotation(ir.identifier('test'));
+    const builder = ir.assertsAnnotation(ir.asserts(ir.identifier('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

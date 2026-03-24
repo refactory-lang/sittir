@@ -6,6 +6,7 @@ describe('function_declaration', () => {
     const builder = ir.functionDeclaration(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('function_declaration');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {

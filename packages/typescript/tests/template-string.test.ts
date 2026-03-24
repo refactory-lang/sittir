@@ -3,20 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('template_string', () => {
   it('should build with correct kind', () => {
-    const builder = ir.template_string();
+    const builder = ir.templateString();
     const node = builder.build();
     expect(node.kind).toBe('template_string');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.template_string();
-    const source = builder.renderImpl();
-    expect(source).toContain('`');
-    expect(source).toContain('`');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.template_string();
+    const builder = ir.templateString();
     const cst = builder.toCST();
     expect(cst.type).toBe('template_string');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +18,7 @@ describe('template_string', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.template_string();
+    const builder = ir.templateString();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

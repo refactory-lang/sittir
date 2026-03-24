@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('literal_type', () => {
   it('should build with correct kind', () => {
-    const builder = ir.literal_type(ir.identifier('test'));
+    const builder = ir.literalType(ir.number('test'));
     const node = builder.build();
     expect(node.kind).toBe('literal_type');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.literal_type(ir.identifier('test'));
+    const builder = ir.literalType(ir.number('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('literal_type');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('literal_type', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.literal_type(ir.identifier('test'));
+    const builder = ir.literalType(ir.number('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

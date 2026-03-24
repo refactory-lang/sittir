@@ -1,14 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TokenRepetition } from '../types.js';
+import type { BooleanLiteral, CharLiteral, Crate, FloatLiteral, Identifier, IntegerLiteral, Metavariable, MutableSpecifier, PrimitiveType, RawStringLiteral, Self, StringLiteral, Super, TokenRepetition, TokenTree } from '../types.js';
+import { token_tree } from './token-tree.js';
+import type { TokenTreeOptions } from './token-tree.js';
+import { string_literal } from './string-literal.js';
+import type { StringLiteralOptions } from './string-literal.js';
+import { raw_string_literal } from './raw-string-literal.js';
+import type { RawStringLiteralOptions } from './raw-string-literal.js';
 
 
-class TokenRepetitionBuilder extends BaseBuilder<TokenRepetition> {
-  private _children: BaseBuilder[] = [];
+class TokenRepetitionBuilder extends Builder<TokenRepetition> {
+  private _children: Builder<TokenTree | TokenRepetition | Metavariable | StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType>[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder<TokenTree | TokenRepetition | Metavariable | StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType>[]): this {
     this._children = value;
     return this;
   }
@@ -26,11 +32,11 @@ class TokenRepetitionBuilder extends BaseBuilder<TokenRepetition> {
   build(ctx?: RenderContext): TokenRepetition {
     return {
       kind: 'token_repetition',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TokenRepetition;
+      children: this._children.map(c => c.build(ctx)),
+    } as TokenRepetition;
   }
 
-  override get nodeKind(): string { return 'token_repetition'; }
+  override get nodeKind(): 'token_repetition' { return 'token_repetition'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -45,6 +51,28 @@ class TokenRepetitionBuilder extends BaseBuilder<TokenRepetition> {
   }
 }
 
+export type { TokenRepetitionBuilder };
+
 export function token_repetition(): TokenRepetitionBuilder {
   return new TokenRepetitionBuilder();
+}
+
+export interface TokenRepetitionOptions {
+  nodeKind: 'token_repetition';
+  children?: Builder<TokenTree | TokenRepetition | Metavariable | StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType> | TokenTreeOptions | StringLiteralOptions | RawStringLiteralOptions | (Builder<TokenTree | TokenRepetition | Metavariable | StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType> | TokenTreeOptions | StringLiteralOptions | RawStringLiteralOptions)[];
+}
+
+export namespace token_repetition {
+  export function from(input: Omit<TokenRepetitionOptions, 'nodeKind'> | Builder<TokenTree | TokenRepetition | Metavariable | StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType> | TokenTreeOptions | StringLiteralOptions | RawStringLiteralOptions | (Builder<TokenTree | TokenRepetition | Metavariable | StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType> | TokenTreeOptions | StringLiteralOptions | RawStringLiteralOptions)[]): TokenRepetitionBuilder {
+    const options: Omit<TokenRepetitionOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TokenRepetitionOptions, 'nodeKind'>
+      : { children: input } as Omit<TokenRepetitionOptions, 'nodeKind'>;
+    const b = new TokenRepetitionBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'token_tree': return token_tree.from(_v);   case 'string_literal': return string_literal.from(_v);   case 'raw_string_literal': return raw_string_literal.from(_v); } throw new Error('unreachable'); }));
+    }
+    return b;
+  }
 }

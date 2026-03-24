@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SpreadElement } from '../types.js';
+import type { Expression, SpreadElement } from '../types.js';
 
 
-class SpreadElementBuilder extends BaseBuilder<SpreadElement> {
-  private _children: BaseBuilder[] = [];
+class SpreadElementBuilder extends Builder<SpreadElement> {
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class SpreadElementBuilder extends BaseBuilder<SpreadElement> {
   build(ctx?: RenderContext): SpreadElement {
     return {
       kind: 'spread_element',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as SpreadElement;
+      children: this._children[0]!.build(ctx),
+    } as SpreadElement;
   }
 
-  override get nodeKind(): string { return 'spread_element'; }
+  override get nodeKind(): 'spread_element' { return 'spread_element'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +37,24 @@ class SpreadElementBuilder extends BaseBuilder<SpreadElement> {
   }
 }
 
-export function spread_element(children: BaseBuilder): SpreadElementBuilder {
+export type { SpreadElementBuilder };
+
+export function spread_element(children: Builder<Expression>): SpreadElementBuilder {
   return new SpreadElementBuilder(children);
+}
+
+export interface SpreadElementOptions {
+  nodeKind: 'spread_element';
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace spread_element {
+  export function from(input: Omit<SpreadElementOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): SpreadElementBuilder {
+    const options: Omit<SpreadElementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<SpreadElementOptions, 'nodeKind'>
+      : { children: input } as Omit<SpreadElementOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new SpreadElementBuilder(_ctor);
+    return b;
+  }
 }

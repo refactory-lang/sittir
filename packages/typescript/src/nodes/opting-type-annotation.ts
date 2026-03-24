@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { OptingTypeAnnotation } from '../types.js';
+import type { OptingTypeAnnotation, Type } from '../types.js';
 
 
-class OptingTypeAnnotationBuilder extends BaseBuilder<OptingTypeAnnotation> {
-  private _children: BaseBuilder[] = [];
+class OptingTypeAnnotationBuilder extends Builder<OptingTypeAnnotation> {
+  private _children: Builder<Type>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Type>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class OptingTypeAnnotationBuilder extends BaseBuilder<OptingTypeAnnotation> {
   build(ctx?: RenderContext): OptingTypeAnnotation {
     return {
       kind: 'opting_type_annotation',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as OptingTypeAnnotation;
+      children: this._children[0]!.build(ctx),
+    } as OptingTypeAnnotation;
   }
 
-  override get nodeKind(): string { return 'opting_type_annotation'; }
+  override get nodeKind(): 'opting_type_annotation' { return 'opting_type_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +37,24 @@ class OptingTypeAnnotationBuilder extends BaseBuilder<OptingTypeAnnotation> {
   }
 }
 
-export function opting_type_annotation(children: BaseBuilder): OptingTypeAnnotationBuilder {
+export type { OptingTypeAnnotationBuilder };
+
+export function opting_type_annotation(children: Builder<Type>): OptingTypeAnnotationBuilder {
   return new OptingTypeAnnotationBuilder(children);
+}
+
+export interface OptingTypeAnnotationOptions {
+  nodeKind: 'opting_type_annotation';
+  children: Builder<Type> | (Builder<Type>)[];
+}
+
+export namespace opting_type_annotation {
+  export function from(input: Omit<OptingTypeAnnotationOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): OptingTypeAnnotationBuilder {
+    const options: Omit<OptingTypeAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<OptingTypeAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<OptingTypeAnnotationOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new OptingTypeAnnotationBuilder(_ctor);
+    return b;
+  }
 }

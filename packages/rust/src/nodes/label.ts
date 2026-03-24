@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Label } from '../types.js';
+import type { Identifier, Label } from '../types.js';
 
 
-class LabelBuilder extends BaseBuilder<Label> {
-  private _children: BaseBuilder[] = [];
+class LabelBuilder extends Builder<Label> {
+  private _children: Builder<Identifier>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Identifier>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class LabelBuilder extends BaseBuilder<Label> {
   build(ctx?: RenderContext): Label {
     return {
       kind: 'label',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Label;
+      children: this._children[0]!.build(ctx),
+    } as Label;
   }
 
-  override get nodeKind(): string { return 'label'; }
+  override get nodeKind(): 'label' { return 'label'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +37,24 @@ class LabelBuilder extends BaseBuilder<Label> {
   }
 }
 
-export function label(children: BaseBuilder): LabelBuilder {
+export type { LabelBuilder };
+
+export function label(children: Builder<Identifier>): LabelBuilder {
   return new LabelBuilder(children);
+}
+
+export interface LabelOptions {
+  nodeKind: 'label';
+  children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+}
+
+export namespace label {
+  export function from(input: Omit<LabelOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): LabelBuilder {
+    const options: Omit<LabelOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<LabelOptions, 'nodeKind'>
+      : { children: input } as Omit<LabelOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new LabelBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    return b;
+  }
 }

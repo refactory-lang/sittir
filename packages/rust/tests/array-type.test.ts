@@ -3,20 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('array_type', () => {
   it('should build with correct kind', () => {
-    const builder = ir.array_type(ir.identifier('test'));
+    const builder = ir.arrayType(ir.metavariable('test'));
     const node = builder.build();
     expect(node.kind).toBe('array_type');
+    expect((node as any).element).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.array_type(ir.identifier('test'));
+    const builder = ir.arrayType(ir.metavariable('test'));
     const source = builder.renderImpl();
     expect(source).toContain('[');
     expect(source).toContain(']');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.array_type(ir.identifier('test'));
+    const builder = ir.arrayType(ir.metavariable('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('array_type');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +26,7 @@ describe('array_type', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.array_type(ir.identifier('test'));
+    const builder = ir.arrayType(ir.metavariable('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

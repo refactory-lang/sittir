@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('conditional_type', () => {
   it('should build with correct kind', () => {
-    const builder = ir.conditional_type(ir.identifier('test'));
+    const builder = ir.conditionalType(ir.callExpression(ir.import()));
     const node = builder.build();
     expect(node.kind).toBe('conditional_type');
+    expect((node as any).left).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.conditional_type(ir.identifier('test'));
+    const builder = ir.conditionalType(ir.callExpression(ir.import()));
     const source = builder.renderImpl();
     expect(source).toContain('extends');
     expect(source).toContain('?');
@@ -17,7 +18,7 @@ describe('conditional_type', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.conditional_type(ir.identifier('test'));
+    const builder = ir.conditionalType(ir.callExpression(ir.import()));
     const cst = builder.toCST();
     expect(cst.type).toBe('conditional_type');
     expect(cst.isNamed).toBe(true);
@@ -26,7 +27,7 @@ describe('conditional_type', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.conditional_type(ir.identifier('test'));
+    const builder = ir.conditionalType(ir.callExpression(ir.import()));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

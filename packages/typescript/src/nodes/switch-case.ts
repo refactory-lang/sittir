@@ -1,18 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SwitchCase } from '../types.js';
+import type { Expression, SequenceExpression, Statement, SwitchCase } from '../types.js';
+import { sequence_expression } from './sequence-expression.js';
+import type { SequenceExpressionOptions } from './sequence-expression.js';
 
 
-class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
-  private _body: BaseBuilder[] = [];
-  private _value: BaseBuilder;
+class SwitchCaseBuilder extends Builder<SwitchCase> {
+  private _value: Builder<Expression | SequenceExpression>;
+  private _body: Builder<Statement>[] = [];
 
-  constructor(value: BaseBuilder) {
+  constructor(value: Builder<Expression | SequenceExpression>) {
     super();
     this._value = value;
   }
 
-  body(value: BaseBuilder[]): this {
+  body(...value: Builder<Statement>[]): this {
     this._body = value;
     return this;
   }
@@ -29,12 +31,12 @@ class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
   build(ctx?: RenderContext): SwitchCase {
     return {
       kind: 'switch_case',
-      body: this._body.map(c => this.renderChild(c, ctx)),
-      value: this.renderChild(this._value, ctx),
-    } as unknown as SwitchCase;
+      value: this._value.build(ctx),
+      body: this._body.map(c => c.build(ctx)),
+    } as SwitchCase;
   }
 
-  override get nodeKind(): string { return 'switch_case'; }
+  override get nodeKind(): 'switch_case' { return 'switch_case'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,6 +50,27 @@ class SwitchCaseBuilder extends BaseBuilder<SwitchCase> {
   }
 }
 
-export function switch_case(value: BaseBuilder): SwitchCaseBuilder {
+export type { SwitchCaseBuilder };
+
+export function switch_case(value: Builder<Expression | SequenceExpression>): SwitchCaseBuilder {
   return new SwitchCaseBuilder(value);
+}
+
+export interface SwitchCaseOptions {
+  nodeKind: 'switch_case';
+  value: Builder<Expression | SequenceExpression> | Omit<SequenceExpressionOptions, 'nodeKind'>;
+  body?: Builder<Statement> | (Builder<Statement>)[];
+}
+
+export namespace switch_case {
+  export function from(options: Omit<SwitchCaseOptions, 'nodeKind'>): SwitchCaseBuilder {
+    const _ctor = options.value;
+    const b = new SwitchCaseBuilder(_ctor instanceof Builder ? _ctor : sequence_expression.from(_ctor));
+    if (options.body !== undefined) {
+      const _v = options.body;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.body(..._arr);
+    }
+    return b;
+  }
 }

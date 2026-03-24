@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('type_binding', () => {
   it('should build with correct kind', () => {
-    const builder = ir.type_binding(ir.identifier('test'));
+    const builder = ir.typeBinding(ir.typeIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('type_binding');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.type_binding(ir.identifier('test'));
+    const builder = ir.typeBinding(ir.typeIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('=');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.type_binding(ir.identifier('test'));
+    const builder = ir.typeBinding(ir.typeIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('type_binding');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('type_binding', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.type_binding(ir.identifier('test'));
+    const builder = ir.typeBinding(ir.typeIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

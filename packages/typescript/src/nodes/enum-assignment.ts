@@ -1,18 +1,22 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { EnumAssignment } from '../types.js';
+import type { ComputedPropertyName, EnumAssignment, Expression, Number, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { computed_property_name } from './computed-property-name.js';
+import type { ComputedPropertyNameOptions } from './computed-property-name.js';
 
 
-class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
-  private _name: BaseBuilder;
-  private _value!: BaseBuilder;
+class EnumAssignmentBuilder extends Builder<EnumAssignment> {
+  private _name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  private _value!: Builder<Expression>;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>) {
     super();
     this._name = name;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder<Expression>): this {
     this._value = value;
     return this;
   }
@@ -28,12 +32,12 @@ class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
   build(ctx?: RenderContext): EnumAssignment {
     return {
       kind: 'enum_assignment',
-      name: this.renderChild(this._name, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-    } as unknown as EnumAssignment;
+      name: this._name.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
+    } as EnumAssignment;
   }
 
-  override get nodeKind(): string { return 'enum_assignment'; }
+  override get nodeKind(): 'enum_assignment' { return 'enum_assignment'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,6 +48,33 @@ class EnumAssignmentBuilder extends BaseBuilder<EnumAssignment> {
   }
 }
 
-export function enum_assignment(name: BaseBuilder): EnumAssignmentBuilder {
+export type { EnumAssignmentBuilder };
+
+export function enum_assignment(name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>): EnumAssignmentBuilder {
   return new EnumAssignmentBuilder(name);
+}
+
+export interface EnumAssignmentOptions {
+  nodeKind: 'enum_assignment';
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions;
+  value: Builder<Expression>;
+}
+
+export namespace enum_assignment {
+  export function from(options: Omit<EnumAssignmentOptions, 'nodeKind'>): EnumAssignmentBuilder {
+    const _raw = options.name;
+    let _ctor: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'string': _ctor = string.from(_raw); break;
+        case 'computed_property_name': _ctor = computed_property_name.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new EnumAssignmentBuilder(_ctor);
+    if (options.value !== undefined) b.value(options.value);
+    return b;
+  }
 }

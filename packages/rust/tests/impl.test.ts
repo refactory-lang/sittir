@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('impl_item', () => {
   it('should build with correct kind', () => {
-    const builder = ir.impl(ir.identifier('test'));
+    const builder = ir.impl(ir.metavariable('test'));
     const node = builder.build();
     expect(node.kind).toBe('impl_item');
+    expect((node as any).type).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.impl(ir.identifier('test'));
+    const builder = ir.impl(ir.metavariable('test'));
     const source = builder.renderImpl();
     expect(source).toContain('impl');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.impl(ir.identifier('test'));
+    const builder = ir.impl(ir.metavariable('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('impl_item');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('impl_item', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.impl(ir.identifier('test'));
+    const builder = ir.impl(ir.metavariable('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

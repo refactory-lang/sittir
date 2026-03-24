@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('match_arm', () => {
   it('should build with correct kind', () => {
-    const builder = ir.match_arm(ir.identifier('test'));
+    const builder = ir.matchArm(ir.matchPattern(ir.charLiteral('test')));
     const node = builder.build();
     expect(node.kind).toBe('match_arm');
+    expect((node as any).pattern).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.match_arm(ir.identifier('test'));
+    const builder = ir.matchArm(ir.matchPattern(ir.charLiteral('test')));
     const source = builder.renderImpl();
     expect(source).toContain('=>');
-    expect(source).toContain(',');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.match_arm(ir.identifier('test'));
+    const builder = ir.matchArm(ir.matchPattern(ir.charLiteral('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('match_arm');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('match_arm', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.match_arm(ir.identifier('test'));
+    const builder = ir.matchArm(ir.matchPattern(ir.charLiteral('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

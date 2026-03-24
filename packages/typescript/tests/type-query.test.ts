@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('type_query', () => {
   it('should build with correct kind', () => {
-    const builder = ir.type_query(ir.identifier('test'));
+    const builder = ir.typeQuery(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('type_query');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.type_query(ir.identifier('test'));
+    const builder = ir.typeQuery(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('typeof');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.type_query(ir.identifier('test'));
+    const builder = ir.typeQuery(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('type_query');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('type_query', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.type_query(ir.identifier('test'));
+    const builder = ir.typeQuery(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

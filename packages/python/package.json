@@ -1,0 +1,48 @@
+{
+  "name": "@sittir/python",
+  "version": "0.1.0",
+  "description": "Typed Python IR builder — node kinds from tree-sitter-python grammar",
+  "license": "MIT",
+  "homepage": "https://github.com/refactory-lang/sittir#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/refactory-lang/sittir.git",
+    "directory": "packages/python"
+  },
+  "keywords": [
+    "python",
+    "tree-sitter",
+    "ir",
+    "codegen",
+    "ast"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "generate": "node ../codegen/dist/cli.js --grammar python --all --output src/",
+    "regenerate": "rm -rf src tests vitest.config.ts && pnpm generate && pnpm build && pnpm test",
+    "build": "tsgo -p tsconfig.build.json",
+    "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+    "dev": "tsgo -p tsconfig.build.json --watch",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@sittir/types": "workspace:*"
+  },
+  "devDependencies": {
+    "tree-sitter-python": "^0.23.6",
+    "type-fest": "^5.4.4"
+  }
+}

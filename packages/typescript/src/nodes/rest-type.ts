@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { RestType } from '../types.js';
+import type { RestType, Type } from '../types.js';
 
 
-class RestTypeBuilder extends BaseBuilder<RestType> {
-  private _children: BaseBuilder[] = [];
+class RestTypeBuilder extends Builder<RestType> {
+  private _children: Builder<Type>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Type>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class RestTypeBuilder extends BaseBuilder<RestType> {
   build(ctx?: RenderContext): RestType {
     return {
       kind: 'rest_type',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as RestType;
+      children: this._children[0]!.build(ctx),
+    } as RestType;
   }
 
-  override get nodeKind(): string { return 'rest_type'; }
+  override get nodeKind(): 'rest_type' { return 'rest_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +37,24 @@ class RestTypeBuilder extends BaseBuilder<RestType> {
   }
 }
 
-export function rest_type(children: BaseBuilder): RestTypeBuilder {
+export type { RestTypeBuilder };
+
+export function rest_type(children: Builder<Type>): RestTypeBuilder {
   return new RestTypeBuilder(children);
+}
+
+export interface RestTypeOptions {
+  nodeKind: 'rest_type';
+  children: Builder<Type> | (Builder<Type>)[];
+}
+
+export namespace rest_type {
+  export function from(input: Omit<RestTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): RestTypeBuilder {
+    const options: Omit<RestTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<RestTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<RestTypeOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new RestTypeBuilder(_ctor);
+    return b;
+  }
 }

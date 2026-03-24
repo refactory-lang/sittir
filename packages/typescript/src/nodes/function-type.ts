@@ -1,25 +1,33 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionType } from '../types.js';
+import type { Asserts, FormalParameters, FunctionType, Type, TypeParameters, TypePredicate } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
+import { asserts } from './asserts.js';
+import type { AssertsOptions } from './asserts.js';
+import { type_predicate } from './type-predicate.js';
+import type { TypePredicateOptions } from './type-predicate.js';
 
 
-class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
-  private _parameters: BaseBuilder;
-  private _returnType!: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class FunctionTypeBuilder extends Builder<FunctionType> {
+  private _typeParameters?: Builder<TypeParameters>;
+  private _parameters: Builder<FormalParameters>;
+  private _returnType!: Builder<Type | Asserts | TypePredicate>;
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  returnType(value: BaseBuilder): this {
-    this._returnType = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
-    this._typeParameters = value;
+  returnType(value: Builder<Type | Asserts | TypePredicate>): this {
+    this._returnType = value;
     return this;
   }
 
@@ -35,13 +43,13 @@ class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
   build(ctx?: RenderContext): FunctionType {
     return {
       kind: 'function_type',
-      parameters: this.renderChild(this._parameters, ctx),
-      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-    } as unknown as FunctionType;
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      parameters: this._parameters.build(ctx),
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
+    } as FunctionType;
   }
 
-  override get nodeKind(): string { return 'function_type'; }
+  override get nodeKind(): 'function_type' { return 'function_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,6 +61,38 @@ class FunctionTypeBuilder extends BaseBuilder<FunctionType> {
   }
 }
 
-export function function_type(parameters: BaseBuilder): FunctionTypeBuilder {
+export type { FunctionTypeBuilder };
+
+export function function_type(parameters: Builder<FormalParameters>): FunctionTypeBuilder {
   return new FunctionTypeBuilder(parameters);
+}
+
+export interface FunctionTypeOptions {
+  nodeKind: 'function_type';
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  returnType: Builder<Type | Asserts | TypePredicate> | AssertsOptions | TypePredicateOptions;
+}
+
+export namespace function_type {
+  export function from(options: Omit<FunctionTypeOptions, 'nodeKind'>): FunctionTypeBuilder {
+    const _ctor = options.parameters;
+    const b = new FunctionTypeBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor));
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
+    }
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      if (_v instanceof Builder) {
+        b.returnType(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'asserts': b.returnType(asserts.from(_v)); break;
+          case 'type_predicate': b.returnType(type_predicate.from(_v)); break;
+        }
+      }
+    }
+    return b;
+  }
 }

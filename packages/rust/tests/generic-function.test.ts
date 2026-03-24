@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('generic_function', () => {
   it('should build with correct kind', () => {
-    const builder = ir.generic_function(ir.identifier('test'));
+    const builder = ir.genericFunction(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('generic_function');
+    expect((node as any).function).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.generic_function(ir.identifier('test'));
+    const builder = ir.genericFunction(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('::');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.generic_function(ir.identifier('test'));
+    const builder = ir.genericFunction(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('generic_function');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('generic_function', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.generic_function(ir.identifier('test'));
+    const builder = ir.genericFunction(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

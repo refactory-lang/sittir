@@ -1,20 +1,26 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { EnumBody } from '../types.js';
+import type { ComputedPropertyName, EnumAssignment, EnumBody, Number, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { computed_property_name } from './computed-property-name.js';
+import type { ComputedPropertyNameOptions } from './computed-property-name.js';
+import { enum_assignment } from './enum-assignment.js';
+import type { EnumAssignmentOptions } from './enum-assignment.js';
 
 
-class EnumBodyBuilder extends BaseBuilder<EnumBody> {
-  private _name: BaseBuilder[] = [];
-  private _children: BaseBuilder[] = [];
+class EnumBodyBuilder extends Builder<EnumBody> {
+  private _name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>[] = [];
+  private _children: Builder<EnumAssignment>[] = [];
 
   constructor() { super(); }
 
-  name(value: BaseBuilder[]): this {
+  name(...value: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>[]): this {
     this._name = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder<EnumAssignment>[]): this {
     this._children = value;
     return this;
   }
@@ -24,7 +30,9 @@ class EnumBodyBuilder extends BaseBuilder<EnumBody> {
     parts.push('{');
     if (this._name.length > 0) {
       if (this._name.length > 0) parts.push(this.renderChildren(this._name, ', ', ctx));
+      if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
       parts.push(',');
+      if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
       parts.push(',');
     }
     parts.push('}');
@@ -34,12 +42,12 @@ class EnumBodyBuilder extends BaseBuilder<EnumBody> {
   build(ctx?: RenderContext): EnumBody {
     return {
       kind: 'enum_body',
-      name: this._name.map(c => this.renderChild(c, ctx)),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as EnumBody;
+      name: this._name.map(c => c.build(ctx)),
+      children: this._children.map(c => c.build(ctx)),
+    } as EnumBody;
   }
 
-  override get nodeKind(): string { return 'enum_body'; }
+  override get nodeKind(): 'enum_body' { return 'enum_body'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,7 +56,9 @@ class EnumBodyBuilder extends BaseBuilder<EnumBody> {
       for (const child of this._name) {
         parts.push({ kind: 'builder', builder: child, fieldName: 'name' });
       }
+      if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
       parts.push({ kind: 'token', text: ',', type: ',' });
+      if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
       parts.push({ kind: 'token', text: ',', type: ',' });
     }
     parts.push({ kind: 'token', text: '}', type: '}' });
@@ -56,6 +66,31 @@ class EnumBodyBuilder extends BaseBuilder<EnumBody> {
   }
 }
 
+export type { EnumBodyBuilder };
+
 export function enum_body(): EnumBodyBuilder {
   return new EnumBodyBuilder();
+}
+
+export interface EnumBodyOptions {
+  nodeKind: 'enum_body';
+  name?: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions | (Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions)[];
+  children?: Builder<EnumAssignment> | Omit<EnumAssignmentOptions, 'nodeKind'> | (Builder<EnumAssignment> | Omit<EnumAssignmentOptions, 'nodeKind'>)[];
+}
+
+export namespace enum_body {
+  export function from(options: Omit<EnumBodyOptions, 'nodeKind'>): EnumBodyBuilder {
+    const b = new EnumBodyBuilder();
+    if (options.name !== undefined) {
+      const _v = options.name;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.name(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'string': return string.from(_v);   case 'computed_property_name': return computed_property_name.from(_v); } throw new Error('unreachable'); }));
+    }
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : enum_assignment.from(_x)));
+    }
+    return b;
+  }
 }

@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('assignment_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.assignment_pattern(ir.identifier('test'));
+    const builder = ir.assignmentPattern(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('assignment_pattern');
+    expect((node as any).left).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.assignment_pattern(ir.identifier('test'));
+    const builder = ir.assignmentPattern(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('=');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.assignment_pattern(ir.identifier('test'));
+    const builder = ir.assignmentPattern(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('assignment_pattern');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('assignment_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.assignment_pattern(ir.identifier('test'));
+    const builder = ir.assignmentPattern(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

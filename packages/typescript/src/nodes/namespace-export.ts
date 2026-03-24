@@ -1,12 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { NamespaceExport } from '../types.js';
+import type { Identifier, NamespaceExport, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
 
 
-class NamespaceExportBuilder extends BaseBuilder<NamespaceExport> {
-  private _children: BaseBuilder[] = [];
+class NamespaceExportBuilder extends Builder<NamespaceExport> {
+  private _children: Builder<Identifier | String>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Identifier | String>) {
     super();
     this._children = [children];
   }
@@ -22,11 +24,11 @@ class NamespaceExportBuilder extends BaseBuilder<NamespaceExport> {
   build(ctx?: RenderContext): NamespaceExport {
     return {
       kind: 'namespace_export',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as NamespaceExport;
+      children: this._children[0]!.build(ctx),
+    } as NamespaceExport;
   }
 
-  override get nodeKind(): string { return 'namespace_export'; }
+  override get nodeKind(): 'namespace_export' { return 'namespace_export'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,6 +41,24 @@ class NamespaceExportBuilder extends BaseBuilder<NamespaceExport> {
   }
 }
 
-export function namespace_export(children: BaseBuilder): NamespaceExportBuilder {
+export type { NamespaceExportBuilder };
+
+export function namespace_export(children: Builder<Identifier | String>): NamespaceExportBuilder {
   return new NamespaceExportBuilder(children);
+}
+
+export interface NamespaceExportOptions {
+  nodeKind: 'namespace_export';
+  children: Builder<Identifier | String> | string | Omit<StringOptions, 'nodeKind'> | (Builder<Identifier | String> | string | Omit<StringOptions, 'nodeKind'>)[];
+}
+
+export namespace namespace_export {
+  export function from(input: Omit<NamespaceExportOptions, 'nodeKind'> | Builder<Identifier | String> | string | Omit<StringOptions, 'nodeKind'> | (Builder<Identifier | String> | string | Omit<StringOptions, 'nodeKind'>)[]): NamespaceExportBuilder {
+    const options: Omit<NamespaceExportOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<NamespaceExportOptions, 'nodeKind'>
+      : { children: input } as Omit<NamespaceExportOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new NamespaceExportBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor instanceof Builder ? _ctor : string.from(_ctor));
+    return b;
+  }
 }

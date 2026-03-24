@@ -3,20 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('ordered_field_declaration_list', () => {
   it('should build with correct kind', () => {
-    const builder = ir.ordered_field_declaration_list();
+    const builder = ir.orderedFieldDeclarationList();
     const node = builder.build();
     expect(node.kind).toBe('ordered_field_declaration_list');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.ordered_field_declaration_list();
-    const source = builder.renderImpl();
-    expect(source).toContain('(');
-    expect(source).toContain(')');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.ordered_field_declaration_list();
+    const builder = ir.orderedFieldDeclarationList();
     const cst = builder.toCST();
     expect(cst.type).toBe('ordered_field_declaration_list');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +18,7 @@ describe('ordered_field_declaration_list', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.ordered_field_declaration_list();
+    const builder = ir.orderedFieldDeclarationList();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('type_predicate', () => {
   it('should build with correct kind', () => {
-    const builder = ir.type_predicate(ir.identifier('test'));
+    const builder = ir.typePredicate(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('type_predicate');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.type_predicate(ir.identifier('test'));
+    const builder = ir.typePredicate(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('is');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.type_predicate(ir.identifier('test'));
+    const builder = ir.typePredicate(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('type_predicate');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('type_predicate', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.type_predicate(ir.identifier('test'));
+    const builder = ir.typePredicate(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

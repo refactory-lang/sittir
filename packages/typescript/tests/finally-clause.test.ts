@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('finally_clause', () => {
   it('should build with correct kind', () => {
-    const builder = ir.finally_clause(ir.identifier('test'));
+    const builder = ir.finallyClause(ir.statementBlock());
     const node = builder.build();
     expect(node.kind).toBe('finally_clause');
+    expect((node as any).body).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.finally_clause(ir.identifier('test'));
+    const builder = ir.finallyClause(ir.statementBlock());
     const source = builder.renderImpl();
     expect(source).toContain('finally');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.finally_clause(ir.identifier('test'));
+    const builder = ir.finallyClause(ir.statementBlock());
     const cst = builder.toCST();
     expect(cst.type).toBe('finally_clause');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('finally_clause', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.finally_clause(ir.identifier('test'));
+    const builder = ir.finallyClause(ir.statementBlock());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

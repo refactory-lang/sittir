@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('arrow_function', () => {
   it('should build with correct kind', () => {
-    const builder = ir.arrow_function(ir.identifier('test'));
+    const builder = ir.arrowFunction(ir.yieldExpression());
     const node = builder.build();
     expect(node.kind).toBe('arrow_function');
+    expect((node as any).body).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.arrow_function(ir.identifier('test'));
+    const builder = ir.arrowFunction(ir.yieldExpression());
     const source = builder.renderImpl();
     expect(source).toContain('=>');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.arrow_function(ir.identifier('test'));
+    const builder = ir.arrowFunction(ir.yieldExpression());
     const cst = builder.toCST();
     expect(cst.type).toBe('arrow_function');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('arrow_function', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.arrow_function(ir.identifier('test'));
+    const builder = ir.arrowFunction(ir.yieldExpression());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

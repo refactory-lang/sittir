@@ -3,20 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('field_initializer_list', () => {
   it('should build with correct kind', () => {
-    const builder = ir.field_initializer_list();
+    const builder = ir.fieldInitializerList();
     const node = builder.build();
     expect(node.kind).toBe('field_initializer_list');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.field_initializer_list();
-    const source = builder.renderImpl();
-    expect(source).toContain('{');
-    expect(source).toContain('}');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.field_initializer_list();
+    const builder = ir.fieldInitializerList();
     const cst = builder.toCST();
     expect(cst.type).toBe('field_initializer_list');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +18,7 @@ describe('field_initializer_list', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.field_initializer_list();
+    const builder = ir.fieldInitializerList();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

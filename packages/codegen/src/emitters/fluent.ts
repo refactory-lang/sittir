@@ -5,7 +5,8 @@
  */
 
 import type { NodeMeta, SupertypeInfo } from '../grammar-reader.ts';
-import { toShortName, toGrammarTypeName, toFactoryName, toFieldName, resolveFileNames } from '../naming.ts';
+import { toShortName, toIrKey, toGrammarTypeName, toFactoryName, toFieldName, toTypeName, toBuilderClassName, resolveFileNames } from '../naming.ts';
+import { selectConstructorField } from './builder.ts';
 
 export interface OperatorContext {
   parentKind: string;
@@ -17,6 +18,8 @@ export interface EmitFluentConfig {
   grammar: string;
   nodeKinds: string[];
   leafKinds: string[];
+  /** Named keywords: kind → fixed text (e.g., 'self' → 'self', 'mutable_specifier' → 'mut'). */
+  keywords?: Map<string, string>;
   operatorContexts?: OperatorContext[];
   nodes?: NodeMeta[];
   supertypes?: SupertypeInfo[];
@@ -44,17 +47,17 @@ const COMPOUND_OP_NAMES: Record<string, string> = {
 };
 
 export function emitFluent(config: EmitFluentConfig): string {
-  const { grammar, nodeKinds, leafKinds, operatorContexts } = config;
+  const { grammar, nodeKinds, leafKinds, keywords, operatorContexts } = config;
   const grammarTypeName = toGrammarTypeName(grammar);
   const grammarPrefix = grammarTypeName.slice(0, -5);
 
   const fileNames = resolveFileNames(nodeKinds);
 
-  // Detect duplicate short names and fall back to full factory name
-  const shortNameCounts = new Map<string, number>();
+  // Detect duplicate irKey collisions and fall back to full factory name
+  const irKeyCounts = new Map<string, number>();
   for (const kind of nodeKinds) {
-    const short = toShortName(kind);
-    shortNameCounts.set(short, (shortNameCounts.get(short) ?? 0) + 1);
+    const key = toIrKey(kind);
+    irKeyCounts.set(key, (irKeyCounts.get(key) ?? 0) + 1);
   }
 
   const imports: string[] = [];
@@ -67,20 +70,16 @@ export function emitFluent(config: EmitFluentConfig): string {
     const fileName = fileNames.get(kind)!;
     const factoryName = toFactoryName(kind);
 
-    const isDuplicate = (shortNameCounts.get(shortName) ?? 0) > 1;
+    const irKey = toIrKey(kind);
+    const isDuplicate = (irKeyCounts.get(irKey) ?? 0) > 1;
+    const propertyKey = isDuplicate ? factoryName : irKey;
+
     const importBinding = isDuplicate ? factoryName : shortName;
 
     if (importBinding !== shortName) {
       imports.push(`import { ${shortName} as ${importBinding} } from './nodes/${fileName}.js';`);
     } else {
       imports.push(`import { ${shortName} } from './nodes/${fileName}.js';`);
-    }
-
-    let propertyKey: string;
-    if (isDuplicate) {
-      propertyKey = factoryName;
-    } else {
-      propertyKey = shortName.endsWith('_') ? shortName.slice(0, -1) : shortName;
     }
 
     if (usedPropertyKeys.has(propertyKey)) continue;
@@ -93,15 +92,24 @@ export function emitFluent(config: EmitFluentConfig): string {
     }
   }
 
-  // Leaf node builders (with numeric overloads)
+  // Leaf node builders — split into constants and variable leaves
+  const keywordEntries: string[] = [];
   const leafEntries: string[] = [];
   for (const kind of leafKinds) {
-    const propName = toFieldName(kind);
+    let propName = toIrKey(kind);
 
-    if (usedPropertyKeys.has(propName)) continue;
+    // Fall back to full camelCase factory name on collision
+    if (usedPropertyKeys.has(propName)) {
+      propName = toFactoryName(kind);
+      if (usedPropertyKeys.has(propName)) continue;
+    }
     usedPropertyKeys.add(propName);
 
-    if (NUMERIC_LEAF_KINDS.has(kind)) {
+    const constantText = keywords?.get(kind);
+    if (constantText !== undefined) {
+      // Keyword — zero-arg factory, text is fixed
+      keywordEntries.push(`  ${propName}: () => new LeafBuilder('${kind}', '${constantText.replace(/'/g, "\\'")}'),`);
+    } else if (NUMERIC_LEAF_KINDS.has(kind)) {
       leafEntries.push(`  ${propName}: (value: number | string) => new LeafBuilder('${kind}', String(value)),`);
     } else {
       leafEntries.push(`  ${propName}: (text: string) => new LeafBuilder('${kind}', text),`);
@@ -139,10 +147,19 @@ export function emitFluent(config: EmitFluentConfig): string {
     '',
     `export const ir = {`,
     ...entries,
-    '',
-    '  // Leaf node builders',
-    ...leafEntries,
   ];
+
+  if (keywordEntries.length > 0) {
+    lines.push('');
+    lines.push('  // Keywords');
+    lines.push(...keywordEntries);
+  }
+
+  if (leafEntries.length > 0) {
+    lines.push('');
+    lines.push('  // Leaf node builders');
+    lines.push(...leafEntries);
+  }
 
   if (opEntries.length > 0) {
     lines.push('');
@@ -156,19 +173,17 @@ export function emitFluent(config: EmitFluentConfig): string {
     const kindToBinding = new Map<string, string>();
     for (const kind of nodeKinds) {
       const shortName = toShortName(kind);
-      const isDuplicate = (shortNameCounts.get(shortName) ?? 0) > 1;
+      const irKey = toIrKey(kind);
+      const isDuplicate = (irKeyCounts.get(irKey) ?? 0) > 1;
       kindToBinding.set(kind, isDuplicate ? toFactoryName(kind) : shortName);
     }
 
     // Build kind→irKey map
     const kindToIrKey = new Map<string, string>();
     for (const kind of nodeKinds) {
-      const shortName = toShortName(kind);
-      const isDuplicate = (shortNameCounts.get(shortName) ?? 0) > 1;
-      const key = isDuplicate
-        ? toFactoryName(kind)
-        : shortName.endsWith('_') ? shortName.slice(0, -1) : shortName;
-      kindToIrKey.set(kind, key);
+      const irKey = toIrKey(kind);
+      const isDuplicate = (irKeyCounts.get(irKey) ?? 0) > 1;
+      kindToIrKey.set(kind, isDuplicate ? toFactoryName(kind) : irKey);
     }
 
     lines.push('');
@@ -179,7 +194,11 @@ export function emitFluent(config: EmitFluentConfig): string {
       const nsName = toFieldName(st.name.replace(/^_/, ''));
 
       // Only include subtypes that we have builders for
+      // Strip redundant namespace suffix from entry keys
+      // e.g., pattern.tuplePattern → pattern.tuple
+      const nsSuffix = nsName.charAt(0).toUpperCase() + nsName.slice(1);
       const nsEntries: string[] = [];
+      const usedNsKeys = new Set<string>();
       for (const subtype of st.subtypes) {
         const binding = kindToBinding.get(subtype);
         if (!binding) continue; // leaf or not generated
@@ -187,8 +206,16 @@ export function emitFluent(config: EmitFluentConfig): string {
         const irKey = kindToIrKey.get(subtype);
         if (!irKey) continue;
 
-        // Use the ir key as the namespace property
-        nsEntries.push(`    ${irKey}: ${binding},`);
+        // Strip the namespace name from the end of the key if redundant
+        let nsKey = irKey;
+        if (nsKey.endsWith(nsSuffix) && nsKey.length > nsSuffix.length) {
+          nsKey = nsKey.slice(0, -nsSuffix.length);
+        }
+        // Avoid collisions within the namespace
+        if (usedNsKeys.has(nsKey)) nsKey = irKey;
+        usedNsKeys.add(nsKey);
+
+        nsEntries.push(`    ${nsKey}: ${binding},`);
       }
 
       if (nsEntries.length > 0 && !usedPropertyKeys.has(nsName)) {
@@ -204,68 +231,112 @@ export function emitFluent(config: EmitFluentConfig): string {
   lines.push(`export type ${grammarPrefix}Ir = typeof ir;`);
   lines.push('');
 
-  // --- fromCST() ---
+  // --- BuilderMap + OptionsMap type lookups ---
+  // Group type imports by file, tracking globally seen type names to avoid duplicates
+  const typeImportsByFile = new Map<string, Set<string>>();
+  const seenTypeNames = new Set<string>();
+  for (const kind of nodeKinds) {
+    const fileName = fileNames.get(kind)!;
+    const types = typeImportsByFile.get(fileName) ?? new Set<string>();
+    const builderName = toBuilderClassName(kind);
+    const optionsName = `${toTypeName(kind)}Options`;
+    if (!seenTypeNames.has(builderName)) { types.add(builderName); seenTypeNames.add(builderName); }
+    if (!seenTypeNames.has(optionsName)) { types.add(optionsName); seenTypeNames.add(optionsName); }
+    typeImportsByFile.set(fileName, types);
+  }
+  for (const [fileName, types] of typeImportsByFile) {
+    if (types.size === 0) continue;
+    lines.push(`import type { ${[...types].sort().join(', ')} } from './nodes/${fileName}.js';`);
+  }
+  lines.push('');
+
+  lines.push('export interface BuilderMap {');
+  for (const kind of nodeKinds) {
+    lines.push(`  '${kind}': ${toBuilderClassName(kind)};`);
+  }
+  lines.push('}');
+  lines.push('');
+
+  lines.push('export interface OptionsMap {');
+  for (const kind of nodeKinds) {
+    lines.push(`  '${kind}': ${toTypeName(kind)}Options;`);
+  }
+  lines.push('}');
+  lines.push('');
+
+  lines.push('export type BuilderFor<K extends keyof BuilderMap> = BuilderMap[K];');
+  lines.push('export type OptionsFor<K extends keyof OptionsMap> = OptionsMap[K];');
+  lines.push('');
+
+  // --- CSTFieldMap + CSTNode + fromCST() + edit() ---
   if (config.nodes && config.nodes.length > 0) {
-    lines.push(`import type { BaseBuilder } from '@sittir/types';`);
+    const grammarName = `${grammarPrefix}Grammar`;
+    lines.push(`import type { Builder, Edit, FieldKinds, FieldName, NodeTransform, NodeType } from '@sittir/types';`);
+    lines.push(`import type { ${grammarName} } from './types.js';`);
     lines.push('');
-    lines.push('/** Tree-sitter CST node interface (minimal shape). */');
-    lines.push('interface CSTInput {');
-    lines.push('  type: string;');
+
+    lines.push('/** Tree-sitter CST node interface, parameterized by grammar node kind. */');
+    lines.push(`export interface CSTNode<K extends keyof ${grammarName} = keyof ${grammarName}> {`);
+    lines.push('  type: K;');
     lines.push('  text: string;');
     lines.push('  isNamed: boolean;');
-    lines.push('  namedChildren: CSTInput[];');
-    lines.push('  childForFieldName(name: string): CSTInput | null;');
-    lines.push('  childrenForFieldName(name: string): CSTInput[];');
+    lines.push('  startIndex: number;');
+    lines.push('  endIndex: number;');
+    lines.push(`  namedChildren: CSTNode<keyof ${grammarName}>[];`);
+    lines.push(`  childForFieldName<F extends FieldName<${grammarName}, K & string>>(name: F): CSTNode<FieldKinds<${grammarName}, K & string, F> & keyof ${grammarName}> | null;`);
+    lines.push(`  childForFieldName(name: string): CSTNode<keyof ${grammarName}> | null;`);
+    lines.push(`  childrenForFieldName<F extends FieldName<${grammarName}, K & string>>(name: F): CSTNode<FieldKinds<${grammarName}, K & string, F> & keyof ${grammarName}>[];`);
+    lines.push(`  childrenForFieldName(name: string): CSTNode<keyof ${grammarName}>[];`);
     lines.push('}');
     lines.push('');
     lines.push('/**');
     lines.push(' * Hydrate a tree-sitter CST node into a builder tree.');
     lines.push(' * Walks the CST recursively — no parsing needed.');
     lines.push(' */');
-    lines.push('export function fromCST(node: CSTInput): BaseBuilder<{ kind: string }> {');
+    lines.push(`export function fromCST<K extends keyof ${grammarName}>(node: CSTNode<K>): Builder<NodeType<${grammarName}, K>> {`);
     lines.push('  // Leaf / unknown nodes → LeafBuilder');
     lines.push('  const builder = resolveBuilder(node);');
-    lines.push('  if (!builder) return new LeafBuilder(node.type, node.text);');
-    lines.push('  return builder;');
+    lines.push(`  if (!builder) return new LeafBuilder(node.type, node.text) as any;`);
+    lines.push(`  return builder as any;`);
     lines.push('}');
     lines.push('');
-    lines.push('function resolveBuilder(node: CSTInput): BaseBuilder<{ kind: string }> | null {');
+    lines.push(`function resolveBuilder(node: CSTNode): Builder | null {`);
     lines.push('  switch (node.type) {');
 
     for (const nodeMeta of config.nodes) {
-      const shortName = toShortName(nodeMeta.kind);
-      const shortNameCt = shortNameCounts.get(shortName) ?? 0;
-      const isDuplicate = shortNameCt > 1;
-      const irKey = isDuplicate
-        ? toFactoryName(nodeMeta.kind)
-        : shortName.endsWith('_') ? shortName.slice(0, -1) : shortName;
+      const irKey = toIrKey(nodeMeta.kind);
+      const isDuplicate = (irKeyCounts.get(irKey) ?? 0) > 1;
+      const resolvedKey = isDuplicate ? toFactoryName(nodeMeta.kind) : irKey;
 
       lines.push(`    case '${nodeMeta.kind}': {`);
 
-      // Find constructor param
-      const requiredFields = nodeMeta.fields.filter((f) => f.required);
-      const nameField = requiredFields.find((f) => f.name === 'name');
-      const argField = requiredFields.find((f) => f.name === 'argument');
-      const ctorField = nameField ?? argField ?? requiredFields[0];
+      // Narrow the node type for typed field access
+      lines.push(`      const n = node as CSTNode<'${nodeMeta.kind}'>;`);
 
-      // Constructor arg
+      // Find constructor param — uses same logic as builder emitter
+      const ctorResult = selectConstructorField(nodeMeta, config.grammar);
+      const ctorField = ctorResult?.source === 'field'
+        ? nodeMeta.fields.find(f => f.name === ctorResult.name)
+        : undefined;
+      const ctorIsChildren = ctorResult?.source === 'children';
+
       if (ctorField) {
         if (ctorField.multiple) {
-          lines.push(`      const ctorChildren = node.childrenForFieldName('${ctorField.name}');`);
-          lines.push(`      const b = ir.${irKey}(ctorChildren.map(c => fromCST(c)));`);
+          lines.push(`      const ctorChildren = n.childrenForFieldName('${ctorField.name}');`);
+          lines.push(`      const b = ir.${resolvedKey}(...ctorChildren.map(c => fromCST(c) as any));`);
         } else {
-          lines.push(`      const ctorChild = node.childForFieldName('${ctorField.name}');`);
-          lines.push(`      const b = ir.${irKey}(ctorChild ? fromCST(ctorChild) : new LeafBuilder('${ctorField.name}', ''));`);
+          lines.push(`      const ctorChild = n.childForFieldName('${ctorField.name}');`);
+          lines.push(`      const b = ir.${resolvedKey}(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('${ctorField.name}', '') as any);`);
         }
-      } else if (nodeMeta.hasChildren && nodeMeta.children?.required) {
-        if (nodeMeta.children.multiple) {
-          lines.push(`      const b = ir.${irKey}(node.namedChildren.map(c => fromCST(c)));`);
+      } else if (ctorIsChildren) {
+        if (nodeMeta.children?.multiple) {
+          lines.push(`      const b = ir.${resolvedKey}(...n.namedChildren.map(c => fromCST(c) as any));`);
         } else {
-          lines.push(`      const firstChild = node.namedChildren[0];`);
-          lines.push(`      const b = ir.${irKey}(firstChild ? fromCST(firstChild) : new LeafBuilder('unknown', ''));`);
+          lines.push(`      const firstChild = n.namedChildren[0];`);
+          lines.push(`      const b = ir.${resolvedKey}(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);`);
         }
       } else {
-        lines.push(`      const b = ir.${irKey}();`);
+        lines.push(`      const b = ir.${resolvedKey}();`);
       }
 
       // Set non-constructor fields
@@ -273,27 +344,27 @@ export function emitFluent(config: EmitFluentConfig): string {
       for (const field of nonCtorFields) {
         const fieldName = toFieldName(field.name);
         if (field.multiple) {
-          lines.push(`      const ${fieldName}Children = node.childrenForFieldName('${field.name}');`);
-          lines.push(`      if (${fieldName}Children.length > 0) b.${fieldName}(${fieldName}Children.map(c => fromCST(c)));`);
+          lines.push(`      const ${fieldName}Children = n.childrenForFieldName('${field.name}');`);
+          lines.push(`      if (${fieldName}Children.length > 0) b.${fieldName}(...${fieldName}Children.map(c => fromCST(c) as any));`);
         } else {
-          lines.push(`      const ${fieldName}Child = node.childForFieldName('${field.name}');`);
-          lines.push(`      if (${fieldName}Child) b.${fieldName}(fromCST(${fieldName}Child));`);
+          lines.push(`      const ${fieldName}Child = n.childForFieldName('${field.name}');`);
+          lines.push(`      if (${fieldName}Child) b.${fieldName}(fromCST(${fieldName}Child) as any);`);
         }
       }
 
       // Set children (if not used as constructor)
-      if (nodeMeta.hasChildren && !(nodeMeta.children?.required && !ctorField)) {
+      if (nodeMeta.hasChildren && !ctorIsChildren) {
         if (!ctorField || ctorField.name !== 'children') {
-          lines.push('      const remainingChildren = node.namedChildren.filter(c => {');
+          lines.push('      const remainingChildren = n.namedChildren.filter(c => {');
           const fieldNames = nodeMeta.fields.map(f => `'${f.name}'`);
           if (fieldNames.length > 0) {
             lines.push(`        const fieldNames = [${fieldNames.join(', ')}];`);
-            lines.push('        return !fieldNames.some(fn => node.childForFieldName(fn) === c);');
+            lines.push('        return !fieldNames.some(fn => n.childForFieldName(fn) === c);');
           } else {
             lines.push('        return true;');
           }
           lines.push('      });');
-          lines.push('      if (remainingChildren.length > 0) b.children(remainingChildren.map(c => fromCST(c)));');
+          lines.push('      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));');
         }
       }
 
@@ -303,6 +374,26 @@ export function emitFluent(config: EmitFluentConfig): string {
 
     lines.push("    default: return null;");
     lines.push('  }');
+    lines.push('}');
+    lines.push('');
+
+    // --- edit() ---
+    lines.push('/**');
+    lines.push(' * Create a codemod-compatible Edit from a tree-sitter node.');
+    lines.push(' * Hydrates the node into a builder, passes it to the transform,');
+    lines.push(' * then renders the result and wraps it with byte positions.');
+    lines.push(' */');
+    lines.push(`export function edit<K extends keyof ${grammarName}>(`);
+    lines.push(`  node: CSTNode<K>,`);
+    lines.push(`  transform: NodeTransform<NodeType<${grammarName}, K>>,`);
+    lines.push('): Edit {');
+    lines.push('  const builder = fromCST(node);');
+    lines.push('  const result = transform(builder);');
+    lines.push('  return {');
+    lines.push('    startPos: node.startIndex,');
+    lines.push('    endPos: node.endIndex,');
+    lines.push('    insertedText: result.renderImpl(),');
+    lines.push('  };');
     lines.push('}');
     lines.push('');
   }

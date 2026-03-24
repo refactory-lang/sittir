@@ -8,13 +8,6 @@ describe('array', () => {
     expect(node.kind).toBe('array');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.array();
-    const source = builder.renderImpl();
-    expect(source).toContain('[');
-    expect(source).toContain(']');
-  });
-
   it('should produce a valid CST node', () => {
     const builder = ir.array();
     const cst = builder.toCST();

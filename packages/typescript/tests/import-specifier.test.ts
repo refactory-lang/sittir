@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('import_specifier', () => {
   it('should build with correct kind', () => {
-    const builder = ir.import_specifier(ir.identifier('test'));
+    const builder = ir.importSpecifier(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('import_specifier');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.import_specifier(ir.identifier('test'));
+    const builder = ir.importSpecifier(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('import_specifier');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('import_specifier', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.import_specifier(ir.identifier('test'));
+    const builder = ir.importSpecifier(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

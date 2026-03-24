@@ -3,13 +3,16 @@ import { ir } from '../src/builder.js';
 
 describe('let_chain', () => {
   it('should build with correct kind', () => {
-    const builder = ir.let_chain([ir.identifier('test')]);
+    const builder = ir.letChain(ir.identifier('test'), ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('let_chain');
+    expect(Array.isArray((node as any).children)).toBe(true);
+    expect((node as any).children.length).toBeGreaterThan(0);
+    expect((node as any).children[0]).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.let_chain([ir.identifier('test')]);
+    const builder = ir.letChain(ir.identifier('test'), ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('let_chain');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +21,7 @@ describe('let_chain', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.let_chain([ir.identifier('test')]);
+    const builder = ir.letChain(ir.identifier('test'), ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

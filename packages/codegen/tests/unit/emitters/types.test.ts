@@ -7,7 +7,7 @@ describe('emitTypes', () => {
     expect(source).toContain("import type { RustGrammar } from './grammar.js'");
     expect(source).toContain("export type { RustGrammar }");
     expect(source).toContain("export type StructItem = NodeType<RustGrammar, 'struct_item'>");
-    expect(source).toContain('export type StructItemConfig = BuilderConfig<RustGrammar, StructItem>');
+    expect(source).not.toContain('Config');
     expect(source).toContain("export type FunctionItem = NodeType<RustGrammar, 'function_item'>");
     expect(source).toContain('export type RustIrNode =');
     expect(source).toContain('| StructItem');

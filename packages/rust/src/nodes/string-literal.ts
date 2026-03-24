@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
-import type { StringLiteral } from '../types.js';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
+import type { EscapeSequence, StringContent, StringLiteral } from '../types.js';
 
 
-class StringLiteralBuilder extends BaseBuilder<StringLiteral> {
-  private _children: BaseBuilder[] = [];
+class StringLiteralBuilder extends Builder<StringLiteral> {
+  private _children: Builder<EscapeSequence | StringContent>[] = [];
 
   constructor() { super(); }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder<EscapeSequence | StringContent>[]): this {
     this._children = value;
     return this;
   }
@@ -23,11 +23,11 @@ class StringLiteralBuilder extends BaseBuilder<StringLiteral> {
   build(ctx?: RenderContext): StringLiteral {
     return {
       kind: 'string_literal',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as StringLiteral;
+      children: this._children.map(c => c.build(ctx)),
+    } as StringLiteral;
   }
 
-  override get nodeKind(): string { return 'string_literal'; }
+  override get nodeKind(): 'string_literal' { return 'string_literal'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,6 +39,28 @@ class StringLiteralBuilder extends BaseBuilder<StringLiteral> {
   }
 }
 
+export type { StringLiteralBuilder };
+
 export function string_literal(): StringLiteralBuilder {
   return new StringLiteralBuilder();
+}
+
+export interface StringLiteralOptions {
+  nodeKind: 'string_literal';
+  children?: Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'> | (Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'>)[];
+}
+
+export namespace string_literal {
+  export function from(input: Omit<StringLiteralOptions, 'nodeKind'> | Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'> | (Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'>)[]): StringLiteralBuilder {
+    const options: Omit<StringLiteralOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<StringLiteralOptions, 'nodeKind'>
+      : { children: input } as Omit<StringLiteralOptions, 'nodeKind'>;
+    const b = new StringLiteralBuilder();
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'escape_sequence': return new LeafBuilder('escape_sequence', (_v as LeafOptions).text!);   case 'string_content': return new LeafBuilder('string_content', (_v as LeafOptions).text!); } throw new Error('unreachable'); }));
+    }
+    return b;
+  }
 }

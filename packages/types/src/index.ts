@@ -20,9 +20,6 @@
 
 import type {
 	CamelCase,
-	OptionalKeysOf,
-	RequiredKeysOf,
-	SetOptional,
 	Simplify,
 	SimplifyDeep,
 } from 'type-fest';
@@ -90,16 +87,20 @@ export type Contains<Visited extends string[], T extends string> = Visited exten
 type LeafBrand<K extends string> = TextBrand<K>;
 
 /**
- * Expand a single child kind into a structured node or a branded-string leaf.
+ * Expand a single child kind into a structured node.
  * Uses the visited set for cycle detection.
+ * Supertypes (with `subtypes`) are expanded into unions of their concrete kinds.
+ * Leaf kinds (no fields, no subtypes) produce `{ readonly kind: K }`.
  */
 export type ExpandOneKind<G, K extends string, Visited extends string[]> = K extends NodeKind<G>
 	? G[K] extends { fields: object }
 		? Contains<Visited, K> extends true
-			? LeafBrand<K>
+			? Readonly<{ kind: K }>
 			: ExpandNode<G, K, Visited>
-		: LeafBrand<K>
-	: LeafBrand<K>;
+		: G[K] extends { subtypes: readonly NodeBasicInfo[] }
+			? ExpandOneKind<G, ResolveType<G, K>, Visited>
+			: Readonly<{ kind: K }>
+	: Readonly<{ kind: K }>;
 
 /**
  * Expand a grammar slot into structured nodes, stopping at cycles.
@@ -138,7 +139,7 @@ export type OptionalFieldName<G, K extends NodeKind<G>> = Exclude<
 >;
 
 /** Extract the kind strings from a field's slot types. */
-type FieldKinds<G, K extends NodeKind<G>, F extends FieldName<G, K>> = SlotKinds<
+export type FieldKinds<G, K extends NodeKind<G>, F extends FieldName<G, K>> = SlotKinds<
 	FieldInfo<G, K, F>
 >;
 
@@ -181,13 +182,13 @@ export type DerivedNodeFields<
 	Visited extends string[],
 	Aliases = {},
 > = {
-	[F in RequiredFieldName<G, K> as ResolveFieldKey<K, F, Aliases>]: ExpandSlot<
+	[F in Exclude<RequiredFieldName<G, K>, 'kind'> as ResolveFieldKey<K, F, Aliases>]: ExpandSlot<
 		G,
 		FieldInfo<G, K, F>,
 		Visited
 	>;
 } & {
-	[F in OptionalFieldName<G, K> as ResolveFieldKey<K, F, Aliases>]?: ExpandSlot<
+	[F in Exclude<OptionalFieldName<G, K>, 'kind'> as ResolveFieldKey<K, F, Aliases>]?: ExpandSlot<
 		G,
 		FieldInfo<G, K, F>,
 		Visited
@@ -240,78 +241,6 @@ export type NodeType<
 	Aliases = {},
 > = SimplifyDeep<Readonly<{ kind: K }> & DerivedNodeShape<G, K, Visited, Aliases>>;
 
-// ---------------------------------------------------------------------------
-// Builder input helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Recursively loosen an IR node type for builder input:
- * branded strings -> plain string, nodes -> node | string, arrays -> loosened element arrays.
- */
-export type BuilderInputValue<G, T> = T extends { kind: NodeKind<G> }
-	? T | string
-	: T extends readonly (infer U)[]
-		? BuilderInputValue<G, U>[]
-		: T extends TextBrand<string>
-			? string
-			: T extends string
-				? string extends T
-					? string
-					: T
-				: T extends object
-					? { [K in keyof T]: BuilderInputValue<G, T[K]> }
-					: T;
-
-/** Branded text type for a node kind. */
-export type NodeText<G, K extends NodeKind<G>> = TextBrand<K>;
-
-/** Branded text type for a field's child kinds. */
-export type FieldText<G, K extends NodeKind<G>, F extends FieldName<G, K>> = TextBrand<
-	FieldKinds<G, K, F>
->;
-
-/** Strip `kind` and apply BuilderInputValue loosening to produce a builder's raw input shape. */
-export type NodeBuilderInput<G, T extends { kind: NodeKind<G> }> = Simplify<
-	{
-		[K in Exclude<Extract<RequiredKeysOf<T>, keyof T>, 'kind'>]: BuilderInputValue<G, T[K]>;
-	} & {
-		[K in Exclude<Extract<OptionalKeysOf<T>, keyof T>, 'kind'>]?: BuilderInputValue<G, T[K]>;
-	}
->;
-
-/**
- * Grammar-derived field names that become optional in `BuilderConfig<T>`.
- * Callers may omit these fields; they're passed through as-is.
- */
-export type DefaultableBuilderFieldName =
-	| 'body'
-	| 'typeParameters'
-	| 'children'
-	| 'returnType'
-	| 'parameters'
-	| 'trait'
-	| 'alternative';
-
-/** Extract keys from a builder input that match DefaultableBuilderFieldName. */
-type DefaultableKeys<G, T extends { kind: NodeKind<G> }> = Extract<
-	keyof NodeBuilderInput<G, T>,
-	DefaultableBuilderFieldName
->;
-
-/** Builder configuration type with specified optional keys. */
-export type BuilderConfig<
-	G,
-	T extends { kind: NodeKind<G> },
-	OptionalKeys extends keyof NodeBuilderInput<G, T> = DefaultableKeys<G, T>,
-> = Simplify<
-	SetOptional<
-		NodeBuilderInput<G, T>,
-		Extract<
-			OptionalKeys | Extract<OptionalKeysOf<NodeBuilderInput<G, T>>, keyof NodeBuilderInput<G, T>>,
-			keyof NodeBuilderInput<G, T>
-		>
-	>
->;
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -370,7 +299,7 @@ export interface CSTNode {
  * (named node) or an anonymous token (keyword/punctuation/separator).
  */
 export type CSTChild =
-	| { kind: 'builder'; builder: BaseBuilder; fieldName?: string }
+	| { kind: 'builder'; builder: Builder; fieldName?: string }
 	| { kind: 'token'; text: string; type?: string }
 	| { kind: 'sep'; text: string };
 
@@ -395,7 +324,7 @@ function offsetToPosition(offset: number, fullText: string, baseOffset: number):
  *
  * @typeParam N - The IR node type produced by this builder.
  */
-export abstract class BaseBuilder<N extends { kind: string } = { kind: string }> {
+export abstract class Builder<N extends { kind: string } = { kind: string }> {
 	/** Render this node to source text (no validation). Override in subclasses. */
 	abstract renderImpl(ctx?: RenderContext): string;
 
@@ -413,14 +342,25 @@ export abstract class BaseBuilder<N extends { kind: string } = { kind: string }>
 		return this.validateFull(source, ctx);
 	}
 
+	/**
+	 * Build a child's IR node for inclusion in this node's build() output.
+	 * Returns `any` because unparameterized Builder erases child type info;
+	 * correctness is guaranteed by the grammar — each child builder produces
+	 * the right kind literal at runtime.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	protected buildChild(child: Builder, ctx?: RenderContext): any {
+		return child.build(ctx);
+	}
+
 	/** Render a single child builder. */
-	protected renderChild(child: BaseBuilder, ctx?: RenderContext): string {
+	protected renderChild(child: Builder, ctx?: RenderContext): string {
 		return child.renderImpl(ctx);
 	}
 
 	/** Render an array of child builders, joined by separator. */
 	protected renderChildren(
-		children: BaseBuilder[],
+		children: Builder[],
 		sep: string,
 		ctx?: RenderContext,
 	): string {
@@ -436,9 +376,14 @@ export abstract class BaseBuilder<N extends { kind: string } = { kind: string }>
 		return [{ kind: 'token', text: this.renderImpl(ctx) }];
 	}
 
+	/** Type guard: narrows an unknown value to Builder<{ kind: K }>. */
+	static is<K extends string>(value: unknown, kind: K): value is Builder<{ kind: K }> {
+		return value instanceof Builder && value.nodeKind === kind;
+	}
+
 	/** The node kind string. Override in generated builders. */
-	get nodeKind(): string {
-		return 'unknown';
+	get nodeKind(): N['kind'] {
+		return 'unknown' as N['kind'];
 	}
 
 	/**
@@ -548,7 +493,7 @@ export abstract class BaseBuilder<N extends { kind: string } = { kind: string }>
  * Builder for terminal/leaf nodes (identifiers, literals, keywords).
  * Wraps a raw text string in a typed builder.
  */
-export class LeafBuilder<K extends string = string> extends BaseBuilder<{
+export class LeafBuilder<K extends string = string> extends Builder<{
 	kind: K;
 }> {
 	constructor(
@@ -558,7 +503,12 @@ export class LeafBuilder<K extends string = string> extends BaseBuilder<{
 		super();
 	}
 
-	override get nodeKind(): string {
+	/** Static factory — avoids `new` at call sites. */
+	static of<K extends string>(kind: K, text: string): LeafBuilder<K> {
+		return new LeafBuilder(kind, text);
+	}
+
+	override get nodeKind(): K {
 		return this.kind;
 	}
 
@@ -586,17 +536,55 @@ export class LeafBuilder<K extends string = string> extends BaseBuilder<{
 }
 
 // ---------------------------------------------------------------------------
-// Legacy interfaces (deprecated — use BaseBuilder instead)
+// Leaf options (for discriminated unions with branch Options)
 // ---------------------------------------------------------------------------
 
-/** @deprecated Use BaseBuilder instead. */
+/**
+ * Options type for leaf nodes, enabling disambiguation in multi-kind unions.
+ * When a field accepts multiple leaf kinds, callers use `{ nodeKind: 'escape_sequence', text: '\\n' }`
+ * instead of a bare string to specify which leaf kind the text represents.
+ *
+ * `text` is optional for constant leaves (e.g., `self`, `null`) where the text is always the same.
+ */
+export interface LeafOptions<K extends string = string> {
+	nodeKind: K;
+	text?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Edit interface (codemod-compatible)
+// ---------------------------------------------------------------------------
+
+/** A text-level edit: replace bytes [startPos, endPos) with insertedText. */
+export interface Edit {
+	startPos: number;
+	endPos: number;
+	insertedText: string;
+}
+
+/** Transform function for edit() — receives a builder typed to the input node and returns one. */
+export type NodeTransform<N extends { kind: string } = { kind: string }> = (input: Builder<N>) => Builder<N>;
+
+
+// ---------------------------------------------------------------------------
+// Deprecated aliases
+// ---------------------------------------------------------------------------
+
+/** @deprecated Renamed to Builder. */
+export type BaseBuilder<N extends { kind: string } = { kind: string }> = Builder<N>;
+
+// ---------------------------------------------------------------------------
+// Legacy interfaces (deprecated — use Builder instead)
+// ---------------------------------------------------------------------------
+
+/** @deprecated Use Builder instead. */
 export interface BuilderTerminal<N extends { kind: string }> {
 	build(): N;
 	render(): string;
 	renderImpl(): string;
 }
 
-/** @deprecated Use BaseBuilder instead. */
+/** @deprecated Use Builder instead. */
 export interface RenderPipeline<N extends { kind: string }> {
 	render(node: N): string;
 	renderImpl(node: N): string;

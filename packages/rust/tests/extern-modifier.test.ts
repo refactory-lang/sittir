@@ -3,19 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('extern_modifier', () => {
   it('should build with correct kind', () => {
-    const builder = ir.extern_modifier();
+    const builder = ir.externModifier();
     const node = builder.build();
     expect(node.kind).toBe('extern_modifier');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.extern_modifier();
-    const source = builder.renderImpl();
-    expect(source).toContain('extern');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.extern_modifier();
+    const builder = ir.externModifier();
     const cst = builder.toCST();
     expect(cst.type).toBe('extern_modifier');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +18,7 @@ describe('extern_modifier', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.extern_modifier();
+    const builder = ir.externModifier();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -3,20 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('regex', () => {
   it('should build with correct kind', () => {
-    const builder = ir.regex(ir.identifier('test'));
+    const builder = ir.regex(ir.regexPattern('test'));
     const node = builder.build();
     expect(node.kind).toBe('regex');
+    expect((node as any).pattern).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.regex(ir.identifier('test'));
+    const builder = ir.regex(ir.regexPattern('test'));
     const source = builder.renderImpl();
     expect(source).toContain('/');
     expect(source).toContain('/');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.regex(ir.identifier('test'));
+    const builder = ir.regex(ir.regexPattern('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('regex');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +26,7 @@ describe('regex', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.regex(ir.identifier('test'));
+    const builder = ir.regex(ir.regexPattern('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

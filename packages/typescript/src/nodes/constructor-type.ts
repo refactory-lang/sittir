@@ -1,25 +1,29 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ConstructorType } from '../types.js';
+import type { ConstructorType, FormalParameters, Type, TypeParameters } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { formal_parameters } from './formal-parameters.js';
+import type { FormalParametersOptions } from './formal-parameters.js';
 
 
-class ConstructorTypeBuilder extends BaseBuilder<ConstructorType> {
-  private _parameters: BaseBuilder;
-  private _type!: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
+class ConstructorTypeBuilder extends Builder<ConstructorType> {
+  private _typeParameters?: Builder<TypeParameters>;
+  private _parameters: Builder<FormalParameters>;
+  private _type!: Builder<Type>;
 
-  constructor(parameters: BaseBuilder) {
+  constructor(parameters: Builder<FormalParameters>) {
     super();
     this._parameters = parameters;
   }
 
-  type(value: BaseBuilder): this {
-    this._type = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
-    this._typeParameters = value;
+  type(value: Builder<Type>): this {
+    this._type = value;
     return this;
   }
 
@@ -36,13 +40,13 @@ class ConstructorTypeBuilder extends BaseBuilder<ConstructorType> {
   build(ctx?: RenderContext): ConstructorType {
     return {
       kind: 'constructor_type',
-      parameters: this.renderChild(this._parameters, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-    } as unknown as ConstructorType;
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      parameters: this._parameters.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
+    } as ConstructorType;
   }
 
-  override get nodeKind(): string { return 'constructor_type'; }
+  override get nodeKind(): 'constructor_type' { return 'constructor_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,6 +59,28 @@ class ConstructorTypeBuilder extends BaseBuilder<ConstructorType> {
   }
 }
 
-export function constructor_type(parameters: BaseBuilder): ConstructorTypeBuilder {
+export type { ConstructorTypeBuilder };
+
+export function constructor_type(parameters: Builder<FormalParameters>): ConstructorTypeBuilder {
   return new ConstructorTypeBuilder(parameters);
+}
+
+export interface ConstructorTypeOptions {
+  nodeKind: 'constructor_type';
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  type: Builder<Type>;
+}
+
+export namespace constructor_type {
+  export function from(options: Omit<ConstructorTypeOptions, 'nodeKind'>): ConstructorTypeBuilder {
+    const _ctor = options.parameters;
+    const b = new ConstructorTypeBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor));
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
+    }
+    if (options.type !== undefined) b.type(options.type);
+    return b;
+  }
 }

@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('call_signature', () => {
   it('should build with correct kind', () => {
-    const builder = ir.call_signature(ir.identifier('test'));
+    const builder = ir.callSignature(ir.formalParameters());
     const node = builder.build();
     expect(node.kind).toBe('call_signature');
+    expect((node as any).parameters).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.call_signature(ir.identifier('test'));
+    const builder = ir.callSignature(ir.formalParameters());
     const cst = builder.toCST();
     expect(cst.type).toBe('call_signature');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('call_signature', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.call_signature(ir.identifier('test'));
+    const builder = ir.callSignature(ir.formalParameters());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -6,6 +6,7 @@ describe('static_item', () => {
     const builder = ir.static(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('static_item');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {

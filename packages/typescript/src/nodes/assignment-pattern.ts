@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AssignmentPattern } from '../types.js';
+import type { AssignmentPattern, Expression, Pattern } from '../types.js';
 
 
-class AssignmentPatternBuilder extends BaseBuilder<AssignmentPattern> {
-  private _left: BaseBuilder;
-  private _right!: BaseBuilder;
+class AssignmentPatternBuilder extends Builder<AssignmentPattern> {
+  private _left: Builder<Pattern>;
+  private _right!: Builder<Expression>;
 
-  constructor(left: BaseBuilder) {
+  constructor(left: Builder<Pattern>) {
     super();
     this._left = left;
   }
 
-  right(value: BaseBuilder): this {
+  right(value: Builder<Expression>): this {
     this._right = value;
     return this;
   }
@@ -28,12 +28,12 @@ class AssignmentPatternBuilder extends BaseBuilder<AssignmentPattern> {
   build(ctx?: RenderContext): AssignmentPattern {
     return {
       kind: 'assignment_pattern',
-      left: this.renderChild(this._left, ctx),
-      right: this._right ? this.renderChild(this._right, ctx) : undefined,
-    } as unknown as AssignmentPattern;
+      left: this._left.build(ctx),
+      right: this._right ? this._right.build(ctx) : undefined,
+    } as AssignmentPattern;
   }
 
-  override get nodeKind(): string { return 'assignment_pattern'; }
+  override get nodeKind(): 'assignment_pattern' { return 'assignment_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,6 +44,22 @@ class AssignmentPatternBuilder extends BaseBuilder<AssignmentPattern> {
   }
 }
 
-export function assignment_pattern(left: BaseBuilder): AssignmentPatternBuilder {
+export type { AssignmentPatternBuilder };
+
+export function assignment_pattern(left: Builder<Pattern>): AssignmentPatternBuilder {
   return new AssignmentPatternBuilder(left);
+}
+
+export interface AssignmentPatternOptions {
+  nodeKind: 'assignment_pattern';
+  left: Builder<Pattern>;
+  right: Builder<Expression>;
+}
+
+export namespace assignment_pattern {
+  export function from(options: Omit<AssignmentPatternOptions, 'nodeKind'>): AssignmentPatternBuilder {
+    const b = new AssignmentPatternBuilder(options.left);
+    if (options.right !== undefined) b.right(options.right);
+    return b;
+  }
 }

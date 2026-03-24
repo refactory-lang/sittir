@@ -1,18 +1,18 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TokenBindingPattern } from '../types.js';
+import type { FragmentSpecifier, Metavariable, TokenBindingPattern } from '../types.js';
 
 
-class TokenBindingPatternBuilder extends BaseBuilder<TokenBindingPattern> {
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
+class TokenBindingPatternBuilder extends Builder<TokenBindingPattern> {
+  private _name: Builder<Metavariable>;
+  private _type!: Builder<FragmentSpecifier>;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder<Metavariable>) {
     super();
     this._name = name;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder<FragmentSpecifier>): this {
     this._type = value;
     return this;
   }
@@ -28,12 +28,12 @@ class TokenBindingPatternBuilder extends BaseBuilder<TokenBindingPattern> {
   build(ctx?: RenderContext): TokenBindingPattern {
     return {
       kind: 'token_binding_pattern',
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-    } as unknown as TokenBindingPattern;
+      name: this._name.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
+    } as TokenBindingPattern;
   }
 
-  override get nodeKind(): string { return 'token_binding_pattern'; }
+  override get nodeKind(): 'token_binding_pattern' { return 'token_binding_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,6 +44,26 @@ class TokenBindingPatternBuilder extends BaseBuilder<TokenBindingPattern> {
   }
 }
 
-export function token_binding_pattern(name: BaseBuilder): TokenBindingPatternBuilder {
+export type { TokenBindingPatternBuilder };
+
+export function token_binding_pattern(name: Builder<Metavariable>): TokenBindingPatternBuilder {
   return new TokenBindingPatternBuilder(name);
+}
+
+export interface TokenBindingPatternOptions {
+  nodeKind: 'token_binding_pattern';
+  name: Builder<Metavariable> | string;
+  type: Builder<FragmentSpecifier> | string;
+}
+
+export namespace token_binding_pattern {
+  export function from(options: Omit<TokenBindingPatternOptions, 'nodeKind'>): TokenBindingPatternBuilder {
+    const _ctor = options.name;
+    const b = new TokenBindingPatternBuilder(typeof _ctor === 'string' ? new LeafBuilder('metavariable', _ctor) : _ctor);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(typeof _v === 'string' ? new LeafBuilder('fragment_specifier', _v) : _v);
+    }
+    return b;
+  }
 }

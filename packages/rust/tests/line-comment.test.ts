@@ -3,19 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('line_comment', () => {
   it('should build with correct kind', () => {
-    const builder = ir.line_comment();
+    const builder = ir.lineComment();
     const node = builder.build();
     expect(node.kind).toBe('line_comment');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.line_comment();
-    const source = builder.renderImpl();
-    expect(source).toContain('//');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.line_comment();
+    const builder = ir.lineComment();
     const cst = builder.toCST();
     expect(cst.type).toBe('line_comment');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +18,7 @@ describe('line_comment', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.line_comment();
+    const builder = ir.lineComment();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

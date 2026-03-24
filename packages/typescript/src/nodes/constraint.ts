@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Constraint } from '../types.js';
+import type { Constraint, Type } from '../types.js';
 
 
-class ConstraintBuilder extends BaseBuilder<Constraint> {
-  private _children: BaseBuilder[] = [];
+class ConstraintBuilder extends Builder<Constraint> {
+  private _children: Builder<Type>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Type>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class ConstraintBuilder extends BaseBuilder<Constraint> {
   build(ctx?: RenderContext): Constraint {
     return {
       kind: 'constraint',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as Constraint;
+      children: this._children[0]!.build(ctx),
+    } as Constraint;
   }
 
-  override get nodeKind(): string { return 'constraint'; }
+  override get nodeKind(): 'constraint' { return 'constraint'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +37,24 @@ class ConstraintBuilder extends BaseBuilder<Constraint> {
   }
 }
 
-export function constraint(children: BaseBuilder): ConstraintBuilder {
+export type { ConstraintBuilder };
+
+export function constraint(children: Builder<Type>): ConstraintBuilder {
   return new ConstraintBuilder(children);
+}
+
+export interface ConstraintOptions {
+  nodeKind: 'constraint';
+  children: Builder<Type> | (Builder<Type>)[];
+}
+
+export namespace constraint {
+  export function from(input: Omit<ConstraintOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): ConstraintBuilder {
+    const options: Omit<ConstraintOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ConstraintOptions, 'nodeKind'>
+      : { children: input } as Omit<ConstraintOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ConstraintBuilder(_ctor);
+    return b;
+  }
 }

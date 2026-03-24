@@ -1,12 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AsyncBlock } from '../types.js';
+import type { AsyncBlock, Block } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
-class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
-  private _children: BaseBuilder[] = [];
+class AsyncBlockBuilder extends Builder<AsyncBlock> {
+  private _children: Builder<Block>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Block>) {
     super();
     this._children = [children];
   }
@@ -21,11 +23,11 @@ class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
   build(ctx?: RenderContext): AsyncBlock {
     return {
       kind: 'async_block',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as AsyncBlock;
+      children: this._children[0]!.build(ctx),
+    } as AsyncBlock;
   }
 
-  override get nodeKind(): string { return 'async_block'; }
+  override get nodeKind(): 'async_block' { return 'async_block'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +39,24 @@ class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
   }
 }
 
-export function async_block(children: BaseBuilder): AsyncBlockBuilder {
+export type { AsyncBlockBuilder };
+
+export function async_block(children: Builder<Block>): AsyncBlockBuilder {
   return new AsyncBlockBuilder(children);
+}
+
+export interface AsyncBlockOptions {
+  nodeKind: 'async_block';
+  children: Builder<Block> | Omit<BlockOptions, 'nodeKind'> | (Builder<Block> | Omit<BlockOptions, 'nodeKind'>)[];
+}
+
+export namespace async_block {
+  export function from(input: Omit<AsyncBlockOptions, 'nodeKind'> | Builder<Block> | Omit<BlockOptions, 'nodeKind'> | (Builder<Block> | Omit<BlockOptions, 'nodeKind'>)[]): AsyncBlockBuilder {
+    const options: Omit<AsyncBlockOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<AsyncBlockOptions, 'nodeKind'>
+      : { children: input } as Omit<AsyncBlockOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new AsyncBlockBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
+    return b;
+  }
 }

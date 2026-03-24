@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { NamespaceImport } from '../types.js';
+import type { Identifier, NamespaceImport } from '../types.js';
 
 
-class NamespaceImportBuilder extends BaseBuilder<NamespaceImport> {
-  private _children: BaseBuilder[] = [];
+class NamespaceImportBuilder extends Builder<NamespaceImport> {
+  private _children: Builder<Identifier>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Identifier>) {
     super();
     this._children = [children];
   }
@@ -22,11 +22,11 @@ class NamespaceImportBuilder extends BaseBuilder<NamespaceImport> {
   build(ctx?: RenderContext): NamespaceImport {
     return {
       kind: 'namespace_import',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as NamespaceImport;
+      children: this._children[0]!.build(ctx),
+    } as NamespaceImport;
   }
 
-  override get nodeKind(): string { return 'namespace_import'; }
+  override get nodeKind(): 'namespace_import' { return 'namespace_import'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,6 +39,24 @@ class NamespaceImportBuilder extends BaseBuilder<NamespaceImport> {
   }
 }
 
-export function namespace_import(children: BaseBuilder): NamespaceImportBuilder {
+export type { NamespaceImportBuilder };
+
+export function namespace_import(children: Builder<Identifier>): NamespaceImportBuilder {
   return new NamespaceImportBuilder(children);
+}
+
+export interface NamespaceImportOptions {
+  nodeKind: 'namespace_import';
+  children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+}
+
+export namespace namespace_import {
+  export function from(input: Omit<NamespaceImportOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): NamespaceImportBuilder {
+    const options: Omit<NamespaceImportOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<NamespaceImportOptions, 'nodeKind'>
+      : { children: input } as Omit<NamespaceImportOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new NamespaceImportBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    return b;
+  }
 }

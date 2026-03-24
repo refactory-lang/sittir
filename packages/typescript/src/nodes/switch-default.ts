@@ -1,14 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { SwitchDefault } from '../types.js';
+import type { Statement, SwitchDefault } from '../types.js';
 
 
-class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
-  private _body: BaseBuilder[] = [];
+class SwitchDefaultBuilder extends Builder<SwitchDefault> {
+  private _body: Builder<Statement>[] = [];
 
   constructor() { super(); }
 
-  body(value: BaseBuilder[]): this {
+  body(...value: Builder<Statement>[]): this {
     this._body = value;
     return this;
   }
@@ -24,11 +24,11 @@ class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
   build(ctx?: RenderContext): SwitchDefault {
     return {
       kind: 'switch_default',
-      body: this._body.map(c => this.renderChild(c, ctx)),
-    } as unknown as SwitchDefault;
+      body: this._body.map(c => c.build(ctx)),
+    } as SwitchDefault;
   }
 
-  override get nodeKind(): string { return 'switch_default'; }
+  override get nodeKind(): 'switch_default' { return 'switch_default'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -41,6 +41,28 @@ class SwitchDefaultBuilder extends BaseBuilder<SwitchDefault> {
   }
 }
 
+export type { SwitchDefaultBuilder };
+
 export function switch_default(): SwitchDefaultBuilder {
   return new SwitchDefaultBuilder();
+}
+
+export interface SwitchDefaultOptions {
+  nodeKind: 'switch_default';
+  body?: Builder<Statement> | (Builder<Statement>)[];
+}
+
+export namespace switch_default {
+  export function from(input: Omit<SwitchDefaultOptions, 'nodeKind'> | Builder<Statement> | (Builder<Statement>)[]): SwitchDefaultBuilder {
+    const options: Omit<SwitchDefaultOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'body' in input
+      ? input as Omit<SwitchDefaultOptions, 'nodeKind'>
+      : { body: input } as Omit<SwitchDefaultOptions, 'nodeKind'>;
+    const b = new SwitchDefaultBuilder();
+    if (options.body !== undefined) {
+      const _v = options.body;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.body(..._arr);
+    }
+    return b;
+  }
 }

@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { IndexTypeQuery } from '../types.js';
+import type { IndexTypeQuery, PrimaryType } from '../types.js';
 
 
-class IndexTypeQueryBuilder extends BaseBuilder<IndexTypeQuery> {
-  private _children: BaseBuilder[] = [];
+class IndexTypeQueryBuilder extends Builder<IndexTypeQuery> {
+  private _children: Builder<PrimaryType>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<PrimaryType>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class IndexTypeQueryBuilder extends BaseBuilder<IndexTypeQuery> {
   build(ctx?: RenderContext): IndexTypeQuery {
     return {
       kind: 'index_type_query',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as IndexTypeQuery;
+      children: this._children[0]!.build(ctx),
+    } as IndexTypeQuery;
   }
 
-  override get nodeKind(): string { return 'index_type_query'; }
+  override get nodeKind(): 'index_type_query' { return 'index_type_query'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +37,24 @@ class IndexTypeQueryBuilder extends BaseBuilder<IndexTypeQuery> {
   }
 }
 
-export function index_type_query(children: BaseBuilder): IndexTypeQueryBuilder {
+export type { IndexTypeQueryBuilder };
+
+export function index_type_query(children: Builder<PrimaryType>): IndexTypeQueryBuilder {
   return new IndexTypeQueryBuilder(children);
+}
+
+export interface IndexTypeQueryOptions {
+  nodeKind: 'index_type_query';
+  children: Builder<PrimaryType> | (Builder<PrimaryType>)[];
+}
+
+export namespace index_type_query {
+  export function from(input: Omit<IndexTypeQueryOptions, 'nodeKind'> | Builder<PrimaryType> | (Builder<PrimaryType>)[]): IndexTypeQueryBuilder {
+    const options: Omit<IndexTypeQueryOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<IndexTypeQueryOptions, 'nodeKind'>
+      : { children: input } as Omit<IndexTypeQueryOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new IndexTypeQueryBuilder(_ctor);
+    return b;
+  }
 }

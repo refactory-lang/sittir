@@ -3,20 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('associated_type', () => {
   it('should build with correct kind', () => {
-    const builder = ir.associated_type(ir.identifier('test'));
+    const builder = ir.associatedType(ir.typeIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('associated_type');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.associated_type(ir.identifier('test'));
+    const builder = ir.associatedType(ir.typeIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('type');
     expect(source).toContain(';');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.associated_type(ir.identifier('test'));
+    const builder = ir.associatedType(ir.typeIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('associated_type');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +26,7 @@ describe('associated_type', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.associated_type(ir.identifier('test'));
+    const builder = ir.associatedType(ir.typeIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

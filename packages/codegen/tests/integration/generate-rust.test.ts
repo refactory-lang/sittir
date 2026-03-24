@@ -14,9 +14,9 @@ describe('generate() for Rust', () => {
 		expect(result.builders.has('attribute_item')).toBe(true);
 	});
 
-	it('should generate self-contained builders extending BaseBuilder', () => {
+	it('should generate self-contained builders extending Builder', () => {
 		const structBuilder = result.builders.get('struct_item')!;
-		expect(structBuilder).toContain('extends BaseBuilder');
+		expect(structBuilder).toContain('extends Builder');
 		expect(structBuilder).toContain('renderImpl(ctx');
 		expect(structBuilder).toContain("parts.push('struct')");
 	});
@@ -37,9 +37,9 @@ describe('generate() for Rust', () => {
 		expect(result.grammar).toContain('RustGrammar');
 	});
 
-	it('should generate index barrel with BaseBuilder re-export', () => {
+	it('should generate index barrel with Builder re-export', () => {
 		expect(result.index).toContain("from './builder.js'");
-		expect(result.index).toContain('BaseBuilder');
+		expect(result.index).toContain('Builder');
 	});
 
 	it('should NOT generate render.ts, validate.ts, etc.', () => {

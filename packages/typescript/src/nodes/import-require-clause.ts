@@ -1,18 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImportRequireClause } from '../types.js';
+import type { Identifier, ImportRequireClause, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
 
 
-class ImportRequireClauseBuilder extends BaseBuilder<ImportRequireClause> {
-  private _source: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ImportRequireClauseBuilder extends Builder<ImportRequireClause> {
+  private _source: Builder<String>;
+  private _children: Builder<Identifier>[] = [];
 
-  constructor(source: BaseBuilder) {
+  constructor(source: Builder<String>) {
     super();
     this._source = source;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder<Identifier>[]): this {
     this._children = value;
     return this;
   }
@@ -31,12 +33,12 @@ class ImportRequireClauseBuilder extends BaseBuilder<ImportRequireClause> {
   build(ctx?: RenderContext): ImportRequireClause {
     return {
       kind: 'import_require_clause',
-      source: this.renderChild(this._source, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ImportRequireClause;
+      source: this._source.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
+    } as ImportRequireClause;
   }
 
-  override get nodeKind(): string { return 'import_require_clause'; }
+  override get nodeKind(): 'import_require_clause' { return 'import_require_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -52,6 +54,27 @@ class ImportRequireClauseBuilder extends BaseBuilder<ImportRequireClause> {
   }
 }
 
-export function import_require_clause(source: BaseBuilder): ImportRequireClauseBuilder {
+export type { ImportRequireClauseBuilder };
+
+export function import_require_clause(source: Builder<String>): ImportRequireClauseBuilder {
   return new ImportRequireClauseBuilder(source);
+}
+
+export interface ImportRequireClauseOptions {
+  nodeKind: 'import_require_clause';
+  source: Builder<String> | Omit<StringOptions, 'nodeKind'>;
+  children?: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+}
+
+export namespace import_require_clause {
+  export function from(options: Omit<ImportRequireClauseOptions, 'nodeKind'>): ImportRequireClauseBuilder {
+    const _ctor = options.source;
+    const b = new ImportRequireClauseBuilder(_ctor instanceof Builder ? _ctor : string.from(_ctor));
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('identifier', _x) : _x));
+    }
+    return b;
+  }
 }

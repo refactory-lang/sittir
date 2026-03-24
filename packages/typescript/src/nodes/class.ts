@@ -1,36 +1,44 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ClassDeclaration } from '../types.js';
+import type { Class, ClassBody, ClassHeritage, Decorator, TypeIdentifier, TypeParameters } from '../types.js';
+import { decorator } from './decorator.js';
+import type { DecoratorOptions } from './decorator.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { class_body } from './class-body.js';
+import type { ClassBodyOptions } from './class-body.js';
+import { class_heritage } from './class-heritage.js';
+import type { ClassHeritageOptions } from './class-heritage.js';
 
 
-class ClassBuilder extends BaseBuilder<ClassDeclaration> {
-  private _body!: BaseBuilder;
-  private _decorator: BaseBuilder[] = [];
-  private _name: BaseBuilder;
-  private _typeParameters?: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class ClassBuilder extends Builder<Class> {
+  private _decorator: Builder<Decorator>[] = [];
+  private _name?: Builder<TypeIdentifier>;
+  private _typeParameters?: Builder<TypeParameters>;
+  private _body: Builder<ClassBody>;
+  private _children: Builder<ClassHeritage>[] = [];
 
-  constructor(name: BaseBuilder) {
+  constructor(body: Builder<ClassBody>) {
     super();
-    this._name = name;
+    this._body = body;
   }
 
-  body(value: BaseBuilder): this {
-    this._body = value;
-    return this;
-  }
-
-  decorator(value: BaseBuilder[]): this {
+  decorator(...value: Builder<Decorator>[]): this {
     this._decorator = value;
     return this;
   }
 
-  typeParameters(value: BaseBuilder): this {
+  name(value: Builder<TypeIdentifier>): this {
+    this._name = value;
+    return this;
+  }
+
+  typeParameters(value: Builder<TypeParameters>): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder<ClassHeritage>[]): this {
     this._children = value;
     return this;
   }
@@ -46,18 +54,18 @@ class ClassBuilder extends BaseBuilder<ClassDeclaration> {
     return parts.join(' ');
   }
 
-  build(ctx?: RenderContext): ClassDeclaration {
+  build(ctx?: RenderContext): Class {
     return {
-      kind: 'class_declaration',
-      body: this._body ? this.renderChild(this._body, ctx) : undefined,
-      decorator: this._decorator.map(c => this.renderChild(c, ctx)),
-      name: this.renderChild(this._name, ctx),
-      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ClassDeclaration;
+      kind: 'class',
+      decorator: this._decorator.map(c => c.build(ctx)),
+      name: this._name ? this._name.build(ctx) : undefined,
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      body: this._body.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
+    } as Class;
   }
 
-  override get nodeKind(): string { return 'class_declaration'; }
+  override get nodeKind(): 'class' { return 'class'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -75,6 +83,43 @@ class ClassBuilder extends BaseBuilder<ClassDeclaration> {
   }
 }
 
-export function class_(name: BaseBuilder): ClassBuilder {
-  return new ClassBuilder(name);
+export type { ClassBuilder };
+
+export function class_(body: Builder<ClassBody>): ClassBuilder {
+  return new ClassBuilder(body);
+}
+
+export interface ClassOptions {
+  nodeKind: 'class';
+  decorator?: Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'> | (Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'>)[];
+  name?: Builder<TypeIdentifier> | string;
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  body: Builder<ClassBody> | Omit<ClassBodyOptions, 'nodeKind'>;
+  children?: Builder<ClassHeritage> | Omit<ClassHeritageOptions, 'nodeKind'> | (Builder<ClassHeritage> | Omit<ClassHeritageOptions, 'nodeKind'>)[];
+}
+
+export namespace class_ {
+  export function from(options: Omit<ClassOptions, 'nodeKind'>): ClassBuilder {
+    const _ctor = options.body;
+    const b = new ClassBuilder(_ctor instanceof Builder ? _ctor : class_body.from(_ctor));
+    if (options.decorator !== undefined) {
+      const _v = options.decorator;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v)));
+    }
+    if (options.name !== undefined) {
+      const _v = options.name;
+      b.name(typeof _v === 'string' ? new LeafBuilder('type_identifier', _v) : _v);
+    }
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
+    }
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : class_heritage.from(_x)));
+    }
+    return b;
+  }
 }

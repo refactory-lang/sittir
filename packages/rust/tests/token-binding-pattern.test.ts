@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('token_binding_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.token_binding_pattern(ir.identifier('test'));
+    const builder = ir.tokenBindingPattern(ir.metavariable('test'));
     const node = builder.build();
     expect(node.kind).toBe('token_binding_pattern');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.token_binding_pattern(ir.identifier('test'));
+    const builder = ir.tokenBindingPattern(ir.metavariable('test'));
     const source = builder.renderImpl();
     expect(source).toContain(':');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.token_binding_pattern(ir.identifier('test'));
+    const builder = ir.tokenBindingPattern(ir.metavariable('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('token_binding_pattern');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('token_binding_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.token_binding_pattern(ir.identifier('test'));
+    const builder = ir.tokenBindingPattern(ir.metavariable('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

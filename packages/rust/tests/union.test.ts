@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('union_item', () => {
   it('should build with correct kind', () => {
-    const builder = ir.union(ir.identifier('test'));
+    const builder = ir.union(ir.typeIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('union_item');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.union(ir.identifier('test'));
+    const builder = ir.union(ir.typeIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('union');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.union(ir.identifier('test'));
+    const builder = ir.union(ir.typeIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('union_item');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('union_item', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.union(ir.identifier('test'));
+    const builder = ir.union(ir.typeIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

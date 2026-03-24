@@ -1,18 +1,22 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { StructPattern } from '../types.js';
+import type { FieldPattern, RemainingFieldPattern, ScopedTypeIdentifier, StructPattern, TypeIdentifier } from '../types.js';
+import { scoped_type_identifier } from './scoped-type-identifier.js';
+import type { ScopedTypeIdentifierOptions } from './scoped-type-identifier.js';
+import { field_pattern } from './field-pattern.js';
+import type { FieldPatternOptions } from './field-pattern.js';
 
 
-class StructPatternBuilder extends BaseBuilder<StructPattern> {
-  private _type: BaseBuilder;
-  private _children: BaseBuilder[] = [];
+class StructPatternBuilder extends Builder<StructPattern> {
+  private _type: Builder<TypeIdentifier | ScopedTypeIdentifier>;
+  private _children: Builder<FieldPattern | RemainingFieldPattern>[] = [];
 
-  constructor(type_: BaseBuilder) {
+  constructor(type_: Builder<TypeIdentifier | ScopedTypeIdentifier>) {
     super();
     this._type = type_;
   }
 
-  children(value: BaseBuilder[]): this {
+  children(...value: Builder<FieldPattern | RemainingFieldPattern>[]): this {
     this._children = value;
     return this;
   }
@@ -21,7 +25,7 @@ class StructPatternBuilder extends BaseBuilder<StructPattern> {
     const parts: string[] = [];
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     parts.push('{');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -29,25 +33,47 @@ class StructPatternBuilder extends BaseBuilder<StructPattern> {
   build(ctx?: RenderContext): StructPattern {
     return {
       kind: 'struct_pattern',
-      type: this.renderChild(this._type, ctx),
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as StructPattern;
+      type: this._type.build(ctx),
+      children: this._children.map(c => c.build(ctx)),
+    } as StructPattern;
   }
 
-  override get nodeKind(): string { return 'struct_pattern'; }
+  override get nodeKind(): 'struct_pattern' { return 'struct_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
     parts.push({ kind: 'token', text: '{', type: '{' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
+    for (let i = 0; i < this._children.length; i++) {
+      if (i > 0 || this._children.length === 1) parts.push({ kind: 'token', text: ',', type: ',' });
+      parts.push({ kind: 'builder', builder: this._children[i]! });
     }
     parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
 }
 
-export function struct_pattern(type_: BaseBuilder): StructPatternBuilder {
+export type { StructPatternBuilder };
+
+export function struct_pattern(type_: Builder<TypeIdentifier | ScopedTypeIdentifier>): StructPatternBuilder {
   return new StructPatternBuilder(type_);
+}
+
+export interface StructPatternOptions {
+  nodeKind: 'struct_pattern';
+  type: Builder<TypeIdentifier | ScopedTypeIdentifier> | string | Omit<ScopedTypeIdentifierOptions, 'nodeKind'>;
+  children?: Builder<FieldPattern | RemainingFieldPattern> | string | Omit<FieldPatternOptions, 'nodeKind'> | (Builder<FieldPattern | RemainingFieldPattern> | string | Omit<FieldPatternOptions, 'nodeKind'>)[];
+}
+
+export namespace struct_pattern {
+  export function from(options: Omit<StructPatternOptions, 'nodeKind'>): StructPatternBuilder {
+    const _ctor = options.type;
+    const b = new StructPatternBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor instanceof Builder ? _ctor : scoped_type_identifier.from(_ctor));
+    if (options.children !== undefined) {
+      const _v = options.children;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('remaining_field_pattern', _x) : _x instanceof Builder ? _x : field_pattern.from(_x)));
+    }
+    return b;
+  }
 }

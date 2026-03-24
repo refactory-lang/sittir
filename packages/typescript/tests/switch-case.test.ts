@@ -3,20 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('switch_case', () => {
   it('should build with correct kind', () => {
-    const builder = ir.switch_case(ir.identifier('test'));
+    const builder = ir.switchCase(ir.yieldExpression());
     const node = builder.build();
     expect(node.kind).toBe('switch_case');
+    expect((node as any).value).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.switch_case(ir.identifier('test'));
+    const builder = ir.switchCase(ir.yieldExpression());
     const source = builder.renderImpl();
     expect(source).toContain('case');
     expect(source).toContain(':');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.switch_case(ir.identifier('test'));
+    const builder = ir.switchCase(ir.yieldExpression());
     const cst = builder.toCST();
     expect(cst.type).toBe('switch_case');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +26,7 @@ describe('switch_case', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.switch_case(ir.identifier('test'));
+    const builder = ir.switchCase(ir.yieldExpression());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

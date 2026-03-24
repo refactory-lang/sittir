@@ -1,24 +1,28 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeParameter } from '../types.js';
+import type { Constraint, DefaultType, TypeIdentifier, TypeParameter } from '../types.js';
+import { constraint } from './constraint.js';
+import type { ConstraintOptions } from './constraint.js';
+import { default_type } from './default-type.js';
+import type { DefaultTypeOptions } from './default-type.js';
 
 
-class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
-  private _constraint?: BaseBuilder;
-  private _name: BaseBuilder;
-  private _value?: BaseBuilder;
+class TypeParameterBuilder extends Builder<TypeParameter> {
+  private _name: Builder<TypeIdentifier>;
+  private _constraint?: Builder<Constraint>;
+  private _value?: Builder<DefaultType>;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  constraint(value: BaseBuilder): this {
+  constraint(value: Builder<Constraint>): this {
     this._constraint = value;
     return this;
   }
 
-  value(value: BaseBuilder): this {
+  value(value: Builder<DefaultType>): this {
     this._value = value;
     return this;
   }
@@ -34,13 +38,13 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
   build(ctx?: RenderContext): TypeParameter {
     return {
       kind: 'type_parameter',
-      constraint: this._constraint ? this.renderChild(this._constraint, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      value: this._value ? this.renderChild(this._value, ctx) : undefined,
-    } as unknown as TypeParameter;
+      name: this._name.build(ctx),
+      constraint: this._constraint ? this._constraint.build(ctx) : undefined,
+      value: this._value ? this._value.build(ctx) : undefined,
+    } as TypeParameter;
   }
 
-  override get nodeKind(): string { return 'type_parameter'; }
+  override get nodeKind(): 'type_parameter' { return 'type_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,6 +55,31 @@ class TypeParameterBuilder extends BaseBuilder<TypeParameter> {
   }
 }
 
-export function type_parameter(name: BaseBuilder): TypeParameterBuilder {
+export type { TypeParameterBuilder };
+
+export function type_parameter(name: Builder<TypeIdentifier>): TypeParameterBuilder {
   return new TypeParameterBuilder(name);
+}
+
+export interface TypeParameterOptions {
+  nodeKind: 'type_parameter';
+  name: Builder<TypeIdentifier> | string;
+  constraint?: Builder<Constraint> | Omit<ConstraintOptions, 'nodeKind'>;
+  value?: Builder<DefaultType> | Omit<DefaultTypeOptions, 'nodeKind'>;
+}
+
+export namespace type_parameter {
+  export function from(options: Omit<TypeParameterOptions, 'nodeKind'>): TypeParameterBuilder {
+    const _ctor = options.name;
+    const b = new TypeParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.constraint !== undefined) {
+      const _v = options.constraint;
+      b.constraint(_v instanceof Builder ? _v : constraint.from(_v));
+    }
+    if (options.value !== undefined) {
+      const _v = options.value;
+      b.value(_v instanceof Builder ? _v : default_type.from(_v));
+    }
+    return b;
+  }
 }

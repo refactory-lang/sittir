@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('struct_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.structExpression(ir.identifier('test'));
+    const builder = ir.structExpression(ir.typeIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('struct_expression');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.structExpression(ir.identifier('test'));
+    const builder = ir.structExpression(ir.typeIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('struct_expression');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('struct_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.structExpression(ir.identifier('test'));
+    const builder = ir.structExpression(ir.typeIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

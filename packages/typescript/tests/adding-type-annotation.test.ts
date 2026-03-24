@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('adding_type_annotation', () => {
   it('should build with correct kind', () => {
-    const builder = ir.adding_type_annotation(ir.identifier('test'));
+    const builder = ir.addingTypeAnnotation(ir.callExpression(ir.import()));
     const node = builder.build();
     expect(node.kind).toBe('adding_type_annotation');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.adding_type_annotation(ir.identifier('test'));
+    const builder = ir.addingTypeAnnotation(ir.callExpression(ir.import()));
     const source = builder.renderImpl();
     expect(source).toContain('+?:');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.adding_type_annotation(ir.identifier('test'));
+    const builder = ir.addingTypeAnnotation(ir.callExpression(ir.import()));
     const cst = builder.toCST();
     expect(cst.type).toBe('adding_type_annotation');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('adding_type_annotation', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.adding_type_annotation(ir.identifier('test'));
+    const builder = ir.addingTypeAnnotation(ir.callExpression(ir.import()));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

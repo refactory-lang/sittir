@@ -1,12 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypePredicateAnnotation } from '../types.js';
+import type { TypePredicate, TypePredicateAnnotation } from '../types.js';
+import { type_predicate } from './type-predicate.js';
+import type { TypePredicateOptions } from './type-predicate.js';
 
 
-class TypePredicateAnnotationBuilder extends BaseBuilder<TypePredicateAnnotation> {
-  private _children: BaseBuilder[] = [];
+class TypePredicateAnnotationBuilder extends Builder<TypePredicateAnnotation> {
+  private _children: Builder<TypePredicate>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<TypePredicate>) {
     super();
     this._children = [children];
   }
@@ -21,11 +23,11 @@ class TypePredicateAnnotationBuilder extends BaseBuilder<TypePredicateAnnotation
   build(ctx?: RenderContext): TypePredicateAnnotation {
     return {
       kind: 'type_predicate_annotation',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TypePredicateAnnotation;
+      children: this._children[0]!.build(ctx),
+    } as TypePredicateAnnotation;
   }
 
-  override get nodeKind(): string { return 'type_predicate_annotation'; }
+  override get nodeKind(): 'type_predicate_annotation' { return 'type_predicate_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +39,24 @@ class TypePredicateAnnotationBuilder extends BaseBuilder<TypePredicateAnnotation
   }
 }
 
-export function type_predicate_annotation(children: BaseBuilder): TypePredicateAnnotationBuilder {
+export type { TypePredicateAnnotationBuilder };
+
+export function type_predicate_annotation(children: Builder<TypePredicate>): TypePredicateAnnotationBuilder {
   return new TypePredicateAnnotationBuilder(children);
+}
+
+export interface TypePredicateAnnotationOptions {
+  nodeKind: 'type_predicate_annotation';
+  children: Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'> | (Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'>)[];
+}
+
+export namespace type_predicate_annotation {
+  export function from(input: Omit<TypePredicateAnnotationOptions, 'nodeKind'> | Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'> | (Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'>)[]): TypePredicateAnnotationBuilder {
+    const options: Omit<TypePredicateAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TypePredicateAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<TypePredicateAnnotationOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TypePredicateAnnotationBuilder(_ctor instanceof Builder ? _ctor : type_predicate.from(_ctor));
+    return b;
+  }
 }

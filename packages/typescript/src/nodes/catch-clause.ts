@@ -1,24 +1,32 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CatchClause } from '../types.js';
+import type { ArrayPattern, CatchClause, Identifier, ObjectPattern, StatementBlock, TypeAnnotation } from '../types.js';
+import { object_pattern } from './object-pattern.js';
+import type { ObjectPatternOptions } from './object-pattern.js';
+import { array_pattern } from './array-pattern.js';
+import type { ArrayPatternOptions } from './array-pattern.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
-class CatchClauseBuilder extends BaseBuilder<CatchClause> {
-  private _body: BaseBuilder;
-  private _parameter?: BaseBuilder;
-  private _type?: BaseBuilder;
+class CatchClauseBuilder extends Builder<CatchClause> {
+  private _parameter?: Builder<ObjectPattern | ArrayPattern | Identifier>;
+  private _type?: Builder<TypeAnnotation>;
+  private _body: Builder<StatementBlock>;
 
-  constructor(body: BaseBuilder) {
+  constructor(body: Builder<StatementBlock>) {
     super();
     this._body = body;
   }
 
-  parameter(value: BaseBuilder): this {
+  parameter(value: Builder<ObjectPattern | ArrayPattern | Identifier>): this {
     this._parameter = value;
     return this;
   }
 
-  type(value: BaseBuilder): this {
+  type(value: Builder<TypeAnnotation>): this {
     this._type = value;
     return this;
   }
@@ -39,13 +47,13 @@ class CatchClauseBuilder extends BaseBuilder<CatchClause> {
   build(ctx?: RenderContext): CatchClause {
     return {
       kind: 'catch_clause',
-      body: this.renderChild(this._body, ctx),
-      parameter: this._parameter ? this.renderChild(this._parameter, ctx) : undefined,
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-    } as unknown as CatchClause;
+      parameter: this._parameter ? this._parameter.build(ctx) : undefined,
+      type: this._type ? this._type.build(ctx) : undefined,
+      body: this._body.build(ctx),
+    } as CatchClause;
   }
 
-  override get nodeKind(): string { return 'catch_clause'; }
+  override get nodeKind(): 'catch_clause' { return 'catch_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -61,6 +69,40 @@ class CatchClauseBuilder extends BaseBuilder<CatchClause> {
   }
 }
 
-export function catch_clause(body: BaseBuilder): CatchClauseBuilder {
+export type { CatchClauseBuilder };
+
+export function catch_clause(body: Builder<StatementBlock>): CatchClauseBuilder {
   return new CatchClauseBuilder(body);
+}
+
+export interface CatchClauseOptions {
+  nodeKind: 'catch_clause';
+  parameter?: Builder<ObjectPattern | ArrayPattern | Identifier> | string | ObjectPatternOptions | ArrayPatternOptions;
+  type?: Builder<TypeAnnotation> | Omit<TypeAnnotationOptions, 'nodeKind'>;
+  body: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
+}
+
+export namespace catch_clause {
+  export function from(options: Omit<CatchClauseOptions, 'nodeKind'>): CatchClauseBuilder {
+    const _ctor = options.body;
+    const b = new CatchClauseBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor));
+    if (options.parameter !== undefined) {
+      const _v = options.parameter;
+      if (typeof _v === 'string') {
+        b.parameter(new LeafBuilder('identifier', _v));
+      } else if (_v instanceof Builder) {
+        b.parameter(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'object_pattern': b.parameter(object_pattern.from(_v)); break;
+          case 'array_pattern': b.parameter(array_pattern.from(_v)); break;
+        }
+      }
+    }
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v));
+    }
+    return b;
+  }
 }

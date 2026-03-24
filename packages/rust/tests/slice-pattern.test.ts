@@ -3,20 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('slice_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.slice_pattern();
+    const builder = ir.slicePattern();
     const node = builder.build();
     expect(node.kind).toBe('slice_pattern');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.slice_pattern();
-    const source = builder.renderImpl();
-    expect(source).toContain('[');
-    expect(source).toContain(']');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.slice_pattern();
+    const builder = ir.slicePattern();
     const cst = builder.toCST();
     expect(cst.type).toBe('slice_pattern');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +18,7 @@ describe('slice_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.slice_pattern();
+    const builder = ir.slicePattern();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('mapped_type_clause', () => {
   it('should build with correct kind', () => {
-    const builder = ir.mapped_type_clause(ir.identifier('test'));
+    const builder = ir.mappedTypeClause(ir.typeIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('mapped_type_clause');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.mapped_type_clause(ir.identifier('test'));
+    const builder = ir.mappedTypeClause(ir.typeIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('in');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.mapped_type_clause(ir.identifier('test'));
+    const builder = ir.mappedTypeClause(ir.typeIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('mapped_type_clause');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('mapped_type_clause', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.mapped_type_clause(ir.identifier('test'));
+    const builder = ir.mappedTypeClause(ir.typeIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

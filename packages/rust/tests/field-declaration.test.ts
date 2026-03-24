@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('field_declaration', () => {
   it('should build with correct kind', () => {
-    const builder = ir.fieldDeclaration(ir.identifier('test'));
+    const builder = ir.fieldDeclaration(ir.fieldIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('field_declaration');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.fieldDeclaration(ir.identifier('test'));
+    const builder = ir.fieldDeclaration(ir.fieldIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain(':');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.fieldDeclaration(ir.identifier('test'));
+    const builder = ir.fieldDeclaration(ir.fieldIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('field_declaration');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('field_declaration', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.fieldDeclaration(ir.identifier('test'));
+    const builder = ir.fieldDeclaration(ir.fieldIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

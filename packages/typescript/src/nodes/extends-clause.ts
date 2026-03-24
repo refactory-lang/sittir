@@ -1,18 +1,20 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ExtendsClause } from '../types.js';
+import type { Expression, ExtendsClause, TypeArguments } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
 
 
-class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
-  private _typeArguments: BaseBuilder[] = [];
-  private _value: BaseBuilder[] = [];
+class ExtendsClauseBuilder extends Builder<ExtendsClause> {
+  private _value: Builder<Expression>[] = [];
+  private _typeArguments: Builder<TypeArguments>[] = [];
 
-  constructor(value: BaseBuilder[]) {
+  constructor(...value: Builder<Expression>[]) {
     super();
     this._value = value;
   }
 
-  typeArguments(value: BaseBuilder[]): this {
+  typeArguments(...value: Builder<TypeArguments>[]): this {
     this._typeArguments = value;
     return this;
   }
@@ -28,12 +30,12 @@ class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
   build(ctx?: RenderContext): ExtendsClause {
     return {
       kind: 'extends_clause',
-      typeArguments: this._typeArguments.map(c => this.renderChild(c, ctx)),
-      value: this._value.map(c => this.renderChild(c, ctx)),
-    } as unknown as ExtendsClause;
+      value: this._value.map(c => c.build(ctx)),
+      typeArguments: this._typeArguments.map(c => c.build(ctx)),
+    } as ExtendsClause;
   }
 
-  override get nodeKind(): string { return 'extends_clause'; }
+  override get nodeKind(): 'extends_clause' { return 'extends_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,6 +50,28 @@ class ExtendsClauseBuilder extends BaseBuilder<ExtendsClause> {
   }
 }
 
-export function extends_clause(value: BaseBuilder[]): ExtendsClauseBuilder {
-  return new ExtendsClauseBuilder(value);
+export type { ExtendsClauseBuilder };
+
+export function extends_clause(...value: Builder<Expression>[]): ExtendsClauseBuilder {
+  return new ExtendsClauseBuilder(...value);
+}
+
+export interface ExtendsClauseOptions {
+  nodeKind: 'extends_clause';
+  value: Builder<Expression> | (Builder<Expression>)[];
+  typeArguments?: Builder<TypeArguments> | Omit<TypeArgumentsOptions, 'nodeKind'> | (Builder<TypeArguments> | Omit<TypeArgumentsOptions, 'nodeKind'>)[];
+}
+
+export namespace extends_clause {
+  export function from(options: Omit<ExtendsClauseOptions, 'nodeKind'>): ExtendsClauseBuilder {
+    const _ctor = options.value;
+    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
+    const b = new ExtendsClauseBuilder(..._arr);
+    if (options.typeArguments !== undefined) {
+      const _v = options.typeArguments;
+      const _arr = Array.isArray(_v) ? _v : [_v];
+      b.typeArguments(..._arr.map(_v => _v instanceof Builder ? _v : type_arguments.from(_v)));
+    }
+    return b;
+  }
 }

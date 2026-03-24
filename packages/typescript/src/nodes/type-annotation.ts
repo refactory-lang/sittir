@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TypeAnnotation } from '../types.js';
+import type { Type, TypeAnnotation } from '../types.js';
 
 
-class TypeAnnotationBuilder extends BaseBuilder<TypeAnnotation> {
-  private _children: BaseBuilder[] = [];
+class TypeAnnotationBuilder extends Builder<TypeAnnotation> {
+  private _children: Builder<Type>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Type>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class TypeAnnotationBuilder extends BaseBuilder<TypeAnnotation> {
   build(ctx?: RenderContext): TypeAnnotation {
     return {
       kind: 'type_annotation',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as TypeAnnotation;
+      children: this._children[0]!.build(ctx),
+    } as TypeAnnotation;
   }
 
-  override get nodeKind(): string { return 'type_annotation'; }
+  override get nodeKind(): 'type_annotation' { return 'type_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +37,24 @@ class TypeAnnotationBuilder extends BaseBuilder<TypeAnnotation> {
   }
 }
 
-export function type_annotation(children: BaseBuilder): TypeAnnotationBuilder {
+export type { TypeAnnotationBuilder };
+
+export function type_annotation(children: Builder<Type>): TypeAnnotationBuilder {
   return new TypeAnnotationBuilder(children);
+}
+
+export interface TypeAnnotationOptions {
+  nodeKind: 'type_annotation';
+  children: Builder<Type> | (Builder<Type>)[];
+}
+
+export namespace type_annotation {
+  export function from(input: Omit<TypeAnnotationOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): TypeAnnotationBuilder {
+    const options: Omit<TypeAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TypeAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<TypeAnnotationOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TypeAnnotationBuilder(_ctor);
+    return b;
+  }
 }

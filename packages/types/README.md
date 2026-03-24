@@ -10,26 +10,72 @@ pnpm add @sittir/types
 
 ## What It Does
 
-Given any tree-sitter grammar type `G`, this package derives fully typed IR node shapes, builder inputs, and builder configs — zero hand-rolled field definitions.
+Provides the runtime base classes and type-level machinery for sittir's builder system:
 
-The core types work via TypeScript's structural type system: any object matching the tree-sitter `node-types.json` shape can be plugged in as `G`.
+1. **`Builder<N>`** — abstract base class that all generated builders extend
+2. **`LeafBuilder<K>`** — concrete builder for terminal nodes (identifiers, literals, keywords)
+3. **`RenderContext`** — context threaded through render/build calls (parser, indent)
+4. **`Edit`** — codemod-compatible text edit interface (`{ startPos, endPos, insertedText }`)
+5. **Type projections** — `NodeType<G, K>`, `BuilderConfig<G, T>` for deriving types from grammars
 
-## Key Types
+## Runtime Classes
+
+### `Builder<N>`
+
+Abstract base for all IR builders. Generated per-node builders extend this with their own `renderImpl()` and `build()`.
+
+```ts
+import { Builder } from '@sittir/types';
+
+// Builder instances support multiple render modes:
+builder.render('skip');              // sync, no validation
+builder.render('fast');              // sync, brace/paren matching
+builder.render('full', { parser }); // async, tree-sitter validation
+
+// Direct access:
+builder.renderImpl(ctx);   // source string (no validation)
+builder.build(ctx);        // plain-object IR node
+builder.toCST(offset, ctx); // lightweight CST with positions
+```
+
+### `LeafBuilder<K>`
+
+The only way to introduce raw text into the IR. Wraps a string with a node kind:
+
+```ts
+import { LeafBuilder } from '@sittir/types';
+
+const id = new LeafBuilder('identifier', 'main');
+id.renderImpl(); // "main"
+id.build();      // { kind: 'identifier' }
+```
+
+### `Edit`
+
+Codemod-compatible text edit — replace bytes `[startPos, endPos)` with `insertedText`:
+
+```ts
+import type { Edit } from '@sittir/types';
+
+const edit: Edit = {
+  startPos: 0,
+  endPos: 10,
+  insertedText: 'fn main() {}',
+};
+```
+
+## Type-Level Projections
 
 | Type | Description |
 |------|-------------|
 | `NodeType<G, K>` | Primary projection — grammar `G`, node kind `K` to fully expanded IR node |
 | `BuilderConfig<G, T>` | Builder input shape with grammar-derived optional fields |
-| `BuilderTerminal<N>` | Terminal operations (`build()`, `render()`, `renderSilent()`) |
 | `NodeKind<G>` | All node kind string literals for grammar `G` |
 | `NamedKind<G>` | Subtype-resolved named node kinds |
-| `RenderPipeline<N>` | Render + validate pipeline interface |
 | `ValidationResult` | Validation outcome (`{ ok: true }` or `{ ok: false; errors }`) |
 
-## Usage
-
 ```ts
-import type { NodeType, BuilderConfig, BuilderTerminal } from '@sittir/types';
+import type { NodeType, BuilderConfig } from '@sittir/types';
 import type { RustGrammar } from '@sittir/rust';
 
 // Derive the full IR node type for a Rust struct

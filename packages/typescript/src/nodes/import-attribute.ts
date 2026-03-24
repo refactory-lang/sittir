@@ -1,12 +1,14 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ImportAttribute } from '../types.js';
+import type { ImportAttribute, Object } from '../types.js';
+import { object } from './object.js';
+import type { ObjectOptions } from './object.js';
 
 
-class ImportAttributeBuilder extends BaseBuilder<ImportAttribute> {
-  private _children: BaseBuilder[] = [];
+class ImportAttributeBuilder extends Builder<ImportAttribute> {
+  private _children: Builder<Object>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Object>) {
     super();
     this._children = [children];
   }
@@ -21,11 +23,11 @@ class ImportAttributeBuilder extends BaseBuilder<ImportAttribute> {
   build(ctx?: RenderContext): ImportAttribute {
     return {
       kind: 'import_attribute',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ImportAttribute;
+      children: this._children[0]!.build(ctx),
+    } as ImportAttribute;
   }
 
-  override get nodeKind(): string { return 'import_attribute'; }
+  override get nodeKind(): 'import_attribute' { return 'import_attribute'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,6 +39,24 @@ class ImportAttributeBuilder extends BaseBuilder<ImportAttribute> {
   }
 }
 
-export function import_attribute(children: BaseBuilder): ImportAttributeBuilder {
+export type { ImportAttributeBuilder };
+
+export function import_attribute(children: Builder<Object>): ImportAttributeBuilder {
   return new ImportAttributeBuilder(children);
+}
+
+export interface ImportAttributeOptions {
+  nodeKind: 'import_attribute';
+  children: Builder<Object> | Omit<ObjectOptions, 'nodeKind'> | (Builder<Object> | Omit<ObjectOptions, 'nodeKind'>)[];
+}
+
+export namespace import_attribute {
+  export function from(input: Omit<ImportAttributeOptions, 'nodeKind'> | Builder<Object> | Omit<ObjectOptions, 'nodeKind'> | (Builder<Object> | Omit<ObjectOptions, 'nodeKind'>)[]): ImportAttributeBuilder {
+    const options: Omit<ImportAttributeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ImportAttributeOptions, 'nodeKind'>
+      : { children: input } as Omit<ImportAttributeOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ImportAttributeBuilder(_ctor instanceof Builder ? _ctor : object.from(_ctor));
+    return b;
+  }
 }

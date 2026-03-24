@@ -3,13 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('compound_assignment_expr', () => {
   it('should build with correct kind', () => {
-    const builder = ir.compound_assignment_expr(ir.identifier('test'));
+    const builder = ir.compoundAssignmentExpr(ir.charLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('compound_assignment_expr');
+    expect((node as any).left).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.compound_assignment_expr(ir.identifier('test'));
+    const builder = ir.compoundAssignmentExpr(ir.charLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('compound_assignment_expr');
     expect(cst.isNamed).toBe(true);
@@ -18,7 +19,7 @@ describe('compound_assignment_expr', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.compound_assignment_expr(ir.identifier('test'));
+    const builder = ir.compoundAssignmentExpr(ir.charLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

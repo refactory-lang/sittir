@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('abstract_method_signature', () => {
   it('should build with correct kind', () => {
-    const builder = ir.abstract_method_signature(ir.identifier('test'));
+    const builder = ir.abstractMethodSignature(ir.propertyIdentifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('abstract_method_signature');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.abstract_method_signature(ir.identifier('test'));
+    const builder = ir.abstractMethodSignature(ir.propertyIdentifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('abstract');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.abstract_method_signature(ir.identifier('test'));
+    const builder = ir.abstractMethodSignature(ir.propertyIdentifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('abstract_method_signature');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('abstract_method_signature', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.abstract_method_signature(ir.identifier('test'));
+    const builder = ir.abstractMethodSignature(ir.propertyIdentifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

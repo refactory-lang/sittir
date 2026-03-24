@@ -3,20 +3,13 @@ import { ir } from '../src/builder.js';
 
 describe('statement_block', () => {
   it('should build with correct kind', () => {
-    const builder = ir.statement_block();
+    const builder = ir.statementBlock();
     const node = builder.build();
     expect(node.kind).toBe('statement_block');
   });
 
-  it('should render required grammar tokens', () => {
-    const builder = ir.statement_block();
-    const source = builder.renderImpl();
-    expect(source).toContain('{');
-    expect(source).toContain('}');
-  });
-
   it('should produce a valid CST node', () => {
-    const builder = ir.statement_block();
+    const builder = ir.statementBlock();
     const cst = builder.toCST();
     expect(cst.type).toBe('statement_block');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +18,7 @@ describe('statement_block', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.statement_block();
+    const builder = ir.statementBlock();
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

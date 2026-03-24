@@ -3,19 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('nested_identifier', () => {
   it('should build with correct kind', () => {
-    const builder = ir.nested_identifier(ir.identifier('test'));
+    const builder = ir.nestedIdentifier(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('nested_identifier');
+    expect((node as any).object).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.nested_identifier(ir.identifier('test'));
+    const builder = ir.nestedIdentifier(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('.');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.nested_identifier(ir.identifier('test'));
+    const builder = ir.nestedIdentifier(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('nested_identifier');
     expect(cst.isNamed).toBe(true);
@@ -24,7 +25,7 @@ describe('nested_identifier', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.nested_identifier(ir.identifier('test'));
+    const builder = ir.nestedIdentifier(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

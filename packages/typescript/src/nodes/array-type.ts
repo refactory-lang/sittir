@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ArrayType } from '../types.js';
+import type { ArrayType, PrimaryType } from '../types.js';
 
 
-class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
-  private _children: BaseBuilder[] = [];
+class ArrayTypeBuilder extends Builder<ArrayType> {
+  private _children: Builder<PrimaryType>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<PrimaryType>) {
     super();
     this._children = [children];
   }
@@ -22,11 +22,11 @@ class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
   build(ctx?: RenderContext): ArrayType {
     return {
       kind: 'array_type',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ArrayType;
+      children: this._children[0]!.build(ctx),
+    } as ArrayType;
   }
 
-  override get nodeKind(): string { return 'array_type'; }
+  override get nodeKind(): 'array_type' { return 'array_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,6 +39,24 @@ class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
   }
 }
 
-export function array_type(children: BaseBuilder): ArrayTypeBuilder {
+export type { ArrayTypeBuilder };
+
+export function array_type(children: Builder<PrimaryType>): ArrayTypeBuilder {
   return new ArrayTypeBuilder(children);
+}
+
+export interface ArrayTypeOptions {
+  nodeKind: 'array_type';
+  children: Builder<PrimaryType> | (Builder<PrimaryType>)[];
+}
+
+export namespace array_type {
+  export function from(input: Omit<ArrayTypeOptions, 'nodeKind'> | Builder<PrimaryType> | (Builder<PrimaryType>)[]): ArrayTypeBuilder {
+    const options: Omit<ArrayTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ArrayTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<ArrayTypeOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ArrayTypeBuilder(_ctor);
+    return b;
+  }
 }

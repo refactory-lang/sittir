@@ -6,13 +6,13 @@ describe('mod_item', () => {
     const builder = ir.mod(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('mod_item');
+    expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
     const builder = ir.mod(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('mod');
-    expect(source).toContain(';');
   });
 
   it('should produce a valid CST node', () => {

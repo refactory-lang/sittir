@@ -1,25 +1,25 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { MappedTypeClause } from '../types.js';
+import type { MappedTypeClause, Type, TypeIdentifier } from '../types.js';
 
 
-class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
-  private _alias?: BaseBuilder;
-  private _name: BaseBuilder;
-  private _type!: BaseBuilder;
+class MappedTypeClauseBuilder extends Builder<MappedTypeClause> {
+  private _name: Builder<TypeIdentifier>;
+  private _type!: Builder<Type>;
+  private _alias?: Builder<Type>;
 
-  constructor(name: BaseBuilder) {
+  constructor(name: Builder<TypeIdentifier>) {
     super();
     this._name = name;
   }
 
-  alias(value: BaseBuilder): this {
-    this._alias = value;
+  type(value: Builder<Type>): this {
+    this._type = value;
     return this;
   }
 
-  type(value: BaseBuilder): this {
-    this._type = value;
+  alias(value: Builder<Type>): this {
+    this._alias = value;
     return this;
   }
 
@@ -38,13 +38,13 @@ class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
   build(ctx?: RenderContext): MappedTypeClause {
     return {
       kind: 'mapped_type_clause',
-      alias: this._alias ? this.renderChild(this._alias, ctx) : undefined,
-      name: this.renderChild(this._name, ctx),
-      type: this._type ? this.renderChild(this._type, ctx) : undefined,
-    } as unknown as MappedTypeClause;
+      name: this._name.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
+      alias: this._alias ? this._alias.build(ctx) : undefined,
+    } as MappedTypeClause;
   }
 
-  override get nodeKind(): string { return 'mapped_type_clause'; }
+  override get nodeKind(): 'mapped_type_clause' { return 'mapped_type_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -59,6 +59,25 @@ class MappedTypeClauseBuilder extends BaseBuilder<MappedTypeClause> {
   }
 }
 
-export function mapped_type_clause(name: BaseBuilder): MappedTypeClauseBuilder {
+export type { MappedTypeClauseBuilder };
+
+export function mapped_type_clause(name: Builder<TypeIdentifier>): MappedTypeClauseBuilder {
   return new MappedTypeClauseBuilder(name);
+}
+
+export interface MappedTypeClauseOptions {
+  nodeKind: 'mapped_type_clause';
+  name: Builder<TypeIdentifier> | string;
+  type: Builder<Type>;
+  alias?: Builder<Type>;
+}
+
+export namespace mapped_type_clause {
+  export function from(options: Omit<MappedTypeClauseOptions, 'nodeKind'>): MappedTypeClauseBuilder {
+    const _ctor = options.name;
+    const b = new MappedTypeClauseBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
+    if (options.type !== undefined) b.type(options.type);
+    if (options.alias !== undefined) b.alias(options.alias);
+    return b;
+  }
 }

@@ -1,12 +1,12 @@
-import { BaseBuilder } from '@sittir/types';
+import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { ComputedPropertyName } from '../types.js';
+import type { ComputedPropertyName, Expression } from '../types.js';
 
 
-class ComputedPropertyNameBuilder extends BaseBuilder<ComputedPropertyName> {
-  private _children: BaseBuilder[] = [];
+class ComputedPropertyNameBuilder extends Builder<ComputedPropertyName> {
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: BaseBuilder) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -22,11 +22,11 @@ class ComputedPropertyNameBuilder extends BaseBuilder<ComputedPropertyName> {
   build(ctx?: RenderContext): ComputedPropertyName {
     return {
       kind: 'computed_property_name',
-      children: this._children.map(c => this.renderChild(c, ctx)),
-    } as unknown as ComputedPropertyName;
+      children: this._children[0]!.build(ctx),
+    } as ComputedPropertyName;
   }
 
-  override get nodeKind(): string { return 'computed_property_name'; }
+  override get nodeKind(): 'computed_property_name' { return 'computed_property_name'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,6 +39,24 @@ class ComputedPropertyNameBuilder extends BaseBuilder<ComputedPropertyName> {
   }
 }
 
-export function computed_property_name(children: BaseBuilder): ComputedPropertyNameBuilder {
+export type { ComputedPropertyNameBuilder };
+
+export function computed_property_name(children: Builder<Expression>): ComputedPropertyNameBuilder {
   return new ComputedPropertyNameBuilder(children);
+}
+
+export interface ComputedPropertyNameOptions {
+  nodeKind: 'computed_property_name';
+  children: Builder<Expression> | (Builder<Expression>)[];
+}
+
+export namespace computed_property_name {
+  export function from(input: Omit<ComputedPropertyNameOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): ComputedPropertyNameBuilder {
+    const options: Omit<ComputedPropertyNameOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ComputedPropertyNameOptions, 'nodeKind'>
+      : { children: input } as Omit<ComputedPropertyNameOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new ComputedPropertyNameBuilder(_ctor);
+    return b;
+  }
 }
