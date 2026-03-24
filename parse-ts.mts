@@ -2,10 +2,10 @@ import { createRequire } from 'node:module';
 import { resolve } from 'path';
 
 const require = createRequire(import.meta.url);
-const ParserModule = require('/Users/pmouli/GitHub.nosync/refactory-lang/sittir/node_modules/.pnpm/web-tree-sitter@0.25.10/node_modules/web-tree-sitter/tree-sitter.cjs');
+const ParserModule = await import('web-tree-sitter');
 
 // web-tree-sitter exports a function that needs to be called
-const Parser = await (ParserModule.default || ParserModule)();
+const Parser = ParserModule.Parser;
 
 const parser = new Parser();
 const wasmPath = resolve('node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/tree-sitter-typescript.wasm');
@@ -19,7 +19,7 @@ const source = `export const NODE_KINDS = [
 
 export type NodeKind = (typeof NODE_KINDS)[number];`;
 
-const tree = parser.parse(source);
+const tree = parser.parse(source)?.rootNode.
 
 const FIELDS = ['declaration','name','value','source','type','body','kind','left','right','key','arguments','parameters','return_type','object','property','index','operator','condition','consequence','alternative','constraint','type_arguments','type_parameters'];
 

@@ -552,7 +552,7 @@ export interface LeafOptions<K extends string = string> {
 }
 
 // ---------------------------------------------------------------------------
-// Edit interface (codemod-compatible)
+// Edit interface (ast-grep/codemod compatible)
 // ---------------------------------------------------------------------------
 
 /** A text-level edit: replace bytes [startPos, endPos) with insertedText. */
@@ -560,34 +560,4 @@ export interface Edit {
 	startPos: number;
 	endPos: number;
 	insertedText: string;
-}
-
-/** Transform function for edit() — receives a builder typed to the input node and returns one. */
-export type NodeTransform<N extends { kind: string } = { kind: string }> = (input: Builder<N>) => Builder<N>;
-
-
-// ---------------------------------------------------------------------------
-// Deprecated aliases
-// ---------------------------------------------------------------------------
-
-/** @deprecated Renamed to Builder. */
-export type BaseBuilder<N extends { kind: string } = { kind: string }> = Builder<N>;
-
-// ---------------------------------------------------------------------------
-// Legacy interfaces (deprecated — use Builder instead)
-// ---------------------------------------------------------------------------
-
-/** @deprecated Use Builder instead. */
-export interface BuilderTerminal<N extends { kind: string }> {
-	build(): N;
-	render(): string;
-	renderImpl(): string;
-}
-
-/** @deprecated Use Builder instead. */
-export interface RenderPipeline<N extends { kind: string }> {
-	render(node: N): string;
-	renderImpl(node: N): string;
-	assertValid(source: string): string;
-	validateFast(source: string): ValidationResult;
 }

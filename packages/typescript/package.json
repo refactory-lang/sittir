@@ -48,6 +48,6 @@
   },
   "devDependencies": {
     "tree-sitter-typescript": "^0.23.2",
-    "type-fest": "^5.4.4"
+    "type-fest": "^5.5.0"
   }
 }
