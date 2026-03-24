@@ -31,11 +31,11 @@ class WhileStatementBuilder extends Builder<WhileStatement> {
     return {
       kind: 'while_statement',
       condition: this._condition.build(ctx),
-      body: this._body?.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
     } as WhileStatement;
   }
 
-  override get nodeKind(): string { return 'while_statement'; }
+  override get nodeKind(): 'while_statement' { return 'while_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,14 +53,15 @@ export function while_statement(condition: Builder<ParenthesizedExpression>): Wh
 }
 
 export interface WhileStatementOptions {
-  condition: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
+  nodeKind: 'while_statement';
+  condition: Builder<ParenthesizedExpression> | Omit<ParenthesizedExpressionOptions, 'nodeKind'>;
   body: Builder<Statement>;
 }
 
 export namespace while_statement {
-  export function from(options: WhileStatementOptions): WhileStatementBuilder {
+  export function from(options: Omit<WhileStatementOptions, 'nodeKind'>): WhileStatementBuilder {
     const _ctor = options.condition;
-    const b = new WhileStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor as ParenthesizedExpressionOptions));
+    const b = new WhileStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor));
     if (options.body !== undefined) b.body(options.body);
     return b;
   }

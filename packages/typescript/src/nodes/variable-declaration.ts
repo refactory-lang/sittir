@@ -16,7 +16,7 @@ class VariableDeclarationBuilder extends Builder<VariableDeclaration> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('var');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -27,7 +27,7 @@ class VariableDeclarationBuilder extends Builder<VariableDeclaration> {
     } as VariableDeclaration;
   }
 
-  override get nodeKind(): string { return 'variable_declaration'; }
+  override get nodeKind(): 'variable_declaration' { return 'variable_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -47,14 +47,18 @@ export function variable_declaration(...children: Builder<VariableDeclarator>[])
 }
 
 export interface VariableDeclarationOptions {
-  children?: Builder<VariableDeclarator> | VariableDeclaratorOptions | (Builder<VariableDeclarator> | VariableDeclaratorOptions)[];
+  nodeKind: 'variable_declaration';
+  children?: Builder<VariableDeclarator> | Omit<VariableDeclaratorOptions, 'nodeKind'> | (Builder<VariableDeclarator> | Omit<VariableDeclaratorOptions, 'nodeKind'>)[];
 }
 
 export namespace variable_declaration {
-  export function from(options: VariableDeclarationOptions): VariableDeclarationBuilder {
+  export function from(input: Omit<VariableDeclarationOptions, 'nodeKind'> | Builder<VariableDeclarator> | Omit<VariableDeclaratorOptions, 'nodeKind'> | (Builder<VariableDeclarator> | Omit<VariableDeclaratorOptions, 'nodeKind'>)[]): VariableDeclarationBuilder {
+    const options: Omit<VariableDeclarationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<VariableDeclarationOptions, 'nodeKind'>
+      : { children: input } as Omit<VariableDeclarationOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new VariableDeclarationBuilder(..._arr.map(_v => _v instanceof Builder ? _v : variable_declarator.from(_v as VariableDeclaratorOptions)));
+    const b = new VariableDeclarationBuilder(..._arr.map(_v => _v instanceof Builder ? _v : variable_declarator.from(_v)));
     return b;
   }
 }

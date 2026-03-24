@@ -35,12 +35,12 @@ class BinaryOperatorBuilder extends Builder<BinaryOperator> {
     return {
       kind: 'binary_operator',
       left: this._left.build(ctx),
-      operator: this._operator?.build(ctx),
-      right: this._right?.build(ctx),
+      operator: this._operator ? this.buildChild(this._operator, ctx) : undefined,
+      right: this._right ? this._right.build(ctx) : undefined,
     } as BinaryOperator;
   }
 
-  override get nodeKind(): string { return 'binary_operator'; }
+  override get nodeKind(): 'binary_operator' { return 'binary_operator'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -58,13 +58,14 @@ export function binary_operator(left: Builder<PrimaryExpression>): BinaryOperato
 }
 
 export interface BinaryOperatorOptions {
+  nodeKind: 'binary_operator';
   left: Builder<PrimaryExpression>;
   operator: Builder;
   right: Builder<PrimaryExpression>;
 }
 
 export namespace binary_operator {
-  export function from(options: BinaryOperatorOptions): BinaryOperatorBuilder {
+  export function from(options: Omit<BinaryOperatorOptions, 'nodeKind'>): BinaryOperatorBuilder {
     const b = new BinaryOperatorBuilder(options.left);
     if (options.operator !== undefined) b.operator(options.operator);
     if (options.right !== undefined) b.right(options.right);

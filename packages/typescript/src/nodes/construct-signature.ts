@@ -41,13 +41,13 @@ class ConstructSignatureBuilder extends Builder<ConstructSignature> {
   build(ctx?: RenderContext): ConstructSignature {
     return {
       kind: 'construct_signature',
-      typeParameters: this._typeParameters?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
       parameters: this._parameters.build(ctx),
-      type: this._type?.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
     } as ConstructSignature;
   }
 
-  override get nodeKind(): string { return 'construct_signature'; }
+  override get nodeKind(): 'construct_signature' { return 'construct_signature'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -66,22 +66,23 @@ export function construct_signature(parameters: Builder<FormalParameters>): Cons
 }
 
 export interface ConstructSignatureOptions {
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  parameters: Builder<FormalParameters> | FormalParametersOptions;
-  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
+  nodeKind: 'construct_signature';
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  type?: Builder<TypeAnnotation> | Omit<TypeAnnotationOptions, 'nodeKind'>;
 }
 
 export namespace construct_signature {
-  export function from(options: ConstructSignatureOptions): ConstructSignatureBuilder {
+  export function from(options: Omit<ConstructSignatureOptions, 'nodeKind'>): ConstructSignatureBuilder {
     const _ctor = options.parameters;
-    const b = new ConstructSignatureBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    const b = new ConstructSignatureBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor));
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
     if (options.type !== undefined) {
       const _v = options.type;
-      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v));
     }
     return b;
   }

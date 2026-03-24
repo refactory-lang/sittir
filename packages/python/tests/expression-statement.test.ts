@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('expression_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.expressionStatement(ir.assignment(ir.identifier('test')), ir.assignment(ir.identifier('test')));
+    const builder = ir.expressionStatement(ir.yield(), ir.yield());
     const node = builder.build();
     expect(node.kind).toBe('expression_statement');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('expression_statement', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.expressionStatement(ir.assignment(ir.identifier('test')), ir.assignment(ir.identifier('test')));
+    const builder = ir.expressionStatement(ir.yield(), ir.yield());
     const cst = builder.toCST();
     expect(cst.type).toBe('expression_statement');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('expression_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.expressionStatement(ir.assignment(ir.identifier('test')), ir.assignment(ir.identifier('test')));
+    const builder = ir.expressionStatement(ir.yield(), ir.yield());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

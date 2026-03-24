@@ -21,11 +21,11 @@ class DictionarySplatBuilder extends Builder<DictionarySplat> {
   build(ctx?: RenderContext): DictionarySplat {
     return {
       kind: 'dictionary_splat',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as DictionarySplat;
   }
 
-  override get nodeKind(): string { return 'dictionary_splat'; }
+  override get nodeKind(): 'dictionary_splat' { return 'dictionary_splat'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function dictionary_splat(children: Builder<Expression>): DictionarySplat
 }
 
 export interface DictionarySplatOptions {
+  nodeKind: 'dictionary_splat';
   children: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace dictionary_splat {
-  export function from(options: DictionarySplatOptions): DictionarySplatBuilder {
+  export function from(input: Omit<DictionarySplatOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): DictionarySplatBuilder {
+    const options: Omit<DictionarySplatOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<DictionarySplatOptions, 'nodeKind'>
+      : { children: input } as Omit<DictionarySplatOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new DictionarySplatBuilder(_ctor);
     return b;

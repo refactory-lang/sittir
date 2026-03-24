@@ -14,7 +14,7 @@ class NonlocalStatementBuilder extends Builder<NonlocalStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('nonlocal');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -25,7 +25,7 @@ class NonlocalStatementBuilder extends Builder<NonlocalStatement> {
     } as NonlocalStatement;
   }
 
-  override get nodeKind(): string { return 'nonlocal_statement'; }
+  override get nodeKind(): 'nonlocal_statement' { return 'nonlocal_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -45,13 +45,17 @@ export function nonlocal_statement(...children: Builder<Identifier>[]): Nonlocal
 }
 
 export interface NonlocalStatementOptions {
-  children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+  nodeKind: 'nonlocal_statement';
+  children?: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace nonlocal_statement {
-  export function from(options: NonlocalStatementOptions): NonlocalStatementBuilder {
+  export function from(input: Omit<NonlocalStatementOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): NonlocalStatementBuilder {
+    const options: Omit<NonlocalStatementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<NonlocalStatementOptions, 'nodeKind'>
+      : { children: input } as Omit<NonlocalStatementOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new NonlocalStatementBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v));
     return b;
   }

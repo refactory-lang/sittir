@@ -24,7 +24,7 @@ class LambdaParametersBuilder extends Builder<LambdaParameters> {
     } as LambdaParameters;
   }
 
-  override get nodeKind(): string { return 'lambda_parameters'; }
+  override get nodeKind(): 'lambda_parameters' { return 'lambda_parameters'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,13 +42,17 @@ export function lambda_parameters(...children: Builder<Parameter>[]): LambdaPara
 }
 
 export interface LambdaParametersOptions {
-  children: Builder<Parameter> | (Builder<Parameter>)[];
+  nodeKind: 'lambda_parameters';
+  children?: Builder<Parameter> | (Builder<Parameter>)[];
 }
 
 export namespace lambda_parameters {
-  export function from(options: LambdaParametersOptions): LambdaParametersBuilder {
+  export function from(input: Omit<LambdaParametersOptions, 'nodeKind'> | Builder<Parameter> | (Builder<Parameter>)[]): LambdaParametersBuilder {
+    const options: Omit<LambdaParametersOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<LambdaParametersOptions, 'nodeKind'>
+      : { children: input } as Omit<LambdaParametersOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new LambdaParametersBuilder(..._arr);
     return b;
   }

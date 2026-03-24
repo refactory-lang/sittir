@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('not_operator', () => {
   it('should build with correct kind', () => {
-    const builder = ir.notOperator(ir.asPattern(ir.identifier('test')));
+    const builder = ir.notOperator(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('not_operator');
     expect((node as any).argument).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.notOperator(ir.asPattern(ir.identifier('test')));
+    const builder = ir.notOperator(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain('not');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.notOperator(ir.asPattern(ir.identifier('test')));
+    const builder = ir.notOperator(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('not_operator');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('not_operator', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.notOperator(ir.asPattern(ir.identifier('test')));
+    const builder = ir.notOperator(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

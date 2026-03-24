@@ -23,11 +23,11 @@ class ImportAttributeBuilder extends Builder<ImportAttribute> {
   build(ctx?: RenderContext): ImportAttribute {
     return {
       kind: 'import_attribute',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as ImportAttribute;
   }
 
-  override get nodeKind(): string { return 'import_attribute'; }
+  override get nodeKind(): 'import_attribute' { return 'import_attribute'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,13 +46,17 @@ export function import_attribute(children: Builder<Object>): ImportAttributeBuil
 }
 
 export interface ImportAttributeOptions {
-  children: Builder<Object> | ObjectOptions | (Builder<Object> | ObjectOptions)[];
+  nodeKind: 'import_attribute';
+  children: Builder<Object> | Omit<ObjectOptions, 'nodeKind'> | (Builder<Object> | Omit<ObjectOptions, 'nodeKind'>)[];
 }
 
 export namespace import_attribute {
-  export function from(options: ImportAttributeOptions): ImportAttributeBuilder {
+  export function from(input: Omit<ImportAttributeOptions, 'nodeKind'> | Builder<Object> | Omit<ObjectOptions, 'nodeKind'> | (Builder<Object> | Omit<ObjectOptions, 'nodeKind'>)[]): ImportAttributeBuilder {
+    const options: Omit<ImportAttributeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ImportAttributeOptions, 'nodeKind'>
+      : { children: input } as Omit<ImportAttributeOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ImportAttributeBuilder(_ctor instanceof Builder ? _ctor : object.from(_ctor as ObjectOptions));
+    const b = new ImportAttributeBuilder(_ctor instanceof Builder ? _ctor : object.from(_ctor));
     return b;
   }
 }

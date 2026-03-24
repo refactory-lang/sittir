@@ -24,7 +24,7 @@ class DottedNameBuilder extends Builder<DottedName> {
     } as DottedName;
   }
 
-  override get nodeKind(): string { return 'dotted_name'; }
+  override get nodeKind(): 'dotted_name' { return 'dotted_name'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -43,13 +43,17 @@ export function dotted_name(...children: Builder<Identifier>[]): DottedNameBuild
 }
 
 export interface DottedNameOptions {
-  children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+  nodeKind: 'dotted_name';
+  children?: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace dotted_name {
-  export function from(options: DottedNameOptions): DottedNameBuilder {
+  export function from(input: Omit<DottedNameOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): DottedNameBuilder {
+    const options: Omit<DottedNameOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<DottedNameOptions, 'nodeKind'>
+      : { children: input } as Omit<DottedNameOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new DottedNameBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v));
     return b;
   }

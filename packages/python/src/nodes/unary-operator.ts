@@ -4,8 +4,8 @@ import type { PrimaryExpression, UnaryOperator } from '../types.js';
 
 
 class UnaryOperatorBuilder extends Builder<UnaryOperator> {
-  private _argument: Builder<PrimaryExpression>;
   private _operator!: Builder;
+  private _argument: Builder<PrimaryExpression>;
 
   constructor(argument: Builder<PrimaryExpression>) {
     super();
@@ -27,12 +27,12 @@ class UnaryOperatorBuilder extends Builder<UnaryOperator> {
   build(ctx?: RenderContext): UnaryOperator {
     return {
       kind: 'unary_operator',
+      operator: this._operator ? this.buildChild(this._operator, ctx) : undefined,
       argument: this._argument.build(ctx),
-      operator: this._operator?.build(ctx),
     } as UnaryOperator;
   }
 
-  override get nodeKind(): string { return 'unary_operator'; }
+  override get nodeKind(): 'unary_operator' { return 'unary_operator'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -49,12 +49,13 @@ export function unary_operator(argument: Builder<PrimaryExpression>): UnaryOpera
 }
 
 export interface UnaryOperatorOptions {
-  argument: Builder<PrimaryExpression>;
+  nodeKind: 'unary_operator';
   operator: Builder;
+  argument: Builder<PrimaryExpression>;
 }
 
 export namespace unary_operator {
-  export function from(options: UnaryOperatorOptions): UnaryOperatorBuilder {
+  export function from(options: Omit<UnaryOperatorOptions, 'nodeKind'>): UnaryOperatorBuilder {
     const b = new UnaryOperatorBuilder(options.argument);
     if (options.operator !== undefined) b.operator(options.operator);
     return b;

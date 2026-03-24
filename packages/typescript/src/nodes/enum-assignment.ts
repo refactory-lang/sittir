@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ComputedPropertyName, EnumAssignment, Expression, Number, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { computed_property_name } from './computed-property-name.js';
+import type { ComputedPropertyNameOptions } from './computed-property-name.js';
 
 
 class EnumAssignmentBuilder extends Builder<EnumAssignment> {
@@ -29,11 +33,11 @@ class EnumAssignmentBuilder extends Builder<EnumAssignment> {
     return {
       kind: 'enum_assignment',
       name: this._name.build(ctx),
-      value: this._value?.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
     } as EnumAssignment;
   }
 
-  override get nodeKind(): string { return 'enum_assignment'; }
+  override get nodeKind(): 'enum_assignment' { return 'enum_assignment'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,13 +55,25 @@ export function enum_assignment(name: Builder<PropertyIdentifier | PrivateProper
 }
 
 export interface EnumAssignmentOptions {
-  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  nodeKind: 'enum_assignment';
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions;
   value: Builder<Expression>;
 }
 
 export namespace enum_assignment {
-  export function from(options: EnumAssignmentOptions): EnumAssignmentBuilder {
-    const b = new EnumAssignmentBuilder(options.name);
+  export function from(options: Omit<EnumAssignmentOptions, 'nodeKind'>): EnumAssignmentBuilder {
+    const _raw = options.name;
+    let _ctor: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'string': _ctor = string.from(_raw); break;
+        case 'computed_property_name': _ctor = computed_property_name.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new EnumAssignmentBuilder(_ctor);
     if (options.value !== undefined) b.value(options.value);
     return b;
   }

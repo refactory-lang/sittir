@@ -21,11 +21,11 @@ class AddingTypeAnnotationBuilder extends Builder<AddingTypeAnnotation> {
   build(ctx?: RenderContext): AddingTypeAnnotation {
     return {
       kind: 'adding_type_annotation',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as AddingTypeAnnotation;
   }
 
-  override get nodeKind(): string { return 'adding_type_annotation'; }
+  override get nodeKind(): 'adding_type_annotation' { return 'adding_type_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function adding_type_annotation(children: Builder<Type>): AddingTypeAnnot
 }
 
 export interface AddingTypeAnnotationOptions {
+  nodeKind: 'adding_type_annotation';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace adding_type_annotation {
-  export function from(options: AddingTypeAnnotationOptions): AddingTypeAnnotationBuilder {
+  export function from(input: Omit<AddingTypeAnnotationOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): AddingTypeAnnotationBuilder {
+    const options: Omit<AddingTypeAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<AddingTypeAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<AddingTypeAnnotationOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new AddingTypeAnnotationBuilder(_ctor);
     return b;

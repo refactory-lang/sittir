@@ -746,115 +746,135 @@ function loadGrammar(grammar: string): GrammarMap {
  * Primary source: grammar.json rules. Fallback: node-types.json (for ALIASed/external nodes).
  */
 export function readGrammarNode(grammar: string, nodeKind: string): NodeMeta {
-	// Try grammar.json first
-	const meta = extractNodeMeta(grammar, nodeKind);
-	if (meta) return meta;
-
-	// Fallback to node-types.json for nodes with no grammar rule
-	// (e.g., interface_body is aliased from object_type, property_identifier from external scanner)
+	// node-types.json is the authoritative source for required/multiple flags.
+	// grammar.json provides richer type resolution (supertype expansion).
 	const grammarMap = loadGrammar(grammar);
-	const entry = grammarMap[nodeKind];
+	const ntEntry = grammarMap[nodeKind];
 
-	if (!entry) {
+	// Try grammar.json for type resolution
+	const grammarMeta = extractNodeMeta(grammar, nodeKind);
+
+	if (!grammarMeta && !ntEntry) {
 		throw new Error(
 			`Node kind "${nodeKind}" not found in ${grammar} grammar`,
 		);
 	}
 
-	const fields: FieldMeta[] = [];
-	if (entry.fields) {
-		for (const [name, raw] of Object.entries(entry.fields)) {
-			fields.push({
-				name,
-				required: raw.required,
-				multiple: raw.multiple,
-				types: raw.types.map((t) => t.type),
-				namedTypes: raw.types.filter((t) => t.named).map((t) => t.type),
-			});
+	// If no grammar.json rule, use node-types.json directly
+	if (!grammarMeta) {
+		const fields: FieldMeta[] = [];
+		if (ntEntry!.fields) {
+			for (const [name, raw] of Object.entries(ntEntry!.fields)) {
+				fields.push({
+					name,
+					required: raw.required,
+					multiple: raw.multiple,
+					types: raw.types.map((t) => t.type),
+					namedTypes: raw.types.filter((t) => t.named).map((t) => t.type),
+				});
+			}
+		}
+		const hasChildren = ntEntry!.children != null;
+		const result: NodeMeta = { kind: nodeKind, fields, hasChildren };
+		if (ntEntry!.children) {
+			result.children = {
+				required: ntEntry!.children.required,
+				multiple: ntEntry!.children.multiple,
+				types: ntEntry!.children.types.map((t) => t.type),
+				namedTypes: ntEntry!.children.types.filter((t) => t.named).map((t) => t.type),
+			};
+		}
+		return result;
+	}
+
+	// Merge: use grammar.json types but node-types.json required/multiple flags.
+	// node-types.json is authoritative for what fields/children exist and their multiplicity.
+	if (ntEntry) {
+		// Build a lookup of grammar.json fields
+		const grammarFieldMap = new Map(grammarMeta.fields.map(f => [f.name, f]));
+
+		if (ntEntry.fields) {
+			// Patch existing fields and add missing ones from node-types.json
+			for (const [name, ntField] of Object.entries(ntEntry.fields)) {
+				const gField = grammarFieldMap.get(name);
+				if (gField) {
+					gField.required = ntField.required;
+					gField.multiple = ntField.multiple;
+				} else {
+					// Field only in node-types.json (aliased/external) — add it
+					grammarMeta.fields.push({
+						name,
+						required: ntField.required,
+						multiple: ntField.multiple,
+						types: ntField.types.map(t => t.type),
+						namedTypes: ntField.types.filter(t => t.named).map(t => t.type),
+					});
+				}
+			}
+
+			// Remove fields that grammar.json found but node-types.json doesn't have
+			grammarMeta.fields = grammarMeta.fields.filter(f =>
+				ntEntry.fields![f.name] !== undefined
+			);
+		}
+
+		// Patch children required/multiple from node-types.json
+		if (ntEntry.children) {
+			if (grammarMeta.children) {
+				grammarMeta.children.required = ntEntry.children.required;
+				grammarMeta.children.multiple = ntEntry.children.multiple;
+			} else {
+				// node-types.json says children exist but grammar.json didn't find them
+				grammarMeta.hasChildren = true;
+				grammarMeta.children = {
+					required: ntEntry.children.required,
+					multiple: ntEntry.children.multiple,
+					types: ntEntry.children.types.map(t => t.type),
+					namedTypes: ntEntry.children.types.filter(t => t.named).map(t => t.type),
+				};
+			}
+		} else if (grammarMeta.children) {
+			// grammar.json found children but node-types.json says none
+			grammarMeta.hasChildren = false;
+			grammarMeta.children = undefined;
 		}
 	}
 
-	const hasChildren = entry.children != null;
-	const result: NodeMeta = { kind: nodeKind, fields, hasChildren };
-
-	if (entry.children) {
-		result.children = {
-			required: entry.children.required,
-			multiple: entry.children.multiple,
-			types: entry.children.types.map((t) => t.type),
-			namedTypes: entry.children.types.filter((t) => t.named).map((t) => t.type),
-		};
-	}
-
-	return result;
+	return grammarMeta;
 }
 
 /**
  * List all named node kinds that have fields or children.
- * Primary source: grammar.json rules. Augmented with node-types.json for ALIASed nodes.
+ * Source: node-types.json (the authoritative tree-sitter output for valid AST node kinds).
  */
 export function listNodeKinds(grammar: string): string[] {
-	const gj = loadGrammarJson(grammar);
-	const kinds = new Set<string>();
-
-	// Exclude supertypes — they're abstract groupings, not concrete node kinds
-	const supertypeNames = new Set(listSupertypes(grammar).map(s => s.name));
-
-	// From grammar.json: non-hidden rules with fields or unnamed children
-	for (const [name, rule] of Object.entries(gj.rules)) {
-		if (name.startsWith('_')) continue;
-		if (supertypeNames.has(name)) continue; // skip abstract supertypes
-
-		const fieldAccums = new Map<string, FieldAccum>();
-		walkForFields(rule, false, false, fieldAccums, grammar);
-
-		const childAccums: ChildAccum[] = [];
-		walkForChildren(rule, false, false, childAccums, false, grammar);
-
-		if (fieldAccums.size > 0 || childAccums.length > 0) {
-			kinds.add(name);
-		}
-	}
-
-	// Augment with node-types.json for ALIASed nodes (e.g., interface_body)
-	// that don't have their own grammar rule but exist as named nodes
 	const grammarMap = loadGrammar(grammar);
+	const kinds: string[] = [];
+
 	for (const [key, entry] of Object.entries(grammarMap)) {
 		if (key.startsWith('_')) continue;
-		if (kinds.has(key)) continue; // already found via grammar.json
+		if (!entry.named) continue;
+		if (entry.subtypes) continue; // skip abstract supertypes
 
 		const hasFields = entry.fields != null && Object.keys(entry.fields).length > 0;
 		const hasChildren = entry.children != null;
 
 		if (hasFields || hasChildren) {
-			kinds.add(key);
+			kinds.push(key);
 		}
 	}
 
-	return [...kinds];
+	return kinds;
 }
 
 /**
  * List all named leaf node kinds — no fields, no children, not abstract.
- * These become LeafBuilder entries in the ir namespace.
+ * Source: node-types.json. These become LeafBuilder entries in the ir namespace.
  */
 export function listLeafKinds(grammar: string): string[] {
-	const gj = loadGrammarJson(grammar);
-	const leaves = new Set<string>();
-	const supertypeNames = new Set(listSupertypes(grammar).map(s => s.name));
-
-	// From grammar.json: non-hidden rules that are purely terminal
-	for (const [name, rule] of Object.entries(gj.rules)) {
-		if (name.startsWith('_')) continue;
-		if (supertypeNames.has(name)) continue;
-		if (isLeafRule(rule)) {
-			leaves.add(name);
-		}
-	}
-
-	// Augment with node-types.json for ALIASed/external leaves
-	// (e.g., property_identifier, type_identifier, string_fragment)
 	const grammarMap = loadGrammar(grammar);
+	const leaves: string[] = [];
+
 	for (const [key, entry] of Object.entries(grammarMap)) {
 		if (key.startsWith('_')) continue;
 		if (!entry.named) continue;
@@ -864,11 +884,54 @@ export function listLeafKinds(grammar: string): string[] {
 		const hasChildren = entry.children != null;
 
 		if (!hasFields && !hasChildren) {
-			leaves.add(key);
+			leaves.push(key);
 		}
 	}
 
-	return [...leaves];
+	return leaves;
+}
+
+/**
+ * Extract constant text from a grammar rule if it resolves to a fixed string.
+ * Handles STRING, SEQ of STRINGs, and precedence wrappers.
+ */
+function extractConstantText(rule: GrammarRule): string | undefined {
+	switch (rule.type) {
+		case 'STRING':
+			return rule.value;
+		case 'SEQ':
+			// All members must be constant strings
+			const parts = rule.members.map(m => extractConstantText(m));
+			if (parts.every((p): p is string => p !== undefined)) return parts.join('');
+			return undefined;
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN':
+			return extractConstantText(rule.content);
+		default:
+			return undefined;
+	}
+}
+
+/**
+ * List named keyword kinds — leaf nodes that always produce the same text.
+ * Returns a map from kind → fixed text (e.g., 'self' → 'self', 'mutable_specifier' → 'mut').
+ */
+export function listNamedKeywords(grammar: string): Map<string, string> {
+	const leaves = listLeafKinds(grammar);
+	const gj = loadGrammarJson(grammar);
+	const result = new Map<string, string>();
+
+	for (const kind of leaves) {
+		const rule = gj.rules[kind];
+		if (!rule) continue;
+		const text = extractConstantText(rule);
+		if (text !== undefined) result.set(kind, text);
+	}
+
+	return result;
 }
 
 export interface OperatorContext {

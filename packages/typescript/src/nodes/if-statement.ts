@@ -40,12 +40,12 @@ class IfStatementBuilder extends Builder<IfStatement> {
     return {
       kind: 'if_statement',
       condition: this._condition.build(ctx),
-      consequence: this._consequence?.build(ctx),
-      alternative: this._alternative?.build(ctx),
+      consequence: this._consequence ? this._consequence.build(ctx) : undefined,
+      alternative: this._alternative ? this._alternative.build(ctx) : undefined,
     } as IfStatement;
   }
 
-  override get nodeKind(): string { return 'if_statement'; }
+  override get nodeKind(): 'if_statement' { return 'if_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -64,19 +64,20 @@ export function if_statement(condition: Builder<ParenthesizedExpression>): IfSta
 }
 
 export interface IfStatementOptions {
-  condition: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
+  nodeKind: 'if_statement';
+  condition: Builder<ParenthesizedExpression> | Omit<ParenthesizedExpressionOptions, 'nodeKind'>;
   consequence: Builder<Statement>;
-  alternative?: Builder<ElseClause> | ElseClauseOptions;
+  alternative?: Builder<ElseClause> | Omit<ElseClauseOptions, 'nodeKind'>;
 }
 
 export namespace if_statement {
-  export function from(options: IfStatementOptions): IfStatementBuilder {
+  export function from(options: Omit<IfStatementOptions, 'nodeKind'>): IfStatementBuilder {
     const _ctor = options.condition;
-    const b = new IfStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor as ParenthesizedExpressionOptions));
+    const b = new IfStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor));
     if (options.consequence !== undefined) b.consequence(options.consequence);
     if (options.alternative !== undefined) {
       const _v = options.alternative;
-      b.alternative(_v instanceof Builder ? _v : else_clause.from(_v as ElseClauseOptions));
+      b.alternative(_v instanceof Builder ? _v : else_clause.from(_v));
     }
     return b;
   }

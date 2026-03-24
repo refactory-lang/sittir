@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('set', () => {
   it('should build with correct kind', () => {
-    const builder = ir.set(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.set(ir.yield(), ir.yield());
     const node = builder.build();
     expect(node.kind).toBe('set');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,14 +12,14 @@ describe('set', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.set(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.set(ir.yield(), ir.yield());
     const source = builder.renderImpl();
     expect(source).toContain('{');
     expect(source).toContain('}');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.set(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.set(ir.yield(), ir.yield());
     const cst = builder.toCST();
     expect(cst.type).toBe('set');
     expect(cst.isNamed).toBe(true);
@@ -28,7 +28,7 @@ describe('set', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.set(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.set(ir.yield(), ir.yield());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

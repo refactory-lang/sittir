@@ -1,12 +1,16 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Attribute, Identifier, ListSplatPattern, Subscript } from '../types.js';
+import { subscript } from './subscript.js';
+import type { SubscriptOptions } from './subscript.js';
+import { attribute } from './attribute.js';
+import type { AttributeOptions } from './attribute.js';
 
 
 class ListSplatPatternBuilder extends Builder<ListSplatPattern> {
-  private _children: Builder<Attribute | Identifier | Subscript>[] = [];
+  private _children: Builder<Identifier | Subscript | Attribute>[] = [];
 
-  constructor(children: Builder<Attribute | Identifier | Subscript>) {
+  constructor(children: Builder<Identifier | Subscript | Attribute>) {
     super();
     this._children = [children];
   }
@@ -21,11 +25,11 @@ class ListSplatPatternBuilder extends Builder<ListSplatPattern> {
   build(ctx?: RenderContext): ListSplatPattern {
     return {
       kind: 'list_splat_pattern',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as ListSplatPattern;
   }
 
-  override get nodeKind(): string { return 'list_splat_pattern'; }
+  override get nodeKind(): 'list_splat_pattern' { return 'list_splat_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,18 +43,32 @@ class ListSplatPatternBuilder extends Builder<ListSplatPattern> {
 
 export type { ListSplatPatternBuilder };
 
-export function list_splat_pattern(children: Builder<Attribute | Identifier | Subscript>): ListSplatPatternBuilder {
+export function list_splat_pattern(children: Builder<Identifier | Subscript | Attribute>): ListSplatPatternBuilder {
   return new ListSplatPatternBuilder(children);
 }
 
 export interface ListSplatPatternOptions {
-  children: Builder<Attribute | Identifier | Subscript> | (Builder<Attribute | Identifier | Subscript>)[];
+  nodeKind: 'list_splat_pattern';
+  children: Builder<Identifier | Subscript | Attribute> | SubscriptOptions | AttributeOptions | (Builder<Identifier | Subscript | Attribute> | SubscriptOptions | AttributeOptions)[];
 }
 
 export namespace list_splat_pattern {
-  export function from(options: ListSplatPatternOptions): ListSplatPatternBuilder {
+  export function from(input: Omit<ListSplatPatternOptions, 'nodeKind'> | Builder<Identifier | Subscript | Attribute> | SubscriptOptions | AttributeOptions | (Builder<Identifier | Subscript | Attribute> | SubscriptOptions | AttributeOptions)[]): ListSplatPatternBuilder {
+    const options: Omit<ListSplatPatternOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ListSplatPatternOptions, 'nodeKind'>
+      : { children: input } as Omit<ListSplatPatternOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ListSplatPatternBuilder(_ctor);
+    let _resolved: Builder<Identifier | Subscript | Attribute>;
+    if (_ctor instanceof Builder) {
+      _resolved = _ctor;
+    } else {
+      switch (_ctor.nodeKind) {
+        case 'subscript': _resolved = subscript.from(_ctor); break;
+        case 'attribute': _resolved = attribute.from(_ctor); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new ListSplatPatternBuilder(_resolved);
     return b;
   }
 }

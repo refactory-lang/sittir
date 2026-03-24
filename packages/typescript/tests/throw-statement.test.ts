@@ -3,22 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('throw_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.throwStatement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.throwStatement(ir.yieldExpression());
     const node = builder.build();
     expect(node.kind).toBe('throw_statement');
-    expect(Array.isArray((node as any).children)).toBe(true);
-    expect((node as any).children.length).toBeGreaterThan(0);
-    expect((node as any).children[0]).toHaveProperty('kind');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.throwStatement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.throwStatement(ir.yieldExpression());
     const source = builder.renderImpl();
     expect(source).toContain('throw');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.throwStatement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.throwStatement(ir.yieldExpression());
     const cst = builder.toCST();
     expect(cst.type).toBe('throw_statement');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +25,7 @@ describe('throw_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.throwStatement(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.throwStatement(ir.yieldExpression());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

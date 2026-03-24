@@ -15,8 +15,7 @@ const JS_RESERVED = new Set([
   'eval', 'abstract',
 ]);
 
-const SHORT_NAME_ALIASES: Record<string, string> = {
-};
+const SHORT_NAME_ALIASES: Record<string, string> = {};
 
 /** Convert snake_case to camelCase */
 function snakeToCamel(s: string): string {

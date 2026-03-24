@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, LetChain, LetCondition } from '../types.js';
+import { let_condition } from './let-condition.js';
+import type { LetConditionOptions } from './let-condition.js';
 
 
 class LetChainBuilder extends Builder<LetChain> {
@@ -24,7 +26,7 @@ class LetChainBuilder extends Builder<LetChain> {
     } as LetChain;
   }
 
-  override get nodeKind(): string { return 'let_chain'; }
+  override get nodeKind(): 'let_chain' { return 'let_chain'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,14 +44,18 @@ export function let_chain(...children: Builder<Expression | LetCondition>[]): Le
 }
 
 export interface LetChainOptions {
-  children: Builder<Expression | LetCondition> | (Builder<Expression | LetCondition>)[];
+  nodeKind: 'let_chain';
+  children?: Builder<Expression | LetCondition> | Omit<LetConditionOptions, 'nodeKind'> | (Builder<Expression | LetCondition> | Omit<LetConditionOptions, 'nodeKind'>)[];
 }
 
 export namespace let_chain {
-  export function from(options: LetChainOptions): LetChainBuilder {
+  export function from(input: Omit<LetChainOptions, 'nodeKind'> | Builder<Expression | LetCondition> | Omit<LetConditionOptions, 'nodeKind'> | (Builder<Expression | LetCondition> | Omit<LetConditionOptions, 'nodeKind'>)[]): LetChainBuilder {
+    const options: Omit<LetChainOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<LetChainOptions, 'nodeKind'>
+      : { children: input } as Omit<LetChainOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new LetChainBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new LetChainBuilder(..._arr.map(_v => _v instanceof Builder ? _v : let_condition.from(_v)));
     return b;
   }
 }

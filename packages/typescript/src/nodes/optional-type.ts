@@ -21,11 +21,11 @@ class OptionalTypeBuilder extends Builder<OptionalType> {
   build(ctx?: RenderContext): OptionalType {
     return {
       kind: 'optional_type',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as OptionalType;
   }
 
-  override get nodeKind(): string { return 'optional_type'; }
+  override get nodeKind(): 'optional_type' { return 'optional_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function optional_type(children: Builder<Type>): OptionalTypeBuilder {
 }
 
 export interface OptionalTypeOptions {
+  nodeKind: 'optional_type';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace optional_type {
-  export function from(options: OptionalTypeOptions): OptionalTypeBuilder {
+  export function from(input: Omit<OptionalTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): OptionalTypeBuilder {
+    const options: Omit<OptionalTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<OptionalTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<OptionalTypeOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new OptionalTypeBuilder(_ctor);
     return b;

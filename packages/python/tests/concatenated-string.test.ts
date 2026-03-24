@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('concatenated_string', () => {
   it('should build with correct kind', () => {
-    const builder = ir.concatenatedString(ir.string(ir.stringEnd('test')), ir.string(ir.stringEnd('test')));
+    const builder = ir.concatenatedString(ir.string(ir.stringStart('test')), ir.string(ir.stringStart('test')));
     const node = builder.build();
     expect(node.kind).toBe('concatenated_string');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('concatenated_string', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.concatenatedString(ir.string(ir.stringEnd('test')), ir.string(ir.stringEnd('test')));
+    const builder = ir.concatenatedString(ir.string(ir.stringStart('test')), ir.string(ir.stringStart('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('concatenated_string');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('concatenated_string', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.concatenatedString(ir.string(ir.stringEnd('test')), ir.string(ir.stringEnd('test')));
+    const builder = ir.concatenatedString(ir.string(ir.stringStart('test')), ir.string(ir.stringStart('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

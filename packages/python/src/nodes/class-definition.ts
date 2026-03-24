@@ -1,21 +1,27 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArgumentList, Block, ClassDefinition, Identifier, TypeParameter } from '../types.js';
+import { type_parameter } from './type-parameter.js';
+import type { TypeParameterOptions } from './type-parameter.js';
+import { argument_list } from './argument-list.js';
+import type { ArgumentListOptions } from './argument-list.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class ClassDefinitionBuilder extends Builder<ClassDefinition> {
-  private _body!: Builder<Block>;
   private _name: Builder<Identifier>;
-  private _superclasses?: Builder<ArgumentList>;
   private _typeParameters?: Builder<TypeParameter>;
+  private _superclasses?: Builder<ArgumentList>;
+  private _body!: Builder<Block>;
 
   constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder<Block>): this {
-    this._body = value;
+  typeParameters(value: Builder<TypeParameter>): this {
+    this._typeParameters = value;
     return this;
   }
 
@@ -24,8 +30,8 @@ class ClassDefinitionBuilder extends Builder<ClassDefinition> {
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameter>): this {
-    this._typeParameters = value;
+  body(value: Builder<Block>): this {
+    this._body = value;
     return this;
   }
 
@@ -43,14 +49,14 @@ class ClassDefinitionBuilder extends Builder<ClassDefinition> {
   build(ctx?: RenderContext): ClassDefinition {
     return {
       kind: 'class_definition',
-      body: this._body?.build(ctx),
       name: this._name.build(ctx),
-      superclasses: this._superclasses?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      superclasses: this._superclasses ? this._superclasses.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
     } as ClassDefinition;
   }
 
-  override get nodeKind(): string { return 'class_definition'; }
+  override get nodeKind(): 'class_definition' { return 'class_definition'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -71,19 +77,29 @@ export function class_definition(name: Builder<Identifier>): ClassDefinitionBuil
 }
 
 export interface ClassDefinitionOptions {
-  body: Builder<Block>;
+  nodeKind: 'class_definition';
   name: Builder<Identifier> | string;
-  superclasses?: Builder<ArgumentList>;
-  typeParameters?: Builder<TypeParameter>;
+  typeParameters?: Builder<TypeParameter> | Omit<TypeParameterOptions, 'nodeKind'>;
+  superclasses?: Builder<ArgumentList> | Omit<ArgumentListOptions, 'nodeKind'>;
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
 }
 
 export namespace class_definition {
-  export function from(options: ClassDefinitionOptions): ClassDefinitionBuilder {
+  export function from(options: Omit<ClassDefinitionOptions, 'nodeKind'>): ClassDefinitionBuilder {
     const _ctor = options.name;
     const b = new ClassDefinitionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
-    if (options.body !== undefined) b.body(options.body);
-    if (options.superclasses !== undefined) b.superclasses(options.superclasses);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameter.from(_v));
+    }
+    if (options.superclasses !== undefined) {
+      const _v = options.superclasses;
+      b.superclasses(_v instanceof Builder ? _v : argument_list.from(_v));
+    }
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : block.from(_v));
+    }
     return b;
   }
 }

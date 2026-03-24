@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ClassHeritage, ExtendsClause, ImplementsClause } from '../types.js';
+import { extends_clause } from './extends-clause.js';
+import type { ExtendsClauseOptions } from './extends-clause.js';
+import { implements_clause } from './implements-clause.js';
+import type { ImplementsClauseOptions } from './implements-clause.js';
 
 
 class ClassHeritageBuilder extends Builder<ClassHeritage> {
@@ -25,7 +29,7 @@ class ClassHeritageBuilder extends Builder<ClassHeritage> {
     } as ClassHeritage;
   }
 
-  override get nodeKind(): string { return 'class_heritage'; }
+  override get nodeKind(): 'class_heritage' { return 'class_heritage'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,14 +46,18 @@ export function class_heritage(...children: Builder<ExtendsClause | ImplementsCl
 }
 
 export interface ClassHeritageOptions {
-  children?: Builder<ExtendsClause | ImplementsClause> | (Builder<ExtendsClause | ImplementsClause>)[];
+  nodeKind: 'class_heritage';
+  children?: Builder<ExtendsClause | ImplementsClause> | ExtendsClauseOptions | ImplementsClauseOptions | (Builder<ExtendsClause | ImplementsClause> | ExtendsClauseOptions | ImplementsClauseOptions)[];
 }
 
 export namespace class_heritage {
-  export function from(options: ClassHeritageOptions): ClassHeritageBuilder {
+  export function from(input: Omit<ClassHeritageOptions, 'nodeKind'> | Builder<ExtendsClause | ImplementsClause> | ExtendsClauseOptions | ImplementsClauseOptions | (Builder<ExtendsClause | ImplementsClause> | ExtendsClauseOptions | ImplementsClauseOptions)[]): ClassHeritageBuilder {
+    const options: Omit<ClassHeritageOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ClassHeritageOptions, 'nodeKind'>
+      : { children: input } as Omit<ClassHeritageOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new ClassHeritageBuilder(..._arr);
+    const b = new ClassHeritageBuilder(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'extends_clause': return extends_clause.from(_v);   case 'implements_clause': return implements_clause.from(_v); } throw new Error('unreachable'); }));
     return b;
   }
 }

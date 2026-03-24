@@ -21,11 +21,11 @@ class DefaultTypeBuilder extends Builder<DefaultType> {
   build(ctx?: RenderContext): DefaultType {
     return {
       kind: 'default_type',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as DefaultType;
   }
 
-  override get nodeKind(): string { return 'default_type'; }
+  override get nodeKind(): 'default_type' { return 'default_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function default_type(children: Builder<Type>): DefaultTypeBuilder {
 }
 
 export interface DefaultTypeOptions {
+  nodeKind: 'default_type';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace default_type {
-  export function from(options: DefaultTypeOptions): DefaultTypeBuilder {
+  export function from(input: Omit<DefaultTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): DefaultTypeBuilder {
+    const options: Omit<DefaultTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<DefaultTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<DefaultTypeOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new DefaultTypeBuilder(_ctor);
     return b;

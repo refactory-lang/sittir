@@ -27,7 +27,7 @@ class ClassStaticBlockBuilder extends Builder<ClassStaticBlock> {
     } as ClassStaticBlock;
   }
 
-  override get nodeKind(): string { return 'class_static_block'; }
+  override get nodeKind(): 'class_static_block' { return 'class_static_block'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,13 +44,17 @@ export function class_static_block(body: Builder<StatementBlock>): ClassStaticBl
 }
 
 export interface ClassStaticBlockOptions {
-  body: Builder<StatementBlock> | StatementBlockOptions;
+  nodeKind: 'class_static_block';
+  body: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
 }
 
 export namespace class_static_block {
-  export function from(options: ClassStaticBlockOptions): ClassStaticBlockBuilder {
+  export function from(input: Omit<ClassStaticBlockOptions, 'nodeKind'> | Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>): ClassStaticBlockBuilder {
+    const options: Omit<ClassStaticBlockOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'body' in input
+      ? input as Omit<ClassStaticBlockOptions, 'nodeKind'>
+      : { body: input } as Omit<ClassStaticBlockOptions, 'nodeKind'>;
     const _ctor = options.body;
-    const b = new ClassStaticBlockBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor as StatementBlockOptions));
+    const b = new ClassStaticBlockBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor));
     return b;
   }
 }

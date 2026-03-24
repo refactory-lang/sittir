@@ -40,13 +40,13 @@ class ConstructorTypeBuilder extends Builder<ConstructorType> {
   build(ctx?: RenderContext): ConstructorType {
     return {
       kind: 'constructor_type',
-      typeParameters: this._typeParameters?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
       parameters: this._parameters.build(ctx),
-      type: this._type?.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
     } as ConstructorType;
   }
 
-  override get nodeKind(): string { return 'constructor_type'; }
+  override get nodeKind(): 'constructor_type' { return 'constructor_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -66,18 +66,19 @@ export function constructor_type(parameters: Builder<FormalParameters>): Constru
 }
 
 export interface ConstructorTypeOptions {
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  parameters: Builder<FormalParameters> | FormalParametersOptions;
+  nodeKind: 'constructor_type';
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
   type: Builder<Type>;
 }
 
 export namespace constructor_type {
-  export function from(options: ConstructorTypeOptions): ConstructorTypeBuilder {
+  export function from(options: Omit<ConstructorTypeOptions, 'nodeKind'>): ConstructorTypeBuilder {
     const _ctor = options.parameters;
-    const b = new ConstructorTypeBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    const b = new ConstructorTypeBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor));
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
     if (options.type !== undefined) b.type(options.type);
     return b;

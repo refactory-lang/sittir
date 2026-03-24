@@ -39,12 +39,12 @@ class MappedTypeClauseBuilder extends Builder<MappedTypeClause> {
     return {
       kind: 'mapped_type_clause',
       name: this._name.build(ctx),
-      type: this._type?.build(ctx),
-      alias: this._alias?.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
+      alias: this._alias ? this._alias.build(ctx) : undefined,
     } as MappedTypeClause;
   }
 
-  override get nodeKind(): string { return 'mapped_type_clause'; }
+  override get nodeKind(): 'mapped_type_clause' { return 'mapped_type_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -66,13 +66,14 @@ export function mapped_type_clause(name: Builder<TypeIdentifier>): MappedTypeCla
 }
 
 export interface MappedTypeClauseOptions {
+  nodeKind: 'mapped_type_clause';
   name: Builder<TypeIdentifier> | string;
   type: Builder<Type>;
   alias?: Builder<Type>;
 }
 
 export namespace mapped_type_clause {
-  export function from(options: MappedTypeClauseOptions): MappedTypeClauseBuilder {
+  export function from(options: Omit<MappedTypeClauseOptions, 'nodeKind'>): MappedTypeClauseBuilder {
     const _ctor = options.name;
     const b = new MappedTypeClauseBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
     if (options.type !== undefined) b.type(options.type);

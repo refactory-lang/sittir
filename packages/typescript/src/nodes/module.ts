@@ -1,6 +1,10 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, Module, NestedIdentifier, StatementBlock, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { nested_identifier } from './nested-identifier.js';
+import type { NestedIdentifierOptions } from './nested-identifier.js';
 import { statement_block } from './statement-block.js';
 import type { StatementBlockOptions } from './statement-block.js';
 
@@ -31,11 +35,11 @@ class ModuleBuilder extends Builder<Module> {
     return {
       kind: 'module',
       name: this._name.build(ctx),
-      body: this._body?.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
     } as Module;
   }
 
-  override get nodeKind(): string { return 'module'; }
+  override get nodeKind(): 'module' { return 'module'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,17 +57,30 @@ export function module(name: Builder<String | Identifier | NestedIdentifier>): M
 }
 
 export interface ModuleOptions {
-  name: Builder<String | Identifier | NestedIdentifier> | string;
-  body?: Builder<StatementBlock> | StatementBlockOptions;
+  nodeKind: 'module';
+  name: Builder<String | Identifier | NestedIdentifier> | string | StringOptions | NestedIdentifierOptions;
+  body?: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
 }
 
 export namespace module {
-  export function from(options: ModuleOptions): ModuleBuilder {
-    const _ctor = options.name;
-    const b = new ModuleBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+  export function from(options: Omit<ModuleOptions, 'nodeKind'>): ModuleBuilder {
+    const _raw = options.name;
+    let _ctor: Builder<String | Identifier | NestedIdentifier>;
+    if (typeof _raw === 'string') {
+      _ctor = new LeafBuilder('identifier', _raw);
+    } else if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'string': _ctor = string.from(_raw); break;
+        case 'nested_identifier': _ctor = nested_identifier.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new ModuleBuilder(_ctor);
     if (options.body !== undefined) {
       const _v = options.body;
-      b.body(_v instanceof Builder ? _v : statement_block.from(_v as StatementBlockOptions));
+      b.body(_v instanceof Builder ? _v : statement_block.from(_v));
     }
     return b;
   }

@@ -1,12 +1,14 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Crate, ExternCrateDeclaration, Identifier, VisibilityModifier } from '../types.js';
+import { visibility_modifier } from './visibility-modifier.js';
+import type { VisibilityModifierOptions } from './visibility-modifier.js';
 
 
 class ExternCrateDeclarationBuilder extends Builder<ExternCrateDeclaration> {
-  private _alias?: Builder<Identifier>;
   private _name: Builder<Identifier>;
-  private _children: Builder<Crate | VisibilityModifier>[] = [];
+  private _alias?: Builder<Identifier>;
+  private _children: Builder<VisibilityModifier | Crate>[] = [];
 
   constructor(name: Builder<Identifier>) {
     super();
@@ -18,15 +20,16 @@ class ExternCrateDeclarationBuilder extends Builder<ExternCrateDeclaration> {
     return this;
   }
 
-  children(...value: Builder<Crate | VisibilityModifier>[]): this {
+  children(...value: Builder<VisibilityModifier | Crate>[]): this {
     this._children = value;
     return this;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
     parts.push('extern');
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._alias) {
       parts.push('as');
@@ -39,20 +42,19 @@ class ExternCrateDeclarationBuilder extends Builder<ExternCrateDeclaration> {
   build(ctx?: RenderContext): ExternCrateDeclaration {
     return {
       kind: 'extern_crate_declaration',
-      alias: this._alias?.build(ctx),
       name: this._name.build(ctx),
+      alias: this._alias ? this._alias.build(ctx) : undefined,
       children: this._children.map(c => c.build(ctx)),
     } as ExternCrateDeclaration;
   }
 
-  override get nodeKind(): string { return 'extern_crate_declaration'; }
+  override get nodeKind(): 'extern_crate_declaration' { return 'extern_crate_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
     parts.push({ kind: 'token', text: 'extern', type: 'extern' });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._alias) {
       parts.push({ kind: 'token', text: 'as', type: 'as' });
@@ -70,13 +72,14 @@ export function extern_crate_declaration(name: Builder<Identifier>): ExternCrate
 }
 
 export interface ExternCrateDeclarationOptions {
-  alias?: Builder<Identifier> | string;
+  nodeKind: 'extern_crate_declaration';
   name: Builder<Identifier> | string;
-  children?: Builder<Crate | VisibilityModifier> | (Builder<Crate | VisibilityModifier>)[];
+  alias?: Builder<Identifier> | string;
+  children?: Builder<VisibilityModifier | Crate> | string | Omit<VisibilityModifierOptions, 'nodeKind'> | (Builder<VisibilityModifier | Crate> | string | Omit<VisibilityModifierOptions, 'nodeKind'>)[];
 }
 
 export namespace extern_crate_declaration {
-  export function from(options: ExternCrateDeclarationOptions): ExternCrateDeclarationBuilder {
+  export function from(options: Omit<ExternCrateDeclarationOptions, 'nodeKind'>): ExternCrateDeclarationBuilder {
     const _ctor = options.name;
     const b = new ExternCrateDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.alias !== undefined) {
@@ -86,7 +89,7 @@ export namespace extern_crate_declaration {
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('crate', _x) : _x instanceof Builder ? _x : visibility_modifier.from(_x)));
     }
     return b;
   }

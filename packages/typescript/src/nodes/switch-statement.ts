@@ -33,11 +33,11 @@ class SwitchStatementBuilder extends Builder<SwitchStatement> {
     return {
       kind: 'switch_statement',
       value: this._value.build(ctx),
-      body: this._body?.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
     } as SwitchStatement;
   }
 
-  override get nodeKind(): string { return 'switch_statement'; }
+  override get nodeKind(): 'switch_statement' { return 'switch_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,17 +55,18 @@ export function switch_statement(value: Builder<ParenthesizedExpression>): Switc
 }
 
 export interface SwitchStatementOptions {
-  value: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
-  body: Builder<SwitchBody> | SwitchBodyOptions;
+  nodeKind: 'switch_statement';
+  value: Builder<ParenthesizedExpression> | Omit<ParenthesizedExpressionOptions, 'nodeKind'>;
+  body: Builder<SwitchBody> | Omit<SwitchBodyOptions, 'nodeKind'>;
 }
 
 export namespace switch_statement {
-  export function from(options: SwitchStatementOptions): SwitchStatementBuilder {
+  export function from(options: Omit<SwitchStatementOptions, 'nodeKind'>): SwitchStatementBuilder {
     const _ctor = options.value;
-    const b = new SwitchStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor as ParenthesizedExpressionOptions));
+    const b = new SwitchStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor));
     if (options.body !== undefined) {
       const _v = options.body;
-      b.body(_v instanceof Builder ? _v : switch_body.from(_v as SwitchBodyOptions));
+      b.body(_v instanceof Builder ? _v : switch_body.from(_v));
     }
     return b;
   }

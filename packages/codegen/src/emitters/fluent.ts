@@ -5,7 +5,7 @@
  */
 
 import type { NodeMeta, SupertypeInfo } from '../grammar-reader.ts';
-import { toShortName, toIrKey, toGrammarTypeName, toFactoryName, toFieldName, resolveFileNames } from '../naming.ts';
+import { toShortName, toIrKey, toGrammarTypeName, toFactoryName, toFieldName, toTypeName, toBuilderClassName, resolveFileNames } from '../naming.ts';
 import { selectConstructorField } from './builder.ts';
 
 export interface OperatorContext {
@@ -18,6 +18,8 @@ export interface EmitFluentConfig {
   grammar: string;
   nodeKinds: string[];
   leafKinds: string[];
+  /** Named keywords: kind → fixed text (e.g., 'self' → 'self', 'mutable_specifier' → 'mut'). */
+  keywords?: Map<string, string>;
   operatorContexts?: OperatorContext[];
   nodes?: NodeMeta[];
   supertypes?: SupertypeInfo[];
@@ -45,7 +47,7 @@ const COMPOUND_OP_NAMES: Record<string, string> = {
 };
 
 export function emitFluent(config: EmitFluentConfig): string {
-  const { grammar, nodeKinds, leafKinds, operatorContexts } = config;
+  const { grammar, nodeKinds, leafKinds, keywords, operatorContexts } = config;
   const grammarTypeName = toGrammarTypeName(grammar);
   const grammarPrefix = grammarTypeName.slice(0, -5);
 
@@ -90,7 +92,8 @@ export function emitFluent(config: EmitFluentConfig): string {
     }
   }
 
-  // Leaf node builders (with numeric overloads)
+  // Leaf node builders — split into constants and variable leaves
+  const keywordEntries: string[] = [];
   const leafEntries: string[] = [];
   for (const kind of leafKinds) {
     let propName = toIrKey(kind);
@@ -102,7 +105,11 @@ export function emitFluent(config: EmitFluentConfig): string {
     }
     usedPropertyKeys.add(propName);
 
-    if (NUMERIC_LEAF_KINDS.has(kind)) {
+    const constantText = keywords?.get(kind);
+    if (constantText !== undefined) {
+      // Keyword — zero-arg factory, text is fixed
+      keywordEntries.push(`  ${propName}: () => new LeafBuilder('${kind}', '${constantText.replace(/'/g, "\\'")}'),`);
+    } else if (NUMERIC_LEAF_KINDS.has(kind)) {
       leafEntries.push(`  ${propName}: (value: number | string) => new LeafBuilder('${kind}', String(value)),`);
     } else {
       leafEntries.push(`  ${propName}: (text: string) => new LeafBuilder('${kind}', text),`);
@@ -140,10 +147,19 @@ export function emitFluent(config: EmitFluentConfig): string {
     '',
     `export const ir = {`,
     ...entries,
-    '',
-    '  // Leaf node builders',
-    ...leafEntries,
   ];
+
+  if (keywordEntries.length > 0) {
+    lines.push('');
+    lines.push('  // Keywords');
+    lines.push(...keywordEntries);
+  }
+
+  if (leafEntries.length > 0) {
+    lines.push('');
+    lines.push('  // Leaf node builders');
+    lines.push(...leafEntries);
+  }
 
   if (opEntries.length > 0) {
     lines.push('');
@@ -213,6 +229,43 @@ export function emitFluent(config: EmitFluentConfig): string {
   lines.push(`} as const;`);
   lines.push('');
   lines.push(`export type ${grammarPrefix}Ir = typeof ir;`);
+  lines.push('');
+
+  // --- BuilderMap + OptionsMap type lookups ---
+  // Group type imports by file, tracking globally seen type names to avoid duplicates
+  const typeImportsByFile = new Map<string, Set<string>>();
+  const seenTypeNames = new Set<string>();
+  for (const kind of nodeKinds) {
+    const fileName = fileNames.get(kind)!;
+    const types = typeImportsByFile.get(fileName) ?? new Set<string>();
+    const builderName = toBuilderClassName(kind);
+    const optionsName = `${toTypeName(kind)}Options`;
+    if (!seenTypeNames.has(builderName)) { types.add(builderName); seenTypeNames.add(builderName); }
+    if (!seenTypeNames.has(optionsName)) { types.add(optionsName); seenTypeNames.add(optionsName); }
+    typeImportsByFile.set(fileName, types);
+  }
+  for (const [fileName, types] of typeImportsByFile) {
+    if (types.size === 0) continue;
+    lines.push(`import type { ${[...types].sort().join(', ')} } from './nodes/${fileName}.js';`);
+  }
+  lines.push('');
+
+  lines.push('export interface BuilderMap {');
+  for (const kind of nodeKinds) {
+    lines.push(`  '${kind}': ${toBuilderClassName(kind)};`);
+  }
+  lines.push('}');
+  lines.push('');
+
+  lines.push('export interface OptionsMap {');
+  for (const kind of nodeKinds) {
+    lines.push(`  '${kind}': ${toTypeName(kind)}Options;`);
+  }
+  lines.push('}');
+  lines.push('');
+
+  lines.push('export type BuilderFor<K extends keyof BuilderMap> = BuilderMap[K];');
+  lines.push('export type OptionsFor<K extends keyof OptionsMap> = OptionsMap[K];');
   lines.push('');
 
   // --- CSTFieldMap + CSTNode + fromCST() + edit() ---

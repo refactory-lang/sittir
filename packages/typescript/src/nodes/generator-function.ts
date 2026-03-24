@@ -5,6 +5,12 @@ import { type_parameters } from './type-parameters.js';
 import type { TypeParametersOptions } from './type-parameters.js';
 import { formal_parameters } from './formal-parameters.js';
 import type { FormalParametersOptions } from './formal-parameters.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
+import { asserts_annotation } from './asserts-annotation.js';
+import type { AssertsAnnotationOptions } from './asserts-annotation.js';
+import { type_predicate_annotation } from './type-predicate-annotation.js';
+import type { TypePredicateAnnotationOptions } from './type-predicate-annotation.js';
 import { statement_block } from './statement-block.js';
 import type { StatementBlockOptions } from './statement-block.js';
 
@@ -56,15 +62,15 @@ class GeneratorFunctionBuilder extends Builder<GeneratorFunction> {
   build(ctx?: RenderContext): GeneratorFunction {
     return {
       kind: 'generator_function',
-      name: this._name?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
+      name: this._name ? this._name.build(ctx) : undefined,
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
       parameters: this._parameters.build(ctx),
-      returnType: this._returnType?.build(ctx),
-      body: this._body?.build(ctx),
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
     } as GeneratorFunction;
   }
 
-  override get nodeKind(): string { return 'generator_function'; }
+  override get nodeKind(): 'generator_function' { return 'generator_function'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -86,29 +92,41 @@ export function generator_function(parameters: Builder<FormalParameters>): Gener
 }
 
 export interface GeneratorFunctionOptions {
+  nodeKind: 'generator_function';
   name?: Builder<Identifier> | string;
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  parameters: Builder<FormalParameters> | FormalParametersOptions;
-  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
-  body: Builder<StatementBlock> | StatementBlockOptions;
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation> | TypeAnnotationOptions | AssertsAnnotationOptions | TypePredicateAnnotationOptions;
+  body: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
 }
 
 export namespace generator_function {
-  export function from(options: GeneratorFunctionOptions): GeneratorFunctionBuilder {
+  export function from(options: Omit<GeneratorFunctionOptions, 'nodeKind'>): GeneratorFunctionBuilder {
     const _ctor = options.parameters;
-    const b = new GeneratorFunctionBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    const b = new GeneratorFunctionBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor));
     if (options.name !== undefined) {
       const _v = options.name;
       b.name(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
     }
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
-    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      if (_v instanceof Builder) {
+        b.returnType(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'type_annotation': b.returnType(type_annotation.from(_v)); break;
+          case 'asserts_annotation': b.returnType(asserts_annotation.from(_v)); break;
+          case 'type_predicate_annotation': b.returnType(type_predicate_annotation.from(_v)); break;
+        }
+      }
+    }
     if (options.body !== undefined) {
       const _v = options.body;
-      b.body(_v instanceof Builder ? _v : statement_block.from(_v as StatementBlockOptions));
+      b.body(_v instanceof Builder ? _v : statement_block.from(_v));
     }
     return b;
   }

@@ -1,11 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, ExceptClause, Expression } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class ExceptClauseBuilder extends Builder<ExceptClause> {
-  private _alias?: Builder<Expression>;
   private _value: Builder<Expression>[] = [];
+  private _alias?: Builder<Expression>;
   private _children: Builder<Block>[] = [];
 
   constructor(children: Builder<Block>) {
@@ -13,13 +15,13 @@ class ExceptClauseBuilder extends Builder<ExceptClause> {
     this._children = [children];
   }
 
-  alias(value: Builder<Expression>): this {
-    this._alias = value;
+  value(...value: Builder<Expression>[]): this {
+    this._value = value;
     return this;
   }
 
-  value(...value: Builder<Expression>[]): this {
-    this._value = value;
+  alias(value: Builder<Expression>): this {
+    this._alias = value;
     return this;
   }
 
@@ -39,13 +41,13 @@ class ExceptClauseBuilder extends Builder<ExceptClause> {
   build(ctx?: RenderContext): ExceptClause {
     return {
       kind: 'except_clause',
-      alias: this._alias?.build(ctx),
       value: this._value.map(c => c.build(ctx)),
-      children: this._children[0]?.build(ctx),
+      alias: this._alias ? this._alias.build(ctx) : undefined,
+      children: this._children[0]!.build(ctx),
     } as ExceptClause;
   }
 
-  override get nodeKind(): string { return 'except_clause'; }
+  override get nodeKind(): 'except_clause' { return 'except_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -72,21 +74,22 @@ export function except_clause(children: Builder<Block>): ExceptClauseBuilder {
 }
 
 export interface ExceptClauseOptions {
-  alias?: Builder<Expression>;
+  nodeKind: 'except_clause';
   value?: Builder<Expression> | (Builder<Expression>)[];
-  children: Builder<Block> | (Builder<Block>)[];
+  alias?: Builder<Expression>;
+  children: Builder<Block> | Omit<BlockOptions, 'nodeKind'> | (Builder<Block> | Omit<BlockOptions, 'nodeKind'>)[];
 }
 
 export namespace except_clause {
-  export function from(options: ExceptClauseOptions): ExceptClauseBuilder {
+  export function from(options: Omit<ExceptClauseOptions, 'nodeKind'>): ExceptClauseBuilder {
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ExceptClauseBuilder(_ctor);
-    if (options.alias !== undefined) b.alias(options.alias);
+    const b = new ExceptClauseBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
     if (options.value !== undefined) {
       const _v = options.value;
       const _arr = Array.isArray(_v) ? _v : [_v];
       b.value(..._arr);
     }
+    if (options.alias !== undefined) b.alias(options.alias);
     return b;
   }
 }

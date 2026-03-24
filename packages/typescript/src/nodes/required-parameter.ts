@@ -1,26 +1,31 @@
 import { Builder, LeafBuilder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AccessibilityModifier, Decorator, Expression, OverrideModifier, Pattern, RequiredParameter, This, TypeAnnotation } from '../types.js';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
+import type { AccessibilityModifier, Decorator, Expression, Identifier, OverrideModifier, Pattern, RequiredParameter, RestPattern, This, TypeAnnotation } from '../types.js';
 import { decorator } from './decorator.js';
 import type { DecoratorOptions } from './decorator.js';
 import { type_annotation } from './type-annotation.js';
 import type { TypeAnnotationOptions } from './type-annotation.js';
+import { rest_pattern } from './rest-pattern.js';
+import type { RestPatternOptions } from './rest-pattern.js';
 
 
 class RequiredParameterBuilder extends Builder<RequiredParameter> {
   private _decorator: Builder<Decorator>[] = [];
-  private _pattern: Builder<Pattern | This>;
+  private _pattern?: Builder<Pattern | This>;
   private _type?: Builder<TypeAnnotation>;
   private _value?: Builder<Expression>;
+  private _name?: Builder<Identifier | RestPattern>;
   private _children: Builder<AccessibilityModifier | OverrideModifier>[] = [];
 
-  constructor(pattern: Builder<Pattern | This>) {
-    super();
-    this._pattern = pattern;
-  }
+  constructor() { super(); }
 
   decorator(...value: Builder<Decorator>[]): this {
     this._decorator = value;
+    return this;
+  }
+
+  pattern(value: Builder<Pattern | This>): this {
+    this._pattern = value;
     return this;
   }
 
@@ -31,6 +36,11 @@ class RequiredParameterBuilder extends Builder<RequiredParameter> {
 
   value(value: Builder<Expression>): this {
     this._value = value;
+    return this;
+  }
+
+  name(value: Builder<Identifier | RestPattern>): this {
+    this._name = value;
     return this;
   }
 
@@ -50,6 +60,7 @@ class RequiredParameterBuilder extends Builder<RequiredParameter> {
       parts.push('=');
       if (this._value) parts.push(this.renderChild(this._value, ctx));
     }
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
     return parts.join(' ');
   }
 
@@ -57,14 +68,15 @@ class RequiredParameterBuilder extends Builder<RequiredParameter> {
     return {
       kind: 'required_parameter',
       decorator: this._decorator.map(c => c.build(ctx)),
-      pattern: this._pattern.build(ctx),
-      type: this._type?.build(ctx),
-      value: this._value?.build(ctx),
+      pattern: this._pattern ? this._pattern.build(ctx) : undefined,
+      type: this._type ? this._type.build(ctx) : undefined,
+      value: this._value ? this._value.build(ctx) : undefined,
+      name: this._name ? this._name.build(ctx) : undefined,
       children: this._children.map(c => c.build(ctx)),
     } as RequiredParameter;
   }
 
-  override get nodeKind(): string { return 'required_parameter'; }
+  override get nodeKind(): 'required_parameter' { return 'required_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -79,42 +91,52 @@ class RequiredParameterBuilder extends Builder<RequiredParameter> {
       parts.push({ kind: 'token', text: '=', type: '=' });
       if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     }
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     return parts;
   }
 }
 
 export type { RequiredParameterBuilder };
 
-export function required_parameter(pattern: Builder<Pattern | This>): RequiredParameterBuilder {
-  return new RequiredParameterBuilder(pattern);
+export function required_parameter(): RequiredParameterBuilder {
+  return new RequiredParameterBuilder();
 }
 
 export interface RequiredParameterOptions {
-  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
-  pattern: Builder<Pattern | This> | string;
-  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
+  nodeKind: 'required_parameter';
+  decorator?: Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'> | (Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'>)[];
+  pattern?: Builder<Pattern | This> | string;
+  type?: Builder<TypeAnnotation> | Omit<TypeAnnotationOptions, 'nodeKind'>;
   value?: Builder<Expression>;
-  children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
+  name?: Builder<Identifier | RestPattern> | string | Omit<RestPatternOptions, 'nodeKind'>;
+  children?: Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'> | (Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'>)[];
 }
 
 export namespace required_parameter {
-  export function from(options: RequiredParameterOptions): RequiredParameterBuilder {
-    const _ctor = options.pattern;
-    const b = new RequiredParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('this', _ctor) : _ctor);
+  export function from(options: Omit<RequiredParameterOptions, 'nodeKind'>): RequiredParameterBuilder {
+    const b = new RequiredParameterBuilder();
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v)));
+    }
+    if (options.pattern !== undefined) {
+      const _v = options.pattern;
+      b.pattern(typeof _v === 'string' ? new LeafBuilder('this', _v) : _v);
     }
     if (options.type !== undefined) {
       const _v = options.type;
-      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v));
     }
     if (options.value !== undefined) b.value(options.value);
+    if (options.name !== undefined) {
+      const _v = options.name;
+      b.name(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v instanceof Builder ? _v : rest_pattern.from(_v));
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'accessibility_modifier': return new LeafBuilder('accessibility_modifier', (_v as LeafOptions).text!);   case 'override_modifier': return new LeafBuilder('override_modifier', (_v as LeafOptions).text ?? 'override'); } throw new Error('unreachable'); }));
     }
     return b;
   }

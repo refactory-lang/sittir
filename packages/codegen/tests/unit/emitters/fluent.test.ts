@@ -9,13 +9,13 @@ describe('emitFluent', () => {
       leafKinds: ['identifier', 'type_identifier'],
     });
     expect(source).toContain("import { struct_ } from './nodes/struct.js'");
-    expect(source).toContain("import { fn } from './nodes/function.js'");
-    expect(source).toContain("import { use_ } from './nodes/use.js'");
+    expect(source).toContain("import { function_ } from './nodes/function.js'");
+    expect(source).toContain("import { use_declaration } from './nodes/use-declaration.js'");
     expect(source).toContain("import { LeafBuilder } from '@sittir/types'");
     expect(source).toContain('export const ir =');
     expect(source).toContain('struct: struct_');
-    expect(source).toContain('fn');
-    expect(source).toContain('use: use_');
+    expect(source).toContain('function_');
+    expect(source).toContain('useDeclaration: use_declaration');
     // Leaf builders
     expect(source).toContain("identifier: (text: string) => new LeafBuilder('identifier', text)");
     expect(source).toContain("typeIdentifier: (text: string) => new LeafBuilder('type_identifier', text)");

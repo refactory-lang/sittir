@@ -39,12 +39,12 @@ class TypeParameterBuilder extends Builder<TypeParameter> {
     return {
       kind: 'type_parameter',
       name: this._name.build(ctx),
-      constraint: this._constraint?.build(ctx),
-      value: this._value?.build(ctx),
+      constraint: this._constraint ? this._constraint.build(ctx) : undefined,
+      value: this._value ? this._value.build(ctx) : undefined,
     } as TypeParameter;
   }
 
-  override get nodeKind(): string { return 'type_parameter'; }
+  override get nodeKind(): 'type_parameter' { return 'type_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -62,22 +62,23 @@ export function type_parameter(name: Builder<TypeIdentifier>): TypeParameterBuil
 }
 
 export interface TypeParameterOptions {
+  nodeKind: 'type_parameter';
   name: Builder<TypeIdentifier> | string;
-  constraint?: Builder<Constraint> | ConstraintOptions;
-  value?: Builder<DefaultType> | DefaultTypeOptions;
+  constraint?: Builder<Constraint> | Omit<ConstraintOptions, 'nodeKind'>;
+  value?: Builder<DefaultType> | Omit<DefaultTypeOptions, 'nodeKind'>;
 }
 
 export namespace type_parameter {
-  export function from(options: TypeParameterOptions): TypeParameterBuilder {
+  export function from(options: Omit<TypeParameterOptions, 'nodeKind'>): TypeParameterBuilder {
     const _ctor = options.name;
     const b = new TypeParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
     if (options.constraint !== undefined) {
       const _v = options.constraint;
-      b.constraint(_v instanceof Builder ? _v : constraint.from(_v as ConstraintOptions));
+      b.constraint(_v instanceof Builder ? _v : constraint.from(_v));
     }
     if (options.value !== undefined) {
       const _v = options.value;
-      b.value(_v instanceof Builder ? _v : default_type.from(_v as DefaultTypeOptions));
+      b.value(_v instanceof Builder ? _v : default_type.from(_v));
     }
     return b;
   }

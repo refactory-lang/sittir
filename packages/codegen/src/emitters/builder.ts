@@ -29,6 +29,10 @@ export interface EmitBuilderConfig {
   leafKinds?: string[];
   /** Supertype info for resolving abstract type references. */
   supertypes?: SupertypeInfo[];
+  /** Resolved file names (kind → file name without extension). */
+  fileNames?: Map<string, string>;
+  /** Named keywords: kind → fixed text (e.g., 'self' → 'self', 'mutable_specifier' → 'mut'). */
+  namedKeywords?: Map<string, string>;
 }
 
 // ---------------------------------------------------------------------------
@@ -237,11 +241,6 @@ function flattenRule(
           return flattenRule(nonBlank[0]!, fieldMeta, grammar, optional);
         }
 
-        const result: RenderElement[] = [];
-        const seenFields = new Set<string>();
-        const seenTokens = new Set<string>();
-        let seenChildren = false;
-
         // Compute which fields are unique to a single branch vs shared
         const fieldBranchCount = new Map<string, number>();
         for (const { flattened } of scored) {
@@ -257,41 +256,103 @@ function flattenRule(
           }
         }
 
+        // Build a map: for each non-common token, find which fields it always
+        // co-occurs with across branches. If a token always precedes a specific
+        // field in every branch where that field appears, group them together.
+        // (e.g. "from" always precedes "source" in export_statement)
+        const tokenFieldPairs = new Map<string, string>(); // token → field name
+        // Collect all non-common tokens from flattened branches
+        const allNonCommonTokens = new Set<string>();
         for (const { flattened } of scored) {
           for (const el of flattened) {
+            if (el.kind === 'token' && !commonTokens.has(el.value)) {
+              allNonCommonTokens.add(el.value);
+            }
+          }
+        }
+        for (const token of allNonCommonTokens) {
+          let pairedField: string | null = null;
+          let consistent = true;
+          for (const { flattened } of scored) {
+            for (let i = 0; i < flattened.length; i++) {
+              const el = flattened[i]!;
+              if (el.kind === 'token' && el.value === token) {
+                const next = flattened[i + 1];
+                if (next?.kind === 'field' && fieldMeta.has(next.name)) {
+                  if (pairedField === null) pairedField = next.name;
+                  else if (pairedField !== next.name) consistent = false;
+                }
+              }
+            }
+          }
+          if (consistent && pairedField) tokenFieldPairs.set(token, pairedField);
+        }
+
+        // Collect unique elements from all branches, keeping each element's
+        // earliest position across branches for ordering.
+        // This preserves the grammar's syntactic ordering rather than
+        // emitting in branch-score order (which misorders e.g. source before children).
+        const collected: Array<{ el: RenderElement; minPos: number }> = [];
+        const seenFields = new Set<string>();
+        const seenTokens = new Set<string>();
+        let seenChildren = false;
+        const groupedFields = new Set(tokenFieldPairs.values());
+
+        for (const { flattened } of scored) {
+          for (let pos = 0; pos < flattened.length; pos++) {
+            const el = flattened[pos]!;
             if (el.kind === 'token') {
-              // Common tokens → non-optional; branch-specific → skip
               if (commonTokens.has(el.value) && !seenTokens.has(el.value)) {
                 seenTokens.add(el.value);
-                result.push({ ...el, optional });
+                collected.push({ el: { ...el, optional }, minPos: pos });
               }
+              // Non-common tokens paired with fields are handled when we see the field
             } else if (el.kind === 'field') {
               if (!seenFields.has(el.name) && fieldMeta.has(el.name)) {
                 seenFields.add(el.name);
-                result.push(el);
+                // Check if this field has a paired token preceding it
+                if (groupedFields.has(el.name)) {
+                  // Find the token that pairs with this field
+                  for (const [tok, fn] of tokenFieldPairs) {
+                    if (fn === el.name) {
+                      collected.push({
+                        el: { kind: 'group', elements: [
+                          { kind: 'token', value: tok, optional: true },
+                          el,
+                        ], optional: true },
+                        minPos: pos > 0 ? pos - 1 : pos,
+                      });
+                      break;
+                    }
+                  }
+                } else {
+                  collected.push({ el, minPos: pos });
+                }
               }
             } else if (el.kind === 'group') {
               const hasNewField = el.elements.some(
                 ge => ge.kind === 'field' && !seenFields.has(ge.name) && fieldMeta.has(ge.name),
               );
               if (hasNewField) {
-                // Filter branch-specific tokens from groups unless the guard field is unique to this branch
                 const guardField = el.elements.find(e => e.kind === 'field');
                 const guardName = guardField?.kind === 'field' ? guardField.name : undefined;
                 const guardIsUnique = guardName && (fieldBranchCount.get(guardName) ?? 0) <= 1;
 
-                if (guardIsUnique) {
-                  // Keep the group as-is (tokens are meaningful for this unique field)
+                // Preserve groups from lower-level CHOICE mergers — they already
+                // determined that the token is semantically paired with the field
+                // (e.g. "from" + "source" in export_statement)
+                const isPreservedGroup = el.elements.some(ge => ge.kind === 'token' && !commonTokens.has((ge as any).value));
+
+                if (guardIsUnique || isPreservedGroup) {
                   for (const ge of el.elements) {
                     if (ge.kind === 'field') seenFields.add(ge.name);
                   }
-                  result.push(el);
+                  collected.push({ el, minPos: pos });
                 } else {
-                  // Strip branch-specific tokens, just add the fields
                   for (const ge of el.elements) {
                     if (ge.kind === 'field' && !seenFields.has(ge.name) && fieldMeta.has(ge.name)) {
                       seenFields.add(ge.name);
-                      result.push(ge);
+                      collected.push({ el: ge, minPos: pos });
                     }
                   }
                 }
@@ -299,13 +360,15 @@ function flattenRule(
             } else if (el.kind === 'symbol') {
               if (!seenChildren) {
                 seenChildren = true;
-                result.push(el);
+                collected.push({ el, minPos: pos });
               }
             }
           }
         }
 
-        return result;
+        // Sort by earliest grammar position to preserve syntactic ordering
+        collected.sort((a, b) => a.minPos - b.minPos);
+        return collected.map(c => c.el);
       }
 
       return flattenRule(nonBlank[0]!, fieldMeta, grammar, optional);
@@ -486,9 +549,10 @@ function emitRenderElement(
         // Positional child — guard against missing children for safe progressive construction
         lines.push(`${indent}if (this._children[${el.index}]) parts.push(this.renderChild(this._children[${el.index}]!, ctx));`);
       } else if (el.separator) {
-        const sep = ` ${el.separator} `;
-        if (el.separatorPrefix) {
-          // Binary pattern: separator always appears (e.g. union_type: | string, string | number)
+        // Comma: "a, b" — no leading space. Other operators: "a | b" — space both sides.
+        const sep = el.separator === ',' ? `${el.separator} ` : ` ${el.separator} `;
+        if (el.separatorPrefix && el.separator !== ',') {
+          // Binary pattern: separator always appears as prefix (e.g. union_type: | string | number)
           lines.push(`${indent}if (this._children.length === 1) {`);
           lines.push(`${indent}  parts.push('${escapeString(el.separator)}');`);
           lines.push(`${indent}  parts.push(this.renderChild(this._children[0]!, ctx));`);
@@ -712,7 +776,7 @@ function generateCSTBody(
 // ---------------------------------------------------------------------------
 
 export function emitBuilder(config: EmitBuilderConfig): string {
-  const { grammar, node, nodeKinds = [], leafKinds = [], supertypes = [] } = config;
+  const { grammar, node, nodeKinds = [], leafKinds = [], supertypes = [], fileNames, namedKeywords } = config;
   const kind = node.kind;
 
   const typeName = toTypeName(kind);
@@ -761,66 +825,84 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // - Exactly one named type that's a leaf
   // - Or one named type that's a non-leaf plus one-or-more leaf alternatives
   //   (e.g., ['nested_type_identifier', 'type_identifier'] — the leaf is the string target)
-  function findLeafKind(namedTypes: string[]): string | undefined {
-    if (namedTypes.length === 0) return undefined;
+  /** Return all leaf kinds present in a field's namedTypes (within small sets). */
+  function findLeafKinds(namedTypes: string[]): string[] {
+    if (namedTypes.length === 0) return [];
     // Single leaf type — unambiguous
-    if (namedTypes.length === 1 && leafKindSet.has(namedTypes[0]!)) return namedTypes[0]!;
-    // Multiple types: only if ALL are leaves (rare) or mix of few leaves + few branches
-    // For now: accept string if there's exactly one leaf among a small set (≤3 types)
+    if (namedTypes.length === 1 && leafKindSet.has(namedTypes[0]!)) return [namedTypes[0]!];
+    // Multiple types within a small set (≤3): collect all leaves
     if (namedTypes.length <= 3) {
       const leaves = namedTypes.filter(nt => leafKindSet.has(nt));
-      if (leaves.length === 1) return leaves[0]!;
+      if (leaves.length >= 1) return leaves;
     }
     // Supertypes with many subtypes → never auto-resolve to string
-    return undefined;
+    return [];
   }
 
-  // Find the single branch node kind for a field (enables POJO auto-resolution).
-  // Returns the kind if there's exactly ONE named type that's a concrete node (not leaf, not supertype).
-  function findSingleBranchKind(namedTypes: string[]): string | undefined {
-    if (namedTypes.length !== 1) return undefined;
-    const nt = namedTypes[0]!;
-    if (leafKindSet.has(nt)) return undefined;
-    if (supertypes.some(s => s.name === nt)) return undefined;
-    if (nodeKindSet.has(nt)) return nt;
-    return undefined;
+  /** Return the single leaf kind for unambiguous string wrapping, or undefined. */
+  function findLeafKind(namedTypes: string[]): string | undefined {
+    const leaves = findLeafKinds(namedTypes);
+    return leaves.length === 1 ? leaves[0] : undefined;
   }
 
-  // Check if .from() needs LeafBuilder for string → builder resolution
-  const hasLeafResolution = node.fields.some(f => findLeafKind(f.namedTypes) !== undefined)
-    || !!(node.children && findLeafKind(node.children.namedTypes) !== undefined);
+  // Find all branch node kinds for a field (enables POJO auto-resolution).
+  // Returns concrete node kinds (not leaf, not supertype, not self-referencing).
+  function findBranchKinds(namedTypes: string[]): string[] {
+    const result: string[] = [];
+    for (const nt of namedTypes) {
+      if (nt === kind) continue; // skip self-references
+      if (leafKindSet.has(nt)) continue;
+      if (supertypes.some(s => s.name === nt)) continue;
+      if (nodeKindSet.has(nt)) result.push(nt);
+    }
+    return result;
+  }
 
-  // Collect cross-builder POJO dependencies: fields with a single branch kind
-  // that can accept a plain options object instead of a Builder instance.
-  // Map from field name → { kind, shortName, fileName, typeName, optionsName }
-  const pojoDeps = new Map<string, { kind: string; shortName: string; fileName: string; typeName: string; optionsName: string }>();
+  // Check if .from() needs LeafBuilder for string/LeafOptions → builder resolution
+  const hasLeafResolution = node.fields.some(f => findLeafKinds(f.namedTypes).length > 0)
+    || !!(node.children && findLeafKinds(node.children.namedTypes).length > 0);
+
+  // Collect cross-builder POJO dependencies: fields whose branch kinds
+  // can accept plain options objects instead of Builder instances.
+  // Map from field name → array of deps (one per branch kind in the field).
+  // importAs is set when the dep's shortName collides with the current builder's shortName.
+  type PojoDep = { kind: string; shortName: string; importAs: string; fileName: string; typeName: string; optionsName: string };
+  const pojoDeps = new Map<string, PojoDep[]>();
   for (const field of node.fields) {
-    const branchKind = findSingleBranchKind(field.namedTypes);
-    if (branchKind && branchKind !== kind) { // skip self-references
-      pojoDeps.set(field.name, {
-        kind: branchKind,
-        shortName: toShortName(branchKind),
-        fileName: toFileName(branchKind),
-        typeName: toTypeName(branchKind),
-        optionsName: `${toTypeName(branchKind)}Options`,
-      });
+    const branchKinds = findBranchKinds(field.namedTypes);
+    if (branchKinds.length > 0) {
+      pojoDeps.set(field.name, branchKinds.map(branchKind => {
+        const depShort = toShortName(branchKind);
+        return {
+          kind: branchKind,
+          shortName: depShort,
+          importAs: depShort === shortName ? `${depShort}__dep` : depShort,
+          fileName: fileNames?.get(branchKind) ?? toFileName(branchKind),
+          typeName: toTypeName(branchKind),
+          optionsName: `${toTypeName(branchKind)}Options`,
+        };
+      }));
     }
   }
   // Also check children
-  let childrenPojoDep: { kind: string; shortName: string; fileName: string; typeName: string; optionsName: string } | undefined;
+  let childrenPojoDeps: PojoDep[] | undefined;
   if (node.children) {
-    const branchKind = findSingleBranchKind(node.children.namedTypes);
-    if (branchKind && branchKind !== kind) {
-      childrenPojoDep = {
-        kind: branchKind,
-        shortName: toShortName(branchKind),
-        fileName: toFileName(branchKind),
-        typeName: toTypeName(branchKind),
-        optionsName: `${toTypeName(branchKind)}Options`,
-      };
+    const branchKinds = findBranchKinds(node.children.namedTypes);
+    if (branchKinds.length > 0) {
+      childrenPojoDeps = branchKinds.map(branchKind => {
+        const depShort = toShortName(branchKind);
+        return {
+          kind: branchKind,
+          shortName: depShort,
+          importAs: depShort === shortName ? `${depShort}__dep` : depShort,
+          fileName: fileNames?.get(branchKind) ?? toFileName(branchKind),
+          typeName: toTypeName(branchKind),
+          optionsName: `${toTypeName(branchKind)}Options`,
+        };
+      });
     }
   }
-  const hasPojoDeps = pojoDeps.size > 0 || childrenPojoDep !== undefined;
+  const hasPojoDeps = pojoDeps.size > 0 || (childrenPojoDeps !== undefined && childrenPojoDeps.length > 0);
 
   /** Get the Builder<T> type string for a field, or plain Builder if unresolved. */
   function builderType(fieldName: string): string {
@@ -840,27 +922,37 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     return true;
   });
 
+  // Check if any field uses multi-leaf (needs LeafOptions import)
+  const hasMultiLeaf = node.fields.some(f => findLeafKinds(f.namedTypes).length > 1)
+    || !!(node.children && findLeafKinds(node.children.namedTypes).length > 1);
+
   const lines: string[] = [];
 
   // --- Imports ---
   const builderImports = hasLeafResolution ? 'Builder, LeafBuilder' : 'Builder';
   lines.push(`import { ${builderImports} } from '@sittir/types';`);
-  lines.push(`import type { RenderContext, CSTChild } from '@sittir/types';`);
+  const typeImportsFromSittir = ['RenderContext', 'CSTChild'];
+  if (hasMultiLeaf) typeImportsFromSittir.push('LeafOptions');
+  lines.push(`import type { ${typeImportsFromSittir.join(', ')} } from '@sittir/types';`);
   // Import all referenced types from types.ts
   const sortedImports = [...importedTypes].sort();
   lines.push(`import type { ${sortedImports.join(', ')} } from '../types.js';`);
 
   // Cross-builder imports for POJO auto-resolution in .from()
   if (hasPojoDeps) {
-    const allDeps = new Map(pojoDeps);
-    if (childrenPojoDep) allDeps.set('__children__', childrenPojoDep);
-    // Deduplicate by kind (multiple fields might reference the same builder)
-    const byKind = new Map<string, { shortName: string; fileName: string; optionsName: string }>();
-    for (const dep of allDeps.values()) {
-      byKind.set(dep.kind, dep);
+    // Collect all deps from fields and children, deduplicate by kind
+    const byKind = new Map<string, PojoDep>();
+    for (const deps of pojoDeps.values()) {
+      for (const dep of deps) byKind.set(dep.kind, dep);
+    }
+    if (childrenPojoDeps) {
+      for (const dep of childrenPojoDeps) byKind.set(dep.kind, dep);
     }
     for (const dep of byKind.values()) {
-      lines.push(`import { ${dep.shortName} } from './${dep.fileName}.js';`);
+      const importBinding = dep.importAs !== dep.shortName
+        ? `${dep.shortName} as ${dep.importAs}`
+        : dep.shortName;
+      lines.push(`import { ${importBinding} } from './${dep.fileName}.js';`);
       lines.push(`import type { ${dep.optionsName} } from './${dep.fileName}.js';`);
     }
   }
@@ -871,7 +963,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // --- Builder class ---
   lines.push(`class ${builderClassName} extends Builder<${typeName}> {`);
 
-  // Private fields (with precise Builder<T> types)
+  // Private fields
   for (const field of node.fields) {
     const fieldName = toFieldName(field.name);
     const bt = builderType(field.name);
@@ -890,8 +982,8 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // Children field
   if (node.hasChildren) {
-    const ct = childBuilderType();
-    lines.push(`  private _children: ${ct}[] = [];`);
+    const cbt = childBuilderType();
+    lines.push(`  private _children: ${cbt}[] = [];`);
   }
 
   lines.push('');
@@ -916,6 +1008,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     const ctorType = constructorParam.source === 'children'
       ? childBuilderType()
       : builderType(constructorParam.name);
+
     if (isMultiple) {
       lines.push(`  constructor(...${ctorParamName}: ${ctorType}[]) {`);
       lines.push('    super();');
@@ -940,7 +1033,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   lines.push('');
 
-  // Fluent setters for non-constructor fields (with precise types)
+  // Fluent setters
   for (const field of setterFields) {
     const fieldName = toFieldName(field.name);
     const bt = builderType(field.name);
@@ -958,8 +1051,8 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // Children setter if applicable and not constructor param
   if (node.hasChildren && constructorParam?.source !== 'children') {
-    const ct = childBuilderType();
-    lines.push(`  children(...value: ${ct}[]): this {`);
+    const cbt = childBuilderType();
+    lines.push(`  children(...value: ${cbt}[]): this {`);
     lines.push('    this._children = value;');
     lines.push('    return this;');
     lines.push('  }');
@@ -1003,19 +1096,31 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     if (field.name === 'kind') continue;
     const fieldName = toFieldName(field.name);
     const isCtorField = constructorParam?.source === 'field' && constructorParam.name === field.name;
+    const isTyped = fieldTypeMap.get(field.name) !== undefined;
+    const buildExpr = isTyped
+      ? (v: string) => `${v}.build(ctx)`
+      : (v: string) => `this.buildChild(${v}, ctx)`;
     if (field.multiple) {
-      lines.push(`      ${fieldName}: this._${fieldName}.map(c => c.build(ctx)),`);
+      lines.push(`      ${fieldName}: this._${fieldName}.map(c => ${buildExpr('c')}),`);
     } else if (field.required && isCtorField) {
-      lines.push(`      ${fieldName}: this._${fieldName}.build(ctx),`);
+      // Constructor param — always set, no guard needed
+      lines.push(`      ${fieldName}: ${buildExpr(`this._${fieldName}`)},`);
     } else {
-      lines.push(`      ${fieldName}: this._${fieldName}?.build(ctx),`);
+      lines.push(`      ${fieldName}: this._${fieldName} ? ${buildExpr(`this._${fieldName}`)} : undefined,`);
     }
   }
   if (node.hasChildren) {
+    const childIsTyped = childrenType !== undefined;
+    const childBuildExpr = childIsTyped
+      ? (v: string) => `${v}.build(ctx)`
+      : (v: string) => `this.buildChild(${v}, ctx)`;
     if (node.children?.multiple) {
-      lines.push(`      children: this._children.map(c => c.build(ctx)),`);
+      lines.push(`      children: this._children.map(c => ${childBuildExpr('c')}),`);
+    } else if (node.children?.required && constructorParam?.source === 'children') {
+      // Constructor supplies children — always set, no guard needed
+      lines.push(`      children: ${childBuildExpr('this._children[0]!')},`);
     } else {
-      lines.push(`      children: this._children[0]?.build(ctx),`);
+      lines.push(`      children: this._children[0] ? ${childBuildExpr('this._children[0]')} : undefined,`);
     }
   }
   lines.push(`    } as ${typeName};`);
@@ -1023,7 +1128,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   lines.push('');
 
   // --- nodeKind getter ---
-  lines.push(`  override get nodeKind(): string { return '${kind}'; }`);
+  lines.push(`  override get nodeKind(): '${kind}' { return '${kind}'; }`);
   lines.push('');
 
   // --- toCSTChildren() ---
@@ -1080,6 +1185,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     const factoryType = constructorParam.source === 'children'
       ? childBuilderType()
       : builderType(constructorParam.name);
+
     if (isMultiple) {
       lines.push(`export function ${shortName}(...${shortParamName}: ${factoryType}[]): ${builderClassName} {`);
       lines.push(`  return new ${builderClassName}(...${shortParamName});`);
@@ -1100,29 +1206,125 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // --- .from() declarative API ---
   const optionsName = `${typeName}Options`;
 
-  // Compute the accepted option type for a field (Builder, | string, | XxxOptions)
-  function fieldOptionType(preciseType: string, namedTypes: string[], fieldName?: string): string {
-    const leafKind = findLeafKind(namedTypes);
-    if (leafKind) return `${preciseType} | string`;
-    const pojoEntry = fieldName !== undefined ? pojoDeps.get(fieldName) : childrenPojoDep;
-    if (pojoEntry) return `${preciseType} | ${pojoEntry.optionsName}`;
-    return preciseType;
+  // Compute the accepted option type for a field (Builder<T> | string | XxxOptions)
+  function fieldOptionType(namedTypes: string[], fieldName?: string): string {
+    const bt = fieldName !== undefined ? builderType(fieldName) : childBuilderType();
+    const parts: string[] = [bt];
+    const leaves = findLeafKinds(namedTypes);
+    if (leaves.length === 1) {
+      // Single leaf — accept bare string (unambiguous)
+      parts.push('string');
+    } else if (leaves.length > 1) {
+      // Multiple leaves — require LeafOptions for disambiguation
+      for (const lk of leaves) parts.push(`LeafOptions<'${lk}'>`);
+    }
+    const pojoEntries = fieldName !== undefined ? pojoDeps.get(fieldName) : childrenPojoDeps;
+    if (pojoEntries) {
+      if (pojoEntries.length === 1 && leaves.length <= 1) {
+        // Single-kind with no multi-leaf: Omit kind since it's unambiguous
+        parts.push(`Omit<${pojoEntries[0]!.optionsName}, 'nodeKind'>`);
+      } else {
+        // Multi-kind or multi-leaf: keep nodeKind for runtime discrimination
+        for (const entry of pojoEntries) parts.push(entry.optionsName);
+      }
+    }
+    return parts.join(' | ');
   }
 
-  // Generate a resolution expression for a value that may be string, POJO, or Builder
+  // Generate a resolution expression for a value that may be string, POJO, or Builder.
+  // Returns undefined for multi-kind fields — those are handled with switch blocks in .from().
   function fieldResolveExpr(varName: string, namedTypes: string[], fieldName?: string): string | undefined {
     const leafKind = findLeafKind(namedTypes);
+    const pojoEntries = fieldName !== undefined ? pojoDeps.get(fieldName) : childrenPojoDeps;
+    if (leafKind && pojoEntries && pojoEntries.length === 1) {
+      // Both string and single Options: string → LeafBuilder, Options → .from(), else passthrough
+      const entry = pojoEntries[0]!;
+      return `typeof ${varName} === 'string' ? new LeafBuilder('${leafKind}', ${varName}) : ${varName} instanceof Builder ? ${varName} : ${entry.importAs}.from(${varName})`;
+    }
     if (leafKind) return `typeof ${varName} === 'string' ? new LeafBuilder('${leafKind}', ${varName}) : ${varName}`;
-    const pojoEntry = fieldName !== undefined ? pojoDeps.get(fieldName) : childrenPojoDep;
-    if (pojoEntry) return `${varName} instanceof Builder ? ${varName} : ${pojoEntry.shortName}.from(${varName} as ${pojoEntry.optionsName})`;
+    if (pojoEntries && pojoEntries.length === 1) {
+      const entry = pojoEntries[0]!;
+      return `${varName} instanceof Builder ? ${varName} : ${entry.importAs}.from(${varName})`;
+    }
+    // Multi-kind: resolved via switch(_v.nodeKind) in .from() body
     return undefined;
   }
 
+  // Emit a multi-kind resolution block (switch on kind discriminant)
+  function emitMultiKindBlock(
+    lines: string[],
+    varName: string,
+    namedTypes: string[],
+    setter: string,
+    pojoEntries: PojoDep[],
+    indent: string,
+  ): void {
+    const leaves = findLeafKinds(namedTypes);
+    if (leaves.length === 1) {
+      // Single leaf — accept bare string
+      lines.push(`${indent}if (typeof ${varName} === 'string') {`);
+      lines.push(`${indent}  ${setter}(new LeafBuilder('${leaves[0]}', ${varName}));`);
+      lines.push(`${indent}} else if (${varName} instanceof Builder) {`);
+    } else {
+      lines.push(`${indent}if (${varName} instanceof Builder) {`);
+    }
+    lines.push(`${indent}  ${setter}(${varName});`);
+    lines.push(`${indent}} else {`);
+    lines.push(`${indent}  switch (${varName}.nodeKind) {`);
+    for (const entry of pojoEntries) {
+      lines.push(`${indent}    case '${entry.kind}': ${setter}(${entry.importAs}.from(${varName})); break;`);
+    }
+    // Multi-leaf: add LeafOptions cases to the switch
+    if (leaves.length > 1) {
+      for (const lk of leaves) {
+        lines.push(`${indent}    case '${lk}': ${setter}(new LeafBuilder('${lk}', ${leafTextExpr(lk, varName)})); break;`);
+      }
+    }
+    lines.push(`${indent}  }`);
+    lines.push(`${indent}}`);
+  }
+
+  /** Generate the text expression for a LeafBuilder from a LeafOptions variable.
+   *  Constant leaves fall back to fixed text when .text is omitted. */
+  function leafTextExpr(kind: string, varName: string): string {
+    const fixedText = namedKeywords?.get(kind);
+    if (fixedText !== undefined) {
+      return `(${varName} as LeafOptions).text ?? '${fixedText.replace(/'/g, "\\'")}'`;
+    }
+    return `(${varName} as LeafOptions).text!`;
+  }
+
+  // Emit a multi-kind map expression for array fields
+  function emitMultiKindMapExpr(
+    namedTypes: string[],
+    pojoEntries: PojoDep[],
+  ): string {
+    const leaves = findLeafKinds(namedTypes);
+    const branches: string[] = [];
+    if (leaves.length === 1) {
+      branches.push(`if (typeof _v === 'string') return new LeafBuilder('${leaves[0]}', _v);`);
+    }
+    branches.push(`if (_v instanceof Builder) return _v;`);
+    branches.push(`switch (_v.nodeKind) {`);
+    for (const entry of pojoEntries) {
+      branches.push(`  case '${entry.kind}': return ${entry.importAs}.from(_v);`);
+    }
+    // Multi-leaf: LeafOptions cases in the switch
+    if (leaves.length > 1) {
+      for (const lk of leaves) {
+        branches.push(`  case '${lk}': return new LeafBuilder('${lk}', ${leafTextExpr(lk, '_v')});`);
+      }
+    }
+    branches.push(`}`);
+    branches.push(`throw new Error('unreachable');`);
+    return branches.join(' ');
+  }
+
   lines.push(`export interface ${optionsName} {`);
+  lines.push(`  nodeKind: '${kind}';`);
   for (const field of node.fields) {
     const fieldName = toFieldName(field.name);
-    const preciseType = builderType(field.name);
-    const baseType = fieldOptionType(preciseType, field.namedTypes, field.name);
+    const baseType = fieldOptionType(field.namedTypes, field.name);
     const optional = !field.required;
 
     if (field.multiple) {
@@ -1132,8 +1334,7 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     }
   }
   if (node.hasChildren) {
-    const ct = childBuilderType();
-    const baseType = fieldOptionType(ct, node.children!.namedTypes);
+    const baseType = fieldOptionType(node.children!.namedTypes);
     const isRequired = !!(node.children?.required && constructorParam?.source === 'children' && !node.children?.multiple);
     lines.push(`  children${isRequired ? '' : '?'}: ${baseType} | (${baseType})[];`);
   }
@@ -1142,24 +1343,94 @@ export function emitBuilder(config: EmitBuilderConfig): string {
 
   // Namespace with .from()
   lines.push(`export namespace ${shortName} {`);
-  lines.push(`  export function from(options: ${optionsName}): ${builderClassName} {`);
+
+  // Detect single-field Options → allow direct value shorthand
+  const optionFieldCount = node.fields.length + (node.hasChildren ? 1 : 0);
+  const isSingleFieldOptions = optionFieldCount === 1;
+
+  if (isSingleFieldOptions) {
+    // Compute the single field's value type for the shorthand parameter
+    let singleFieldType: string;
+    let singleFieldName: string;
+    if (node.hasChildren && node.fields.length === 0) {
+      singleFieldName = 'children';
+      const baseType = fieldOptionType(node.children!.namedTypes);
+      singleFieldType = `${baseType} | (${baseType})[]`;
+    } else {
+      const field = node.fields[0]!;
+      singleFieldName = toFieldName(field.name);
+      const baseType = fieldOptionType(field.namedTypes, field.name);
+      singleFieldType = field.multiple ? `${baseType} | (${baseType})[]` : baseType;
+    }
+
+    lines.push(`  export function from(input: Omit<${optionsName}, 'nodeKind'> | ${singleFieldType}): ${builderClassName} {`);
+    lines.push(`    const options: Omit<${optionsName}, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && '${singleFieldName}' in input`);
+    lines.push(`      ? input as Omit<${optionsName}, 'nodeKind'>`);
+    lines.push(`      : { ${singleFieldName}: input } as Omit<${optionsName}, 'nodeKind'>;`);
+  } else {
+    lines.push(`  export function from(options: Omit<${optionsName}, 'nodeKind'>): ${builderClassName} {`);
+  }
+
+  // Helper: emit a multi-kind resolution to a variable for constructor use
+  function emitMultiKindResolveVar(
+    lines: string[],
+    rawVar: string,
+    resolvedVar: string,
+    namedTypes: string[],
+    pojoEntries: PojoDep[],
+    indent: string,
+  ): void {
+    const leaves = findLeafKinds(namedTypes);
+    if (leaves.length === 1) {
+      lines.push(`${indent}if (typeof ${rawVar} === 'string') {`);
+      lines.push(`${indent}  ${resolvedVar} = new LeafBuilder('${leaves[0]}', ${rawVar});`);
+      lines.push(`${indent}} else if (${rawVar} instanceof Builder) {`);
+    } else {
+      lines.push(`${indent}if (${rawVar} instanceof Builder) {`);
+    }
+    lines.push(`${indent}  ${resolvedVar} = ${rawVar};`);
+    lines.push(`${indent}} else {`);
+    lines.push(`${indent}  switch (${rawVar}.nodeKind) {`);
+    for (const entry of pojoEntries) {
+      lines.push(`${indent}    case '${entry.kind}': ${resolvedVar} = ${entry.importAs}.from(${rawVar}); break;`);
+    }
+    // Multi-leaf: LeafOptions cases in the switch
+    if (leaves.length > 1) {
+      for (const lk of leaves) {
+        lines.push(`${indent}    case '${lk}': ${resolvedVar} = new LeafBuilder('${lk}', ${leafTextExpr(lk, rawVar)}); break;`);
+      }
+    }
+    lines.push(`${indent}    default: throw new Error('unreachable');`);
+    lines.push(`${indent}  }`);
+    lines.push(`${indent}}`);
+  }
 
   // Constructor
   if (constructorParam && constructorParam.source === 'field') {
     const ctorFieldName = toFieldName(constructorParam.name);
     const ctorField = node.fields.find(f => f.name === constructorParam.name);
     const resolve = ctorField ? fieldResolveExpr('_ctor', ctorField.namedTypes, ctorField.name) : undefined;
+    const ctorPojoEntries = ctorField ? pojoDeps.get(ctorField.name) : undefined;
+    const ctorLeaves = ctorField ? findLeafKinds(ctorField.namedTypes) : [];
+    const isCtorMultiKind = (ctorPojoEntries && ctorPojoEntries.length > 1) || ctorLeaves.length > 1;
 
     if (ctorField?.multiple) {
       lines.push(`    const _ctor = options.${ctorFieldName};`);
       lines.push(`    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];`);
-      if (resolve) {
+      if (isCtorMultiKind) {
+        lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => { ${emitMultiKindMapExpr(ctorField!.namedTypes, ctorPojoEntries ?? [])} }));`);
+      } else if (resolve) {
         lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => ${fieldResolveExpr('_v', ctorField!.namedTypes, ctorField!.name)}));`);
       } else {
         lines.push(`    const b = new ${builderClassName}(..._arr);`);
       }
     } else {
-      if (resolve) {
+      if (isCtorMultiKind) {
+        lines.push(`    const _raw = options.${ctorFieldName};`);
+        lines.push(`    let _ctor: ${builderType(constructorParam.name)};`);
+        emitMultiKindResolveVar(lines, '_raw', '_ctor', ctorField!.namedTypes, ctorPojoEntries ?? [], '    ');
+        lines.push(`    const b = new ${builderClassName}(_ctor);`);
+      } else if (resolve) {
         lines.push(`    const _ctor = options.${ctorFieldName};`);
         lines.push(`    const b = new ${builderClassName}(${resolve});`);
       } else {
@@ -1170,6 +1441,8 @@ export function emitBuilder(config: EmitBuilderConfig): string {
     const isMultiple = node.children?.multiple;
     const resolve = node.children ? fieldResolveExpr('_v', node.children.namedTypes) : undefined;
     const childrenRequired = !!(node.children?.required && !isMultiple);
+    const ctorChildLeaves = node.children ? findLeafKinds(node.children.namedTypes) : [];
+    const ctorChildrenMultiKind = (childrenPojoDeps && childrenPojoDeps.length > 1) || ctorChildLeaves.length > 1;
 
     if (isMultiple) {
       lines.push(`    const _children = options.children;`);
@@ -1178,7 +1451,9 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       } else {
         lines.push(`    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];`);
       }
-      if (resolve) {
+      if (ctorChildrenMultiKind) {
+        lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => { ${emitMultiKindMapExpr(node.children!.namedTypes, childrenPojoDeps ?? [])} }));`);
+      } else if (resolve) {
         lines.push(`    const b = new ${builderClassName}(..._arr.map(_v => ${resolve}));`);
       } else {
         lines.push(`    const b = new ${builderClassName}(..._arr);`);
@@ -1187,7 +1462,11 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       const resolveCtorExpr = node.children ? fieldResolveExpr('_ctor', node.children.namedTypes) : undefined;
       if (childrenRequired) {
         lines.push(`    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;`);
-        if (resolveCtorExpr) {
+        if (ctorChildrenMultiKind) {
+          lines.push(`    let _resolved: ${childBuilderType()};`);
+          emitMultiKindResolveVar(lines, '_ctor', '_resolved', node.children!.namedTypes, childrenPojoDeps ?? [], '    ');
+          lines.push(`    const b = new ${builderClassName}(_resolved);`);
+        } else if (resolveCtorExpr) {
           lines.push(`    const b = new ${builderClassName}(${resolveCtorExpr});`);
         } else {
           lines.push(`    const b = new ${builderClassName}(_ctor);`);
@@ -1195,7 +1474,13 @@ export function emitBuilder(config: EmitBuilderConfig): string {
       } else {
         lines.push(`    const _raw = options.children;`);
         lines.push(`    const _ctor = _raw !== undefined ? (Array.isArray(_raw) ? _raw[0]! : _raw) : undefined;`);
-        if (resolveCtorExpr) {
+        if (ctorChildrenMultiKind) {
+          lines.push(`    let _resolved: ${childBuilderType()} | undefined;`);
+          lines.push(`    if (_ctor !== undefined) {`);
+          emitMultiKindResolveVar(lines, '_ctor', '_resolved', node.children!.namedTypes, childrenPojoDeps ?? [], '      ');
+          lines.push(`    }`);
+          lines.push(`    const b = _resolved !== undefined ? new ${builderClassName}(_resolved) : new ${builderClassName}();`);
+        } else if (resolveCtorExpr) {
           lines.push(`    const b = _ctor !== undefined ? new ${builderClassName}(${resolveCtorExpr}) : new ${builderClassName}();`);
         } else {
           lines.push(`    const b = _ctor !== undefined ? new ${builderClassName}(_ctor) : new ${builderClassName}();`);
@@ -1210,19 +1495,30 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   for (const field of setterFields) {
     const fieldName = toFieldName(field.name);
     const resolve = fieldResolveExpr('_v', field.namedTypes, field.name);
+    const pojoEntries = pojoDeps.get(field.name);
+    const fieldLeaves = findLeafKinds(field.namedTypes);
+    // Multi-kind: either multiple POJO deps or multiple leaf kinds need switch dispatch
+    const isMultiKind = (pojoEntries && pojoEntries.length > 1) || fieldLeaves.length > 1;
 
     if (field.multiple) {
       lines.push(`    if (options.${fieldName} !== undefined) {`);
       lines.push(`      const _v = options.${fieldName};`);
       lines.push(`      const _arr = Array.isArray(_v) ? _v : [_v];`);
-      if (resolve) {
+      if (isMultiKind) {
+        lines.push(`      b.${fieldName}(..._arr.map(_v => { ${emitMultiKindMapExpr(field.namedTypes, pojoEntries ?? [])} }));`);
+      } else if (resolve) {
         lines.push(`      b.${fieldName}(..._arr.map(_v => ${resolve}));`);
       } else {
         lines.push(`      b.${fieldName}(..._arr);`);
       }
       lines.push(`    }`);
     } else {
-      if (resolve) {
+      if (isMultiKind) {
+        lines.push(`    if (options.${fieldName} !== undefined) {`);
+        lines.push(`      const _v = options.${fieldName};`);
+        emitMultiKindBlock(lines, '_v', field.namedTypes, `b.${fieldName}`, pojoEntries ?? [], '      ');
+        lines.push(`    }`);
+      } else if (resolve) {
         lines.push(`    if (options.${fieldName} !== undefined) {`);
         lines.push(`      const _v = options.${fieldName};`);
         lines.push(`      b.${fieldName}(${resolve});`);
@@ -1236,11 +1532,15 @@ export function emitBuilder(config: EmitBuilderConfig): string {
   // Children (if not constructor)
   if (node.hasChildren && constructorParam?.source !== 'children') {
     const resolve = node.children ? fieldResolveExpr('_x', node.children.namedTypes) : undefined;
+    const childLeaves = node.children ? findLeafKinds(node.children.namedTypes) : [];
+    const isMultiKindChildren = (childrenPojoDeps && childrenPojoDeps.length > 1) || childLeaves.length > 1;
 
     lines.push(`    if (options.children !== undefined) {`);
     lines.push(`      const _v = options.children;`);
     lines.push(`      const _arr = Array.isArray(_v) ? _v : [_v];`);
-    if (resolve) {
+    if (isMultiKindChildren) {
+      lines.push(`      b.children(..._arr.map(_v => { ${emitMultiKindMapExpr(node.children!.namedTypes, childrenPojoDeps ?? [])} }));`);
+    } else if (resolve) {
       lines.push(`      b.children(..._arr.map(_x => ${resolve}));`);
     } else {
       lines.push(`      b.children(..._arr);`);

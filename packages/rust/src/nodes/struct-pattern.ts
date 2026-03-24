@@ -1,13 +1,17 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FieldPattern, RemainingFieldPattern, ScopedTypeIdentifier, StructPattern, TypeIdentifier } from '../types.js';
+import { scoped_type_identifier } from './scoped-type-identifier.js';
+import type { ScopedTypeIdentifierOptions } from './scoped-type-identifier.js';
+import { field_pattern } from './field-pattern.js';
+import type { FieldPatternOptions } from './field-pattern.js';
 
 
 class StructPatternBuilder extends Builder<StructPattern> {
-  private _type: Builder<ScopedTypeIdentifier | TypeIdentifier>;
+  private _type: Builder<TypeIdentifier | ScopedTypeIdentifier>;
   private _children: Builder<FieldPattern | RemainingFieldPattern>[] = [];
 
-  constructor(type_: Builder<ScopedTypeIdentifier | TypeIdentifier>) {
+  constructor(type_: Builder<TypeIdentifier | ScopedTypeIdentifier>) {
     super();
     this._type = type_;
   }
@@ -21,12 +25,7 @@ class StructPatternBuilder extends Builder<StructPattern> {
     const parts: string[] = [];
     if (this._type) parts.push(this.renderChild(this._type, ctx));
     parts.push('{');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -39,7 +38,7 @@ class StructPatternBuilder extends Builder<StructPattern> {
     } as StructPattern;
   }
 
-  override get nodeKind(): string { return 'struct_pattern'; }
+  override get nodeKind(): 'struct_pattern' { return 'struct_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -56,22 +55,24 @@ class StructPatternBuilder extends Builder<StructPattern> {
 
 export type { StructPatternBuilder };
 
-export function struct_pattern(type_: Builder<ScopedTypeIdentifier | TypeIdentifier>): StructPatternBuilder {
+export function struct_pattern(type_: Builder<TypeIdentifier | ScopedTypeIdentifier>): StructPatternBuilder {
   return new StructPatternBuilder(type_);
 }
 
 export interface StructPatternOptions {
-  type: Builder<ScopedTypeIdentifier | TypeIdentifier>;
-  children?: Builder<FieldPattern | RemainingFieldPattern> | (Builder<FieldPattern | RemainingFieldPattern>)[];
+  nodeKind: 'struct_pattern';
+  type: Builder<TypeIdentifier | ScopedTypeIdentifier> | string | Omit<ScopedTypeIdentifierOptions, 'nodeKind'>;
+  children?: Builder<FieldPattern | RemainingFieldPattern> | string | Omit<FieldPatternOptions, 'nodeKind'> | (Builder<FieldPattern | RemainingFieldPattern> | string | Omit<FieldPatternOptions, 'nodeKind'>)[];
 }
 
 export namespace struct_pattern {
-  export function from(options: StructPatternOptions): StructPatternBuilder {
-    const b = new StructPatternBuilder(options.type);
+  export function from(options: Omit<StructPatternOptions, 'nodeKind'>): StructPatternBuilder {
+    const _ctor = options.type;
+    const b = new StructPatternBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor instanceof Builder ? _ctor : scoped_type_identifier.from(_ctor));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('remaining_field_pattern', _x) : _x instanceof Builder ? _x : field_pattern.from(_x)));
     }
     return b;
   }

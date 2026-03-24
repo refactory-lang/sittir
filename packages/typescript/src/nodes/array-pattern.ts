@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrayPattern, AssignmentPattern, Pattern } from '../types.js';
+import { assignment_pattern } from './assignment-pattern.js';
+import type { AssignmentPatternOptions } from './assignment-pattern.js';
 
 
 class ArrayPatternBuilder extends Builder<ArrayPattern> {
@@ -16,12 +18,7 @@ class ArrayPatternBuilder extends Builder<ArrayPattern> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('[');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push(']');
     return parts.join(' ');
   }
@@ -33,7 +30,7 @@ class ArrayPatternBuilder extends Builder<ArrayPattern> {
     } as ArrayPattern;
   }
 
-  override get nodeKind(): string { return 'array_pattern'; }
+  override get nodeKind(): 'array_pattern' { return 'array_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -54,16 +51,20 @@ export function array_pattern(): ArrayPatternBuilder {
 }
 
 export interface ArrayPatternOptions {
-  children?: Builder<Pattern | AssignmentPattern> | (Builder<Pattern | AssignmentPattern>)[];
+  nodeKind: 'array_pattern';
+  children?: Builder<Pattern | AssignmentPattern> | Omit<AssignmentPatternOptions, 'nodeKind'> | (Builder<Pattern | AssignmentPattern> | Omit<AssignmentPatternOptions, 'nodeKind'>)[];
 }
 
 export namespace array_pattern {
-  export function from(options: ArrayPatternOptions): ArrayPatternBuilder {
+  export function from(input: Omit<ArrayPatternOptions, 'nodeKind'> | Builder<Pattern | AssignmentPattern> | Omit<AssignmentPatternOptions, 'nodeKind'> | (Builder<Pattern | AssignmentPattern> | Omit<AssignmentPatternOptions, 'nodeKind'>)[]): ArrayPatternBuilder {
+    const options: Omit<ArrayPatternOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ArrayPatternOptions, 'nodeKind'>
+      : { children: input } as Omit<ArrayPatternOptions, 'nodeKind'>;
     const b = new ArrayPatternBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : assignment_pattern.from(_x)));
     }
     return b;
   }

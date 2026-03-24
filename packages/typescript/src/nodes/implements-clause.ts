@@ -14,7 +14,7 @@ class ImplementsClauseBuilder extends Builder<ImplementsClause> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('implements');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -25,7 +25,7 @@ class ImplementsClauseBuilder extends Builder<ImplementsClause> {
     } as ImplementsClause;
   }
 
-  override get nodeKind(): string { return 'implements_clause'; }
+  override get nodeKind(): 'implements_clause' { return 'implements_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -45,11 +45,15 @@ export function implements_clause(...children: Builder<Type>[]): ImplementsClaus
 }
 
 export interface ImplementsClauseOptions {
+  nodeKind: 'implements_clause';
   children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace implements_clause {
-  export function from(options: ImplementsClauseOptions): ImplementsClauseBuilder {
+  export function from(input: Omit<ImplementsClauseOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): ImplementsClauseBuilder {
+    const options: Omit<ImplementsClauseOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ImplementsClauseOptions, 'nodeKind'>
+      : { children: input } as Omit<ImplementsClauseOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new ImplementsClauseBuilder(..._arr);

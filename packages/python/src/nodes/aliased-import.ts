@@ -1,11 +1,13 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AliasedImport, DottedName, Identifier } from '../types.js';
+import { dotted_name } from './dotted-name.js';
+import type { DottedNameOptions } from './dotted-name.js';
 
 
 class AliasedImportBuilder extends Builder<AliasedImport> {
-  private _alias!: Builder<Identifier>;
   private _name: Builder<DottedName>;
+  private _alias!: Builder<Identifier>;
 
   constructor(name: Builder<DottedName>) {
     super();
@@ -28,12 +30,12 @@ class AliasedImportBuilder extends Builder<AliasedImport> {
   build(ctx?: RenderContext): AliasedImport {
     return {
       kind: 'aliased_import',
-      alias: this._alias?.build(ctx),
       name: this._name.build(ctx),
+      alias: this._alias ? this._alias.build(ctx) : undefined,
     } as AliasedImport;
   }
 
-  override get nodeKind(): string { return 'aliased_import'; }
+  override get nodeKind(): 'aliased_import' { return 'aliased_import'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,13 +53,15 @@ export function aliased_import(name: Builder<DottedName>): AliasedImportBuilder 
 }
 
 export interface AliasedImportOptions {
+  nodeKind: 'aliased_import';
+  name: Builder<DottedName> | Omit<DottedNameOptions, 'nodeKind'>;
   alias: Builder<Identifier> | string;
-  name: Builder<DottedName>;
 }
 
 export namespace aliased_import {
-  export function from(options: AliasedImportOptions): AliasedImportBuilder {
-    const b = new AliasedImportBuilder(options.name);
+  export function from(options: Omit<AliasedImportOptions, 'nodeKind'>): AliasedImportBuilder {
+    const _ctor = options.name;
+    const b = new AliasedImportBuilder(_ctor instanceof Builder ? _ctor : dotted_name.from(_ctor));
     if (options.alias !== undefined) {
       const _v = options.alias;
       b.alias(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);

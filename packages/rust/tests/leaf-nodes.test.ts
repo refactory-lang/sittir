@@ -27,7 +27,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.crate() should build a { kind } object', () => {
-    const builder = ir.crate('test');
+    const builder = ir.crate();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'crate');
@@ -41,7 +41,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.emptyStatement() should build a { kind } object', () => {
-    const builder = ir.emptyStatement('test');
+    const builder = ir.emptyStatement();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'empty_statement');
@@ -104,14 +104,14 @@ describe('leaf nodes', () => {
   });
 
   it('ir.mutableSpecifier() should build a { kind } object', () => {
-    const builder = ir.mutableSpecifier('test');
+    const builder = ir.mutableSpecifier();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'mutable_specifier');
   });
 
   it('ir.neverType() should build a { kind } object', () => {
-    const builder = ir.neverType('test');
+    const builder = ir.neverType();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'never_type');
@@ -132,14 +132,14 @@ describe('leaf nodes', () => {
   });
 
   it('ir.remainingFieldPattern() should build a { kind } object', () => {
-    const builder = ir.remainingFieldPattern('test');
+    const builder = ir.remainingFieldPattern();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'remaining_field_pattern');
   });
 
   it('ir.self() should build a { kind } object', () => {
-    const builder = ir.self('test');
+    const builder = ir.self();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'self');
@@ -167,7 +167,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.super() should build a { kind } object', () => {
-    const builder = ir.super('test');
+    const builder = ir.super();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'super');
@@ -181,14 +181,14 @@ describe('leaf nodes', () => {
   });
 
   it('ir.unitExpression() should build a { kind } object', () => {
-    const builder = ir.unitExpression('test');
+    const builder = ir.unitExpression();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'unit_expression');
   });
 
   it('ir.unitType() should build a { kind } object', () => {
-    const builder = ir.unitType('test');
+    const builder = ir.unitType();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'unit_type');

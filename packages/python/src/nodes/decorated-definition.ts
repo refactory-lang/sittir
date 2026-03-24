@@ -1,6 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ClassDefinition, DecoratedDefinition, Decorator, FunctionDefinition } from '../types.js';
+import { class_definition } from './class-definition.js';
+import type { ClassDefinitionOptions } from './class-definition.js';
+import { function_definition } from './function-definition.js';
+import type { FunctionDefinitionOptions } from './function-definition.js';
+import { decorator } from './decorator.js';
+import type { DecoratorOptions } from './decorator.js';
 
 
 class DecoratedDefinitionBuilder extends Builder<DecoratedDefinition> {
@@ -32,7 +38,7 @@ class DecoratedDefinitionBuilder extends Builder<DecoratedDefinition> {
     } as DecoratedDefinition;
   }
 
-  override get nodeKind(): string { return 'decorated_definition'; }
+  override get nodeKind(): 'decorated_definition' { return 'decorated_definition'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,17 +57,29 @@ export function decorated_definition(definition: Builder<ClassDefinition | Funct
 }
 
 export interface DecoratedDefinitionOptions {
-  definition: Builder<ClassDefinition | FunctionDefinition>;
-  children?: Builder<Decorator> | (Builder<Decorator>)[];
+  nodeKind: 'decorated_definition';
+  definition: Builder<ClassDefinition | FunctionDefinition> | ClassDefinitionOptions | FunctionDefinitionOptions;
+  children?: Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'> | (Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'>)[];
 }
 
 export namespace decorated_definition {
-  export function from(options: DecoratedDefinitionOptions): DecoratedDefinitionBuilder {
-    const b = new DecoratedDefinitionBuilder(options.definition);
+  export function from(options: Omit<DecoratedDefinitionOptions, 'nodeKind'>): DecoratedDefinitionBuilder {
+    const _raw = options.definition;
+    let _ctor: Builder<ClassDefinition | FunctionDefinition>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'class_definition': _ctor = class_definition.from(_raw); break;
+        case 'function_definition': _ctor = function_definition.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new DecoratedDefinitionBuilder(_ctor);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : decorator.from(_x)));
     }
     return b;
   }

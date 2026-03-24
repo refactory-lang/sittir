@@ -11,7 +11,7 @@
 import type { SupertypeInfo } from '../grammar-reader.ts';
 import { toTypeName, toGrammarTypeName } from '../naming.ts';
 import { ir } from '@sittir/typescript';
-import { LeafBuilder } from '@sittir/types';
+import { LeafBuilder, Builder } from '@sittir/types';
 
 // ---------------------------------------------------------------------------
 // Leaf helpers
@@ -25,7 +25,7 @@ const str = (text: string) => leaf('string', `'${text}'`);
 // ---------------------------------------------------------------------------
 
 /** `export type NAME = VALUE;` */
-function exportTypeAlias(name: string, value: any) {
+function exportTypeAlias(name: string, value: Builder) {
   return ir.exportStatement.from({
     declaration: ir.typeAliasDeclaration.from({
       name,
@@ -35,13 +35,13 @@ function exportTypeAlias(name: string, value: any) {
 }
 
 /** `export type NAME = TYPE<ARG1, ARG2>;` */
-function exportGenericTypeAlias(name: string, baseName: string, ...args: any[]) {
+function exportGenericTypeAlias(name: string, baseName: string, ...args: Builder[]) {
   return ir.exportStatement.from({
     declaration: ir.typeAliasDeclaration.from({
       name,
       value: ir.genericType.from({
         name: baseName,
-        typeArguments: { children: args as any },
+        typeArguments: { children: args },
       }),
     }),
   });
@@ -57,7 +57,7 @@ function exportObjectType(name: string, kindValue: string) {
           name: ir.propertyIdentifier('kind'),
           type: { children: ir.literalType.from({ children: str(kindValue) }) },
         }),
-      }) as any,
+      }),
     }),
   });
 }
@@ -68,7 +68,7 @@ function exportUnionType(name: string, members: string[]) {
     declaration: ir.typeAliasDeclaration.from({
       name,
       value: ir.unionType.from({
-        children: members.map(m => ir.typeIdentifier(m)) as any,
+        children: members.map(m => ir.typeIdentifier(m)),
       }),
     }),
   });

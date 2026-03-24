@@ -1,21 +1,29 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, ElseClause, Expression, ExpressionList, ForStatement, Pattern, PatternList } from '../types.js';
+import { pattern_list } from './pattern-list.js';
+import type { PatternListOptions } from './pattern-list.js';
+import { expression_list } from './expression-list.js';
+import type { ExpressionListOptions } from './expression-list.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
+import { else_clause } from './else-clause.js';
+import type { ElseClauseOptions } from './else-clause.js';
 
 
 class ForStatementBuilder extends Builder<ForStatement> {
-  private _alternative?: Builder<ElseClause>;
-  private _body!: Builder<Block>;
   private _left: Builder<Pattern | PatternList>;
   private _right!: Builder<Expression | ExpressionList>;
+  private _body!: Builder<Block>;
+  private _alternative?: Builder<ElseClause>;
 
   constructor(left: Builder<Pattern | PatternList>) {
     super();
     this._left = left;
   }
 
-  alternative(value: Builder<ElseClause>): this {
-    this._alternative = value;
+  right(value: Builder<Expression | ExpressionList>): this {
+    this._right = value;
     return this;
   }
 
@@ -24,8 +32,8 @@ class ForStatementBuilder extends Builder<ForStatement> {
     return this;
   }
 
-  right(value: Builder<Expression | ExpressionList>): this {
-    this._right = value;
+  alternative(value: Builder<ElseClause>): this {
+    this._alternative = value;
     return this;
   }
 
@@ -44,14 +52,14 @@ class ForStatementBuilder extends Builder<ForStatement> {
   build(ctx?: RenderContext): ForStatement {
     return {
       kind: 'for_statement',
-      alternative: this._alternative?.build(ctx),
-      body: this._body?.build(ctx),
       left: this._left.build(ctx),
-      right: this._right?.build(ctx),
+      right: this._right ? this._right.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
+      alternative: this._alternative ? this._alternative.build(ctx) : undefined,
     } as ForStatement;
   }
 
-  override get nodeKind(): string { return 'for_statement'; }
+  override get nodeKind(): 'for_statement' { return 'for_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -73,18 +81,29 @@ export function for_statement(left: Builder<Pattern | PatternList>): ForStatemen
 }
 
 export interface ForStatementOptions {
-  alternative?: Builder<ElseClause>;
-  body: Builder<Block>;
-  left: Builder<Pattern | PatternList>;
-  right: Builder<Expression | ExpressionList>;
+  nodeKind: 'for_statement';
+  left: Builder<Pattern | PatternList> | Omit<PatternListOptions, 'nodeKind'>;
+  right: Builder<Expression | ExpressionList> | Omit<ExpressionListOptions, 'nodeKind'>;
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
+  alternative?: Builder<ElseClause> | Omit<ElseClauseOptions, 'nodeKind'>;
 }
 
 export namespace for_statement {
-  export function from(options: ForStatementOptions): ForStatementBuilder {
-    const b = new ForStatementBuilder(options.left);
-    if (options.alternative !== undefined) b.alternative(options.alternative);
-    if (options.body !== undefined) b.body(options.body);
-    if (options.right !== undefined) b.right(options.right);
+  export function from(options: Omit<ForStatementOptions, 'nodeKind'>): ForStatementBuilder {
+    const _ctor = options.left;
+    const b = new ForStatementBuilder(_ctor instanceof Builder ? _ctor : pattern_list.from(_ctor));
+    if (options.right !== undefined) {
+      const _v = options.right;
+      b.right(_v instanceof Builder ? _v : expression_list.from(_v));
+    }
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : block.from(_v));
+    }
+    if (options.alternative !== undefined) {
+      const _v = options.alternative;
+      b.alternative(_v instanceof Builder ? _v : else_clause.from(_v));
+    }
     return b;
   }
 }

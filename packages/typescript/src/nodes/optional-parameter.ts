@@ -1,6 +1,6 @@
 import { Builder, LeafBuilder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AccessibilityModifier, Decorator, Expression, OptionalParameter, OverrideModifier, Pattern, This, TypeAnnotation } from '../types.js';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
+import type { AccessibilityModifier, Decorator, Expression, Identifier, OptionalParameter, OverrideModifier, Pattern, This, TypeAnnotation } from '../types.js';
 import { decorator } from './decorator.js';
 import type { DecoratorOptions } from './decorator.js';
 import { type_annotation } from './type-annotation.js';
@@ -9,18 +9,21 @@ import type { TypeAnnotationOptions } from './type-annotation.js';
 
 class OptionalParameterBuilder extends Builder<OptionalParameter> {
   private _decorator: Builder<Decorator>[] = [];
-  private _pattern: Builder<Pattern | This>;
+  private _pattern?: Builder<Pattern | This>;
   private _type?: Builder<TypeAnnotation>;
   private _value?: Builder<Expression>;
+  private _name?: Builder<Identifier>;
   private _children: Builder<AccessibilityModifier | OverrideModifier>[] = [];
 
-  constructor(pattern: Builder<Pattern | This>) {
-    super();
-    this._pattern = pattern;
-  }
+  constructor() { super(); }
 
   decorator(...value: Builder<Decorator>[]): this {
     this._decorator = value;
+    return this;
+  }
+
+  pattern(value: Builder<Pattern | This>): this {
+    this._pattern = value;
     return this;
   }
 
@@ -31,6 +34,11 @@ class OptionalParameterBuilder extends Builder<OptionalParameter> {
 
   value(value: Builder<Expression>): this {
     this._value = value;
+    return this;
+  }
+
+  name(value: Builder<Identifier>): this {
+    this._name = value;
     return this;
   }
 
@@ -51,6 +59,7 @@ class OptionalParameterBuilder extends Builder<OptionalParameter> {
       parts.push('=');
       if (this._value) parts.push(this.renderChild(this._value, ctx));
     }
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
     return parts.join(' ');
   }
 
@@ -58,14 +67,15 @@ class OptionalParameterBuilder extends Builder<OptionalParameter> {
     return {
       kind: 'optional_parameter',
       decorator: this._decorator.map(c => c.build(ctx)),
-      pattern: this._pattern.build(ctx),
-      type: this._type?.build(ctx),
-      value: this._value?.build(ctx),
+      pattern: this._pattern ? this._pattern.build(ctx) : undefined,
+      type: this._type ? this._type.build(ctx) : undefined,
+      value: this._value ? this._value.build(ctx) : undefined,
+      name: this._name ? this._name.build(ctx) : undefined,
       children: this._children.map(c => c.build(ctx)),
     } as OptionalParameter;
   }
 
-  override get nodeKind(): string { return 'optional_parameter'; }
+  override get nodeKind(): 'optional_parameter' { return 'optional_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -81,42 +91,52 @@ class OptionalParameterBuilder extends Builder<OptionalParameter> {
       parts.push({ kind: 'token', text: '=', type: '=' });
       if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
     }
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     return parts;
   }
 }
 
 export type { OptionalParameterBuilder };
 
-export function optional_parameter(pattern: Builder<Pattern | This>): OptionalParameterBuilder {
-  return new OptionalParameterBuilder(pattern);
+export function optional_parameter(): OptionalParameterBuilder {
+  return new OptionalParameterBuilder();
 }
 
 export interface OptionalParameterOptions {
-  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
-  pattern: Builder<Pattern | This> | string;
-  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
+  nodeKind: 'optional_parameter';
+  decorator?: Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'> | (Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'>)[];
+  pattern?: Builder<Pattern | This> | string;
+  type?: Builder<TypeAnnotation> | Omit<TypeAnnotationOptions, 'nodeKind'>;
   value?: Builder<Expression>;
-  children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
+  name?: Builder<Identifier> | string;
+  children?: Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'> | (Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'>)[];
 }
 
 export namespace optional_parameter {
-  export function from(options: OptionalParameterOptions): OptionalParameterBuilder {
-    const _ctor = options.pattern;
-    const b = new OptionalParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('this', _ctor) : _ctor);
+  export function from(options: Omit<OptionalParameterOptions, 'nodeKind'>): OptionalParameterBuilder {
+    const b = new OptionalParameterBuilder();
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v)));
+    }
+    if (options.pattern !== undefined) {
+      const _v = options.pattern;
+      b.pattern(typeof _v === 'string' ? new LeafBuilder('this', _v) : _v);
     }
     if (options.type !== undefined) {
       const _v = options.type;
-      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v));
     }
     if (options.value !== undefined) b.value(options.value);
+    if (options.name !== undefined) {
+      const _v = options.name;
+      b.name(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'accessibility_modifier': return new LeafBuilder('accessibility_modifier', (_v as LeafOptions).text!);   case 'override_modifier': return new LeafBuilder('override_modifier', (_v as LeafOptions).text ?? 'override'); } throw new Error('unreachable'); }));
     }
     return b;
   }

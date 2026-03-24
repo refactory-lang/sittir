@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('negative_literal', () => {
   it('should build with correct kind', () => {
-    const builder = ir.negativeLiteral(ir.floatLiteral('test'));
+    const builder = ir.negativeLiteral(ir.integerLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('negative_literal');
     expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.negativeLiteral(ir.floatLiteral('test'));
+    const builder = ir.negativeLiteral(ir.integerLiteral('test'));
     const source = builder.renderImpl();
     expect(source).toContain('-');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.negativeLiteral(ir.floatLiteral('test'));
+    const builder = ir.negativeLiteral(ir.integerLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('negative_literal');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('negative_literal', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.negativeLiteral(ir.floatLiteral('test'));
+    const builder = ir.negativeLiteral(ir.integerLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

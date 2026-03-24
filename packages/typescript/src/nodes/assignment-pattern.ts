@@ -29,11 +29,11 @@ class AssignmentPatternBuilder extends Builder<AssignmentPattern> {
     return {
       kind: 'assignment_pattern',
       left: this._left.build(ctx),
-      right: this._right?.build(ctx),
+      right: this._right ? this._right.build(ctx) : undefined,
     } as AssignmentPattern;
   }
 
-  override get nodeKind(): string { return 'assignment_pattern'; }
+  override get nodeKind(): 'assignment_pattern' { return 'assignment_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,12 +51,13 @@ export function assignment_pattern(left: Builder<Pattern>): AssignmentPatternBui
 }
 
 export interface AssignmentPatternOptions {
+  nodeKind: 'assignment_pattern';
   left: Builder<Pattern>;
   right: Builder<Expression>;
 }
 
 export namespace assignment_pattern {
-  export function from(options: AssignmentPatternOptions): AssignmentPatternBuilder {
+  export function from(options: Omit<AssignmentPatternOptions, 'nodeKind'>): AssignmentPatternBuilder {
     const b = new AssignmentPatternBuilder(options.left);
     if (options.right !== undefined) b.right(options.right);
     return b;

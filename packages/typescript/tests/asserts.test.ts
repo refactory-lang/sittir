@@ -3,22 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('asserts', () => {
   it('should build with correct kind', () => {
-    const builder = ir.asserts(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.asserts(ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('asserts');
-    expect(Array.isArray((node as any).children)).toBe(true);
-    expect((node as any).children.length).toBeGreaterThan(0);
-    expect((node as any).children[0]).toHaveProperty('kind');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.asserts(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.asserts(ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('asserts');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.asserts(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.asserts(ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('asserts');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +25,7 @@ describe('asserts', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.asserts(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.asserts(ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

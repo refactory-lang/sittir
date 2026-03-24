@@ -1,22 +1,30 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Block, FunctionDefinition, Identifier, Parameters, TypeParameter } from '../types.js';
+import type { Block, FunctionDefinition, Identifier, Parameters, Type, TypeParameter } from '../types.js';
+import { type_parameter } from './type-parameter.js';
+import type { TypeParameterOptions } from './type-parameter.js';
+import { parameters } from './parameters.js';
+import type { ParametersOptions } from './parameters.js';
+import { type_ } from './type.js';
+import type { TypeOptions } from './type.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class FunctionDefinitionBuilder extends Builder<FunctionDefinition> {
-  private _body!: Builder<Block>;
   private _name: Builder<Identifier>;
-  private _parameters!: Builder<Parameters>;
-  private _returnType?: Builder;
   private _typeParameters?: Builder<TypeParameter>;
+  private _parameters!: Builder<Parameters>;
+  private _returnType?: Builder<Type>;
+  private _body!: Builder<Block>;
 
   constructor(name: Builder<Identifier>) {
     super();
     this._name = name;
   }
 
-  body(value: Builder<Block>): this {
-    this._body = value;
+  typeParameters(value: Builder<TypeParameter>): this {
+    this._typeParameters = value;
     return this;
   }
 
@@ -25,13 +33,13 @@ class FunctionDefinitionBuilder extends Builder<FunctionDefinition> {
     return this;
   }
 
-  returnType(value: Builder): this {
+  returnType(value: Builder<Type>): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameter>): this {
-    this._typeParameters = value;
+  body(value: Builder<Block>): this {
+    this._body = value;
     return this;
   }
 
@@ -53,15 +61,15 @@ class FunctionDefinitionBuilder extends Builder<FunctionDefinition> {
   build(ctx?: RenderContext): FunctionDefinition {
     return {
       kind: 'function_definition',
-      body: this._body?.build(ctx),
       name: this._name.build(ctx),
-      parameters: this._parameters?.build(ctx),
-      returnType: this._returnType?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      parameters: this._parameters ? this._parameters.build(ctx) : undefined,
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
     } as FunctionDefinition;
   }
 
-  override get nodeKind(): string { return 'function_definition'; }
+  override get nodeKind(): 'function_definition' { return 'function_definition'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -86,21 +94,34 @@ export function function_definition(name: Builder<Identifier>): FunctionDefiniti
 }
 
 export interface FunctionDefinitionOptions {
-  body: Builder<Block>;
+  nodeKind: 'function_definition';
   name: Builder<Identifier> | string;
-  parameters: Builder<Parameters>;
-  returnType?: Builder;
-  typeParameters?: Builder<TypeParameter>;
+  typeParameters?: Builder<TypeParameter> | Omit<TypeParameterOptions, 'nodeKind'>;
+  parameters: Builder<Parameters> | Omit<ParametersOptions, 'nodeKind'>;
+  returnType?: Builder<Type> | Omit<TypeOptions, 'nodeKind'>;
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
 }
 
 export namespace function_definition {
-  export function from(options: FunctionDefinitionOptions): FunctionDefinitionBuilder {
+  export function from(options: Omit<FunctionDefinitionOptions, 'nodeKind'>): FunctionDefinitionBuilder {
     const _ctor = options.name;
     const b = new FunctionDefinitionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
-    if (options.body !== undefined) b.body(options.body);
-    if (options.parameters !== undefined) b.parameters(options.parameters);
-    if (options.returnType !== undefined) b.returnType(options.returnType);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameter.from(_v));
+    }
+    if (options.parameters !== undefined) {
+      const _v = options.parameters;
+      b.parameters(_v instanceof Builder ? _v : parameters.from(_v));
+    }
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      b.returnType(_v instanceof Builder ? _v : type_.from(_v));
+    }
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : block.from(_v));
+    }
     return b;
   }
 }

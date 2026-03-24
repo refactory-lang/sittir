@@ -20,11 +20,11 @@ class RawStringLiteralBuilder extends Builder<RawStringLiteral> {
   build(ctx?: RenderContext): RawStringLiteral {
     return {
       kind: 'raw_string_literal',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as RawStringLiteral;
   }
 
-  override get nodeKind(): string { return 'raw_string_literal'; }
+  override get nodeKind(): 'raw_string_literal' { return 'raw_string_literal'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,11 +42,15 @@ export function raw_string_literal(children: Builder<StringContent>): RawStringL
 }
 
 export interface RawStringLiteralOptions {
+  nodeKind: 'raw_string_literal';
   children: Builder<StringContent> | string | (Builder<StringContent> | string)[];
 }
 
 export namespace raw_string_literal {
-  export function from(options: RawStringLiteralOptions): RawStringLiteralBuilder {
+  export function from(input: Omit<RawStringLiteralOptions, 'nodeKind'> | Builder<StringContent> | string | (Builder<StringContent> | string)[]): RawStringLiteralBuilder {
+    const options: Omit<RawStringLiteralOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<RawStringLiteralOptions, 'nodeKind'>
+      : { children: input } as Omit<RawStringLiteralOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new RawStringLiteralBuilder(typeof _ctor === 'string' ? new LeafBuilder('string_content', _ctor) : _ctor);
     return b;

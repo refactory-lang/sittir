@@ -1,25 +1,29 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, ElseClause, Expression, WhileStatement } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
+import { else_clause } from './else-clause.js';
+import type { ElseClauseOptions } from './else-clause.js';
 
 
 class WhileStatementBuilder extends Builder<WhileStatement> {
-  private _alternative?: Builder<ElseClause>;
-  private _body!: Builder<Block>;
   private _condition: Builder<Expression>;
+  private _body!: Builder<Block>;
+  private _alternative?: Builder<ElseClause>;
 
   constructor(condition: Builder<Expression>) {
     super();
     this._condition = condition;
   }
 
-  alternative(value: Builder<ElseClause>): this {
-    this._alternative = value;
+  body(value: Builder<Block>): this {
+    this._body = value;
     return this;
   }
 
-  body(value: Builder<Block>): this {
-    this._body = value;
+  alternative(value: Builder<ElseClause>): this {
+    this._alternative = value;
     return this;
   }
 
@@ -36,13 +40,13 @@ class WhileStatementBuilder extends Builder<WhileStatement> {
   build(ctx?: RenderContext): WhileStatement {
     return {
       kind: 'while_statement',
-      alternative: this._alternative?.build(ctx),
-      body: this._body?.build(ctx),
       condition: this._condition.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
+      alternative: this._alternative ? this._alternative.build(ctx) : undefined,
     } as WhileStatement;
   }
 
-  override get nodeKind(): string { return 'while_statement'; }
+  override get nodeKind(): 'while_statement' { return 'while_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -62,16 +66,23 @@ export function while_statement(condition: Builder<Expression>): WhileStatementB
 }
 
 export interface WhileStatementOptions {
-  alternative?: Builder<ElseClause>;
-  body: Builder<Block>;
+  nodeKind: 'while_statement';
   condition: Builder<Expression>;
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
+  alternative?: Builder<ElseClause> | Omit<ElseClauseOptions, 'nodeKind'>;
 }
 
 export namespace while_statement {
-  export function from(options: WhileStatementOptions): WhileStatementBuilder {
+  export function from(options: Omit<WhileStatementOptions, 'nodeKind'>): WhileStatementBuilder {
     const b = new WhileStatementBuilder(options.condition);
-    if (options.alternative !== undefined) b.alternative(options.alternative);
-    if (options.body !== undefined) b.body(options.body);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : block.from(_v));
+    }
+    if (options.alternative !== undefined) {
+      const _v = options.alternative;
+      b.alternative(_v instanceof Builder ? _v : else_clause.from(_v));
+    }
     return b;
   }
 }

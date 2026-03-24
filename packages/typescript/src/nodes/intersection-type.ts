@@ -29,7 +29,7 @@ class IntersectionTypeBuilder extends Builder<IntersectionType> {
     } as IntersectionType;
   }
 
-  override get nodeKind(): string { return 'intersection_type'; }
+  override get nodeKind(): 'intersection_type' { return 'intersection_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,11 +48,15 @@ export function intersection_type(...children: Builder<Type>[]): IntersectionTyp
 }
 
 export interface IntersectionTypeOptions {
+  nodeKind: 'intersection_type';
   children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace intersection_type {
-  export function from(options: IntersectionTypeOptions): IntersectionTypeBuilder {
+  export function from(input: Omit<IntersectionTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): IntersectionTypeBuilder {
+    const options: Omit<IntersectionTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<IntersectionTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<IntersectionTypeOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new IntersectionTypeBuilder(..._arr);

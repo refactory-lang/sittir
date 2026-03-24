@@ -26,7 +26,7 @@ class AsExpressionBuilder extends Builder<AsExpression> {
     } as AsExpression;
   }
 
-  override get nodeKind(): string { return 'as_expression'; }
+  override get nodeKind(): 'as_expression' { return 'as_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function as_expression(...children: Builder<Expression | Type>[]): AsExpr
 }
 
 export interface AsExpressionOptions {
+  nodeKind: 'as_expression';
   children?: Builder<Expression | Type> | (Builder<Expression | Type>)[];
 }
 
 export namespace as_expression {
-  export function from(options: AsExpressionOptions): AsExpressionBuilder {
+  export function from(input: Omit<AsExpressionOptions, 'nodeKind'> | Builder<Expression | Type> | (Builder<Expression | Type>)[]): AsExpressionBuilder {
+    const options: Omit<AsExpressionOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<AsExpressionOptions, 'nodeKind'>
+      : { children: input } as Omit<AsExpressionOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new AsExpressionBuilder(..._arr);

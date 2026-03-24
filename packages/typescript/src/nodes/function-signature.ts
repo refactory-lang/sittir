@@ -5,6 +5,12 @@ import { type_parameters } from './type-parameters.js';
 import type { TypeParametersOptions } from './type-parameters.js';
 import { formal_parameters } from './formal-parameters.js';
 import type { FormalParametersOptions } from './formal-parameters.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
+import { asserts_annotation } from './asserts-annotation.js';
+import type { AssertsAnnotationOptions } from './asserts-annotation.js';
+import { type_predicate_annotation } from './type-predicate-annotation.js';
+import type { TypePredicateAnnotationOptions } from './type-predicate-annotation.js';
 
 
 class FunctionSignatureBuilder extends Builder<FunctionSignature> {
@@ -47,13 +53,13 @@ class FunctionSignatureBuilder extends Builder<FunctionSignature> {
     return {
       kind: 'function_signature',
       name: this._name.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
-      parameters: this._parameters?.build(ctx),
-      returnType: this._returnType?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      parameters: this._parameters ? this._parameters.build(ctx) : undefined,
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
     } as FunctionSignature;
   }
 
-  override get nodeKind(): string { return 'function_signature'; }
+  override get nodeKind(): 'function_signature' { return 'function_signature'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -73,25 +79,37 @@ export function function_signature(name: Builder<Identifier>): FunctionSignature
 }
 
 export interface FunctionSignatureOptions {
+  nodeKind: 'function_signature';
   name: Builder<Identifier> | string;
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  parameters: Builder<FormalParameters> | FormalParametersOptions;
-  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation> | TypeAnnotationOptions | AssertsAnnotationOptions | TypePredicateAnnotationOptions;
 }
 
 export namespace function_signature {
-  export function from(options: FunctionSignatureOptions): FunctionSignatureBuilder {
+  export function from(options: Omit<FunctionSignatureOptions, 'nodeKind'>): FunctionSignatureBuilder {
     const _ctor = options.name;
     const b = new FunctionSignatureBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
     if (options.parameters !== undefined) {
       const _v = options.parameters;
-      b.parameters(_v instanceof Builder ? _v : formal_parameters.from(_v as FormalParametersOptions));
+      b.parameters(_v instanceof Builder ? _v : formal_parameters.from(_v));
     }
-    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      if (_v instanceof Builder) {
+        b.returnType(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'type_annotation': b.returnType(type_annotation.from(_v)); break;
+          case 'asserts_annotation': b.returnType(asserts_annotation.from(_v)); break;
+          case 'type_predicate_annotation': b.returnType(type_predicate_annotation.from(_v)); break;
+        }
+      }
+    }
     return b;
   }
 }

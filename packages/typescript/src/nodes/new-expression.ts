@@ -40,12 +40,12 @@ class NewExpressionBuilder extends Builder<NewExpression> {
     return {
       kind: 'new_expression',
       constructor: this._constructor.build(ctx),
-      typeArguments: this._typeArguments?.build(ctx),
-      arguments: this._arguments?.build(ctx),
+      typeArguments: this._typeArguments ? this._typeArguments.build(ctx) : undefined,
+      arguments: this._arguments ? this._arguments.build(ctx) : undefined,
     } as NewExpression;
   }
 
-  override get nodeKind(): string { return 'new_expression'; }
+  override get nodeKind(): 'new_expression' { return 'new_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -64,21 +64,22 @@ export function new_expression(constructor: Builder<PrimaryExpression>): NewExpr
 }
 
 export interface NewExpressionOptions {
+  nodeKind: 'new_expression';
   constructor: Builder<PrimaryExpression>;
-  typeArguments?: Builder<TypeArguments> | TypeArgumentsOptions;
-  arguments?: Builder<Arguments> | ArgumentsOptions;
+  typeArguments?: Builder<TypeArguments> | Omit<TypeArgumentsOptions, 'nodeKind'>;
+  arguments?: Builder<Arguments> | Omit<ArgumentsOptions, 'nodeKind'>;
 }
 
 export namespace new_expression {
-  export function from(options: NewExpressionOptions): NewExpressionBuilder {
+  export function from(options: Omit<NewExpressionOptions, 'nodeKind'>): NewExpressionBuilder {
     const b = new NewExpressionBuilder(options.constructor);
     if (options.typeArguments !== undefined) {
       const _v = options.typeArguments;
-      b.typeArguments(_v instanceof Builder ? _v : type_arguments.from(_v as TypeArgumentsOptions));
+      b.typeArguments(_v instanceof Builder ? _v : type_arguments.from(_v));
     }
     if (options.arguments !== undefined) {
       const _v = options.arguments;
-      b.arguments(_v instanceof Builder ? _v : arguments_.from(_v as ArgumentsOptions));
+      b.arguments(_v instanceof Builder ? _v : arguments_.from(_v));
     }
     return b;
   }

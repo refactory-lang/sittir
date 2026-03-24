@@ -1,6 +1,8 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, ImportAlias, NestedIdentifier } from '../types.js';
+import { nested_identifier } from './nested-identifier.js';
+import type { NestedIdentifierOptions } from './nested-identifier.js';
 
 
 class ImportAliasBuilder extends Builder<ImportAlias> {
@@ -27,7 +29,7 @@ class ImportAliasBuilder extends Builder<ImportAlias> {
     } as ImportAlias;
   }
 
-  override get nodeKind(): string { return 'import_alias'; }
+  override get nodeKind(): 'import_alias' { return 'import_alias'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,14 +48,18 @@ export function import_alias(...children: Builder<Identifier | NestedIdentifier>
 }
 
 export interface ImportAliasOptions {
-  children?: Builder<Identifier | NestedIdentifier> | string | (Builder<Identifier | NestedIdentifier> | string)[];
+  nodeKind: 'import_alias';
+  children?: Builder<Identifier | NestedIdentifier> | string | Omit<NestedIdentifierOptions, 'nodeKind'> | (Builder<Identifier | NestedIdentifier> | string | Omit<NestedIdentifierOptions, 'nodeKind'>)[];
 }
 
 export namespace import_alias {
-  export function from(options: ImportAliasOptions): ImportAliasBuilder {
+  export function from(input: Omit<ImportAliasOptions, 'nodeKind'> | Builder<Identifier | NestedIdentifier> | string | Omit<NestedIdentifierOptions, 'nodeKind'> | (Builder<Identifier | NestedIdentifier> | string | Omit<NestedIdentifierOptions, 'nodeKind'>)[]): ImportAliasBuilder {
+    const options: Omit<ImportAliasOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ImportAliasOptions, 'nodeKind'>
+      : { children: input } as Omit<ImportAliasOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new ImportAliasBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v));
+    const b = new ImportAliasBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v instanceof Builder ? _v : nested_identifier.from(_v)));
     return b;
   }
 }

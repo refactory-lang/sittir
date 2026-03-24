@@ -1,18 +1,26 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, ElseClause, ExceptClause, FinallyClause, TryStatement } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
+import { except_clause } from './except-clause.js';
+import type { ExceptClauseOptions } from './except-clause.js';
+import { else_clause } from './else-clause.js';
+import type { ElseClauseOptions } from './else-clause.js';
+import { finally_clause } from './finally-clause.js';
+import type { FinallyClauseOptions } from './finally-clause.js';
 
 
 class TryStatementBuilder extends Builder<TryStatement> {
   private _body: Builder<Block>;
-  private _children: Builder<ElseClause | ExceptClause | FinallyClause>[] = [];
+  private _children: Builder<ExceptClause | ElseClause | FinallyClause>[] = [];
 
   constructor(body: Builder<Block>) {
     super();
     this._body = body;
   }
 
-  children(...value: Builder<ElseClause | ExceptClause | FinallyClause>[]): this {
+  children(...value: Builder<ExceptClause | ElseClause | FinallyClause>[]): this {
     this._children = value;
     return this;
   }
@@ -36,7 +44,7 @@ class TryStatementBuilder extends Builder<TryStatement> {
     } as TryStatement;
   }
 
-  override get nodeKind(): string { return 'try_statement'; }
+  override get nodeKind(): 'try_statement' { return 'try_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -57,17 +65,19 @@ export function try_statement(body: Builder<Block>): TryStatementBuilder {
 }
 
 export interface TryStatementOptions {
-  body: Builder<Block>;
-  children?: Builder<ElseClause | ExceptClause | FinallyClause> | (Builder<ElseClause | ExceptClause | FinallyClause>)[];
+  nodeKind: 'try_statement';
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
+  children?: Builder<ExceptClause | ElseClause | FinallyClause> | ExceptClauseOptions | ElseClauseOptions | FinallyClauseOptions | (Builder<ExceptClause | ElseClause | FinallyClause> | ExceptClauseOptions | ElseClauseOptions | FinallyClauseOptions)[];
 }
 
 export namespace try_statement {
-  export function from(options: TryStatementOptions): TryStatementBuilder {
-    const b = new TryStatementBuilder(options.body);
+  export function from(options: Omit<TryStatementOptions, 'nodeKind'>): TryStatementBuilder {
+    const _ctor = options.body;
+    const b = new TryStatementBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'except_clause': return except_clause.from(_v);   case 'else_clause': return else_clause.from(_v);   case 'finally_clause': return finally_clause.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

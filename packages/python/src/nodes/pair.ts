@@ -29,11 +29,11 @@ class PairBuilder extends Builder<Pair> {
     return {
       kind: 'pair',
       key: this._key.build(ctx),
-      value: this._value?.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
     } as Pair;
   }
 
-  override get nodeKind(): string { return 'pair'; }
+  override get nodeKind(): 'pair' { return 'pair'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,12 +51,13 @@ export function pair(key: Builder<Expression>): PairBuilder {
 }
 
 export interface PairOptions {
+  nodeKind: 'pair';
   key: Builder<Expression>;
   value: Builder<Expression>;
 }
 
 export namespace pair {
-  export function from(options: PairOptions): PairBuilder {
+  export function from(options: Omit<PairOptions, 'nodeKind'>): PairBuilder {
     const b = new PairBuilder(options.key);
     if (options.value !== undefined) b.value(options.value);
     return b;

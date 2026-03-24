@@ -25,7 +25,7 @@ class PatternListBuilder extends Builder<PatternList> {
     } as PatternList;
   }
 
-  override get nodeKind(): string { return 'pattern_list'; }
+  override get nodeKind(): 'pattern_list' { return 'pattern_list'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,13 +44,17 @@ export function pattern_list(...children: Builder<Pattern>[]): PatternListBuilde
 }
 
 export interface PatternListOptions {
-  children: Builder<Pattern> | (Builder<Pattern>)[];
+  nodeKind: 'pattern_list';
+  children?: Builder<Pattern> | (Builder<Pattern>)[];
 }
 
 export namespace pattern_list {
-  export function from(options: PatternListOptions): PatternListBuilder {
+  export function from(input: Omit<PatternListOptions, 'nodeKind'> | Builder<Pattern> | (Builder<Pattern>)[]): PatternListBuilder {
+    const options: Omit<PatternListOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<PatternListOptions, 'nodeKind'>
+      : { children: input } as Omit<PatternListOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new PatternListBuilder(..._arr);
     return b;
   }

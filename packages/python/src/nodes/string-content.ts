@@ -1,5 +1,5 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { EscapeInterpolation, EscapeSequence, StringContent } from '../types.js';
 
 
@@ -26,7 +26,7 @@ class StringContentBuilder extends Builder<StringContent> {
     } as StringContent;
   }
 
-  override get nodeKind(): string { return 'string_content'; }
+  override get nodeKind(): 'string_content' { return 'string_content'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,16 +44,20 @@ export function string_content(): StringContentBuilder {
 }
 
 export interface StringContentOptions {
-  children?: Builder<EscapeInterpolation | EscapeSequence> | (Builder<EscapeInterpolation | EscapeSequence>)[];
+  nodeKind: 'string_content';
+  children?: Builder<EscapeInterpolation | EscapeSequence> | LeafOptions<'escape_interpolation'> | LeafOptions<'escape_sequence'> | (Builder<EscapeInterpolation | EscapeSequence> | LeafOptions<'escape_interpolation'> | LeafOptions<'escape_sequence'>)[];
 }
 
 export namespace string_content {
-  export function from(options: StringContentOptions): StringContentBuilder {
+  export function from(input: Omit<StringContentOptions, 'nodeKind'> | Builder<EscapeInterpolation | EscapeSequence> | LeafOptions<'escape_interpolation'> | LeafOptions<'escape_sequence'> | (Builder<EscapeInterpolation | EscapeSequence> | LeafOptions<'escape_interpolation'> | LeafOptions<'escape_sequence'>)[]): StringContentBuilder {
+    const options: Omit<StringContentOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<StringContentOptions, 'nodeKind'>
+      : { children: input } as Omit<StringContentOptions, 'nodeKind'>;
     const b = new StringContentBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'escape_interpolation': return new LeafBuilder('escape_interpolation', (_v as LeafOptions).text!);   case 'escape_sequence': return new LeafBuilder('escape_sequence', (_v as LeafOptions).text!); } throw new Error('unreachable'); }));
     }
     return b;
   }

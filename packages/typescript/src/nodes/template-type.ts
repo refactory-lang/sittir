@@ -1,14 +1,16 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { InferType, PrimaryType, TemplateType } from '../types.js';
+import { infer_type } from './infer-type.js';
+import type { InferTypeOptions } from './infer-type.js';
 
 
 class TemplateTypeBuilder extends Builder<TemplateType> {
   private _children: Builder<PrimaryType | InferType>[] = [];
 
-  constructor(...children: Builder<PrimaryType | InferType>[]) {
+  constructor(children: Builder<PrimaryType | InferType>) {
     super();
-    this._children = children;
+    this._children = [children];
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -22,11 +24,11 @@ class TemplateTypeBuilder extends Builder<TemplateType> {
   build(ctx?: RenderContext): TemplateType {
     return {
       kind: 'template_type',
-      children: this._children.map(c => c.build(ctx)),
+      children: this._children[0]!.build(ctx),
     } as TemplateType;
   }
 
-  override get nodeKind(): string { return 'template_type'; }
+  override get nodeKind(): 'template_type' { return 'template_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -41,19 +43,22 @@ class TemplateTypeBuilder extends Builder<TemplateType> {
 
 export type { TemplateTypeBuilder };
 
-export function template_type(...children: Builder<PrimaryType | InferType>[]): TemplateTypeBuilder {
-  return new TemplateTypeBuilder(...children);
+export function template_type(children: Builder<PrimaryType | InferType>): TemplateTypeBuilder {
+  return new TemplateTypeBuilder(children);
 }
 
 export interface TemplateTypeOptions {
-  children?: Builder<PrimaryType | InferType> | (Builder<PrimaryType | InferType>)[];
+  nodeKind: 'template_type';
+  children: Builder<PrimaryType | InferType> | Omit<InferTypeOptions, 'nodeKind'> | (Builder<PrimaryType | InferType> | Omit<InferTypeOptions, 'nodeKind'>)[];
 }
 
 export namespace template_type {
-  export function from(options: TemplateTypeOptions): TemplateTypeBuilder {
-    const _children = options.children;
-    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new TemplateTypeBuilder(..._arr);
+  export function from(input: Omit<TemplateTypeOptions, 'nodeKind'> | Builder<PrimaryType | InferType> | Omit<InferTypeOptions, 'nodeKind'> | (Builder<PrimaryType | InferType> | Omit<InferTypeOptions, 'nodeKind'>)[]): TemplateTypeBuilder {
+    const options: Omit<TemplateTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TemplateTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<TemplateTypeOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    const b = new TemplateTypeBuilder(_ctor instanceof Builder ? _ctor : infer_type.from(_ctor));
     return b;
   }
 }

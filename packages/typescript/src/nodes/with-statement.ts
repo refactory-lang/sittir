@@ -31,11 +31,11 @@ class WithStatementBuilder extends Builder<WithStatement> {
     return {
       kind: 'with_statement',
       object: this._object.build(ctx),
-      body: this._body?.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
     } as WithStatement;
   }
 
-  override get nodeKind(): string { return 'with_statement'; }
+  override get nodeKind(): 'with_statement' { return 'with_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,14 +53,15 @@ export function with_statement(object: Builder<ParenthesizedExpression>): WithSt
 }
 
 export interface WithStatementOptions {
-  object: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
+  nodeKind: 'with_statement';
+  object: Builder<ParenthesizedExpression> | Omit<ParenthesizedExpressionOptions, 'nodeKind'>;
   body: Builder<Statement>;
 }
 
 export namespace with_statement {
-  export function from(options: WithStatementOptions): WithStatementBuilder {
+  export function from(options: Omit<WithStatementOptions, 'nodeKind'>): WithStatementBuilder {
     const _ctor = options.object;
-    const b = new WithStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor as ParenthesizedExpressionOptions));
+    const b = new WithStatementBuilder(_ctor instanceof Builder ? _ctor : parenthesized_expression.from(_ctor));
     if (options.body !== undefined) b.body(options.body);
     return b;
   }

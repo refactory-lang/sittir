@@ -1,12 +1,34 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { TupleType, Type } from '../types.js';
+import type { AbstractType, ArrayType, BoundedType, DynamicType, FunctionType, GenericType, MacroInvocation, Metavariable, NeverType, PointerType, PrimitiveType, ReferenceType, RemovedTraitBound, ScopedTypeIdentifier, TupleType, TypeIdentifier, UnitType } from '../types.js';
+import { abstract_type } from './abstract-type.js';
+import type { AbstractTypeOptions } from './abstract-type.js';
+import { reference_type } from './reference-type.js';
+import type { ReferenceTypeOptions } from './reference-type.js';
+import { pointer_type } from './pointer-type.js';
+import type { PointerTypeOptions } from './pointer-type.js';
+import { generic_type } from './generic-type.js';
+import type { GenericTypeOptions } from './generic-type.js';
+import { scoped_type_identifier } from './scoped-type-identifier.js';
+import type { ScopedTypeIdentifierOptions } from './scoped-type-identifier.js';
+import { array_type } from './array-type.js';
+import type { ArrayTypeOptions } from './array-type.js';
+import { function_type } from './function-type.js';
+import type { FunctionTypeOptions } from './function-type.js';
+import { macro_invocation } from './macro-invocation.js';
+import type { MacroInvocationOptions } from './macro-invocation.js';
+import { dynamic_type } from './dynamic-type.js';
+import type { DynamicTypeOptions } from './dynamic-type.js';
+import { bounded_type } from './bounded-type.js';
+import type { BoundedTypeOptions } from './bounded-type.js';
+import { removed_trait_bound } from './removed-trait-bound.js';
+import type { RemovedTraitBoundOptions } from './removed-trait-bound.js';
 
 
 class TupleTypeBuilder extends Builder<TupleType> {
-  private _children: Builder<Type>[] = [];
+  private _children: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>[] = [];
 
-  constructor(...children: Builder<Type>[]) {
+  constructor(...children: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>[]) {
     super();
     this._children = children;
   }
@@ -14,7 +36,7 @@ class TupleTypeBuilder extends Builder<TupleType> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('(');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push(')');
     return parts.join(' ');
   }
@@ -26,7 +48,7 @@ class TupleTypeBuilder extends Builder<TupleType> {
     } as TupleType;
   }
 
-  override get nodeKind(): string { return 'tuple_type'; }
+  override get nodeKind(): 'tuple_type' { return 'tuple_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,19 +64,23 @@ class TupleTypeBuilder extends Builder<TupleType> {
 
 export type { TupleTypeBuilder };
 
-export function tuple_type(...children: Builder<Type>[]): TupleTypeBuilder {
+export function tuple_type(...children: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>[]): TupleTypeBuilder {
   return new TupleTypeBuilder(...children);
 }
 
 export interface TupleTypeOptions {
-  children: Builder<Type> | (Builder<Type>)[];
+  nodeKind: 'tuple_type';
+  children?: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType> | AbstractTypeOptions | ReferenceTypeOptions | PointerTypeOptions | GenericTypeOptions | ScopedTypeIdentifierOptions | ArrayTypeOptions | FunctionTypeOptions | MacroInvocationOptions | DynamicTypeOptions | BoundedTypeOptions | RemovedTraitBoundOptions | (Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType> | AbstractTypeOptions | ReferenceTypeOptions | PointerTypeOptions | GenericTypeOptions | ScopedTypeIdentifierOptions | ArrayTypeOptions | FunctionTypeOptions | MacroInvocationOptions | DynamicTypeOptions | BoundedTypeOptions | RemovedTraitBoundOptions)[];
 }
 
 export namespace tuple_type {
-  export function from(options: TupleTypeOptions): TupleTypeBuilder {
+  export function from(input: Omit<TupleTypeOptions, 'nodeKind'> | Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType> | AbstractTypeOptions | ReferenceTypeOptions | PointerTypeOptions | GenericTypeOptions | ScopedTypeIdentifierOptions | ArrayTypeOptions | FunctionTypeOptions | MacroInvocationOptions | DynamicTypeOptions | BoundedTypeOptions | RemovedTraitBoundOptions | (Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType> | AbstractTypeOptions | ReferenceTypeOptions | PointerTypeOptions | GenericTypeOptions | ScopedTypeIdentifierOptions | ArrayTypeOptions | FunctionTypeOptions | MacroInvocationOptions | DynamicTypeOptions | BoundedTypeOptions | RemovedTraitBoundOptions)[]): TupleTypeBuilder {
+    const options: Omit<TupleTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TupleTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<TupleTypeOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new TupleTypeBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new TupleTypeBuilder(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'abstract_type': return abstract_type.from(_v);   case 'reference_type': return reference_type.from(_v);   case 'pointer_type': return pointer_type.from(_v);   case 'generic_type': return generic_type.from(_v);   case 'scoped_type_identifier': return scoped_type_identifier.from(_v);   case 'array_type': return array_type.from(_v);   case 'function_type': return function_type.from(_v);   case 'macro_invocation': return macro_invocation.from(_v);   case 'dynamic_type': return dynamic_type.from(_v);   case 'bounded_type': return bounded_type.from(_v);   case 'removed_trait_bound': return removed_trait_bound.from(_v); } throw new Error('unreachable'); }));
     return b;
   }
 }

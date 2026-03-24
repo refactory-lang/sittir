@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('member_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.memberExpression(ir.false('test'));
+    const builder = ir.memberExpression(ir.false());
     const node = builder.build();
     expect(node.kind).toBe('member_expression');
     expect((node as any).object).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.memberExpression(ir.false('test'));
+    const builder = ir.memberExpression(ir.false());
     const cst = builder.toCST();
     expect(cst.type).toBe('member_expression');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('member_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.memberExpression(ir.false('test'));
+    const builder = ir.memberExpression(ir.false());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

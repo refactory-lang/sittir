@@ -28,12 +28,12 @@ class ComparisonOperatorBuilder extends Builder<ComparisonOperator> {
   build(ctx?: RenderContext): ComparisonOperator {
     return {
       kind: 'comparison_operator',
-      operators: this._operators.map(c => c.build(ctx)),
+      operators: this._operators.map(c => this.buildChild(c, ctx)),
       children: this._children.map(c => c.build(ctx)),
     } as ComparisonOperator;
   }
 
-  override get nodeKind(): string { return 'comparison_operator'; }
+  override get nodeKind(): 'comparison_operator' { return 'comparison_operator'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,12 +53,13 @@ export function comparison_operator(...operators: Builder[]): ComparisonOperator
 }
 
 export interface ComparisonOperatorOptions {
+  nodeKind: 'comparison_operator';
   operators: Builder | (Builder)[];
   children?: Builder<PrimaryExpression> | (Builder<PrimaryExpression>)[];
 }
 
 export namespace comparison_operator {
-  export function from(options: ComparisonOperatorOptions): ComparisonOperatorBuilder {
+  export function from(options: Omit<ComparisonOperatorOptions, 'nodeKind'>): ComparisonOperatorBuilder {
     const _ctor = options.operators;
     const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
     const b = new ComparisonOperatorBuilder(..._arr);

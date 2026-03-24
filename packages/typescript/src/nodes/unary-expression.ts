@@ -27,12 +27,12 @@ class UnaryExpressionBuilder extends Builder<UnaryExpression> {
   build(ctx?: RenderContext): UnaryExpression {
     return {
       kind: 'unary_expression',
-      operator: this._operator?.build(ctx),
+      operator: this._operator ? this.buildChild(this._operator, ctx) : undefined,
       argument: this._argument.build(ctx),
     } as UnaryExpression;
   }
 
-  override get nodeKind(): string { return 'unary_expression'; }
+  override get nodeKind(): 'unary_expression' { return 'unary_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -49,12 +49,13 @@ export function unary_expression(argument: Builder<Expression>): UnaryExpression
 }
 
 export interface UnaryExpressionOptions {
+  nodeKind: 'unary_expression';
   operator: Builder;
   argument: Builder<Expression>;
 }
 
 export namespace unary_expression {
-  export function from(options: UnaryExpressionOptions): UnaryExpressionBuilder {
+  export function from(options: Omit<UnaryExpressionOptions, 'nodeKind'>): UnaryExpressionBuilder {
     const b = new UnaryExpressionBuilder(options.argument);
     if (options.operator !== undefined) b.operator(options.operator);
     return b;

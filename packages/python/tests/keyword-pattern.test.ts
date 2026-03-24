@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('keyword_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.keywordPattern(ir.false('test'), ir.false('test'));
+    const builder = ir.keywordPattern(ir.identifier('test'), ir.identifier('test'));
     const node = builder.build();
     expect(node.kind).toBe('keyword_pattern');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,13 +12,13 @@ describe('keyword_pattern', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.keywordPattern(ir.false('test'), ir.false('test'));
+    const builder = ir.keywordPattern(ir.identifier('test'), ir.identifier('test'));
     const source = builder.renderImpl();
     expect(source).toContain('=');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.keywordPattern(ir.false('test'), ir.false('test'));
+    const builder = ir.keywordPattern(ir.identifier('test'), ir.identifier('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('keyword_pattern');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +27,7 @@ describe('keyword_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.keywordPattern(ir.false('test'), ir.false('test'));
+    const builder = ir.keywordPattern(ir.identifier('test'), ir.identifier('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -22,11 +22,11 @@ class NamespaceImportBuilder extends Builder<NamespaceImport> {
   build(ctx?: RenderContext): NamespaceImport {
     return {
       kind: 'namespace_import',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as NamespaceImport;
   }
 
-  override get nodeKind(): string { return 'namespace_import'; }
+  override get nodeKind(): 'namespace_import' { return 'namespace_import'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,11 +46,15 @@ export function namespace_import(children: Builder<Identifier>): NamespaceImport
 }
 
 export interface NamespaceImportOptions {
+  nodeKind: 'namespace_import';
   children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace namespace_import {
-  export function from(options: NamespaceImportOptions): NamespaceImportBuilder {
+  export function from(input: Omit<NamespaceImportOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): NamespaceImportBuilder {
+    const options: Omit<NamespaceImportOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<NamespaceImportOptions, 'nodeKind'>
+      : { children: input } as Omit<NamespaceImportOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new NamespaceImportBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     return b;

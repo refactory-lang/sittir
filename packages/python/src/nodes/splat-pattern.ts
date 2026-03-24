@@ -23,11 +23,11 @@ class SplatPatternBuilder extends Builder<SplatPattern> {
   build(ctx?: RenderContext): SplatPattern {
     return {
       kind: 'splat_pattern',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as SplatPattern;
   }
 
-  override get nodeKind(): string { return 'splat_pattern'; }
+  override get nodeKind(): 'splat_pattern' { return 'splat_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,11 +46,15 @@ export function splat_pattern(): SplatPatternBuilder {
 }
 
 export interface SplatPatternOptions {
+  nodeKind: 'splat_pattern';
   children?: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace splat_pattern {
-  export function from(options: SplatPatternOptions): SplatPatternBuilder {
+  export function from(input: Omit<SplatPatternOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): SplatPatternBuilder {
+    const options: Omit<SplatPatternOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<SplatPatternOptions, 'nodeKind'>
+      : { children: input } as Omit<SplatPatternOptions, 'nodeKind'>;
     const b = new SplatPatternBuilder();
     if (options.children !== undefined) {
       const _v = options.children;

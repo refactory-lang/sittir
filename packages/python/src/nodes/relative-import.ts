@@ -1,12 +1,14 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DottedName, ImportPrefix, RelativeImport } from '../types.js';
+import { dotted_name } from './dotted-name.js';
+import type { DottedNameOptions } from './dotted-name.js';
 
 
 class RelativeImportBuilder extends Builder<RelativeImport> {
-  private _children: Builder<DottedName | ImportPrefix>[] = [];
+  private _children: Builder<ImportPrefix | DottedName>[] = [];
 
-  constructor(...children: Builder<DottedName | ImportPrefix>[]) {
+  constructor(...children: Builder<ImportPrefix | DottedName>[]) {
     super();
     this._children = children;
   }
@@ -25,7 +27,7 @@ class RelativeImportBuilder extends Builder<RelativeImport> {
     } as RelativeImport;
   }
 
-  override get nodeKind(): string { return 'relative_import'; }
+  override get nodeKind(): 'relative_import' { return 'relative_import'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -37,19 +39,23 @@ class RelativeImportBuilder extends Builder<RelativeImport> {
 
 export type { RelativeImportBuilder };
 
-export function relative_import(...children: Builder<DottedName | ImportPrefix>[]): RelativeImportBuilder {
+export function relative_import(...children: Builder<ImportPrefix | DottedName>[]): RelativeImportBuilder {
   return new RelativeImportBuilder(...children);
 }
 
 export interface RelativeImportOptions {
-  children: Builder<DottedName | ImportPrefix> | (Builder<DottedName | ImportPrefix>)[];
+  nodeKind: 'relative_import';
+  children?: Builder<ImportPrefix | DottedName> | string | Omit<DottedNameOptions, 'nodeKind'> | (Builder<ImportPrefix | DottedName> | string | Omit<DottedNameOptions, 'nodeKind'>)[];
 }
 
 export namespace relative_import {
-  export function from(options: RelativeImportOptions): RelativeImportBuilder {
+  export function from(input: Omit<RelativeImportOptions, 'nodeKind'> | Builder<ImportPrefix | DottedName> | string | Omit<DottedNameOptions, 'nodeKind'> | (Builder<ImportPrefix | DottedName> | string | Omit<DottedNameOptions, 'nodeKind'>)[]): RelativeImportBuilder {
+    const options: Omit<RelativeImportOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<RelativeImportOptions, 'nodeKind'>
+      : { children: input } as Omit<RelativeImportOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new RelativeImportBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new RelativeImportBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('import_prefix', _v) : _v instanceof Builder ? _v : dotted_name.from(_v)));
     return b;
   }
 }

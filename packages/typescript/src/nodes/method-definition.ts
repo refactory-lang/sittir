@@ -1,10 +1,20 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { AccessibilityModifier, AssertsAnnotation, ComputedPropertyName, FormalParameters, MethodDefinition, Number, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, StatementBlock, String, TypeAnnotation, TypeParameters, TypePredicateAnnotation } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { computed_property_name } from './computed-property-name.js';
+import type { ComputedPropertyNameOptions } from './computed-property-name.js';
 import { type_parameters } from './type-parameters.js';
 import type { TypeParametersOptions } from './type-parameters.js';
 import { formal_parameters } from './formal-parameters.js';
 import type { FormalParametersOptions } from './formal-parameters.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
+import { asserts_annotation } from './asserts-annotation.js';
+import type { AssertsAnnotationOptions } from './asserts-annotation.js';
+import { type_predicate_annotation } from './type-predicate-annotation.js';
+import type { TypePredicateAnnotationOptions } from './type-predicate-annotation.js';
 import { statement_block } from './statement-block.js';
 import type { StatementBlockOptions } from './statement-block.js';
 
@@ -63,15 +73,15 @@ class MethodDefinitionBuilder extends Builder<MethodDefinition> {
     return {
       kind: 'method_definition',
       name: this._name.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
-      parameters: this._parameters?.build(ctx),
-      returnType: this._returnType?.build(ctx),
-      body: this._body?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      parameters: this._parameters ? this._parameters.build(ctx) : undefined,
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
       children: this._children.map(c => c.build(ctx)),
     } as MethodDefinition;
   }
 
-  override get nodeKind(): string { return 'method_definition'; }
+  override get nodeKind(): 'method_definition' { return 'method_definition'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -93,34 +103,57 @@ export function method_definition(name: Builder<PropertyIdentifier | PrivateProp
 }
 
 export interface MethodDefinitionOptions {
-  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  parameters: Builder<FormalParameters> | FormalParametersOptions;
-  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
-  body: Builder<StatementBlock> | StatementBlockOptions;
-  children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
+  nodeKind: 'method_definition';
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions;
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation> | TypeAnnotationOptions | AssertsAnnotationOptions | TypePredicateAnnotationOptions;
+  body: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
+  children?: Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'> | (Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'>)[];
 }
 
 export namespace method_definition {
-  export function from(options: MethodDefinitionOptions): MethodDefinitionBuilder {
-    const b = new MethodDefinitionBuilder(options.name);
+  export function from(options: Omit<MethodDefinitionOptions, 'nodeKind'>): MethodDefinitionBuilder {
+    const _raw = options.name;
+    let _ctor: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'string': _ctor = string.from(_raw); break;
+        case 'computed_property_name': _ctor = computed_property_name.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new MethodDefinitionBuilder(_ctor);
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
     if (options.parameters !== undefined) {
       const _v = options.parameters;
-      b.parameters(_v instanceof Builder ? _v : formal_parameters.from(_v as FormalParametersOptions));
+      b.parameters(_v instanceof Builder ? _v : formal_parameters.from(_v));
     }
-    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      if (_v instanceof Builder) {
+        b.returnType(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'type_annotation': b.returnType(type_annotation.from(_v)); break;
+          case 'asserts_annotation': b.returnType(asserts_annotation.from(_v)); break;
+          case 'type_predicate_annotation': b.returnType(type_predicate_annotation.from(_v)); break;
+        }
+      }
+    }
     if (options.body !== undefined) {
       const _v = options.body;
-      b.body(_v instanceof Builder ? _v : statement_block.from(_v as StatementBlockOptions));
+      b.body(_v instanceof Builder ? _v : statement_block.from(_v));
     }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'accessibility_modifier': return new LeafBuilder('accessibility_modifier', (_v as LeafOptions).text!);   case 'override_modifier': return new LeafBuilder('override_modifier', (_v as LeafOptions).text ?? 'override'); } throw new Error('unreachable'); }));
     }
     return b;
   }

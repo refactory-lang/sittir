@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('call', () => {
   it('should build with correct kind', () => {
-    const builder = ir.call(ir.ellipsis('test'));
+    const builder = ir.call(ir.ellipsis());
     const node = builder.build();
     expect(node.kind).toBe('call');
     expect((node as any).function).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.call(ir.ellipsis('test'));
+    const builder = ir.call(ir.ellipsis());
     const cst = builder.toCST();
     expect(cst.type).toBe('call');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('call', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.call(ir.ellipsis('test'));
+    const builder = ir.call(ir.ellipsis());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

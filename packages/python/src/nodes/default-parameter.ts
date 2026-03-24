@@ -1,6 +1,8 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DefaultParameter, Expression, Identifier, TuplePattern } from '../types.js';
+import { tuple_pattern } from './tuple-pattern.js';
+import type { TuplePatternOptions } from './tuple-pattern.js';
 
 
 class DefaultParameterBuilder extends Builder<DefaultParameter> {
@@ -29,11 +31,11 @@ class DefaultParameterBuilder extends Builder<DefaultParameter> {
     return {
       kind: 'default_parameter',
       name: this._name.build(ctx),
-      value: this._value?.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
     } as DefaultParameter;
   }
 
-  override get nodeKind(): string { return 'default_parameter'; }
+  override get nodeKind(): 'default_parameter' { return 'default_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,13 +53,15 @@ export function default_parameter(name: Builder<Identifier | TuplePattern>): Def
 }
 
 export interface DefaultParameterOptions {
-  name: Builder<Identifier | TuplePattern>;
+  nodeKind: 'default_parameter';
+  name: Builder<Identifier | TuplePattern> | string | Omit<TuplePatternOptions, 'nodeKind'>;
   value: Builder<Expression>;
 }
 
 export namespace default_parameter {
-  export function from(options: DefaultParameterOptions): DefaultParameterBuilder {
-    const b = new DefaultParameterBuilder(options.name);
+  export function from(options: Omit<DefaultParameterOptions, 'nodeKind'>): DefaultParameterBuilder {
+    const _ctor = options.name;
+    const b = new DefaultParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor instanceof Builder ? _ctor : tuple_pattern.from(_ctor));
     if (options.value !== undefined) b.value(options.value);
     return b;
   }

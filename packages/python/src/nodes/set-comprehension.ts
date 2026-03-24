@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, ForInClause, IfClause, SetComprehension } from '../types.js';
+import { for_in_clause } from './for-in-clause.js';
+import type { ForInClauseOptions } from './for-in-clause.js';
+import { if_clause } from './if-clause.js';
+import type { IfClauseOptions } from './if-clause.js';
 
 
 class SetComprehensionBuilder extends Builder<SetComprehension> {
@@ -34,7 +38,7 @@ class SetComprehensionBuilder extends Builder<SetComprehension> {
     } as SetComprehension;
   }
 
-  override get nodeKind(): string { return 'set_comprehension'; }
+  override get nodeKind(): 'set_comprehension' { return 'set_comprehension'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,17 +59,18 @@ export function set_comprehension(body: Builder<Expression>): SetComprehensionBu
 }
 
 export interface SetComprehensionOptions {
+  nodeKind: 'set_comprehension';
   body: Builder<Expression>;
-  children?: Builder<ForInClause | IfClause> | (Builder<ForInClause | IfClause>)[];
+  children?: Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions | (Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions)[];
 }
 
 export namespace set_comprehension {
-  export function from(options: SetComprehensionOptions): SetComprehensionBuilder {
+  export function from(options: Omit<SetComprehensionOptions, 'nodeKind'>): SetComprehensionBuilder {
     const b = new SetComprehensionBuilder(options.body);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'for_in_clause': return for_in_clause.from(_v);   case 'if_clause': return if_clause.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

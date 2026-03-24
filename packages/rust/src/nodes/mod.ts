@@ -1,11 +1,15 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DeclarationList, Identifier, ModItem, VisibilityModifier } from '../types.js';
+import { declaration_list } from './declaration-list.js';
+import type { DeclarationListOptions } from './declaration-list.js';
+import { visibility_modifier } from './visibility-modifier.js';
+import type { VisibilityModifierOptions } from './visibility-modifier.js';
 
 
 class ModBuilder extends Builder<ModItem> {
-  private _body?: Builder<DeclarationList>;
   private _name: Builder<Identifier>;
+  private _body?: Builder<DeclarationList>;
   private _children: Builder<VisibilityModifier>[] = [];
 
   constructor(name: Builder<Identifier>) {
@@ -35,13 +39,13 @@ class ModBuilder extends Builder<ModItem> {
   build(ctx?: RenderContext): ModItem {
     return {
       kind: 'mod_item',
-      body: this._body?.build(ctx),
       name: this._name.build(ctx),
-      children: this._children[0]?.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as ModItem;
   }
 
-  override get nodeKind(): string { return 'mod_item'; }
+  override get nodeKind(): 'mod_item' { return 'mod_item'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -62,20 +66,24 @@ export function mod(name: Builder<Identifier>): ModBuilder {
 }
 
 export interface ModItemOptions {
-  body?: Builder<DeclarationList>;
+  nodeKind: 'mod_item';
   name: Builder<Identifier> | string;
-  children?: Builder<VisibilityModifier> | (Builder<VisibilityModifier>)[];
+  body?: Builder<DeclarationList> | Omit<DeclarationListOptions, 'nodeKind'>;
+  children?: Builder<VisibilityModifier> | Omit<VisibilityModifierOptions, 'nodeKind'> | (Builder<VisibilityModifier> | Omit<VisibilityModifierOptions, 'nodeKind'>)[];
 }
 
 export namespace mod {
-  export function from(options: ModItemOptions): ModBuilder {
+  export function from(options: Omit<ModItemOptions, 'nodeKind'>): ModBuilder {
     const _ctor = options.name;
     const b = new ModBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
-    if (options.body !== undefined) b.body(options.body);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : declaration_list.from(_v));
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : visibility_modifier.from(_x)));
     }
     return b;
   }

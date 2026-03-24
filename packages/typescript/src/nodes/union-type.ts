@@ -29,7 +29,7 @@ class UnionTypeBuilder extends Builder<UnionType> {
     } as UnionType;
   }
 
-  override get nodeKind(): string { return 'union_type'; }
+  override get nodeKind(): 'union_type' { return 'union_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,11 +48,15 @@ export function union_type(...children: Builder<Type>[]): UnionTypeBuilder {
 }
 
 export interface UnionTypeOptions {
+  nodeKind: 'union_type';
   children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace union_type {
-  export function from(options: UnionTypeOptions): UnionTypeBuilder {
+  export function from(input: Omit<UnionTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): UnionTypeBuilder {
+    const options: Omit<UnionTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<UnionTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<UnionTypeOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new UnionTypeBuilder(..._arr);

@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ComputedPropertyName, EnumAssignment, EnumBody, Number, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { computed_property_name } from './computed-property-name.js';
+import type { ComputedPropertyNameOptions } from './computed-property-name.js';
 import { enum_assignment } from './enum-assignment.js';
 import type { EnumAssignmentOptions } from './enum-assignment.js';
 
@@ -43,7 +47,7 @@ class EnumBodyBuilder extends Builder<EnumBody> {
     } as EnumBody;
   }
 
-  override get nodeKind(): string { return 'enum_body'; }
+  override get nodeKind(): 'enum_body' { return 'enum_body'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -69,22 +73,23 @@ export function enum_body(): EnumBodyBuilder {
 }
 
 export interface EnumBodyOptions {
-  name?: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | (Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>)[];
-  children?: Builder<EnumAssignment> | EnumAssignmentOptions | (Builder<EnumAssignment> | EnumAssignmentOptions)[];
+  nodeKind: 'enum_body';
+  name?: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions | (Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions)[];
+  children?: Builder<EnumAssignment> | Omit<EnumAssignmentOptions, 'nodeKind'> | (Builder<EnumAssignment> | Omit<EnumAssignmentOptions, 'nodeKind'>)[];
 }
 
 export namespace enum_body {
-  export function from(options: EnumBodyOptions): EnumBodyBuilder {
+  export function from(options: Omit<EnumBodyOptions, 'nodeKind'>): EnumBodyBuilder {
     const b = new EnumBodyBuilder();
     if (options.name !== undefined) {
       const _v = options.name;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.name(..._arr);
+      b.name(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'string': return string.from(_v);   case 'computed_property_name': return computed_property_name.from(_v); } throw new Error('unreachable'); }));
     }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr.map(_x => _x instanceof Builder ? _x : enum_assignment.from(_x as EnumAssignmentOptions)));
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : enum_assignment.from(_x)));
     }
     return b;
   }

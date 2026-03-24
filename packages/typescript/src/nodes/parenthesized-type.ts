@@ -22,11 +22,11 @@ class ParenthesizedTypeBuilder extends Builder<ParenthesizedType> {
   build(ctx?: RenderContext): ParenthesizedType {
     return {
       kind: 'parenthesized_type',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as ParenthesizedType;
   }
 
-  override get nodeKind(): string { return 'parenthesized_type'; }
+  override get nodeKind(): 'parenthesized_type' { return 'parenthesized_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,11 +46,15 @@ export function parenthesized_type(children: Builder<Type>): ParenthesizedTypeBu
 }
 
 export interface ParenthesizedTypeOptions {
+  nodeKind: 'parenthesized_type';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace parenthesized_type {
-  export function from(options: ParenthesizedTypeOptions): ParenthesizedTypeBuilder {
+  export function from(input: Omit<ParenthesizedTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): ParenthesizedTypeBuilder {
+    const options: Omit<ParenthesizedTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ParenthesizedTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<ParenthesizedTypeOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new ParenthesizedTypeBuilder(_ctor);
     return b;

@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('tuple_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.tupleExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.tupleExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('tuple_expression');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('tuple_expression', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.tupleExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.tupleExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     const source = builder.renderImpl();
     expect(source).toContain('(');
     expect(source).toContain(',');
@@ -20,7 +20,7 @@ describe('tuple_expression', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.tupleExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.tupleExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('tuple_expression');
     expect(cst.isNamed).toBe(true);
@@ -29,7 +29,7 @@ describe('tuple_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.tupleExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.tupleExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -21,11 +21,11 @@ class ChevronBuilder extends Builder<Chevron> {
   build(ctx?: RenderContext): Chevron {
     return {
       kind: 'chevron',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as Chevron;
   }
 
-  override get nodeKind(): string { return 'chevron'; }
+  override get nodeKind(): 'chevron' { return 'chevron'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function chevron(children: Builder<Expression>): ChevronBuilder {
 }
 
 export interface ChevronOptions {
+  nodeKind: 'chevron';
   children: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace chevron {
-  export function from(options: ChevronOptions): ChevronBuilder {
+  export function from(input: Omit<ChevronOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): ChevronBuilder {
+    const options: Omit<ChevronOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ChevronOptions, 'nodeKind'>
+      : { children: input } as Omit<ChevronOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new ChevronBuilder(_ctor);
     return b;

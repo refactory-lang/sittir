@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('expression_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.expressionStatement(ir.identifier('test'));
+    const builder = ir.expressionStatement(ir.charLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('expression_statement');
     expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.expressionStatement(ir.identifier('test'));
+    const builder = ir.expressionStatement(ir.charLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('expression_statement');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('expression_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.expressionStatement(ir.identifier('test'));
+    const builder = ir.expressionStatement(ir.charLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

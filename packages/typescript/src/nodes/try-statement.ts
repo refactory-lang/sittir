@@ -42,12 +42,12 @@ class TryStatementBuilder extends Builder<TryStatement> {
     return {
       kind: 'try_statement',
       body: this._body.build(ctx),
-      handler: this._handler?.build(ctx),
-      finalizer: this._finalizer?.build(ctx),
+      handler: this._handler ? this._handler.build(ctx) : undefined,
+      finalizer: this._finalizer ? this._finalizer.build(ctx) : undefined,
     } as TryStatement;
   }
 
-  override get nodeKind(): string { return 'try_statement'; }
+  override get nodeKind(): 'try_statement' { return 'try_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -66,22 +66,23 @@ export function try_statement(body: Builder<StatementBlock>): TryStatementBuilde
 }
 
 export interface TryStatementOptions {
-  body: Builder<StatementBlock> | StatementBlockOptions;
-  handler?: Builder<CatchClause> | CatchClauseOptions;
-  finalizer?: Builder<FinallyClause> | FinallyClauseOptions;
+  nodeKind: 'try_statement';
+  body: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
+  handler?: Builder<CatchClause> | Omit<CatchClauseOptions, 'nodeKind'>;
+  finalizer?: Builder<FinallyClause> | Omit<FinallyClauseOptions, 'nodeKind'>;
 }
 
 export namespace try_statement {
-  export function from(options: TryStatementOptions): TryStatementBuilder {
+  export function from(options: Omit<TryStatementOptions, 'nodeKind'>): TryStatementBuilder {
     const _ctor = options.body;
-    const b = new TryStatementBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor as StatementBlockOptions));
+    const b = new TryStatementBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor));
     if (options.handler !== undefined) {
       const _v = options.handler;
-      b.handler(_v instanceof Builder ? _v : catch_clause.from(_v as CatchClauseOptions));
+      b.handler(_v instanceof Builder ? _v : catch_clause.from(_v));
     }
     if (options.finalizer !== undefined) {
       const _v = options.finalizer;
-      b.finalizer(_v instanceof Builder ? _v : finally_clause.from(_v as FinallyClauseOptions));
+      b.finalizer(_v instanceof Builder ? _v : finally_clause.from(_v));
     }
     return b;
   }

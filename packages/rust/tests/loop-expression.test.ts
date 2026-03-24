@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('loop_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.loopExpression(ir.identifier('test') as any);
+    const builder = ir.loopExpression(ir.block());
     const node = builder.build();
     expect(node.kind).toBe('loop_expression');
     expect((node as any).body).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.loopExpression(ir.identifier('test') as any);
+    const builder = ir.loopExpression(ir.block());
     const source = builder.renderImpl();
     expect(source).toContain('loop');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.loopExpression(ir.identifier('test') as any);
+    const builder = ir.loopExpression(ir.block());
     const cst = builder.toCST();
     expect(cst.type).toBe('loop_expression');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('loop_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.loopExpression(ir.identifier('test') as any);
+    const builder = ir.loopExpression(ir.block());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

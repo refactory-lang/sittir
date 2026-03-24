@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('if_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     const node = builder.build();
     expect(node.kind).toBe('if_statement');
     expect((node as any).condition).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     const source = builder.renderImpl();
     expect(source).toContain('if');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     const cst = builder.toCST();
     expect(cst.type).toBe('if_statement');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('if_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.ifStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

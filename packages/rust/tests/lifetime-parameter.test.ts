@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('lifetime_parameter', () => {
   it('should build with correct kind', () => {
-    const builder = ir.lifetimeParameter(ir.identifier('test') as any);
+    const builder = ir.lifetimeParameter(ir.lifetime(ir.identifier('test')));
     const node = builder.build();
     expect(node.kind).toBe('lifetime_parameter');
     expect((node as any).name).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.lifetimeParameter(ir.identifier('test') as any);
+    const builder = ir.lifetimeParameter(ir.lifetime(ir.identifier('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('lifetime_parameter');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('lifetime_parameter', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.lifetimeParameter(ir.identifier('test') as any);
+    const builder = ir.lifetimeParameter(ir.lifetime(ir.identifier('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

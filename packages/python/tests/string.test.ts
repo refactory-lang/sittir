@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('string', () => {
   it('should build with correct kind', () => {
-    const builder = ir.string(ir.stringEnd('test'), ir.stringEnd('test'));
+    const builder = ir.string(ir.stringStart('test'), ir.stringStart('test'));
     const node = builder.build();
     expect(node.kind).toBe('string');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('string', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.string(ir.stringEnd('test'), ir.stringEnd('test'));
+    const builder = ir.string(ir.stringStart('test'), ir.stringStart('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('string');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('string', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.string(ir.stringEnd('test'), ir.stringEnd('test'));
+    const builder = ir.string(ir.stringStart('test'), ir.stringStart('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

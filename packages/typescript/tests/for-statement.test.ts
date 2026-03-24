@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('for_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.forStatement(ir.emptyStatement('test'));
+    const builder = ir.forStatement(ir.emptyStatement());
     const node = builder.build();
     expect(node.kind).toBe('for_statement');
     expect((node as any).initializer).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.forStatement(ir.emptyStatement('test'));
+    const builder = ir.forStatement(ir.emptyStatement());
     const source = builder.renderImpl();
     expect(source).toContain('for');
     expect(source).toContain('(');
@@ -18,7 +18,7 @@ describe('for_statement', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.forStatement(ir.emptyStatement('test'));
+    const builder = ir.forStatement(ir.emptyStatement());
     const cst = builder.toCST();
     expect(cst.type).toBe('for_statement');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +27,7 @@ describe('for_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.forStatement(ir.emptyStatement('test'));
+    const builder = ir.forStatement(ir.emptyStatement());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

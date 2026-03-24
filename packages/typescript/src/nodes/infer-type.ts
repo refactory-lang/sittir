@@ -25,7 +25,7 @@ class InferTypeBuilder extends Builder<InferType> {
     } as InferType;
   }
 
-  override get nodeKind(): string { return 'infer_type'; }
+  override get nodeKind(): 'infer_type' { return 'infer_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function infer_type(...children: Builder<TypeIdentifier | Type>[]): Infer
 }
 
 export interface InferTypeOptions {
+  nodeKind: 'infer_type';
   children?: Builder<TypeIdentifier | Type> | string | (Builder<TypeIdentifier | Type> | string)[];
 }
 
 export namespace infer_type {
-  export function from(options: InferTypeOptions): InferTypeBuilder {
+  export function from(input: Omit<InferTypeOptions, 'nodeKind'> | Builder<TypeIdentifier | Type> | string | (Builder<TypeIdentifier | Type> | string)[]): InferTypeBuilder {
+    const options: Omit<InferTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<InferTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<InferTypeOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new InferTypeBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('type_identifier', _v) : _v));

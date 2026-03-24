@@ -1,12 +1,12 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { ComplexPattern, Float, Integer } from '../types.js';
 
 
 class ComplexPatternBuilder extends Builder<ComplexPattern> {
-  private _children: Builder<Float | Integer>[] = [];
+  private _children: Builder<Integer | Float>[] = [];
 
-  constructor(...children: Builder<Float | Integer>[]) {
+  constructor(...children: Builder<Integer | Float>[]) {
     super();
     this._children = children;
   }
@@ -26,7 +26,7 @@ class ComplexPatternBuilder extends Builder<ComplexPattern> {
     } as ComplexPattern;
   }
 
-  override get nodeKind(): string { return 'complex_pattern'; }
+  override get nodeKind(): 'complex_pattern' { return 'complex_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,19 +39,23 @@ class ComplexPatternBuilder extends Builder<ComplexPattern> {
 
 export type { ComplexPatternBuilder };
 
-export function complex_pattern(...children: Builder<Float | Integer>[]): ComplexPatternBuilder {
+export function complex_pattern(...children: Builder<Integer | Float>[]): ComplexPatternBuilder {
   return new ComplexPatternBuilder(...children);
 }
 
 export interface ComplexPatternOptions {
-  children: Builder<Float | Integer> | (Builder<Float | Integer>)[];
+  nodeKind: 'complex_pattern';
+  children?: Builder<Integer | Float> | LeafOptions<'integer'> | LeafOptions<'float'> | (Builder<Integer | Float> | LeafOptions<'integer'> | LeafOptions<'float'>)[];
 }
 
 export namespace complex_pattern {
-  export function from(options: ComplexPatternOptions): ComplexPatternBuilder {
+  export function from(input: Omit<ComplexPatternOptions, 'nodeKind'> | Builder<Integer | Float> | LeafOptions<'integer'> | LeafOptions<'float'> | (Builder<Integer | Float> | LeafOptions<'integer'> | LeafOptions<'float'>)[]): ComplexPatternBuilder {
+    const options: Omit<ComplexPatternOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ComplexPatternOptions, 'nodeKind'>
+      : { children: input } as Omit<ComplexPatternOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new ComplexPatternBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ComplexPatternBuilder(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'integer': return new LeafBuilder('integer', (_v as LeafOptions).text!);   case 'float': return new LeafBuilder('float', (_v as LeafOptions).text!); } throw new Error('unreachable'); }));
     return b;
   }
 }

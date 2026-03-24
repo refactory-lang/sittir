@@ -21,11 +21,11 @@ class OptingTypeAnnotationBuilder extends Builder<OptingTypeAnnotation> {
   build(ctx?: RenderContext): OptingTypeAnnotation {
     return {
       kind: 'opting_type_annotation',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as OptingTypeAnnotation;
   }
 
-  override get nodeKind(): string { return 'opting_type_annotation'; }
+  override get nodeKind(): 'opting_type_annotation' { return 'opting_type_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function opting_type_annotation(children: Builder<Type>): OptingTypeAnnot
 }
 
 export interface OptingTypeAnnotationOptions {
+  nodeKind: 'opting_type_annotation';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace opting_type_annotation {
-  export function from(options: OptingTypeAnnotationOptions): OptingTypeAnnotationBuilder {
+  export function from(input: Omit<OptingTypeAnnotationOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): OptingTypeAnnotationBuilder {
+    const options: Omit<OptingTypeAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<OptingTypeAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<OptingTypeAnnotationOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new OptingTypeAnnotationBuilder(_ctor);
     return b;

@@ -27,7 +27,7 @@ class ProgramBuilder extends Builder<Program> {
     } as Program;
   }
 
-  override get nodeKind(): string { return 'program'; }
+  override get nodeKind(): 'program' { return 'program'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function program(): ProgramBuilder {
 }
 
 export interface ProgramOptions {
+  nodeKind: 'program';
   children?: Builder<HashBangLine | Statement> | string | (Builder<HashBangLine | Statement> | string)[];
 }
 
 export namespace program {
-  export function from(options: ProgramOptions): ProgramBuilder {
+  export function from(input: Omit<ProgramOptions, 'nodeKind'> | Builder<HashBangLine | Statement> | string | (Builder<HashBangLine | Statement> | string)[]): ProgramBuilder {
+    const options: Omit<ProgramOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ProgramOptions, 'nodeKind'>
+      : { children: input } as Omit<ProgramOptions, 'nodeKind'>;
     const b = new ProgramBuilder();
     if (options.children !== undefined) {
       const _v = options.children;

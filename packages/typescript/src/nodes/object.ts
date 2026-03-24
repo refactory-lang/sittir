@@ -1,6 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MethodDefinition, Object, Pair, ShorthandPropertyIdentifier, SpreadElement } from '../types.js';
+import { pair } from './pair.js';
+import type { PairOptions } from './pair.js';
+import { spread_element } from './spread-element.js';
+import type { SpreadElementOptions } from './spread-element.js';
+import { method_definition } from './method-definition.js';
+import type { MethodDefinitionOptions } from './method-definition.js';
 
 
 class ObjectBuilder extends Builder<Object> {
@@ -16,12 +22,7 @@ class ObjectBuilder extends Builder<Object> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('{');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -33,7 +34,7 @@ class ObjectBuilder extends Builder<Object> {
     } as Object;
   }
 
-  override get nodeKind(): string { return 'object'; }
+  override get nodeKind(): 'object' { return 'object'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -54,16 +55,20 @@ export function object(): ObjectBuilder {
 }
 
 export interface ObjectOptions {
-  children?: Builder<Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier> | (Builder<Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier>)[];
+  nodeKind: 'object';
+  children?: Builder<Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier> | PairOptions | SpreadElementOptions | MethodDefinitionOptions | (Builder<Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier> | PairOptions | SpreadElementOptions | MethodDefinitionOptions)[];
 }
 
 export namespace object {
-  export function from(options: ObjectOptions): ObjectBuilder {
+  export function from(input: Omit<ObjectOptions, 'nodeKind'> | Builder<Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier> | PairOptions | SpreadElementOptions | MethodDefinitionOptions | (Builder<Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier> | PairOptions | SpreadElementOptions | MethodDefinitionOptions)[]): ObjectBuilder {
+    const options: Omit<ObjectOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ObjectOptions, 'nodeKind'>
+      : { children: input } as Omit<ObjectOptions, 'nodeKind'>;
     const b = new ObjectBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'pair': return pair.from(_v);   case 'spread_element': return spread_element.from(_v);   case 'method_definition': return method_definition.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

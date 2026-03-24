@@ -27,7 +27,7 @@ class FinallyClauseBuilder extends Builder<FinallyClause> {
     } as FinallyClause;
   }
 
-  override get nodeKind(): string { return 'finally_clause'; }
+  override get nodeKind(): 'finally_clause' { return 'finally_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,13 +44,17 @@ export function finally_clause(body: Builder<StatementBlock>): FinallyClauseBuil
 }
 
 export interface FinallyClauseOptions {
-  body: Builder<StatementBlock> | StatementBlockOptions;
+  nodeKind: 'finally_clause';
+  body: Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>;
 }
 
 export namespace finally_clause {
-  export function from(options: FinallyClauseOptions): FinallyClauseBuilder {
+  export function from(input: Omit<FinallyClauseOptions, 'nodeKind'> | Builder<StatementBlock> | Omit<StatementBlockOptions, 'nodeKind'>): FinallyClauseBuilder {
+    const options: Omit<FinallyClauseOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'body' in input
+      ? input as Omit<FinallyClauseOptions, 'nodeKind'>
+      : { body: input } as Omit<FinallyClauseOptions, 'nodeKind'>;
     const _ctor = options.body;
-    const b = new FinallyClauseBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor as StatementBlockOptions));
+    const b = new FinallyClauseBuilder(_ctor instanceof Builder ? _ctor : statement_block.from(_ctor));
     return b;
   }
 }

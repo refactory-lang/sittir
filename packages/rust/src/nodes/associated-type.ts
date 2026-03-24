@@ -1,12 +1,18 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AssociatedType, TraitBounds, TypeIdentifier, TypeParameters, WhereClause } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { trait_bounds } from './trait-bounds.js';
+import type { TraitBoundsOptions } from './trait-bounds.js';
+import { where_clause } from './where-clause.js';
+import type { WhereClauseOptions } from './where-clause.js';
 
 
 class AssociatedTypeBuilder extends Builder<AssociatedType> {
-  private _bounds?: Builder<TraitBounds>;
   private _name: Builder<TypeIdentifier>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _bounds?: Builder<TraitBounds>;
   private _children: Builder<WhereClause>[] = [];
 
   constructor(name: Builder<TypeIdentifier>) {
@@ -14,13 +20,13 @@ class AssociatedTypeBuilder extends Builder<AssociatedType> {
     this._name = name;
   }
 
-  bounds(value: Builder<TraitBounds>): this {
-    this._bounds = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  bounds(value: Builder<TraitBounds>): this {
+    this._bounds = value;
     return this;
   }
 
@@ -43,14 +49,14 @@ class AssociatedTypeBuilder extends Builder<AssociatedType> {
   build(ctx?: RenderContext): AssociatedType {
     return {
       kind: 'associated_type',
-      bounds: this._bounds?.build(ctx),
       name: this._name.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
-      children: this._children[0]?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      bounds: this._bounds ? this._bounds.build(ctx) : undefined,
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as AssociatedType;
   }
 
-  override get nodeKind(): string { return 'associated_type'; }
+  override get nodeKind(): 'associated_type' { return 'associated_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -73,22 +79,29 @@ export function associated_type(name: Builder<TypeIdentifier>): AssociatedTypeBu
 }
 
 export interface AssociatedTypeOptions {
-  bounds?: Builder<TraitBounds>;
+  nodeKind: 'associated_type';
   name: Builder<TypeIdentifier> | string;
-  typeParameters?: Builder<TypeParameters>;
-  children?: Builder<WhereClause> | (Builder<WhereClause>)[];
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  bounds?: Builder<TraitBounds> | Omit<TraitBoundsOptions, 'nodeKind'>;
+  children?: Builder<WhereClause> | Omit<WhereClauseOptions, 'nodeKind'> | (Builder<WhereClause> | Omit<WhereClauseOptions, 'nodeKind'>)[];
 }
 
 export namespace associated_type {
-  export function from(options: AssociatedTypeOptions): AssociatedTypeBuilder {
+  export function from(options: Omit<AssociatedTypeOptions, 'nodeKind'>): AssociatedTypeBuilder {
     const _ctor = options.name;
     const b = new AssociatedTypeBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
-    if (options.bounds !== undefined) b.bounds(options.bounds);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
+    }
+    if (options.bounds !== undefined) {
+      const _v = options.bounds;
+      b.bounds(_v instanceof Builder ? _v : trait_bounds.from(_v));
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : where_clause.from(_x)));
     }
     return b;
   }

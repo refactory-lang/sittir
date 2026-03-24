@@ -1,11 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, Expression, MatchStatement } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class MatchStatementBuilder extends Builder<MatchStatement> {
-  private _body!: Builder<Block>;
   private _subject: Builder<Expression>[] = [];
+  private _body!: Builder<Block>;
 
   constructor(...subject: Builder<Expression>[]) {
     super();
@@ -29,12 +31,12 @@ class MatchStatementBuilder extends Builder<MatchStatement> {
   build(ctx?: RenderContext): MatchStatement {
     return {
       kind: 'match_statement',
-      body: this._body?.build(ctx),
       subject: this._subject.map(c => c.build(ctx)),
+      body: this._body ? this._body.build(ctx) : undefined,
     } as MatchStatement;
   }
 
-  override get nodeKind(): string { return 'match_statement'; }
+  override get nodeKind(): 'match_statement' { return 'match_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,16 +57,20 @@ export function match_statement(...subject: Builder<Expression>[]): MatchStateme
 }
 
 export interface MatchStatementOptions {
-  body: Builder<Block>;
+  nodeKind: 'match_statement';
   subject: Builder<Expression> | (Builder<Expression>)[];
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
 }
 
 export namespace match_statement {
-  export function from(options: MatchStatementOptions): MatchStatementBuilder {
+  export function from(options: Omit<MatchStatementOptions, 'nodeKind'>): MatchStatementBuilder {
     const _ctor = options.subject;
     const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
     const b = new MatchStatementBuilder(..._arr);
-    if (options.body !== undefined) b.body(options.body);
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : block.from(_v));
+    }
     return b;
   }
 }

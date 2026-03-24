@@ -9,11 +9,9 @@ class ExtendsClauseBuilder extends Builder<ExtendsClause> {
   private _value: Builder<Expression>[] = [];
   private _typeArguments: Builder<TypeArguments>[] = [];
 
-  constructor() { super(); }
-
-  value(...value: Builder<Expression>[]): this {
+  constructor(...value: Builder<Expression>[]) {
+    super();
     this._value = value;
-    return this;
   }
 
   typeArguments(...value: Builder<TypeArguments>[]): this {
@@ -37,7 +35,7 @@ class ExtendsClauseBuilder extends Builder<ExtendsClause> {
     } as ExtendsClause;
   }
 
-  override get nodeKind(): string { return 'extends_clause'; }
+  override get nodeKind(): 'extends_clause' { return 'extends_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -54,27 +52,25 @@ class ExtendsClauseBuilder extends Builder<ExtendsClause> {
 
 export type { ExtendsClauseBuilder };
 
-export function extends_clause(): ExtendsClauseBuilder {
-  return new ExtendsClauseBuilder();
+export function extends_clause(...value: Builder<Expression>[]): ExtendsClauseBuilder {
+  return new ExtendsClauseBuilder(...value);
 }
 
 export interface ExtendsClauseOptions {
-  value?: Builder<Expression> | (Builder<Expression>)[];
-  typeArguments?: Builder<TypeArguments> | TypeArgumentsOptions | (Builder<TypeArguments> | TypeArgumentsOptions)[];
+  nodeKind: 'extends_clause';
+  value: Builder<Expression> | (Builder<Expression>)[];
+  typeArguments?: Builder<TypeArguments> | Omit<TypeArgumentsOptions, 'nodeKind'> | (Builder<TypeArguments> | Omit<TypeArgumentsOptions, 'nodeKind'>)[];
 }
 
 export namespace extends_clause {
-  export function from(options: ExtendsClauseOptions): ExtendsClauseBuilder {
-    const b = new ExtendsClauseBuilder();
-    if (options.value !== undefined) {
-      const _v = options.value;
-      const _arr = Array.isArray(_v) ? _v : [_v];
-      b.value(..._arr);
-    }
+  export function from(options: Omit<ExtendsClauseOptions, 'nodeKind'>): ExtendsClauseBuilder {
+    const _ctor = options.value;
+    const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
+    const b = new ExtendsClauseBuilder(..._arr);
     if (options.typeArguments !== undefined) {
       const _v = options.typeArguments;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.typeArguments(..._arr.map(_v => _v instanceof Builder ? _v : type_arguments.from(_v as TypeArgumentsOptions)));
+      b.typeArguments(..._arr.map(_v => _v instanceof Builder ? _v : type_arguments.from(_v)));
     }
     return b;
   }

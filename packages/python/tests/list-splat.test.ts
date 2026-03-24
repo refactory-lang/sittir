@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('list_splat', () => {
   it('should build with correct kind', () => {
-    const builder = ir.listSplat(ir.identifier('test'));
+    const builder = ir.listSplat(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('list_splat');
     expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.listSplat(ir.identifier('test'));
+    const builder = ir.listSplat(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain('*');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.listSplat(ir.identifier('test'));
+    const builder = ir.listSplat(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('list_splat');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('list_splat', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.listSplat(ir.identifier('test'));
+    const builder = ir.listSplat(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

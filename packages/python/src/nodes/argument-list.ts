@@ -1,14 +1,22 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArgumentList, DictionarySplat, Expression, KeywordArgument, ListSplat, ParenthesizedExpression } from '../types.js';
+import { list_splat } from './list-splat.js';
+import type { ListSplatOptions } from './list-splat.js';
+import { dictionary_splat } from './dictionary-splat.js';
+import type { DictionarySplatOptions } from './dictionary-splat.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
+import { keyword_argument } from './keyword-argument.js';
+import type { KeywordArgumentOptions } from './keyword-argument.js';
 
 
 class ArgumentListBuilder extends Builder<ArgumentList> {
-  private _children: Builder<DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression>[] = [];
+  private _children: Builder<Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression>[]): this {
+  children(...value: Builder<Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument>[]): this {
     this._children = value;
     return this;
   }
@@ -16,12 +24,7 @@ class ArgumentListBuilder extends Builder<ArgumentList> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('(');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push(')');
     return parts.join(' ');
   }
@@ -33,7 +36,7 @@ class ArgumentListBuilder extends Builder<ArgumentList> {
     } as ArgumentList;
   }
 
-  override get nodeKind(): string { return 'argument_list'; }
+  override get nodeKind(): 'argument_list' { return 'argument_list'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -54,16 +57,20 @@ export function argument_list(): ArgumentListBuilder {
 }
 
 export interface ArgumentListOptions {
-  children?: Builder<DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression> | (Builder<DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression>)[];
+  nodeKind: 'argument_list';
+  children?: Builder<Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument> | ListSplatOptions | DictionarySplatOptions | ParenthesizedExpressionOptions | KeywordArgumentOptions | (Builder<Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument> | ListSplatOptions | DictionarySplatOptions | ParenthesizedExpressionOptions | KeywordArgumentOptions)[];
 }
 
 export namespace argument_list {
-  export function from(options: ArgumentListOptions): ArgumentListBuilder {
+  export function from(input: Omit<ArgumentListOptions, 'nodeKind'> | Builder<Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument> | ListSplatOptions | DictionarySplatOptions | ParenthesizedExpressionOptions | KeywordArgumentOptions | (Builder<Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument> | ListSplatOptions | DictionarySplatOptions | ParenthesizedExpressionOptions | KeywordArgumentOptions)[]): ArgumentListBuilder {
+    const options: Omit<ArgumentListOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ArgumentListOptions, 'nodeKind'>
+      : { children: input } as Omit<ArgumentListOptions, 'nodeKind'>;
     const b = new ArgumentListBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'list_splat': return list_splat.from(_v);   case 'dictionary_splat': return dictionary_splat.from(_v);   case 'parenthesized_expression': return parenthesized_expression.from(_v);   case 'keyword_argument': return keyword_argument.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

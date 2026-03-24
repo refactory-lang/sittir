@@ -1,6 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { DictionaryComprehension, ForInClause, IfClause, Pair } from '../types.js';
+import { pair } from './pair.js';
+import type { PairOptions } from './pair.js';
+import { for_in_clause } from './for-in-clause.js';
+import type { ForInClauseOptions } from './for-in-clause.js';
+import { if_clause } from './if-clause.js';
+import type { IfClauseOptions } from './if-clause.js';
 
 
 class DictionaryComprehensionBuilder extends Builder<DictionaryComprehension> {
@@ -34,7 +40,7 @@ class DictionaryComprehensionBuilder extends Builder<DictionaryComprehension> {
     } as DictionaryComprehension;
   }
 
-  override get nodeKind(): string { return 'dictionary_comprehension'; }
+  override get nodeKind(): 'dictionary_comprehension' { return 'dictionary_comprehension'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,17 +61,19 @@ export function dictionary_comprehension(body: Builder<Pair>): DictionaryCompreh
 }
 
 export interface DictionaryComprehensionOptions {
-  body: Builder<Pair>;
-  children?: Builder<ForInClause | IfClause> | (Builder<ForInClause | IfClause>)[];
+  nodeKind: 'dictionary_comprehension';
+  body: Builder<Pair> | Omit<PairOptions, 'nodeKind'>;
+  children?: Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions | (Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions)[];
 }
 
 export namespace dictionary_comprehension {
-  export function from(options: DictionaryComprehensionOptions): DictionaryComprehensionBuilder {
-    const b = new DictionaryComprehensionBuilder(options.body);
+  export function from(options: Omit<DictionaryComprehensionOptions, 'nodeKind'>): DictionaryComprehensionBuilder {
+    const _ctor = options.body;
+    const b = new DictionaryComprehensionBuilder(_ctor instanceof Builder ? _ctor : pair.from(_ctor));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'for_in_clause': return for_in_clause.from(_v);   case 'if_clause': return if_clause.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

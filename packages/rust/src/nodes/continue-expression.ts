@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ContinueExpression, Label } from '../types.js';
+import { label } from './label.js';
+import type { LabelOptions } from './label.js';
 
 
 class ContinueExpressionBuilder extends Builder<ContinueExpression> {
@@ -23,11 +25,11 @@ class ContinueExpressionBuilder extends Builder<ContinueExpression> {
   build(ctx?: RenderContext): ContinueExpression {
     return {
       kind: 'continue_expression',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as ContinueExpression;
   }
 
-  override get nodeKind(): string { return 'continue_expression'; }
+  override get nodeKind(): 'continue_expression' { return 'continue_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,16 +48,20 @@ export function continue_expression(): ContinueExpressionBuilder {
 }
 
 export interface ContinueExpressionOptions {
-  children?: Builder<Label> | (Builder<Label>)[];
+  nodeKind: 'continue_expression';
+  children?: Builder<Label> | Omit<LabelOptions, 'nodeKind'> | (Builder<Label> | Omit<LabelOptions, 'nodeKind'>)[];
 }
 
 export namespace continue_expression {
-  export function from(options: ContinueExpressionOptions): ContinueExpressionBuilder {
+  export function from(input: Omit<ContinueExpressionOptions, 'nodeKind'> | Builder<Label> | Omit<LabelOptions, 'nodeKind'> | (Builder<Label> | Omit<LabelOptions, 'nodeKind'>)[]): ContinueExpressionBuilder {
+    const options: Omit<ContinueExpressionOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ContinueExpressionOptions, 'nodeKind'>
+      : { children: input } as Omit<ContinueExpressionOptions, 'nodeKind'>;
     const b = new ContinueExpressionBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : label.from(_x)));
     }
     return b;
   }

@@ -18,12 +18,7 @@ class NamedImportsBuilder extends Builder<NamedImports> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('{');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -35,7 +30,7 @@ class NamedImportsBuilder extends Builder<NamedImports> {
     } as NamedImports;
   }
 
-  override get nodeKind(): string { return 'named_imports'; }
+  override get nodeKind(): 'named_imports' { return 'named_imports'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -56,16 +51,20 @@ export function named_imports(): NamedImportsBuilder {
 }
 
 export interface NamedImportsOptions {
-  children?: Builder<ImportSpecifier> | ImportSpecifierOptions | (Builder<ImportSpecifier> | ImportSpecifierOptions)[];
+  nodeKind: 'named_imports';
+  children?: Builder<ImportSpecifier> | Omit<ImportSpecifierOptions, 'nodeKind'> | (Builder<ImportSpecifier> | Omit<ImportSpecifierOptions, 'nodeKind'>)[];
 }
 
 export namespace named_imports {
-  export function from(options: NamedImportsOptions): NamedImportsBuilder {
+  export function from(input: Omit<NamedImportsOptions, 'nodeKind'> | Builder<ImportSpecifier> | Omit<ImportSpecifierOptions, 'nodeKind'> | (Builder<ImportSpecifier> | Omit<ImportSpecifierOptions, 'nodeKind'>)[]): NamedImportsBuilder {
+    const options: Omit<NamedImportsOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<NamedImportsOptions, 'nodeKind'>
+      : { children: input } as Omit<NamedImportsOptions, 'nodeKind'>;
     const b = new NamedImportsBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr.map(_x => _x instanceof Builder ? _x : import_specifier.from(_x as ImportSpecifierOptions)));
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : import_specifier.from(_x)));
     }
     return b;
   }

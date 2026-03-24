@@ -1,12 +1,16 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ListSplat, ParenthesizedExpression, ParenthesizedListSplat } from '../types.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
+import { list_splat } from './list-splat.js';
+import type { ListSplatOptions } from './list-splat.js';
 
 
 class ParenthesizedListSplatBuilder extends Builder<ParenthesizedListSplat> {
-  private _children: Builder<ListSplat | ParenthesizedExpression>[] = [];
+  private _children: Builder<ParenthesizedExpression | ListSplat>[] = [];
 
-  constructor(children: Builder<ListSplat | ParenthesizedExpression>) {
+  constructor(children: Builder<ParenthesizedExpression | ListSplat>) {
     super();
     this._children = [children];
   }
@@ -22,11 +26,11 @@ class ParenthesizedListSplatBuilder extends Builder<ParenthesizedListSplat> {
   build(ctx?: RenderContext): ParenthesizedListSplat {
     return {
       kind: 'parenthesized_list_splat',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as ParenthesizedListSplat;
   }
 
-  override get nodeKind(): string { return 'parenthesized_list_splat'; }
+  override get nodeKind(): 'parenthesized_list_splat' { return 'parenthesized_list_splat'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -41,18 +45,32 @@ class ParenthesizedListSplatBuilder extends Builder<ParenthesizedListSplat> {
 
 export type { ParenthesizedListSplatBuilder };
 
-export function parenthesized_list_splat(children: Builder<ListSplat | ParenthesizedExpression>): ParenthesizedListSplatBuilder {
+export function parenthesized_list_splat(children: Builder<ParenthesizedExpression | ListSplat>): ParenthesizedListSplatBuilder {
   return new ParenthesizedListSplatBuilder(children);
 }
 
 export interface ParenthesizedListSplatOptions {
-  children: Builder<ListSplat | ParenthesizedExpression> | (Builder<ListSplat | ParenthesizedExpression>)[];
+  nodeKind: 'parenthesized_list_splat';
+  children: Builder<ParenthesizedExpression | ListSplat> | ParenthesizedExpressionOptions | ListSplatOptions | (Builder<ParenthesizedExpression | ListSplat> | ParenthesizedExpressionOptions | ListSplatOptions)[];
 }
 
 export namespace parenthesized_list_splat {
-  export function from(options: ParenthesizedListSplatOptions): ParenthesizedListSplatBuilder {
+  export function from(input: Omit<ParenthesizedListSplatOptions, 'nodeKind'> | Builder<ParenthesizedExpression | ListSplat> | ParenthesizedExpressionOptions | ListSplatOptions | (Builder<ParenthesizedExpression | ListSplat> | ParenthesizedExpressionOptions | ListSplatOptions)[]): ParenthesizedListSplatBuilder {
+    const options: Omit<ParenthesizedListSplatOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ParenthesizedListSplatOptions, 'nodeKind'>
+      : { children: input } as Omit<ParenthesizedListSplatOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new ParenthesizedListSplatBuilder(_ctor);
+    let _resolved: Builder<ParenthesizedExpression | ListSplat>;
+    if (_ctor instanceof Builder) {
+      _resolved = _ctor;
+    } else {
+      switch (_ctor.nodeKind) {
+        case 'parenthesized_expression': _resolved = parenthesized_expression.from(_ctor); break;
+        case 'list_splat': _resolved = list_splat.from(_ctor); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new ParenthesizedListSplatBuilder(_resolved);
     return b;
   }
 }

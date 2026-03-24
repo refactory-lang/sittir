@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MacroRule, TokenTree, TokenTreePattern } from '../types.js';
+import { token_tree_pattern } from './token-tree-pattern.js';
+import type { TokenTreePatternOptions } from './token-tree-pattern.js';
+import { token_tree } from './token-tree.js';
+import type { TokenTreeOptions } from './token-tree.js';
 
 
 class MacroRuleBuilder extends Builder<MacroRule> {
@@ -29,11 +33,11 @@ class MacroRuleBuilder extends Builder<MacroRule> {
     return {
       kind: 'macro_rule',
       left: this._left.build(ctx),
-      right: this._right?.build(ctx),
+      right: this._right ? this._right.build(ctx) : undefined,
     } as MacroRule;
   }
 
-  override get nodeKind(): string { return 'macro_rule'; }
+  override get nodeKind(): 'macro_rule' { return 'macro_rule'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,14 +55,19 @@ export function macro_rule(left: Builder<TokenTreePattern>): MacroRuleBuilder {
 }
 
 export interface MacroRuleOptions {
-  left: Builder<TokenTreePattern>;
-  right: Builder<TokenTree>;
+  nodeKind: 'macro_rule';
+  left: Builder<TokenTreePattern> | Omit<TokenTreePatternOptions, 'nodeKind'>;
+  right: Builder<TokenTree> | Omit<TokenTreeOptions, 'nodeKind'>;
 }
 
 export namespace macro_rule {
-  export function from(options: MacroRuleOptions): MacroRuleBuilder {
-    const b = new MacroRuleBuilder(options.left);
-    if (options.right !== undefined) b.right(options.right);
+  export function from(options: Omit<MacroRuleOptions, 'nodeKind'>): MacroRuleBuilder {
+    const _ctor = options.left;
+    const b = new MacroRuleBuilder(_ctor instanceof Builder ? _ctor : token_tree_pattern.from(_ctor));
+    if (options.right !== undefined) {
+      const _v = options.right;
+      b.right(_v instanceof Builder ? _v : token_tree.from(_v));
+    }
     return b;
   }
 }

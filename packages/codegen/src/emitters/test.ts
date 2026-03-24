@@ -5,7 +5,7 @@
  */
 
 import type { NodeMeta, FieldMeta } from '../grammar-reader.ts';
-import { collectRequiredTokens, listLeafKinds, listNodeKinds, listSupertypes, readGrammarNode } from '../grammar-reader.ts';
+import { collectRequiredTokens, listLeafKinds, listNamedKeywords, listNodeKinds, listSupertypes, readGrammarNode } from '../grammar-reader.ts';
 import { toShortName, toIrKey, toFieldName, toFactoryName } from '../naming.ts';
 import { selectConstructorField } from './builder.ts';
 
@@ -38,6 +38,8 @@ function resolveIrKey(kind: string, irKeyCounts: Map<string, number>): string {
 interface CtorArgContext {
   grammar: string;
   leafKinds: Set<string>;
+  /** Named keywords — leaf kinds with fixed text (zero-arg factories). */
+  keywords: Set<string>;
   nodeKinds: Set<string>;
   supertypeMap: Map<string, string[]>;
   irKeyCounts: Map<string, number>;
@@ -61,6 +63,7 @@ function buildCtorArgContext(grammar: string): CtorArgContext {
   return {
     grammar,
     leafKinds: new Set(listLeafKinds(grammar)),
+    keywords: new Set(listNamedKeywords(grammar).keys()),
     nodeKinds: new Set(nodeKindsList),
     supertypeMap: new Map(listSupertypes(grammar).map(st => [st.name, st.subtypes])),
     irKeyCounts,
@@ -90,7 +93,10 @@ function buildCtorArg(
   for (const nt of expandedTypes) {
     if (ctx.leafKinds.has(nt)) {
       const leafKey = resolveLeafIrKey(nt, ctx.branchKeys);
-      if (leafKey) return `ir.${leafKey}('test')`;
+      if (leafKey) {
+        // Keywords are zero-arg; other leaves take 'test'
+        return ctx.keywords.has(nt) ? `ir.${leafKey}()` : `ir.${leafKey}('test')`;
+      }
     }
   }
 
@@ -252,6 +258,8 @@ export function emitTest(config: EmitTestConfig): string {
 export interface EmitLeafTestsConfig {
   leafKinds: string[];
   nodeKinds: string[];
+  /** Named keywords — zero-arg leaf factories. */
+  keywords?: Set<string>;
   /** Import path for the builder module (default: '../src/builder.js') */
   sourceImportPath?: string;
 }
@@ -315,8 +323,9 @@ export function emitLeafTests(config: EmitLeafTestsConfig): string {
   for (const kind of config.leafKinds) {
     const propName = resolveLeafIrKey(kind, usedKeys);
     if (!propName) continue;
+    const isKeyword = config.keywords?.has(kind) ?? false;
     lines.push(`  it('ir.${propName}() should build a { kind } object', () => {`);
-    lines.push(`    const builder = ir.${propName}('test');`);
+    lines.push(`    const builder = ${isKeyword ? `ir.${propName}()` : `ir.${propName}('test')`};`);
     lines.push(`    const node = builder.build();`);
     lines.push(`    expect(typeof node).toBe('object');`);
     lines.push(`    expect(node).toHaveProperty('kind', '${kind}');`);

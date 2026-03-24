@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('if_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.ifExpression(ir.identifier('test'));
+    const builder = ir.ifExpression(ir.charLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('if_expression');
     expect((node as any).condition).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.ifExpression(ir.identifier('test'));
+    const builder = ir.ifExpression(ir.charLiteral('test'));
     const source = builder.renderImpl();
     expect(source).toContain('if');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.ifExpression(ir.identifier('test'));
+    const builder = ir.ifExpression(ir.charLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('if_expression');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('if_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.ifExpression(ir.identifier('test'));
+    const builder = ir.ifExpression(ir.charLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

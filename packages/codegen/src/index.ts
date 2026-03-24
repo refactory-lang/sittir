@@ -15,7 +15,7 @@
  *   sittir --grammar rust --all --output src/
  */
 
-import { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, listSupertypes, listEnumValues } from './grammar-reader.ts';
+import { readGrammarNode, listNodeKinds, listLeafKinds, listNamedKeywords, listOperatorContexts, listKeywords, listOperatorTokens, listSupertypes, listEnumValues } from './grammar-reader.ts';
 import { resolveFileNames, toIrKey, toFactoryName } from './naming.ts';
 import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
@@ -73,6 +73,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 		: listNodeKinds(config.grammar);
 
 	const leafKinds = listLeafKinds(config.grammar);
+	const namedKeywords = listNamedKeywords(config.grammar);
 	const operatorContexts = listOperatorContexts(config.grammar);
 	const keywords = listKeywords(config.grammar);
 	const operatorTokens = listOperatorTokens(config.grammar);
@@ -106,7 +107,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 	const tests = new Map<string, string>();
 
 	for (const node of nodes) {
-		builders.set(node.kind, emitBuilder({ grammar: config.grammar, node, nodeKinds, leafKinds, supertypes }));
+		builders.set(node.kind, emitBuilder({ grammar: config.grammar, node, nodeKinds, leafKinds, supertypes, fileNames, namedKeywords }));
 		tests.set(node.kind, emitTest({
 			grammar: config.grammar,
 			node,
@@ -120,10 +121,10 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 		grammar: emitGrammar({ grammar: config.grammar }),
 		types: emitTypes({ grammar: config.grammar, nodeKinds, leafKinds, supertypes }),
 		builders,
-		builder: emitFluent({ grammar: config.grammar, nodeKinds, leafKinds, operatorContexts, nodes, supertypes }),
+		builder: emitFluent({ grammar: config.grammar, nodeKinds, leafKinds, keywords: namedKeywords, operatorContexts, nodes, supertypes }),
 		consts: emitConsts({ grammar: config.grammar, nodeKinds, leafKinds, keywords, operators: operatorTokens, nodes, enumKinds }),
 		tests,
-		leafTests: emitLeafTests({ leafKinds, nodeKinds, sourceImportPath: config.testSourceImportPath }),
+		leafTests: emitLeafTests({ leafKinds, nodeKinds, keywords: new Set(namedKeywords.keys()), sourceImportPath: config.testSourceImportPath }),
 		config: emitConfig({ grammar: config.grammar }),
 		index: emitIndex({ grammar: config.grammar, nodeKinds }),
 	};

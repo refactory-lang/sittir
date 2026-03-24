@@ -29,11 +29,11 @@ class TokenBindingPatternBuilder extends Builder<TokenBindingPattern> {
     return {
       kind: 'token_binding_pattern',
       name: this._name.build(ctx),
-      type: this._type?.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
     } as TokenBindingPattern;
   }
 
-  override get nodeKind(): string { return 'token_binding_pattern'; }
+  override get nodeKind(): 'token_binding_pattern' { return 'token_binding_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,12 +51,13 @@ export function token_binding_pattern(name: Builder<Metavariable>): TokenBinding
 }
 
 export interface TokenBindingPatternOptions {
+  nodeKind: 'token_binding_pattern';
   name: Builder<Metavariable> | string;
   type: Builder<FragmentSpecifier> | string;
 }
 
 export namespace token_binding_pattern {
-  export function from(options: TokenBindingPatternOptions): TokenBindingPatternBuilder {
+  export function from(options: Omit<TokenBindingPatternOptions, 'nodeKind'>): TokenBindingPatternBuilder {
     const _ctor = options.name;
     const b = new TokenBindingPatternBuilder(typeof _ctor === 'string' ? new LeafBuilder('metavariable', _ctor) : _ctor);
     if (options.type !== undefined) {

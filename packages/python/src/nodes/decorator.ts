@@ -21,11 +21,11 @@ class DecoratorBuilder extends Builder<Decorator> {
   build(ctx?: RenderContext): Decorator {
     return {
       kind: 'decorator',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as Decorator;
   }
 
-  override get nodeKind(): string { return 'decorator'; }
+  override get nodeKind(): 'decorator' { return 'decorator'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function decorator(children: Builder<Expression>): DecoratorBuilder {
 }
 
 export interface DecoratorOptions {
+  nodeKind: 'decorator';
   children: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace decorator {
-  export function from(options: DecoratorOptions): DecoratorBuilder {
+  export function from(input: Omit<DecoratorOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): DecoratorBuilder {
+    const options: Omit<DecoratorOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<DecoratorOptions, 'nodeKind'>
+      : { children: input } as Omit<DecoratorOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new DecoratorBuilder(_ctor);
     return b;

@@ -18,12 +18,7 @@ class ExportClauseBuilder extends Builder<ExportClause> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('{');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -35,7 +30,7 @@ class ExportClauseBuilder extends Builder<ExportClause> {
     } as ExportClause;
   }
 
-  override get nodeKind(): string { return 'export_clause'; }
+  override get nodeKind(): 'export_clause' { return 'export_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -56,16 +51,20 @@ export function export_clause(): ExportClauseBuilder {
 }
 
 export interface ExportClauseOptions {
-  children?: Builder<ExportSpecifier> | ExportSpecifierOptions | (Builder<ExportSpecifier> | ExportSpecifierOptions)[];
+  nodeKind: 'export_clause';
+  children?: Builder<ExportSpecifier> | Omit<ExportSpecifierOptions, 'nodeKind'> | (Builder<ExportSpecifier> | Omit<ExportSpecifierOptions, 'nodeKind'>)[];
 }
 
 export namespace export_clause {
-  export function from(options: ExportClauseOptions): ExportClauseBuilder {
+  export function from(input: Omit<ExportClauseOptions, 'nodeKind'> | Builder<ExportSpecifier> | Omit<ExportSpecifierOptions, 'nodeKind'> | (Builder<ExportSpecifier> | Omit<ExportSpecifierOptions, 'nodeKind'>)[]): ExportClauseBuilder {
+    const options: Omit<ExportClauseOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ExportClauseOptions, 'nodeKind'>
+      : { children: input } as Omit<ExportClauseOptions, 'nodeKind'>;
     const b = new ExportClauseBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr.map(_x => _x instanceof Builder ? _x : export_specifier.from(_x as ExportSpecifierOptions)));
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : export_specifier.from(_x)));
     }
     return b;
   }

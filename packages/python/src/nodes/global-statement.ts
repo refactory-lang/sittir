@@ -14,7 +14,7 @@ class GlobalStatementBuilder extends Builder<GlobalStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('global');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -25,7 +25,7 @@ class GlobalStatementBuilder extends Builder<GlobalStatement> {
     } as GlobalStatement;
   }
 
-  override get nodeKind(): string { return 'global_statement'; }
+  override get nodeKind(): 'global_statement' { return 'global_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -45,13 +45,17 @@ export function global_statement(...children: Builder<Identifier>[]): GlobalStat
 }
 
 export interface GlobalStatementOptions {
-  children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
+  nodeKind: 'global_statement';
+  children?: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace global_statement {
-  export function from(options: GlobalStatementOptions): GlobalStatementBuilder {
+  export function from(input: Omit<GlobalStatementOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): GlobalStatementBuilder {
+    const options: Omit<GlobalStatementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<GlobalStatementOptions, 'nodeKind'>
+      : { children: input } as Omit<GlobalStatementOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new GlobalStatementBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v));
     return b;
   }

@@ -25,7 +25,7 @@ class NotOperatorBuilder extends Builder<NotOperator> {
     } as NotOperator;
   }
 
-  override get nodeKind(): string { return 'not_operator'; }
+  override get nodeKind(): 'not_operator' { return 'not_operator'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,11 +42,15 @@ export function not_operator(argument: Builder<Expression>): NotOperatorBuilder 
 }
 
 export interface NotOperatorOptions {
+  nodeKind: 'not_operator';
   argument: Builder<Expression>;
 }
 
 export namespace not_operator {
-  export function from(options: NotOperatorOptions): NotOperatorBuilder {
+  export function from(input: Omit<NotOperatorOptions, 'nodeKind'> | Builder<Expression>): NotOperatorBuilder {
+    const options: Omit<NotOperatorOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'argument' in input
+      ? input as Omit<NotOperatorOptions, 'nodeKind'>
+      : { argument: input } as Omit<NotOperatorOptions, 'nodeKind'>;
     const b = new NotOperatorBuilder(options.argument);
     return b;
   }

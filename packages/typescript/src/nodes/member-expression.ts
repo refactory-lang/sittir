@@ -1,5 +1,5 @@
 import { Builder, LeafBuilder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { Expression, Import, MemberExpression, OptionalChain, PrimaryExpression, PrivatePropertyIdentifier, PropertyIdentifier } from '../types.js';
 
 
@@ -35,12 +35,12 @@ class MemberExpressionBuilder extends Builder<MemberExpression> {
     return {
       kind: 'member_expression',
       object: this._object.build(ctx),
-      optionalChain: this._optionalChain?.build(ctx),
-      property: this._property?.build(ctx),
+      optionalChain: this._optionalChain ? this._optionalChain.build(ctx) : undefined,
+      property: this._property ? this._property.build(ctx) : undefined,
     } as MemberExpression;
   }
 
-  override get nodeKind(): string { return 'member_expression'; }
+  override get nodeKind(): 'member_expression' { return 'member_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -58,20 +58,31 @@ export function member_expression(object: Builder<Expression | PrimaryExpression
 }
 
 export interface MemberExpressionOptions {
+  nodeKind: 'member_expression';
   object: Builder<Expression | PrimaryExpression | Import> | string;
   optionalChain?: Builder<OptionalChain> | string;
-  property: Builder<PrivatePropertyIdentifier | PropertyIdentifier>;
+  property: Builder<PrivatePropertyIdentifier | PropertyIdentifier> | LeafOptions<'private_property_identifier'> | LeafOptions<'property_identifier'>;
 }
 
 export namespace member_expression {
-  export function from(options: MemberExpressionOptions): MemberExpressionBuilder {
+  export function from(options: Omit<MemberExpressionOptions, 'nodeKind'>): MemberExpressionBuilder {
     const _ctor = options.object;
     const b = new MemberExpressionBuilder(typeof _ctor === 'string' ? new LeafBuilder('import', _ctor) : _ctor);
     if (options.optionalChain !== undefined) {
       const _v = options.optionalChain;
       b.optionalChain(typeof _v === 'string' ? new LeafBuilder('optional_chain', _v) : _v);
     }
-    if (options.property !== undefined) b.property(options.property);
+    if (options.property !== undefined) {
+      const _v = options.property;
+      if (_v instanceof Builder) {
+        b.property(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'private_property_identifier': b.property(new LeafBuilder('private_property_identifier', (_v as LeafOptions).text!)); break;
+          case 'property_identifier': b.property(new LeafBuilder('property_identifier', (_v as LeafOptions).text!)); break;
+        }
+      }
+    }
     return b;
   }
 }

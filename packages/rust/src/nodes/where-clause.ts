@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { WhereClause, WherePredicate } from '../types.js';
+import { where_predicate } from './where-predicate.js';
+import type { WherePredicateOptions } from './where-predicate.js';
 
 
 class WhereClauseBuilder extends Builder<WhereClause> {
@@ -16,12 +18,7 @@ class WhereClauseBuilder extends Builder<WhereClause> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('where');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -32,7 +29,7 @@ class WhereClauseBuilder extends Builder<WhereClause> {
     } as WhereClause;
   }
 
-  override get nodeKind(): string { return 'where_clause'; }
+  override get nodeKind(): 'where_clause' { return 'where_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -52,16 +49,20 @@ export function where_clause(): WhereClauseBuilder {
 }
 
 export interface WhereClauseOptions {
-  children?: Builder<WherePredicate> | (Builder<WherePredicate>)[];
+  nodeKind: 'where_clause';
+  children?: Builder<WherePredicate> | Omit<WherePredicateOptions, 'nodeKind'> | (Builder<WherePredicate> | Omit<WherePredicateOptions, 'nodeKind'>)[];
 }
 
 export namespace where_clause {
-  export function from(options: WhereClauseOptions): WhereClauseBuilder {
+  export function from(input: Omit<WhereClauseOptions, 'nodeKind'> | Builder<WherePredicate> | Omit<WherePredicateOptions, 'nodeKind'> | (Builder<WherePredicate> | Omit<WherePredicateOptions, 'nodeKind'>)[]): WhereClauseBuilder {
+    const options: Omit<WhereClauseOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<WhereClauseOptions, 'nodeKind'>
+      : { children: input } as Omit<WhereClauseOptions, 'nodeKind'>;
     const b = new WhereClauseBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : where_predicate.from(_x)));
     }
     return b;
   }

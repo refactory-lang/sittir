@@ -21,11 +21,11 @@ class RestTypeBuilder extends Builder<RestType> {
   build(ctx?: RenderContext): RestType {
     return {
       kind: 'rest_type',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as RestType;
   }
 
-  override get nodeKind(): string { return 'rest_type'; }
+  override get nodeKind(): 'rest_type' { return 'rest_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function rest_type(children: Builder<Type>): RestTypeBuilder {
 }
 
 export interface RestTypeOptions {
+  nodeKind: 'rest_type';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace rest_type {
-  export function from(options: RestTypeOptions): RestTypeBuilder {
+  export function from(input: Omit<RestTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): RestTypeBuilder {
+    const options: Omit<RestTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<RestTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<RestTypeOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new RestTypeBuilder(_ctor);
     return b;

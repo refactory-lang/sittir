@@ -21,11 +21,11 @@ class ConstraintBuilder extends Builder<Constraint> {
   build(ctx?: RenderContext): Constraint {
     return {
       kind: 'constraint',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as Constraint;
   }
 
-  override get nodeKind(): string { return 'constraint'; }
+  override get nodeKind(): 'constraint' { return 'constraint'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function constraint(children: Builder<Type>): ConstraintBuilder {
 }
 
 export interface ConstraintOptions {
+  nodeKind: 'constraint';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace constraint {
-  export function from(options: ConstraintOptions): ConstraintBuilder {
+  export function from(input: Omit<ConstraintOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): ConstraintBuilder {
+    const options: Omit<ConstraintOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ConstraintOptions, 'nodeKind'>
+      : { children: input } as Omit<ConstraintOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new ConstraintBuilder(_ctor);
     return b;

@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ConcatenatedString, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
 
 
 class ConcatenatedStringBuilder extends Builder<ConcatenatedString> {
@@ -25,7 +27,7 @@ class ConcatenatedStringBuilder extends Builder<ConcatenatedString> {
     } as ConcatenatedString;
   }
 
-  override get nodeKind(): string { return 'concatenated_string'; }
+  override get nodeKind(): 'concatenated_string' { return 'concatenated_string'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,14 +44,18 @@ export function concatenated_string(...children: Builder<String>[]): Concatenate
 }
 
 export interface ConcatenatedStringOptions {
-  children: Builder<String> | (Builder<String>)[];
+  nodeKind: 'concatenated_string';
+  children?: Builder<String> | Omit<StringOptions, 'nodeKind'> | (Builder<String> | Omit<StringOptions, 'nodeKind'>)[];
 }
 
 export namespace concatenated_string {
-  export function from(options: ConcatenatedStringOptions): ConcatenatedStringBuilder {
+  export function from(input: Omit<ConcatenatedStringOptions, 'nodeKind'> | Builder<String> | Omit<StringOptions, 'nodeKind'> | (Builder<String> | Omit<StringOptions, 'nodeKind'>)[]): ConcatenatedStringBuilder {
+    const options: Omit<ConcatenatedStringOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ConcatenatedStringOptions, 'nodeKind'>
+      : { children: input } as Omit<ConcatenatedStringOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new ConcatenatedStringBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ConcatenatedStringBuilder(..._arr.map(_v => _v instanceof Builder ? _v : string.from(_v)));
     return b;
   }
 }

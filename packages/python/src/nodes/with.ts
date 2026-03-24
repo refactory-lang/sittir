@@ -24,7 +24,7 @@ class WithBuilder extends Builder<WithItem> {
     } as WithItem;
   }
 
-  override get nodeKind(): string { return 'with_item'; }
+  override get nodeKind(): 'with_item' { return 'with_item'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -40,11 +40,15 @@ export function with_(value: Builder<Expression>): WithBuilder {
 }
 
 export interface WithItemOptions {
+  nodeKind: 'with_item';
   value: Builder<Expression>;
 }
 
 export namespace with_ {
-  export function from(options: WithItemOptions): WithBuilder {
+  export function from(input: Omit<WithItemOptions, 'nodeKind'> | Builder<Expression>): WithBuilder {
+    const options: Omit<WithItemOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'value' in input
+      ? input as Omit<WithItemOptions, 'nodeKind'>
+      : { value: input } as Omit<WithItemOptions, 'nodeKind'>;
     const b = new WithBuilder(options.value);
     return b;
   }

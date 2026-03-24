@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, WithClause, WithStatement } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
+import { with_clause } from './with-clause.js';
+import type { WithClauseOptions } from './with-clause.js';
 
 
 class WithStatementBuilder extends Builder<WithStatement> {
@@ -30,11 +34,11 @@ class WithStatementBuilder extends Builder<WithStatement> {
     return {
       kind: 'with_statement',
       body: this._body.build(ctx),
-      children: this._children[0]?.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as WithStatement;
   }
 
-  override get nodeKind(): string { return 'with_statement'; }
+  override get nodeKind(): 'with_statement' { return 'with_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,17 +59,19 @@ export function with_statement(body: Builder<Block>): WithStatementBuilder {
 }
 
 export interface WithStatementOptions {
-  body: Builder<Block>;
-  children?: Builder<WithClause> | (Builder<WithClause>)[];
+  nodeKind: 'with_statement';
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
+  children?: Builder<WithClause> | Omit<WithClauseOptions, 'nodeKind'> | (Builder<WithClause> | Omit<WithClauseOptions, 'nodeKind'>)[];
 }
 
 export namespace with_statement {
-  export function from(options: WithStatementOptions): WithStatementBuilder {
-    const b = new WithStatementBuilder(options.body);
+  export function from(options: Omit<WithStatementOptions, 'nodeKind'>): WithStatementBuilder {
+    const _ctor = options.body;
+    const b = new WithStatementBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : with_clause.from(_x)));
     }
     return b;
   }

@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('assert_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.assertStatement(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.assertStatement(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))), ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('assert_statement');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,13 +12,13 @@ describe('assert_statement', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.assertStatement(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.assertStatement(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))), ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain('assert');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.assertStatement(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.assertStatement(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))), ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('assert_statement');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +27,7 @@ describe('assert_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.assertStatement(ir.asPattern(ir.identifier('test')), ir.asPattern(ir.identifier('test')));
+    const builder = ir.assertStatement(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))), ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

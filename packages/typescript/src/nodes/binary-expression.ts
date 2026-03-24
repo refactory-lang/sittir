@@ -35,12 +35,12 @@ class BinaryExpressionBuilder extends Builder<BinaryExpression> {
     return {
       kind: 'binary_expression',
       left: this._left.build(ctx),
-      operator: this._operator?.build(ctx),
-      right: this._right?.build(ctx),
+      operator: this._operator ? this.buildChild(this._operator, ctx) : undefined,
+      right: this._right ? this._right.build(ctx) : undefined,
     } as BinaryExpression;
   }
 
-  override get nodeKind(): string { return 'binary_expression'; }
+  override get nodeKind(): 'binary_expression' { return 'binary_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -58,13 +58,14 @@ export function binary_expression(left: Builder<Expression | PrivatePropertyIden
 }
 
 export interface BinaryExpressionOptions {
+  nodeKind: 'binary_expression';
   left: Builder<Expression | PrivatePropertyIdentifier> | string;
   operator: Builder;
   right: Builder<Expression>;
 }
 
 export namespace binary_expression {
-  export function from(options: BinaryExpressionOptions): BinaryExpressionBuilder {
+  export function from(options: Omit<BinaryExpressionOptions, 'nodeKind'>): BinaryExpressionBuilder {
     const _ctor = options.left;
     const b = new BinaryExpressionBuilder(typeof _ctor === 'string' ? new LeafBuilder('private_property_identifier', _ctor) : _ctor);
     if (options.operator !== undefined) b.operator(options.operator);

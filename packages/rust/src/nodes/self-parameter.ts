@@ -1,6 +1,8 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { Lifetime, MutableSpecifier, Self, SelfParameter } from '../types.js';
+import { lifetime } from './lifetime.js';
+import type { LifetimeOptions } from './lifetime.js';
 
 
 class SelfParameterBuilder extends Builder<SelfParameter> {
@@ -13,7 +15,9 @@ class SelfParameterBuilder extends Builder<SelfParameter> {
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
+    if (this._children[2]) parts.push(this.renderChild(this._children[2]!, ctx));
     return parts.join(' ');
   }
 
@@ -24,13 +28,13 @@ class SelfParameterBuilder extends Builder<SelfParameter> {
     } as SelfParameter;
   }
 
-  override get nodeKind(): string { return 'self_parameter'; }
+  override get nodeKind(): 'self_parameter' { return 'self_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
+    if (this._children[2]) parts.push({ kind: 'builder', builder: this._children[2]! });
     return parts;
   }
 }
@@ -42,14 +46,18 @@ export function self_parameter(...children: Builder<Lifetime | MutableSpecifier 
 }
 
 export interface SelfParameterOptions {
-  children: Builder<Lifetime | MutableSpecifier | Self> | (Builder<Lifetime | MutableSpecifier | Self>)[];
+  nodeKind: 'self_parameter';
+  children?: Builder<Lifetime | MutableSpecifier | Self> | LeafOptions<'mutable_specifier'> | LeafOptions<'self'> | LifetimeOptions | (Builder<Lifetime | MutableSpecifier | Self> | LeafOptions<'mutable_specifier'> | LeafOptions<'self'> | LifetimeOptions)[];
 }
 
 export namespace self_parameter {
-  export function from(options: SelfParameterOptions): SelfParameterBuilder {
+  export function from(input: Omit<SelfParameterOptions, 'nodeKind'> | Builder<Lifetime | MutableSpecifier | Self> | LeafOptions<'mutable_specifier'> | LeafOptions<'self'> | LifetimeOptions | (Builder<Lifetime | MutableSpecifier | Self> | LeafOptions<'mutable_specifier'> | LeafOptions<'self'> | LifetimeOptions)[]): SelfParameterBuilder {
+    const options: Omit<SelfParameterOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<SelfParameterOptions, 'nodeKind'>
+      : { children: input } as Omit<SelfParameterOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new SelfParameterBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new SelfParameterBuilder(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'lifetime': return lifetime.from(_v);   case 'mutable_specifier': return new LeafBuilder('mutable_specifier', (_v as LeafOptions).text ?? 'mut');   case 'self': return new LeafBuilder('self', (_v as LeafOptions).text ?? 'self'); } throw new Error('unreachable'); }));
     return b;
   }
 }

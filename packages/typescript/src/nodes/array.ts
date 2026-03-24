@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Array, Expression, SpreadElement } from '../types.js';
+import { spread_element } from './spread-element.js';
+import type { SpreadElementOptions } from './spread-element.js';
 
 
 class ArrayBuilder extends Builder<Array> {
@@ -16,12 +18,7 @@ class ArrayBuilder extends Builder<Array> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('[');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push(']');
     return parts.join(' ');
   }
@@ -33,7 +30,7 @@ class ArrayBuilder extends Builder<Array> {
     } as Array;
   }
 
-  override get nodeKind(): string { return 'array'; }
+  override get nodeKind(): 'array' { return 'array'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -54,16 +51,20 @@ export function array(): ArrayBuilder {
 }
 
 export interface ArrayOptions {
-  children?: Builder<Expression | SpreadElement> | (Builder<Expression | SpreadElement>)[];
+  nodeKind: 'array';
+  children?: Builder<Expression | SpreadElement> | Omit<SpreadElementOptions, 'nodeKind'> | (Builder<Expression | SpreadElement> | Omit<SpreadElementOptions, 'nodeKind'>)[];
 }
 
 export namespace array {
-  export function from(options: ArrayOptions): ArrayBuilder {
+  export function from(input: Omit<ArrayOptions, 'nodeKind'> | Builder<Expression | SpreadElement> | Omit<SpreadElementOptions, 'nodeKind'> | (Builder<Expression | SpreadElement> | Omit<SpreadElementOptions, 'nodeKind'>)[]): ArrayBuilder {
+    const options: Omit<ArrayOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ArrayOptions, 'nodeKind'>
+      : { children: input } as Omit<ArrayOptions, 'nodeKind'>;
     const b = new ArrayBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : spread_element.from(_x)));
     }
     return b;
   }

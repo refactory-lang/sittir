@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('pair', () => {
   it('should build with correct kind', () => {
-    const builder = ir.pair(ir.asPattern(ir.identifier('test')));
+    const builder = ir.pair(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('pair');
     expect((node as any).key).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.pair(ir.asPattern(ir.identifier('test')));
+    const builder = ir.pair(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain(':');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.pair(ir.asPattern(ir.identifier('test')));
+    const builder = ir.pair(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('pair');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('pair', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.pair(ir.asPattern(ir.identifier('test')));
+    const builder = ir.pair(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

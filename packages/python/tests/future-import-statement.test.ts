@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('future_import_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.futureImportStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.futureImportStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     const node = builder.build();
     expect(node.kind).toBe('future_import_statement');
     expect(Array.isArray((node as any).name)).toBe(true);
@@ -12,7 +12,7 @@ describe('future_import_statement', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.futureImportStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.futureImportStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     const source = builder.renderImpl();
     expect(source).toContain('from');
     expect(source).toContain('__future__');
@@ -20,7 +20,7 @@ describe('future_import_statement', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.futureImportStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.futureImportStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('future_import_statement');
     expect(cst.isNamed).toBe(true);
@@ -29,7 +29,7 @@ describe('future_import_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.futureImportStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.futureImportStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

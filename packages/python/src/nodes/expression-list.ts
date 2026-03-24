@@ -25,7 +25,7 @@ class ExpressionListBuilder extends Builder<ExpressionList> {
     } as ExpressionList;
   }
 
-  override get nodeKind(): string { return 'expression_list'; }
+  override get nodeKind(): 'expression_list' { return 'expression_list'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,13 +44,17 @@ export function expression_list(...children: Builder<Expression>[]): ExpressionL
 }
 
 export interface ExpressionListOptions {
-  children: Builder<Expression> | (Builder<Expression>)[];
+  nodeKind: 'expression_list';
+  children?: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace expression_list {
-  export function from(options: ExpressionListOptions): ExpressionListBuilder {
+  export function from(input: Omit<ExpressionListOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): ExpressionListBuilder {
+    const options: Omit<ExpressionListOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ExpressionListOptions, 'nodeKind'>
+      : { children: input } as Omit<ExpressionListOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new ExpressionListBuilder(..._arr);
     return b;
   }

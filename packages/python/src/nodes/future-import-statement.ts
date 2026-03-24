@@ -1,12 +1,16 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AliasedImport, DottedName, FutureImportStatement } from '../types.js';
+import { dotted_name } from './dotted-name.js';
+import type { DottedNameOptions } from './dotted-name.js';
+import { aliased_import } from './aliased-import.js';
+import type { AliasedImportOptions } from './aliased-import.js';
 
 
 class FutureImportStatementBuilder extends Builder<FutureImportStatement> {
-  private _name: Builder<AliasedImport | DottedName>[] = [];
+  private _name: Builder<DottedName | AliasedImport>[] = [];
 
-  constructor(...name: Builder<AliasedImport | DottedName>[]) {
+  constructor(...name: Builder<DottedName | AliasedImport>[]) {
     super();
     this._name = name;
   }
@@ -27,7 +31,7 @@ class FutureImportStatementBuilder extends Builder<FutureImportStatement> {
     } as FutureImportStatement;
   }
 
-  override get nodeKind(): string { return 'future_import_statement'; }
+  override get nodeKind(): 'future_import_statement' { return 'future_import_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -43,19 +47,23 @@ class FutureImportStatementBuilder extends Builder<FutureImportStatement> {
 
 export type { FutureImportStatementBuilder };
 
-export function future_import_statement(...name: Builder<AliasedImport | DottedName>[]): FutureImportStatementBuilder {
+export function future_import_statement(...name: Builder<DottedName | AliasedImport>[]): FutureImportStatementBuilder {
   return new FutureImportStatementBuilder(...name);
 }
 
 export interface FutureImportStatementOptions {
-  name: Builder<AliasedImport | DottedName> | (Builder<AliasedImport | DottedName>)[];
+  nodeKind: 'future_import_statement';
+  name: Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions | (Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions)[];
 }
 
 export namespace future_import_statement {
-  export function from(options: FutureImportStatementOptions): FutureImportStatementBuilder {
+  export function from(input: Omit<FutureImportStatementOptions, 'nodeKind'> | Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions | (Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions)[]): FutureImportStatementBuilder {
+    const options: Omit<FutureImportStatementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'name' in input
+      ? input as Omit<FutureImportStatementOptions, 'nodeKind'>
+      : { name: input } as Omit<FutureImportStatementOptions, 'nodeKind'>;
     const _ctor = options.name;
     const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
-    const b = new FutureImportStatementBuilder(..._arr);
+    const b = new FutureImportStatementBuilder(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'dotted_name': return dotted_name.from(_v);   case 'aliased_import': return aliased_import.from(_v); } throw new Error('unreachable'); }));
     return b;
   }
 }

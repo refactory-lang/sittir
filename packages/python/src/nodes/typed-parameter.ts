@@ -1,18 +1,24 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { DictionarySplatPattern, Identifier, ListSplatPattern, TypedParameter } from '../types.js';
+import type { DictionarySplatPattern, Identifier, ListSplatPattern, Type, TypedParameter } from '../types.js';
+import { type_ } from './type.js';
+import type { TypeOptions } from './type.js';
+import { list_splat_pattern } from './list-splat-pattern.js';
+import type { ListSplatPatternOptions } from './list-splat-pattern.js';
+import { dictionary_splat_pattern } from './dictionary-splat-pattern.js';
+import type { DictionarySplatPatternOptions } from './dictionary-splat-pattern.js';
 
 
 class TypedParameterBuilder extends Builder<TypedParameter> {
-  private _type: Builder;
-  private _children: Builder<DictionarySplatPattern | Identifier | ListSplatPattern>[] = [];
+  private _type: Builder<Type>;
+  private _children: Builder<Identifier | ListSplatPattern | DictionarySplatPattern>[] = [];
 
-  constructor(type_: Builder) {
+  constructor(type_: Builder<Type>) {
     super();
     this._type = type_;
   }
 
-  children(...value: Builder<DictionarySplatPattern | Identifier | ListSplatPattern>[]): this {
+  children(...value: Builder<Identifier | ListSplatPattern | DictionarySplatPattern>[]): this {
     this._children = value;
     return this;
   }
@@ -29,11 +35,11 @@ class TypedParameterBuilder extends Builder<TypedParameter> {
     return {
       kind: 'typed_parameter',
       type: this._type.build(ctx),
-      children: this._children[0]?.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as TypedParameter;
   }
 
-  override get nodeKind(): string { return 'typed_parameter'; }
+  override get nodeKind(): 'typed_parameter' { return 'typed_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,22 +54,24 @@ class TypedParameterBuilder extends Builder<TypedParameter> {
 
 export type { TypedParameterBuilder };
 
-export function typed_parameter(type_: Builder): TypedParameterBuilder {
+export function typed_parameter(type_: Builder<Type>): TypedParameterBuilder {
   return new TypedParameterBuilder(type_);
 }
 
 export interface TypedParameterOptions {
-  type: Builder;
-  children?: Builder<DictionarySplatPattern | Identifier | ListSplatPattern> | (Builder<DictionarySplatPattern | Identifier | ListSplatPattern>)[];
+  nodeKind: 'typed_parameter';
+  type: Builder<Type> | Omit<TypeOptions, 'nodeKind'>;
+  children?: Builder<Identifier | ListSplatPattern | DictionarySplatPattern> | string | ListSplatPatternOptions | DictionarySplatPatternOptions | (Builder<Identifier | ListSplatPattern | DictionarySplatPattern> | string | ListSplatPatternOptions | DictionarySplatPatternOptions)[];
 }
 
 export namespace typed_parameter {
-  export function from(options: TypedParameterOptions): TypedParameterBuilder {
-    const b = new TypedParameterBuilder(options.type);
+  export function from(options: Omit<TypedParameterOptions, 'nodeKind'>): TypedParameterBuilder {
+    const _ctor = options.type;
+    const b = new TypedParameterBuilder(_ctor instanceof Builder ? _ctor : type_.from(_ctor));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (typeof _v === 'string') return new LeafBuilder('identifier', _v); if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'list_splat_pattern': return list_splat_pattern.from(_v);   case 'dictionary_splat_pattern': return dictionary_splat_pattern.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

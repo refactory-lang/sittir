@@ -3,21 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('interpolation', () => {
   it('should build with correct kind', () => {
-    const builder = ir.interpolation(ir.asPattern(ir.identifier('test')));
+    const builder = ir.interpolation(ir.yield());
     const node = builder.build();
     expect(node.kind).toBe('interpolation');
     expect((node as any).expression).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.interpolation(ir.asPattern(ir.identifier('test')));
+    const builder = ir.interpolation(ir.yield());
     const source = builder.renderImpl();
     expect(source).toContain('{');
     expect(source).toContain('}');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.interpolation(ir.asPattern(ir.identifier('test')));
+    const builder = ir.interpolation(ir.yield());
     const cst = builder.toCST();
     expect(cst.type).toBe('interpolation');
     expect(cst.isNamed).toBe(true);
@@ -26,7 +26,7 @@ describe('interpolation', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.interpolation(ir.asPattern(ir.identifier('test')));
+    const builder = ir.interpolation(ir.yield());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

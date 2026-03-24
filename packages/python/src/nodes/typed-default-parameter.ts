@@ -1,11 +1,13 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Expression, Identifier, TypedDefaultParameter } from '../types.js';
+import type { Expression, Identifier, Type, TypedDefaultParameter } from '../types.js';
+import { type_ } from './type.js';
+import type { TypeOptions } from './type.js';
 
 
 class TypedDefaultParameterBuilder extends Builder<TypedDefaultParameter> {
   private _name: Builder<Identifier>;
-  private _type!: Builder;
+  private _type!: Builder<Type>;
   private _value!: Builder<Expression>;
 
   constructor(name: Builder<Identifier>) {
@@ -13,7 +15,7 @@ class TypedDefaultParameterBuilder extends Builder<TypedDefaultParameter> {
     this._name = name;
   }
 
-  type(value: Builder): this {
+  type(value: Builder<Type>): this {
     this._type = value;
     return this;
   }
@@ -37,12 +39,12 @@ class TypedDefaultParameterBuilder extends Builder<TypedDefaultParameter> {
     return {
       kind: 'typed_default_parameter',
       name: this._name.build(ctx),
-      type: this._type?.build(ctx),
-      value: this._value?.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
+      value: this._value ? this._value.build(ctx) : undefined,
     } as TypedDefaultParameter;
   }
 
-  override get nodeKind(): string { return 'typed_default_parameter'; }
+  override get nodeKind(): 'typed_default_parameter' { return 'typed_default_parameter'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -62,16 +64,20 @@ export function typed_default_parameter(name: Builder<Identifier>): TypedDefault
 }
 
 export interface TypedDefaultParameterOptions {
+  nodeKind: 'typed_default_parameter';
   name: Builder<Identifier> | string;
-  type: Builder;
+  type: Builder<Type> | Omit<TypeOptions, 'nodeKind'>;
   value: Builder<Expression>;
 }
 
 export namespace typed_default_parameter {
-  export function from(options: TypedDefaultParameterOptions): TypedDefaultParameterBuilder {
+  export function from(options: Omit<TypedDefaultParameterOptions, 'nodeKind'>): TypedDefaultParameterBuilder {
     const _ctor = options.name;
     const b = new TypedDefaultParameterBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
-    if (options.type !== undefined) b.type(options.type);
+    if (options.type !== undefined) {
+      const _v = options.type;
+      b.type(_v instanceof Builder ? _v : type_.from(_v));
+    }
     if (options.value !== undefined) b.value(options.value);
     return b;
   }

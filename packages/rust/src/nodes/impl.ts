@@ -1,32 +1,62 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { DeclarationList, GenericType, ImplItem, ScopedTypeIdentifier, Type, TypeIdentifier, TypeParameters, WhereClause } from '../types.js';
+import type { AbstractType, ArrayType, BoundedType, DeclarationList, DynamicType, FunctionType, GenericType, ImplItem, MacroInvocation, Metavariable, NeverType, PointerType, PrimitiveType, ReferenceType, RemovedTraitBound, ScopedTypeIdentifier, TupleType, TypeIdentifier, TypeParameters, UnitType, WhereClause } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { scoped_type_identifier } from './scoped-type-identifier.js';
+import type { ScopedTypeIdentifierOptions } from './scoped-type-identifier.js';
+import { generic_type } from './generic-type.js';
+import type { GenericTypeOptions } from './generic-type.js';
+import { abstract_type } from './abstract-type.js';
+import type { AbstractTypeOptions } from './abstract-type.js';
+import { reference_type } from './reference-type.js';
+import type { ReferenceTypeOptions } from './reference-type.js';
+import { pointer_type } from './pointer-type.js';
+import type { PointerTypeOptions } from './pointer-type.js';
+import { tuple_type } from './tuple-type.js';
+import type { TupleTypeOptions } from './tuple-type.js';
+import { array_type } from './array-type.js';
+import type { ArrayTypeOptions } from './array-type.js';
+import { function_type } from './function-type.js';
+import type { FunctionTypeOptions } from './function-type.js';
+import { macro_invocation } from './macro-invocation.js';
+import type { MacroInvocationOptions } from './macro-invocation.js';
+import { dynamic_type } from './dynamic-type.js';
+import type { DynamicTypeOptions } from './dynamic-type.js';
+import { bounded_type } from './bounded-type.js';
+import type { BoundedTypeOptions } from './bounded-type.js';
+import { removed_trait_bound } from './removed-trait-bound.js';
+import type { RemovedTraitBoundOptions } from './removed-trait-bound.js';
+import { declaration_list } from './declaration-list.js';
+import type { DeclarationListOptions } from './declaration-list.js';
+import { where_clause } from './where-clause.js';
+import type { WhereClauseOptions } from './where-clause.js';
 
 
 class ImplBuilder extends Builder<ImplItem> {
-  private _body?: Builder<DeclarationList>;
-  private _trait?: Builder<GenericType | ScopedTypeIdentifier | TypeIdentifier>;
-  private _type: Builder<Type>;
   private _typeParameters?: Builder<TypeParameters>;
+  private _trait?: Builder<TypeIdentifier | ScopedTypeIdentifier | GenericType>;
+  private _type: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>;
+  private _body?: Builder<DeclarationList>;
   private _children: Builder<WhereClause>[] = [];
 
-  constructor(type_: Builder<Type>) {
+  constructor(type_: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>) {
     super();
     this._type = type_;
   }
 
-  body(value: Builder<DeclarationList>): this {
-    this._body = value;
+  typeParameters(value: Builder<TypeParameters>): this {
+    this._typeParameters = value;
     return this;
   }
 
-  trait(value: Builder<GenericType | ScopedTypeIdentifier | TypeIdentifier>): this {
+  trait(value: Builder<TypeIdentifier | ScopedTypeIdentifier | GenericType>): this {
     this._trait = value;
     return this;
   }
 
-  typeParameters(value: Builder<TypeParameters>): this {
-    this._typeParameters = value;
+  body(value: Builder<DeclarationList>): this {
+    this._body = value;
     return this;
   }
 
@@ -53,15 +83,15 @@ class ImplBuilder extends Builder<ImplItem> {
   build(ctx?: RenderContext): ImplItem {
     return {
       kind: 'impl_item',
-      body: this._body?.build(ctx),
-      trait: this._trait?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      trait: this._trait ? this._trait.build(ctx) : undefined,
       type: this._type.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
-      children: this._children[0]?.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as ImplItem;
   }
 
-  override get nodeKind(): string { return 'impl_item'; }
+  override get nodeKind(): 'impl_item' { return 'impl_item'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -83,28 +113,68 @@ class ImplBuilder extends Builder<ImplItem> {
 
 export type { ImplBuilder };
 
-export function impl(type_: Builder<Type>): ImplBuilder {
+export function impl(type_: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>): ImplBuilder {
   return new ImplBuilder(type_);
 }
 
 export interface ImplItemOptions {
-  body?: Builder<DeclarationList>;
-  trait?: Builder<GenericType | ScopedTypeIdentifier | TypeIdentifier>;
-  type: Builder<Type>;
-  typeParameters?: Builder<TypeParameters>;
-  children?: Builder<WhereClause> | (Builder<WhereClause>)[];
+  nodeKind: 'impl_item';
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  trait?: Builder<TypeIdentifier | ScopedTypeIdentifier | GenericType> | string | ScopedTypeIdentifierOptions | GenericTypeOptions;
+  type: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType> | AbstractTypeOptions | ReferenceTypeOptions | PointerTypeOptions | GenericTypeOptions | ScopedTypeIdentifierOptions | TupleTypeOptions | ArrayTypeOptions | FunctionTypeOptions | MacroInvocationOptions | DynamicTypeOptions | BoundedTypeOptions | RemovedTraitBoundOptions;
+  body?: Builder<DeclarationList> | Omit<DeclarationListOptions, 'nodeKind'>;
+  children?: Builder<WhereClause> | Omit<WhereClauseOptions, 'nodeKind'> | (Builder<WhereClause> | Omit<WhereClauseOptions, 'nodeKind'>)[];
 }
 
 export namespace impl {
-  export function from(options: ImplItemOptions): ImplBuilder {
-    const b = new ImplBuilder(options.type);
-    if (options.body !== undefined) b.body(options.body);
-    if (options.trait !== undefined) b.trait(options.trait);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+  export function from(options: Omit<ImplItemOptions, 'nodeKind'>): ImplBuilder {
+    const _raw = options.type;
+    let _ctor: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'abstract_type': _ctor = abstract_type.from(_raw); break;
+        case 'reference_type': _ctor = reference_type.from(_raw); break;
+        case 'pointer_type': _ctor = pointer_type.from(_raw); break;
+        case 'generic_type': _ctor = generic_type.from(_raw); break;
+        case 'scoped_type_identifier': _ctor = scoped_type_identifier.from(_raw); break;
+        case 'tuple_type': _ctor = tuple_type.from(_raw); break;
+        case 'array_type': _ctor = array_type.from(_raw); break;
+        case 'function_type': _ctor = function_type.from(_raw); break;
+        case 'macro_invocation': _ctor = macro_invocation.from(_raw); break;
+        case 'dynamic_type': _ctor = dynamic_type.from(_raw); break;
+        case 'bounded_type': _ctor = bounded_type.from(_raw); break;
+        case 'removed_trait_bound': _ctor = removed_trait_bound.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new ImplBuilder(_ctor);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
+    }
+    if (options.trait !== undefined) {
+      const _v = options.trait;
+      if (typeof _v === 'string') {
+        b.trait(new LeafBuilder('type_identifier', _v));
+      } else if (_v instanceof Builder) {
+        b.trait(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'scoped_type_identifier': b.trait(scoped_type_identifier.from(_v)); break;
+          case 'generic_type': b.trait(generic_type.from(_v)); break;
+        }
+      }
+    }
+    if (options.body !== undefined) {
+      const _v = options.body;
+      b.body(_v instanceof Builder ? _v : declaration_list.from(_v));
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : where_clause.from(_x)));
     }
     return b;
   }

@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, ForInClause, GeneratorExpression, IfClause } from '../types.js';
+import { for_in_clause } from './for-in-clause.js';
+import type { ForInClauseOptions } from './for-in-clause.js';
+import { if_clause } from './if-clause.js';
+import type { IfClauseOptions } from './if-clause.js';
 
 
 class GeneratorExpressionBuilder extends Builder<GeneratorExpression> {
@@ -34,7 +38,7 @@ class GeneratorExpressionBuilder extends Builder<GeneratorExpression> {
     } as GeneratorExpression;
   }
 
-  override get nodeKind(): string { return 'generator_expression'; }
+  override get nodeKind(): 'generator_expression' { return 'generator_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,17 +59,18 @@ export function generator_expression(body: Builder<Expression>): GeneratorExpres
 }
 
 export interface GeneratorExpressionOptions {
+  nodeKind: 'generator_expression';
   body: Builder<Expression>;
-  children?: Builder<ForInClause | IfClause> | (Builder<ForInClause | IfClause>)[];
+  children?: Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions | (Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions)[];
 }
 
 export namespace generator_expression {
-  export function from(options: GeneratorExpressionOptions): GeneratorExpressionBuilder {
+  export function from(options: Omit<GeneratorExpressionOptions, 'nodeKind'>): GeneratorExpressionBuilder {
     const b = new GeneratorExpressionBuilder(options.body);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'for_in_clause': return for_in_clause.from(_v);   case 'if_clause': return if_clause.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

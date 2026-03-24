@@ -1,6 +1,8 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, MacroDefinition, MacroRule } from '../types.js';
+import { macro_rule } from './macro-rule.js';
+import type { MacroRuleOptions } from './macro-rule.js';
 
 
 class MacroDefinitionBuilder extends Builder<MacroDefinition> {
@@ -41,7 +43,7 @@ class MacroDefinitionBuilder extends Builder<MacroDefinition> {
     } as MacroDefinition;
   }
 
-  override get nodeKind(): string { return 'macro_definition'; }
+  override get nodeKind(): 'macro_definition' { return 'macro_definition'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -65,18 +67,19 @@ export function macro_definition(name: Builder<Identifier>): MacroDefinitionBuil
 }
 
 export interface MacroDefinitionOptions {
+  nodeKind: 'macro_definition';
   name: Builder<Identifier> | string;
-  children?: Builder<MacroRule> | (Builder<MacroRule>)[];
+  children?: Builder<MacroRule> | Omit<MacroRuleOptions, 'nodeKind'> | (Builder<MacroRule> | Omit<MacroRuleOptions, 'nodeKind'>)[];
 }
 
 export namespace macro_definition {
-  export function from(options: MacroDefinitionOptions): MacroDefinitionBuilder {
+  export function from(options: Omit<MacroDefinitionOptions, 'nodeKind'>): MacroDefinitionBuilder {
     const _ctor = options.name;
     const b = new MacroDefinitionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : macro_rule.from(_x)));
     }
     return b;
   }

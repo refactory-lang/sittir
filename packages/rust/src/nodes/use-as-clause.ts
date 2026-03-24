@@ -1,13 +1,15 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Crate, Identifier, Metavariable, ScopedIdentifier, Self, Super, UseAsClause } from '../types.js';
+import { scoped_identifier } from './scoped-identifier.js';
+import type { ScopedIdentifierOptions } from './scoped-identifier.js';
 
 
 class UseAsClauseBuilder extends Builder<UseAsClause> {
+  private _path: Builder<Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier>;
   private _alias!: Builder<Identifier>;
-  private _path: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
 
-  constructor(path: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>) {
+  constructor(path: Builder<Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier>) {
     super();
     this._path = path;
   }
@@ -28,12 +30,12 @@ class UseAsClauseBuilder extends Builder<UseAsClause> {
   build(ctx?: RenderContext): UseAsClause {
     return {
       kind: 'use_as_clause',
-      alias: this._alias?.build(ctx),
       path: this._path.build(ctx),
+      alias: this._alias ? this._alias.build(ctx) : undefined,
     } as UseAsClause;
   }
 
-  override get nodeKind(): string { return 'use_as_clause'; }
+  override get nodeKind(): 'use_as_clause' { return 'use_as_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,18 +48,20 @@ class UseAsClauseBuilder extends Builder<UseAsClause> {
 
 export type { UseAsClauseBuilder };
 
-export function use_as_clause(path: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>): UseAsClauseBuilder {
+export function use_as_clause(path: Builder<Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier>): UseAsClauseBuilder {
   return new UseAsClauseBuilder(path);
 }
 
 export interface UseAsClauseOptions {
+  nodeKind: 'use_as_clause';
+  path: Builder<Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier> | Omit<ScopedIdentifierOptions, 'nodeKind'>;
   alias: Builder<Identifier> | string;
-  path: Builder<Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super>;
 }
 
 export namespace use_as_clause {
-  export function from(options: UseAsClauseOptions): UseAsClauseBuilder {
-    const b = new UseAsClauseBuilder(options.path);
+  export function from(options: Omit<UseAsClauseOptions, 'nodeKind'>): UseAsClauseBuilder {
+    const _ctor = options.path;
+    const b = new UseAsClauseBuilder(_ctor instanceof Builder ? _ctor : scoped_identifier.from(_ctor));
     if (options.alias !== undefined) {
       const _v = options.alias;
       b.alias(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);

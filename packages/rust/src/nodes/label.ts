@@ -21,11 +21,11 @@ class LabelBuilder extends Builder<Label> {
   build(ctx?: RenderContext): Label {
     return {
       kind: 'label',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as Label;
   }
 
-  override get nodeKind(): string { return 'label'; }
+  override get nodeKind(): 'label' { return 'label'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function label(children: Builder<Identifier>): LabelBuilder {
 }
 
 export interface LabelOptions {
+  nodeKind: 'label';
   children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace label {
-  export function from(options: LabelOptions): LabelBuilder {
+  export function from(input: Omit<LabelOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): LabelBuilder {
+    const options: Omit<LabelOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<LabelOptions, 'nodeKind'>
+      : { children: input } as Omit<LabelOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new LabelBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     return b;

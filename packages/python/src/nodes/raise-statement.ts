@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, ExpressionList, RaiseStatement } from '../types.js';
+import { expression_list } from './expression-list.js';
+import type { ExpressionListOptions } from './expression-list.js';
 
 
 class RaiseStatementBuilder extends Builder<RaiseStatement> {
@@ -33,12 +35,12 @@ class RaiseStatementBuilder extends Builder<RaiseStatement> {
   build(ctx?: RenderContext): RaiseStatement {
     return {
       kind: 'raise_statement',
-      cause: this._cause?.build(ctx),
-      children: this._children[0]?.build(ctx),
+      cause: this._cause ? this._cause.build(ctx) : undefined,
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as RaiseStatement;
   }
 
-  override get nodeKind(): string { return 'raise_statement'; }
+  override get nodeKind(): 'raise_statement' { return 'raise_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -61,18 +63,19 @@ export function raise_statement(): RaiseStatementBuilder {
 }
 
 export interface RaiseStatementOptions {
+  nodeKind: 'raise_statement';
   cause?: Builder<Expression>;
-  children?: Builder<Expression | ExpressionList> | (Builder<Expression | ExpressionList>)[];
+  children?: Builder<Expression | ExpressionList> | Omit<ExpressionListOptions, 'nodeKind'> | (Builder<Expression | ExpressionList> | Omit<ExpressionListOptions, 'nodeKind'>)[];
 }
 
 export namespace raise_statement {
-  export function from(options: RaiseStatementOptions): RaiseStatementBuilder {
+  export function from(options: Omit<RaiseStatementOptions, 'nodeKind'>): RaiseStatementBuilder {
     const b = new RaiseStatementBuilder();
     if (options.cause !== undefined) b.cause(options.cause);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : expression_list.from(_x)));
     }
     return b;
   }

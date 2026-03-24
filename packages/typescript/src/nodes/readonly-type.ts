@@ -21,11 +21,11 @@ class ReadonlyTypeBuilder extends Builder<ReadonlyType> {
   build(ctx?: RenderContext): ReadonlyType {
     return {
       kind: 'readonly_type',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as ReadonlyType;
   }
 
-  override get nodeKind(): string { return 'readonly_type'; }
+  override get nodeKind(): 'readonly_type' { return 'readonly_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function readonly_type(children: Builder<Type>): ReadonlyTypeBuilder {
 }
 
 export interface ReadonlyTypeOptions {
+  nodeKind: 'readonly_type';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace readonly_type {
-  export function from(options: ReadonlyTypeOptions): ReadonlyTypeBuilder {
+  export function from(input: Omit<ReadonlyTypeOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): ReadonlyTypeBuilder {
+    const options: Omit<ReadonlyTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ReadonlyTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<ReadonlyTypeOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new ReadonlyTypeBuilder(_ctor);
     return b;

@@ -21,11 +21,11 @@ class LifetimeBuilder extends Builder<Lifetime> {
   build(ctx?: RenderContext): Lifetime {
     return {
       kind: 'lifetime',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as Lifetime;
   }
 
-  override get nodeKind(): string { return 'lifetime'; }
+  override get nodeKind(): 'lifetime' { return 'lifetime'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function lifetime(children: Builder<Identifier>): LifetimeBuilder {
 }
 
 export interface LifetimeOptions {
+  nodeKind: 'lifetime';
   children: Builder<Identifier> | string | (Builder<Identifier> | string)[];
 }
 
 export namespace lifetime {
-  export function from(options: LifetimeOptions): LifetimeBuilder {
+  export function from(input: Omit<LifetimeOptions, 'nodeKind'> | Builder<Identifier> | string | (Builder<Identifier> | string)[]): LifetimeBuilder {
+    const options: Omit<LifetimeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<LifetimeOptions, 'nodeKind'>
+      : { children: input } as Omit<LifetimeOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new LifetimeBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     return b;

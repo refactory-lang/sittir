@@ -22,7 +22,7 @@ class LexicalDeclarationBuilder extends Builder<LexicalDeclaration> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._kind) parts.push(this.renderChild(this._kind, ctx));
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -33,7 +33,7 @@ class LexicalDeclarationBuilder extends Builder<LexicalDeclaration> {
     } as LexicalDeclaration;
   }
 
-  override get nodeKind(): string { return 'lexical_declaration'; }
+  override get nodeKind(): 'lexical_declaration' { return 'lexical_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,17 +53,18 @@ export function lexical_declaration(kind: Builder): LexicalDeclarationBuilder {
 }
 
 export interface LexicalDeclarationOptions {
+  nodeKind: 'lexical_declaration';
   kind: Builder;
-  children?: Builder<VariableDeclarator> | VariableDeclaratorOptions | (Builder<VariableDeclarator> | VariableDeclaratorOptions)[];
+  children?: Builder<VariableDeclarator> | Omit<VariableDeclaratorOptions, 'nodeKind'> | (Builder<VariableDeclarator> | Omit<VariableDeclaratorOptions, 'nodeKind'>)[];
 }
 
 export namespace lexical_declaration {
-  export function from(options: LexicalDeclarationOptions): LexicalDeclarationBuilder {
+  export function from(options: Omit<LexicalDeclarationOptions, 'nodeKind'>): LexicalDeclarationBuilder {
     const b = new LexicalDeclarationBuilder(options.kind);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr.map(_x => _x instanceof Builder ? _x : variable_declarator.from(_x as VariableDeclaratorOptions)));
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : variable_declarator.from(_x)));
     }
     return b;
   }

@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('as_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.asExpression(ir.yieldExpression(), ir.yieldExpression());
     const node = builder.build();
     expect(node.kind).toBe('as_expression');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,13 +12,13 @@ describe('as_expression', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.asExpression(ir.yieldExpression(), ir.yieldExpression());
     const source = builder.renderImpl();
     expect(source).toContain('as');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.asExpression(ir.yieldExpression(), ir.yieldExpression());
     const cst = builder.toCST();
     expect(cst.type).toBe('as_expression');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +27,7 @@ describe('as_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.asExpression(ir.yieldExpression(), ir.yieldExpression());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

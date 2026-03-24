@@ -1,14 +1,16 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { Asserts, Identifier, This, TypePredicate } from '../types.js';
+import { type_predicate } from './type-predicate.js';
+import type { TypePredicateOptions } from './type-predicate.js';
 
 
 class AssertsBuilder extends Builder<Asserts> {
   private _children: Builder<TypePredicate | Identifier | This>[] = [];
 
-  constructor(...children: Builder<TypePredicate | Identifier | This>[]) {
+  constructor(children: Builder<TypePredicate | Identifier | This>) {
     super();
-    this._children = children;
+    this._children = [children];
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -21,11 +23,11 @@ class AssertsBuilder extends Builder<Asserts> {
   build(ctx?: RenderContext): Asserts {
     return {
       kind: 'asserts',
-      children: this._children.map(c => c.build(ctx)),
+      children: this._children[0]!.build(ctx),
     } as Asserts;
   }
 
-  override get nodeKind(): string { return 'asserts'; }
+  override get nodeKind(): 'asserts' { return 'asserts'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,19 +41,33 @@ class AssertsBuilder extends Builder<Asserts> {
 
 export type { AssertsBuilder };
 
-export function asserts(...children: Builder<TypePredicate | Identifier | This>[]): AssertsBuilder {
-  return new AssertsBuilder(...children);
+export function asserts(children: Builder<TypePredicate | Identifier | This>): AssertsBuilder {
+  return new AssertsBuilder(children);
 }
 
 export interface AssertsOptions {
-  children?: Builder<TypePredicate | Identifier | This> | (Builder<TypePredicate | Identifier | This>)[];
+  nodeKind: 'asserts';
+  children: Builder<TypePredicate | Identifier | This> | LeafOptions<'identifier'> | LeafOptions<'this'> | TypePredicateOptions | (Builder<TypePredicate | Identifier | This> | LeafOptions<'identifier'> | LeafOptions<'this'> | TypePredicateOptions)[];
 }
 
 export namespace asserts {
-  export function from(options: AssertsOptions): AssertsBuilder {
-    const _children = options.children;
-    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new AssertsBuilder(..._arr);
+  export function from(input: Omit<AssertsOptions, 'nodeKind'> | Builder<TypePredicate | Identifier | This> | LeafOptions<'identifier'> | LeafOptions<'this'> | TypePredicateOptions | (Builder<TypePredicate | Identifier | This> | LeafOptions<'identifier'> | LeafOptions<'this'> | TypePredicateOptions)[]): AssertsBuilder {
+    const options: Omit<AssertsOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<AssertsOptions, 'nodeKind'>
+      : { children: input } as Omit<AssertsOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    let _resolved: Builder<TypePredicate | Identifier | This>;
+    if (_ctor instanceof Builder) {
+      _resolved = _ctor;
+    } else {
+      switch (_ctor.nodeKind) {
+        case 'type_predicate': _resolved = type_predicate.from(_ctor); break;
+        case 'identifier': _resolved = new LeafBuilder('identifier', (_ctor as LeafOptions).text!); break;
+        case 'this': _resolved = new LeafBuilder('this', (_ctor as LeafOptions).text ?? 'this'); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new AssertsBuilder(_resolved);
     return b;
   }
 }

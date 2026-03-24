@@ -1,14 +1,20 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { CallExpression, Decorator, Identifier, MemberExpression, ParenthesizedExpression } from '../types.js';
+import { member_expression } from './member-expression.js';
+import type { MemberExpressionOptions } from './member-expression.js';
+import { call_expression } from './call-expression.js';
+import type { CallExpressionOptions } from './call-expression.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
 
 
 class DecoratorBuilder extends Builder<Decorator> {
   private _children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>[] = [];
 
-  constructor(...children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>[]) {
+  constructor(children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>) {
     super();
-    this._children = children;
+    this._children = [children];
   }
 
   renderImpl(ctx?: RenderContext): string {
@@ -21,11 +27,11 @@ class DecoratorBuilder extends Builder<Decorator> {
   build(ctx?: RenderContext): Decorator {
     return {
       kind: 'decorator',
-      children: this._children.map(c => c.build(ctx)),
+      children: this._children[0]!.build(ctx),
     } as Decorator;
   }
 
-  override get nodeKind(): string { return 'decorator'; }
+  override get nodeKind(): 'decorator' { return 'decorator'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,19 +45,33 @@ class DecoratorBuilder extends Builder<Decorator> {
 
 export type { DecoratorBuilder };
 
-export function decorator(...children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>[]): DecoratorBuilder {
-  return new DecoratorBuilder(...children);
+export function decorator(children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>): DecoratorBuilder {
+  return new DecoratorBuilder(children);
 }
 
 export interface DecoratorOptions {
-  children?: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression> | (Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>)[];
+  nodeKind: 'decorator';
+  children: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression> | MemberExpressionOptions | CallExpressionOptions | ParenthesizedExpressionOptions | (Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression> | MemberExpressionOptions | CallExpressionOptions | ParenthesizedExpressionOptions)[];
 }
 
 export namespace decorator {
-  export function from(options: DecoratorOptions): DecoratorBuilder {
-    const _children = options.children;
-    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new DecoratorBuilder(..._arr);
+  export function from(input: Omit<DecoratorOptions, 'nodeKind'> | Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression> | MemberExpressionOptions | CallExpressionOptions | ParenthesizedExpressionOptions | (Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression> | MemberExpressionOptions | CallExpressionOptions | ParenthesizedExpressionOptions)[]): DecoratorBuilder {
+    const options: Omit<DecoratorOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<DecoratorOptions, 'nodeKind'>
+      : { children: input } as Omit<DecoratorOptions, 'nodeKind'>;
+    const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
+    let _resolved: Builder<Identifier | MemberExpression | CallExpression | ParenthesizedExpression>;
+    if (_ctor instanceof Builder) {
+      _resolved = _ctor;
+    } else {
+      switch (_ctor.nodeKind) {
+        case 'member_expression': _resolved = member_expression.from(_ctor); break;
+        case 'call_expression': _resolved = call_expression.from(_ctor); break;
+        case 'parenthesized_expression': _resolved = parenthesized_expression.from(_ctor); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new DecoratorBuilder(_resolved);
     return b;
   }
 }

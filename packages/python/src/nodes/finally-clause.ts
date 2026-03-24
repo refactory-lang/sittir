@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, FinallyClause } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class FinallyClauseBuilder extends Builder<FinallyClause> {
@@ -22,11 +24,11 @@ class FinallyClauseBuilder extends Builder<FinallyClause> {
   build(ctx?: RenderContext): FinallyClause {
     return {
       kind: 'finally_clause',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as FinallyClause;
   }
 
-  override get nodeKind(): string { return 'finally_clause'; }
+  override get nodeKind(): 'finally_clause' { return 'finally_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,13 +48,17 @@ export function finally_clause(children: Builder<Block>): FinallyClauseBuilder {
 }
 
 export interface FinallyClauseOptions {
-  children: Builder<Block> | (Builder<Block>)[];
+  nodeKind: 'finally_clause';
+  children: Builder<Block> | Omit<BlockOptions, 'nodeKind'> | (Builder<Block> | Omit<BlockOptions, 'nodeKind'>)[];
 }
 
 export namespace finally_clause {
-  export function from(options: FinallyClauseOptions): FinallyClauseBuilder {
+  export function from(input: Omit<FinallyClauseOptions, 'nodeKind'> | Builder<Block> | Omit<BlockOptions, 'nodeKind'> | (Builder<Block> | Omit<BlockOptions, 'nodeKind'>)[]): FinallyClauseBuilder {
+    const options: Omit<FinallyClauseOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<FinallyClauseOptions, 'nodeKind'>
+      : { children: input } as Omit<FinallyClauseOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new FinallyClauseBuilder(_ctor);
+    const b = new FinallyClauseBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
     return b;
   }
 }

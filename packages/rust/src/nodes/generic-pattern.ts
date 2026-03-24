@@ -1,6 +1,10 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GenericPattern, Identifier, ScopedIdentifier, TypeArguments } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
+import { scoped_identifier } from './scoped-identifier.js';
+import type { ScopedIdentifierOptions } from './scoped-identifier.js';
 
 
 class GenericPatternBuilder extends Builder<GenericPattern> {
@@ -29,11 +33,11 @@ class GenericPatternBuilder extends Builder<GenericPattern> {
     return {
       kind: 'generic_pattern',
       typeArguments: this._typeArguments.build(ctx),
-      children: this._children[0]?.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as GenericPattern;
   }
 
-  override get nodeKind(): string { return 'generic_pattern'; }
+  override get nodeKind(): 'generic_pattern' { return 'generic_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,17 +57,19 @@ export function generic_pattern(typeArguments: Builder<TypeArguments>): GenericP
 }
 
 export interface GenericPatternOptions {
-  typeArguments: Builder<TypeArguments>;
-  children?: Builder<Identifier | ScopedIdentifier> | (Builder<Identifier | ScopedIdentifier>)[];
+  nodeKind: 'generic_pattern';
+  typeArguments: Builder<TypeArguments> | Omit<TypeArgumentsOptions, 'nodeKind'>;
+  children?: Builder<Identifier | ScopedIdentifier> | string | Omit<ScopedIdentifierOptions, 'nodeKind'> | (Builder<Identifier | ScopedIdentifier> | string | Omit<ScopedIdentifierOptions, 'nodeKind'>)[];
 }
 
 export namespace generic_pattern {
-  export function from(options: GenericPatternOptions): GenericPatternBuilder {
-    const b = new GenericPatternBuilder(options.typeArguments);
+  export function from(options: Omit<GenericPatternOptions, 'nodeKind'>): GenericPatternBuilder {
+    const _ctor = options.typeArguments;
+    const b = new GenericPatternBuilder(_ctor instanceof Builder ? _ctor : type_arguments.from(_ctor));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('identifier', _x) : _x instanceof Builder ? _x : scoped_identifier.from(_x)));
     }
     return b;
   }

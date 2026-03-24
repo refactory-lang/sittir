@@ -23,11 +23,11 @@ class AssertsAnnotationBuilder extends Builder<AssertsAnnotation> {
   build(ctx?: RenderContext): AssertsAnnotation {
     return {
       kind: 'asserts_annotation',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as AssertsAnnotation;
   }
 
-  override get nodeKind(): string { return 'asserts_annotation'; }
+  override get nodeKind(): 'asserts_annotation' { return 'asserts_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,13 +46,17 @@ export function asserts_annotation(children: Builder<Asserts>): AssertsAnnotatio
 }
 
 export interface AssertsAnnotationOptions {
-  children: Builder<Asserts> | AssertsOptions | (Builder<Asserts> | AssertsOptions)[];
+  nodeKind: 'asserts_annotation';
+  children: Builder<Asserts> | Omit<AssertsOptions, 'nodeKind'> | (Builder<Asserts> | Omit<AssertsOptions, 'nodeKind'>)[];
 }
 
 export namespace asserts_annotation {
-  export function from(options: AssertsAnnotationOptions): AssertsAnnotationBuilder {
+  export function from(input: Omit<AssertsAnnotationOptions, 'nodeKind'> | Builder<Asserts> | Omit<AssertsOptions, 'nodeKind'> | (Builder<Asserts> | Omit<AssertsOptions, 'nodeKind'>)[]): AssertsAnnotationBuilder {
+    const options: Omit<AssertsAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<AssertsAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<AssertsAnnotationOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new AssertsAnnotationBuilder(_ctor instanceof Builder ? _ctor : asserts.from(_ctor as AssertsOptions));
+    const b = new AssertsAnnotationBuilder(_ctor instanceof Builder ? _ctor : asserts.from(_ctor));
     return b;
   }
 }

@@ -1,6 +1,8 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, ImportSpecifier, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
 
 
 class ImportSpecifierBuilder extends Builder<ImportSpecifier> {
@@ -20,7 +22,10 @@ class ImportSpecifierBuilder extends Builder<ImportSpecifier> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     if (this._name) parts.push(this.renderChild(this._name, ctx));
-    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
+    if (this._alias) {
+      parts.push('as');
+      if (this._alias) parts.push(this.renderChild(this._alias, ctx));
+    }
     return parts.join(' ');
   }
 
@@ -28,16 +33,19 @@ class ImportSpecifierBuilder extends Builder<ImportSpecifier> {
     return {
       kind: 'import_specifier',
       name: this._name.build(ctx),
-      alias: this._alias?.build(ctx),
+      alias: this._alias ? this._alias.build(ctx) : undefined,
     } as ImportSpecifier;
   }
 
-  override get nodeKind(): string { return 'import_specifier'; }
+  override get nodeKind(): 'import_specifier' { return 'import_specifier'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
-    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
+    if (this._alias) {
+      parts.push({ kind: 'token', text: 'as', type: 'as' });
+      if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
+    }
     return parts;
   }
 }
@@ -49,14 +57,15 @@ export function import_specifier(name: Builder<Identifier | String>): ImportSpec
 }
 
 export interface ImportSpecifierOptions {
-  name: Builder<Identifier | String> | string;
+  nodeKind: 'import_specifier';
+  name: Builder<Identifier | String> | string | Omit<StringOptions, 'nodeKind'>;
   alias?: Builder<Identifier> | string;
 }
 
 export namespace import_specifier {
-  export function from(options: ImportSpecifierOptions): ImportSpecifierBuilder {
+  export function from(options: Omit<ImportSpecifierOptions, 'nodeKind'>): ImportSpecifierBuilder {
     const _ctor = options.name;
-    const b = new ImportSpecifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    const b = new ImportSpecifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor instanceof Builder ? _ctor : string.from(_ctor));
     if (options.alias !== undefined) {
       const _v = options.alias;
       b.alias(typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v);

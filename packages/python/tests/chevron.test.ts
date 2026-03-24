@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('chevron', () => {
   it('should build with correct kind', () => {
-    const builder = ir.chevron(ir.asPattern(ir.identifier('test')));
+    const builder = ir.chevron(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('chevron');
     expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.chevron(ir.asPattern(ir.identifier('test')));
+    const builder = ir.chevron(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const source = builder.renderImpl();
     expect(source).toContain('>>');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.chevron(ir.asPattern(ir.identifier('test')));
+    const builder = ir.chevron(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('chevron');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('chevron', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.chevron(ir.asPattern(ir.identifier('test')));
+    const builder = ir.chevron(ir.asPattern(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

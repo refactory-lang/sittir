@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('import_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.importStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.importStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     const node = builder.build();
     expect(node.kind).toBe('import_statement');
     expect(Array.isArray((node as any).name)).toBe(true);
@@ -12,13 +12,13 @@ describe('import_statement', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.importStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.importStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     const source = builder.renderImpl();
     expect(source).toContain('import');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.importStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.importStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('import_statement');
     expect(cst.isNamed).toBe(true);
@@ -27,7 +27,7 @@ describe('import_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.importStatement(ir.aliasedImport(ir.dottedName(ir.identifier('test'))), ir.aliasedImport(ir.dottedName(ir.identifier('test'))));
+    const builder = ir.importStatement(ir.dottedName(ir.identifier('test')), ir.dottedName(ir.identifier('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

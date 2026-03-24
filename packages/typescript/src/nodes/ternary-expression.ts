@@ -36,12 +36,12 @@ class TernaryExpressionBuilder extends Builder<TernaryExpression> {
     return {
       kind: 'ternary_expression',
       condition: this._condition.build(ctx),
-      consequence: this._consequence?.build(ctx),
-      alternative: this._alternative?.build(ctx),
+      consequence: this._consequence ? this._consequence.build(ctx) : undefined,
+      alternative: this._alternative ? this._alternative.build(ctx) : undefined,
     } as TernaryExpression;
   }
 
-  override get nodeKind(): string { return 'ternary_expression'; }
+  override get nodeKind(): 'ternary_expression' { return 'ternary_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -60,13 +60,14 @@ export function ternary_expression(condition: Builder<Expression>): TernaryExpre
 }
 
 export interface TernaryExpressionOptions {
+  nodeKind: 'ternary_expression';
   condition: Builder<Expression>;
   consequence: Builder<Expression>;
   alternative: Builder<Expression>;
 }
 
 export namespace ternary_expression {
-  export function from(options: TernaryExpressionOptions): TernaryExpressionBuilder {
+  export function from(options: Omit<TernaryExpressionOptions, 'nodeKind'>): TernaryExpressionBuilder {
     const b = new TernaryExpressionBuilder(options.condition);
     if (options.consequence !== undefined) b.consequence(options.consequence);
     if (options.alternative !== undefined) b.alternative(options.alternative);

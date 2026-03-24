@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, TypeArguments, TypeAssertion } from '../types.js';
+import { type_arguments } from './type-arguments.js';
+import type { TypeArgumentsOptions } from './type-arguments.js';
 
 
 class TypeAssertionBuilder extends Builder<TypeAssertion> {
@@ -25,7 +27,7 @@ class TypeAssertionBuilder extends Builder<TypeAssertion> {
     } as TypeAssertion;
   }
 
-  override get nodeKind(): string { return 'type_assertion'; }
+  override get nodeKind(): 'type_assertion' { return 'type_assertion'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,14 +44,18 @@ export function type_assertion(...children: Builder<TypeArguments | Expression>[
 }
 
 export interface TypeAssertionOptions {
-  children?: Builder<TypeArguments | Expression> | (Builder<TypeArguments | Expression>)[];
+  nodeKind: 'type_assertion';
+  children?: Builder<TypeArguments | Expression> | Omit<TypeArgumentsOptions, 'nodeKind'> | (Builder<TypeArguments | Expression> | Omit<TypeArgumentsOptions, 'nodeKind'>)[];
 }
 
 export namespace type_assertion {
-  export function from(options: TypeAssertionOptions): TypeAssertionBuilder {
+  export function from(input: Omit<TypeAssertionOptions, 'nodeKind'> | Builder<TypeArguments | Expression> | Omit<TypeArgumentsOptions, 'nodeKind'> | (Builder<TypeArguments | Expression> | Omit<TypeArgumentsOptions, 'nodeKind'>)[]): TypeAssertionBuilder {
+    const options: Omit<TypeAssertionOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TypeAssertionOptions, 'nodeKind'>
+      : { children: input } as Omit<TypeAssertionOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new TypeAssertionBuilder(..._arr);
+    const b = new TypeAssertionBuilder(..._arr.map(_v => _v instanceof Builder ? _v : type_arguments.from(_v)));
     return b;
   }
 }

@@ -4,8 +4,8 @@ import type { Attribute, Identifier, PrimaryExpression } from '../types.js';
 
 
 class AttributeBuilder extends Builder<Attribute> {
-  private _attribute!: Builder<Identifier>;
   private _object: Builder<PrimaryExpression>;
+  private _attribute!: Builder<Identifier>;
 
   constructor(object: Builder<PrimaryExpression>) {
     super();
@@ -28,12 +28,12 @@ class AttributeBuilder extends Builder<Attribute> {
   build(ctx?: RenderContext): Attribute {
     return {
       kind: 'attribute',
-      attribute: this._attribute?.build(ctx),
       object: this._object.build(ctx),
+      attribute: this._attribute ? this._attribute.build(ctx) : undefined,
     } as Attribute;
   }
 
-  override get nodeKind(): string { return 'attribute'; }
+  override get nodeKind(): 'attribute' { return 'attribute'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,12 +51,13 @@ export function attribute(object: Builder<PrimaryExpression>): AttributeBuilder 
 }
 
 export interface AttributeOptions {
-  attribute: Builder<Identifier> | string;
+  nodeKind: 'attribute';
   object: Builder<PrimaryExpression>;
+  attribute: Builder<Identifier> | string;
 }
 
 export namespace attribute {
-  export function from(options: AttributeOptions): AttributeBuilder {
+  export function from(options: Omit<AttributeOptions, 'nodeKind'>): AttributeBuilder {
     const b = new AttributeBuilder(options.object);
     if (options.attribute !== undefined) {
       const _v = options.attribute;

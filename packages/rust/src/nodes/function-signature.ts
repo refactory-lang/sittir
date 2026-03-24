@@ -1,28 +1,52 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
-import type { FunctionModifiers, FunctionSignatureItem, Identifier, Metavariable, Parameters, Type, TypeParameters, VisibilityModifier, WhereClause } from '../types.js';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
+import type { AbstractType, ArrayType, BoundedType, DynamicType, FunctionModifiers, FunctionSignatureItem, FunctionType, GenericType, Identifier, MacroInvocation, Metavariable, NeverType, Parameters, PointerType, PrimitiveType, ReferenceType, RemovedTraitBound, ScopedTypeIdentifier, TupleType, TypeIdentifier, TypeParameters, UnitType, VisibilityModifier, WhereClause } from '../types.js';
+import { type_parameters } from './type-parameters.js';
+import type { TypeParametersOptions } from './type-parameters.js';
+import { parameters } from './parameters.js';
+import type { ParametersOptions } from './parameters.js';
+import { abstract_type } from './abstract-type.js';
+import type { AbstractTypeOptions } from './abstract-type.js';
+import { reference_type } from './reference-type.js';
+import type { ReferenceTypeOptions } from './reference-type.js';
+import { pointer_type } from './pointer-type.js';
+import type { PointerTypeOptions } from './pointer-type.js';
+import { generic_type } from './generic-type.js';
+import type { GenericTypeOptions } from './generic-type.js';
+import { scoped_type_identifier } from './scoped-type-identifier.js';
+import type { ScopedTypeIdentifierOptions } from './scoped-type-identifier.js';
+import { tuple_type } from './tuple-type.js';
+import type { TupleTypeOptions } from './tuple-type.js';
+import { array_type } from './array-type.js';
+import type { ArrayTypeOptions } from './array-type.js';
+import { function_type } from './function-type.js';
+import type { FunctionTypeOptions } from './function-type.js';
+import { macro_invocation } from './macro-invocation.js';
+import type { MacroInvocationOptions } from './macro-invocation.js';
+import { dynamic_type } from './dynamic-type.js';
+import type { DynamicTypeOptions } from './dynamic-type.js';
+import { bounded_type } from './bounded-type.js';
+import type { BoundedTypeOptions } from './bounded-type.js';
+import { removed_trait_bound } from './removed-trait-bound.js';
+import type { RemovedTraitBoundOptions } from './removed-trait-bound.js';
+import { visibility_modifier } from './visibility-modifier.js';
+import type { VisibilityModifierOptions } from './visibility-modifier.js';
+import { function_modifiers } from './function-modifiers.js';
+import type { FunctionModifiersOptions } from './function-modifiers.js';
+import { where_clause } from './where-clause.js';
+import type { WhereClauseOptions } from './where-clause.js';
 
 
 class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
   private _name: Builder<Identifier | Metavariable>;
-  private _parameters!: Builder<Parameters>;
-  private _returnType?: Builder<Type>;
   private _typeParameters?: Builder<TypeParameters>;
-  private _children: Builder<FunctionModifiers | VisibilityModifier | WhereClause>[] = [];
+  private _parameters!: Builder<Parameters>;
+  private _returnType?: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>;
+  private _children: Builder<VisibilityModifier | FunctionModifiers | WhereClause>[] = [];
 
   constructor(name: Builder<Identifier | Metavariable>) {
     super();
     this._name = name;
-  }
-
-  parameters(value: Builder<Parameters>): this {
-    this._parameters = value;
-    return this;
-  }
-
-  returnType(value: Builder<Type>): this {
-    this._returnType = value;
-    return this;
   }
 
   typeParameters(value: Builder<TypeParameters>): this {
@@ -30,14 +54,25 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
     return this;
   }
 
-  children(...value: Builder<FunctionModifiers | VisibilityModifier | WhereClause>[]): this {
+  parameters(value: Builder<Parameters>): this {
+    this._parameters = value;
+    return this;
+  }
+
+  returnType(value: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType>): this {
+    this._returnType = value;
+    return this;
+  }
+
+  children(...value: Builder<VisibilityModifier | FunctionModifiers | WhereClause>[]): this {
     this._children = value;
     return this;
   }
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     parts.push('fn');
     if (this._name) parts.push(this.renderChild(this._name, ctx));
     if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
@@ -46,6 +81,7 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
       parts.push('->');
       if (this._returnType) parts.push(this.renderChild(this._returnType, ctx));
     }
+    if (this._children[2]) parts.push(this.renderChild(this._children[2]!, ctx));
     parts.push(';');
     return parts.join(' ');
   }
@@ -54,20 +90,19 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
     return {
       kind: 'function_signature_item',
       name: this._name.build(ctx),
-      parameters: this._parameters?.build(ctx),
-      returnType: this._returnType?.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      parameters: this._parameters ? this._parameters.build(ctx) : undefined,
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
       children: this._children.map(c => c.build(ctx)),
     } as FunctionSignatureItem;
   }
 
-  override get nodeKind(): string { return 'function_signature_item'; }
+  override get nodeKind(): 'function_signature_item' { return 'function_signature_item'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     parts.push({ kind: 'token', text: 'fn', type: 'fn' });
     if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
     if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
@@ -76,6 +111,7 @@ class FunctionSignatureBuilder extends Builder<FunctionSignatureItem> {
       parts.push({ kind: 'token', text: '->', type: '->' });
       if (this._returnType) parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
     }
+    if (this._children[2]) parts.push({ kind: 'builder', builder: this._children[2]! });
     parts.push({ kind: 'token', text: ';', type: ';' });
     return parts;
   }
@@ -88,23 +124,61 @@ export function function_signature(name: Builder<Identifier | Metavariable>): Fu
 }
 
 export interface FunctionSignatureItemOptions {
-  name: Builder<Identifier | Metavariable>;
-  parameters: Builder<Parameters>;
-  returnType?: Builder<Type>;
-  typeParameters?: Builder<TypeParameters>;
-  children?: Builder<FunctionModifiers | VisibilityModifier | WhereClause> | (Builder<FunctionModifiers | VisibilityModifier | WhereClause>)[];
+  nodeKind: 'function_signature_item';
+  name: Builder<Identifier | Metavariable> | LeafOptions<'identifier'> | LeafOptions<'metavariable'>;
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<Parameters> | Omit<ParametersOptions, 'nodeKind'>;
+  returnType?: Builder<AbstractType | ReferenceType | Metavariable | PointerType | GenericType | ScopedTypeIdentifier | TupleType | UnitType | ArrayType | FunctionType | TypeIdentifier | MacroInvocation | NeverType | DynamicType | BoundedType | RemovedTraitBound | PrimitiveType> | AbstractTypeOptions | ReferenceTypeOptions | PointerTypeOptions | GenericTypeOptions | ScopedTypeIdentifierOptions | TupleTypeOptions | ArrayTypeOptions | FunctionTypeOptions | MacroInvocationOptions | DynamicTypeOptions | BoundedTypeOptions | RemovedTraitBoundOptions;
+  children?: Builder<VisibilityModifier | FunctionModifiers | WhereClause> | VisibilityModifierOptions | FunctionModifiersOptions | WhereClauseOptions | (Builder<VisibilityModifier | FunctionModifiers | WhereClause> | VisibilityModifierOptions | FunctionModifiersOptions | WhereClauseOptions)[];
 }
 
 export namespace function_signature {
-  export function from(options: FunctionSignatureItemOptions): FunctionSignatureBuilder {
-    const b = new FunctionSignatureBuilder(options.name);
-    if (options.parameters !== undefined) b.parameters(options.parameters);
-    if (options.returnType !== undefined) b.returnType(options.returnType);
-    if (options.typeParameters !== undefined) b.typeParameters(options.typeParameters);
+  export function from(options: Omit<FunctionSignatureItemOptions, 'nodeKind'>): FunctionSignatureBuilder {
+    const _raw = options.name;
+    let _ctor: Builder<Identifier | Metavariable>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'identifier': _ctor = new LeafBuilder('identifier', (_raw as LeafOptions).text!); break;
+        case 'metavariable': _ctor = new LeafBuilder('metavariable', (_raw as LeafOptions).text!); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new FunctionSignatureBuilder(_ctor);
+    if (options.typeParameters !== undefined) {
+      const _v = options.typeParameters;
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
+    }
+    if (options.parameters !== undefined) {
+      const _v = options.parameters;
+      b.parameters(_v instanceof Builder ? _v : parameters.from(_v));
+    }
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      if (_v instanceof Builder) {
+        b.returnType(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'abstract_type': b.returnType(abstract_type.from(_v)); break;
+          case 'reference_type': b.returnType(reference_type.from(_v)); break;
+          case 'pointer_type': b.returnType(pointer_type.from(_v)); break;
+          case 'generic_type': b.returnType(generic_type.from(_v)); break;
+          case 'scoped_type_identifier': b.returnType(scoped_type_identifier.from(_v)); break;
+          case 'tuple_type': b.returnType(tuple_type.from(_v)); break;
+          case 'array_type': b.returnType(array_type.from(_v)); break;
+          case 'function_type': b.returnType(function_type.from(_v)); break;
+          case 'macro_invocation': b.returnType(macro_invocation.from(_v)); break;
+          case 'dynamic_type': b.returnType(dynamic_type.from(_v)); break;
+          case 'bounded_type': b.returnType(bounded_type.from(_v)); break;
+          case 'removed_trait_bound': b.returnType(removed_trait_bound.from(_v)); break;
+        }
+      }
+    }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'visibility_modifier': return visibility_modifier.from(_v);   case 'function_modifiers': return function_modifiers.from(_v);   case 'where_clause': return where_clause.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

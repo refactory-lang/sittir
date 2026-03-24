@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('type_alias_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.typeAliasStatement(ir.identifier('test') as any);
+    const builder = ir.typeAliasStatement(ir.type(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('type_alias_statement');
     expect((node as any).left).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.typeAliasStatement(ir.identifier('test') as any);
+    const builder = ir.typeAliasStatement(ir.type(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('type_alias_statement');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('type_alias_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.typeAliasStatement(ir.identifier('test') as any);
+    const builder = ir.typeAliasStatement(ir.type(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -23,11 +23,11 @@ class ContinueStatementBuilder extends Builder<ContinueStatement> {
   build(ctx?: RenderContext): ContinueStatement {
     return {
       kind: 'continue_statement',
-      label: this._label?.build(ctx),
+      label: this._label ? this._label.build(ctx) : undefined,
     } as ContinueStatement;
   }
 
-  override get nodeKind(): string { return 'continue_statement'; }
+  override get nodeKind(): 'continue_statement' { return 'continue_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function continue_statement(): ContinueStatementBuilder {
 }
 
 export interface ContinueStatementOptions {
+  nodeKind: 'continue_statement';
   label?: Builder<StatementIdentifier> | string;
 }
 
 export namespace continue_statement {
-  export function from(options: ContinueStatementOptions): ContinueStatementBuilder {
+  export function from(input: Omit<ContinueStatementOptions, 'nodeKind'> | Builder<StatementIdentifier> | string): ContinueStatementBuilder {
+    const options: Omit<ContinueStatementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'label' in input
+      ? input as Omit<ContinueStatementOptions, 'nodeKind'>
+      : { label: input } as Omit<ContinueStatementOptions, 'nodeKind'>;
     const b = new ContinueStatementBuilder();
     if (options.label !== undefined) {
       const _v = options.label;

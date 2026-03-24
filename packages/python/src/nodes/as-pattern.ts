@@ -1,13 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { AsPattern, CasePattern, Expression, Identifier } from '../types.js';
+import type { AsPattern, Expression } from '../types.js';
 
 
 class AsPatternBuilder extends Builder<AsPattern> {
   private _alias?: Builder;
-  private _children: Builder<CasePattern | Expression | Identifier>[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(...children: Builder<CasePattern | Expression | Identifier>[]) {
+  constructor(...children: Builder<Expression>[]) {
     super();
     this._children = children;
   }
@@ -28,12 +28,12 @@ class AsPatternBuilder extends Builder<AsPattern> {
   build(ctx?: RenderContext): AsPattern {
     return {
       kind: 'as_pattern',
-      alias: this._alias?.build(ctx),
+      alias: this._alias ? this.buildChild(this._alias, ctx) : undefined,
       children: this._children.map(c => c.build(ctx)),
     } as AsPattern;
   }
 
-  override get nodeKind(): string { return 'as_pattern'; }
+  override get nodeKind(): 'as_pattern' { return 'as_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,19 +48,20 @@ class AsPatternBuilder extends Builder<AsPattern> {
 
 export type { AsPatternBuilder };
 
-export function as_pattern(...children: Builder<CasePattern | Expression | Identifier>[]): AsPatternBuilder {
+export function as_pattern(...children: Builder<Expression>[]): AsPatternBuilder {
   return new AsPatternBuilder(...children);
 }
 
 export interface AsPatternOptions {
+  nodeKind: 'as_pattern';
   alias?: Builder;
-  children: Builder<CasePattern | Expression | Identifier> | (Builder<CasePattern | Expression | Identifier>)[];
+  children?: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace as_pattern {
-  export function from(options: AsPatternOptions): AsPatternBuilder {
+  export function from(options: Omit<AsPatternOptions, 'nodeKind'>): AsPatternBuilder {
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new AsPatternBuilder(..._arr);
     if (options.alias !== undefined) b.alias(options.alias);
     return b;

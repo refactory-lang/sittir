@@ -60,13 +60,13 @@ class AbstractClassDeclarationBuilder extends Builder<AbstractClassDeclaration> 
       kind: 'abstract_class_declaration',
       decorator: this._decorator.map(c => c.build(ctx)),
       name: this._name.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
-      body: this._body?.build(ctx),
-      children: this._children[0]?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as AbstractClassDeclaration;
   }
 
-  override get nodeKind(): string { return 'abstract_class_declaration'; }
+  override get nodeKind(): 'abstract_class_declaration' { return 'abstract_class_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -92,34 +92,35 @@ export function abstract_class_declaration(name: Builder<TypeIdentifier>): Abstr
 }
 
 export interface AbstractClassDeclarationOptions {
-  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
+  nodeKind: 'abstract_class_declaration';
+  decorator?: Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'> | (Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'>)[];
   name: Builder<TypeIdentifier> | string;
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  body: Builder<ClassBody> | ClassBodyOptions;
-  children?: Builder<ClassHeritage> | ClassHeritageOptions | (Builder<ClassHeritage> | ClassHeritageOptions)[];
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  body: Builder<ClassBody> | Omit<ClassBodyOptions, 'nodeKind'>;
+  children?: Builder<ClassHeritage> | Omit<ClassHeritageOptions, 'nodeKind'> | (Builder<ClassHeritage> | Omit<ClassHeritageOptions, 'nodeKind'>)[];
 }
 
 export namespace abstract_class_declaration {
-  export function from(options: AbstractClassDeclarationOptions): AbstractClassDeclarationBuilder {
+  export function from(options: Omit<AbstractClassDeclarationOptions, 'nodeKind'>): AbstractClassDeclarationBuilder {
     const _ctor = options.name;
     const b = new AbstractClassDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v)));
     }
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
     if (options.body !== undefined) {
       const _v = options.body;
-      b.body(_v instanceof Builder ? _v : class_body.from(_v as ClassBodyOptions));
+      b.body(_v instanceof Builder ? _v : class_body.from(_v));
     }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr.map(_x => _x instanceof Builder ? _x : class_heritage.from(_x as ClassHeritageOptions)));
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : class_heritage.from(_x)));
     }
     return b;
   }

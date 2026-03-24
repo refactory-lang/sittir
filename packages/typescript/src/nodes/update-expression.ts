@@ -28,11 +28,11 @@ class UpdateExpressionBuilder extends Builder<UpdateExpression> {
     return {
       kind: 'update_expression',
       argument: this._argument.build(ctx),
-      operator: this._operator?.build(ctx),
+      operator: this._operator ? this.buildChild(this._operator, ctx) : undefined,
     } as UpdateExpression;
   }
 
-  override get nodeKind(): string { return 'update_expression'; }
+  override get nodeKind(): 'update_expression' { return 'update_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -49,12 +49,13 @@ export function update_expression(argument: Builder<Expression>): UpdateExpressi
 }
 
 export interface UpdateExpressionOptions {
+  nodeKind: 'update_expression';
   argument: Builder<Expression>;
   operator: Builder;
 }
 
 export namespace update_expression {
-  export function from(options: UpdateExpressionOptions): UpdateExpressionBuilder {
+  export function from(options: Omit<UpdateExpressionOptions, 'nodeKind'>): UpdateExpressionBuilder {
     const b = new UpdateExpressionBuilder(options.argument);
     if (options.operator !== undefined) b.operator(options.operator);
     return b;

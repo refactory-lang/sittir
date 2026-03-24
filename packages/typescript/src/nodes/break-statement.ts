@@ -23,11 +23,11 @@ class BreakStatementBuilder extends Builder<BreakStatement> {
   build(ctx?: RenderContext): BreakStatement {
     return {
       kind: 'break_statement',
-      label: this._label?.build(ctx),
+      label: this._label ? this._label.build(ctx) : undefined,
     } as BreakStatement;
   }
 
-  override get nodeKind(): string { return 'break_statement'; }
+  override get nodeKind(): 'break_statement' { return 'break_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function break_statement(): BreakStatementBuilder {
 }
 
 export interface BreakStatementOptions {
+  nodeKind: 'break_statement';
   label?: Builder<StatementIdentifier> | string;
 }
 
 export namespace break_statement {
-  export function from(options: BreakStatementOptions): BreakStatementBuilder {
+  export function from(input: Omit<BreakStatementOptions, 'nodeKind'> | Builder<StatementIdentifier> | string): BreakStatementBuilder {
+    const options: Omit<BreakStatementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'label' in input
+      ? input as Omit<BreakStatementOptions, 'nodeKind'>
+      : { label: input } as Omit<BreakStatementOptions, 'nodeKind'>;
     const b = new BreakStatementBuilder();
     if (options.label !== undefined) {
       const _v = options.label;

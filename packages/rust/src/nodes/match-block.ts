@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { MatchArm, MatchBlock } from '../types.js';
+import { match_arm } from './match-arm.js';
+import type { MatchArmOptions } from './match-arm.js';
 
 
 class MatchBlockBuilder extends Builder<MatchBlock> {
@@ -16,7 +18,8 @@ class MatchBlockBuilder extends Builder<MatchBlock> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('{');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -28,14 +31,13 @@ class MatchBlockBuilder extends Builder<MatchBlock> {
     } as MatchBlock;
   }
 
-  override get nodeKind(): string { return 'match_block'; }
+  override get nodeKind(): 'match_block' { return 'match_block'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
     parts.push({ kind: 'token', text: '{', type: '{' });
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     parts.push({ kind: 'token', text: '}', type: '}' });
     return parts;
   }
@@ -48,16 +50,20 @@ export function match_block(): MatchBlockBuilder {
 }
 
 export interface MatchBlockOptions {
-  children?: Builder<MatchArm> | (Builder<MatchArm>)[];
+  nodeKind: 'match_block';
+  children?: Builder<MatchArm> | Omit<MatchArmOptions, 'nodeKind'> | (Builder<MatchArm> | Omit<MatchArmOptions, 'nodeKind'>)[];
 }
 
 export namespace match_block {
-  export function from(options: MatchBlockOptions): MatchBlockBuilder {
+  export function from(input: Omit<MatchBlockOptions, 'nodeKind'> | Builder<MatchArm> | Omit<MatchArmOptions, 'nodeKind'> | (Builder<MatchArm> | Omit<MatchArmOptions, 'nodeKind'>)[]): MatchBlockBuilder {
+    const options: Omit<MatchBlockOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<MatchBlockOptions, 'nodeKind'>
+      : { children: input } as Omit<MatchBlockOptions, 'nodeKind'>;
     const b = new MatchBlockBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : match_arm.from(_x)));
     }
     return b;
   }

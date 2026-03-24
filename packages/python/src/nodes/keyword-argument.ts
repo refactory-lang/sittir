@@ -29,11 +29,11 @@ class KeywordArgumentBuilder extends Builder<KeywordArgument> {
     return {
       kind: 'keyword_argument',
       name: this._name.build(ctx),
-      value: this._value?.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
     } as KeywordArgument;
   }
 
-  override get nodeKind(): string { return 'keyword_argument'; }
+  override get nodeKind(): 'keyword_argument' { return 'keyword_argument'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,12 +51,13 @@ export function keyword_argument(name: Builder<Identifier>): KeywordArgumentBuil
 }
 
 export interface KeywordArgumentOptions {
+  nodeKind: 'keyword_argument';
   name: Builder<Identifier> | string;
   value: Builder<Expression>;
 }
 
 export namespace keyword_argument {
-  export function from(options: KeywordArgumentOptions): KeywordArgumentBuilder {
+  export function from(options: Omit<KeywordArgumentOptions, 'nodeKind'>): KeywordArgumentBuilder {
     const _ctor = options.name;
     const b = new KeywordArgumentBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.value !== undefined) b.value(options.value);

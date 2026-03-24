@@ -32,11 +32,11 @@ class DoStatementBuilder extends Builder<DoStatement> {
     return {
       kind: 'do_statement',
       body: this._body.build(ctx),
-      condition: this._condition?.build(ctx),
+      condition: this._condition ? this._condition.build(ctx) : undefined,
     } as DoStatement;
   }
 
-  override get nodeKind(): string { return 'do_statement'; }
+  override get nodeKind(): 'do_statement' { return 'do_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,16 +55,17 @@ export function do_statement(body: Builder<Statement>): DoStatementBuilder {
 }
 
 export interface DoStatementOptions {
+  nodeKind: 'do_statement';
   body: Builder<Statement>;
-  condition: Builder<ParenthesizedExpression> | ParenthesizedExpressionOptions;
+  condition: Builder<ParenthesizedExpression> | Omit<ParenthesizedExpressionOptions, 'nodeKind'>;
 }
 
 export namespace do_statement {
-  export function from(options: DoStatementOptions): DoStatementBuilder {
+  export function from(options: Omit<DoStatementOptions, 'nodeKind'>): DoStatementBuilder {
     const b = new DoStatementBuilder(options.body);
     if (options.condition !== undefined) {
       const _v = options.condition;
-      b.condition(_v instanceof Builder ? _v : parenthesized_expression.from(_v as ParenthesizedExpressionOptions));
+      b.condition(_v instanceof Builder ? _v : parenthesized_expression.from(_v));
     }
     return b;
   }

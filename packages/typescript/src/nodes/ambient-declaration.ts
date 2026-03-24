@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AmbientDeclaration, Declaration, PropertyIdentifier, StatementBlock, Type } from '../types.js';
+import { statement_block } from './statement-block.js';
+import type { StatementBlockOptions } from './statement-block.js';
 
 
 class AmbientDeclarationBuilder extends Builder<AmbientDeclaration> {
@@ -25,7 +27,7 @@ class AmbientDeclarationBuilder extends Builder<AmbientDeclaration> {
     } as AmbientDeclaration;
   }
 
-  override get nodeKind(): string { return 'ambient_declaration'; }
+  override get nodeKind(): 'ambient_declaration' { return 'ambient_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,14 +46,18 @@ export function ambient_declaration(...children: Builder<Declaration | Statement
 }
 
 export interface AmbientDeclarationOptions {
-  children?: Builder<Declaration | StatementBlock | PropertyIdentifier | Type> | (Builder<Declaration | StatementBlock | PropertyIdentifier | Type>)[];
+  nodeKind: 'ambient_declaration';
+  children?: Builder<Declaration | StatementBlock | PropertyIdentifier | Type> | Omit<StatementBlockOptions, 'nodeKind'> | (Builder<Declaration | StatementBlock | PropertyIdentifier | Type> | Omit<StatementBlockOptions, 'nodeKind'>)[];
 }
 
 export namespace ambient_declaration {
-  export function from(options: AmbientDeclarationOptions): AmbientDeclarationBuilder {
+  export function from(input: Omit<AmbientDeclarationOptions, 'nodeKind'> | Builder<Declaration | StatementBlock | PropertyIdentifier | Type> | Omit<StatementBlockOptions, 'nodeKind'> | (Builder<Declaration | StatementBlock | PropertyIdentifier | Type> | Omit<StatementBlockOptions, 'nodeKind'>)[]): AmbientDeclarationBuilder {
+    const options: Omit<AmbientDeclarationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<AmbientDeclarationOptions, 'nodeKind'>
+      : { children: input } as Omit<AmbientDeclarationOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new AmbientDeclarationBuilder(..._arr);
+    const b = new AmbientDeclarationBuilder(..._arr.map(_v => _v instanceof Builder ? _v : statement_block.from(_v)));
     return b;
   }
 }

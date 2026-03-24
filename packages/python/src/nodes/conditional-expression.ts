@@ -28,7 +28,7 @@ class ConditionalExpressionBuilder extends Builder<ConditionalExpression> {
     } as ConditionalExpression;
   }
 
-  override get nodeKind(): string { return 'conditional_expression'; }
+  override get nodeKind(): 'conditional_expression' { return 'conditional_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,13 +48,17 @@ export function conditional_expression(...children: Builder<Expression>[]): Cond
 }
 
 export interface ConditionalExpressionOptions {
-  children: Builder<Expression> | (Builder<Expression>)[];
+  nodeKind: 'conditional_expression';
+  children?: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace conditional_expression {
-  export function from(options: ConditionalExpressionOptions): ConditionalExpressionBuilder {
+  export function from(input: Omit<ConditionalExpressionOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): ConditionalExpressionBuilder {
+    const options: Omit<ConditionalExpressionOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ConditionalExpressionOptions, 'nodeKind'>
+      : { children: input } as Omit<ConditionalExpressionOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new ConditionalExpressionBuilder(..._arr);
     return b;
   }

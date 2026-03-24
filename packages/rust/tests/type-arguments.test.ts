@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('type_arguments', () => {
   it('should build with correct kind', () => {
-    const builder = ir.typeArguments(ir.booleanLiteral('test'), ir.booleanLiteral('test'));
+    const builder = ir.typeArguments(ir.metavariable('test'), ir.metavariable('test'));
     const node = builder.build();
     expect(node.kind).toBe('type_arguments');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,14 +12,14 @@ describe('type_arguments', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.typeArguments(ir.booleanLiteral('test'), ir.booleanLiteral('test'));
+    const builder = ir.typeArguments(ir.metavariable('test'), ir.metavariable('test'));
     const source = builder.renderImpl();
     expect(source).toContain('<');
     expect(source).toContain('>');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.typeArguments(ir.booleanLiteral('test'), ir.booleanLiteral('test'));
+    const builder = ir.typeArguments(ir.metavariable('test'), ir.metavariable('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('type_arguments');
     expect(cst.isNamed).toBe(true);
@@ -28,7 +28,7 @@ describe('type_arguments', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.typeArguments(ir.booleanLiteral('test'), ir.booleanLiteral('test'));
+    const builder = ir.typeArguments(ir.metavariable('test'), ir.metavariable('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

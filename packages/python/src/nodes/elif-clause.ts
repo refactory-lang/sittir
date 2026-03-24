@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, ElifClause, Expression } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class ElifClauseBuilder extends Builder<ElifClause> {
@@ -30,11 +32,11 @@ class ElifClauseBuilder extends Builder<ElifClause> {
     return {
       kind: 'elif_clause',
       condition: this._condition.build(ctx),
-      consequence: this._consequence?.build(ctx),
+      consequence: this._consequence ? this._consequence.build(ctx) : undefined,
     } as ElifClause;
   }
 
-  override get nodeKind(): string { return 'elif_clause'; }
+  override get nodeKind(): 'elif_clause' { return 'elif_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,14 +55,18 @@ export function elif_clause(condition: Builder<Expression>): ElifClauseBuilder {
 }
 
 export interface ElifClauseOptions {
+  nodeKind: 'elif_clause';
   condition: Builder<Expression>;
-  consequence: Builder<Block>;
+  consequence: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
 }
 
 export namespace elif_clause {
-  export function from(options: ElifClauseOptions): ElifClauseBuilder {
+  export function from(options: Omit<ElifClauseOptions, 'nodeKind'>): ElifClauseBuilder {
     const b = new ElifClauseBuilder(options.condition);
-    if (options.consequence !== undefined) b.consequence(options.consequence);
+    if (options.consequence !== undefined) {
+      const _v = options.consequence;
+      b.consequence(_v instanceof Builder ? _v : block.from(_v));
+    }
     return b;
   }
 }

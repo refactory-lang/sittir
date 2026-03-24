@@ -1,5 +1,5 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { EscapeSequence, String, StringFragment } from '../types.js';
 
 
@@ -28,7 +28,7 @@ class StringBuilder extends Builder<String> {
     } as String;
   }
 
-  override get nodeKind(): string { return 'string'; }
+  override get nodeKind(): 'string' { return 'string'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,16 +48,20 @@ export function string(): StringBuilder {
 }
 
 export interface StringOptions {
-  children?: Builder<StringFragment | EscapeSequence> | (Builder<StringFragment | EscapeSequence>)[];
+  nodeKind: 'string';
+  children?: Builder<StringFragment | EscapeSequence> | LeafOptions<'string_fragment'> | LeafOptions<'escape_sequence'> | (Builder<StringFragment | EscapeSequence> | LeafOptions<'string_fragment'> | LeafOptions<'escape_sequence'>)[];
 }
 
 export namespace string {
-  export function from(options: StringOptions): StringBuilder {
+  export function from(input: Omit<StringOptions, 'nodeKind'> | Builder<StringFragment | EscapeSequence> | LeafOptions<'string_fragment'> | LeafOptions<'escape_sequence'> | (Builder<StringFragment | EscapeSequence> | LeafOptions<'string_fragment'> | LeafOptions<'escape_sequence'>)[]): StringBuilder {
+    const options: Omit<StringOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<StringOptions, 'nodeKind'>
+      : { children: input } as Omit<StringOptions, 'nodeKind'>;
     const b = new StringBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'string_fragment': return new LeafBuilder('string_fragment', (_v as LeafOptions).text!);   case 'escape_sequence': return new LeafBuilder('escape_sequence', (_v as LeafOptions).text!); } throw new Error('unreachable'); }));
     }
     return b;
   }

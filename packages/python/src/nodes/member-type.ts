@@ -1,12 +1,14 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Identifier, MemberType } from '../types.js';
+import type { Identifier, MemberType, Type } from '../types.js';
+import { type_ } from './type.js';
+import type { TypeOptions } from './type.js';
 
 
 class MemberTypeBuilder extends Builder<MemberType> {
-  private _children: Builder<Identifier>[] = [];
+  private _children: Builder<Type | Identifier>[] = [];
 
-  constructor(...children: Builder<Identifier>[]) {
+  constructor(...children: Builder<Type | Identifier>[]) {
     super();
     this._children = children;
   }
@@ -26,7 +28,7 @@ class MemberTypeBuilder extends Builder<MemberType> {
     } as MemberType;
   }
 
-  override get nodeKind(): string { return 'member_type'; }
+  override get nodeKind(): 'member_type' { return 'member_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,19 +41,23 @@ class MemberTypeBuilder extends Builder<MemberType> {
 
 export type { MemberTypeBuilder };
 
-export function member_type(...children: Builder<Identifier>[]): MemberTypeBuilder {
+export function member_type(...children: Builder<Type | Identifier>[]): MemberTypeBuilder {
   return new MemberTypeBuilder(...children);
 }
 
 export interface MemberTypeOptions {
-  children: Builder<Identifier> | (Builder<Identifier>)[];
+  nodeKind: 'member_type';
+  children?: Builder<Type | Identifier> | string | Omit<TypeOptions, 'nodeKind'> | (Builder<Type | Identifier> | string | Omit<TypeOptions, 'nodeKind'>)[];
 }
 
 export namespace member_type {
-  export function from(options: MemberTypeOptions): MemberTypeBuilder {
+  export function from(input: Omit<MemberTypeOptions, 'nodeKind'> | Builder<Type | Identifier> | string | Omit<TypeOptions, 'nodeKind'> | (Builder<Type | Identifier> | string | Omit<TypeOptions, 'nodeKind'>)[]): MemberTypeBuilder {
+    const options: Omit<MemberTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<MemberTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<MemberTypeOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new MemberTypeBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new MemberTypeBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v instanceof Builder ? _v : type_.from(_v)));
     return b;
   }
 }

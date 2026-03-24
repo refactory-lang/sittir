@@ -1,14 +1,14 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CasePattern, ListPattern, Pattern } from '../types.js';
+import type { ListPattern, Pattern } from '../types.js';
 
 
 class ListPatternBuilder extends Builder<ListPattern> {
-  private _children: Builder<CasePattern | Pattern>[] = [];
+  private _children: Builder<Pattern>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<CasePattern | Pattern>[]): this {
+  children(...value: Builder<Pattern>[]): this {
     this._children = value;
     return this;
   }
@@ -28,7 +28,7 @@ class ListPatternBuilder extends Builder<ListPattern> {
     } as ListPattern;
   }
 
-  override get nodeKind(): string { return 'list_pattern'; }
+  override get nodeKind(): 'list_pattern' { return 'list_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,11 +48,15 @@ export function list_pattern(): ListPatternBuilder {
 }
 
 export interface ListPatternOptions {
-  children?: Builder<CasePattern | Pattern> | (Builder<CasePattern | Pattern>)[];
+  nodeKind: 'list_pattern';
+  children?: Builder<Pattern> | (Builder<Pattern>)[];
 }
 
 export namespace list_pattern {
-  export function from(options: ListPatternOptions): ListPatternBuilder {
+  export function from(input: Omit<ListPatternOptions, 'nodeKind'> | Builder<Pattern> | (Builder<Pattern>)[]): ListPatternBuilder {
+    const options: Omit<ListPatternOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ListPatternOptions, 'nodeKind'>
+      : { children: input } as Omit<ListPatternOptions, 'nodeKind'>;
     const b = new ListPatternBuilder();
     if (options.children !== undefined) {
       const _v = options.children;

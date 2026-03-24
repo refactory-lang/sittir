@@ -1,14 +1,14 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { CasePattern, Pattern, TuplePattern } from '../types.js';
+import type { Pattern, TuplePattern } from '../types.js';
 
 
 class TuplePatternBuilder extends Builder<TuplePattern> {
-  private _children: Builder<CasePattern | Pattern>[] = [];
+  private _children: Builder<Pattern>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<CasePattern | Pattern>[]): this {
+  children(...value: Builder<Pattern>[]): this {
     this._children = value;
     return this;
   }
@@ -28,7 +28,7 @@ class TuplePatternBuilder extends Builder<TuplePattern> {
     } as TuplePattern;
   }
 
-  override get nodeKind(): string { return 'tuple_pattern'; }
+  override get nodeKind(): 'tuple_pattern' { return 'tuple_pattern'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,11 +48,15 @@ export function tuple_pattern(): TuplePatternBuilder {
 }
 
 export interface TuplePatternOptions {
-  children?: Builder<CasePattern | Pattern> | (Builder<CasePattern | Pattern>)[];
+  nodeKind: 'tuple_pattern';
+  children?: Builder<Pattern> | (Builder<Pattern>)[];
 }
 
 export namespace tuple_pattern {
-  export function from(options: TuplePatternOptions): TuplePatternBuilder {
+  export function from(input: Omit<TuplePatternOptions, 'nodeKind'> | Builder<Pattern> | (Builder<Pattern>)[]): TuplePatternBuilder {
+    const options: Omit<TuplePatternOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TuplePatternOptions, 'nodeKind'>
+      : { children: input } as Omit<TuplePatternOptions, 'nodeKind'>;
     const b = new TuplePatternBuilder();
     if (options.children !== undefined) {
       const _v = options.children;

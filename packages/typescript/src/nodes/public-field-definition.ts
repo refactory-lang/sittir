@@ -1,8 +1,12 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { AccessibilityModifier, ComputedPropertyName, Decorator, Expression, Number, OverrideModifier, PrivatePropertyIdentifier, PropertyIdentifier, PublicFieldDefinition, String, TypeAnnotation } from '../types.js';
 import { decorator } from './decorator.js';
 import type { DecoratorOptions } from './decorator.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { computed_property_name } from './computed-property-name.js';
+import type { ComputedPropertyNameOptions } from './computed-property-name.js';
 import { type_annotation } from './type-annotation.js';
 import type { TypeAnnotationOptions } from './type-annotation.js';
 
@@ -58,13 +62,13 @@ class PublicFieldDefinitionBuilder extends Builder<PublicFieldDefinition> {
       kind: 'public_field_definition',
       decorator: this._decorator.map(c => c.build(ctx)),
       name: this._name.build(ctx),
-      type: this._type?.build(ctx),
-      value: this._value?.build(ctx),
+      type: this._type ? this._type.build(ctx) : undefined,
+      value: this._value ? this._value.build(ctx) : undefined,
       children: this._children.map(c => c.build(ctx)),
     } as PublicFieldDefinition;
   }
 
-  override get nodeKind(): string { return 'public_field_definition'; }
+  override get nodeKind(): 'public_field_definition' { return 'public_field_definition'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -90,30 +94,42 @@ export function public_field_definition(name: Builder<PropertyIdentifier | Priva
 }
 
 export interface PublicFieldDefinitionOptions {
-  decorator?: Builder<Decorator> | DecoratorOptions | (Builder<Decorator> | DecoratorOptions)[];
-  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
-  type?: Builder<TypeAnnotation> | TypeAnnotationOptions;
+  nodeKind: 'public_field_definition';
+  decorator?: Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'> | (Builder<Decorator> | Omit<DecoratorOptions, 'nodeKind'>)[];
+  name: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions;
+  type?: Builder<TypeAnnotation> | Omit<TypeAnnotationOptions, 'nodeKind'>;
   value?: Builder<Expression>;
-  children?: Builder<AccessibilityModifier | OverrideModifier> | (Builder<AccessibilityModifier | OverrideModifier>)[];
+  children?: Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'> | (Builder<AccessibilityModifier | OverrideModifier> | LeafOptions<'accessibility_modifier'> | LeafOptions<'override_modifier'>)[];
 }
 
 export namespace public_field_definition {
-  export function from(options: PublicFieldDefinitionOptions): PublicFieldDefinitionBuilder {
-    const b = new PublicFieldDefinitionBuilder(options.name);
+  export function from(options: Omit<PublicFieldDefinitionOptions, 'nodeKind'>): PublicFieldDefinitionBuilder {
+    const _raw = options.name;
+    let _ctor: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'string': _ctor = string.from(_raw); break;
+        case 'computed_property_name': _ctor = computed_property_name.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new PublicFieldDefinitionBuilder(_ctor);
     if (options.decorator !== undefined) {
       const _v = options.decorator;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v as DecoratorOptions)));
+      b.decorator(..._arr.map(_v => _v instanceof Builder ? _v : decorator.from(_v)));
     }
     if (options.type !== undefined) {
       const _v = options.type;
-      b.type(_v instanceof Builder ? _v : type_annotation.from(_v as TypeAnnotationOptions));
+      b.type(_v instanceof Builder ? _v : type_annotation.from(_v));
     }
     if (options.value !== undefined) b.value(options.value);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'accessibility_modifier': return new LeafBuilder('accessibility_modifier', (_v as LeafOptions).text!);   case 'override_modifier': return new LeafBuilder('override_modifier', (_v as LeafOptions).text ?? 'override'); } throw new Error('unreachable'); }));
     }
     return b;
   }

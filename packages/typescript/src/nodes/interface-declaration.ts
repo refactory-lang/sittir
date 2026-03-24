@@ -49,13 +49,13 @@ class InterfaceDeclarationBuilder extends Builder<InterfaceDeclaration> {
     return {
       kind: 'interface_declaration',
       name: this._name.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
-      body: this._body?.build(ctx),
-      children: this._children[0]?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as InterfaceDeclaration;
   }
 
-  override get nodeKind(): string { return 'interface_declaration'; }
+  override get nodeKind(): 'interface_declaration' { return 'interface_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -77,28 +77,29 @@ export function interface_declaration(name: Builder<TypeIdentifier>): InterfaceD
 }
 
 export interface InterfaceDeclarationOptions {
+  nodeKind: 'interface_declaration';
   name: Builder<TypeIdentifier> | string;
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  body: Builder<InterfaceBody> | InterfaceBodyOptions;
-  children?: Builder<ExtendsTypeClause> | ExtendsTypeClauseOptions | (Builder<ExtendsTypeClause> | ExtendsTypeClauseOptions)[];
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  body: Builder<InterfaceBody> | Omit<InterfaceBodyOptions, 'nodeKind'>;
+  children?: Builder<ExtendsTypeClause> | Omit<ExtendsTypeClauseOptions, 'nodeKind'> | (Builder<ExtendsTypeClause> | Omit<ExtendsTypeClauseOptions, 'nodeKind'>)[];
 }
 
 export namespace interface_declaration {
-  export function from(options: InterfaceDeclarationOptions): InterfaceDeclarationBuilder {
+  export function from(options: Omit<InterfaceDeclarationOptions, 'nodeKind'>): InterfaceDeclarationBuilder {
     const _ctor = options.name;
     const b = new InterfaceDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
     if (options.body !== undefined) {
       const _v = options.body;
-      b.body(_v instanceof Builder ? _v : interface_body.from(_v as InterfaceBodyOptions));
+      b.body(_v instanceof Builder ? _v : interface_body.from(_v));
     }
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr.map(_x => _x instanceof Builder ? _x : extends_type_clause.from(_x as ExtendsTypeClauseOptions)));
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : extends_type_clause.from(_x)));
     }
     return b;
   }

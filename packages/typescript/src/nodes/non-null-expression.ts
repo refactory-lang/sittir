@@ -21,11 +21,11 @@ class NonNullExpressionBuilder extends Builder<NonNullExpression> {
   build(ctx?: RenderContext): NonNullExpression {
     return {
       kind: 'non_null_expression',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as NonNullExpression;
   }
 
-  override get nodeKind(): string { return 'non_null_expression'; }
+  override get nodeKind(): 'non_null_expression' { return 'non_null_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function non_null_expression(children: Builder<Expression>): NonNullExpre
 }
 
 export interface NonNullExpressionOptions {
+  nodeKind: 'non_null_expression';
   children: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace non_null_expression {
-  export function from(options: NonNullExpressionOptions): NonNullExpressionBuilder {
+  export function from(input: Omit<NonNullExpressionOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): NonNullExpressionBuilder {
+    const options: Omit<NonNullExpressionOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<NonNullExpressionOptions, 'nodeKind'>
+      : { children: input } as Omit<NonNullExpressionOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new NonNullExpressionBuilder(_ctor);
     return b;

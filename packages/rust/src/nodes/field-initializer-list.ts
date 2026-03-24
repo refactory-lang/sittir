@@ -1,14 +1,20 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { BaseFieldInitializer, FieldInitializer, FieldInitializerList, ShorthandFieldInitializer } from '../types.js';
+import { shorthand_field_initializer } from './shorthand-field-initializer.js';
+import type { ShorthandFieldInitializerOptions } from './shorthand-field-initializer.js';
+import { field_initializer } from './field-initializer.js';
+import type { FieldInitializerOptions } from './field-initializer.js';
+import { base_field_initializer } from './base-field-initializer.js';
+import type { BaseFieldInitializerOptions } from './base-field-initializer.js';
 
 
 class FieldInitializerListBuilder extends Builder<FieldInitializerList> {
-  private _children: Builder<BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer>[] = [];
+  private _children: Builder<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>[] = [];
 
   constructor() { super(); }
 
-  children(...value: Builder<BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer>[]): this {
+  children(...value: Builder<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>[]): this {
     this._children = value;
     return this;
   }
@@ -16,12 +22,7 @@ class FieldInitializerListBuilder extends Builder<FieldInitializerList> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('{');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('}');
     return parts.join(' ');
   }
@@ -33,7 +34,7 @@ class FieldInitializerListBuilder extends Builder<FieldInitializerList> {
     } as FieldInitializerList;
   }
 
-  override get nodeKind(): string { return 'field_initializer_list'; }
+  override get nodeKind(): 'field_initializer_list' { return 'field_initializer_list'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -54,16 +55,20 @@ export function field_initializer_list(): FieldInitializerListBuilder {
 }
 
 export interface FieldInitializerListOptions {
-  children?: Builder<BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer> | (Builder<BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer>)[];
+  nodeKind: 'field_initializer_list';
+  children?: Builder<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer> | ShorthandFieldInitializerOptions | FieldInitializerOptions | BaseFieldInitializerOptions | (Builder<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer> | ShorthandFieldInitializerOptions | FieldInitializerOptions | BaseFieldInitializerOptions)[];
 }
 
 export namespace field_initializer_list {
-  export function from(options: FieldInitializerListOptions): FieldInitializerListBuilder {
+  export function from(input: Omit<FieldInitializerListOptions, 'nodeKind'> | Builder<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer> | ShorthandFieldInitializerOptions | FieldInitializerOptions | BaseFieldInitializerOptions | (Builder<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer> | ShorthandFieldInitializerOptions | FieldInitializerOptions | BaseFieldInitializerOptions)[]): FieldInitializerListBuilder {
+    const options: Omit<FieldInitializerListOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<FieldInitializerListOptions, 'nodeKind'>
+      : { children: input } as Omit<FieldInitializerListOptions, 'nodeKind'>;
     const b = new FieldInitializerListBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'shorthand_field_initializer': return shorthand_field_initializer.from(_v);   case 'field_initializer': return field_initializer.from(_v);   case 'base_field_initializer': return base_field_initializer.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

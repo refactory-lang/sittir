@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('with_clause', () => {
   it('should build with correct kind', () => {
-    const builder = ir.withClause(ir.with(ir.asPattern(ir.identifier('test'))), ir.with(ir.asPattern(ir.identifier('test'))));
+    const builder = ir.withClause(ir.with(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))), ir.with(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const node = builder.build();
     expect(node.kind).toBe('with_clause');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('with_clause', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.withClause(ir.with(ir.asPattern(ir.identifier('test'))), ir.with(ir.asPattern(ir.identifier('test'))));
+    const builder = ir.withClause(ir.with(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))), ir.with(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     const cst = builder.toCST();
     expect(cst.type).toBe('with_clause');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('with_clause', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.withClause(ir.with(ir.asPattern(ir.identifier('test'))), ir.with(ir.asPattern(ir.identifier('test'))));
+    const builder = ir.withClause(ir.with(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))), ir.with(ir.asPattern(ir.asPattern(ir.asPattern(ir.identifier('test') as any)))));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

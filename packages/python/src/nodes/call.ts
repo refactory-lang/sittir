@@ -1,18 +1,22 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArgumentList, Call, GeneratorExpression, PrimaryExpression } from '../types.js';
+import { generator_expression } from './generator-expression.js';
+import type { GeneratorExpressionOptions } from './generator-expression.js';
+import { argument_list } from './argument-list.js';
+import type { ArgumentListOptions } from './argument-list.js';
 
 
 class CallBuilder extends Builder<Call> {
-  private _arguments!: Builder<ArgumentList | GeneratorExpression>;
   private _function: Builder<PrimaryExpression>;
+  private _arguments!: Builder<GeneratorExpression | ArgumentList>;
 
   constructor(function_: Builder<PrimaryExpression>) {
     super();
     this._function = function_;
   }
 
-  arguments(value: Builder<ArgumentList | GeneratorExpression>): this {
+  arguments(value: Builder<GeneratorExpression | ArgumentList>): this {
     this._arguments = value;
     return this;
   }
@@ -27,12 +31,12 @@ class CallBuilder extends Builder<Call> {
   build(ctx?: RenderContext): Call {
     return {
       kind: 'call',
-      arguments: this._arguments?.build(ctx),
       function: this._function.build(ctx),
+      arguments: this._arguments ? this._arguments.build(ctx) : undefined,
     } as Call;
   }
 
-  override get nodeKind(): string { return 'call'; }
+  override get nodeKind(): 'call' { return 'call'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -49,14 +53,25 @@ export function call(function_: Builder<PrimaryExpression>): CallBuilder {
 }
 
 export interface CallOptions {
-  arguments: Builder<ArgumentList | GeneratorExpression>;
+  nodeKind: 'call';
   function: Builder<PrimaryExpression>;
+  arguments: Builder<GeneratorExpression | ArgumentList> | GeneratorExpressionOptions | ArgumentListOptions;
 }
 
 export namespace call {
-  export function from(options: CallOptions): CallBuilder {
+  export function from(options: Omit<CallOptions, 'nodeKind'>): CallBuilder {
     const b = new CallBuilder(options.function);
-    if (options.arguments !== undefined) b.arguments(options.arguments);
+    if (options.arguments !== undefined) {
+      const _v = options.arguments;
+      if (_v instanceof Builder) {
+        b.arguments(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'generator_expression': b.arguments(generator_expression.from(_v)); break;
+          case 'argument_list': b.arguments(argument_list.from(_v)); break;
+        }
+      }
+    }
     return b;
   }
 }

@@ -1,6 +1,8 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AttributeItem, Identifier, ShorthandFieldInitializer } from '../types.js';
+import { attribute } from './attribute-item.js';
+import type { AttributeItemOptions } from './attribute-item.js';
 
 
 class ShorthandFieldInitializerBuilder extends Builder<ShorthandFieldInitializer> {
@@ -13,7 +15,8 @@ class ShorthandFieldInitializerBuilder extends Builder<ShorthandFieldInitializer
 
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    if (this._children[0]) parts.push(this.renderChild(this._children[0]!, ctx));
+    if (this._children[1]) parts.push(this.renderChild(this._children[1]!, ctx));
     return parts.join(' ');
   }
 
@@ -24,13 +27,12 @@ class ShorthandFieldInitializerBuilder extends Builder<ShorthandFieldInitializer
     } as ShorthandFieldInitializer;
   }
 
-  override get nodeKind(): string { return 'shorthand_field_initializer'; }
+  override get nodeKind(): 'shorthand_field_initializer' { return 'shorthand_field_initializer'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
-    for (const child of this._children) {
-      parts.push({ kind: 'builder', builder: child });
-    }
+    if (this._children[0]) parts.push({ kind: 'builder', builder: this._children[0]! });
+    if (this._children[1]) parts.push({ kind: 'builder', builder: this._children[1]! });
     return parts;
   }
 }
@@ -42,14 +44,18 @@ export function shorthand_field_initializer(...children: Builder<AttributeItem |
 }
 
 export interface ShorthandFieldInitializerOptions {
-  children: Builder<AttributeItem | Identifier> | (Builder<AttributeItem | Identifier>)[];
+  nodeKind: 'shorthand_field_initializer';
+  children?: Builder<AttributeItem | Identifier> | string | Omit<AttributeItemOptions, 'nodeKind'> | (Builder<AttributeItem | Identifier> | string | Omit<AttributeItemOptions, 'nodeKind'>)[];
 }
 
 export namespace shorthand_field_initializer {
-  export function from(options: ShorthandFieldInitializerOptions): ShorthandFieldInitializerBuilder {
+  export function from(input: Omit<ShorthandFieldInitializerOptions, 'nodeKind'> | Builder<AttributeItem | Identifier> | string | Omit<AttributeItemOptions, 'nodeKind'> | (Builder<AttributeItem | Identifier> | string | Omit<AttributeItemOptions, 'nodeKind'>)[]): ShorthandFieldInitializerBuilder {
+    const options: Omit<ShorthandFieldInitializerOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ShorthandFieldInitializerOptions, 'nodeKind'>
+      : { children: input } as Omit<ShorthandFieldInitializerOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new ShorthandFieldInitializerBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ShorthandFieldInitializerBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v instanceof Builder ? _v : attribute.from(_v)));
     return b;
   }
 }

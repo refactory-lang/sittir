@@ -8,6 +8,7 @@ import { assert_statement } from './nodes/assert-statement.js';
 import { assignment } from './nodes/assignment.js';
 import { attribute } from './nodes/attribute.js';
 import { augmented_assignment } from './nodes/augmented-assignment.js';
+import { await_ } from './nodes/await.js';
 import { binary_operator } from './nodes/binary-operator.js';
 import { block } from './nodes/block.js';
 import { boolean_operator } from './nodes/boolean-operator.js';
@@ -55,6 +56,7 @@ import { import_statement } from './nodes/import-statement.js';
 import { interpolation } from './nodes/interpolation.js';
 import { keyword_argument } from './nodes/keyword-argument.js';
 import { keyword_pattern } from './nodes/keyword-pattern.js';
+import { lambda } from './nodes/lambda.js';
 import { lambda_parameters } from './nodes/lambda-parameters.js';
 import { list } from './nodes/list.js';
 import { list_comprehension } from './nodes/list-comprehension.js';
@@ -87,6 +89,7 @@ import { subscript } from './nodes/subscript.js';
 import { try_statement } from './nodes/try-statement.js';
 import { tuple } from './nodes/tuple.js';
 import { tuple_pattern } from './nodes/tuple-pattern.js';
+import { type_ } from './nodes/type.js';
 import { type_alias_statement } from './nodes/type-alias-statement.js';
 import { type_parameter } from './nodes/type-parameter.js';
 import { typed_default_parameter } from './nodes/typed-default-parameter.js';
@@ -98,6 +101,7 @@ import { while_statement } from './nodes/while-statement.js';
 import { with_clause } from './nodes/with-clause.js';
 import { with_ } from './nodes/with.js';
 import { with_statement } from './nodes/with-statement.js';
+import { yield_ } from './nodes/yield.js';
 
 export const ir = {
   aliasedImport: aliased_import,
@@ -107,6 +111,7 @@ export const ir = {
   assignment,
   attribute,
   augmentedAssignment: augmented_assignment,
+  await: await_,
   binaryOperator: binary_operator,
   block,
   booleanOperator: boolean_operator,
@@ -154,6 +159,7 @@ export const ir = {
   interpolation,
   keywordArgument: keyword_argument,
   keywordPattern: keyword_pattern,
+  lambda,
   lambdaParameters: lambda_parameters,
   list,
   listComprehension: list_comprehension,
@@ -186,6 +192,7 @@ export const ir = {
   tryStatement: try_statement,
   tuple,
   tuplePattern: tuple_pattern,
+  type: type_,
   typeAliasStatement: type_alias_statement,
   typeParameter: type_parameter,
   typedDefaultParameter: typed_default_parameter,
@@ -197,28 +204,31 @@ export const ir = {
   withClause: with_clause,
   with: with_,
   withStatement: with_statement,
+  yield: yield_,
+
+  // Keywords
+  breakStatement: () => new LeafBuilder('break_statement', 'break'),
+  continueStatement: () => new LeafBuilder('continue_statement', 'continue'),
+  keywordSeparator: () => new LeafBuilder('keyword_separator', '*'),
+  passStatement: () => new LeafBuilder('pass_statement', 'pass'),
+  positionalSeparator: () => new LeafBuilder('positional_separator', '/'),
+  wildcardImport: () => new LeafBuilder('wildcard_import', '*'),
+  ellipsis: () => new LeafBuilder('ellipsis', '...'),
+  false: () => new LeafBuilder('false', 'False'),
+  none: () => new LeafBuilder('none', 'None'),
+  true: () => new LeafBuilder('true', 'True'),
 
   // Leaf node builders
-  breakStatement: (text: string) => new LeafBuilder('break_statement', text),
-  continueStatement: (text: string) => new LeafBuilder('continue_statement', text),
   importPrefix: (text: string) => new LeafBuilder('import_prefix', text),
-  keywordSeparator: (text: string) => new LeafBuilder('keyword_separator', text),
-  passStatement: (text: string) => new LeafBuilder('pass_statement', text),
-  positionalSeparator: (text: string) => new LeafBuilder('positional_separator', text),
-  wildcardImport: (text: string) => new LeafBuilder('wildcard_import', text),
   comment: (text: string) => new LeafBuilder('comment', text),
-  ellipsis: (text: string) => new LeafBuilder('ellipsis', text),
   escapeInterpolation: (text: string) => new LeafBuilder('escape_interpolation', text),
   escapeSequence: (text: string) => new LeafBuilder('escape_sequence', text),
-  false: (text: string) => new LeafBuilder('false', text),
   float: (text: string) => new LeafBuilder('float', text),
   identifier: (text: string) => new LeafBuilder('identifier', text),
   integer: (text: string) => new LeafBuilder('integer', text),
   lineContinuation: (text: string) => new LeafBuilder('line_continuation', text),
-  none: (text: string) => new LeafBuilder('none', text),
   stringEnd: (text: string) => new LeafBuilder('string_end', text),
   stringStart: (text: string) => new LeafBuilder('string_start', text),
-  true: (text: string) => new LeafBuilder('true', text),
   typeConversion: (text: string) => new LeafBuilder('type_conversion', text),
 
   // Namespaced access via supertypes
@@ -253,6 +263,7 @@ export const ir = {
     booleanOperator: boolean_operator,
     comparisonOperator: comparison_operator,
     conditional: conditional_expression,
+    lambda: lambda,
     named: named_expression,
     notOperator: not_operator,
   },
@@ -273,6 +284,7 @@ export const ir = {
   },
   primaryExpression: {
     attribute: attribute,
+    await: await_,
     binaryOperator: binary_operator,
     call: call,
     concatenatedString: concatenated_string,
@@ -293,6 +305,319 @@ export const ir = {
 } as const;
 
 export type PythonIr = typeof ir;
+
+import type { AliasedImportBuilder, AliasedImportOptions } from './nodes/aliased-import.js';
+import type { ArgumentListBuilder, ArgumentListOptions } from './nodes/argument-list.js';
+import type { AsPatternBuilder, AsPatternOptions } from './nodes/as-pattern.js';
+import type { AssertStatementBuilder, AssertStatementOptions } from './nodes/assert-statement.js';
+import type { AssignmentBuilder, AssignmentOptions } from './nodes/assignment.js';
+import type { AttributeBuilder, AttributeOptions } from './nodes/attribute.js';
+import type { AugmentedAssignmentBuilder, AugmentedAssignmentOptions } from './nodes/augmented-assignment.js';
+import type { AwaitBuilder, AwaitOptions } from './nodes/await.js';
+import type { BinaryOperatorBuilder, BinaryOperatorOptions } from './nodes/binary-operator.js';
+import type { BlockBuilder, BlockOptions } from './nodes/block.js';
+import type { BooleanOperatorBuilder, BooleanOperatorOptions } from './nodes/boolean-operator.js';
+import type { CallBuilder, CallOptions } from './nodes/call.js';
+import type { CaseClauseBuilder, CaseClauseOptions } from './nodes/case-clause.js';
+import type { CasePatternBuilder, CasePatternOptions } from './nodes/case-pattern.js';
+import type { ChevronBuilder, ChevronOptions } from './nodes/chevron.js';
+import type { ClassDefinitionBuilder, ClassDefinitionOptions } from './nodes/class-definition.js';
+import type { ClassPatternBuilder, ClassPatternOptions } from './nodes/class-pattern.js';
+import type { ComparisonOperatorBuilder, ComparisonOperatorOptions } from './nodes/comparison-operator.js';
+import type { ComplexPatternBuilder, ComplexPatternOptions } from './nodes/complex-pattern.js';
+import type { ConcatenatedStringBuilder, ConcatenatedStringOptions } from './nodes/concatenated-string.js';
+import type { ConditionalExpressionBuilder, ConditionalExpressionOptions } from './nodes/conditional-expression.js';
+import type { ConstrainedTypeBuilder, ConstrainedTypeOptions } from './nodes/constrained-type.js';
+import type { DecoratedDefinitionBuilder, DecoratedDefinitionOptions } from './nodes/decorated-definition.js';
+import type { DecoratorBuilder, DecoratorOptions } from './nodes/decorator.js';
+import type { DefaultParameterBuilder, DefaultParameterOptions } from './nodes/default-parameter.js';
+import type { DeleteStatementBuilder, DeleteStatementOptions } from './nodes/delete-statement.js';
+import type { DictPatternBuilder, DictPatternOptions } from './nodes/dict-pattern.js';
+import type { DictionaryBuilder, DictionaryOptions } from './nodes/dictionary.js';
+import type { DictionaryComprehensionBuilder, DictionaryComprehensionOptions } from './nodes/dictionary-comprehension.js';
+import type { DictionarySplatBuilder, DictionarySplatOptions } from './nodes/dictionary-splat.js';
+import type { DictionarySplatPatternBuilder, DictionarySplatPatternOptions } from './nodes/dictionary-splat-pattern.js';
+import type { DottedNameBuilder, DottedNameOptions } from './nodes/dotted-name.js';
+import type { ElifClauseBuilder, ElifClauseOptions } from './nodes/elif-clause.js';
+import type { ElseClauseBuilder, ElseClauseOptions } from './nodes/else-clause.js';
+import type { ExceptClauseBuilder, ExceptClauseOptions } from './nodes/except-clause.js';
+import type { ExecStatementBuilder, ExecStatementOptions } from './nodes/exec-statement.js';
+import type { ExpressionListBuilder, ExpressionListOptions } from './nodes/expression-list.js';
+import type { ExpressionStatementBuilder, ExpressionStatementOptions } from './nodes/expression-statement.js';
+import type { FinallyClauseBuilder, FinallyClauseOptions } from './nodes/finally-clause.js';
+import type { ForInClauseBuilder, ForInClauseOptions } from './nodes/for-in-clause.js';
+import type { ForStatementBuilder, ForStatementOptions } from './nodes/for-statement.js';
+import type { FormatExpressionBuilder, FormatExpressionOptions } from './nodes/format-expression.js';
+import type { FormatSpecifierBuilder, FormatSpecifierOptions } from './nodes/format-specifier.js';
+import type { FunctionDefinitionBuilder, FunctionDefinitionOptions } from './nodes/function-definition.js';
+import type { FutureImportStatementBuilder, FutureImportStatementOptions } from './nodes/future-import-statement.js';
+import type { GeneratorExpressionBuilder, GeneratorExpressionOptions } from './nodes/generator-expression.js';
+import type { GenericTypeBuilder, GenericTypeOptions } from './nodes/generic-type.js';
+import type { GlobalStatementBuilder, GlobalStatementOptions } from './nodes/global-statement.js';
+import type { IfClauseBuilder, IfClauseOptions } from './nodes/if-clause.js';
+import type { IfStatementBuilder, IfStatementOptions } from './nodes/if-statement.js';
+import type { ImportFromStatementBuilder, ImportFromStatementOptions } from './nodes/import-from-statement.js';
+import type { ImportStatementBuilder, ImportStatementOptions } from './nodes/import-statement.js';
+import type { InterpolationBuilder, InterpolationOptions } from './nodes/interpolation.js';
+import type { KeywordArgumentBuilder, KeywordArgumentOptions } from './nodes/keyword-argument.js';
+import type { KeywordPatternBuilder, KeywordPatternOptions } from './nodes/keyword-pattern.js';
+import type { LambdaBuilder, LambdaOptions } from './nodes/lambda.js';
+import type { LambdaParametersBuilder, LambdaParametersOptions } from './nodes/lambda-parameters.js';
+import type { ListBuilder, ListOptions } from './nodes/list.js';
+import type { ListComprehensionBuilder, ListComprehensionOptions } from './nodes/list-comprehension.js';
+import type { ListPatternBuilder, ListPatternOptions } from './nodes/list-pattern.js';
+import type { ListSplatBuilder, ListSplatOptions } from './nodes/list-splat.js';
+import type { ListSplatPatternBuilder, ListSplatPatternOptions } from './nodes/list-splat-pattern.js';
+import type { MatchStatementBuilder, MatchStatementOptions } from './nodes/match-statement.js';
+import type { MemberTypeBuilder, MemberTypeOptions } from './nodes/member-type.js';
+import type { ModuleBuilder, ModuleOptions } from './nodes/module.js';
+import type { NamedExpressionBuilder, NamedExpressionOptions } from './nodes/named-expression.js';
+import type { NonlocalStatementBuilder, NonlocalStatementOptions } from './nodes/nonlocal-statement.js';
+import type { NotOperatorBuilder, NotOperatorOptions } from './nodes/not-operator.js';
+import type { PairBuilder, PairOptions } from './nodes/pair.js';
+import type { ParametersBuilder, ParametersOptions } from './nodes/parameters.js';
+import type { ParenthesizedExpressionBuilder, ParenthesizedExpressionOptions } from './nodes/parenthesized-expression.js';
+import type { ParenthesizedListSplatBuilder, ParenthesizedListSplatOptions } from './nodes/parenthesized-list-splat.js';
+import type { PatternListBuilder, PatternListOptions } from './nodes/pattern-list.js';
+import type { PrintStatementBuilder, PrintStatementOptions } from './nodes/print-statement.js';
+import type { RaiseStatementBuilder, RaiseStatementOptions } from './nodes/raise-statement.js';
+import type { RelativeImportBuilder, RelativeImportOptions } from './nodes/relative-import.js';
+import type { ReturnStatementBuilder, ReturnStatementOptions } from './nodes/return-statement.js';
+import type { SetBuilder, SetOptions } from './nodes/set.js';
+import type { SetComprehensionBuilder, SetComprehensionOptions } from './nodes/set-comprehension.js';
+import type { SliceBuilder, SliceOptions } from './nodes/slice.js';
+import type { SplatPatternBuilder, SplatPatternOptions } from './nodes/splat-pattern.js';
+import type { SplatTypeBuilder, SplatTypeOptions } from './nodes/splat-type.js';
+import type { StringBuilder, StringOptions } from './nodes/string.js';
+import type { StringContentBuilder, StringContentOptions } from './nodes/string-content.js';
+import type { SubscriptBuilder, SubscriptOptions } from './nodes/subscript.js';
+import type { TryStatementBuilder, TryStatementOptions } from './nodes/try-statement.js';
+import type { TupleBuilder, TupleOptions } from './nodes/tuple.js';
+import type { TuplePatternBuilder, TuplePatternOptions } from './nodes/tuple-pattern.js';
+import type { TypeBuilder, TypeOptions } from './nodes/type.js';
+import type { TypeAliasStatementBuilder, TypeAliasStatementOptions } from './nodes/type-alias-statement.js';
+import type { TypeParameterBuilder, TypeParameterOptions } from './nodes/type-parameter.js';
+import type { TypedDefaultParameterBuilder, TypedDefaultParameterOptions } from './nodes/typed-default-parameter.js';
+import type { TypedParameterBuilder, TypedParameterOptions } from './nodes/typed-parameter.js';
+import type { UnaryOperatorBuilder, UnaryOperatorOptions } from './nodes/unary-operator.js';
+import type { UnionPatternBuilder, UnionPatternOptions } from './nodes/union-pattern.js';
+import type { UnionTypeBuilder, UnionTypeOptions } from './nodes/union-type.js';
+import type { WhileStatementBuilder, WhileStatementOptions } from './nodes/while-statement.js';
+import type { WithClauseBuilder, WithClauseOptions } from './nodes/with-clause.js';
+import type { WithBuilder, WithItemOptions } from './nodes/with.js';
+import type { WithStatementBuilder, WithStatementOptions } from './nodes/with-statement.js';
+import type { YieldBuilder, YieldOptions } from './nodes/yield.js';
+
+export interface BuilderMap {
+  'aliased_import': AliasedImportBuilder;
+  'argument_list': ArgumentListBuilder;
+  'as_pattern': AsPatternBuilder;
+  'assert_statement': AssertStatementBuilder;
+  'assignment': AssignmentBuilder;
+  'attribute': AttributeBuilder;
+  'augmented_assignment': AugmentedAssignmentBuilder;
+  'await': AwaitBuilder;
+  'binary_operator': BinaryOperatorBuilder;
+  'block': BlockBuilder;
+  'boolean_operator': BooleanOperatorBuilder;
+  'call': CallBuilder;
+  'case_clause': CaseClauseBuilder;
+  'case_pattern': CasePatternBuilder;
+  'chevron': ChevronBuilder;
+  'class_definition': ClassDefinitionBuilder;
+  'class_pattern': ClassPatternBuilder;
+  'comparison_operator': ComparisonOperatorBuilder;
+  'complex_pattern': ComplexPatternBuilder;
+  'concatenated_string': ConcatenatedStringBuilder;
+  'conditional_expression': ConditionalExpressionBuilder;
+  'constrained_type': ConstrainedTypeBuilder;
+  'decorated_definition': DecoratedDefinitionBuilder;
+  'decorator': DecoratorBuilder;
+  'default_parameter': DefaultParameterBuilder;
+  'delete_statement': DeleteStatementBuilder;
+  'dict_pattern': DictPatternBuilder;
+  'dictionary': DictionaryBuilder;
+  'dictionary_comprehension': DictionaryComprehensionBuilder;
+  'dictionary_splat': DictionarySplatBuilder;
+  'dictionary_splat_pattern': DictionarySplatPatternBuilder;
+  'dotted_name': DottedNameBuilder;
+  'elif_clause': ElifClauseBuilder;
+  'else_clause': ElseClauseBuilder;
+  'except_clause': ExceptClauseBuilder;
+  'exec_statement': ExecStatementBuilder;
+  'expression_list': ExpressionListBuilder;
+  'expression_statement': ExpressionStatementBuilder;
+  'finally_clause': FinallyClauseBuilder;
+  'for_in_clause': ForInClauseBuilder;
+  'for_statement': ForStatementBuilder;
+  'format_expression': FormatExpressionBuilder;
+  'format_specifier': FormatSpecifierBuilder;
+  'function_definition': FunctionDefinitionBuilder;
+  'future_import_statement': FutureImportStatementBuilder;
+  'generator_expression': GeneratorExpressionBuilder;
+  'generic_type': GenericTypeBuilder;
+  'global_statement': GlobalStatementBuilder;
+  'if_clause': IfClauseBuilder;
+  'if_statement': IfStatementBuilder;
+  'import_from_statement': ImportFromStatementBuilder;
+  'import_statement': ImportStatementBuilder;
+  'interpolation': InterpolationBuilder;
+  'keyword_argument': KeywordArgumentBuilder;
+  'keyword_pattern': KeywordPatternBuilder;
+  'lambda': LambdaBuilder;
+  'lambda_parameters': LambdaParametersBuilder;
+  'list': ListBuilder;
+  'list_comprehension': ListComprehensionBuilder;
+  'list_pattern': ListPatternBuilder;
+  'list_splat': ListSplatBuilder;
+  'list_splat_pattern': ListSplatPatternBuilder;
+  'match_statement': MatchStatementBuilder;
+  'member_type': MemberTypeBuilder;
+  'module': ModuleBuilder;
+  'named_expression': NamedExpressionBuilder;
+  'nonlocal_statement': NonlocalStatementBuilder;
+  'not_operator': NotOperatorBuilder;
+  'pair': PairBuilder;
+  'parameters': ParametersBuilder;
+  'parenthesized_expression': ParenthesizedExpressionBuilder;
+  'parenthesized_list_splat': ParenthesizedListSplatBuilder;
+  'pattern_list': PatternListBuilder;
+  'print_statement': PrintStatementBuilder;
+  'raise_statement': RaiseStatementBuilder;
+  'relative_import': RelativeImportBuilder;
+  'return_statement': ReturnStatementBuilder;
+  'set': SetBuilder;
+  'set_comprehension': SetComprehensionBuilder;
+  'slice': SliceBuilder;
+  'splat_pattern': SplatPatternBuilder;
+  'splat_type': SplatTypeBuilder;
+  'string': StringBuilder;
+  'string_content': StringContentBuilder;
+  'subscript': SubscriptBuilder;
+  'try_statement': TryStatementBuilder;
+  'tuple': TupleBuilder;
+  'tuple_pattern': TuplePatternBuilder;
+  'type': TypeBuilder;
+  'type_alias_statement': TypeAliasStatementBuilder;
+  'type_parameter': TypeParameterBuilder;
+  'typed_default_parameter': TypedDefaultParameterBuilder;
+  'typed_parameter': TypedParameterBuilder;
+  'unary_operator': UnaryOperatorBuilder;
+  'union_pattern': UnionPatternBuilder;
+  'union_type': UnionTypeBuilder;
+  'while_statement': WhileStatementBuilder;
+  'with_clause': WithClauseBuilder;
+  'with_item': WithBuilder;
+  'with_statement': WithStatementBuilder;
+  'yield': YieldBuilder;
+}
+
+export interface OptionsMap {
+  'aliased_import': AliasedImportOptions;
+  'argument_list': ArgumentListOptions;
+  'as_pattern': AsPatternOptions;
+  'assert_statement': AssertStatementOptions;
+  'assignment': AssignmentOptions;
+  'attribute': AttributeOptions;
+  'augmented_assignment': AugmentedAssignmentOptions;
+  'await': AwaitOptions;
+  'binary_operator': BinaryOperatorOptions;
+  'block': BlockOptions;
+  'boolean_operator': BooleanOperatorOptions;
+  'call': CallOptions;
+  'case_clause': CaseClauseOptions;
+  'case_pattern': CasePatternOptions;
+  'chevron': ChevronOptions;
+  'class_definition': ClassDefinitionOptions;
+  'class_pattern': ClassPatternOptions;
+  'comparison_operator': ComparisonOperatorOptions;
+  'complex_pattern': ComplexPatternOptions;
+  'concatenated_string': ConcatenatedStringOptions;
+  'conditional_expression': ConditionalExpressionOptions;
+  'constrained_type': ConstrainedTypeOptions;
+  'decorated_definition': DecoratedDefinitionOptions;
+  'decorator': DecoratorOptions;
+  'default_parameter': DefaultParameterOptions;
+  'delete_statement': DeleteStatementOptions;
+  'dict_pattern': DictPatternOptions;
+  'dictionary': DictionaryOptions;
+  'dictionary_comprehension': DictionaryComprehensionOptions;
+  'dictionary_splat': DictionarySplatOptions;
+  'dictionary_splat_pattern': DictionarySplatPatternOptions;
+  'dotted_name': DottedNameOptions;
+  'elif_clause': ElifClauseOptions;
+  'else_clause': ElseClauseOptions;
+  'except_clause': ExceptClauseOptions;
+  'exec_statement': ExecStatementOptions;
+  'expression_list': ExpressionListOptions;
+  'expression_statement': ExpressionStatementOptions;
+  'finally_clause': FinallyClauseOptions;
+  'for_in_clause': ForInClauseOptions;
+  'for_statement': ForStatementOptions;
+  'format_expression': FormatExpressionOptions;
+  'format_specifier': FormatSpecifierOptions;
+  'function_definition': FunctionDefinitionOptions;
+  'future_import_statement': FutureImportStatementOptions;
+  'generator_expression': GeneratorExpressionOptions;
+  'generic_type': GenericTypeOptions;
+  'global_statement': GlobalStatementOptions;
+  'if_clause': IfClauseOptions;
+  'if_statement': IfStatementOptions;
+  'import_from_statement': ImportFromStatementOptions;
+  'import_statement': ImportStatementOptions;
+  'interpolation': InterpolationOptions;
+  'keyword_argument': KeywordArgumentOptions;
+  'keyword_pattern': KeywordPatternOptions;
+  'lambda': LambdaOptions;
+  'lambda_parameters': LambdaParametersOptions;
+  'list': ListOptions;
+  'list_comprehension': ListComprehensionOptions;
+  'list_pattern': ListPatternOptions;
+  'list_splat': ListSplatOptions;
+  'list_splat_pattern': ListSplatPatternOptions;
+  'match_statement': MatchStatementOptions;
+  'member_type': MemberTypeOptions;
+  'module': ModuleOptions;
+  'named_expression': NamedExpressionOptions;
+  'nonlocal_statement': NonlocalStatementOptions;
+  'not_operator': NotOperatorOptions;
+  'pair': PairOptions;
+  'parameters': ParametersOptions;
+  'parenthesized_expression': ParenthesizedExpressionOptions;
+  'parenthesized_list_splat': ParenthesizedListSplatOptions;
+  'pattern_list': PatternListOptions;
+  'print_statement': PrintStatementOptions;
+  'raise_statement': RaiseStatementOptions;
+  'relative_import': RelativeImportOptions;
+  'return_statement': ReturnStatementOptions;
+  'set': SetOptions;
+  'set_comprehension': SetComprehensionOptions;
+  'slice': SliceOptions;
+  'splat_pattern': SplatPatternOptions;
+  'splat_type': SplatTypeOptions;
+  'string': StringOptions;
+  'string_content': StringContentOptions;
+  'subscript': SubscriptOptions;
+  'try_statement': TryStatementOptions;
+  'tuple': TupleOptions;
+  'tuple_pattern': TuplePatternOptions;
+  'type': TypeOptions;
+  'type_alias_statement': TypeAliasStatementOptions;
+  'type_parameter': TypeParameterOptions;
+  'typed_default_parameter': TypedDefaultParameterOptions;
+  'typed_parameter': TypedParameterOptions;
+  'unary_operator': UnaryOperatorOptions;
+  'union_pattern': UnionPatternOptions;
+  'union_type': UnionTypeOptions;
+  'while_statement': WhileStatementOptions;
+  'with_clause': WithClauseOptions;
+  'with_item': WithItemOptions;
+  'with_statement': WithStatementOptions;
+  'yield': YieldOptions;
+}
+
+export type BuilderFor<K extends keyof BuilderMap> = BuilderMap[K];
+export type OptionsFor<K extends keyof OptionsMap> = OptionsMap[K];
 
 import type { Builder, Edit, FieldKinds, FieldName, NodeTransform, NodeType } from '@sittir/types';
 import type { PythonGrammar } from './types.js';
@@ -381,6 +706,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       if (rightChild) b.right(fromCST(rightChild) as any);
       return b;
     }
+    case 'await': {
+      const n = node as CSTNode<'await'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.await(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
+      return b;
+    }
     case 'binary_operator': {
       const n = node as CSTNode<'binary_operator'>;
       const ctorChild = n.childForFieldName('left');
@@ -428,7 +759,7 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const guardChild = n.childForFieldName('guard');
       if (guardChild) b.guard(fromCST(guardChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['consequence', 'guard'];
+        const fieldNames = ['guard', 'consequence'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -453,12 +784,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'class_definition'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.classDefinition(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
-      const superclassesChild = n.childForFieldName('superclasses');
-      if (superclassesChild) b.superclasses(fromCST(superclassesChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const superclassesChild = n.childForFieldName('superclasses');
+      if (superclassesChild) b.superclasses(fromCST(superclassesChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       return b;
     }
     case 'class_pattern': {
@@ -597,10 +928,10 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'except_clause'>;
       const firstChild = n.namedChildren[0];
       const b = ir.exceptClause(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
-      const aliasChild = n.childForFieldName('alias');
-      if (aliasChild) b.alias(fromCST(aliasChild) as any);
       const valueChildren = n.childrenForFieldName('value');
       if (valueChildren.length > 0) b.value(...valueChildren.map(c => fromCST(c) as any));
+      const aliasChild = n.childForFieldName('alias');
+      if (aliasChild) b.alias(fromCST(aliasChild) as any);
       return b;
     }
     case 'exec_statement': {
@@ -642,12 +973,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'for_statement'>;
       const ctorChild = n.childForFieldName('left');
       const b = ir.forStatement(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('left', '') as any);
-      const alternativeChild = n.childForFieldName('alternative');
-      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const rightChild = n.childForFieldName('right');
       if (rightChild) b.right(fromCST(rightChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const alternativeChild = n.childForFieldName('alternative');
+      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
       return b;
     }
     case 'format_expression': {
@@ -673,14 +1004,14 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'function_definition'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.functionDefinition(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
       const parametersChild = n.childForFieldName('parameters');
       if (parametersChild) b.parameters(fromCST(parametersChild) as any);
       const returnTypeChild = n.childForFieldName('return_type');
       if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
-      const typeParametersChild = n.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       return b;
     }
     case 'future_import_statement': {
@@ -720,10 +1051,10 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'if_statement'>;
       const ctorChild = n.childForFieldName('condition');
       const b = ir.ifStatement(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('condition', '') as any);
-      const alternativeChildren = n.childrenForFieldName('alternative');
-      if (alternativeChildren.length > 0) b.alternative(...alternativeChildren.map(c => fromCST(c) as any));
       const consequenceChild = n.childForFieldName('consequence');
       if (consequenceChild) b.consequence(fromCST(consequenceChild) as any);
+      const alternativeChildren = n.childrenForFieldName('alternative');
+      if (alternativeChildren.length > 0) b.alternative(...alternativeChildren.map(c => fromCST(c) as any));
       return b;
     }
     case 'import_from_statement': {
@@ -749,10 +1080,10 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'interpolation'>;
       const ctorChild = n.childForFieldName('expression');
       const b = ir.interpolation(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('expression', '') as any);
-      const formatSpecifierChild = n.childForFieldName('format_specifier');
-      if (formatSpecifierChild) b.formatSpecifier(fromCST(formatSpecifierChild) as any);
       const typeConversionChild = n.childForFieldName('type_conversion');
       if (typeConversionChild) b.typeConversion(fromCST(typeConversionChild) as any);
+      const formatSpecifierChild = n.childForFieldName('format_specifier');
+      if (formatSpecifierChild) b.formatSpecifier(fromCST(formatSpecifierChild) as any);
       return b;
     }
     case 'keyword_argument': {
@@ -766,6 +1097,14 @@ function resolveBuilder(node: CSTNode): Builder | null {
     case 'keyword_pattern': {
       const n = node as CSTNode<'keyword_pattern'>;
       const b = ir.keywordPattern(...n.namedChildren.map(c => fromCST(c) as any));
+      return b;
+    }
+    case 'lambda': {
+      const n = node as CSTNode<'lambda'>;
+      const ctorChild = n.childForFieldName('body');
+      const b = ir.lambda(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('body', '') as any);
+      const parametersChild = n.childForFieldName('parameters');
+      if (parametersChild) b.parameters(fromCST(parametersChild) as any);
       return b;
     }
     case 'lambda_parameters': {
@@ -1018,6 +1357,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;
     }
+    case 'type': {
+      const n = node as CSTNode<'type'>;
+      const firstChild = n.namedChildren[0];
+      const b = ir.type(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
+      return b;
+    }
     case 'type_alias_statement': {
       const n = node as CSTNode<'type_alias_statement'>;
       const ctorChild = n.childForFieldName('left');
@@ -1078,10 +1423,10 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'while_statement'>;
       const ctorChild = n.childForFieldName('condition');
       const b = ir.whileStatement(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('condition', '') as any);
-      const alternativeChild = n.childForFieldName('alternative');
-      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
       const bodyChild = n.childForFieldName('body');
       if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const alternativeChild = n.childForFieldName('alternative');
+      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
       return b;
     }
     case 'with_clause': {
@@ -1102,6 +1447,15 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const remainingChildren = n.namedChildren.filter(c => {
         const fieldNames = ['body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
+      });
+      if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
+      return b;
+    }
+    case 'yield': {
+      const n = node as CSTNode<'yield'>;
+      const b = ir.yield();
+      const remainingChildren = n.namedChildren.filter(c => {
+        return true;
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
       return b;

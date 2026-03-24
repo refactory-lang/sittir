@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, ConstBlock } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class ConstBlockBuilder extends Builder<ConstBlock> {
@@ -25,7 +27,7 @@ class ConstBlockBuilder extends Builder<ConstBlock> {
     } as ConstBlock;
   }
 
-  override get nodeKind(): string { return 'const_block'; }
+  override get nodeKind(): 'const_block' { return 'const_block'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,12 +44,17 @@ export function const_block(body: Builder<Block>): ConstBlockBuilder {
 }
 
 export interface ConstBlockOptions {
-  body: Builder<Block>;
+  nodeKind: 'const_block';
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
 }
 
 export namespace const_block {
-  export function from(options: ConstBlockOptions): ConstBlockBuilder {
-    const b = new ConstBlockBuilder(options.body);
+  export function from(input: Omit<ConstBlockOptions, 'nodeKind'> | Builder<Block> | Omit<BlockOptions, 'nodeKind'>): ConstBlockBuilder {
+    const options: Omit<ConstBlockOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'body' in input
+      ? input as Omit<ConstBlockOptions, 'nodeKind'>
+      : { body: input } as Omit<ConstBlockOptions, 'nodeKind'>;
+    const _ctor = options.body;
+    const b = new ConstBlockBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
     return b;
   }
 }

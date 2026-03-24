@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('for_lifetimes', () => {
   it('should build with correct kind', () => {
-    const builder = ir.forLifetimes(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.forLifetimes(ir.lifetime(ir.identifier('test')), ir.lifetime(ir.identifier('test')));
     const node = builder.build();
     expect(node.kind).toBe('for_lifetimes');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('for_lifetimes', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.forLifetimes(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.forLifetimes(ir.lifetime(ir.identifier('test')), ir.lifetime(ir.identifier('test')));
     const source = builder.renderImpl();
     expect(source).toContain('for');
     expect(source).toContain('<');
@@ -20,7 +20,7 @@ describe('for_lifetimes', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.forLifetimes(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.forLifetimes(ir.lifetime(ir.identifier('test')), ir.lifetime(ir.identifier('test')));
     const cst = builder.toCST();
     expect(cst.type).toBe('for_lifetimes');
     expect(cst.isNamed).toBe(true);
@@ -29,7 +29,7 @@ describe('for_lifetimes', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.forLifetimes(ir.identifier('test') as any, ir.identifier('test') as any);
+    const builder = ir.forLifetimes(ir.lifetime(ir.identifier('test')), ir.lifetime(ir.identifier('test')));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

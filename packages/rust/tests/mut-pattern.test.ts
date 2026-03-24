@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('mut_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.mutPattern(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.mutPattern(ir.mutableSpecifier(), ir.mutableSpecifier());
     const node = builder.build();
     expect(node.kind).toBe('mut_pattern');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('mut_pattern', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.mutPattern(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.mutPattern(ir.mutableSpecifier(), ir.mutableSpecifier());
     const cst = builder.toCST();
     expect(cst.type).toBe('mut_pattern');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('mut_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.mutPattern(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.mutPattern(ir.mutableSpecifier(), ir.mutableSpecifier());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

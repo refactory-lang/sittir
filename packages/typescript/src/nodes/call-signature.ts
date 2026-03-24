@@ -5,6 +5,12 @@ import { type_parameters } from './type-parameters.js';
 import type { TypeParametersOptions } from './type-parameters.js';
 import { formal_parameters } from './formal-parameters.js';
 import type { FormalParametersOptions } from './formal-parameters.js';
+import { type_annotation } from './type-annotation.js';
+import type { TypeAnnotationOptions } from './type-annotation.js';
+import { asserts_annotation } from './asserts-annotation.js';
+import type { AssertsAnnotationOptions } from './asserts-annotation.js';
+import { type_predicate_annotation } from './type-predicate-annotation.js';
+import type { TypePredicateAnnotationOptions } from './type-predicate-annotation.js';
 
 
 class CallSignatureBuilder extends Builder<CallSignature> {
@@ -38,13 +44,13 @@ class CallSignatureBuilder extends Builder<CallSignature> {
   build(ctx?: RenderContext): CallSignature {
     return {
       kind: 'call_signature',
-      typeParameters: this._typeParameters?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
       parameters: this._parameters.build(ctx),
-      returnType: this._returnType?.build(ctx),
+      returnType: this._returnType ? this._returnType.build(ctx) : undefined,
     } as CallSignature;
   }
 
-  override get nodeKind(): string { return 'call_signature'; }
+  override get nodeKind(): 'call_signature' { return 'call_signature'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -62,20 +68,32 @@ export function call_signature(parameters: Builder<FormalParameters>): CallSigna
 }
 
 export interface CallSignatureOptions {
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
-  parameters: Builder<FormalParameters> | FormalParametersOptions;
-  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation>;
+  nodeKind: 'call_signature';
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
+  parameters: Builder<FormalParameters> | Omit<FormalParametersOptions, 'nodeKind'>;
+  returnType?: Builder<TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation> | TypeAnnotationOptions | AssertsAnnotationOptions | TypePredicateAnnotationOptions;
 }
 
 export namespace call_signature {
-  export function from(options: CallSignatureOptions): CallSignatureBuilder {
+  export function from(options: Omit<CallSignatureOptions, 'nodeKind'>): CallSignatureBuilder {
     const _ctor = options.parameters;
-    const b = new CallSignatureBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor as FormalParametersOptions));
+    const b = new CallSignatureBuilder(_ctor instanceof Builder ? _ctor : formal_parameters.from(_ctor));
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
-    if (options.returnType !== undefined) b.returnType(options.returnType);
+    if (options.returnType !== undefined) {
+      const _v = options.returnType;
+      if (_v instanceof Builder) {
+        b.returnType(_v);
+      } else {
+        switch (_v.nodeKind) {
+          case 'type_annotation': b.returnType(type_annotation.from(_v)); break;
+          case 'asserts_annotation': b.returnType(asserts_annotation.from(_v)); break;
+          case 'type_predicate_annotation': b.returnType(type_predicate_annotation.from(_v)); break;
+        }
+      }
+    }
     return b;
   }
 }

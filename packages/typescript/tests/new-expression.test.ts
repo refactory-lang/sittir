@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('new_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.newExpression(ir.false('test'));
+    const builder = ir.newExpression(ir.false());
     const node = builder.build();
     expect(node.kind).toBe('new_expression');
     expect((node as any).constructor).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.newExpression(ir.false('test'));
+    const builder = ir.newExpression(ir.false());
     const source = builder.renderImpl();
     expect(source).toContain('new');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.newExpression(ir.false('test'));
+    const builder = ir.newExpression(ir.false());
     const cst = builder.toCST();
     expect(cst.type).toBe('new_expression');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('new_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.newExpression(ir.false('test'));
+    const builder = ir.newExpression(ir.false());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

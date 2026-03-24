@@ -1,6 +1,20 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ArrayPattern, Expression, ForInStatement, Identifier, MemberExpression, NonNullExpression, ObjectPattern, ParenthesizedExpression, SequenceExpression, Statement, SubscriptExpression, Undefined } from '../types.js';
+import { member_expression } from './member-expression.js';
+import type { MemberExpressionOptions } from './member-expression.js';
+import { subscript_expression } from './subscript-expression.js';
+import type { SubscriptExpressionOptions } from './subscript-expression.js';
+import { object_pattern } from './object-pattern.js';
+import type { ObjectPatternOptions } from './object-pattern.js';
+import { array_pattern } from './array-pattern.js';
+import type { ArrayPatternOptions } from './array-pattern.js';
+import { non_null_expression } from './non-null-expression.js';
+import type { NonNullExpressionOptions } from './non-null-expression.js';
+import { parenthesized_expression } from './parenthesized-expression.js';
+import type { ParenthesizedExpressionOptions } from './parenthesized-expression.js';
+import { sequence_expression } from './sequence-expression.js';
+import type { SequenceExpressionOptions } from './sequence-expression.js';
 
 
 class ForInStatementBuilder extends Builder<ForInStatement> {
@@ -62,14 +76,14 @@ class ForInStatementBuilder extends Builder<ForInStatement> {
     return {
       kind: 'for_in_statement',
       left: this._left.build(ctx),
-      value: this._value?.build(ctx),
-      operator: this._operator?.build(ctx),
-      right: this._right?.build(ctx),
-      body: this._body?.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
+      operator: this._operator ? this.buildChild(this._operator, ctx) : undefined,
+      right: this._right ? this._right.build(ctx) : undefined,
+      body: this._body ? this._body.build(ctx) : undefined,
     } as ForInStatement;
   }
 
-  override get nodeKind(): string { return 'for_in_statement'; }
+  override get nodeKind(): 'for_in_statement' { return 'for_in_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -96,21 +110,40 @@ export function for_in_statement(left: Builder<MemberExpression | SubscriptExpre
 }
 
 export interface ForInStatementOptions {
-  left: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression | ParenthesizedExpression>;
+  nodeKind: 'for_in_statement';
+  left: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression | ParenthesizedExpression> | MemberExpressionOptions | SubscriptExpressionOptions | ObjectPatternOptions | ArrayPatternOptions | NonNullExpressionOptions | ParenthesizedExpressionOptions;
   kind?: Builder;
   value?: Builder<Expression>;
   operator: Builder;
-  right: Builder<Expression | SequenceExpression>;
+  right: Builder<Expression | SequenceExpression> | Omit<SequenceExpressionOptions, 'nodeKind'>;
   body: Builder<Statement>;
 }
 
 export namespace for_in_statement {
-  export function from(options: ForInStatementOptions): ForInStatementBuilder {
-    const b = new ForInStatementBuilder(options.left);
+  export function from(options: Omit<ForInStatementOptions, 'nodeKind'>): ForInStatementBuilder {
+    const _raw = options.left;
+    let _ctor: Builder<MemberExpression | SubscriptExpression | Undefined | Identifier | ObjectPattern | ArrayPattern | NonNullExpression | ParenthesizedExpression>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'member_expression': _ctor = member_expression.from(_raw); break;
+        case 'subscript_expression': _ctor = subscript_expression.from(_raw); break;
+        case 'object_pattern': _ctor = object_pattern.from(_raw); break;
+        case 'array_pattern': _ctor = array_pattern.from(_raw); break;
+        case 'non_null_expression': _ctor = non_null_expression.from(_raw); break;
+        case 'parenthesized_expression': _ctor = parenthesized_expression.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new ForInStatementBuilder(_ctor);
     if (options.kind !== undefined) b.kind(options.kind);
     if (options.value !== undefined) b.value(options.value);
     if (options.operator !== undefined) b.operator(options.operator);
-    if (options.right !== undefined) b.right(options.right);
+    if (options.right !== undefined) {
+      const _v = options.right;
+      b.right(_v instanceof Builder ? _v : sequence_expression.from(_v));
+    }
     if (options.body !== undefined) b.body(options.body);
     return b;
   }

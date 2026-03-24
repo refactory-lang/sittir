@@ -35,12 +35,12 @@ class BooleanOperatorBuilder extends Builder<BooleanOperator> {
     return {
       kind: 'boolean_operator',
       left: this._left.build(ctx),
-      operator: this._operator?.build(ctx),
-      right: this._right?.build(ctx),
+      operator: this._operator ? this.buildChild(this._operator, ctx) : undefined,
+      right: this._right ? this._right.build(ctx) : undefined,
     } as BooleanOperator;
   }
 
-  override get nodeKind(): string { return 'boolean_operator'; }
+  override get nodeKind(): 'boolean_operator' { return 'boolean_operator'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -58,13 +58,14 @@ export function boolean_operator(left: Builder<Expression>): BooleanOperatorBuil
 }
 
 export interface BooleanOperatorOptions {
+  nodeKind: 'boolean_operator';
   left: Builder<Expression>;
   operator: Builder;
   right: Builder<Expression>;
 }
 
 export namespace boolean_operator {
-  export function from(options: BooleanOperatorOptions): BooleanOperatorBuilder {
+  export function from(options: Omit<BooleanOperatorOptions, 'nodeKind'>): BooleanOperatorBuilder {
     const b = new BooleanOperatorBuilder(options.left);
     if (options.operator !== undefined) b.operator(options.operator);
     if (options.right !== undefined) b.right(options.right);

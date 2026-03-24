@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, UnsafeBlock } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class UnsafeBlockBuilder extends Builder<UnsafeBlock> {
@@ -21,11 +23,11 @@ class UnsafeBlockBuilder extends Builder<UnsafeBlock> {
   build(ctx?: RenderContext): UnsafeBlock {
     return {
       kind: 'unsafe_block',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as UnsafeBlock;
   }
 
-  override get nodeKind(): string { return 'unsafe_block'; }
+  override get nodeKind(): 'unsafe_block' { return 'unsafe_block'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,13 +46,17 @@ export function unsafe_block(children: Builder<Block>): UnsafeBlockBuilder {
 }
 
 export interface UnsafeBlockOptions {
-  children: Builder<Block> | (Builder<Block>)[];
+  nodeKind: 'unsafe_block';
+  children: Builder<Block> | Omit<BlockOptions, 'nodeKind'> | (Builder<Block> | Omit<BlockOptions, 'nodeKind'>)[];
 }
 
 export namespace unsafe_block {
-  export function from(options: UnsafeBlockOptions): UnsafeBlockBuilder {
+  export function from(input: Omit<UnsafeBlockOptions, 'nodeKind'> | Builder<Block> | Omit<BlockOptions, 'nodeKind'> | (Builder<Block> | Omit<BlockOptions, 'nodeKind'>)[]): UnsafeBlockBuilder {
+    const options: Omit<UnsafeBlockOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<UnsafeBlockOptions, 'nodeKind'>
+      : { children: input } as Omit<UnsafeBlockOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new UnsafeBlockBuilder(_ctor);
+    const b = new UnsafeBlockBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
     return b;
   }
 }

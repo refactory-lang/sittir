@@ -39,12 +39,12 @@ class TypeAliasDeclarationBuilder extends Builder<TypeAliasDeclaration> {
     return {
       kind: 'type_alias_declaration',
       name: this._name.build(ctx),
-      typeParameters: this._typeParameters?.build(ctx),
-      value: this._value?.build(ctx),
+      typeParameters: this._typeParameters ? this._typeParameters.build(ctx) : undefined,
+      value: this._value ? this._value.build(ctx) : undefined,
     } as TypeAliasDeclaration;
   }
 
-  override get nodeKind(): string { return 'type_alias_declaration'; }
+  override get nodeKind(): 'type_alias_declaration' { return 'type_alias_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -64,18 +64,19 @@ export function type_alias_declaration(name: Builder<TypeIdentifier>): TypeAlias
 }
 
 export interface TypeAliasDeclarationOptions {
+  nodeKind: 'type_alias_declaration';
   name: Builder<TypeIdentifier> | string;
-  typeParameters?: Builder<TypeParameters> | TypeParametersOptions;
+  typeParameters?: Builder<TypeParameters> | Omit<TypeParametersOptions, 'nodeKind'>;
   value: Builder<Type>;
 }
 
 export namespace type_alias_declaration {
-  export function from(options: TypeAliasDeclarationOptions): TypeAliasDeclarationBuilder {
+  export function from(options: Omit<TypeAliasDeclarationOptions, 'nodeKind'>): TypeAliasDeclarationBuilder {
     const _ctor = options.name;
     const b = new TypeAliasDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('type_identifier', _ctor) : _ctor);
     if (options.typeParameters !== undefined) {
       const _v = options.typeParameters;
-      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v as TypeParametersOptions));
+      b.typeParameters(_v instanceof Builder ? _v : type_parameters.from(_v));
     }
     if (options.value !== undefined) b.value(options.value);
     return b;

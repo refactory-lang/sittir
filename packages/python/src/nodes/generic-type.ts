@@ -1,6 +1,8 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { GenericType, Identifier, TypeParameter } from '../types.js';
+import { type_parameter } from './type-parameter.js';
+import type { TypeParameterOptions } from './type-parameter.js';
 
 
 class GenericTypeBuilder extends Builder<GenericType> {
@@ -25,7 +27,7 @@ class GenericTypeBuilder extends Builder<GenericType> {
     } as GenericType;
   }
 
-  override get nodeKind(): string { return 'generic_type'; }
+  override get nodeKind(): 'generic_type' { return 'generic_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -42,14 +44,18 @@ export function generic_type(...children: Builder<Identifier | TypeParameter>[])
 }
 
 export interface GenericTypeOptions {
-  children: Builder<Identifier | TypeParameter> | (Builder<Identifier | TypeParameter>)[];
+  nodeKind: 'generic_type';
+  children?: Builder<Identifier | TypeParameter> | string | Omit<TypeParameterOptions, 'nodeKind'> | (Builder<Identifier | TypeParameter> | string | Omit<TypeParameterOptions, 'nodeKind'>)[];
 }
 
 export namespace generic_type {
-  export function from(options: GenericTypeOptions): GenericTypeBuilder {
+  export function from(input: Omit<GenericTypeOptions, 'nodeKind'> | Builder<Identifier | TypeParameter> | string | Omit<TypeParameterOptions, 'nodeKind'> | (Builder<Identifier | TypeParameter> | string | Omit<TypeParameterOptions, 'nodeKind'>)[]): GenericTypeBuilder {
+    const options: Omit<GenericTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<GenericTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<GenericTypeOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new GenericTypeBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new GenericTypeBuilder(..._arr.map(_v => typeof _v === 'string' ? new LeafBuilder('identifier', _v) : _v instanceof Builder ? _v : type_parameter.from(_v)));
     return b;
   }
 }

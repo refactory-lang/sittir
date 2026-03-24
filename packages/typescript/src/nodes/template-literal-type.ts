@@ -1,6 +1,8 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { StringFragment, TemplateLiteralType, TemplateType } from '../types.js';
+import { template_type } from './template-type.js';
+import type { TemplateTypeOptions } from './template-type.js';
 
 
 class TemplateLiteralTypeBuilder extends Builder<TemplateLiteralType> {
@@ -28,7 +30,7 @@ class TemplateLiteralTypeBuilder extends Builder<TemplateLiteralType> {
     } as TemplateLiteralType;
   }
 
-  override get nodeKind(): string { return 'template_literal_type'; }
+  override get nodeKind(): 'template_literal_type' { return 'template_literal_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,16 +50,20 @@ export function template_literal_type(): TemplateLiteralTypeBuilder {
 }
 
 export interface TemplateLiteralTypeOptions {
-  children?: Builder<StringFragment | TemplateType> | string | (Builder<StringFragment | TemplateType> | string)[];
+  nodeKind: 'template_literal_type';
+  children?: Builder<StringFragment | TemplateType> | string | Omit<TemplateTypeOptions, 'nodeKind'> | (Builder<StringFragment | TemplateType> | string | Omit<TemplateTypeOptions, 'nodeKind'>)[];
 }
 
 export namespace template_literal_type {
-  export function from(options: TemplateLiteralTypeOptions): TemplateLiteralTypeBuilder {
+  export function from(input: Omit<TemplateLiteralTypeOptions, 'nodeKind'> | Builder<StringFragment | TemplateType> | string | Omit<TemplateTypeOptions, 'nodeKind'> | (Builder<StringFragment | TemplateType> | string | Omit<TemplateTypeOptions, 'nodeKind'>)[]): TemplateLiteralTypeBuilder {
+    const options: Omit<TemplateLiteralTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TemplateLiteralTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<TemplateLiteralTypeOptions, 'nodeKind'>;
     const b = new TemplateLiteralTypeBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('string_fragment', _x) : _x));
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('string_fragment', _x) : _x instanceof Builder ? _x : template_type.from(_x)));
     }
     return b;
   }

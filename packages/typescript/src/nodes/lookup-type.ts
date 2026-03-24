@@ -27,7 +27,7 @@ class LookupTypeBuilder extends Builder<LookupType> {
     } as LookupType;
   }
 
-  override get nodeKind(): string { return 'lookup_type'; }
+  override get nodeKind(): 'lookup_type' { return 'lookup_type'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,11 +46,15 @@ export function lookup_type(...children: Builder<PrimaryType | Type>[]): LookupT
 }
 
 export interface LookupTypeOptions {
+  nodeKind: 'lookup_type';
   children?: Builder<PrimaryType | Type> | (Builder<PrimaryType | Type>)[];
 }
 
 export namespace lookup_type {
-  export function from(options: LookupTypeOptions): LookupTypeBuilder {
+  export function from(input: Omit<LookupTypeOptions, 'nodeKind'> | Builder<PrimaryType | Type> | (Builder<PrimaryType | Type>)[]): LookupTypeBuilder {
+    const options: Omit<LookupTypeOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<LookupTypeOptions, 'nodeKind'>
+      : { children: input } as Omit<LookupTypeOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new LookupTypeBuilder(..._arr);

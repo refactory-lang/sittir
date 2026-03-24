@@ -28,7 +28,7 @@ class ParametersBuilder extends Builder<Parameters> {
     } as Parameters;
   }
 
-  override get nodeKind(): string { return 'parameters'; }
+  override get nodeKind(): 'parameters' { return 'parameters'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,11 +48,15 @@ export function parameters(): ParametersBuilder {
 }
 
 export interface ParametersOptions {
+  nodeKind: 'parameters';
   children?: Builder<Parameter> | (Builder<Parameter>)[];
 }
 
 export namespace parameters {
-  export function from(options: ParametersOptions): ParametersBuilder {
+  export function from(input: Omit<ParametersOptions, 'nodeKind'> | Builder<Parameter> | (Builder<Parameter>)[]): ParametersBuilder {
+    const options: Omit<ParametersOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ParametersOptions, 'nodeKind'>
+      : { children: input } as Omit<ParametersOptions, 'nodeKind'>;
     const b = new ParametersBuilder();
     if (options.children !== undefined) {
       const _v = options.children;

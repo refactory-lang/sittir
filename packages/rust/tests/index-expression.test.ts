@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('index_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.indexExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.indexExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('index_expression');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,14 +12,14 @@ describe('index_expression', () => {
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.indexExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.indexExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     const source = builder.renderImpl();
     expect(source).toContain('[');
     expect(source).toContain(']');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.indexExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.indexExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('index_expression');
     expect(cst.isNamed).toBe(true);
@@ -28,7 +28,7 @@ describe('index_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.indexExpression(ir.identifier('test'), ir.identifier('test'));
+    const builder = ir.indexExpression(ir.charLiteral('test'), ir.charLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

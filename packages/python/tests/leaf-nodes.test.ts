@@ -13,7 +13,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.breakStatement() should build a { kind } object', () => {
-    const builder = ir.breakStatement('test');
+    const builder = ir.breakStatement();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'break_statement');
@@ -27,14 +27,14 @@ describe('leaf nodes', () => {
   });
 
   it('ir.continueStatement() should build a { kind } object', () => {
-    const builder = ir.continueStatement('test');
+    const builder = ir.continueStatement();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'continue_statement');
   });
 
   it('ir.ellipsis() should build a { kind } object', () => {
-    const builder = ir.ellipsis('test');
+    const builder = ir.ellipsis();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'ellipsis');
@@ -55,7 +55,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.false() should build a { kind } object', () => {
-    const builder = ir.false('test');
+    const builder = ir.false();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'false');
@@ -90,7 +90,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.keywordSeparator() should build a { kind } object', () => {
-    const builder = ir.keywordSeparator('test');
+    const builder = ir.keywordSeparator();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'keyword_separator');
@@ -104,21 +104,21 @@ describe('leaf nodes', () => {
   });
 
   it('ir.none() should build a { kind } object', () => {
-    const builder = ir.none('test');
+    const builder = ir.none();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'none');
   });
 
   it('ir.passStatement() should build a { kind } object', () => {
-    const builder = ir.passStatement('test');
+    const builder = ir.passStatement();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'pass_statement');
   });
 
   it('ir.positionalSeparator() should build a { kind } object', () => {
-    const builder = ir.positionalSeparator('test');
+    const builder = ir.positionalSeparator();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'positional_separator');
@@ -139,7 +139,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.true() should build a { kind } object', () => {
-    const builder = ir.true('test');
+    const builder = ir.true();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'true');
@@ -153,7 +153,7 @@ describe('leaf nodes', () => {
   });
 
   it('ir.wildcardImport() should build a { kind } object', () => {
-    const builder = ir.wildcardImport('test');
+    const builder = ir.wildcardImport();
     const node = builder.build();
     expect(typeof node).toBe('object');
     expect(node).toHaveProperty('kind', 'wildcard_import');

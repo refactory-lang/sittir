@@ -278,18 +278,23 @@ export const ir = {
   whileExpression: while_expression,
   yieldExpression: yield_expression,
 
+  // Keywords
+  emptyStatement: () => new LeafBuilder('empty_statement', ';'),
+  neverType: () => new LeafBuilder('never_type', '!'),
+  remainingFieldPattern: () => new LeafBuilder('remaining_field_pattern', '..'),
+  unitExpression: () => new LeafBuilder('unit_expression', '()'),
+  unitType: () => new LeafBuilder('unit_type', '()'),
+  crate: () => new LeafBuilder('crate', 'crate'),
+  mutableSpecifier: () => new LeafBuilder('mutable_specifier', 'mut'),
+  self: () => new LeafBuilder('self', 'self'),
+  super: () => new LeafBuilder('super', 'super'),
+
   // Leaf node builders
   booleanLiteral: (text: string) => new LeafBuilder('boolean_literal', text),
-  emptyStatement: (text: string) => new LeafBuilder('empty_statement', text),
   fragmentSpecifier: (text: string) => new LeafBuilder('fragment_specifier', text),
   innerDocCommentMarker: (text: string) => new LeafBuilder('inner_doc_comment_marker', text),
-  neverType: (text: string) => new LeafBuilder('never_type', text),
   outerDocCommentMarker: (text: string) => new LeafBuilder('outer_doc_comment_marker', text),
-  remainingFieldPattern: (text: string) => new LeafBuilder('remaining_field_pattern', text),
-  unitExpression: (text: string) => new LeafBuilder('unit_expression', text),
-  unitType: (text: string) => new LeafBuilder('unit_type', text),
   charLiteral: (text: string) => new LeafBuilder('char_literal', text),
-  crate: (text: string) => new LeafBuilder('crate', text),
   docComment: (text: string) => new LeafBuilder('doc_comment', text),
   escapeSequence: (text: string) => new LeafBuilder('escape_sequence', text),
   fieldIdentifier: (text: string) => new LeafBuilder('field_identifier', text),
@@ -297,43 +302,40 @@ export const ir = {
   identifier: (text: string) => new LeafBuilder('identifier', text),
   integerLiteral: (value: number | string) => new LeafBuilder('integer_literal', String(value)),
   metavariable: (text: string) => new LeafBuilder('metavariable', text),
-  mutableSpecifier: (text: string) => new LeafBuilder('mutable_specifier', text),
   primitiveType: (text: string) => new LeafBuilder('primitive_type', text),
-  self: (text: string) => new LeafBuilder('self', text),
   shebang: (text: string) => new LeafBuilder('shebang', text),
   shorthandFieldIdentifier: (text: string) => new LeafBuilder('shorthand_field_identifier', text),
   stringContent: (text: string) => new LeafBuilder('string_content', text),
-  super: (text: string) => new LeafBuilder('super', text),
   typeIdentifier: (text: string) => new LeafBuilder('type_identifier', text),
 
   // Semantic operator aliases
-  neq: () => new LeafBuilder('binary_expression_operator', '!='),
-  bitAnd: () => new LeafBuilder('binary_expression_operator', '&'),
   and: () => new LeafBuilder('binary_expression_operator', '&&'),
-  mul: () => new LeafBuilder('binary_expression_operator', '*'),
-  add: () => new LeafBuilder('binary_expression_operator', '+'),
-  sub: () => new LeafBuilder('binary_expression_operator', '-'),
-  div: () => new LeafBuilder('binary_expression_operator', '/'),
-  lt: () => new LeafBuilder('binary_expression_operator', '<'),
-  shl: () => new LeafBuilder('binary_expression_operator', '<<'),
-  lte: () => new LeafBuilder('binary_expression_operator', '<='),
+  or: () => new LeafBuilder('binary_expression_operator', '||'),
+  bitAnd: () => new LeafBuilder('binary_expression_operator', '&'),
+  bitOr: () => new LeafBuilder('binary_expression_operator', '|'),
+  bitXor: () => new LeafBuilder('binary_expression_operator', '^'),
   eq: () => new LeafBuilder('binary_expression_operator', '=='),
+  neq: () => new LeafBuilder('binary_expression_operator', '!='),
+  lt: () => new LeafBuilder('binary_expression_operator', '<'),
+  lte: () => new LeafBuilder('binary_expression_operator', '<='),
   gt: () => new LeafBuilder('binary_expression_operator', '>'),
   gte: () => new LeafBuilder('binary_expression_operator', '>='),
+  shl: () => new LeafBuilder('binary_expression_operator', '<<'),
   shr: () => new LeafBuilder('binary_expression_operator', '>>'),
-  bitXor: () => new LeafBuilder('binary_expression_operator', '^'),
-  bitOr: () => new LeafBuilder('binary_expression_operator', '|'),
-  or: () => new LeafBuilder('binary_expression_operator', '||'),
-  modAssign: () => new LeafBuilder('compound_assignment_expr_operator', '%='),
-  bitAndAssign: () => new LeafBuilder('compound_assignment_expr_operator', '&='),
-  mulAssign: () => new LeafBuilder('compound_assignment_expr_operator', '*='),
+  add: () => new LeafBuilder('binary_expression_operator', '+'),
+  sub: () => new LeafBuilder('binary_expression_operator', '-'),
+  mul: () => new LeafBuilder('binary_expression_operator', '*'),
+  div: () => new LeafBuilder('binary_expression_operator', '/'),
   addAssign: () => new LeafBuilder('compound_assignment_expr_operator', '+='),
   subAssign: () => new LeafBuilder('compound_assignment_expr_operator', '-='),
+  mulAssign: () => new LeafBuilder('compound_assignment_expr_operator', '*='),
   divAssign: () => new LeafBuilder('compound_assignment_expr_operator', '/='),
+  modAssign: () => new LeafBuilder('compound_assignment_expr_operator', '%='),
+  bitAndAssign: () => new LeafBuilder('compound_assignment_expr_operator', '&='),
+  bitOrAssign: () => new LeafBuilder('compound_assignment_expr_operator', '|='),
+  bitXorAssign: () => new LeafBuilder('compound_assignment_expr_operator', '^='),
   shlAssign: () => new LeafBuilder('compound_assignment_expr_operator', '<<='),
   shrAssign: () => new LeafBuilder('compound_assignment_expr_operator', '>>='),
-  bitXorAssign: () => new LeafBuilder('compound_assignment_expr_operator', '^='),
-  bitOrAssign: () => new LeafBuilder('compound_assignment_expr_operator', '|='),
 
   // Namespaced access via supertypes
   declarationStatement: {
@@ -424,6 +426,427 @@ export const ir = {
 
 export type RustIr = typeof ir;
 
+import type { AbstractTypeBuilder, AbstractTypeOptions } from './nodes/abstract-type.js';
+import type { ArgumentsBuilder, ArgumentsOptions } from './nodes/arguments.js';
+import type { ArrayExpressionBuilder, ArrayExpressionOptions } from './nodes/array-expression.js';
+import type { ArrayTypeBuilder, ArrayTypeOptions } from './nodes/array-type.js';
+import type { AssignmentExpressionBuilder, AssignmentExpressionOptions } from './nodes/assignment-expression.js';
+import type { AssociatedTypeBuilder, AssociatedTypeOptions } from './nodes/associated-type.js';
+import type { AsyncBlockBuilder, AsyncBlockOptions } from './nodes/async-block.js';
+import type { AttributeBuilder, AttributeOptions } from './nodes/attribute.js';
+import type { AttributeItemOptions } from './nodes/attribute-item.js';
+import type { AwaitExpressionBuilder, AwaitExpressionOptions } from './nodes/await-expression.js';
+import type { BaseFieldInitializerBuilder, BaseFieldInitializerOptions } from './nodes/base-field-initializer.js';
+import type { BinaryExpressionBuilder, BinaryExpressionOptions } from './nodes/binary-expression.js';
+import type { BlockBuilder, BlockOptions } from './nodes/block.js';
+import type { BlockCommentBuilder, BlockCommentOptions } from './nodes/block-comment.js';
+import type { BoundedTypeBuilder, BoundedTypeOptions } from './nodes/bounded-type.js';
+import type { BracketedTypeBuilder, BracketedTypeOptions } from './nodes/bracketed-type.js';
+import type { BreakExpressionBuilder, BreakExpressionOptions } from './nodes/break-expression.js';
+import type { CallExpressionBuilder, CallExpressionOptions } from './nodes/call-expression.js';
+import type { CapturedPatternBuilder, CapturedPatternOptions } from './nodes/captured-pattern.js';
+import type { ClosureExpressionBuilder, ClosureExpressionOptions } from './nodes/closure-expression.js';
+import type { ClosureParametersBuilder, ClosureParametersOptions } from './nodes/closure-parameters.js';
+import type { CompoundAssignmentExprBuilder, CompoundAssignmentExprOptions } from './nodes/compound-assignment-expr.js';
+import type { ConstBlockBuilder, ConstBlockOptions } from './nodes/const-block.js';
+import type { ConstBuilder, ConstItemOptions } from './nodes/const.js';
+import type { ConstParameterBuilder, ConstParameterOptions } from './nodes/const-parameter.js';
+import type { ContinueExpressionBuilder, ContinueExpressionOptions } from './nodes/continue-expression.js';
+import type { DeclarationListBuilder, DeclarationListOptions } from './nodes/declaration-list.js';
+import type { DynamicTypeBuilder, DynamicTypeOptions } from './nodes/dynamic-type.js';
+import type { ElseClauseBuilder, ElseClauseOptions } from './nodes/else-clause.js';
+import type { EnumBuilder, EnumItemOptions } from './nodes/enum.js';
+import type { EnumVariantBuilder, EnumVariantOptions } from './nodes/enum-variant.js';
+import type { EnumVariantListBuilder, EnumVariantListOptions } from './nodes/enum-variant-list.js';
+import type { ExpressionStatementBuilder, ExpressionStatementOptions } from './nodes/expression-statement.js';
+import type { ExternCrateDeclarationBuilder, ExternCrateDeclarationOptions } from './nodes/extern-crate-declaration.js';
+import type { ExternModifierBuilder, ExternModifierOptions } from './nodes/extern-modifier.js';
+import type { FieldDeclarationBuilder, FieldDeclarationOptions } from './nodes/field-declaration.js';
+import type { FieldDeclarationListBuilder, FieldDeclarationListOptions } from './nodes/field-declaration-list.js';
+import type { FieldExpressionBuilder, FieldExpressionOptions } from './nodes/field-expression.js';
+import type { FieldInitializerBuilder, FieldInitializerOptions } from './nodes/field-initializer.js';
+import type { FieldInitializerListBuilder, FieldInitializerListOptions } from './nodes/field-initializer-list.js';
+import type { FieldPatternBuilder, FieldPatternOptions } from './nodes/field-pattern.js';
+import type { ForExpressionBuilder, ForExpressionOptions } from './nodes/for-expression.js';
+import type { ForLifetimesBuilder, ForLifetimesOptions } from './nodes/for-lifetimes.js';
+import type { ForeignModBuilder, ForeignModItemOptions } from './nodes/foreign-mod.js';
+import type { FunctionBuilder, FunctionItemOptions } from './nodes/function.js';
+import type { FunctionModifiersBuilder, FunctionModifiersOptions } from './nodes/function-modifiers.js';
+import type { FunctionSignatureBuilder, FunctionSignatureItemOptions } from './nodes/function-signature.js';
+import type { FunctionTypeBuilder, FunctionTypeOptions } from './nodes/function-type.js';
+import type { GenBlockBuilder, GenBlockOptions } from './nodes/gen-block.js';
+import type { GenericFunctionBuilder, GenericFunctionOptions } from './nodes/generic-function.js';
+import type { GenericPatternBuilder, GenericPatternOptions } from './nodes/generic-pattern.js';
+import type { GenericTypeBuilder, GenericTypeOptions } from './nodes/generic-type.js';
+import type { GenericTypeWithTurbofishBuilder, GenericTypeWithTurbofishOptions } from './nodes/generic-type-with-turbofish.js';
+import type { HigherRankedTraitBoundBuilder, HigherRankedTraitBoundOptions } from './nodes/higher-ranked-trait-bound.js';
+import type { IfExpressionBuilder, IfExpressionOptions } from './nodes/if-expression.js';
+import type { ImplBuilder, ImplItemOptions } from './nodes/impl.js';
+import type { IndexExpressionBuilder, IndexExpressionOptions } from './nodes/index-expression.js';
+import type { InnerAttributeBuilder, InnerAttributeItemOptions } from './nodes/inner-attribute.js';
+import type { LabelBuilder, LabelOptions } from './nodes/label.js';
+import type { LetChainBuilder, LetChainOptions } from './nodes/let-chain.js';
+import type { LetConditionBuilder, LetConditionOptions } from './nodes/let-condition.js';
+import type { LetDeclarationBuilder, LetDeclarationOptions } from './nodes/let-declaration.js';
+import type { LifetimeBuilder, LifetimeOptions } from './nodes/lifetime.js';
+import type { LifetimeParameterBuilder, LifetimeParameterOptions } from './nodes/lifetime-parameter.js';
+import type { LineCommentBuilder, LineCommentOptions } from './nodes/line-comment.js';
+import type { LoopExpressionBuilder, LoopExpressionOptions } from './nodes/loop-expression.js';
+import type { MacroDefinitionBuilder, MacroDefinitionOptions } from './nodes/macro-definition.js';
+import type { MacroInvocationBuilder, MacroInvocationOptions } from './nodes/macro-invocation.js';
+import type { MacroRuleBuilder, MacroRuleOptions } from './nodes/macro-rule.js';
+import type { MatchArmBuilder, MatchArmOptions } from './nodes/match-arm.js';
+import type { MatchBlockBuilder, MatchBlockOptions } from './nodes/match-block.js';
+import type { MatchExpressionBuilder, MatchExpressionOptions } from './nodes/match-expression.js';
+import type { MatchPatternBuilder, MatchPatternOptions } from './nodes/match-pattern.js';
+import type { ModBuilder, ModItemOptions } from './nodes/mod.js';
+import type { MutPatternBuilder, MutPatternOptions } from './nodes/mut-pattern.js';
+import type { NegativeLiteralBuilder, NegativeLiteralOptions } from './nodes/negative-literal.js';
+import type { OrPatternBuilder, OrPatternOptions } from './nodes/or-pattern.js';
+import type { OrderedFieldDeclarationListBuilder, OrderedFieldDeclarationListOptions } from './nodes/ordered-field-declaration-list.js';
+import type { ParameterBuilder, ParameterOptions } from './nodes/parameter.js';
+import type { ParametersBuilder, ParametersOptions } from './nodes/parameters.js';
+import type { ParenthesizedExpressionBuilder, ParenthesizedExpressionOptions } from './nodes/parenthesized-expression.js';
+import type { PointerTypeBuilder, PointerTypeOptions } from './nodes/pointer-type.js';
+import type { QualifiedTypeBuilder, QualifiedTypeOptions } from './nodes/qualified-type.js';
+import type { RangeExpressionBuilder, RangeExpressionOptions } from './nodes/range-expression.js';
+import type { RangePatternBuilder, RangePatternOptions } from './nodes/range-pattern.js';
+import type { RawStringLiteralBuilder, RawStringLiteralOptions } from './nodes/raw-string-literal.js';
+import type { RefPatternBuilder, RefPatternOptions } from './nodes/ref-pattern.js';
+import type { ReferenceExpressionBuilder, ReferenceExpressionOptions } from './nodes/reference-expression.js';
+import type { ReferencePatternBuilder, ReferencePatternOptions } from './nodes/reference-pattern.js';
+import type { ReferenceTypeBuilder, ReferenceTypeOptions } from './nodes/reference-type.js';
+import type { RemovedTraitBoundBuilder, RemovedTraitBoundOptions } from './nodes/removed-trait-bound.js';
+import type { ReturnExpressionBuilder, ReturnExpressionOptions } from './nodes/return-expression.js';
+import type { ScopedIdentifierBuilder, ScopedIdentifierOptions } from './nodes/scoped-identifier.js';
+import type { ScopedTypeIdentifierBuilder, ScopedTypeIdentifierOptions } from './nodes/scoped-type-identifier.js';
+import type { ScopedUseListBuilder, ScopedUseListOptions } from './nodes/scoped-use-list.js';
+import type { SelfParameterBuilder, SelfParameterOptions } from './nodes/self-parameter.js';
+import type { ShorthandFieldInitializerBuilder, ShorthandFieldInitializerOptions } from './nodes/shorthand-field-initializer.js';
+import type { SlicePatternBuilder, SlicePatternOptions } from './nodes/slice-pattern.js';
+import type { SourceFileBuilder, SourceFileOptions } from './nodes/source-file.js';
+import type { StaticBuilder, StaticItemOptions } from './nodes/static.js';
+import type { StringLiteralBuilder, StringLiteralOptions } from './nodes/string-literal.js';
+import type { StructExpressionBuilder, StructExpressionOptions } from './nodes/struct-expression.js';
+import type { StructBuilder, StructItemOptions } from './nodes/struct.js';
+import type { StructPatternBuilder, StructPatternOptions } from './nodes/struct-pattern.js';
+import type { TokenBindingPatternBuilder, TokenBindingPatternOptions } from './nodes/token-binding-pattern.js';
+import type { TokenRepetitionBuilder, TokenRepetitionOptions } from './nodes/token-repetition.js';
+import type { TokenRepetitionPatternBuilder, TokenRepetitionPatternOptions } from './nodes/token-repetition-pattern.js';
+import type { TokenTreeBuilder, TokenTreeOptions } from './nodes/token-tree.js';
+import type { TokenTreePatternBuilder, TokenTreePatternOptions } from './nodes/token-tree-pattern.js';
+import type { TraitBoundsBuilder, TraitBoundsOptions } from './nodes/trait-bounds.js';
+import type { TraitBuilder, TraitItemOptions } from './nodes/trait.js';
+import type { TryBlockBuilder, TryBlockOptions } from './nodes/try-block.js';
+import type { TryExpressionBuilder, TryExpressionOptions } from './nodes/try-expression.js';
+import type { TupleExpressionBuilder, TupleExpressionOptions } from './nodes/tuple-expression.js';
+import type { TuplePatternBuilder, TuplePatternOptions } from './nodes/tuple-pattern.js';
+import type { TupleStructPatternBuilder, TupleStructPatternOptions } from './nodes/tuple-struct-pattern.js';
+import type { TupleTypeBuilder, TupleTypeOptions } from './nodes/tuple-type.js';
+import type { TypeArgumentsBuilder, TypeArgumentsOptions } from './nodes/type-arguments.js';
+import type { TypeBindingBuilder, TypeBindingOptions } from './nodes/type-binding.js';
+import type { TypeCastExpressionBuilder, TypeCastExpressionOptions } from './nodes/type-cast-expression.js';
+import type { TypeBuilder, TypeItemOptions } from './nodes/type.js';
+import type { TypeParameterBuilder, TypeParameterOptions } from './nodes/type-parameter.js';
+import type { TypeParametersBuilder, TypeParametersOptions } from './nodes/type-parameters.js';
+import type { UnaryExpressionBuilder, UnaryExpressionOptions } from './nodes/unary-expression.js';
+import type { UnionBuilder, UnionItemOptions } from './nodes/union.js';
+import type { UnsafeBlockBuilder, UnsafeBlockOptions } from './nodes/unsafe-block.js';
+import type { UseAsClauseBuilder, UseAsClauseOptions } from './nodes/use-as-clause.js';
+import type { UseBoundsBuilder, UseBoundsOptions } from './nodes/use-bounds.js';
+import type { UseDeclarationBuilder, UseDeclarationOptions } from './nodes/use-declaration.js';
+import type { UseListBuilder, UseListOptions } from './nodes/use-list.js';
+import type { UseWildcardBuilder, UseWildcardOptions } from './nodes/use-wildcard.js';
+import type { VariadicParameterBuilder, VariadicParameterOptions } from './nodes/variadic-parameter.js';
+import type { VisibilityModifierBuilder, VisibilityModifierOptions } from './nodes/visibility-modifier.js';
+import type { WhereClauseBuilder, WhereClauseOptions } from './nodes/where-clause.js';
+import type { WherePredicateBuilder, WherePredicateOptions } from './nodes/where-predicate.js';
+import type { WhileExpressionBuilder, WhileExpressionOptions } from './nodes/while-expression.js';
+import type { YieldExpressionBuilder, YieldExpressionOptions } from './nodes/yield-expression.js';
+
+export interface BuilderMap {
+  'abstract_type': AbstractTypeBuilder;
+  'arguments': ArgumentsBuilder;
+  'array_expression': ArrayExpressionBuilder;
+  'array_type': ArrayTypeBuilder;
+  'assignment_expression': AssignmentExpressionBuilder;
+  'associated_type': AssociatedTypeBuilder;
+  'async_block': AsyncBlockBuilder;
+  'attribute': AttributeBuilder;
+  'attribute_item': AttributeBuilder;
+  'await_expression': AwaitExpressionBuilder;
+  'base_field_initializer': BaseFieldInitializerBuilder;
+  'binary_expression': BinaryExpressionBuilder;
+  'block': BlockBuilder;
+  'block_comment': BlockCommentBuilder;
+  'bounded_type': BoundedTypeBuilder;
+  'bracketed_type': BracketedTypeBuilder;
+  'break_expression': BreakExpressionBuilder;
+  'call_expression': CallExpressionBuilder;
+  'captured_pattern': CapturedPatternBuilder;
+  'closure_expression': ClosureExpressionBuilder;
+  'closure_parameters': ClosureParametersBuilder;
+  'compound_assignment_expr': CompoundAssignmentExprBuilder;
+  'const_block': ConstBlockBuilder;
+  'const_item': ConstBuilder;
+  'const_parameter': ConstParameterBuilder;
+  'continue_expression': ContinueExpressionBuilder;
+  'declaration_list': DeclarationListBuilder;
+  'dynamic_type': DynamicTypeBuilder;
+  'else_clause': ElseClauseBuilder;
+  'enum_item': EnumBuilder;
+  'enum_variant': EnumVariantBuilder;
+  'enum_variant_list': EnumVariantListBuilder;
+  'expression_statement': ExpressionStatementBuilder;
+  'extern_crate_declaration': ExternCrateDeclarationBuilder;
+  'extern_modifier': ExternModifierBuilder;
+  'field_declaration': FieldDeclarationBuilder;
+  'field_declaration_list': FieldDeclarationListBuilder;
+  'field_expression': FieldExpressionBuilder;
+  'field_initializer': FieldInitializerBuilder;
+  'field_initializer_list': FieldInitializerListBuilder;
+  'field_pattern': FieldPatternBuilder;
+  'for_expression': ForExpressionBuilder;
+  'for_lifetimes': ForLifetimesBuilder;
+  'foreign_mod_item': ForeignModBuilder;
+  'function_item': FunctionBuilder;
+  'function_modifiers': FunctionModifiersBuilder;
+  'function_signature_item': FunctionSignatureBuilder;
+  'function_type': FunctionTypeBuilder;
+  'gen_block': GenBlockBuilder;
+  'generic_function': GenericFunctionBuilder;
+  'generic_pattern': GenericPatternBuilder;
+  'generic_type': GenericTypeBuilder;
+  'generic_type_with_turbofish': GenericTypeWithTurbofishBuilder;
+  'higher_ranked_trait_bound': HigherRankedTraitBoundBuilder;
+  'if_expression': IfExpressionBuilder;
+  'impl_item': ImplBuilder;
+  'index_expression': IndexExpressionBuilder;
+  'inner_attribute_item': InnerAttributeBuilder;
+  'label': LabelBuilder;
+  'let_chain': LetChainBuilder;
+  'let_condition': LetConditionBuilder;
+  'let_declaration': LetDeclarationBuilder;
+  'lifetime': LifetimeBuilder;
+  'lifetime_parameter': LifetimeParameterBuilder;
+  'line_comment': LineCommentBuilder;
+  'loop_expression': LoopExpressionBuilder;
+  'macro_definition': MacroDefinitionBuilder;
+  'macro_invocation': MacroInvocationBuilder;
+  'macro_rule': MacroRuleBuilder;
+  'match_arm': MatchArmBuilder;
+  'match_block': MatchBlockBuilder;
+  'match_expression': MatchExpressionBuilder;
+  'match_pattern': MatchPatternBuilder;
+  'mod_item': ModBuilder;
+  'mut_pattern': MutPatternBuilder;
+  'negative_literal': NegativeLiteralBuilder;
+  'or_pattern': OrPatternBuilder;
+  'ordered_field_declaration_list': OrderedFieldDeclarationListBuilder;
+  'parameter': ParameterBuilder;
+  'parameters': ParametersBuilder;
+  'parenthesized_expression': ParenthesizedExpressionBuilder;
+  'pointer_type': PointerTypeBuilder;
+  'qualified_type': QualifiedTypeBuilder;
+  'range_expression': RangeExpressionBuilder;
+  'range_pattern': RangePatternBuilder;
+  'raw_string_literal': RawStringLiteralBuilder;
+  'ref_pattern': RefPatternBuilder;
+  'reference_expression': ReferenceExpressionBuilder;
+  'reference_pattern': ReferencePatternBuilder;
+  'reference_type': ReferenceTypeBuilder;
+  'removed_trait_bound': RemovedTraitBoundBuilder;
+  'return_expression': ReturnExpressionBuilder;
+  'scoped_identifier': ScopedIdentifierBuilder;
+  'scoped_type_identifier': ScopedTypeIdentifierBuilder;
+  'scoped_use_list': ScopedUseListBuilder;
+  'self_parameter': SelfParameterBuilder;
+  'shorthand_field_initializer': ShorthandFieldInitializerBuilder;
+  'slice_pattern': SlicePatternBuilder;
+  'source_file': SourceFileBuilder;
+  'static_item': StaticBuilder;
+  'string_literal': StringLiteralBuilder;
+  'struct_expression': StructExpressionBuilder;
+  'struct_item': StructBuilder;
+  'struct_pattern': StructPatternBuilder;
+  'token_binding_pattern': TokenBindingPatternBuilder;
+  'token_repetition': TokenRepetitionBuilder;
+  'token_repetition_pattern': TokenRepetitionPatternBuilder;
+  'token_tree': TokenTreeBuilder;
+  'token_tree_pattern': TokenTreePatternBuilder;
+  'trait_bounds': TraitBoundsBuilder;
+  'trait_item': TraitBuilder;
+  'try_block': TryBlockBuilder;
+  'try_expression': TryExpressionBuilder;
+  'tuple_expression': TupleExpressionBuilder;
+  'tuple_pattern': TuplePatternBuilder;
+  'tuple_struct_pattern': TupleStructPatternBuilder;
+  'tuple_type': TupleTypeBuilder;
+  'type_arguments': TypeArgumentsBuilder;
+  'type_binding': TypeBindingBuilder;
+  'type_cast_expression': TypeCastExpressionBuilder;
+  'type_item': TypeBuilder;
+  'type_parameter': TypeParameterBuilder;
+  'type_parameters': TypeParametersBuilder;
+  'unary_expression': UnaryExpressionBuilder;
+  'union_item': UnionBuilder;
+  'unsafe_block': UnsafeBlockBuilder;
+  'use_as_clause': UseAsClauseBuilder;
+  'use_bounds': UseBoundsBuilder;
+  'use_declaration': UseDeclarationBuilder;
+  'use_list': UseListBuilder;
+  'use_wildcard': UseWildcardBuilder;
+  'variadic_parameter': VariadicParameterBuilder;
+  'visibility_modifier': VisibilityModifierBuilder;
+  'where_clause': WhereClauseBuilder;
+  'where_predicate': WherePredicateBuilder;
+  'while_expression': WhileExpressionBuilder;
+  'yield_expression': YieldExpressionBuilder;
+}
+
+export interface OptionsMap {
+  'abstract_type': AbstractTypeOptions;
+  'arguments': ArgumentsOptions;
+  'array_expression': ArrayExpressionOptions;
+  'array_type': ArrayTypeOptions;
+  'assignment_expression': AssignmentExpressionOptions;
+  'associated_type': AssociatedTypeOptions;
+  'async_block': AsyncBlockOptions;
+  'attribute': AttributeOptions;
+  'attribute_item': AttributeItemOptions;
+  'await_expression': AwaitExpressionOptions;
+  'base_field_initializer': BaseFieldInitializerOptions;
+  'binary_expression': BinaryExpressionOptions;
+  'block': BlockOptions;
+  'block_comment': BlockCommentOptions;
+  'bounded_type': BoundedTypeOptions;
+  'bracketed_type': BracketedTypeOptions;
+  'break_expression': BreakExpressionOptions;
+  'call_expression': CallExpressionOptions;
+  'captured_pattern': CapturedPatternOptions;
+  'closure_expression': ClosureExpressionOptions;
+  'closure_parameters': ClosureParametersOptions;
+  'compound_assignment_expr': CompoundAssignmentExprOptions;
+  'const_block': ConstBlockOptions;
+  'const_item': ConstItemOptions;
+  'const_parameter': ConstParameterOptions;
+  'continue_expression': ContinueExpressionOptions;
+  'declaration_list': DeclarationListOptions;
+  'dynamic_type': DynamicTypeOptions;
+  'else_clause': ElseClauseOptions;
+  'enum_item': EnumItemOptions;
+  'enum_variant': EnumVariantOptions;
+  'enum_variant_list': EnumVariantListOptions;
+  'expression_statement': ExpressionStatementOptions;
+  'extern_crate_declaration': ExternCrateDeclarationOptions;
+  'extern_modifier': ExternModifierOptions;
+  'field_declaration': FieldDeclarationOptions;
+  'field_declaration_list': FieldDeclarationListOptions;
+  'field_expression': FieldExpressionOptions;
+  'field_initializer': FieldInitializerOptions;
+  'field_initializer_list': FieldInitializerListOptions;
+  'field_pattern': FieldPatternOptions;
+  'for_expression': ForExpressionOptions;
+  'for_lifetimes': ForLifetimesOptions;
+  'foreign_mod_item': ForeignModItemOptions;
+  'function_item': FunctionItemOptions;
+  'function_modifiers': FunctionModifiersOptions;
+  'function_signature_item': FunctionSignatureItemOptions;
+  'function_type': FunctionTypeOptions;
+  'gen_block': GenBlockOptions;
+  'generic_function': GenericFunctionOptions;
+  'generic_pattern': GenericPatternOptions;
+  'generic_type': GenericTypeOptions;
+  'generic_type_with_turbofish': GenericTypeWithTurbofishOptions;
+  'higher_ranked_trait_bound': HigherRankedTraitBoundOptions;
+  'if_expression': IfExpressionOptions;
+  'impl_item': ImplItemOptions;
+  'index_expression': IndexExpressionOptions;
+  'inner_attribute_item': InnerAttributeItemOptions;
+  'label': LabelOptions;
+  'let_chain': LetChainOptions;
+  'let_condition': LetConditionOptions;
+  'let_declaration': LetDeclarationOptions;
+  'lifetime': LifetimeOptions;
+  'lifetime_parameter': LifetimeParameterOptions;
+  'line_comment': LineCommentOptions;
+  'loop_expression': LoopExpressionOptions;
+  'macro_definition': MacroDefinitionOptions;
+  'macro_invocation': MacroInvocationOptions;
+  'macro_rule': MacroRuleOptions;
+  'match_arm': MatchArmOptions;
+  'match_block': MatchBlockOptions;
+  'match_expression': MatchExpressionOptions;
+  'match_pattern': MatchPatternOptions;
+  'mod_item': ModItemOptions;
+  'mut_pattern': MutPatternOptions;
+  'negative_literal': NegativeLiteralOptions;
+  'or_pattern': OrPatternOptions;
+  'ordered_field_declaration_list': OrderedFieldDeclarationListOptions;
+  'parameter': ParameterOptions;
+  'parameters': ParametersOptions;
+  'parenthesized_expression': ParenthesizedExpressionOptions;
+  'pointer_type': PointerTypeOptions;
+  'qualified_type': QualifiedTypeOptions;
+  'range_expression': RangeExpressionOptions;
+  'range_pattern': RangePatternOptions;
+  'raw_string_literal': RawStringLiteralOptions;
+  'ref_pattern': RefPatternOptions;
+  'reference_expression': ReferenceExpressionOptions;
+  'reference_pattern': ReferencePatternOptions;
+  'reference_type': ReferenceTypeOptions;
+  'removed_trait_bound': RemovedTraitBoundOptions;
+  'return_expression': ReturnExpressionOptions;
+  'scoped_identifier': ScopedIdentifierOptions;
+  'scoped_type_identifier': ScopedTypeIdentifierOptions;
+  'scoped_use_list': ScopedUseListOptions;
+  'self_parameter': SelfParameterOptions;
+  'shorthand_field_initializer': ShorthandFieldInitializerOptions;
+  'slice_pattern': SlicePatternOptions;
+  'source_file': SourceFileOptions;
+  'static_item': StaticItemOptions;
+  'string_literal': StringLiteralOptions;
+  'struct_expression': StructExpressionOptions;
+  'struct_item': StructItemOptions;
+  'struct_pattern': StructPatternOptions;
+  'token_binding_pattern': TokenBindingPatternOptions;
+  'token_repetition': TokenRepetitionOptions;
+  'token_repetition_pattern': TokenRepetitionPatternOptions;
+  'token_tree': TokenTreeOptions;
+  'token_tree_pattern': TokenTreePatternOptions;
+  'trait_bounds': TraitBoundsOptions;
+  'trait_item': TraitItemOptions;
+  'try_block': TryBlockOptions;
+  'try_expression': TryExpressionOptions;
+  'tuple_expression': TupleExpressionOptions;
+  'tuple_pattern': TuplePatternOptions;
+  'tuple_struct_pattern': TupleStructPatternOptions;
+  'tuple_type': TupleTypeOptions;
+  'type_arguments': TypeArgumentsOptions;
+  'type_binding': TypeBindingOptions;
+  'type_cast_expression': TypeCastExpressionOptions;
+  'type_item': TypeItemOptions;
+  'type_parameter': TypeParameterOptions;
+  'type_parameters': TypeParametersOptions;
+  'unary_expression': UnaryExpressionOptions;
+  'union_item': UnionItemOptions;
+  'unsafe_block': UnsafeBlockOptions;
+  'use_as_clause': UseAsClauseOptions;
+  'use_bounds': UseBoundsOptions;
+  'use_declaration': UseDeclarationOptions;
+  'use_list': UseListOptions;
+  'use_wildcard': UseWildcardOptions;
+  'variadic_parameter': VariadicParameterOptions;
+  'visibility_modifier': VisibilityModifierOptions;
+  'where_clause': WhereClauseOptions;
+  'where_predicate': WherePredicateOptions;
+  'while_expression': WhileExpressionOptions;
+  'yield_expression': YieldExpressionOptions;
+}
+
+export type BuilderFor<K extends keyof BuilderMap> = BuilderMap[K];
+export type OptionsFor<K extends keyof OptionsMap> = OptionsMap[K];
+
 import type { Builder, Edit, FieldKinds, FieldName, NodeTransform, NodeType } from '@sittir/types';
 import type { RustGrammar } from './types.js';
 
@@ -506,12 +929,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'associated_type'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.associatedType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const boundsChild = n.childForFieldName('bounds');
-      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const boundsChild = n.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['bounds', 'name', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'bounds'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -527,10 +950,10 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'attribute'>;
       const firstChild = n.namedChildren[0];
       const b = ir.attribute(firstChild ? fromCST(firstChild) as any : new LeafBuilder('unknown', '') as any);
-      const argumentsChild = n.childForFieldName('arguments');
-      if (argumentsChild) b.arguments(fromCST(argumentsChild) as any);
       const valueChild = n.childForFieldName('value');
       if (valueChild) b.value(fromCST(valueChild) as any);
+      const argumentsChild = n.childForFieldName('arguments');
+      if (argumentsChild) b.arguments(fromCST(argumentsChild) as any);
       return b;
     }
     case 'attribute_item': {
@@ -573,12 +996,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
     case 'block_comment': {
       const n = node as CSTNode<'block_comment'>;
       const b = ir.blockComment();
-      const docChild = n.childForFieldName('doc');
-      if (docChild) b.doc(fromCST(docChild) as any);
-      const innerChild = n.childForFieldName('inner');
-      if (innerChild) b.inner(fromCST(innerChild) as any);
       const outerChild = n.childForFieldName('outer');
       if (outerChild) b.outer(fromCST(outerChild) as any);
+      const innerChild = n.childForFieldName('inner');
+      if (innerChild) b.inner(fromCST(innerChild) as any);
+      const docChild = n.childForFieldName('doc');
+      if (docChild) b.doc(fromCST(docChild) as any);
       return b;
     }
     case 'bounded_type': {
@@ -618,10 +1041,10 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'closure_expression'>;
       const ctorChild = n.childForFieldName('parameters');
       const b = ir.closureExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('parameters', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const returnTypeChild = n.childForFieldName('return_type');
       if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       return b;
     }
     case 'closure_parameters': {
@@ -708,12 +1131,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'enum_item'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.enum(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'name', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -728,7 +1151,7 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const valueChild = n.childForFieldName('value');
       if (valueChild) b.value(fromCST(valueChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'name', 'value'];
+        const fieldNames = ['name', 'body', 'value'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -756,7 +1179,7 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const aliasChild = n.childForFieldName('alias');
       if (aliasChild) b.alias(fromCST(aliasChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['alias', 'name'];
+        const fieldNames = ['name', 'alias'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -840,12 +1263,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'for_expression'>;
       const ctorChild = n.childForFieldName('pattern');
       const b = ir.forExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('pattern', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const valueChild = n.childForFieldName('value');
       if (valueChild) b.value(fromCST(valueChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'pattern', 'value'];
+        const fieldNames = ['pattern', 'value', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -867,16 +1290,16 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'function_item'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.function(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
       const parametersChild = n.childForFieldName('parameters');
       if (parametersChild) b.parameters(fromCST(parametersChild) as any);
       const returnTypeChild = n.childForFieldName('return_type');
       if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
-      const typeParametersChild = n.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'name', 'parameters', 'return_type', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'parameters', 'return_type', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -895,14 +1318,14 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'function_signature_item'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.functionSignature(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
+      const typeParametersChild = n.childForFieldName('type_parameters');
+      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
       const parametersChild = n.childForFieldName('parameters');
       if (parametersChild) b.parameters(fromCST(parametersChild) as any);
       const returnTypeChild = n.childForFieldName('return_type');
       if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
-      const typeParametersChild = n.childForFieldName('type_parameters');
-      if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['name', 'parameters', 'return_type', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'parameters', 'return_type'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -912,12 +1335,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'function_type'>;
       const ctorChild = n.childForFieldName('parameters');
       const b = ir.functionType(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('parameters', '') as any);
-      const returnTypeChild = n.childForFieldName('return_type');
-      if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
       const traitChild = n.childForFieldName('trait');
       if (traitChild) b.trait(fromCST(traitChild) as any);
+      const returnTypeChild = n.childForFieldName('return_type');
+      if (returnTypeChild) b.returnType(fromCST(returnTypeChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['parameters', 'return_type', 'trait'];
+        const fieldNames = ['trait', 'parameters', 'return_type'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -976,24 +1399,24 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'if_expression'>;
       const ctorChild = n.childForFieldName('condition');
       const b = ir.ifExpression(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('condition', '') as any);
-      const alternativeChild = n.childForFieldName('alternative');
-      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
       const consequenceChild = n.childForFieldName('consequence');
       if (consequenceChild) b.consequence(fromCST(consequenceChild) as any);
+      const alternativeChild = n.childForFieldName('alternative');
+      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
       return b;
     }
     case 'impl_item': {
       const n = node as CSTNode<'impl_item'>;
       const ctorChild = n.childForFieldName('type');
       const b = ir.impl(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('type', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
-      const traitChild = n.childForFieldName('trait');
-      if (traitChild) b.trait(fromCST(traitChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const traitChild = n.childForFieldName('trait');
+      if (traitChild) b.trait(fromCST(traitChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'trait', 'type', 'type_parameters'];
+        const fieldNames = ['type_parameters', 'trait', 'type', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -1033,14 +1456,14 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'let_declaration'>;
       const ctorChild = n.childForFieldName('pattern');
       const b = ir.letDeclaration(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('pattern', '') as any);
-      const alternativeChild = n.childForFieldName('alternative');
-      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
       const typeChild = n.childForFieldName('type');
       if (typeChild) b.type(fromCST(typeChild) as any);
       const valueChild = n.childForFieldName('value');
       if (valueChild) b.value(fromCST(valueChild) as any);
+      const alternativeChild = n.childForFieldName('alternative');
+      if (alternativeChild) b.alternative(fromCST(alternativeChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['alternative', 'pattern', 'type', 'value'];
+        const fieldNames = ['pattern', 'type', 'value', 'alternative'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -1063,12 +1486,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
     case 'line_comment': {
       const n = node as CSTNode<'line_comment'>;
       const b = ir.lineComment();
-      const docChild = n.childForFieldName('doc');
-      if (docChild) b.doc(fromCST(docChild) as any);
-      const innerChild = n.childForFieldName('inner');
-      if (innerChild) b.inner(fromCST(innerChild) as any);
       const outerChild = n.childForFieldName('outer');
       if (outerChild) b.outer(fromCST(outerChild) as any);
+      const innerChild = n.childForFieldName('inner');
+      if (innerChild) b.inner(fromCST(innerChild) as any);
+      const docChild = n.childForFieldName('doc');
+      if (docChild) b.doc(fromCST(docChild) as any);
       return b;
     }
     case 'loop_expression': {
@@ -1157,7 +1580,7 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const bodyChild = n.childForFieldName('body');
       if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'name'];
+        const fieldNames = ['name', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -1398,12 +1821,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'struct_item'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.struct(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'name', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -1473,14 +1896,14 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'trait_item'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.trait(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
-      const boundsChild = n.childForFieldName('bounds');
-      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const boundsChild = n.childForFieldName('bounds');
+      if (boundsChild) b.bounds(fromCST(boundsChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'bounds', 'name', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'bounds', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -1537,10 +1960,10 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'type_binding'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.typeBinding(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const typeChild = n.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild) as any);
       const typeArgumentsChild = n.childForFieldName('type_arguments');
       if (typeArgumentsChild) b.typeArguments(fromCST(typeArgumentsChild) as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
       return b;
     }
     case 'type_cast_expression': {
@@ -1555,12 +1978,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'type_item'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.type(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const typeChild = n.childForFieldName('type');
-      if (typeChild) b.type(fromCST(typeChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const typeChild = n.childForFieldName('type');
+      if (typeChild) b.type(fromCST(typeChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['name', 'type', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'type'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -1591,12 +2014,12 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const n = node as CSTNode<'union_item'>;
       const ctorChild = n.childForFieldName('name');
       const b = ir.union(ctorChild ? fromCST(ctorChild) as any : new LeafBuilder('name', '') as any);
-      const bodyChild = n.childForFieldName('body');
-      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const typeParametersChild = n.childForFieldName('type_parameters');
       if (typeParametersChild) b.typeParameters(fromCST(typeParametersChild) as any);
+      const bodyChild = n.childForFieldName('body');
+      if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'name', 'type_parameters'];
+        const fieldNames = ['name', 'type_parameters', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));
@@ -1699,7 +2122,7 @@ function resolveBuilder(node: CSTNode): Builder | null {
       const bodyChild = n.childForFieldName('body');
       if (bodyChild) b.body(fromCST(bodyChild) as any);
       const remainingChildren = n.namedChildren.filter(c => {
-        const fieldNames = ['body', 'condition'];
+        const fieldNames = ['condition', 'body'];
         return !fieldNames.some(fn => n.childForFieldName(fn) === c);
       });
       if (remainingChildren.length > 0) b.children(...remainingChildren.map(c => fromCST(c) as any));

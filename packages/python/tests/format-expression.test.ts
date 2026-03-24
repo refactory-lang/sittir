@@ -3,14 +3,14 @@ import { ir } from '../src/builder.js';
 
 describe('format_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.formatExpression(ir.asPattern(ir.identifier('test')));
+    const builder = ir.formatExpression(ir.yield());
     const node = builder.build();
     expect(node.kind).toBe('format_expression');
     expect((node as any).expression).toHaveProperty('kind');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.formatExpression(ir.asPattern(ir.identifier('test')));
+    const builder = ir.formatExpression(ir.yield());
     const cst = builder.toCST();
     expect(cst.type).toBe('format_expression');
     expect(cst.isNamed).toBe(true);
@@ -19,7 +19,7 @@ describe('format_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.formatExpression(ir.asPattern(ir.identifier('test')));
+    const builder = ir.formatExpression(ir.yield());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -29,11 +29,11 @@ class NamedExpressionBuilder extends Builder<NamedExpression> {
     return {
       kind: 'named_expression',
       name: this._name.build(ctx),
-      value: this._value?.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
     } as NamedExpression;
   }
 
-  override get nodeKind(): string { return 'named_expression'; }
+  override get nodeKind(): 'named_expression' { return 'named_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,12 +51,13 @@ export function named_expression(name: Builder<Identifier>): NamedExpressionBuil
 }
 
 export interface NamedExpressionOptions {
+  nodeKind: 'named_expression';
   name: Builder<Identifier> | string;
   value: Builder<Expression>;
 }
 
 export namespace named_expression {
-  export function from(options: NamedExpressionOptions): NamedExpressionBuilder {
+  export function from(options: Omit<NamedExpressionOptions, 'nodeKind'>): NamedExpressionBuilder {
     const _ctor = options.name;
     const b = new NamedExpressionBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.value !== undefined) b.value(options.value);

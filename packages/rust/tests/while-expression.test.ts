@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('while_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.whileExpression(ir.identifier('test'));
+    const builder = ir.whileExpression(ir.charLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('while_expression');
     expect((node as any).condition).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.whileExpression(ir.identifier('test'));
+    const builder = ir.whileExpression(ir.charLiteral('test'));
     const source = builder.renderImpl();
     expect(source).toContain('while');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.whileExpression(ir.identifier('test'));
+    const builder = ir.whileExpression(ir.charLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('while_expression');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('while_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.whileExpression(ir.identifier('test'));
+    const builder = ir.whileExpression(ir.charLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

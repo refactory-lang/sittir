@@ -26,7 +26,7 @@ class SatisfiesExpressionBuilder extends Builder<SatisfiesExpression> {
     } as SatisfiesExpression;
   }
 
-  override get nodeKind(): string { return 'satisfies_expression'; }
+  override get nodeKind(): 'satisfies_expression' { return 'satisfies_expression'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function satisfies_expression(...children: Builder<Expression | Type>[]):
 }
 
 export interface SatisfiesExpressionOptions {
+  nodeKind: 'satisfies_expression';
   children?: Builder<Expression | Type> | (Builder<Expression | Type>)[];
 }
 
 export namespace satisfies_expression {
-  export function from(options: SatisfiesExpressionOptions): SatisfiesExpressionBuilder {
+  export function from(input: Omit<SatisfiesExpressionOptions, 'nodeKind'> | Builder<Expression | Type> | (Builder<Expression | Type>)[]): SatisfiesExpressionBuilder {
+    const options: Omit<SatisfiesExpressionOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<SatisfiesExpressionOptions, 'nodeKind'>
+      : { children: input } as Omit<SatisfiesExpressionOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new SatisfiesExpressionBuilder(..._arr);

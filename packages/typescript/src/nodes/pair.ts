@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ComputedPropertyName, Expression, Number, Pair, PrivatePropertyIdentifier, PropertyIdentifier, String } from '../types.js';
+import { string } from './string.js';
+import type { StringOptions } from './string.js';
+import { computed_property_name } from './computed-property-name.js';
+import type { ComputedPropertyNameOptions } from './computed-property-name.js';
 
 
 class PairBuilder extends Builder<Pair> {
@@ -29,11 +33,11 @@ class PairBuilder extends Builder<Pair> {
     return {
       kind: 'pair',
       key: this._key.build(ctx),
-      value: this._value?.build(ctx),
+      value: this._value ? this._value.build(ctx) : undefined,
     } as Pair;
   }
 
-  override get nodeKind(): string { return 'pair'; }
+  override get nodeKind(): 'pair' { return 'pair'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,13 +55,25 @@ export function pair(key: Builder<PropertyIdentifier | PrivatePropertyIdentifier
 }
 
 export interface PairOptions {
-  key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+  nodeKind: 'pair';
+  key: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName> | StringOptions | ComputedPropertyNameOptions;
   value: Builder<Expression>;
 }
 
 export namespace pair {
-  export function from(options: PairOptions): PairBuilder {
-    const b = new PairBuilder(options.key);
+  export function from(options: Omit<PairOptions, 'nodeKind'>): PairBuilder {
+    const _raw = options.key;
+    let _ctor: Builder<PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName>;
+    if (_raw instanceof Builder) {
+      _ctor = _raw;
+    } else {
+      switch (_raw.nodeKind) {
+        case 'string': _ctor = string.from(_raw); break;
+        case 'computed_property_name': _ctor = computed_property_name.from(_raw); break;
+        default: throw new Error('unreachable');
+      }
+    }
+    const b = new PairBuilder(_ctor);
     if (options.value !== undefined) b.value(options.value);
     return b;
   }

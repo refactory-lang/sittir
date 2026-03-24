@@ -3,23 +3,21 @@ import { ir } from '../src/builder.js';
 
 describe('parenthesized_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.parenthesizedExpression(ir.yieldExpression());
     const node = builder.build();
     expect(node.kind).toBe('parenthesized_expression');
-    expect(Array.isArray((node as any).children)).toBe(true);
-    expect((node as any).children.length).toBeGreaterThan(0);
-    expect((node as any).children[0]).toHaveProperty('kind');
+    expect((node as any).children).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.parenthesizedExpression(ir.yieldExpression());
     const source = builder.renderImpl();
     expect(source).toContain('(');
     expect(source).toContain(')');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.parenthesizedExpression(ir.yieldExpression());
     const cst = builder.toCST();
     expect(cst.type).toBe('parenthesized_expression');
     expect(cst.isNamed).toBe(true);
@@ -28,7 +26,7 @@ describe('parenthesized_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))), ir.asExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.parenthesizedExpression(ir.yieldExpression());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

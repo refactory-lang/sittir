@@ -1,6 +1,8 @@
 import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, MemberExpression, NestedIdentifier, PropertyIdentifier } from '../types.js';
+import { member_expression } from './member-expression.js';
+import type { MemberExpressionOptions } from './member-expression.js';
 
 
 class NestedIdentifierBuilder extends Builder<NestedIdentifier> {
@@ -29,11 +31,11 @@ class NestedIdentifierBuilder extends Builder<NestedIdentifier> {
     return {
       kind: 'nested_identifier',
       object: this._object.build(ctx),
-      property: this._property?.build(ctx),
+      property: this._property ? this._property.build(ctx) : undefined,
     } as NestedIdentifier;
   }
 
-  override get nodeKind(): string { return 'nested_identifier'; }
+  override get nodeKind(): 'nested_identifier' { return 'nested_identifier'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -51,14 +53,15 @@ export function nested_identifier(object: Builder<Identifier | MemberExpression>
 }
 
 export interface NestedIdentifierOptions {
-  object: Builder<Identifier | MemberExpression> | string;
+  nodeKind: 'nested_identifier';
+  object: Builder<Identifier | MemberExpression> | string | Omit<MemberExpressionOptions, 'nodeKind'>;
   property: Builder<PropertyIdentifier> | string;
 }
 
 export namespace nested_identifier {
-  export function from(options: NestedIdentifierOptions): NestedIdentifierBuilder {
+  export function from(options: Omit<NestedIdentifierOptions, 'nodeKind'>): NestedIdentifierBuilder {
     const _ctor = options.object;
-    const b = new NestedIdentifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
+    const b = new NestedIdentifierBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor instanceof Builder ? _ctor : member_expression.from(_ctor));
     if (options.property !== undefined) {
       const _v = options.property;
       b.property(typeof _v === 'string' ? new LeafBuilder('property_identifier', _v) : _v);

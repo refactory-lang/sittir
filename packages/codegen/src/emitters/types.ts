@@ -32,7 +32,7 @@ export function emitTypes(config: EmitTypesConfig): string {
   lines.push(`import type { ${grammarAlias} } from './grammar.js';`);
 
   // 2. Import from @sittir/types
-  lines.push(`import type { NodeType, BuilderConfig, ValidationResult } from '@sittir/types';`);
+  lines.push(`import type { NodeType, ValidationResult } from '@sittir/types';`);
 
   lines.push('');
 
@@ -41,12 +41,11 @@ export function emitTypes(config: EmitTypesConfig): string {
 
   lines.push('');
 
-  // 4 & 5. For each node kind: NodeType and BuilderConfig
+  // 4. For each node kind: NodeType projection
   for (let i = 0; i < nodeKinds.length; i++) {
     const kind = nodeKinds[i];
     const typeName = typeNames[i];
     lines.push(`export type ${typeName} = NodeType<${grammarAlias}, '${kind}'>;`);
-    lines.push(`export type ${typeName}Config = BuilderConfig<${grammarAlias}, ${typeName}>;`);
     lines.push('');
   }
 

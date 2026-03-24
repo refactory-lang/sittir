@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { ForLifetimes, Lifetime } from '../types.js';
+import { lifetime } from './lifetime.js';
+import type { LifetimeOptions } from './lifetime.js';
 
 
 class ForLifetimesBuilder extends Builder<ForLifetimes> {
@@ -15,7 +17,7 @@ class ForLifetimesBuilder extends Builder<ForLifetimes> {
     const parts: string[] = [];
     parts.push('for');
     parts.push('<');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('>');
     return parts.join(' ');
   }
@@ -27,7 +29,7 @@ class ForLifetimesBuilder extends Builder<ForLifetimes> {
     } as ForLifetimes;
   }
 
-  override get nodeKind(): string { return 'for_lifetimes'; }
+  override get nodeKind(): 'for_lifetimes' { return 'for_lifetimes'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -49,14 +51,18 @@ export function for_lifetimes(...children: Builder<Lifetime>[]): ForLifetimesBui
 }
 
 export interface ForLifetimesOptions {
-  children: Builder<Lifetime> | (Builder<Lifetime>)[];
+  nodeKind: 'for_lifetimes';
+  children?: Builder<Lifetime> | Omit<LifetimeOptions, 'nodeKind'> | (Builder<Lifetime> | Omit<LifetimeOptions, 'nodeKind'>)[];
 }
 
 export namespace for_lifetimes {
-  export function from(options: ForLifetimesOptions): ForLifetimesBuilder {
+  export function from(input: Omit<ForLifetimesOptions, 'nodeKind'> | Builder<Lifetime> | Omit<LifetimeOptions, 'nodeKind'> | (Builder<Lifetime> | Omit<LifetimeOptions, 'nodeKind'>)[]): ForLifetimesBuilder {
+    const options: Omit<ForLifetimesOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ForLifetimesOptions, 'nodeKind'>
+      : { children: input } as Omit<ForLifetimesOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
-    const b = new ForLifetimesBuilder(..._arr);
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
+    const b = new ForLifetimesBuilder(..._arr.map(_v => _v instanceof Builder ? _v : lifetime.from(_v)));
     return b;
   }
 }

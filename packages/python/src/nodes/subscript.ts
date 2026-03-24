@@ -1,11 +1,13 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, PrimaryExpression, Slice, Subscript } from '../types.js';
+import { slice } from './slice.js';
+import type { SliceOptions } from './slice.js';
 
 
 class SubscriptBuilder extends Builder<Subscript> {
-  private _subscript: Builder<Expression | Slice>[] = [];
   private _value: Builder<PrimaryExpression>;
+  private _subscript: Builder<Expression | Slice>[] = [];
 
   constructor(value: Builder<PrimaryExpression>) {
     super();
@@ -29,12 +31,12 @@ class SubscriptBuilder extends Builder<Subscript> {
   build(ctx?: RenderContext): Subscript {
     return {
       kind: 'subscript',
-      subscript: this._subscript.map(c => c.build(ctx)),
       value: this._value.build(ctx),
+      subscript: this._subscript.map(c => c.build(ctx)),
     } as Subscript;
   }
 
-  override get nodeKind(): string { return 'subscript'; }
+  override get nodeKind(): 'subscript' { return 'subscript'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,17 +57,18 @@ export function subscript(value: Builder<PrimaryExpression>): SubscriptBuilder {
 }
 
 export interface SubscriptOptions {
-  subscript: Builder<Expression | Slice> | (Builder<Expression | Slice>)[];
+  nodeKind: 'subscript';
   value: Builder<PrimaryExpression>;
+  subscript: Builder<Expression | Slice> | Omit<SliceOptions, 'nodeKind'> | (Builder<Expression | Slice> | Omit<SliceOptions, 'nodeKind'>)[];
 }
 
 export namespace subscript {
-  export function from(options: SubscriptOptions): SubscriptBuilder {
+  export function from(options: Omit<SubscriptOptions, 'nodeKind'>): SubscriptBuilder {
     const b = new SubscriptBuilder(options.value);
     if (options.subscript !== undefined) {
       const _v = options.subscript;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.subscript(..._arr);
+      b.subscript(..._arr.map(_v => _v instanceof Builder ? _v : slice.from(_v)));
     }
     return b;
   }

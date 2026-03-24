@@ -1,6 +1,8 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Lifetime, TypeIdentifier, UseBounds } from '../types.js';
+import { lifetime } from './lifetime.js';
+import type { LifetimeOptions } from './lifetime.js';
 
 
 class UseBoundsBuilder extends Builder<UseBounds> {
@@ -17,12 +19,7 @@ class UseBoundsBuilder extends Builder<UseBounds> {
     const parts: string[] = [];
     parts.push('use');
     parts.push('<');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('>');
     return parts.join(' ');
   }
@@ -34,7 +31,7 @@ class UseBoundsBuilder extends Builder<UseBounds> {
     } as UseBounds;
   }
 
-  override get nodeKind(): string { return 'use_bounds'; }
+  override get nodeKind(): 'use_bounds' { return 'use_bounds'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -56,16 +53,20 @@ export function use_bounds(): UseBoundsBuilder {
 }
 
 export interface UseBoundsOptions {
-  children?: Builder<Lifetime | TypeIdentifier> | (Builder<Lifetime | TypeIdentifier>)[];
+  nodeKind: 'use_bounds';
+  children?: Builder<Lifetime | TypeIdentifier> | string | Omit<LifetimeOptions, 'nodeKind'> | (Builder<Lifetime | TypeIdentifier> | string | Omit<LifetimeOptions, 'nodeKind'>)[];
 }
 
 export namespace use_bounds {
-  export function from(options: UseBoundsOptions): UseBoundsBuilder {
+  export function from(input: Omit<UseBoundsOptions, 'nodeKind'> | Builder<Lifetime | TypeIdentifier> | string | Omit<LifetimeOptions, 'nodeKind'> | (Builder<Lifetime | TypeIdentifier> | string | Omit<LifetimeOptions, 'nodeKind'>)[]): UseBoundsBuilder {
+    const options: Omit<UseBoundsOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<UseBoundsOptions, 'nodeKind'>
+      : { children: input } as Omit<UseBoundsOptions, 'nodeKind'>;
     const b = new UseBoundsBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => typeof _x === 'string' ? new LeafBuilder('type_identifier', _x) : _x instanceof Builder ? _x : lifetime.from(_x)));
     }
     return b;
   }

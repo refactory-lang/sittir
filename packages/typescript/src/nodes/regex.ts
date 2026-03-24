@@ -30,11 +30,11 @@ class RegexBuilder extends Builder<Regex> {
     return {
       kind: 'regex',
       pattern: this._pattern.build(ctx),
-      flags: this._flags?.build(ctx),
+      flags: this._flags ? this._flags.build(ctx) : undefined,
     } as Regex;
   }
 
-  override get nodeKind(): string { return 'regex'; }
+  override get nodeKind(): 'regex' { return 'regex'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,12 +53,13 @@ export function regex(pattern: Builder<RegexPattern>): RegexBuilder {
 }
 
 export interface RegexOptions {
+  nodeKind: 'regex';
   pattern: Builder<RegexPattern> | string;
   flags?: Builder<RegexFlags> | string;
 }
 
 export namespace regex {
-  export function from(options: RegexOptions): RegexBuilder {
+  export function from(options: Omit<RegexOptions, 'nodeKind'>): RegexBuilder {
     const _ctor = options.pattern;
     const b = new RegexBuilder(typeof _ctor === 'string' ? new LeafBuilder('regex_pattern', _ctor) : _ctor);
     if (options.flags !== undefined) {

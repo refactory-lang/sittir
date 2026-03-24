@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { FormalParameters, OptionalParameter, RequiredParameter } from '../types.js';
+import { required_parameter } from './required-parameter.js';
+import type { RequiredParameterOptions } from './required-parameter.js';
+import { optional_parameter } from './optional-parameter.js';
+import type { OptionalParameterOptions } from './optional-parameter.js';
 
 
 class FormalParametersBuilder extends Builder<FormalParameters> {
@@ -16,12 +20,7 @@ class FormalParametersBuilder extends Builder<FormalParameters> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('(');
-    if (this._children.length === 1) {
-      parts.push(',');
-      parts.push(this.renderChild(this._children[0]!, ctx));
-    } else if (this._children.length > 1) {
-      parts.push(this.renderChildren(this._children, ' , ', ctx));
-    }
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push(')');
     return parts.join(' ');
   }
@@ -33,7 +32,7 @@ class FormalParametersBuilder extends Builder<FormalParameters> {
     } as FormalParameters;
   }
 
-  override get nodeKind(): string { return 'formal_parameters'; }
+  override get nodeKind(): 'formal_parameters' { return 'formal_parameters'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -54,16 +53,20 @@ export function formal_parameters(): FormalParametersBuilder {
 }
 
 export interface FormalParametersOptions {
-  children?: Builder<RequiredParameter | OptionalParameter> | (Builder<RequiredParameter | OptionalParameter>)[];
+  nodeKind: 'formal_parameters';
+  children?: Builder<RequiredParameter | OptionalParameter> | RequiredParameterOptions | OptionalParameterOptions | (Builder<RequiredParameter | OptionalParameter> | RequiredParameterOptions | OptionalParameterOptions)[];
 }
 
 export namespace formal_parameters {
-  export function from(options: FormalParametersOptions): FormalParametersBuilder {
+  export function from(input: Omit<FormalParametersOptions, 'nodeKind'> | Builder<RequiredParameter | OptionalParameter> | RequiredParameterOptions | OptionalParameterOptions | (Builder<RequiredParameter | OptionalParameter> | RequiredParameterOptions | OptionalParameterOptions)[]): FormalParametersBuilder {
+    const options: Omit<FormalParametersOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<FormalParametersOptions, 'nodeKind'>
+      : { children: input } as Omit<FormalParametersOptions, 'nodeKind'>;
     const b = new FormalParametersBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'required_parameter': return required_parameter.from(_v);   case 'optional_parameter': return optional_parameter.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

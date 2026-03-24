@@ -21,11 +21,11 @@ class SpreadElementBuilder extends Builder<SpreadElement> {
   build(ctx?: RenderContext): SpreadElement {
     return {
       kind: 'spread_element',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as SpreadElement;
   }
 
-  override get nodeKind(): string { return 'spread_element'; }
+  override get nodeKind(): 'spread_element' { return 'spread_element'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function spread_element(children: Builder<Expression>): SpreadElementBuil
 }
 
 export interface SpreadElementOptions {
+  nodeKind: 'spread_element';
   children: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace spread_element {
-  export function from(options: SpreadElementOptions): SpreadElementBuilder {
+  export function from(input: Omit<SpreadElementOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): SpreadElementBuilder {
+    const options: Omit<SpreadElementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<SpreadElementOptions, 'nodeKind'>
+      : { children: input } as Omit<SpreadElementOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new SpreadElementBuilder(_ctor);
     return b;

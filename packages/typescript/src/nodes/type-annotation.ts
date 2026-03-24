@@ -21,11 +21,11 @@ class TypeAnnotationBuilder extends Builder<TypeAnnotation> {
   build(ctx?: RenderContext): TypeAnnotation {
     return {
       kind: 'type_annotation',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as TypeAnnotation;
   }
 
-  override get nodeKind(): string { return 'type_annotation'; }
+  override get nodeKind(): 'type_annotation' { return 'type_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,11 +44,15 @@ export function type_annotation(children: Builder<Type>): TypeAnnotationBuilder 
 }
 
 export interface TypeAnnotationOptions {
+  nodeKind: 'type_annotation';
   children: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace type_annotation {
-  export function from(options: TypeAnnotationOptions): TypeAnnotationBuilder {
+  export function from(input: Omit<TypeAnnotationOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): TypeAnnotationBuilder {
+    const options: Omit<TypeAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TypeAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<TypeAnnotationOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new TypeAnnotationBuilder(_ctor);
     return b;

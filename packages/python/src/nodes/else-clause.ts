@@ -1,6 +1,8 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Block, ElseClause } from '../types.js';
+import { block } from './block.js';
+import type { BlockOptions } from './block.js';
 
 
 class ElseClauseBuilder extends Builder<ElseClause> {
@@ -26,7 +28,7 @@ class ElseClauseBuilder extends Builder<ElseClause> {
     } as ElseClause;
   }
 
-  override get nodeKind(): string { return 'else_clause'; }
+  override get nodeKind(): 'else_clause' { return 'else_clause'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -44,12 +46,17 @@ export function else_clause(body: Builder<Block>): ElseClauseBuilder {
 }
 
 export interface ElseClauseOptions {
-  body: Builder<Block>;
+  nodeKind: 'else_clause';
+  body: Builder<Block> | Omit<BlockOptions, 'nodeKind'>;
 }
 
 export namespace else_clause {
-  export function from(options: ElseClauseOptions): ElseClauseBuilder {
-    const b = new ElseClauseBuilder(options.body);
+  export function from(input: Omit<ElseClauseOptions, 'nodeKind'> | Builder<Block> | Omit<BlockOptions, 'nodeKind'>): ElseClauseBuilder {
+    const options: Omit<ElseClauseOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'body' in input
+      ? input as Omit<ElseClauseOptions, 'nodeKind'>
+      : { body: input } as Omit<ElseClauseOptions, 'nodeKind'>;
+    const _ctor = options.body;
+    const b = new ElseClauseBuilder(_ctor instanceof Builder ? _ctor : block.from(_ctor));
     return b;
   }
 }

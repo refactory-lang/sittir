@@ -23,11 +23,11 @@ class TypePredicateAnnotationBuilder extends Builder<TypePredicateAnnotation> {
   build(ctx?: RenderContext): TypePredicateAnnotation {
     return {
       kind: 'type_predicate_annotation',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as TypePredicateAnnotation;
   }
 
-  override get nodeKind(): string { return 'type_predicate_annotation'; }
+  override get nodeKind(): 'type_predicate_annotation' { return 'type_predicate_annotation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,13 +46,17 @@ export function type_predicate_annotation(children: Builder<TypePredicate>): Typ
 }
 
 export interface TypePredicateAnnotationOptions {
-  children: Builder<TypePredicate> | TypePredicateOptions | (Builder<TypePredicate> | TypePredicateOptions)[];
+  nodeKind: 'type_predicate_annotation';
+  children: Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'> | (Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'>)[];
 }
 
 export namespace type_predicate_annotation {
-  export function from(options: TypePredicateAnnotationOptions): TypePredicateAnnotationBuilder {
+  export function from(input: Omit<TypePredicateAnnotationOptions, 'nodeKind'> | Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'> | (Builder<TypePredicate> | Omit<TypePredicateOptions, 'nodeKind'>)[]): TypePredicateAnnotationBuilder {
+    const options: Omit<TypePredicateAnnotationOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TypePredicateAnnotationOptions, 'nodeKind'>
+      : { children: input } as Omit<TypePredicateAnnotationOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
-    const b = new TypePredicateAnnotationBuilder(_ctor instanceof Builder ? _ctor : type_predicate.from(_ctor as TypePredicateOptions));
+    const b = new TypePredicateAnnotationBuilder(_ctor instanceof Builder ? _ctor : type_predicate.from(_ctor));
     return b;
   }
 }

@@ -1,6 +1,10 @@
-import { Builder } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Identifier, MacroInvocation, ScopedIdentifier, TokenTree } from '../types.js';
+import { scoped_identifier } from './scoped-identifier.js';
+import type { ScopedIdentifierOptions } from './scoped-identifier.js';
+import { token_tree } from './token-tree.js';
+import type { TokenTreeOptions } from './token-tree.js';
 
 
 class MacroInvocationBuilder extends Builder<MacroInvocation> {
@@ -29,11 +33,11 @@ class MacroInvocationBuilder extends Builder<MacroInvocation> {
     return {
       kind: 'macro_invocation',
       macro: this._macro.build(ctx),
-      children: this._children[0]?.build(ctx),
+      children: this._children[0] ? this._children[0].build(ctx) : undefined,
     } as MacroInvocation;
   }
 
-  override get nodeKind(): string { return 'macro_invocation'; }
+  override get nodeKind(): 'macro_invocation' { return 'macro_invocation'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,17 +57,19 @@ export function macro_invocation(macro: Builder<Identifier | ScopedIdentifier>):
 }
 
 export interface MacroInvocationOptions {
-  macro: Builder<Identifier | ScopedIdentifier>;
-  children?: Builder<TokenTree> | (Builder<TokenTree>)[];
+  nodeKind: 'macro_invocation';
+  macro: Builder<Identifier | ScopedIdentifier> | string | Omit<ScopedIdentifierOptions, 'nodeKind'>;
+  children?: Builder<TokenTree> | Omit<TokenTreeOptions, 'nodeKind'> | (Builder<TokenTree> | Omit<TokenTreeOptions, 'nodeKind'>)[];
 }
 
 export namespace macro_invocation {
-  export function from(options: MacroInvocationOptions): MacroInvocationBuilder {
-    const b = new MacroInvocationBuilder(options.macro);
+  export function from(options: Omit<MacroInvocationOptions, 'nodeKind'>): MacroInvocationBuilder {
+    const _ctor = options.macro;
+    const b = new MacroInvocationBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor instanceof Builder ? _ctor : scoped_identifier.from(_ctor));
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_x => _x instanceof Builder ? _x : token_tree.from(_x)));
     }
     return b;
   }

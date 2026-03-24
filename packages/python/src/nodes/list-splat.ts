@@ -1,12 +1,12 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
-import type { Attribute, Expression, Identifier, ListSplat, Subscript } from '../types.js';
+import type { Expression, ListSplat } from '../types.js';
 
 
 class ListSplatBuilder extends Builder<ListSplat> {
-  private _children: Builder<Attribute | Expression | Identifier | Subscript>[] = [];
+  private _children: Builder<Expression>[] = [];
 
-  constructor(children: Builder<Attribute | Expression | Identifier | Subscript>) {
+  constructor(children: Builder<Expression>) {
     super();
     this._children = [children];
   }
@@ -21,11 +21,11 @@ class ListSplatBuilder extends Builder<ListSplat> {
   build(ctx?: RenderContext): ListSplat {
     return {
       kind: 'list_splat',
-      children: this._children[0]?.build(ctx),
+      children: this._children[0]!.build(ctx),
     } as ListSplat;
   }
 
-  override get nodeKind(): string { return 'list_splat'; }
+  override get nodeKind(): 'list_splat' { return 'list_splat'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,16 +39,20 @@ class ListSplatBuilder extends Builder<ListSplat> {
 
 export type { ListSplatBuilder };
 
-export function list_splat(children: Builder<Attribute | Expression | Identifier | Subscript>): ListSplatBuilder {
+export function list_splat(children: Builder<Expression>): ListSplatBuilder {
   return new ListSplatBuilder(children);
 }
 
 export interface ListSplatOptions {
-  children: Builder<Attribute | Expression | Identifier | Subscript> | (Builder<Attribute | Expression | Identifier | Subscript>)[];
+  nodeKind: 'list_splat';
+  children: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace list_splat {
-  export function from(options: ListSplatOptions): ListSplatBuilder {
+  export function from(input: Omit<ListSplatOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): ListSplatBuilder {
+    const options: Omit<ListSplatOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<ListSplatOptions, 'nodeKind'>
+      : { children: input } as Omit<ListSplatOptions, 'nodeKind'>;
     const _ctor = Array.isArray(options.children) ? options.children[0]! : options.children;
     const b = new ListSplatBuilder(_ctor);
     return b;

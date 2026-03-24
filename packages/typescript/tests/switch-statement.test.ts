@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('switch_statement', () => {
   it('should build with correct kind', () => {
-    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     const node = builder.build();
     expect(node.kind).toBe('switch_statement');
     expect((node as any).value).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     const source = builder.renderImpl();
     expect(source).toContain('switch');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     const cst = builder.toCST();
     expect(cst.type).toBe('switch_statement');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('switch_statement', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.asExpression(ir.asExpression(ir.asExpression(ir.identifier('test') as any)))));
+    const builder = ir.switchStatement(ir.parenthesizedExpression(ir.yieldExpression()));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

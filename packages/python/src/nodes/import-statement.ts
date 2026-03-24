@@ -1,12 +1,16 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { AliasedImport, DottedName, ImportStatement } from '../types.js';
+import { dotted_name } from './dotted-name.js';
+import type { DottedNameOptions } from './dotted-name.js';
+import { aliased_import } from './aliased-import.js';
+import type { AliasedImportOptions } from './aliased-import.js';
 
 
 class ImportStatementBuilder extends Builder<ImportStatement> {
-  private _name: Builder<AliasedImport | DottedName>[] = [];
+  private _name: Builder<DottedName | AliasedImport>[] = [];
 
-  constructor(...name: Builder<AliasedImport | DottedName>[]) {
+  constructor(...name: Builder<DottedName | AliasedImport>[]) {
     super();
     this._name = name;
   }
@@ -25,7 +29,7 @@ class ImportStatementBuilder extends Builder<ImportStatement> {
     } as ImportStatement;
   }
 
-  override get nodeKind(): string { return 'import_statement'; }
+  override get nodeKind(): 'import_statement' { return 'import_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -39,19 +43,23 @@ class ImportStatementBuilder extends Builder<ImportStatement> {
 
 export type { ImportStatementBuilder };
 
-export function import_statement(...name: Builder<AliasedImport | DottedName>[]): ImportStatementBuilder {
+export function import_statement(...name: Builder<DottedName | AliasedImport>[]): ImportStatementBuilder {
   return new ImportStatementBuilder(...name);
 }
 
 export interface ImportStatementOptions {
-  name: Builder<AliasedImport | DottedName> | (Builder<AliasedImport | DottedName>)[];
+  nodeKind: 'import_statement';
+  name: Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions | (Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions)[];
 }
 
 export namespace import_statement {
-  export function from(options: ImportStatementOptions): ImportStatementBuilder {
+  export function from(input: Omit<ImportStatementOptions, 'nodeKind'> | Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions | (Builder<DottedName | AliasedImport> | DottedNameOptions | AliasedImportOptions)[]): ImportStatementBuilder {
+    const options: Omit<ImportStatementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'name' in input
+      ? input as Omit<ImportStatementOptions, 'nodeKind'>
+      : { name: input } as Omit<ImportStatementOptions, 'nodeKind'>;
     const _ctor = options.name;
     const _arr = Array.isArray(_ctor) ? _ctor : [_ctor];
-    const b = new ImportStatementBuilder(..._arr);
+    const b = new ImportStatementBuilder(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'dotted_name': return dotted_name.from(_v);   case 'aliased_import': return aliased_import.from(_v); } throw new Error('unreachable'); }));
     return b;
   }
 }

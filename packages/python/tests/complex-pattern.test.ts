@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('complex_pattern', () => {
   it('should build with correct kind', () => {
-    const builder = ir.complexPattern(ir.float('test'), ir.float('test'));
+    const builder = ir.complexPattern(ir.integer('test'), ir.integer('test'));
     const node = builder.build();
     expect(node.kind).toBe('complex_pattern');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('complex_pattern', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.complexPattern(ir.float('test'), ir.float('test'));
+    const builder = ir.complexPattern(ir.integer('test'), ir.integer('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('complex_pattern');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('complex_pattern', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.complexPattern(ir.float('test'), ir.float('test'));
+    const builder = ir.complexPattern(ir.integer('test'), ir.integer('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

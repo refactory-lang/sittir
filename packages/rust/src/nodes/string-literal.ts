@@ -1,5 +1,5 @@
-import { Builder } from '@sittir/types';
-import type { RenderContext, CSTChild } from '@sittir/types';
+import { Builder, LeafBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild, LeafOptions } from '@sittir/types';
 import type { EscapeSequence, StringContent, StringLiteral } from '../types.js';
 
 
@@ -27,7 +27,7 @@ class StringLiteralBuilder extends Builder<StringLiteral> {
     } as StringLiteral;
   }
 
-  override get nodeKind(): string { return 'string_literal'; }
+  override get nodeKind(): 'string_literal' { return 'string_literal'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -46,16 +46,20 @@ export function string_literal(): StringLiteralBuilder {
 }
 
 export interface StringLiteralOptions {
-  children?: Builder<EscapeSequence | StringContent> | (Builder<EscapeSequence | StringContent>)[];
+  nodeKind: 'string_literal';
+  children?: Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'> | (Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'>)[];
 }
 
 export namespace string_literal {
-  export function from(options: StringLiteralOptions): StringLiteralBuilder {
+  export function from(input: Omit<StringLiteralOptions, 'nodeKind'> | Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'> | (Builder<EscapeSequence | StringContent> | LeafOptions<'escape_sequence'> | LeafOptions<'string_content'>)[]): StringLiteralBuilder {
+    const options: Omit<StringLiteralOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<StringLiteralOptions, 'nodeKind'>
+      : { children: input } as Omit<StringLiteralOptions, 'nodeKind'>;
     const b = new StringLiteralBuilder();
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'escape_sequence': return new LeafBuilder('escape_sequence', (_v as LeafOptions).text!);   case 'string_content': return new LeafBuilder('string_content', (_v as LeafOptions).text!); } throw new Error('unreachable'); }));
     }
     return b;
   }

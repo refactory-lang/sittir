@@ -3,7 +3,7 @@ import { ir } from '../src/builder.js';
 
 describe('foreign_mod_item', () => {
   it('should build with correct kind', () => {
-    const builder = ir.foreignMod(ir.externModifier(), ir.externModifier());
+    const builder = ir.foreignMod(ir.visibilityModifier(), ir.visibilityModifier());
     const node = builder.build();
     expect(node.kind).toBe('foreign_mod_item');
     expect(Array.isArray((node as any).children)).toBe(true);
@@ -12,7 +12,7 @@ describe('foreign_mod_item', () => {
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.foreignMod(ir.externModifier(), ir.externModifier());
+    const builder = ir.foreignMod(ir.visibilityModifier(), ir.visibilityModifier());
     const cst = builder.toCST();
     expect(cst.type).toBe('foreign_mod_item');
     expect(cst.isNamed).toBe(true);
@@ -21,7 +21,7 @@ describe('foreign_mod_item', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.foreignMod(ir.externModifier(), ir.externModifier());
+    const builder = ir.foreignMod(ir.visibilityModifier(), ir.visibilityModifier());
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

@@ -3,20 +3,20 @@ import { ir } from '../src/builder.js';
 
 describe('reference_expression', () => {
   it('should build with correct kind', () => {
-    const builder = ir.referenceExpression(ir.identifier('test'));
+    const builder = ir.referenceExpression(ir.charLiteral('test'));
     const node = builder.build();
     expect(node.kind).toBe('reference_expression');
     expect((node as any).value).toHaveProperty('kind');
   });
 
   it('should render required grammar tokens', () => {
-    const builder = ir.referenceExpression(ir.identifier('test'));
+    const builder = ir.referenceExpression(ir.charLiteral('test'));
     const source = builder.renderImpl();
     expect(source).toContain('&');
   });
 
   it('should produce a valid CST node', () => {
-    const builder = ir.referenceExpression(ir.identifier('test'));
+    const builder = ir.referenceExpression(ir.charLiteral('test'));
     const cst = builder.toCST();
     expect(cst.type).toBe('reference_expression');
     expect(cst.isNamed).toBe(true);
@@ -25,7 +25,7 @@ describe('reference_expression', () => {
   });
 
   it('should pass fast validation', () => {
-    const builder = ir.referenceExpression(ir.identifier('test'));
+    const builder = ir.referenceExpression(ir.charLiteral('test'));
     expect(() => builder.render('fast')).not.toThrow();
   });
 });

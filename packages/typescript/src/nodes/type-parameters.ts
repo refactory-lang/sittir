@@ -16,7 +16,7 @@ class TypeParametersBuilder extends Builder<TypeParameters> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('<');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('>');
     return parts.join(' ');
   }
@@ -28,7 +28,7 @@ class TypeParametersBuilder extends Builder<TypeParameters> {
     } as TypeParameters;
   }
 
-  override get nodeKind(): string { return 'type_parameters'; }
+  override get nodeKind(): 'type_parameters' { return 'type_parameters'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -49,14 +49,18 @@ export function type_parameters(...children: Builder<TypeParameter>[]): TypePara
 }
 
 export interface TypeParametersOptions {
-  children?: Builder<TypeParameter> | TypeParameterOptions | (Builder<TypeParameter> | TypeParameterOptions)[];
+  nodeKind: 'type_parameters';
+  children?: Builder<TypeParameter> | Omit<TypeParameterOptions, 'nodeKind'> | (Builder<TypeParameter> | Omit<TypeParameterOptions, 'nodeKind'>)[];
 }
 
 export namespace type_parameters {
-  export function from(options: TypeParametersOptions): TypeParametersBuilder {
+  export function from(input: Omit<TypeParametersOptions, 'nodeKind'> | Builder<TypeParameter> | Omit<TypeParameterOptions, 'nodeKind'> | (Builder<TypeParameter> | Omit<TypeParameterOptions, 'nodeKind'>)[]): TypeParametersBuilder {
+    const options: Omit<TypeParametersOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TypeParametersOptions, 'nodeKind'>
+      : { children: input } as Omit<TypeParametersOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
-    const b = new TypeParametersBuilder(..._arr.map(_v => _v instanceof Builder ? _v : type_parameter.from(_v as TypeParameterOptions)));
+    const b = new TypeParametersBuilder(..._arr.map(_v => _v instanceof Builder ? _v : type_parameter.from(_v)));
     return b;
   }
 }

@@ -28,7 +28,7 @@ class StatementBlockBuilder extends Builder<StatementBlock> {
     } as StatementBlock;
   }
 
-  override get nodeKind(): string { return 'statement_block'; }
+  override get nodeKind(): 'statement_block' { return 'statement_block'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -48,11 +48,15 @@ export function statement_block(): StatementBlockBuilder {
 }
 
 export interface StatementBlockOptions {
+  nodeKind: 'statement_block';
   children?: Builder<Statement> | (Builder<Statement>)[];
 }
 
 export namespace statement_block {
-  export function from(options: StatementBlockOptions): StatementBlockBuilder {
+  export function from(input: Omit<StatementBlockOptions, 'nodeKind'> | Builder<Statement> | (Builder<Statement>)[]): StatementBlockBuilder {
+    const options: Omit<StatementBlockOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<StatementBlockOptions, 'nodeKind'>
+      : { children: input } as Omit<StatementBlockOptions, 'nodeKind'>;
     const b = new StatementBlockBuilder();
     if (options.children !== undefined) {
       const _v = options.children;

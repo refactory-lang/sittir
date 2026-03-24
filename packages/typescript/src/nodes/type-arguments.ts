@@ -14,7 +14,7 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('<');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     parts.push('>');
     return parts.join(' ');
   }
@@ -26,7 +26,7 @@ class TypeArgumentsBuilder extends Builder<TypeArguments> {
     } as TypeArguments;
   }
 
-  override get nodeKind(): string { return 'type_arguments'; }
+  override get nodeKind(): 'type_arguments' { return 'type_arguments'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -47,11 +47,15 @@ export function type_arguments(...children: Builder<Type>[]): TypeArgumentsBuild
 }
 
 export interface TypeArgumentsOptions {
+  nodeKind: 'type_arguments';
   children?: Builder<Type> | (Builder<Type>)[];
 }
 
 export namespace type_arguments {
-  export function from(options: TypeArgumentsOptions): TypeArgumentsBuilder {
+  export function from(input: Omit<TypeArgumentsOptions, 'nodeKind'> | Builder<Type> | (Builder<Type>)[]): TypeArgumentsBuilder {
+    const options: Omit<TypeArgumentsOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<TypeArgumentsOptions, 'nodeKind'>
+      : { children: input } as Omit<TypeArgumentsOptions, 'nodeKind'>;
     const _children = options.children;
     const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new TypeArgumentsBuilder(..._arr);

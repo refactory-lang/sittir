@@ -1,6 +1,10 @@
 import { Builder } from '@sittir/types';
 import type { RenderContext, CSTChild } from '@sittir/types';
 import type { Expression, ForInClause, IfClause, ListComprehension } from '../types.js';
+import { for_in_clause } from './for-in-clause.js';
+import type { ForInClauseOptions } from './for-in-clause.js';
+import { if_clause } from './if-clause.js';
+import type { IfClauseOptions } from './if-clause.js';
 
 
 class ListComprehensionBuilder extends Builder<ListComprehension> {
@@ -34,7 +38,7 @@ class ListComprehensionBuilder extends Builder<ListComprehension> {
     } as ListComprehension;
   }
 
-  override get nodeKind(): string { return 'list_comprehension'; }
+  override get nodeKind(): 'list_comprehension' { return 'list_comprehension'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -55,17 +59,18 @@ export function list_comprehension(body: Builder<Expression>): ListComprehension
 }
 
 export interface ListComprehensionOptions {
+  nodeKind: 'list_comprehension';
   body: Builder<Expression>;
-  children?: Builder<ForInClause | IfClause> | (Builder<ForInClause | IfClause>)[];
+  children?: Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions | (Builder<ForInClause | IfClause> | ForInClauseOptions | IfClauseOptions)[];
 }
 
 export namespace list_comprehension {
-  export function from(options: ListComprehensionOptions): ListComprehensionBuilder {
+  export function from(options: Omit<ListComprehensionOptions, 'nodeKind'>): ListComprehensionBuilder {
     const b = new ListComprehensionBuilder(options.body);
     if (options.children !== undefined) {
       const _v = options.children;
       const _arr = Array.isArray(_v) ? _v : [_v];
-      b.children(..._arr);
+      b.children(..._arr.map(_v => { if (_v instanceof Builder) return _v; switch (_v.nodeKind) {   case 'for_in_clause': return for_in_clause.from(_v);   case 'if_clause': return if_clause.from(_v); } throw new Error('unreachable'); }));
     }
     return b;
   }

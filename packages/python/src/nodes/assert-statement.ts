@@ -14,7 +14,7 @@ class AssertStatementBuilder extends Builder<AssertStatement> {
   renderImpl(ctx?: RenderContext): string {
     const parts: string[] = [];
     parts.push('assert');
-    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' , ', ctx));
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ', ', ctx));
     return parts.join(' ');
   }
 
@@ -25,7 +25,7 @@ class AssertStatementBuilder extends Builder<AssertStatement> {
     } as AssertStatement;
   }
 
-  override get nodeKind(): string { return 'assert_statement'; }
+  override get nodeKind(): 'assert_statement' { return 'assert_statement'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -45,13 +45,17 @@ export function assert_statement(...children: Builder<Expression>[]): AssertStat
 }
 
 export interface AssertStatementOptions {
-  children: Builder<Expression> | (Builder<Expression>)[];
+  nodeKind: 'assert_statement';
+  children?: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace assert_statement {
-  export function from(options: AssertStatementOptions): AssertStatementBuilder {
+  export function from(input: Omit<AssertStatementOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): AssertStatementBuilder {
+    const options: Omit<AssertStatementOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<AssertStatementOptions, 'nodeKind'>
+      : { children: input } as Omit<AssertStatementOptions, 'nodeKind'>;
     const _children = options.children;
-    const _arr = Array.isArray(_children) ? _children : [_children];
+    const _arr = _children !== undefined ? (Array.isArray(_children) ? _children : [_children]) : [];
     const b = new AssertStatementBuilder(..._arr);
     return b;
   }

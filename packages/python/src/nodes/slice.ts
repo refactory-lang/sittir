@@ -31,7 +31,7 @@ class SliceBuilder extends Builder<Slice> {
     } as Slice;
   }
 
-  override get nodeKind(): string { return 'slice'; }
+  override get nodeKind(): 'slice' { return 'slice'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -50,11 +50,15 @@ export function slice(): SliceBuilder {
 }
 
 export interface SliceOptions {
+  nodeKind: 'slice';
   children?: Builder<Expression> | (Builder<Expression>)[];
 }
 
 export namespace slice {
-  export function from(options: SliceOptions): SliceBuilder {
+  export function from(input: Omit<SliceOptions, 'nodeKind'> | Builder<Expression> | (Builder<Expression>)[]): SliceBuilder {
+    const options: Omit<SliceOptions, 'nodeKind'> = typeof input === 'object' && input !== null && !Array.isArray(input) && !(input instanceof Builder) && 'children' in input
+      ? input as Omit<SliceOptions, 'nodeKind'>
+      : { children: input } as Omit<SliceOptions, 'nodeKind'>;
     const b = new SliceBuilder();
     if (options.children !== undefined) {
       const _v = options.children;

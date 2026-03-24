@@ -31,11 +31,11 @@ class EnumDeclarationBuilder extends Builder<EnumDeclaration> {
     return {
       kind: 'enum_declaration',
       name: this._name.build(ctx),
-      body: this._body?.build(ctx),
+      body: this._body ? this._body.build(ctx) : undefined,
     } as EnumDeclaration;
   }
 
-  override get nodeKind(): string { return 'enum_declaration'; }
+  override get nodeKind(): 'enum_declaration' { return 'enum_declaration'; }
 
   override toCSTChildren(ctx?: RenderContext): CSTChild[] {
     const parts: CSTChild[] = [];
@@ -53,17 +53,18 @@ export function enum_declaration(name: Builder<Identifier>): EnumDeclarationBuil
 }
 
 export interface EnumDeclarationOptions {
+  nodeKind: 'enum_declaration';
   name: Builder<Identifier> | string;
-  body: Builder<EnumBody> | EnumBodyOptions;
+  body: Builder<EnumBody> | Omit<EnumBodyOptions, 'nodeKind'>;
 }
 
 export namespace enum_declaration {
-  export function from(options: EnumDeclarationOptions): EnumDeclarationBuilder {
+  export function from(options: Omit<EnumDeclarationOptions, 'nodeKind'>): EnumDeclarationBuilder {
     const _ctor = options.name;
     const b = new EnumDeclarationBuilder(typeof _ctor === 'string' ? new LeafBuilder('identifier', _ctor) : _ctor);
     if (options.body !== undefined) {
       const _v = options.body;
-      b.body(_v instanceof Builder ? _v : enum_body.from(_v as EnumBodyOptions));
+      b.body(_v instanceof Builder ? _v : enum_body.from(_v));
     }
     return b;
   }
