@@ -45,7 +45,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		// Test 1: factory produces correct kind
 		lines.push(`  it('factory produces NodeData with kind', () => {`);
 		lines.push(`    const node = ir.${irKey}(${minimalArgs(node)});`);
-		lines.push(`    expect(node.kind).toBe('${node.kind}');`);
+		lines.push(`    expect(node.type).toBe('${node.kind}');`);
 		lines.push(`  });`);
 
 		// Test 2: render produces non-empty string
@@ -85,7 +85,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		const irKey = toIrKey(kind);
 		lines.push(`  it('${kind} produces fixed text', () => {`);
 		lines.push(`    const node = ir.${irKey}();`);
-		lines.push(`    expect(node.kind).toBe('${kind}');`);
+		lines.push(`    expect(node.type).toBe('${kind}');`);
 		lines.push(`    expect(node.text).toBe('${escapeString(text)}');`);
 		lines.push(`  });`);
 	}
@@ -106,7 +106,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		}
 		lines.push(`  it('${kind} accepts text', () => {`);
 		lines.push(`    const node = ir.${irKey}('${testValue}');`);
-		lines.push(`    expect(node.kind).toBe('${kind}');`);
+		lines.push(`    expect(node.type).toBe('${kind}');`);
 		lines.push(`    expect(node.text).toBe('${testValue}');`);
 		lines.push(`  });`);
 	}

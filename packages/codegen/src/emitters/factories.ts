@@ -153,8 +153,11 @@ export function emitFactory(config: {
 
 	// Render methods
 	lines.push(`  node.render = () => render(node, rules, joinBy);`);
-	lines.push(`  node.toEdit = (startOrRange: any, endPos?: number) => toEdit(node, rules, startOrRange, endPos, joinBy);`);
-	lines.push(`  node.replace = (target: any) => { const r = target.range(); return toEdit(node, rules, r, undefined, joinBy); };`);
+	lines.push(`  node.toEdit = (startOrRange: any, endPos?: number) => {`);
+	lines.push(`    if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);`);
+	lines.push(`    return toEdit(node, rules, startOrRange, joinBy);`);
+	lines.push(`  };`);
+	lines.push(`  node.replace = (target: any) => { const r = target.range(); return toEdit(node, rules, r, joinBy); };`);
 	lines.push(`  return node;`);
 	lines.push(`}`);
 	lines.push('');
@@ -164,7 +167,7 @@ export function emitFactory(config: {
 	lines.push(`  const overrides: any = {};`);
 	// Build fields: read from target, overrides take precedence
 	const fieldNames = node.fields.map(f => f.name);
-	lines.push(`  const fieldList = [${fieldNames.map(f => `'${f}'`).join(', ')}];`);
+	lines.push(`  const fieldList: string[] = [${fieldNames.map(f => `'${f}'`).join(', ')}];`);
 	lines.push(`  const getFields = () => {`);
 	lines.push(`    const merged: any = {};`);
 	lines.push(`    for (const f of fieldList) {`);
@@ -225,7 +228,10 @@ export function emitTerminalFactory(
 		lines.push(`  const node: any = { type: '${kind}', fields: {}, text: '${escapeString(fixedText)}' };`);
 		lines.push(`  node.render = () => '${escapeString(fixedText)}';`);
 		lines.push(`  node.toEdit = (startOrRange: any, endPos?: number) => {`);
-		lines.push(`    if (typeof startOrRange === 'number') return { startPos: startOrRange, endPos: endPos!, insertedText: '${escapeString(fixedText)}' };`);
+		lines.push(`    if (typeof startOrRange === 'number') {`);
+		lines.push(`      if (endPos === undefined) throw new Error('endPos required when startPos is a number');`);
+		lines.push(`      return { startPos: startOrRange, endPos, insertedText: '${escapeString(fixedText)}' };`);
+		lines.push(`    }`);
 		lines.push(`    return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: '${escapeString(fixedText)}' };`);
 		lines.push(`  };`);
 		lines.push(`  node.replace = (target: any) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: '${escapeString(fixedText)}' }; };`);
@@ -257,17 +263,22 @@ export function emitTerminalFactory(
 		lines.push(`  if (RESERVED_KEYWORDS.has(text)) throw new Error(\`'\${text}' is a reserved keyword, not a valid ${kind}\`);`);
 	}
 	if (leafPattern && !enumValues?.length) {
-		// Emit regex validation from grammar pattern
-		// Don't double-escape backslashes — pattern is already valid regex
-		const escaped = leafPattern.replace(/`/g, '\\`');
-		// Use 'u' flag if pattern contains Unicode property escapes
-		const flags = leafPattern.includes('\\p{') ? 'u' : '';
-		lines.push(`  if (!/^${escaped}$/${flags}.test(text)) throw new Error(\`Invalid ${kind}: '\${text}' does not match grammar pattern\`);`);
+		// Skip patterns that can't be safely embedded in JS regex literals
+		// (e.g., comment patterns containing // or /* which conflict with JS syntax)
+		const hasSyntaxConflict = leafPattern.includes('//') || leafPattern.includes('/*');
+		if (!hasSyntaxConflict && isSafeJsRegex(leafPattern)) {
+			const escaped = leafPattern.replace(/`/g, '\\`');
+			const flags = leafPattern.includes('\\p{') ? 'u' : '';
+			lines.push(`  if (!/^${escaped}$/${flags}.test(text)) throw new Error(\`Invalid ${kind}: '\${text}' does not match grammar pattern\`);`);
+		}
 	}
 	lines.push(`  const node: any = { type: '${kind}', fields: {}, text };`);
 	lines.push(`  node.render = () => text;`);
 	lines.push(`  node.toEdit = (startOrRange: any, endPos?: number) => {`);
-	lines.push(`    if (typeof startOrRange === 'number') return { startPos: startOrRange, endPos: endPos!, insertedText: text };`);
+	lines.push(`    if (typeof startOrRange === 'number') {`);
+	lines.push(`      if (endPos === undefined) throw new Error('endPos required when startPos is a number');`);
+	lines.push(`      return { startPos: startOrRange, endPos, insertedText: text };`);
+	lines.push(`    }`);
 	lines.push(`    return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: text };`);
 	lines.push(`  };`);
 	lines.push(`  node.replace = (target: any) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; };`);
@@ -310,11 +321,11 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	// Leaf pattern registry — grammar-derived regex for each leaf kind
 	lines.push('const LEAF_PATTERNS: Record<string, RegExp> = {');
 	for (const kind of leafKinds) {
-		if (keywordKinds.has(kind)) continue; // keywords have fixed text, no pattern needed
+		if (keywordKinds.has(kind)) continue;
 		const enumVals = leafValueMap.get(kind);
-		if (enumVals && enumVals.length > 0) continue; // enum kinds validated by type system
+		if (enumVals && enumVals.length > 0) continue;
 		const pattern = extractLeafPattern(config.grammar, kind);
-		if (pattern) {
+		if (pattern && isSafeJsRegex(pattern)) {
 			const flags = pattern.includes('\\p{') ? 'u' : '';
 			lines.push(`  '${kind}': /^${pattern.replace(/`/g, '\\`')}$/${flags},`);
 		}
@@ -410,4 +421,22 @@ function fieldTypeExpr(field: FieldMeta, leafSet: Set<string>): string {
 
 function escapeString(s: string): string {
 	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+/** Check if a pattern can be safely embedded as a JS regex literal. */
+function isSafeJsRegex(pattern: string): boolean {
+	// Reject patterns with Rust-specific regex syntax or JS syntax conflicts
+	if (pattern.includes('//') || pattern.includes('/*')) return false;
+	if (pattern.includes('\\x')) return false; // \x00 style — use \u instead
+	if (pattern.includes('\\u2028') || pattern.includes('\\u2029')) return false; // line separators
+	if (pattern.includes('\\uFEFF')) return false; // BOM
+
+	// Try to compile it as a JS regex
+	try {
+		const flags = pattern.includes('\\p{') ? 'u' : '';
+		new RegExp(`^${pattern}$`, flags);
+		return true;
+	} catch {
+		return false;
+	}
 }

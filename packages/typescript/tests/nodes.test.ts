@@ -8,7 +8,7 @@ import { joinBy } from '../src/joinby.js';
 describe('abstract_class_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.abstractClassDeclaration({ name: ir.identifier('test_name'), body: { kind: 'class_body', fields: {} } as any });
-    expect(node.kind).toBe('abstract_class_declaration');
+    expect(node.type).toBe('abstract_class_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.abstractClassDeclaration({ name: ir.identifier('test_name'), body: { kind: 'class_body', fields: {} } as any });
@@ -31,7 +31,7 @@ describe('abstract_class_declaration', () => {
 describe('abstract_method_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.abstractMethodSignature({ name: { kind: 'property_identifier', fields: {} } as any, parameters: { kind: 'formal_parameters', fields: {} } as any });
-    expect(node.kind).toBe('abstract_method_signature');
+    expect(node.type).toBe('abstract_method_signature');
   });
   it('renders to non-empty string', () => {
     const node = ir.abstractMethodSignature({ name: { kind: 'property_identifier', fields: {} } as any, parameters: { kind: 'formal_parameters', fields: {} } as any });
@@ -53,7 +53,7 @@ describe('abstract_method_signature', () => {
 describe('adding_type_annotation', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.addingTypeAnnotation();
-    expect(node.kind).toBe('adding_type_annotation');
+    expect(node.type).toBe('adding_type_annotation');
   });
   it('renders to non-empty string', () => {
     const node = ir.addingTypeAnnotation();
@@ -75,7 +75,7 @@ describe('adding_type_annotation', () => {
 describe('ambient_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.ambientDeclaration();
-    expect(node.kind).toBe('ambient_declaration');
+    expect(node.type).toBe('ambient_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.ambientDeclaration();
@@ -97,7 +97,7 @@ describe('ambient_declaration', () => {
 describe('arguments', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.arguments();
-    expect(node.kind).toBe('arguments');
+    expect(node.type).toBe('arguments');
   });
   it('renders to non-empty string', () => {
     const node = ir.arguments();
@@ -120,7 +120,7 @@ describe('arguments', () => {
 describe('array', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.array();
-    expect(node.kind).toBe('array');
+    expect(node.type).toBe('array');
   });
   it('renders to non-empty string', () => {
     const node = ir.array();
@@ -143,7 +143,7 @@ describe('array', () => {
 describe('array_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.arrayPattern();
-    expect(node.kind).toBe('array_pattern');
+    expect(node.type).toBe('array_pattern');
   });
   it('renders to non-empty string', () => {
     const node = ir.arrayPattern();
@@ -166,7 +166,7 @@ describe('array_pattern', () => {
 describe('array_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.arrayType();
-    expect(node.kind).toBe('array_type');
+    expect(node.type).toBe('array_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.arrayType();
@@ -189,7 +189,7 @@ describe('array_type', () => {
 describe('arrow_function', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.arrowFunction({ kind: 'expression', fields: {} } as any);
-    expect(node.kind).toBe('arrow_function');
+    expect(node.type).toBe('arrow_function');
   });
   it('renders to non-empty string', () => {
     const node = ir.arrowFunction({ kind: 'expression', fields: {} } as any);
@@ -211,7 +211,7 @@ describe('arrow_function', () => {
 describe('as_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.asExpression();
-    expect(node.kind).toBe('as_expression');
+    expect(node.type).toBe('as_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.asExpression();
@@ -233,7 +233,7 @@ describe('as_expression', () => {
 describe('asserts', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.asserts();
-    expect(node.kind).toBe('asserts');
+    expect(node.type).toBe('asserts');
   });
   it('renders to non-empty string', () => {
     const node = ir.asserts();
@@ -255,7 +255,7 @@ describe('asserts', () => {
 describe('asserts_annotation', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.assertsAnnotation();
-    expect(node.kind).toBe('asserts_annotation');
+    expect(node.type).toBe('asserts_annotation');
   });
   it('renders to non-empty string', () => {
     const node = ir.assertsAnnotation();
@@ -277,7 +277,7 @@ describe('asserts_annotation', () => {
 describe('assignment_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.assignmentExpression({ left: ir.identifier('test_left'), right: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('assignment_expression');
+    expect(node.type).toBe('assignment_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.assignmentExpression({ left: ir.identifier('test_left'), right: { kind: 'expression', fields: {} } as any });
@@ -299,7 +299,7 @@ describe('assignment_expression', () => {
 describe('assignment_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.assignmentPattern({ left: { kind: 'pattern', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('assignment_pattern');
+    expect(node.type).toBe('assignment_pattern');
   });
   it('renders to non-empty string', () => {
     const node = ir.assignmentPattern({ left: { kind: 'pattern', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
@@ -321,7 +321,7 @@ describe('assignment_pattern', () => {
 describe('augmented_assignment_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.augmentedAssignmentExpression({ left: ir.identifier('test_left'), operator: { kind: 'unknown', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('augmented_assignment_expression');
+    expect(node.type).toBe('augmented_assignment_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.augmentedAssignmentExpression({ left: ir.identifier('test_left'), operator: { kind: 'unknown', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
@@ -338,7 +338,7 @@ describe('augmented_assignment_expression', () => {
 describe('await_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.awaitExpression();
-    expect(node.kind).toBe('await_expression');
+    expect(node.type).toBe('await_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.awaitExpression();
@@ -360,7 +360,7 @@ describe('await_expression', () => {
 describe('binary_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.binaryExpression({ left: { kind: 'expression', fields: {} } as any, operator: { kind: 'unknown', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('binary_expression');
+    expect(node.type).toBe('binary_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.binaryExpression({ left: { kind: 'expression', fields: {} } as any, operator: { kind: 'unknown', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
@@ -377,7 +377,7 @@ describe('binary_expression', () => {
 describe('break_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.breakStatement();
-    expect(node.kind).toBe('break_statement');
+    expect(node.type).toBe('break_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.breakStatement();
@@ -399,7 +399,7 @@ describe('break_statement', () => {
 describe('call_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.callExpression({ function: { kind: 'expression', fields: {} } as any, arguments: { kind: 'arguments', fields: {} } as any });
-    expect(node.kind).toBe('call_expression');
+    expect(node.type).toBe('call_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.callExpression({ function: { kind: 'expression', fields: {} } as any, arguments: { kind: 'arguments', fields: {} } as any });
@@ -416,7 +416,7 @@ describe('call_expression', () => {
 describe('call_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.callSignature({ kind: 'formal_parameters', fields: {} } as any);
-    expect(node.kind).toBe('call_signature');
+    expect(node.type).toBe('call_signature');
   });
   it('renders to non-empty string', () => {
     const node = ir.callSignature({ kind: 'formal_parameters', fields: {} } as any);
@@ -433,7 +433,7 @@ describe('call_signature', () => {
 describe('catch_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.catchClause({ kind: 'statement_block', fields: {} } as any);
-    expect(node.kind).toBe('catch_clause');
+    expect(node.type).toBe('catch_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.catchClause({ kind: 'statement_block', fields: {} } as any);
@@ -455,7 +455,7 @@ describe('catch_clause', () => {
 describe('class', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.class({ kind: 'class_body', fields: {} } as any);
-    expect(node.kind).toBe('class');
+    expect(node.type).toBe('class');
   });
   it('renders to non-empty string', () => {
     const node = ir.class({ kind: 'class_body', fields: {} } as any);
@@ -477,7 +477,7 @@ describe('class', () => {
 describe('class_body', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.classBody();
-    expect(node.kind).toBe('class_body');
+    expect(node.type).toBe('class_body');
   });
   it('renders to non-empty string', () => {
     const node = ir.classBody();
@@ -500,7 +500,7 @@ describe('class_body', () => {
 describe('class_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.classDeclaration({ name: ir.identifier('test_name'), body: { kind: 'class_body', fields: {} } as any });
-    expect(node.kind).toBe('class_declaration');
+    expect(node.type).toBe('class_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.classDeclaration({ name: ir.identifier('test_name'), body: { kind: 'class_body', fields: {} } as any });
@@ -522,7 +522,7 @@ describe('class_declaration', () => {
 describe('class_heritage', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.classHeritage();
-    expect(node.kind).toBe('class_heritage');
+    expect(node.type).toBe('class_heritage');
   });
   it('renders to non-empty string', () => {
     const node = ir.classHeritage();
@@ -539,7 +539,7 @@ describe('class_heritage', () => {
 describe('class_static_block', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.classStaticBlock({ kind: 'statement_block', fields: {} } as any);
-    expect(node.kind).toBe('class_static_block');
+    expect(node.type).toBe('class_static_block');
   });
   it('renders to non-empty string', () => {
     const node = ir.classStaticBlock({ kind: 'statement_block', fields: {} } as any);
@@ -561,7 +561,7 @@ describe('class_static_block', () => {
 describe('computed_property_name', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.computedPropertyName();
-    expect(node.kind).toBe('computed_property_name');
+    expect(node.type).toBe('computed_property_name');
   });
   it('renders to non-empty string', () => {
     const node = ir.computedPropertyName();
@@ -584,7 +584,7 @@ describe('computed_property_name', () => {
 describe('conditional_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.conditionalType({ left: { kind: 'type', fields: {} } as any, right: { kind: 'type', fields: {} } as any, consequence: { kind: 'type', fields: {} } as any, alternative: { kind: 'type', fields: {} } as any });
-    expect(node.kind).toBe('conditional_type');
+    expect(node.type).toBe('conditional_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.conditionalType({ left: { kind: 'type', fields: {} } as any, right: { kind: 'type', fields: {} } as any, consequence: { kind: 'type', fields: {} } as any, alternative: { kind: 'type', fields: {} } as any });
@@ -608,7 +608,7 @@ describe('conditional_type', () => {
 describe('constraint', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.constraint();
-    expect(node.kind).toBe('constraint');
+    expect(node.type).toBe('constraint');
   });
   it('renders to non-empty string', () => {
     const node = ir.constraint();
@@ -625,7 +625,7 @@ describe('constraint', () => {
 describe('construct_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.constructSignature({ kind: 'formal_parameters', fields: {} } as any);
-    expect(node.kind).toBe('construct_signature');
+    expect(node.type).toBe('construct_signature');
   });
   it('renders to non-empty string', () => {
     const node = ir.constructSignature({ kind: 'formal_parameters', fields: {} } as any);
@@ -647,7 +647,7 @@ describe('construct_signature', () => {
 describe('constructor_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.constructorType({ parameters: { kind: 'formal_parameters', fields: {} } as any, type: { kind: 'type', fields: {} } as any });
-    expect(node.kind).toBe('constructor_type');
+    expect(node.type).toBe('constructor_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.constructorType({ parameters: { kind: 'formal_parameters', fields: {} } as any, type: { kind: 'type', fields: {} } as any });
@@ -670,7 +670,7 @@ describe('constructor_type', () => {
 describe('continue_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.continueStatement();
-    expect(node.kind).toBe('continue_statement');
+    expect(node.type).toBe('continue_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.continueStatement();
@@ -692,7 +692,7 @@ describe('continue_statement', () => {
 describe('decorator', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.decorator();
-    expect(node.kind).toBe('decorator');
+    expect(node.type).toBe('decorator');
   });
   it('renders to non-empty string', () => {
     const node = ir.decorator();
@@ -714,7 +714,7 @@ describe('decorator', () => {
 describe('default_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.defaultType();
-    expect(node.kind).toBe('default_type');
+    expect(node.type).toBe('default_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.defaultType();
@@ -736,7 +736,7 @@ describe('default_type', () => {
 describe('do_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.doStatement({ body: { kind: 'statement', fields: {} } as any, condition: { kind: 'parenthesized_expression', fields: {} } as any });
-    expect(node.kind).toBe('do_statement');
+    expect(node.type).toBe('do_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.doStatement({ body: { kind: 'statement', fields: {} } as any, condition: { kind: 'parenthesized_expression', fields: {} } as any });
@@ -759,7 +759,7 @@ describe('do_statement', () => {
 describe('else_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.elseClause();
-    expect(node.kind).toBe('else_clause');
+    expect(node.type).toBe('else_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.elseClause();
@@ -781,7 +781,7 @@ describe('else_clause', () => {
 describe('enum_assignment', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.enumAssignment({ name: { kind: 'property_identifier', fields: {} } as any, value: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('enum_assignment');
+    expect(node.type).toBe('enum_assignment');
   });
   it('renders to non-empty string', () => {
     const node = ir.enumAssignment({ name: { kind: 'property_identifier', fields: {} } as any, value: { kind: 'expression', fields: {} } as any });
@@ -798,7 +798,7 @@ describe('enum_assignment', () => {
 describe('enum_body', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.enumBody();
-    expect(node.kind).toBe('enum_body');
+    expect(node.type).toBe('enum_body');
   });
   it('renders to non-empty string', () => {
     const node = ir.enumBody();
@@ -821,7 +821,7 @@ describe('enum_body', () => {
 describe('enum_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.enumDeclaration({ name: ir.identifier('test_name'), body: { kind: 'enum_body', fields: {} } as any });
-    expect(node.kind).toBe('enum_declaration');
+    expect(node.type).toBe('enum_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.enumDeclaration({ name: ir.identifier('test_name'), body: { kind: 'enum_body', fields: {} } as any });
@@ -843,7 +843,7 @@ describe('enum_declaration', () => {
 describe('export_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.exportClause();
-    expect(node.kind).toBe('export_clause');
+    expect(node.type).toBe('export_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.exportClause();
@@ -866,7 +866,7 @@ describe('export_clause', () => {
 describe('export_specifier', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.exportSpecifier(ir.identifier('test_name'));
-    expect(node.kind).toBe('export_specifier');
+    expect(node.type).toBe('export_specifier');
   });
   it('renders to non-empty string', () => {
     const node = ir.exportSpecifier(ir.identifier('test_name'));
@@ -883,7 +883,7 @@ describe('export_specifier', () => {
 describe('export_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.exportStatement();
-    expect(node.kind).toBe('export_statement');
+    expect(node.type).toBe('export_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.exportStatement();
@@ -905,7 +905,7 @@ describe('export_statement', () => {
 describe('expression_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.expressionStatement();
-    expect(node.kind).toBe('expression_statement');
+    expect(node.type).toBe('expression_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.expressionStatement();
@@ -922,7 +922,7 @@ describe('expression_statement', () => {
 describe('extends_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.extendsClause([]);
-    expect(node.kind).toBe('extends_clause');
+    expect(node.type).toBe('extends_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.extendsClause([]);
@@ -944,7 +944,7 @@ describe('extends_clause', () => {
 describe('extends_type_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.extendsTypeClause(ir.identifier('test_type'));
-    expect(node.kind).toBe('extends_type_clause');
+    expect(node.type).toBe('extends_type_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.extendsTypeClause(ir.identifier('test_type'));
@@ -966,7 +966,7 @@ describe('extends_type_clause', () => {
 describe('finally_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.finallyClause({ kind: 'statement_block', fields: {} } as any);
-    expect(node.kind).toBe('finally_clause');
+    expect(node.type).toBe('finally_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.finallyClause({ kind: 'statement_block', fields: {} } as any);
@@ -988,7 +988,7 @@ describe('finally_clause', () => {
 describe('flow_maybe_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.flowMaybeType();
-    expect(node.kind).toBe('flow_maybe_type');
+    expect(node.type).toBe('flow_maybe_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.flowMaybeType();
@@ -1010,7 +1010,7 @@ describe('flow_maybe_type', () => {
 describe('for_in_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.forInStatement({ left: ir.identifier('test_left'), operator: { kind: 'unknown', fields: {} } as any, right: { kind: 'expression', fields: {} } as any, body: { kind: 'statement', fields: {} } as any });
-    expect(node.kind).toBe('for_in_statement');
+    expect(node.type).toBe('for_in_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.forInStatement({ left: ir.identifier('test_left'), operator: { kind: 'unknown', fields: {} } as any, right: { kind: 'expression', fields: {} } as any, body: { kind: 'statement', fields: {} } as any });
@@ -1032,7 +1032,7 @@ describe('for_in_statement', () => {
 describe('for_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.forStatement({ initializer: { kind: 'expression', fields: {} } as any, condition: [], body: { kind: 'statement', fields: {} } as any });
-    expect(node.kind).toBe('for_statement');
+    expect(node.type).toBe('for_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.forStatement({ initializer: { kind: 'expression', fields: {} } as any, condition: [], body: { kind: 'statement', fields: {} } as any });
@@ -1056,7 +1056,7 @@ describe('for_statement', () => {
 describe('formal_parameters', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.formalParameters();
-    expect(node.kind).toBe('formal_parameters');
+    expect(node.type).toBe('formal_parameters');
   });
   it('renders to non-empty string', () => {
     const node = ir.formalParameters();
@@ -1079,7 +1079,7 @@ describe('formal_parameters', () => {
 describe('function_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.functionDeclaration({ name: ir.identifier('test_name'), parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
-    expect(node.kind).toBe('function_declaration');
+    expect(node.type).toBe('function_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.functionDeclaration({ name: ir.identifier('test_name'), parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
@@ -1101,7 +1101,7 @@ describe('function_declaration', () => {
 describe('function_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.functionExpression({ parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
-    expect(node.kind).toBe('function_expression');
+    expect(node.type).toBe('function_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.functionExpression({ parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
@@ -1123,7 +1123,7 @@ describe('function_expression', () => {
 describe('function_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.functionSignature({ name: ir.identifier('test_name'), parameters: { kind: 'formal_parameters', fields: {} } as any });
-    expect(node.kind).toBe('function_signature');
+    expect(node.type).toBe('function_signature');
   });
   it('renders to non-empty string', () => {
     const node = ir.functionSignature({ name: ir.identifier('test_name'), parameters: { kind: 'formal_parameters', fields: {} } as any });
@@ -1145,7 +1145,7 @@ describe('function_signature', () => {
 describe('function_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.functionType({ parameters: { kind: 'formal_parameters', fields: {} } as any, return_type: { kind: 'type', fields: {} } as any });
-    expect(node.kind).toBe('function_type');
+    expect(node.type).toBe('function_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.functionType({ parameters: { kind: 'formal_parameters', fields: {} } as any, return_type: { kind: 'type', fields: {} } as any });
@@ -1167,7 +1167,7 @@ describe('function_type', () => {
 describe('generator_function', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.generatorFunction({ parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
-    expect(node.kind).toBe('generator_function');
+    expect(node.type).toBe('generator_function');
   });
   it('renders to non-empty string', () => {
     const node = ir.generatorFunction({ parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
@@ -1190,7 +1190,7 @@ describe('generator_function', () => {
 describe('generator_function_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.generatorFunctionDeclaration({ name: ir.identifier('test_name'), parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
-    expect(node.kind).toBe('generator_function_declaration');
+    expect(node.type).toBe('generator_function_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.generatorFunctionDeclaration({ name: ir.identifier('test_name'), parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
@@ -1213,7 +1213,7 @@ describe('generator_function_declaration', () => {
 describe('generic_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.genericType({ name: ir.identifier('test_name'), type_arguments: { kind: 'type_arguments', fields: {} } as any });
-    expect(node.kind).toBe('generic_type');
+    expect(node.type).toBe('generic_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.genericType({ name: ir.identifier('test_name'), type_arguments: { kind: 'type_arguments', fields: {} } as any });
@@ -1230,7 +1230,7 @@ describe('generic_type', () => {
 describe('if_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.ifStatement({ condition: { kind: 'parenthesized_expression', fields: {} } as any, consequence: { kind: 'statement', fields: {} } as any });
-    expect(node.kind).toBe('if_statement');
+    expect(node.type).toBe('if_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.ifStatement({ condition: { kind: 'parenthesized_expression', fields: {} } as any, consequence: { kind: 'statement', fields: {} } as any });
@@ -1252,7 +1252,7 @@ describe('if_statement', () => {
 describe('implements_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.implementsClause();
-    expect(node.kind).toBe('implements_clause');
+    expect(node.type).toBe('implements_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.implementsClause();
@@ -1274,7 +1274,7 @@ describe('implements_clause', () => {
 describe('import_alias', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.importAlias();
-    expect(node.kind).toBe('import_alias');
+    expect(node.type).toBe('import_alias');
   });
   it('renders to non-empty string', () => {
     const node = ir.importAlias();
@@ -1297,7 +1297,7 @@ describe('import_alias', () => {
 describe('import_attribute', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.importAttribute();
-    expect(node.kind).toBe('import_attribute');
+    expect(node.type).toBe('import_attribute');
   });
   it('renders to non-empty string', () => {
     const node = ir.importAttribute();
@@ -1314,7 +1314,7 @@ describe('import_attribute', () => {
 describe('import_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.importClause();
-    expect(node.kind).toBe('import_clause');
+    expect(node.type).toBe('import_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.importClause();
@@ -1331,7 +1331,7 @@ describe('import_clause', () => {
 describe('import_require_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.importRequireClause({ kind: 'string', fields: {} } as any);
-    expect(node.kind).toBe('import_require_clause');
+    expect(node.type).toBe('import_require_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.importRequireClause({ kind: 'string', fields: {} } as any);
@@ -1356,7 +1356,7 @@ describe('import_require_clause', () => {
 describe('import_specifier', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.importSpecifier(ir.identifier('test_name'));
-    expect(node.kind).toBe('import_specifier');
+    expect(node.type).toBe('import_specifier');
   });
   it('renders to non-empty string', () => {
     const node = ir.importSpecifier(ir.identifier('test_name'));
@@ -1373,7 +1373,7 @@ describe('import_specifier', () => {
 describe('import_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.importStatement();
-    expect(node.kind).toBe('import_statement');
+    expect(node.type).toBe('import_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.importStatement();
@@ -1395,7 +1395,7 @@ describe('import_statement', () => {
 describe('index_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.indexSignature({ kind: 'type_annotation', fields: {} } as any);
-    expect(node.kind).toBe('index_signature');
+    expect(node.type).toBe('index_signature');
   });
   it('renders to non-empty string', () => {
     const node = ir.indexSignature({ kind: 'type_annotation', fields: {} } as any);
@@ -1418,7 +1418,7 @@ describe('index_signature', () => {
 describe('index_type_query', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.indexTypeQuery();
-    expect(node.kind).toBe('index_type_query');
+    expect(node.type).toBe('index_type_query');
   });
   it('renders to non-empty string', () => {
     const node = ir.indexTypeQuery();
@@ -1440,7 +1440,7 @@ describe('index_type_query', () => {
 describe('infer_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.inferType();
-    expect(node.kind).toBe('infer_type');
+    expect(node.type).toBe('infer_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.inferType();
@@ -1462,7 +1462,7 @@ describe('infer_type', () => {
 describe('instantiation_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.instantiationExpression({ kind: 'type_arguments', fields: {} } as any);
-    expect(node.kind).toBe('instantiation_expression');
+    expect(node.type).toBe('instantiation_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.instantiationExpression({ kind: 'type_arguments', fields: {} } as any);
@@ -1479,7 +1479,7 @@ describe('instantiation_expression', () => {
 describe('interface_body', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.interfaceBody();
-    expect(node.kind).toBe('interface_body');
+    expect(node.type).toBe('interface_body');
   });
   it('renders to non-empty string', () => {
     const node = ir.interfaceBody();
@@ -1496,7 +1496,7 @@ describe('interface_body', () => {
 describe('interface_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.interfaceDeclaration({ name: ir.identifier('test_name'), body: { kind: 'interface_body', fields: {} } as any });
-    expect(node.kind).toBe('interface_declaration');
+    expect(node.type).toBe('interface_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.interfaceDeclaration({ name: ir.identifier('test_name'), body: { kind: 'interface_body', fields: {} } as any });
@@ -1518,7 +1518,7 @@ describe('interface_declaration', () => {
 describe('internal_module', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.internalModule(ir.identifier('test_name'));
-    expect(node.kind).toBe('internal_module');
+    expect(node.type).toBe('internal_module');
   });
   it('renders to non-empty string', () => {
     const node = ir.internalModule(ir.identifier('test_name'));
@@ -1540,7 +1540,7 @@ describe('internal_module', () => {
 describe('intersection_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.intersectionType();
-    expect(node.kind).toBe('intersection_type');
+    expect(node.type).toBe('intersection_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.intersectionType();
@@ -1562,7 +1562,7 @@ describe('intersection_type', () => {
 describe('labeled_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.labeledStatement({ body: { kind: 'statement', fields: {} } as any, label: { kind: 'statement_identifier', fields: {} } as any });
-    expect(node.kind).toBe('labeled_statement');
+    expect(node.type).toBe('labeled_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.labeledStatement({ body: { kind: 'statement', fields: {} } as any, label: { kind: 'statement_identifier', fields: {} } as any });
@@ -1579,7 +1579,7 @@ describe('labeled_statement', () => {
 describe('lexical_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.lexicalDeclaration({ kind: 'unknown', fields: {} } as any);
-    expect(node.kind).toBe('lexical_declaration');
+    expect(node.type).toBe('lexical_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.lexicalDeclaration({ kind: 'unknown', fields: {} } as any);
@@ -1596,7 +1596,7 @@ describe('lexical_declaration', () => {
 describe('literal_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.literalType();
-    expect(node.kind).toBe('literal_type');
+    expect(node.type).toBe('literal_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.literalType();
@@ -1613,7 +1613,7 @@ describe('literal_type', () => {
 describe('lookup_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.lookupType();
-    expect(node.kind).toBe('lookup_type');
+    expect(node.type).toBe('lookup_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.lookupType();
@@ -1636,7 +1636,7 @@ describe('lookup_type', () => {
 describe('mapped_type_clause', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.mappedTypeClause({ name: ir.identifier('test_name'), type: { kind: 'type', fields: {} } as any });
-    expect(node.kind).toBe('mapped_type_clause');
+    expect(node.type).toBe('mapped_type_clause');
   });
   it('renders to non-empty string', () => {
     const node = ir.mappedTypeClause({ name: ir.identifier('test_name'), type: { kind: 'type', fields: {} } as any });
@@ -1658,7 +1658,7 @@ describe('mapped_type_clause', () => {
 describe('member_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.memberExpression({ object: { kind: 'expression', fields: {} } as any, property: { kind: 'private_property_identifier', fields: {} } as any });
-    expect(node.kind).toBe('member_expression');
+    expect(node.type).toBe('member_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.memberExpression({ object: { kind: 'expression', fields: {} } as any, property: { kind: 'private_property_identifier', fields: {} } as any });
@@ -1675,7 +1675,7 @@ describe('member_expression', () => {
 describe('method_definition', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.methodDefinition({ name: { kind: 'property_identifier', fields: {} } as any, parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
-    expect(node.kind).toBe('method_definition');
+    expect(node.type).toBe('method_definition');
   });
   it('renders to non-empty string', () => {
     const node = ir.methodDefinition({ name: { kind: 'property_identifier', fields: {} } as any, parameters: { kind: 'formal_parameters', fields: {} } as any, body: { kind: 'statement_block', fields: {} } as any });
@@ -1692,7 +1692,7 @@ describe('method_definition', () => {
 describe('method_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.methodSignature({ name: { kind: 'property_identifier', fields: {} } as any, parameters: { kind: 'formal_parameters', fields: {} } as any });
-    expect(node.kind).toBe('method_signature');
+    expect(node.type).toBe('method_signature');
   });
   it('renders to non-empty string', () => {
     const node = ir.methodSignature({ name: { kind: 'property_identifier', fields: {} } as any, parameters: { kind: 'formal_parameters', fields: {} } as any });
@@ -1709,7 +1709,7 @@ describe('method_signature', () => {
 describe('module', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.module(ir.identifier('test_name'));
-    expect(node.kind).toBe('module');
+    expect(node.type).toBe('module');
   });
   it('renders to non-empty string', () => {
     const node = ir.module(ir.identifier('test_name'));
@@ -1731,7 +1731,7 @@ describe('module', () => {
 describe('named_imports', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.namedImports();
-    expect(node.kind).toBe('named_imports');
+    expect(node.type).toBe('named_imports');
   });
   it('renders to non-empty string', () => {
     const node = ir.namedImports();
@@ -1754,7 +1754,7 @@ describe('named_imports', () => {
 describe('namespace_export', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.namespaceExport();
-    expect(node.kind).toBe('namespace_export');
+    expect(node.type).toBe('namespace_export');
   });
   it('renders to non-empty string', () => {
     const node = ir.namespaceExport();
@@ -1777,7 +1777,7 @@ describe('namespace_export', () => {
 describe('namespace_import', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.namespaceImport();
-    expect(node.kind).toBe('namespace_import');
+    expect(node.type).toBe('namespace_import');
   });
   it('renders to non-empty string', () => {
     const node = ir.namespaceImport();
@@ -1800,7 +1800,7 @@ describe('namespace_import', () => {
 describe('nested_identifier', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.nestedIdentifier({ object: ir.identifier('test_object'), property: { kind: 'property_identifier', fields: {} } as any });
-    expect(node.kind).toBe('nested_identifier');
+    expect(node.type).toBe('nested_identifier');
   });
   it('renders to non-empty string', () => {
     const node = ir.nestedIdentifier({ object: ir.identifier('test_object'), property: { kind: 'property_identifier', fields: {} } as any });
@@ -1822,7 +1822,7 @@ describe('nested_identifier', () => {
 describe('nested_type_identifier', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.nestedTypeIdentifier({ module: ir.identifier('test_module'), name: ir.identifier('test_name') });
-    expect(node.kind).toBe('nested_type_identifier');
+    expect(node.type).toBe('nested_type_identifier');
   });
   it('renders to non-empty string', () => {
     const node = ir.nestedTypeIdentifier({ module: ir.identifier('test_module'), name: ir.identifier('test_name') });
@@ -1844,7 +1844,7 @@ describe('nested_type_identifier', () => {
 describe('new_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.newExpression({ kind: 'primary_expression', fields: {} } as any);
-    expect(node.kind).toBe('new_expression');
+    expect(node.type).toBe('new_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.newExpression({ kind: 'primary_expression', fields: {} } as any);
@@ -1866,7 +1866,7 @@ describe('new_expression', () => {
 describe('non_null_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.nonNullExpression();
-    expect(node.kind).toBe('non_null_expression');
+    expect(node.type).toBe('non_null_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.nonNullExpression();
@@ -1888,7 +1888,7 @@ describe('non_null_expression', () => {
 describe('object', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.object();
-    expect(node.kind).toBe('object');
+    expect(node.type).toBe('object');
   });
   it('renders to non-empty string', () => {
     const node = ir.object();
@@ -1911,7 +1911,7 @@ describe('object', () => {
 describe('object_assignment_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.objectAssignmentPattern({ left: { kind: 'object_pattern', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('object_assignment_pattern');
+    expect(node.type).toBe('object_assignment_pattern');
   });
   it('renders to non-empty string', () => {
     const node = ir.objectAssignmentPattern({ left: { kind: 'object_pattern', fields: {} } as any, right: { kind: 'expression', fields: {} } as any });
@@ -1933,7 +1933,7 @@ describe('object_assignment_pattern', () => {
 describe('object_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.objectPattern();
-    expect(node.kind).toBe('object_pattern');
+    expect(node.type).toBe('object_pattern');
   });
   it('renders to non-empty string', () => {
     const node = ir.objectPattern();
@@ -1956,7 +1956,7 @@ describe('object_pattern', () => {
 describe('object_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.objectType();
-    expect(node.kind).toBe('object_type');
+    expect(node.type).toBe('object_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.objectType();
@@ -1973,7 +1973,7 @@ describe('object_type', () => {
 describe('omitting_type_annotation', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.omittingTypeAnnotation();
-    expect(node.kind).toBe('omitting_type_annotation');
+    expect(node.type).toBe('omitting_type_annotation');
   });
   it('renders to non-empty string', () => {
     const node = ir.omittingTypeAnnotation();
@@ -1995,7 +1995,7 @@ describe('omitting_type_annotation', () => {
 describe('opting_type_annotation', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.optingTypeAnnotation();
-    expect(node.kind).toBe('opting_type_annotation');
+    expect(node.type).toBe('opting_type_annotation');
   });
   it('renders to non-empty string', () => {
     const node = ir.optingTypeAnnotation();
@@ -2017,7 +2017,7 @@ describe('opting_type_annotation', () => {
 describe('optional_parameter', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.optionalParameter();
-    expect(node.kind).toBe('optional_parameter');
+    expect(node.type).toBe('optional_parameter');
   });
   it('renders to non-empty string', () => {
     const node = ir.optionalParameter();
@@ -2039,7 +2039,7 @@ describe('optional_parameter', () => {
 describe('optional_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.optionalType();
-    expect(node.kind).toBe('optional_type');
+    expect(node.type).toBe('optional_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.optionalType();
@@ -2061,7 +2061,7 @@ describe('optional_type', () => {
 describe('pair', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.pair({ key: { kind: 'property_identifier', fields: {} } as any, value: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('pair');
+    expect(node.type).toBe('pair');
   });
   it('renders to non-empty string', () => {
     const node = ir.pair({ key: { kind: 'property_identifier', fields: {} } as any, value: { kind: 'expression', fields: {} } as any });
@@ -2083,7 +2083,7 @@ describe('pair', () => {
 describe('pair_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.pairPattern({ key: { kind: 'property_identifier', fields: {} } as any, value: { kind: 'pattern', fields: {} } as any });
-    expect(node.kind).toBe('pair_pattern');
+    expect(node.type).toBe('pair_pattern');
   });
   it('renders to non-empty string', () => {
     const node = ir.pairPattern({ key: { kind: 'property_identifier', fields: {} } as any, value: { kind: 'pattern', fields: {} } as any });
@@ -2105,7 +2105,7 @@ describe('pair_pattern', () => {
 describe('parenthesized_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.parenthesizedExpression();
-    expect(node.kind).toBe('parenthesized_expression');
+    expect(node.type).toBe('parenthesized_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.parenthesizedExpression();
@@ -2128,7 +2128,7 @@ describe('parenthesized_expression', () => {
 describe('parenthesized_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.parenthesizedType();
-    expect(node.kind).toBe('parenthesized_type');
+    expect(node.type).toBe('parenthesized_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.parenthesizedType();
@@ -2151,7 +2151,7 @@ describe('parenthesized_type', () => {
 describe('program', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.program();
-    expect(node.kind).toBe('program');
+    expect(node.type).toBe('program');
   });
   it('renders to non-empty string', () => {
     const node = ir.program();
@@ -2168,7 +2168,7 @@ describe('program', () => {
 describe('property_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.propertySignature({ kind: 'property_identifier', fields: {} } as any);
-    expect(node.kind).toBe('property_signature');
+    expect(node.type).toBe('property_signature');
   });
   it('renders to non-empty string', () => {
     const node = ir.propertySignature({ kind: 'property_identifier', fields: {} } as any);
@@ -2185,7 +2185,7 @@ describe('property_signature', () => {
 describe('public_field_definition', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.publicFieldDefinition({ kind: 'property_identifier', fields: {} } as any);
-    expect(node.kind).toBe('public_field_definition');
+    expect(node.type).toBe('public_field_definition');
   });
   it('renders to non-empty string', () => {
     const node = ir.publicFieldDefinition({ kind: 'property_identifier', fields: {} } as any);
@@ -2202,7 +2202,7 @@ describe('public_field_definition', () => {
 describe('readonly_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.readonlyType();
-    expect(node.kind).toBe('readonly_type');
+    expect(node.type).toBe('readonly_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.readonlyType();
@@ -2224,7 +2224,7 @@ describe('readonly_type', () => {
 describe('regex', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.regex({ kind: 'regex_pattern', fields: {} } as any);
-    expect(node.kind).toBe('regex');
+    expect(node.type).toBe('regex');
   });
   it('renders to non-empty string', () => {
     const node = ir.regex({ kind: 'regex_pattern', fields: {} } as any);
@@ -2247,7 +2247,7 @@ describe('regex', () => {
 describe('required_parameter', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.requiredParameter();
-    expect(node.kind).toBe('required_parameter');
+    expect(node.type).toBe('required_parameter');
   });
   it('renders to non-empty string', () => {
     const node = ir.requiredParameter();
@@ -2264,7 +2264,7 @@ describe('required_parameter', () => {
 describe('rest_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.restPattern();
-    expect(node.kind).toBe('rest_pattern');
+    expect(node.type).toBe('rest_pattern');
   });
   it('renders to non-empty string', () => {
     const node = ir.restPattern();
@@ -2286,7 +2286,7 @@ describe('rest_pattern', () => {
 describe('rest_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.restType();
-    expect(node.kind).toBe('rest_type');
+    expect(node.type).toBe('rest_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.restType();
@@ -2308,7 +2308,7 @@ describe('rest_type', () => {
 describe('return_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.returnStatement();
-    expect(node.kind).toBe('return_statement');
+    expect(node.type).toBe('return_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.returnStatement();
@@ -2330,7 +2330,7 @@ describe('return_statement', () => {
 describe('satisfies_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.satisfiesExpression();
-    expect(node.kind).toBe('satisfies_expression');
+    expect(node.type).toBe('satisfies_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.satisfiesExpression();
@@ -2352,7 +2352,7 @@ describe('satisfies_expression', () => {
 describe('sequence_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.sequenceExpression();
-    expect(node.kind).toBe('sequence_expression');
+    expect(node.type).toBe('sequence_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.sequenceExpression();
@@ -2369,7 +2369,7 @@ describe('sequence_expression', () => {
 describe('spread_element', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.spreadElement();
-    expect(node.kind).toBe('spread_element');
+    expect(node.type).toBe('spread_element');
   });
   it('renders to non-empty string', () => {
     const node = ir.spreadElement();
@@ -2391,7 +2391,7 @@ describe('spread_element', () => {
 describe('statement_block', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.statementBlock();
-    expect(node.kind).toBe('statement_block');
+    expect(node.type).toBe('statement_block');
   });
   it('renders to non-empty string', () => {
     const node = ir.statementBlock();
@@ -2414,7 +2414,7 @@ describe('statement_block', () => {
 describe('string', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.string();
-    expect(node.kind).toBe('string');
+    expect(node.type).toBe('string');
   });
   it('renders to non-empty string', () => {
     const node = ir.string();
@@ -2431,7 +2431,7 @@ describe('string', () => {
 describe('subscript_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.subscriptExpression({ object: { kind: 'expression', fields: {} } as any, index: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('subscript_expression');
+    expect(node.type).toBe('subscript_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.subscriptExpression({ object: { kind: 'expression', fields: {} } as any, index: { kind: 'expression', fields: {} } as any });
@@ -2454,7 +2454,7 @@ describe('subscript_expression', () => {
 describe('switch_body', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.switchBody();
-    expect(node.kind).toBe('switch_body');
+    expect(node.type).toBe('switch_body');
   });
   it('renders to non-empty string', () => {
     const node = ir.switchBody();
@@ -2477,7 +2477,7 @@ describe('switch_body', () => {
 describe('switch_case', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.switchCase({ kind: 'expression', fields: {} } as any);
-    expect(node.kind).toBe('switch_case');
+    expect(node.type).toBe('switch_case');
   });
   it('renders to non-empty string', () => {
     const node = ir.switchCase({ kind: 'expression', fields: {} } as any);
@@ -2500,7 +2500,7 @@ describe('switch_case', () => {
 describe('switch_default', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.switchDefault();
-    expect(node.kind).toBe('switch_default');
+    expect(node.type).toBe('switch_default');
   });
   it('renders to non-empty string', () => {
     const node = ir.switchDefault();
@@ -2523,7 +2523,7 @@ describe('switch_default', () => {
 describe('switch_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.switchStatement({ value: { kind: 'parenthesized_expression', fields: {} } as any, body: { kind: 'switch_body', fields: {} } as any });
-    expect(node.kind).toBe('switch_statement');
+    expect(node.type).toBe('switch_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.switchStatement({ value: { kind: 'parenthesized_expression', fields: {} } as any, body: { kind: 'switch_body', fields: {} } as any });
@@ -2545,7 +2545,7 @@ describe('switch_statement', () => {
 describe('template_literal_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.templateLiteralType();
-    expect(node.kind).toBe('template_literal_type');
+    expect(node.type).toBe('template_literal_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.templateLiteralType();
@@ -2568,7 +2568,7 @@ describe('template_literal_type', () => {
 describe('template_string', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.templateString();
-    expect(node.kind).toBe('template_string');
+    expect(node.type).toBe('template_string');
   });
   it('renders to non-empty string', () => {
     const node = ir.templateString();
@@ -2591,7 +2591,7 @@ describe('template_string', () => {
 describe('template_substitution', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.templateSubstitution();
-    expect(node.kind).toBe('template_substitution');
+    expect(node.type).toBe('template_substitution');
   });
   it('renders to non-empty string', () => {
     const node = ir.templateSubstitution();
@@ -2614,7 +2614,7 @@ describe('template_substitution', () => {
 describe('template_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.templateType();
-    expect(node.kind).toBe('template_type');
+    expect(node.type).toBe('template_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.templateType();
@@ -2637,7 +2637,7 @@ describe('template_type', () => {
 describe('ternary_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.ternaryExpression({ condition: { kind: 'expression', fields: {} } as any, consequence: { kind: 'expression', fields: {} } as any, alternative: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('ternary_expression');
+    expect(node.type).toBe('ternary_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.ternaryExpression({ condition: { kind: 'expression', fields: {} } as any, consequence: { kind: 'expression', fields: {} } as any, alternative: { kind: 'expression', fields: {} } as any });
@@ -2659,7 +2659,7 @@ describe('ternary_expression', () => {
 describe('throw_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.throwStatement();
-    expect(node.kind).toBe('throw_statement');
+    expect(node.type).toBe('throw_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.throwStatement();
@@ -2681,7 +2681,7 @@ describe('throw_statement', () => {
 describe('try_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.tryStatement({ kind: 'statement_block', fields: {} } as any);
-    expect(node.kind).toBe('try_statement');
+    expect(node.type).toBe('try_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.tryStatement({ kind: 'statement_block', fields: {} } as any);
@@ -2703,7 +2703,7 @@ describe('try_statement', () => {
 describe('tuple_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.tupleType();
-    expect(node.kind).toBe('tuple_type');
+    expect(node.type).toBe('tuple_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.tupleType();
@@ -2726,7 +2726,7 @@ describe('tuple_type', () => {
 describe('type_alias_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typeAliasDeclaration({ name: ir.identifier('test_name'), value: { kind: 'type', fields: {} } as any });
-    expect(node.kind).toBe('type_alias_declaration');
+    expect(node.type).toBe('type_alias_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.typeAliasDeclaration({ name: ir.identifier('test_name'), value: { kind: 'type', fields: {} } as any });
@@ -2749,7 +2749,7 @@ describe('type_alias_declaration', () => {
 describe('type_annotation', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typeAnnotation();
-    expect(node.kind).toBe('type_annotation');
+    expect(node.type).toBe('type_annotation');
   });
   it('renders to non-empty string', () => {
     const node = ir.typeAnnotation();
@@ -2771,7 +2771,7 @@ describe('type_annotation', () => {
 describe('type_arguments', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typeArguments();
-    expect(node.kind).toBe('type_arguments');
+    expect(node.type).toBe('type_arguments');
   });
   it('renders to non-empty string', () => {
     const node = ir.typeArguments();
@@ -2794,7 +2794,7 @@ describe('type_arguments', () => {
 describe('type_assertion', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typeAssertion();
-    expect(node.kind).toBe('type_assertion');
+    expect(node.type).toBe('type_assertion');
   });
   it('renders to non-empty string', () => {
     const node = ir.typeAssertion();
@@ -2811,7 +2811,7 @@ describe('type_assertion', () => {
 describe('type_parameter', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typeParameter(ir.identifier('test_name'));
-    expect(node.kind).toBe('type_parameter');
+    expect(node.type).toBe('type_parameter');
   });
   it('renders to non-empty string', () => {
     const node = ir.typeParameter(ir.identifier('test_name'));
@@ -2828,7 +2828,7 @@ describe('type_parameter', () => {
 describe('type_parameters', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typeParameters();
-    expect(node.kind).toBe('type_parameters');
+    expect(node.type).toBe('type_parameters');
   });
   it('renders to non-empty string', () => {
     const node = ir.typeParameters();
@@ -2851,7 +2851,7 @@ describe('type_parameters', () => {
 describe('type_predicate', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typePredicate({ name: ir.identifier('test_name'), type: { kind: 'type', fields: {} } as any });
-    expect(node.kind).toBe('type_predicate');
+    expect(node.type).toBe('type_predicate');
   });
   it('renders to non-empty string', () => {
     const node = ir.typePredicate({ name: ir.identifier('test_name'), type: { kind: 'type', fields: {} } as any });
@@ -2873,7 +2873,7 @@ describe('type_predicate', () => {
 describe('type_predicate_annotation', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typePredicateAnnotation();
-    expect(node.kind).toBe('type_predicate_annotation');
+    expect(node.type).toBe('type_predicate_annotation');
   });
   it('renders to non-empty string', () => {
     const node = ir.typePredicateAnnotation();
@@ -2895,7 +2895,7 @@ describe('type_predicate_annotation', () => {
 describe('type_query', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.typeQuery();
-    expect(node.kind).toBe('type_query');
+    expect(node.type).toBe('type_query');
   });
   it('renders to non-empty string', () => {
     const node = ir.typeQuery();
@@ -2917,7 +2917,7 @@ describe('type_query', () => {
 describe('unary_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.unaryExpression({ operator: { kind: 'unknown', fields: {} } as any, argument: { kind: 'expression', fields: {} } as any });
-    expect(node.kind).toBe('unary_expression');
+    expect(node.type).toBe('unary_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.unaryExpression({ operator: { kind: 'unknown', fields: {} } as any, argument: { kind: 'expression', fields: {} } as any });
@@ -2934,7 +2934,7 @@ describe('unary_expression', () => {
 describe('union_type', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.unionType();
-    expect(node.kind).toBe('union_type');
+    expect(node.type).toBe('union_type');
   });
   it('renders to non-empty string', () => {
     const node = ir.unionType();
@@ -2956,7 +2956,7 @@ describe('union_type', () => {
 describe('update_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.updateExpression({ argument: { kind: 'expression', fields: {} } as any, operator: { kind: 'unknown', fields: {} } as any });
-    expect(node.kind).toBe('update_expression');
+    expect(node.type).toBe('update_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.updateExpression({ argument: { kind: 'expression', fields: {} } as any, operator: { kind: 'unknown', fields: {} } as any });
@@ -2973,7 +2973,7 @@ describe('update_expression', () => {
 describe('variable_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.variableDeclaration();
-    expect(node.kind).toBe('variable_declaration');
+    expect(node.type).toBe('variable_declaration');
   });
   it('renders to non-empty string', () => {
     const node = ir.variableDeclaration();
@@ -2995,7 +2995,7 @@ describe('variable_declaration', () => {
 describe('variable_declarator', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.variableDeclarator(ir.identifier('test_name'));
-    expect(node.kind).toBe('variable_declarator');
+    expect(node.type).toBe('variable_declarator');
   });
   it('renders to non-empty string', () => {
     const node = ir.variableDeclarator(ir.identifier('test_name'));
@@ -3012,7 +3012,7 @@ describe('variable_declarator', () => {
 describe('while_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.whileStatement({ condition: { kind: 'parenthesized_expression', fields: {} } as any, body: { kind: 'statement', fields: {} } as any });
-    expect(node.kind).toBe('while_statement');
+    expect(node.type).toBe('while_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.whileStatement({ condition: { kind: 'parenthesized_expression', fields: {} } as any, body: { kind: 'statement', fields: {} } as any });
@@ -3034,7 +3034,7 @@ describe('while_statement', () => {
 describe('with_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.withStatement({ object: { kind: 'parenthesized_expression', fields: {} } as any, body: { kind: 'statement', fields: {} } as any });
-    expect(node.kind).toBe('with_statement');
+    expect(node.type).toBe('with_statement');
   });
   it('renders to non-empty string', () => {
     const node = ir.withStatement({ object: { kind: 'parenthesized_expression', fields: {} } as any, body: { kind: 'statement', fields: {} } as any });
@@ -3056,7 +3056,7 @@ describe('with_statement', () => {
 describe('yield_expression', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.yieldExpression();
-    expect(node.kind).toBe('yield_expression');
+    expect(node.type).toBe('yield_expression');
   });
   it('renders to non-empty string', () => {
     const node = ir.yieldExpression();
@@ -3078,157 +3078,157 @@ describe('yield_expression', () => {
 describe('terminal factories', () => {
   it('empty_statement produces fixed text', () => {
     const node = ir.emptyStatement();
-    expect(node.kind).toBe('empty_statement');
+    expect(node.type).toBe('empty_statement');
     expect(node.text).toBe(';');
   });
   it('existential_type produces fixed text', () => {
     const node = ir.existentialType();
-    expect(node.kind).toBe('existential_type');
+    expect(node.type).toBe('existential_type');
     expect(node.text).toBe('*');
   });
   it('import produces fixed text', () => {
     const node = ir.import();
-    expect(node.kind).toBe('import');
+    expect(node.type).toBe('import');
     expect(node.text).toBe('import');
   });
   it('optional_chain produces fixed text', () => {
     const node = ir.optionalChain();
-    expect(node.kind).toBe('optional_chain');
+    expect(node.type).toBe('optional_chain');
     expect(node.text).toBe('?.');
   });
   it('override_modifier produces fixed text', () => {
     const node = ir.overrideModifier();
-    expect(node.kind).toBe('override_modifier');
+    expect(node.type).toBe('override_modifier');
     expect(node.text).toBe('override');
   });
   it('false produces fixed text', () => {
     const node = ir.false();
-    expect(node.kind).toBe('false');
+    expect(node.type).toBe('false');
     expect(node.text).toBe('false');
   });
   it('null produces fixed text', () => {
     const node = ir.null();
-    expect(node.kind).toBe('null');
+    expect(node.type).toBe('null');
     expect(node.text).toBe('null');
   });
   it('super produces fixed text', () => {
     const node = ir.super();
-    expect(node.kind).toBe('super');
+    expect(node.type).toBe('super');
     expect(node.text).toBe('super');
   });
   it('this produces fixed text', () => {
     const node = ir.this();
-    expect(node.kind).toBe('this');
+    expect(node.type).toBe('this');
     expect(node.text).toBe('this');
   });
   it('true produces fixed text', () => {
     const node = ir.true();
-    expect(node.kind).toBe('true');
+    expect(node.type).toBe('true');
     expect(node.text).toBe('true');
   });
   it('undefined produces fixed text', () => {
     const node = ir.undefined();
-    expect(node.kind).toBe('undefined');
+    expect(node.type).toBe('undefined');
     expect(node.text).toBe('undefined');
   });
   it('accessibility_modifier accepts text', () => {
     const node = ir.accessibilityModifier('private');
-    expect(node.kind).toBe('accessibility_modifier');
+    expect(node.type).toBe('accessibility_modifier');
     expect(node.text).toBe('private');
   });
   it('comment accepts text', () => {
     const node = ir.comment('test_value');
-    expect(node.kind).toBe('comment');
+    expect(node.type).toBe('comment');
     expect(node.text).toBe('test_value');
   });
   it('debugger_statement accepts text', () => {
     const node = ir.debuggerStatement('test_value');
-    expect(node.kind).toBe('debugger_statement');
+    expect(node.type).toBe('debugger_statement');
     expect(node.text).toBe('test_value');
   });
   it('escape_sequence accepts text', () => {
     const node = ir.escapeSequence('\\n');
-    expect(node.kind).toBe('escape_sequence');
+    expect(node.type).toBe('escape_sequence');
     expect(node.text).toBe('\\n');
   });
   it('hash_bang_line accepts text', () => {
     const node = ir.hashBangLine('test_value');
-    expect(node.kind).toBe('hash_bang_line');
+    expect(node.type).toBe('hash_bang_line');
     expect(node.text).toBe('test_value');
   });
   it('html_comment accepts text', () => {
     const node = ir.htmlComment('test_value');
-    expect(node.kind).toBe('html_comment');
+    expect(node.type).toBe('html_comment');
     expect(node.text).toBe('test_value');
   });
   it('identifier accepts text', () => {
     const node = ir.identifier('test_value');
-    expect(node.kind).toBe('identifier');
+    expect(node.type).toBe('identifier');
     expect(node.text).toBe('test_value');
   });
   it('meta_property accepts text', () => {
     const node = ir.metaProperty('test_value');
-    expect(node.kind).toBe('meta_property');
+    expect(node.type).toBe('meta_property');
     expect(node.text).toBe('test_value');
   });
   it('number accepts text', () => {
     const node = ir.number('test_value');
-    expect(node.kind).toBe('number');
+    expect(node.type).toBe('number');
     expect(node.text).toBe('test_value');
   });
   it('predefined_type accepts text', () => {
     const node = ir.predefinedType('any');
-    expect(node.kind).toBe('predefined_type');
+    expect(node.type).toBe('predefined_type');
     expect(node.text).toBe('any');
   });
   it('private_property_identifier accepts text', () => {
     const node = ir.privatePropertyIdentifier('test_value');
-    expect(node.kind).toBe('private_property_identifier');
+    expect(node.type).toBe('private_property_identifier');
     expect(node.text).toBe('test_value');
   });
   it('property_identifier accepts text', () => {
     const node = ir.propertyIdentifier('test_value');
-    expect(node.kind).toBe('property_identifier');
+    expect(node.type).toBe('property_identifier');
     expect(node.text).toBe('test_value');
   });
   it('regex_flags accepts text', () => {
     const node = ir.regexFlags('test_value');
-    expect(node.kind).toBe('regex_flags');
+    expect(node.type).toBe('regex_flags');
     expect(node.text).toBe('test_value');
   });
   it('regex_pattern accepts text', () => {
     const node = ir.regexPattern('test_value');
-    expect(node.kind).toBe('regex_pattern');
+    expect(node.type).toBe('regex_pattern');
     expect(node.text).toBe('test_value');
   });
   it('shorthand_property_identifier accepts text', () => {
     const node = ir.shorthandPropertyIdentifier('test_value');
-    expect(node.kind).toBe('shorthand_property_identifier');
+    expect(node.type).toBe('shorthand_property_identifier');
     expect(node.text).toBe('test_value');
   });
   it('shorthand_property_identifier_pattern accepts text', () => {
     const node = ir.shorthandPropertyIdentifierPattern('test_value');
-    expect(node.kind).toBe('shorthand_property_identifier_pattern');
+    expect(node.type).toBe('shorthand_property_identifier_pattern');
     expect(node.text).toBe('test_value');
   });
   it('statement_identifier accepts text', () => {
     const node = ir.statementIdentifier('test_value');
-    expect(node.kind).toBe('statement_identifier');
+    expect(node.type).toBe('statement_identifier');
     expect(node.text).toBe('test_value');
   });
   it('string_fragment accepts text', () => {
     const node = ir.stringFragment('test_value');
-    expect(node.kind).toBe('string_fragment');
+    expect(node.type).toBe('string_fragment');
     expect(node.text).toBe('test_value');
   });
   it('this_type accepts text', () => {
     const node = ir.thisType('test_value');
-    expect(node.kind).toBe('this_type');
+    expect(node.type).toBe('this_type');
     expect(node.text).toBe('test_value');
   });
   it('type_identifier accepts text', () => {
     const node = ir.typeIdentifier('test_value');
-    expect(node.kind).toBe('type_identifier');
+    expect(node.type).toBe('type_identifier');
     expect(node.text).toBe('test_value');
   });
 });
