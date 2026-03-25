@@ -157,6 +157,27 @@
 
 ---
 
+## Phase 9: `.from()` API — Ergonomic Entry Point & Tree-Shaking Split
+
+**Purpose**: Universal `.from()` API with client-side resolution, SgNode dispatch, and tree-shakeable module split
+
+- [x] T061 [US2] Implement `.from()` emitter in `packages/codegen/src/emitters/from.ts` — generates `from.ts` with inlined per-field resolution logic (no generic core resolver). Each field's resolution is codegen'd: string → leaf factory (identifier/primitive_type/type_identifier), number → integer_literal/float_literal, boolean → boolean_literal, array → wrapping branch, object with `kind` → `_resolveByKind` dispatch, object without `kind` → `_inferBranch` field-name scoring
+- [x] T062 [US2] Implement SgNode dispatch in `.from()` — duck-typing `typeof input.field === 'function'` detects AssignableNode, delegates to `.assign()`, wraps strict setters with ergonomic resolution (saves original setter, replaces with resolution wrapper)
+- [x] T063 [US2] Implement ergonomic setters for SgNode dispatch — wraps `.assign()` node's strict setters: `_orig_fieldName = base.setter; base.setter = (v) => _orig_fieldName(resolveExpr(v))` preserving lazy override mechanism
+- [x] T064 [US2] Strip `.from()` code from `packages/codegen/src/emitters/factories.ts` — removed `FromContext`/`FromFieldInfo`, resolution tables, `getFromContext()`, namespace merge, `resolveFromInput`/`resolveFieldValue` runtime imports. Factories now emit strict `NodeData<NarrowKind>` only (FR-016)
+- [x] T065 [US2] Rewrite `packages/codegen/src/emitters/ir-namespace.ts` — imports from both `factories.js` and `from.js`; branch factories use `Object.assign(factory, { from: fromFn })`; keyword/leaf factories unchanged
+- [x] T066 [US2] Update `packages/codegen/src/emitters/index-file.ts` — added `export * from './from.js';` for tree-shakeable `.from()` exports
+- [x] T067 [US2] Update `packages/codegen/src/index.ts` and CLI — added `emitFrom()` call, `from: string` in `GeneratedFiles`, CLI writes `from.ts`
+- [x] T068 [US2] Regenerate all grammar packages — `@sittir/rust`, `@sittir/typescript`, `@sittir/python` with new `from.ts`
+- [x] T069 [US2] Write `.from()` integration tests in `packages/tests/from.test.ts` — 13 tests: basic string/NodeData resolution, array wrapping, nested object resolution, operator resolution, number/boolean resolution, children resolution, render integration (6 tests), SgNode dispatch (2 tests)
+- [x] T070 [US2] Fix integer vs float dispatch — `Number.isInteger()` check when both `integer_literal` and `float_literal` are accepted field types
+- [x] T071 [US2] Validate `.from()` naming convention — confirmed against `Buffer.from()`, `Array.from()`, Rust `From` trait, Zod `.parse()` precedents. Polymorphic constructor dispatching on input shape is standard JS/Rust convention
+- [x] T072 [US2] Update spec documents — FR-016 reconciled (strict NodeData only for regular API), FR-026–FR-031 added (`.from()` API, FromInput types, FromNode return types, client-side resolution, tree-shaking split, SgNode dispatch), enhancement-summary.md, public-api.md, quickstart.md updated
+
+**Checkpoint**: `.from()` API works as universal entry point. Tree-shakeable split: `factories.ts` (strict), `from.ts` (ergonomic), `ir.ts` (combined). SgNode dispatch delegates to `.assign()` with ergonomic setters. 73 integration tests pass.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies

@@ -19,7 +19,7 @@ import type {
 } from 'type-fest';
 
 // ---------------------------------------------------------------------------
-// Re-export core runtime types (for convenience)
+// Core types — canonical definitions (zero runtime)
 // ---------------------------------------------------------------------------
 
 export type {
@@ -29,10 +29,23 @@ export type {
 	TemplateElement,
 	ParsedTemplate,
 	Edit,
+	ByteRange,
 	Position,
 	CSTNode,
 	RenderContext,
-} from '@sittir/core';
+	RulesRegistry,
+	JoinByMap,
+	ReplaceTarget,
+	AssignableNode,
+	Renderable,
+	KindOf,
+} from './core-types.ts';
+
+// ---------------------------------------------------------------------------
+// .from() resolution types (defined here, re-exported by core)
+// ---------------------------------------------------------------------------
+
+export type { FromValue, FromObject, FromFieldInfo, FromContext } from './from.ts';
 
 // ---------------------------------------------------------------------------
 // Grammar primitives

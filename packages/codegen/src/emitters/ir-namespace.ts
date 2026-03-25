@@ -2,13 +2,17 @@
  * Emits ir.ts — the developer-facing namespace that re-exports
  * all factories with short names, plus keyword and operator aliases.
  *
+ * Branch factories are combined with their .from() counterparts via
+ * Object.assign, so ir.function.from(...) works.
+ *
  * Naming: toShortName strips suffixes (function_item → function),
  * toIrKey converts to camelCase (if_expression → ifExpression).
  * Trailing underscores dropped in the ir namespace (function_ → function).
  */
 
 import type { KindMeta, SupertypeInfo, OperatorContext } from '../grammar-reader.ts';
-import { toIrKey, toFactoryName, toShortName } from '../naming.ts';
+import { toIrKey, toFactoryName, toShortName, toTypeName } from '../naming.ts';
+import { escapeString } from './utils.ts';
 
 export interface EmitIrNamespaceConfig {
 	grammar: string;
@@ -42,6 +46,13 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 	}
 
 	lines.push(`import { ${factoryImports.join(', ')} } from './factories.js';`);
+
+	// Import .from() functions from from.ts
+	const fromImports: string[] = [];
+	for (const kind of branchKinds) {
+		fromImports.push(`${toFactoryName(kind)}From`);
+	}
+	lines.push(`import { ${fromImports.join(', ')} } from './from.js';`);
 	lines.push('');
 
 	// Build ir namespace entries
@@ -50,16 +61,13 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 
 	lines.push('export const ir = {');
 
-	// Branch factories — use toIrKey (short name, camelCase)
+	// Branch factories — combined with .from() via Object.assign
 	lines.push('  // Branch node factories');
 	for (const kind of branchKinds) {
 		const irKey = resolveIrKey(kind, usedKeys);
 		const factory = toFactoryName(kind);
-		if (irKey === factory) {
-			lines.push(`  ${irKey},`);
-		} else {
-			lines.push(`  ${irKey}: ${factory},`);
-		}
+		const fromFn = `${factory}From`;
+		lines.push(`  ${irKey}: Object.assign(${factory}, { from: ${fromFn} }),`);
 	}
 
 	lines.push('');
@@ -100,7 +108,7 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 				const alias = operatorAlias(token);
 				if (alias && !usedKeys.has(alias)) {
 					usedKeys.set(alias, `operator:${token}`);
-					lines.push(`  ${alias}: () => ({ kind: '${ctx.field}', fields: {}, text: '${escapeString(token)}' }),`);
+					lines.push(`  ${alias}: () => ({ type: '${ctx.field}', fields: {}, text: '${escapeString(token)}' }),`);
 				}
 			}
 		}
@@ -141,6 +149,3 @@ function operatorAlias(token: string): string | undefined {
 	return aliases[token];
 }
 
-function escapeString(s: string): string {
-	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}

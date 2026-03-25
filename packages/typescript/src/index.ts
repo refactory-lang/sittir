@@ -3,8 +3,14 @@
 // Types (grammar + construction types + navigation types + enums)
 export * from './types.js';
 
-// Factories (ir namespace)
+// Factories (ir namespace with .from())
 export { ir } from './ir.js';
+
+// Shared resolution utilities
+export * from './utils.js';
+
+// .from() resolution (tree-shakeable, separate from factories)
+export * from './from.js';
 
 // Render templates
 export { rules } from './rules.js';
@@ -17,4 +23,4 @@ export * from './consts.js';
 
 // Core re-exports
 export { render, toEdit, toCst } from '@sittir/core';
-export type { NodeData, Edit, CSTNode, RenderContext } from '@sittir/core';
+export type { NodeData, Edit, CSTNode, RenderContext } from '@sittir/types';

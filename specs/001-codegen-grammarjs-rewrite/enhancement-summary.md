@@ -8,18 +8,22 @@
 | **Rendering** | Per-node `renderImpl()` methods (200+ files) | Single render engine + S-expression templates |
 | **Render templates** | Imperative code in each class | `.scm` files — tree-sitter query syntax, syntax-highlighted |
 | **Package structure** | `@sittir/types` (runtime + types) | `@sittir/core` (runtime) + `@sittir/types` (pure types, zero runtime) |
-| **Generated code size** | ~200 files per grammar (one per node) | ~7 files per grammar (rules, factories, ir, types, consts, joinby, index) |
+| **Generated code size** | ~200 files per grammar (one per node) | ~8 files per grammar (rules, factories, from, ir, types, consts, joinby, index) |
 | **Generated code nature** | Executable classes with render logic | Data (templates) + thin factories (no render logic) |
 
 ## API Surface
 
 | Feature | Before | After |
 |---------|--------|-------|
-| **Declarative** | `function_.from({ name: ..., body: ... })` | `ir.function.from({ name: 'main', type: 'i32', value: 100 })` — POJO-like sugar |
+| **Declarative** | `function_.from({ name: ..., body: ... })` | `ir.function({ name: ir.identifier('main'), body: ir.block() })` — strict `NodeData` only |
 | **Fluent** | `function_(name).body(block)` | `ir.function(name).body(block)` — same pattern, no classes |
 | **Mixed** | Not supported | `ir.function(name, { body: block })` — positional + config |
-| **String shorthand** | Required `LeafBuilder` / `LeafOptions` | Plain strings: `'main'` → inferred `identifier` |
-| **Number shorthand** | Not supported | `100` → inferred `integer_literal` |
+| **`.from()` (ergonomic)** | Not available | `ir.function.from({ name: 'main', return_type: 'i32', body: [] })` — universal entry point |
+| **String shorthand** | Required `LeafBuilder` / `LeafOptions` | `.from()` only: `'main'` → inferred `identifier` |
+| **Number shorthand** | Not supported | `.from()` only: `100` → inferred `integer_literal` |
+| **Boolean shorthand** | Not supported | `.from()` only: `true` → inferred `boolean_literal` |
+| **Array compression** | Not supported | `.from()` only: `[]` → inferred container branch type |
+| **SgNode dispatch** | Not available | `.from(sgNode)` → delegates to `.assign()` with ergonomic setters |
 | **Single-field compression** | Not supported | `ir.stringLiteral('hello')` instead of `ir.stringLiteral({ content: 'hello' })` |
 | **Keyword factories** | `new LeafBuilder('self', 'self')` | `ir.self()` → `NodeData` with fixed text |
 | **Operator aliases** | `ir.add()` returning `LeafBuilder` | `ir.add()` → `NodeData` with `text: '+'` |
@@ -37,6 +41,7 @@
 | `replace(target, replacement)` | Standalone replacement |
 | `replaceField(parent, n => n.field, replacement)` | **Type-safe** field replacement — `KindOf<TField>` constrains valid kinds |
 | `ir.*.assign(target)` | **In-place editing** — hydrate factory from parsed tree, override fields, `.toEdit()` with no args |
+| `ir.*.from(sgNode)` | **Universal entry** — detects SgNode, delegates to `.assign()` with ergonomic setters |
 | `edit(target)` | Sugar for `ir[kind].assign(target)` |
 
 ### Zero Reparsing
@@ -88,7 +93,7 @@ source → parse (once) → match → build replacement (sittir) → Edit → co
 | Template literal types | `escape_sequence`, `boolean_literal`, enum kinds | Compile time | Zero |
 | Reserved keywords | `identifier('fn')` → throws | Factory creation | O(1) Set.has() |
 | Grammar patterns | `identifier('123')` → fails regex from grammar.json | Factory creation / setter | O(1) regex.test() |
-| NodeData.text validation | Any NodeData passed to setter validated against `LEAF_PATTERNS[type]` | Setter time | O(1) |
+| `.from()` resolution | Scalars/objects → leaf/branch factories (validation via factory) | `.from()` call | Inline per-field |
 | **No render-time validation** | Output correct by construction | — | Zero |
 
 ## Render Engine
@@ -120,7 +125,7 @@ source → parse (once) → match → build replacement (sittir) → Edit → co
 |---------|-------|
 | `@sittir/core` | 24 (render, sexpr parser, edit, CST) |
 | `@sittir/codegen` | 58 (grammar reader, rules emitter, factories emitter, types emitter, integration) |
-| Integration | 53 (composition 3 modes, keywords, leaves, operators, template literals, input validation, string shorthand, edit/replace/replaceField/assign/edit, multi-grammar) |
+| Integration | 73 (composition 3 modes, keywords, leaves, operators, template literals, input validation, string shorthand, edit/replace/replaceField/assign/edit, multi-grammar, .from() resolution/render/SgNode dispatch) |
 | Generated (Rust) | 522/545 (95.8%) |
 | **Total** | **135+ hand-written, 522+ generated** |
 

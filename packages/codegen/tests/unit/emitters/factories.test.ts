@@ -33,12 +33,12 @@ describe('emitFactory', () => {
 		expect(source).toContain("type: 'binary_expression'");
 	});
 
-	it('generates string shorthand for leaf-only fields', () => {
+	it('generates narrow NodeData for leaf-only fields in regular API', () => {
 		const node = readGrammarKind('rust', 'function_item');
 		const source = emitFactory({ node, leafKinds: ['identifier', 'metavariable'] });
 
-		// name field accepts identifier | metavariable — both leaves
-		expect(source).toContain('NodeData | string');
+		// name field accepts identifier | metavariable — narrowed NodeData in regular API (FR-016)
+		expect(source).toContain("NodeData<'identifier' | 'metavariable'>");
 	});
 
 	it('generates children setter for nodes with children', () => {

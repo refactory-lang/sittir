@@ -151,57 +151,93 @@ ir.add()    // → { kind: 'binary_expression_operator', text: '+' }
 ir.eq()     // → { kind: 'binary_expression_operator', text: '==' }
 ```
 
+### Three API Tiers
+
+The factory system provides three distinct API tiers with different tradeoffs:
+
+| API | Performance | Ergonomics | Input types | File |
+|-----|-------------|------------|-------------|------|
+| **Regular** (declarative/fluent/mixed) | Maximum | Strict | `NodeData<NarrowKind>` only | `factories.ts` |
+| **`.from()`** (ergonomic) | Good | Maximum | Strings, numbers, booleans, objects, arrays, NodeData, SgNode | `from.ts` |
+| **`.assign()`** (hydration) | Good | Strict | `AssignableNode` (SgNode) | `factories.ts` |
+
+The `.from()` API is the universal entry point — it dispatches to the regular factory for plain-object resolution, and to `.assign()` when it detects an SgNode-like input. Naming follows the `Buffer.from()` / Rust `From` trait convention: a polymorphic constructor that accepts diverse input shapes.
+
 ### Generated Factory Implementation Pattern
 
 ```typescript
-import { render, toEdit, toCst, validateFast } from '@sittir/core';
+// === factories.ts — regular API (lightweight, tree-shakeable) ===
+
+import { render, toEdit } from '@sittir/core';
 import { rules } from './rules.js';
 
-// Per-node config type (generated)
-interface FunctionConfig {
-  name: NodeData | string;           // required; string shorthand for identifier
-  returnType?: NodeData | string;    // optional; string shorthand for type_identifier
-  parameters?: NodeData;             // optional
-  body?: NodeData;                   // optional
+// Per-node config type — strict, narrowed NodeData per field (FR-016)
+interface FunctionItemConfig {
+  name: NodeData<'identifier' | 'metavariable'>;          // required
+  type_parameters?: NodeData<'type_parameters'>;           // optional
+  parameters: NodeData<'parameters'>;                      // required
+  return_type?: NodeData<'primitive_type' | 'type_identifier' | ...>; // optional
+  body: NodeData<'block'>;                                 // required
 }
 
-// Per-node return type — NodeData + fluent setters + render methods (generated)
-type FunctionNode = NodeData & {
-  returnType(t: NodeData | string): FunctionNode;
-  parameters(p: NodeData): FunctionNode;
-  body(b: NodeData): FunctionNode;
+// FromInput type — ergonomic, recursively typed for .from() API (FR-027)
+interface FunctionItemFromInput {
+  name: NodeData<'identifier' | 'metavariable'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput;
+  parameters: NodeData<'parameters'> | ParametersFromInput | FromValue[];
+  return_type?: NodeData<...> | string | number | GenericTypeFromInput | ...;
+  body: NodeData<'block'> | BlockFromInput | FromValue[];
+}
+
+// Return types: Node (strict setters) vs FromNode (ergonomic setters)
+type FunctionItemNode = NodeData<'function_item'> & {
+  typeParameters(v: NodeData<'type_parameters'>): FunctionItemNode;
+  returnType(v: NodeData<...>): FunctionItemNode;
+  body(v: NodeData<'block'>): FunctionItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
-  toCst(offset?: number): CSTNode;
-  validate(mode?: 'fast' | 'full'): string | Promise<string>;
+  replace(target: ...): Edit;
 };
 
-// Factory function (generated)
-export function function_(
-  nameOrConfig: NodeData | string | FunctionConfig,
-  config?: Partial<FunctionConfig>,
-): FunctionNode {
-  const fields: FunctionConfig = typeof nameOrConfig === 'string'
-    ? { name: resolveLeaf('identifier', nameOrConfig), ...config }
-    : isNodeData(nameOrConfig)
-      ? { name: nameOrConfig, ...config }
-      : nameOrConfig;
+type FunctionItemFromNode = NodeData<'function_item'> & {
+  typeParameters(v: NodeData<...> | TypeParametersFromInput): FunctionItemFromNode;
+  returnType(v: NodeData<...> | string | number | ...): FunctionItemFromNode;
+  body(v: NodeData<...> | BlockFromInput | FromValue[]): FunctionItemFromNode;
+  render(): string;
+  toEdit(start: number, end: number): Edit;
+  replace(target: ...): Edit;
+};
 
-  const node: any = { kind: 'function_item', fields };
-  // Fluent setters
-  node.returnType = (t) => { fields.returnType = resolveField(t, ...); return node; };
-  node.parameters = (p) => { fields.parameters = p; return node; };
-  node.body = (b) => { fields.body = b; return node; };
-  // Render methods (close over rules)
-  node.render = () => render(node, rules.function_item);
-  node.toEdit = (s, e) => toEdit(node, rules.function_item, s, e);
-  node.toCst = (o) => toCst(node, rules.function_item, o ?? 0);
-  node.validate = (m) => m === 'full' ? validateFull(...) : validateFast(render(node, rules.function_item));
-  return node;
+// Factory function — no runtime type inference, only NodeData accepted
+export function functionItem(
+  nameOrConfig: NodeData<'identifier' | 'metavariable'> | FunctionItemConfig,
+  config?: Partial<FunctionItemConfig>,
+): FunctionItemNode { ... }
+
+// .assign() — hydrate from parsed tree node
+functionItem.assign = function(target: AssignableNode<'function_item'>): FunctionItemNode { ... };
+
+// === from.ts — .from() API (separate file for tree-shaking, FR-030) ===
+
+// Inlined per-field resolution — no generic resolver (FR-029)
+export function functionItemFrom(
+  input: AssignableNode<'function_item'> | FunctionItemFromInput | FromValue[],
+): FunctionItemFromNode {
+  // SgNode detection — delegates to .assign() with ergonomic setters (FR-031)
+  if (typeof input.field === 'function') {
+    const base = functionItem.assign(input);
+    // Wrap setters with resolution...
+    return base;
+  }
+  // Plain-object resolution: strings → identifier(), numbers → integerLiteral(), etc.
+  ...
 }
 
-// ir namespace uses toShortName — trailing underscore dropped
-// ir.function = function_
+// === ir.ts — combines both via Object.assign ===
+export const ir = {
+  function: Object.assign(functionItem, { from: functionItemFrom }),
+  ...
+};
 ```
 
 ### Constants
