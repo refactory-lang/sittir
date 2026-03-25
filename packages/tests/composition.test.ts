@@ -153,14 +153,18 @@ describe('String shorthand sugar (FR-021, FR-022)', () => {
 		expect(node.type).toBe('string_literal');
 	});
 
-	// Known issue: string shorthand in .from() for children accepting
-	// escape_sequence | string_content resolves to escape_sequence first,
-	// which rejects non-backslash strings. Fix: resolution should try
-	// string_content before escape_sequence for plain strings.
-	// it('ir.stringLiteral.from() accepts string children', () => {
-	//   const node = ir.stringLiteral.from({ children: ['hello'] });
-	//   expect(node.fields.children[0].type).toBe('string_content');
-	// });
+	it('ir.stringLiteral.from() resolves string children via pattern matching', () => {
+		const node = ir.stringLiteral.from({ children: ['hello'] });
+		expect(node.type).toBe('string_literal');
+		expect((node.fields.children as any)[0].type).toBe('string_content');
+		expect((node.fields.children as any)[0].text).toBe('hello');
+	});
+
+	it('ir.stringLiteral.from() resolves escape sequences via pattern matching', () => {
+		const node = ir.stringLiteral.from({ children: ['\\n'] });
+		expect(node.type).toBe('string_literal');
+		expect((node.fields.children as any)[0].type).toBe('escape_sequence');
+	});
 
 	it('ir.stringLiteral accepts NodeData array', () => {
 		const node = ir.stringLiteral([

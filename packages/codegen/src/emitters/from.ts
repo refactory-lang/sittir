@@ -14,6 +14,7 @@
  */
 
 import type { KindMeta, FieldMeta } from '../grammar-reader.ts';
+import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
 import { selectConstructorField, escapeString } from './utils.ts';
 
@@ -78,7 +79,7 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// Per-kind .from() functions
 	for (const node of nodes) {
-		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes));
+		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar));
 		lines.push('');
 	}
 
@@ -97,6 +98,7 @@ function emitErgonomicSetters(
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
 	allNodes: KindMeta[],
+	grammar?: string,
 ): string[] {
 	const lines: string[] = [];
 
@@ -107,11 +109,11 @@ function emitErgonomicSetters(
 		if (field.multiple) {
 			lines.push(`  ${baseVar}.${setterName} = (...v: any[]) => {`);
 			lines.push(`    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
-			lines.push(`    (${baseVar}.fields as any)['${field.name}'] = arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+			lines.push(`    (${baseVar}.fields as any)['${field.name}'] = arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)});`);
 			lines.push(`    return ${baseVar};`);
 			lines.push(`  };`);
 		} else {
-			lines.push(`  ${baseVar}.${setterName} = (v: any) => { (${baseVar}.fields as any)['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes)}; return ${baseVar}; };`);
+			lines.push(`  ${baseVar}.${setterName} = (v: any) => { (${baseVar}.fields as any)['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)}; return ${baseVar}; };`);
 		}
 	}
 
@@ -125,7 +127,7 @@ function emitErgonomicSetters(
 		};
 		lines.push(`  ${baseVar}.children = (...v: any[]) => {`);
 		lines.push(`    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
-		lines.push(`    (${baseVar}.fields as any).children = arr.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+		lines.push(`    (${baseVar}.fields as any).children = arr.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar)});`);
 		lines.push(`    return ${baseVar};`);
 		lines.push(`  };`);
 	}
@@ -147,6 +149,7 @@ function emitFromFunction(
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
 	allNodes: KindMeta[],
+	grammar?: string,
 ): string {
 	const typeName = toTypeName(node.kind);
 	const factoryName = toFactoryName(node.kind);
@@ -179,10 +182,10 @@ function emitFromFunction(
 		if (field.multiple) {
 			lines.push(`    base.${setterName} = (...v: any[]) => {`);
 			lines.push(`      const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
-			lines.push(`      return _orig_${field.name}(...arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes)}));`);
+			lines.push(`      return _orig_${field.name}(...arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)}));`);
 			lines.push(`    };`);
 		} else {
-			lines.push(`    base.${setterName} = (v: any) => _orig_${field.name}(${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+			lines.push(`    base.${setterName} = (v: any) => _orig_${field.name}(${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)});`);
 		}
 	}
 	if (node.hasChildren && node.children) {
@@ -194,7 +197,7 @@ function emitFromFunction(
 			namedTypes: node.children.namedTypes,
 		};
 		lines.push(`    const _orig_children = base.children;`);
-		lines.push(`    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes)}));`);
+		lines.push(`    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar)}));`);
 	}
 	lines.push(`    return base;`);
 	lines.push(`  }`);
@@ -213,9 +216,9 @@ function emitFromFunction(
 		if (field.multiple) {
 			lines.push(`    const raw = obj['${field.name}'];`);
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
-			lines.push(`    resolved['${field.name}'] = arr.map((v: any) => ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+			lines.push(`    resolved['${field.name}'] = arr.map((v: any) => ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)});`);
 		} else {
-			lines.push(`    resolved['${field.name}'] = ${emitResolveExpr(`obj['${field.name}']`, field, leafSet, leafValueMap, keywordKinds, allNodes)};`);
+			lines.push(`    resolved['${field.name}'] = ${emitResolveExpr(`obj['${field.name}']`, field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)};`);
 		}
 		lines.push(`  }`);
 	}
@@ -231,7 +234,7 @@ function emitFromFunction(
 			types: node.children.types,
 			namedTypes: node.children.namedTypes,
 		};
-		lines.push(`    resolved['children'] = arr.map((v: any) => ${emitResolveExpr('v', childField, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+		lines.push(`    resolved['children'] = arr.map((v: any) => ${emitResolveExpr('v', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar)});`);
 		lines.push(`  }`);
 	}
 
@@ -239,7 +242,7 @@ function emitFromFunction(
 	lines.push(`  const base: any = ${factoryName}(resolved);`);
 
 	// Replace fluent setters with ergonomic ones
-	lines.push(...emitErgonomicSetters(node, ctorField, 'base', leafSet, leafValueMap, keywordKinds, allNodes));
+	lines.push(...emitErgonomicSetters(node, ctorField, 'base', leafSet, leafValueMap, keywordKinds, allNodes, grammar));
 
 	lines.push(`  return base;`);
 	lines.push(`}`);
@@ -260,6 +263,7 @@ function emitResolveExpr(
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
 	allNodes: KindMeta[],
+	grammar?: string,
 ): string {
 	const leafTypes = field.namedTypes.filter(t => leafSet.has(t));
 	const branchTypes = field.namedTypes.filter(t => !leafSet.has(t));
@@ -279,7 +283,7 @@ function emitResolveExpr(
 	}
 
 	// Complex case: use inline IIFE for multi-type resolution
-	return `((v => {${emitResolveBody('v', leafTypes, branchTypes, anonTokens, leafSet, leafValueMap, keywordKinds, allNodes)}})(${varName}))`;
+	return `((v => {${emitResolveBody('v', leafTypes, branchTypes, anonTokens, leafSet, leafValueMap, keywordKinds, allNodes, grammar)}})(${varName}))`;
 }
 
 /**
@@ -295,6 +299,7 @@ function emitResolveBody(
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
 	allNodes: KindMeta[],
+	grammar?: string,
 ): string {
 	const parts: string[] = [];
 
@@ -318,7 +323,7 @@ function emitResolveBody(
 	}
 
 	// String resolution
-	parts.push(`if(typeof ${v}==='string'){${emitStringResolve(v, leafTypes, anonTokens, leafSet, leafValueMap)}}`);
+	parts.push(`if(typeof ${v}==='string'){${emitStringResolve(v, leafTypes, anonTokens, leafSet, leafValueMap, grammar)}}`);
 
 	// Array → wrap in single branch type as children
 	if (branchTypes.length > 0) {
@@ -349,6 +354,7 @@ function emitStringResolve(
 	anonTokens: string[],
 	_leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
+	grammar?: string,
 ): string {
 	const parts: string[] = [];
 
@@ -375,6 +381,31 @@ function emitStringResolve(
 		parts.push(`if([${tokenSet}].includes(${v}))return{type:${v},fields:{},text:${v}} as any;`);
 	}
 
+	// Pattern matching: for leaf types with grammar-derived regex patterns,
+	// try each pattern and pick the first match. This ensures e.g.
+	// 'hello' → string_content (not escape_sequence) when both are accepted.
+	// Types without patterns and identifier-like types fall through to the
+	// existing priority logic below.
+	if (leafTypes.length > 1 && grammar) {
+		const identKinds = new Set(['identifier', 'type_identifier', 'field_identifier', 'shorthand_field_identifier']);
+
+		for (const lt of leafTypes) {
+			if (identKinds.has(lt)) continue; // handled by priority logic below
+			const vals = leafValueMap.get(lt);
+			if (vals && vals.length > 0) continue; // already handled by enum check above
+			const pattern = extractLeafPattern(grammar, lt);
+			if (pattern && !pattern.includes('//') && !pattern.includes('/*') && !pattern.includes('\\x')) {
+				try {
+					const flags = pattern.includes('\\p{') ? 'u' : '';
+					new RegExp(`^${pattern}$`, flags);
+					parts.push(`if(/^${pattern.replace(/`/g, '\\`')}$/${flags}.test(${v}))return ${toFactoryName(lt)}(${v} as any);`);
+				} catch {
+					// Pattern not safe for JS — skip
+				}
+			}
+		}
+	}
+
 	// Prefer identifier-like types
 	const hasTypeIdent = leafTypes.includes('type_identifier');
 	const hasIdent = leafTypes.includes('identifier');
@@ -391,7 +422,15 @@ function emitStringResolve(
 		}
 	}
 
-	// Fallback to first leaf type
+	// Fallback: prefer leaf types without a grammar pattern (they accept any string)
+	if (leafTypes.length > 0 && grammar) {
+		const noPatternKind = leafTypes.find(lt => !extractLeafPattern(grammar, lt));
+		if (noPatternKind) {
+			parts.push(`return ${toFactoryName(noPatternKind)}(${v} as any);`);
+			return parts.join('');
+		}
+	}
+	// Last resort: first leaf type
 	if (leafTypes.length > 0) {
 		parts.push(`return ${toFactoryName(leafTypes[0]!)}(${v} as any);`);
 		return parts.join('');
