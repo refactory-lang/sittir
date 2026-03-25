@@ -9,6 +9,9 @@ export { ir } from './ir.js';
 // Shared resolution utilities
 export * from './utils.js';
 
+// Tree node hydration and in-place editing
+export { assignByKind, edit } from './assign.js';
+
 // .from() resolution (tree-shakeable, separate from factories)
 export * from './from.js';
 

@@ -23,6 +23,7 @@ import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
 import { emitRules, emitRule } from './emitters/rules.ts';
 import { emitFactories } from './emitters/factories.ts';
+import { emitAssign } from './emitters/assign.ts';
 import { emitFrom } from './emitters/from.ts';
 import { emitClientUtils } from './emitters/client-utils.ts';
 import { emitConsts } from './emitters/consts.ts';
@@ -52,8 +53,10 @@ export interface GeneratedFiles {
 	types: string;
 	/** rules.ts — S-expression render templates + joinBy map */
 	rules: string;
-	/** factories.ts — unified factory functions (declarative + fluent + mixed) */
+	/** factories.ts — pure factory functions (typed fields in → typed node out) */
 	factories: string;
+	/** assign.ts — assignByKind table, per-kind assign functions, edit() */
+	assign: string;
 	/** utils.ts — shared client-side resolution utilities (isNodeData, _inferBranch, types) */
 	utils: string;
 	/** from.ts — .from() resolution functions (tree-shakeable, separate from factories) */
@@ -108,6 +111,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 			operatorTokens,
 			supertypes,
 		}),
+		assign: emitAssign({ grammar: config.grammar, nodes, leafKinds, keywordKinds }),
 		utils: emitClientUtils({ nodes, leafKinds }),
 		from: emitFrom({
 			grammar: config.grammar,

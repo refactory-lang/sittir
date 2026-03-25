@@ -102,6 +102,7 @@ writeFile(join(outDir, 'grammar.ts'), result.grammar);
 writeFile(join(outDir, 'types.ts'), result.types);
 writeFile(join(outDir, 'rules.ts'), result.rules);
 writeFile(join(outDir, 'factories.ts'), result.factories);
+writeFile(join(outDir, 'assign.ts'), result.assign);
 writeFile(join(outDir, 'utils.ts'), result.utils);
 writeFile(join(outDir, 'from.ts'), result.from);
 writeFile(join(outDir, 'ir.ts'), result.irNamespace);
