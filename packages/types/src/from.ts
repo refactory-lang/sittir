@@ -3,14 +3,14 @@
  * Used by @sittir/core runtime resolver and generated packages.
  */
 
-import type { NodeData } from './core-types.ts';
+import type { AnyNodeData } from './core-types.ts';
 
 // ---------------------------------------------------------------------------
 // .from() input types
 // ---------------------------------------------------------------------------
 
 /** Base type for any value accepted by .from() resolution. */
-export type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;
+export type FromValue = string | number | boolean | AnyNodeData | FromValue[] | FromObject;
 
 /** Plain object with optional kind discriminant for .from() resolution. */
 export interface FromObject {
@@ -45,7 +45,7 @@ export interface FromContext {
 	/** Get enum values for a leaf kind (e.g., primitive_type → ['bool', ...]). */
 	getLeafValues(kind: string): readonly string[] | undefined;
 	/** Create a leaf node via the factory (with validation). */
-	createLeaf(kind: string, text: string): NodeData;
+	createLeaf(kind: string, text: string): AnyNodeData;
 	/** Create a branch node from an already-resolved config. */
-	createBranch(kind: string, config: Record<string, unknown>): NodeData;
+	createBranch(kind: string, config: Record<string, unknown>): AnyNodeData;
 }

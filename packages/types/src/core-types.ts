@@ -9,11 +9,16 @@
 // Node data — what factories produce, what the render engine consumes
 // ---------------------------------------------------------------------------
 
-/** A plain object representing an AST node, parameterized by kind. */
-export interface NodeData<T extends string = string> {
-	readonly type: T;
-	readonly fields: Readonly<Record<string, NodeData | NodeData[] | string | number | undefined>>;
-	/** For terminal nodes — the source text (identifiers, literals, keywords). */
+/**
+ * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
+ * that accept any node regardless of grammar.
+ *
+ * Consumers should use NodeData<G, K> from @sittir/types for grammar-derived typing.
+ * AnyNodeData is the structural supertype that all NodeData<G, K> satisfy.
+ */
+export interface AnyNodeData {
+	readonly type: string;
+	readonly fields: Readonly<Record<string, AnyNodeData | AnyNodeData[] | string | number | undefined>>;
 	readonly text?: string;
 }
 
@@ -130,13 +135,14 @@ export interface ReplaceTarget<T extends string = string> {
  * A parsed tree node that can be assigned to a factory.
  * Structurally compatible with ast-grep SgNode and tree-sitter Node.
  */
-export interface AssignableNode<T extends string = string> extends ReplaceTarget<T> {
-	/** Access a named field's child node. */
-	field(name: string): AssignableNode | null;
-	/** Get the source text of this node. */
+/**
+ * @deprecated Use TreeNode<G, K> from @sittir/types for grammar-derived tree navigation.
+ * This loose version is kept for @sittir/core internal use only.
+ */
+export interface AnyTreeNode extends ReplaceTarget {
+	field(name: string): AnyTreeNode | null;
 	text(): string;
-	/** Get child nodes. */
-	children(): AssignableNode[];
+	children(): AnyTreeNode[];
 }
 
 /** Factory output that can render itself. */
