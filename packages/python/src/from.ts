@@ -220,17 +220,21 @@ export function argumentListFrom(input: any): ArgumentListFromNode {
   if (typeof input.field === 'function') {
     const base: any = argumentList.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'keyword_argument':return keywordArgumentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","list_splat","dictionary_splat","parenthesized_expression","keyword_argument"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'keyword_argument':return keywordArgumentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","list_splat","dictionary_splat","parenthesized_expression","keyword_argument"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'keyword_argument':return keywordArgumentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","list_splat","dictionary_splat","parenthesized_expression","keyword_argument"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'keyword_argument':return keywordArgumentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","list_splat","dictionary_splat","parenthesized_expression","keyword_argument"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = argumentList(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'keyword_argument':return keywordArgumentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","list_splat","dictionary_splat","parenthesized_expression","keyword_argument"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'keyword_argument':return keywordArgumentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","list_splat","dictionary_splat","parenthesized_expression","keyword_argument"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -256,7 +260,11 @@ export function asPatternFrom(input: any): AsPatternFromNode {
   }
   const base: any = asPattern(resolved);
   base.alias = (v: any) => { (base.fields as any)['alias'] = (isNodeData(v) ? v : Array.isArray(v) ? asPatternTargetFrom(v as any) : typeof v === 'object' ? asPatternTargetFrom(v as any) : v); return base; };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -276,7 +284,11 @@ export function assertStatementFrom(input: any): AssertStatementFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = assertStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -286,9 +298,9 @@ export function assignmentFrom(input: any): AssignmentFromNode {
   if (typeof input.field === 'function') {
     const base: any = assignment.assign(input);
     const _orig_left = base.left;
-    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_right = base.right;
-    base.right = (v: any) => _orig_right(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.right = (v: any) => _orig_right(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_type = base.typeField;
     base.typeField = (v: any) => _orig_type((isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v as any) : v));
     return base;
@@ -296,16 +308,16 @@ export function assignmentFrom(input: any): AssignmentFromNode {
   const obj: any = input;
   const resolved: any = {};
   if (obj['left'] !== undefined) {
-    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
+    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
   }
   if (obj['right'] !== undefined) {
-    resolved['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['right']));
+    resolved['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['right']));
   }
   if (obj['type'] !== undefined) {
     resolved['type'] = (isNodeData(obj['type']) ? obj['type'] : Array.isArray(obj['type']) ? type_From(obj['type'] as any) : typeof obj['type'] === 'object' ? type_From(obj['type'] as any) : obj['type']);
   }
   const base: any = assignment(resolved);
-  base.right = (v: any) => { (base.fields as any)['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
+  base.right = (v: any) => { (base.fields as any)['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
   base.typeField = (v: any) => { (base.fields as any)['type'] = (isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v as any) : v); return base; };
   return base;
 }
@@ -340,27 +352,27 @@ export function augmentedAssignmentFrom(input: any): AugmentedAssignmentFromNode
   if (typeof input.field === 'function') {
     const base: any = augmentedAssignment.assign(input);
     const _orig_left = base.left;
-    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_operator = base.operator;
-    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+=','-=','*=','/=','@=','//=','%=','**=','>>=','<<=','&=','^=','|='].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
+    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+=','-=','*=','/=','@=','//=','%=','**=','>>=','<<=','&=','^=','|='].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_right = base.right;
-    base.right = (v: any) => _orig_right(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.right = (v: any) => _orig_right(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
     return base;
   }
   const obj: any = input;
   const resolved: any = {};
   if (obj['left'] !== undefined) {
-    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
+    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
   }
   if (obj['operator'] !== undefined) {
-    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+=','-=','*=','/=','@=','//=','%=','**=','>>=','<<=','&=','^=','|='].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
+    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+=','-=','*=','/=','@=','//=','%=','**=','>>=','<<=','&=','^=','|='].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
   }
   if (obj['right'] !== undefined) {
-    resolved['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['right']));
+    resolved['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['right']));
   }
   const base: any = augmentedAssignment(resolved);
-  base.operator = (v: any) => { (base.fields as any)['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+=','-=','*=','/=','@=','//=','%=','**=','>>=','<<=','&=','^=','|='].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)); return base; };
-  base.right = (v: any) => { (base.fields as any)['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
+  base.operator = (v: any) => { (base.fields as any)['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+=','-=','*=','/=','@=','//=','%=','**=','>>=','<<=','&=','^=','|='].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)); return base; };
+  base.right = (v: any) => { (base.fields as any)['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
   return base;
 }
 
@@ -380,7 +392,11 @@ export function await_From(input: any): AwaitFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? primaryExpressionFrom(v as any) : typeof v === 'object' ? primaryExpressionFrom(v as any) : v));
   }
   const base: any = await_(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? primaryExpressionFrom(e as any) : typeof e === 'object' ? primaryExpressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? primaryExpressionFrom(e as any) : typeof e === 'object' ? primaryExpressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -392,7 +408,7 @@ export function binaryOperatorFrom(input: any): BinaryOperatorFromNode {
     const _orig_left = base.left;
     base.left = (v: any) => _orig_left((isNodeData(v) ? v : Array.isArray(v) ? primaryExpressionFrom(v as any) : typeof v === 'object' ? primaryExpressionFrom(v as any) : v));
     const _orig_operator = base.operator;
-    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+','-','*','@','/','%','//','**','|','&','^','<<','>>'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
+    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+','-','*','@','/','%','//','**','|','&','^','<<','>>'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_right = base.right;
     base.right = (v: any) => _orig_right((isNodeData(v) ? v : Array.isArray(v) ? primaryExpressionFrom(v as any) : typeof v === 'object' ? primaryExpressionFrom(v as any) : v));
     return base;
@@ -403,13 +419,13 @@ export function binaryOperatorFrom(input: any): BinaryOperatorFromNode {
     resolved['left'] = (isNodeData(obj['left']) ? obj['left'] : Array.isArray(obj['left']) ? primaryExpressionFrom(obj['left'] as any) : typeof obj['left'] === 'object' ? primaryExpressionFrom(obj['left'] as any) : obj['left']);
   }
   if (obj['operator'] !== undefined) {
-    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+','-','*','@','/','%','//','**','|','&','^','<<','>>'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
+    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+','-','*','@','/','%','//','**','|','&','^','<<','>>'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
   }
   if (obj['right'] !== undefined) {
     resolved['right'] = (isNodeData(obj['right']) ? obj['right'] : Array.isArray(obj['right']) ? primaryExpressionFrom(obj['right'] as any) : typeof obj['right'] === 'object' ? primaryExpressionFrom(obj['right'] as any) : obj['right']);
   }
   const base: any = binaryOperator(resolved);
-  base.operator = (v: any) => { (base.fields as any)['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+','-','*','@','/','%','//','**','|','&','^','<<','>>'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)); return base; };
+  base.operator = (v: any) => { (base.fields as any)['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+','-','*','@','/','%','//','**','|','&','^','<<','>>'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)); return base; };
   base.right = (v: any) => { (base.fields as any)['right'] = (isNodeData(v) ? v : Array.isArray(v) ? primaryExpressionFrom(v as any) : typeof v === 'object' ? primaryExpressionFrom(v as any) : v); return base; };
   return base;
 }
@@ -445,7 +461,11 @@ export function blockFrom(input: any): BlockFromNode {
     (base.fields as any)['alternative'] = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? caseClauseFrom(e as any) : typeof e === 'object' ? caseClauseFrom(e as any) : e));
     return base;
   };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return passStatement(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'future_import_statement':return futureImportStatementFrom(rest as any);case 'import_statement':return importStatementFrom(rest as any);case 'import_from_statement':return importFromStatementFrom(rest as any);case 'print_statement':return printStatementFrom(rest as any);case 'assert_statement':return assertStatementFrom(rest as any);case 'expression_statement':return expressionStatementFrom(rest as any);case 'return_statement':return returnStatementFrom(rest as any);case 'delete_statement':return deleteStatementFrom(rest as any);case 'raise_statement':return raiseStatementFrom(rest as any);case 'global_statement':return globalStatementFrom(rest as any);case 'nonlocal_statement':return nonlocalStatementFrom(rest as any);case 'exec_statement':return execStatementFrom(rest as any);case 'type_alias_statement':return typeAliasStatementFrom(rest as any);case 'if_statement':return ifStatementFrom(rest as any);case 'for_statement':return forStatementFrom(rest as any);case 'while_statement':return whileStatementFrom(rest as any);case 'try_statement':return tryStatementFrom(rest as any);case 'with_statement':return withStatementFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);case 'class_definition':return classDefinitionFrom(rest as any);case 'decorated_definition':return decoratedDefinitionFrom(rest as any);case 'match_statement':return matchStatementFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["future_import_statement","import_statement","import_from_statement","print_statement","assert_statement","expression_statement","return_statement","delete_statement","raise_statement","global_statement","nonlocal_statement","exec_statement","type_alias_statement","if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return passStatement(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'future_import_statement':return futureImportStatementFrom(rest as any);case 'import_statement':return importStatementFrom(rest as any);case 'import_from_statement':return importFromStatementFrom(rest as any);case 'print_statement':return printStatementFrom(rest as any);case 'assert_statement':return assertStatementFrom(rest as any);case 'expression_statement':return expressionStatementFrom(rest as any);case 'return_statement':return returnStatementFrom(rest as any);case 'delete_statement':return deleteStatementFrom(rest as any);case 'raise_statement':return raiseStatementFrom(rest as any);case 'global_statement':return globalStatementFrom(rest as any);case 'nonlocal_statement':return nonlocalStatementFrom(rest as any);case 'exec_statement':return execStatementFrom(rest as any);case 'type_alias_statement':return typeAliasStatementFrom(rest as any);case 'if_statement':return ifStatementFrom(rest as any);case 'for_statement':return forStatementFrom(rest as any);case 'while_statement':return whileStatementFrom(rest as any);case 'try_statement':return tryStatementFrom(rest as any);case 'with_statement':return withStatementFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);case 'class_definition':return classDefinitionFrom(rest as any);case 'decorated_definition':return decoratedDefinitionFrom(rest as any);case 'match_statement':return matchStatementFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["future_import_statement","import_statement","import_from_statement","print_statement","assert_statement","expression_statement","return_statement","delete_statement","raise_statement","global_statement","nonlocal_statement","exec_statement","type_alias_statement","if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -457,7 +477,7 @@ export function booleanOperatorFrom(input: any): BooleanOperatorFromNode {
     const _orig_left = base.left;
     base.left = (v: any) => _orig_left((isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
     const _orig_operator = base.operator;
-    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['and','or'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
+    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['and','or'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_right = base.right;
     base.right = (v: any) => _orig_right((isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
     return base;
@@ -468,13 +488,13 @@ export function booleanOperatorFrom(input: any): BooleanOperatorFromNode {
     resolved['left'] = (isNodeData(obj['left']) ? obj['left'] : Array.isArray(obj['left']) ? expressionFrom(obj['left'] as any) : typeof obj['left'] === 'object' ? expressionFrom(obj['left'] as any) : obj['left']);
   }
   if (obj['operator'] !== undefined) {
-    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['and','or'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
+    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['and','or'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
   }
   if (obj['right'] !== undefined) {
     resolved['right'] = (isNodeData(obj['right']) ? obj['right'] : Array.isArray(obj['right']) ? expressionFrom(obj['right'] as any) : typeof obj['right'] === 'object' ? expressionFrom(obj['right'] as any) : obj['right']);
   }
   const base: any = booleanOperator(resolved);
-  base.operator = (v: any) => { (base.fields as any)['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['and','or'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)); return base; };
+  base.operator = (v: any) => { (base.fields as any)['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['and','or'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)); return base; };
   base.right = (v: any) => { (base.fields as any)['right'] = (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v); return base; };
   return base;
 }
@@ -487,7 +507,7 @@ export function callFrom(input: any): CallFromNode {
     const _orig_function = base.function;
     base.function = (v: any) => _orig_function((isNodeData(v) ? v : Array.isArray(v) ? primaryExpressionFrom(v as any) : typeof v === 'object' ? primaryExpressionFrom(v as any) : v));
     const _orig_arguments = base.arguments;
-    base.arguments = (v: any) => _orig_arguments(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'generator_expression':return generatorExpressionFrom(rest as any);case 'argument_list':return argumentListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["generator_expression","argument_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.arguments = (v: any) => _orig_arguments(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'generator_expression':return generatorExpressionFrom(rest as any);case 'argument_list':return argumentListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["generator_expression","argument_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
     return base;
   }
   const obj: any = input;
@@ -496,10 +516,10 @@ export function callFrom(input: any): CallFromNode {
     resolved['function'] = (isNodeData(obj['function']) ? obj['function'] : Array.isArray(obj['function']) ? primaryExpressionFrom(obj['function'] as any) : typeof obj['function'] === 'object' ? primaryExpressionFrom(obj['function'] as any) : obj['function']);
   }
   if (obj['arguments'] !== undefined) {
-    resolved['arguments'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'generator_expression':return generatorExpressionFrom(rest as any);case 'argument_list':return argumentListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["generator_expression","argument_list"]);}throw new Error('Cannot resolve .from() value');})(obj['arguments']));
+    resolved['arguments'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'generator_expression':return generatorExpressionFrom(rest as any);case 'argument_list':return argumentListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["generator_expression","argument_list"]);}throw new Error('Cannot resolve .from() value');})(obj['arguments']));
   }
   const base: any = call(resolved);
-  base.arguments = (v: any) => { (base.fields as any)['arguments'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'generator_expression':return generatorExpressionFrom(rest as any);case 'argument_list':return argumentListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["generator_expression","argument_list"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
+  base.arguments = (v: any) => { (base.fields as any)['arguments'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'generator_expression':return generatorExpressionFrom(rest as any);case 'argument_list':return argumentListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["generator_expression","argument_list"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
   return base;
 }
 
@@ -530,7 +550,11 @@ export function caseClauseFrom(input: any): CaseClauseFromNode {
   }
   const base: any = caseClause(resolved);
   base.guard = (v: any) => { (base.fields as any)['guard'] = (isNodeData(v) ? v : Array.isArray(v) ? ifClauseFrom(v as any) : typeof v === 'object' ? ifClauseFrom(v as any) : v); return base; };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? casePatternFrom(e as any) : typeof e === 'object' ? casePatternFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? casePatternFrom(e as any) : typeof e === 'object' ? casePatternFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -550,7 +574,11 @@ export function casePatternFrom(input: any): CasePatternFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return true_(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'as_pattern':return asPatternFrom(rest as any);case 'keyword_pattern':return keywordPatternFrom(rest as any);case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["as_pattern","keyword_pattern","class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = casePattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return true_(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'as_pattern':return asPatternFrom(rest as any);case 'keyword_pattern':return keywordPatternFrom(rest as any);case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["as_pattern","keyword_pattern","class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return true_(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'as_pattern':return asPatternFrom(rest as any);case 'keyword_pattern':return keywordPatternFrom(rest as any);case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["as_pattern","keyword_pattern","class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -570,7 +598,11 @@ export function chevronFrom(input: any): ChevronFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = chevron(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -616,17 +648,21 @@ export function classPatternFrom(input: any): ClassPatternFromNode {
   if (typeof input.field === 'function') {
     const base: any = classPattern.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'case_pattern':return casePatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","case_pattern"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'case_pattern':return casePatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","case_pattern"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'case_pattern':return casePatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","case_pattern"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'case_pattern':return casePatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","case_pattern"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = classPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'case_pattern':return casePatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","case_pattern"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'case_pattern':return casePatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","case_pattern"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -638,7 +674,7 @@ export function comparisonOperatorFrom(input: any): ComparisonOperatorFromNode {
     const _orig_operators = base.operators;
     base.operators = (...v: any[]) => {
       const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-      return _orig_operators(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['<','<=','==','!=','>=','>','<>','in','is'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e))));
+      return _orig_operators(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['<','<=','==','!=','>=','>','<>','in','is'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e))));
     };
     const _orig_children = base.children;
     base.children = (...v: any[]) => _orig_children(...v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? primaryExpressionFrom(e as any) : typeof e === 'object' ? primaryExpressionFrom(e as any) : e)));
@@ -649,7 +685,7 @@ export function comparisonOperatorFrom(input: any): ComparisonOperatorFromNode {
   if (obj['operators'] !== undefined) {
     const raw = obj['operators'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['operators'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['<','<=','==','!=','>=','>','<>','in','is'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['operators'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['<','<=','==','!=','>=','>','<>','in','is'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
@@ -658,10 +694,14 @@ export function comparisonOperatorFrom(input: any): ComparisonOperatorFromNode {
   const base: any = comparisonOperator(resolved);
   base.operators = (...v: any[]) => {
     const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-    (base.fields as any)['operators'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['<','<=','==','!=','>=','>','<>','in','is'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e)));
+    (base.fields as any)['operators'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['<','<=','==','!=','>=','>','<>','in','is'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e)));
     return base;
   };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? primaryExpressionFrom(e as any) : typeof e === 'object' ? primaryExpressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? primaryExpressionFrom(e as any) : typeof e === 'object' ? primaryExpressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -681,7 +721,11 @@ export function complexPatternFrom(input: any): ComplexPatternFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return integer(v as any);}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = complexPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return integer(v as any);}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return integer(v as any);}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -701,7 +745,11 @@ export function concatenatedStringFrom(input: any): ConcatenatedStringFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? stringFrom(v as any) : typeof v === 'object' ? stringFrom(v as any) : v));
   }
   const base: any = concatenatedString(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? stringFrom(e as any) : typeof e === 'object' ? stringFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? stringFrom(e as any) : typeof e === 'object' ? stringFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -721,7 +769,11 @@ export function conditionalExpressionFrom(input: any): ConditionalExpressionFrom
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = conditionalExpression(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -741,7 +793,11 @@ export function constrainedTypeFrom(input: any): ConstrainedTypeFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v as any) : v));
   }
   const base: any = constrainedType(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? type_From(e as any) : typeof e === 'object' ? type_From(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? type_From(e as any) : typeof e === 'object' ? type_From(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -751,7 +807,7 @@ export function decoratedDefinitionFrom(input: any): DecoratedDefinitionFromNode
   if (typeof input.field === 'function') {
     const base: any = decoratedDefinition.assign(input);
     const _orig_definition = base.definition;
-    base.definition = (v: any) => _orig_definition(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_definition':return classDefinitionFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_definition","function_definition"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.definition = (v: any) => _orig_definition(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_definition':return classDefinitionFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_definition","function_definition"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_children = base.children;
     base.children = (...v: any[]) => _orig_children(...v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? decoratorFrom(e as any) : typeof e === 'object' ? decoratorFrom(e as any) : e)));
     return base;
@@ -759,14 +815,18 @@ export function decoratedDefinitionFrom(input: any): DecoratedDefinitionFromNode
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['definition'] !== undefined) {
-    resolved['definition'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_definition':return classDefinitionFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_definition","function_definition"]);}throw new Error('Cannot resolve .from() value');})(obj['definition']));
+    resolved['definition'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_definition':return classDefinitionFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_definition","function_definition"]);}throw new Error('Cannot resolve .from() value');})(obj['definition']));
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? decoratorFrom(v as any) : typeof v === 'object' ? decoratorFrom(v as any) : v));
   }
   const base: any = decoratedDefinition(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? decoratorFrom(e as any) : typeof e === 'object' ? decoratorFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? decoratorFrom(e as any) : typeof e === 'object' ? decoratorFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -786,7 +846,11 @@ export function decoratorFrom(input: any): DecoratorFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = decorator(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -820,17 +884,21 @@ export function deleteStatementFrom(input: any): DeleteStatementFromNode {
   if (typeof input.field === 'function') {
     const base: any = deleteStatement.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = deleteStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -880,7 +948,11 @@ export function dictPatternFrom(input: any): DictPatternFromNode {
     (base.fields as any)['value'] = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? casePatternFrom(e as any) : typeof e === 'object' ? casePatternFrom(e as any) : e));
     return base;
   };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? splatPatternFrom(e as any) : typeof e === 'object' ? splatPatternFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? splatPatternFrom(e as any) : typeof e === 'object' ? splatPatternFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -890,17 +962,21 @@ export function dictionaryFrom(input: any): DictionaryFromNode {
   if (typeof input.field === 'function') {
     const base: any = dictionary.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pair':return pairFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pair","dictionary_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pair':return pairFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pair","dictionary_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pair':return pairFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pair","dictionary_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pair':return pairFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pair","dictionary_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = dictionary(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pair':return pairFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pair","dictionary_splat"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pair':return pairFrom(rest as any);case 'dictionary_splat':return dictionarySplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pair","dictionary_splat"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -912,7 +988,7 @@ export function dictionaryComprehensionFrom(input: any): DictionaryComprehension
     const _orig_body = base.body;
     base.body = (v: any) => _orig_body((isNodeData(v) ? v : Array.isArray(v) ? pairFrom(v as any) : typeof v === 'object' ? pairFrom(v as any) : v));
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
@@ -922,10 +998,14 @@ export function dictionaryComprehensionFrom(input: any): DictionaryComprehension
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = dictionaryComprehension(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -945,7 +1025,11 @@ export function dictionarySplatFrom(input: any): DictionarySplatFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = dictionarySplat(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -965,7 +1049,11 @@ export function dictionarySplatPatternFrom(input: any): DictionarySplatPatternFr
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'keyword_identifier':return keywordIdentifierFrom(rest as any);case 'subscript':return subscriptFrom(rest as any);case 'attribute':return attributeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["keyword_identifier","subscript","attribute"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = dictionarySplatPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'keyword_identifier':return keywordIdentifierFrom(rest as any);case 'subscript':return subscriptFrom(rest as any);case 'attribute':return attributeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["keyword_identifier","subscript","attribute"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'keyword_identifier':return keywordIdentifierFrom(rest as any);case 'subscript':return subscriptFrom(rest as any);case 'attribute':return attributeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["keyword_identifier","subscript","attribute"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -985,7 +1073,11 @@ export function dottedNameFrom(input: any): DottedNameFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : identifier(String(v) as any)));
   }
   const base: any = dottedName(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any)));
+    return base;
+  };
   return base;
 }
 
@@ -1068,7 +1160,11 @@ export function exceptClauseFrom(input: any): ExceptClauseFromNode {
     return base;
   };
   base.alias = (v: any) => { (base.fields as any)['alias'] = (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v); return base; };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? blockFrom(e as any) : typeof e === 'object' ? blockFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? blockFrom(e as any) : typeof e === 'object' ? blockFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1093,7 +1189,11 @@ export function execStatementFrom(input: any): ExecStatementFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = execStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1113,7 +1213,11 @@ export function expressionListFrom(input: any): ExpressionListFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = expressionList(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1123,17 +1227,21 @@ export function expressionStatementFrom(input: any): ExpressionStatementFromNode
   if (typeof input.field === 'function') {
     const base: any = expressionStatement.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","assignment","augmented_assignment","yield"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","assignment","augmented_assignment","yield"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","assignment","augmented_assignment","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","assignment","augmented_assignment","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = expressionStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","assignment","augmented_assignment","yield"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'assignment':return assignmentFrom(rest as any);case 'augmented_assignment':return augmentedAssignmentFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","assignment","augmented_assignment","yield"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1153,7 +1261,11 @@ export function finallyClauseFrom(input: any): FinallyClauseFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? blockFrom(v as any) : typeof v === 'object' ? blockFrom(v as any) : v));
   }
   const base: any = finallyClause(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? blockFrom(e as any) : typeof e === 'object' ? blockFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? blockFrom(e as any) : typeof e === 'object' ? blockFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1163,28 +1275,28 @@ export function forInClauseFrom(input: any): ForInClauseFromNode {
   if (typeof input.field === 'function') {
     const base: any = forInClause.assign(input);
     const _orig_left = base.left;
-    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_right = base.right;
     base.right = (...v: any[]) => {
       const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-      return _orig_right(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if([','].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'lambda':return lambdaFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","lambda"]);}throw new Error('Cannot resolve .from() value');})(e))));
+      return _orig_right(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if([','].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'lambda':return lambdaFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","lambda"]);}throw new Error('Cannot resolve .from() value');})(e))));
     };
     return base;
   }
   const obj: any = input;
   const resolved: any = {};
   if (obj['left'] !== undefined) {
-    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
+    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
   }
   if (obj['right'] !== undefined) {
     const raw = obj['right'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['right'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if([','].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'lambda':return lambdaFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","lambda"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['right'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if([','].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'lambda':return lambdaFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","lambda"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = forInClause(resolved);
   base.right = (...v: any[]) => {
     const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-    (base.fields as any)['right'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if([','].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'lambda':return lambdaFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","lambda"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    (base.fields as any)['right'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if([','].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'lambda':return lambdaFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","lambda"]);}throw new Error('Cannot resolve .from() value');})(e)));
     return base;
   };
   return base;
@@ -1196,9 +1308,9 @@ export function forStatementFrom(input: any): ForStatementFromNode {
   if (typeof input.field === 'function') {
     const base: any = forStatement.assign(input);
     const _orig_left = base.left;
-    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.left = (v: any) => _orig_left(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_right = base.right;
-    base.right = (v: any) => _orig_right(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.right = (v: any) => _orig_right(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_body = base.body;
     base.body = (v: any) => _orig_body((isNodeData(v) ? v : Array.isArray(v) ? blockFrom(v as any) : typeof v === 'object' ? blockFrom(v as any) : v));
     const _orig_alternative = base.alternative;
@@ -1208,10 +1320,10 @@ export function forStatementFrom(input: any): ForStatementFromNode {
   const obj: any = input;
   const resolved: any = {};
   if (obj['left'] !== undefined) {
-    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
+    resolved['left'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'pattern':return patternFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["pattern","pattern_list"]);}throw new Error('Cannot resolve .from() value');})(obj['left']));
   }
   if (obj['right'] !== undefined) {
-    resolved['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(obj['right']));
+    resolved['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(obj['right']));
   }
   if (obj['body'] !== undefined) {
     resolved['body'] = (isNodeData(obj['body']) ? obj['body'] : Array.isArray(obj['body']) ? blockFrom(obj['body'] as any) : typeof obj['body'] === 'object' ? blockFrom(obj['body'] as any) : obj['body']);
@@ -1220,7 +1332,7 @@ export function forStatementFrom(input: any): ForStatementFromNode {
     resolved['alternative'] = (isNodeData(obj['alternative']) ? obj['alternative'] : Array.isArray(obj['alternative']) ? elseClauseFrom(obj['alternative'] as any) : typeof obj['alternative'] === 'object' ? elseClauseFrom(obj['alternative'] as any) : obj['alternative']);
   }
   const base: any = forStatement(resolved);
-  base.right = (v: any) => { (base.fields as any)['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
+  base.right = (v: any) => { (base.fields as any)['right'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)); return base; };
   base.body = (v: any) => { (base.fields as any)['body'] = (isNodeData(v) ? v : Array.isArray(v) ? blockFrom(v as any) : typeof v === 'object' ? blockFrom(v as any) : v); return base; };
   base.alternative = (v: any) => { (base.fields as any)['alternative'] = (isNodeData(v) ? v : Array.isArray(v) ? elseClauseFrom(v as any) : typeof v === 'object' ? elseClauseFrom(v as any) : v); return base; };
   return base;
@@ -1232,7 +1344,7 @@ export function formatExpressionFrom(input: any): FormatExpressionFromNode {
   if (typeof input.field === 'function') {
     const base: any = formatExpression.assign(input);
     const _orig_expression = base.expression;
-    base.expression = (v: any) => _orig_expression(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.expression = (v: any) => _orig_expression(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_format_specifier = base.formatSpecifier;
     base.formatSpecifier = (v: any) => _orig_format_specifier((isNodeData(v) ? v : Array.isArray(v) ? formatSpecifierFrom(v as any) : typeof v === 'object' ? formatSpecifierFrom(v as any) : v));
     const _orig_type_conversion = base.typeConversion;
@@ -1242,7 +1354,7 @@ export function formatExpressionFrom(input: any): FormatExpressionFromNode {
   const obj: any = input;
   const resolved: any = {};
   if (obj['expression'] !== undefined) {
-    resolved['expression'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['expression']));
+    resolved['expression'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['expression']));
   }
   if (obj['format_specifier'] !== undefined) {
     resolved['format_specifier'] = (isNodeData(obj['format_specifier']) ? obj['format_specifier'] : Array.isArray(obj['format_specifier']) ? formatSpecifierFrom(obj['format_specifier'] as any) : typeof obj['format_specifier'] === 'object' ? formatSpecifierFrom(obj['format_specifier'] as any) : obj['format_specifier']);
@@ -1272,7 +1384,11 @@ export function formatSpecifierFrom(input: any): FormatSpecifierFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? formatExpressionFrom(v as any) : typeof v === 'object' ? formatExpressionFrom(v as any) : v));
   }
   const base: any = formatSpecifier(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? formatExpressionFrom(e as any) : typeof e === 'object' ? formatExpressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? formatExpressionFrom(e as any) : typeof e === 'object' ? formatExpressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1326,7 +1442,7 @@ export function futureImportStatementFrom(input: any): FutureImportStatementFrom
     const _orig_name = base.name;
     base.name = (...v: any[]) => {
       const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-      return _orig_name(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e))));
+      return _orig_name(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e))));
     };
     return base;
   }
@@ -1335,12 +1451,12 @@ export function futureImportStatementFrom(input: any): FutureImportStatementFrom
   if (obj['name'] !== undefined) {
     const raw = obj['name'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['name'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['name'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = futureImportStatement(resolved);
   base.name = (...v: any[]) => {
     const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-    (base.fields as any)['name'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    (base.fields as any)['name'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e)));
     return base;
   };
   return base;
@@ -1354,7 +1470,7 @@ export function generatorExpressionFrom(input: any): GeneratorExpressionFromNode
     const _orig_body = base.body;
     base.body = (v: any) => _orig_body((isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
@@ -1364,10 +1480,14 @@ export function generatorExpressionFrom(input: any): GeneratorExpressionFromNode
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = generatorExpression(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1387,7 +1507,11 @@ export function genericTypeFrom(input: any): GenericTypeFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))return typeParameterFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'type_parameter':return typeParameterFrom(rest as any);}return _resolveByKind(k,rest);}return typeParameterFrom(v as any);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = genericType(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))return typeParameterFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'type_parameter':return typeParameterFrom(rest as any);}return _resolveByKind(k,rest);}return typeParameterFrom(v as any);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))return typeParameterFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'type_parameter':return typeParameterFrom(rest as any);}return _resolveByKind(k,rest);}return typeParameterFrom(v as any);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1407,7 +1531,11 @@ export function globalStatementFrom(input: any): GlobalStatementFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : identifier(String(v) as any)));
   }
   const base: any = globalStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any)));
+    return base;
+  };
   return base;
 }
 
@@ -1427,7 +1555,11 @@ export function ifClauseFrom(input: any): IfClauseFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = ifClause(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1443,7 +1575,7 @@ export function ifStatementFrom(input: any): IfStatementFromNode {
     const _orig_alternative = base.alternative;
     base.alternative = (...v: any[]) => {
       const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-      return _orig_alternative(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'elif_clause':return elifClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["elif_clause","else_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
+      return _orig_alternative(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'elif_clause':return elifClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["elif_clause","else_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
     };
     return base;
   }
@@ -1458,13 +1590,13 @@ export function ifStatementFrom(input: any): IfStatementFromNode {
   if (obj['alternative'] !== undefined) {
     const raw = obj['alternative'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['alternative'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'elif_clause':return elifClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["elif_clause","else_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['alternative'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'elif_clause':return elifClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["elif_clause","else_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = ifStatement(resolved);
   base.consequence = (v: any) => { (base.fields as any)['consequence'] = (isNodeData(v) ? v : Array.isArray(v) ? blockFrom(v as any) : typeof v === 'object' ? blockFrom(v as any) : v); return base; };
   base.alternative = (...v: any[]) => {
     const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-    (base.fields as any)['alternative'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'elif_clause':return elifClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["elif_clause","else_clause"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    (base.fields as any)['alternative'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'elif_clause':return elifClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["elif_clause","else_clause"]);}throw new Error('Cannot resolve .from() value');})(e)));
     return base;
   };
   return base;
@@ -1476,11 +1608,11 @@ export function importFromStatementFrom(input: any): ImportFromStatementFromNode
   if (typeof input.field === 'function') {
     const base: any = importFromStatement.assign(input);
     const _orig_module_name = base.moduleName;
-    base.moduleName = (v: any) => _orig_module_name(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'relative_import':return relativeImportFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["relative_import","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.moduleName = (v: any) => _orig_module_name(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'relative_import':return relativeImportFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["relative_import","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_name = base.name;
     base.name = (...v: any[]) => {
       const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-      return _orig_name(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e))));
+      return _orig_name(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e))));
     };
     const _orig_children = base.children;
     base.children = (...v: any[]) => _orig_children(...v.map((e: any) => (isNodeData(e) ? e : wildcardImport(String(e) as any))));
@@ -1489,12 +1621,12 @@ export function importFromStatementFrom(input: any): ImportFromStatementFromNode
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['module_name'] !== undefined) {
-    resolved['module_name'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'relative_import':return relativeImportFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["relative_import","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(obj['module_name']));
+    resolved['module_name'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'relative_import':return relativeImportFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["relative_import","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(obj['module_name']));
   }
   if (obj['name'] !== undefined) {
     const raw = obj['name'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['name'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['name'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
@@ -1503,10 +1635,14 @@ export function importFromStatementFrom(input: any): ImportFromStatementFromNode
   const base: any = importFromStatement(resolved);
   base.name = (...v: any[]) => {
     const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-    (base.fields as any)['name'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    (base.fields as any)['name'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e)));
     return base;
   };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : wildcardImport(String(e) as any))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : wildcardImport(String(e) as any)));
+    return base;
+  };
   return base;
 }
 
@@ -1518,7 +1654,7 @@ export function importStatementFrom(input: any): ImportStatementFromNode {
     const _orig_name = base.name;
     base.name = (...v: any[]) => {
       const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-      return _orig_name(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e))));
+      return _orig_name(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e))));
     };
     return base;
   }
@@ -1527,12 +1663,12 @@ export function importStatementFrom(input: any): ImportStatementFromNode {
   if (obj['name'] !== undefined) {
     const raw = obj['name'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['name'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['name'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = importStatement(resolved);
   base.name = (...v: any[]) => {
     const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-    (base.fields as any)['name'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    (base.fields as any)['name'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);case 'aliased_import':return aliasedImportFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["dotted_name","aliased_import"]);}throw new Error('Cannot resolve .from() value');})(e)));
     return base;
   };
   return base;
@@ -1544,7 +1680,7 @@ export function interpolationFrom(input: any): InterpolationFromNode {
   if (typeof input.field === 'function') {
     const base: any = interpolation.assign(input);
     const _orig_expression = base.expression;
-    base.expression = (v: any) => _orig_expression(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    base.expression = (v: any) => _orig_expression(((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_type_conversion = base.typeConversion;
     base.typeConversion = (v: any) => _orig_type_conversion((isNodeData(v) ? v : typeConversion(String(v) as any)));
     const _orig_format_specifier = base.formatSpecifier;
@@ -1554,7 +1690,7 @@ export function interpolationFrom(input: any): InterpolationFromNode {
   const obj: any = input;
   const resolved: any = {};
   if (obj['expression'] !== undefined) {
-    resolved['expression'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['expression']));
+    resolved['expression'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);case 'pattern_list':return patternListFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list","pattern_list","yield"]);}throw new Error('Cannot resolve .from() value');})(obj['expression']));
   }
   if (obj['type_conversion'] !== undefined) {
     resolved['type_conversion'] = (isNodeData(obj['type_conversion']) ? obj['type_conversion'] : typeConversion(String(obj['type_conversion']) as any));
@@ -1608,7 +1744,11 @@ export function keywordPatternFrom(input: any): KeywordPatternFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = keywordPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1652,7 +1792,11 @@ export function lambdaParametersFrom(input: any): LambdaParametersFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? parameterFrom(v as any) : typeof v === 'object' ? parameterFrom(v as any) : v));
   }
   const base: any = lambdaParameters(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? parameterFrom(e as any) : typeof e === 'object' ? parameterFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? parameterFrom(e as any) : typeof e === 'object' ? parameterFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1662,17 +1806,21 @@ export function listFrom(input: any): ListFromNode {
   if (typeof input.field === 'function') {
     const base: any = list.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = list(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1684,7 +1832,7 @@ export function listComprehensionFrom(input: any): ListComprehensionFromNode {
     const _orig_body = base.body;
     base.body = (v: any) => _orig_body((isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
@@ -1694,10 +1842,14 @@ export function listComprehensionFrom(input: any): ListComprehensionFromNode {
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = listComprehension(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1717,7 +1869,11 @@ export function listPatternFrom(input: any): ListPatternFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? patternFrom(v as any) : typeof v === 'object' ? patternFrom(v as any) : v));
   }
   const base: any = listPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? patternFrom(e as any) : typeof e === 'object' ? patternFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? patternFrom(e as any) : typeof e === 'object' ? patternFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1737,7 +1893,11 @@ export function listSplatFrom(input: any): ListSplatFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = listSplat(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1757,7 +1917,11 @@ export function listSplatPatternFrom(input: any): ListSplatPatternFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'keyword_identifier':return keywordIdentifierFrom(rest as any);case 'subscript':return subscriptFrom(rest as any);case 'attribute':return attributeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["keyword_identifier","subscript","attribute"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = listSplatPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'keyword_identifier':return keywordIdentifierFrom(rest as any);case 'subscript':return subscriptFrom(rest as any);case 'attribute':return attributeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["keyword_identifier","subscript","attribute"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'keyword_identifier':return keywordIdentifierFrom(rest as any);case 'subscript':return subscriptFrom(rest as any);case 'attribute':return attributeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["keyword_identifier","subscript","attribute"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1810,7 +1974,11 @@ export function memberTypeFrom(input: any): MemberTypeFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))return type_From(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'type':return type_From(rest as any);}return _resolveByKind(k,rest);}return type_From(v as any);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = memberType(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))return type_From(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'type':return type_From(rest as any);}return _resolveByKind(k,rest);}return type_From(v as any);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))return type_From(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'type':return type_From(rest as any);}return _resolveByKind(k,rest);}return type_From(v as any);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1830,7 +1998,11 @@ export function moduleFrom(input: any): ModuleFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return passStatement(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'future_import_statement':return futureImportStatementFrom(rest as any);case 'import_statement':return importStatementFrom(rest as any);case 'import_from_statement':return importFromStatementFrom(rest as any);case 'print_statement':return printStatementFrom(rest as any);case 'assert_statement':return assertStatementFrom(rest as any);case 'expression_statement':return expressionStatementFrom(rest as any);case 'return_statement':return returnStatementFrom(rest as any);case 'delete_statement':return deleteStatementFrom(rest as any);case 'raise_statement':return raiseStatementFrom(rest as any);case 'global_statement':return globalStatementFrom(rest as any);case 'nonlocal_statement':return nonlocalStatementFrom(rest as any);case 'exec_statement':return execStatementFrom(rest as any);case 'type_alias_statement':return typeAliasStatementFrom(rest as any);case 'if_statement':return ifStatementFrom(rest as any);case 'for_statement':return forStatementFrom(rest as any);case 'while_statement':return whileStatementFrom(rest as any);case 'try_statement':return tryStatementFrom(rest as any);case 'with_statement':return withStatementFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);case 'class_definition':return classDefinitionFrom(rest as any);case 'decorated_definition':return decoratedDefinitionFrom(rest as any);case 'match_statement':return matchStatementFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["future_import_statement","import_statement","import_from_statement","print_statement","assert_statement","expression_statement","return_statement","delete_statement","raise_statement","global_statement","nonlocal_statement","exec_statement","type_alias_statement","if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = module(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return passStatement(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'future_import_statement':return futureImportStatementFrom(rest as any);case 'import_statement':return importStatementFrom(rest as any);case 'import_from_statement':return importFromStatementFrom(rest as any);case 'print_statement':return printStatementFrom(rest as any);case 'assert_statement':return assertStatementFrom(rest as any);case 'expression_statement':return expressionStatementFrom(rest as any);case 'return_statement':return returnStatementFrom(rest as any);case 'delete_statement':return deleteStatementFrom(rest as any);case 'raise_statement':return raiseStatementFrom(rest as any);case 'global_statement':return globalStatementFrom(rest as any);case 'nonlocal_statement':return nonlocalStatementFrom(rest as any);case 'exec_statement':return execStatementFrom(rest as any);case 'type_alias_statement':return typeAliasStatementFrom(rest as any);case 'if_statement':return ifStatementFrom(rest as any);case 'for_statement':return forStatementFrom(rest as any);case 'while_statement':return whileStatementFrom(rest as any);case 'try_statement':return tryStatementFrom(rest as any);case 'with_statement':return withStatementFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);case 'class_definition':return classDefinitionFrom(rest as any);case 'decorated_definition':return decoratedDefinitionFrom(rest as any);case 'match_statement':return matchStatementFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["future_import_statement","import_statement","import_from_statement","print_statement","assert_statement","expression_statement","return_statement","delete_statement","raise_statement","global_statement","nonlocal_statement","exec_statement","type_alias_statement","if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return passStatement(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'future_import_statement':return futureImportStatementFrom(rest as any);case 'import_statement':return importStatementFrom(rest as any);case 'import_from_statement':return importFromStatementFrom(rest as any);case 'print_statement':return printStatementFrom(rest as any);case 'assert_statement':return assertStatementFrom(rest as any);case 'expression_statement':return expressionStatementFrom(rest as any);case 'return_statement':return returnStatementFrom(rest as any);case 'delete_statement':return deleteStatementFrom(rest as any);case 'raise_statement':return raiseStatementFrom(rest as any);case 'global_statement':return globalStatementFrom(rest as any);case 'nonlocal_statement':return nonlocalStatementFrom(rest as any);case 'exec_statement':return execStatementFrom(rest as any);case 'type_alias_statement':return typeAliasStatementFrom(rest as any);case 'if_statement':return ifStatementFrom(rest as any);case 'for_statement':return forStatementFrom(rest as any);case 'while_statement':return whileStatementFrom(rest as any);case 'try_statement':return tryStatementFrom(rest as any);case 'with_statement':return withStatementFrom(rest as any);case 'function_definition':return functionDefinitionFrom(rest as any);case 'class_definition':return classDefinitionFrom(rest as any);case 'decorated_definition':return decoratedDefinitionFrom(rest as any);case 'match_statement':return matchStatementFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["future_import_statement","import_statement","import_from_statement","print_statement","assert_statement","expression_statement","return_statement","delete_statement","raise_statement","global_statement","nonlocal_statement","exec_statement","type_alias_statement","if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1874,7 +2046,11 @@ export function nonlocalStatementFrom(input: any): NonlocalStatementFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : identifier(String(v) as any)));
   }
   const base: any = nonlocalStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any)));
+    return base;
+  };
   return base;
 }
 
@@ -1936,7 +2112,11 @@ export function parametersFrom(input: any): ParametersFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? parameterFrom(v as any) : typeof v === 'object' ? parameterFrom(v as any) : v));
   }
   const base: any = parameters(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? parameterFrom(e as any) : typeof e === 'object' ? parameterFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? parameterFrom(e as any) : typeof e === 'object' ? parameterFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -1946,17 +2126,21 @@ export function parenthesizedExpressionFrom(input: any): ParenthesizedExpression
   if (typeof input.field === 'function') {
     const base: any = parenthesizedExpression.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = parenthesizedExpression(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1966,17 +2150,21 @@ export function parenthesizedListSplatFrom(input: any): ParenthesizedListSplatFr
   if (typeof input.field === 'function') {
     const base: any = parenthesizedListSplat.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["parenthesized_expression","list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["parenthesized_expression","list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["parenthesized_expression","list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["parenthesized_expression","list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = parenthesizedListSplat(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["parenthesized_expression","list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'parenthesized_expression':return parenthesizedExpressionFrom(rest as any);case 'list_splat':return listSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["parenthesized_expression","list_splat"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -1996,7 +2184,11 @@ export function patternListFrom(input: any): PatternListFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? patternFrom(v as any) : typeof v === 'object' ? patternFrom(v as any) : v));
   }
   const base: any = patternList(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? patternFrom(e as any) : typeof e === 'object' ? patternFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? patternFrom(e as any) : typeof e === 'object' ? patternFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2031,7 +2223,11 @@ export function printStatementFrom(input: any): PrintStatementFromNode {
     (base.fields as any)['argument'] = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
     return base;
   };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? chevronFrom(e as any) : typeof e === 'object' ? chevronFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? chevronFrom(e as any) : typeof e === 'object' ? chevronFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2043,7 +2239,7 @@ export function raiseStatementFrom(input: any): RaiseStatementFromNode {
     const _orig_cause = base.cause;
     base.cause = (v: any) => _orig_cause((isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
@@ -2053,11 +2249,15 @@ export function raiseStatementFrom(input: any): RaiseStatementFromNode {
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = raiseStatement(resolved);
   base.cause = (v: any) => { (base.fields as any)['cause'] = (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v); return base; };
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2077,7 +2277,11 @@ export function relativeImportFrom(input: any): RelativeImportFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return importPrefix(v as any);}if(Array.isArray(v))return dottedNameFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return dottedNameFrom(v as any);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = relativeImport(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return importPrefix(v as any);}if(Array.isArray(v))return dottedNameFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return dottedNameFrom(v as any);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return importPrefix(v as any);}if(Array.isArray(v))return dottedNameFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return dottedNameFrom(v as any);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2087,17 +2291,21 @@ export function returnStatementFrom(input: any): ReturnStatementFromNode {
   if (typeof input.field === 'function') {
     const base: any = returnStatement.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = returnStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2107,17 +2315,21 @@ export function setFrom(input: any): SetFromNode {
   if (typeof input.field === 'function') {
     const base: any = set.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = set(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2129,7 +2341,7 @@ export function setComprehensionFrom(input: any): SetComprehensionFromNode {
     const _orig_body = base.body;
     base.body = (v: any) => _orig_body((isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
@@ -2139,10 +2351,14 @@ export function setComprehensionFrom(input: any): SetComprehensionFromNode {
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = setComprehension(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'for_in_clause':return forInClauseFrom(rest as any);case 'if_clause':return ifClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["for_in_clause","if_clause"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2162,7 +2378,11 @@ export function sliceFrom(input: any): SliceFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? expressionFrom(v as any) : typeof v === 'object' ? expressionFrom(v as any) : v));
   }
   const base: any = slice(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? expressionFrom(e as any) : typeof e === 'object' ? expressionFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2182,7 +2402,11 @@ export function splatPatternFrom(input: any): SplatPatternFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : identifier(String(v) as any)));
   }
   const base: any = splatPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any)));
+    return base;
+  };
   return base;
 }
 
@@ -2202,7 +2426,11 @@ export function splatTypeFrom(input: any): SplatTypeFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : identifier(String(v) as any)));
   }
   const base: any = splatType(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : identifier(String(e) as any)));
+    return base;
+  };
   return base;
 }
 
@@ -2222,7 +2450,11 @@ export function stringFrom(input: any): StringFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return stringStart(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'interpolation':return interpolationFrom(rest as any);case 'string_content':return stringContentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["interpolation","string_content"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = string(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return stringStart(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'interpolation':return interpolationFrom(rest as any);case 'string_content':return stringContentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["interpolation","string_content"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return stringStart(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'interpolation':return interpolationFrom(rest as any);case 'string_content':return stringContentFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["interpolation","string_content"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2242,7 +2474,11 @@ export function stringContentFrom(input: any): StringContentFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return escapeInterpolation(v as any);}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = stringContent(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return escapeInterpolation(v as any);}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return escapeInterpolation(v as any);}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2256,7 +2492,7 @@ export function subscriptFrom(input: any): SubscriptFromNode {
     const _orig_subscript = base.subscript;
     base.subscript = (...v: any[]) => {
       const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-      return _orig_subscript(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'slice':return sliceFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","slice"]);}throw new Error('Cannot resolve .from() value');})(e))));
+      return _orig_subscript(...arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'slice':return sliceFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","slice"]);}throw new Error('Cannot resolve .from() value');})(e))));
     };
     return base;
   }
@@ -2268,12 +2504,12 @@ export function subscriptFrom(input: any): SubscriptFromNode {
   if (obj['subscript'] !== undefined) {
     const raw = obj['subscript'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['subscript'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'slice':return sliceFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","slice"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['subscript'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'slice':return sliceFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","slice"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = subscript(resolved);
   base.subscript = (...v: any[]) => {
     const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
-    (base.fields as any)['subscript'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'slice':return sliceFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","slice"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    (base.fields as any)['subscript'] = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'slice':return sliceFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","slice"]);}throw new Error('Cannot resolve .from() value');})(e)));
     return base;
   };
   return base;
@@ -2287,7 +2523,7 @@ export function tryStatementFrom(input: any): TryStatementFromNode {
     const _orig_body = base.body;
     base.body = (v: any) => _orig_body((isNodeData(v) ? v : Array.isArray(v) ? blockFrom(v as any) : typeof v === 'object' ? blockFrom(v as any) : v));
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'except_clause':return exceptClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);case 'finally_clause':return finallyClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["except_clause","else_clause","finally_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'except_clause':return exceptClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);case 'finally_clause':return finallyClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["except_clause","else_clause","finally_clause"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
@@ -2297,10 +2533,14 @@ export function tryStatementFrom(input: any): TryStatementFromNode {
   }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'except_clause':return exceptClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);case 'finally_clause':return finallyClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["except_clause","else_clause","finally_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'except_clause':return exceptClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);case 'finally_clause':return finallyClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["except_clause","else_clause","finally_clause"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = tryStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'except_clause':return exceptClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);case 'finally_clause':return finallyClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["except_clause","else_clause","finally_clause"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'except_clause':return exceptClauseFrom(rest as any);case 'else_clause':return elseClauseFrom(rest as any);case 'finally_clause':return finallyClauseFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["except_clause","else_clause","finally_clause"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2310,17 +2550,21 @@ export function tupleFrom(input: any): TupleFromNode {
   if (typeof input.field === 'function') {
     const base: any = tuple.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = tuple(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'yield':return yield_From(rest as any);case 'list_splat':return listSplatFrom(rest as any);case 'parenthesized_list_splat':return parenthesizedListSplatFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","yield","list_splat","parenthesized_list_splat"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2340,7 +2584,11 @@ export function tuplePatternFrom(input: any): TuplePatternFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? patternFrom(v as any) : typeof v === 'object' ? patternFrom(v as any) : v));
   }
   const base: any = tuplePattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? patternFrom(e as any) : typeof e === 'object' ? patternFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? patternFrom(e as any) : typeof e === 'object' ? patternFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2350,17 +2598,21 @@ export function type_From(input: any): TypeFromNode {
   if (typeof input.field === 'function') {
     const base: any = type_.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'splat_type':return splatTypeFrom(rest as any);case 'generic_type':return genericTypeFrom(rest as any);case 'union_type':return unionTypeFrom(rest as any);case 'constrained_type':return constrainedTypeFrom(rest as any);case 'member_type':return memberTypeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","splat_type","generic_type","union_type","constrained_type","member_type"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'splat_type':return splatTypeFrom(rest as any);case 'generic_type':return genericTypeFrom(rest as any);case 'union_type':return unionTypeFrom(rest as any);case 'constrained_type':return constrainedTypeFrom(rest as any);case 'member_type':return memberTypeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","splat_type","generic_type","union_type","constrained_type","member_type"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'splat_type':return splatTypeFrom(rest as any);case 'generic_type':return genericTypeFrom(rest as any);case 'union_type':return unionTypeFrom(rest as any);case 'constrained_type':return constrainedTypeFrom(rest as any);case 'member_type':return memberTypeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","splat_type","generic_type","union_type","constrained_type","member_type"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'splat_type':return splatTypeFrom(rest as any);case 'generic_type':return genericTypeFrom(rest as any);case 'union_type':return unionTypeFrom(rest as any);case 'constrained_type':return constrainedTypeFrom(rest as any);case 'member_type':return memberTypeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","splat_type","generic_type","union_type","constrained_type","member_type"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = type_(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'splat_type':return splatTypeFrom(rest as any);case 'generic_type':return genericTypeFrom(rest as any);case 'union_type':return unionTypeFrom(rest as any);case 'constrained_type':return constrainedTypeFrom(rest as any);case 'member_type':return memberTypeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","splat_type","generic_type","union_type","constrained_type","member_type"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'splat_type':return splatTypeFrom(rest as any);case 'generic_type':return genericTypeFrom(rest as any);case 'union_type':return unionTypeFrom(rest as any);case 'constrained_type':return constrainedTypeFrom(rest as any);case 'member_type':return memberTypeFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","splat_type","generic_type","union_type","constrained_type","member_type"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2404,7 +2656,11 @@ export function typeParameterFrom(input: any): TypeParameterFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v as any) : v));
   }
   const base: any = typeParameter(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? type_From(e as any) : typeof e === 'object' ? type_From(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? type_From(e as any) : typeof e === 'object' ? type_From(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2459,7 +2715,11 @@ export function typedParameterFrom(input: any): TypedParameterFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'list_splat_pattern':return listSplatPatternFrom(rest as any);case 'dictionary_splat_pattern':return dictionarySplatPatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["list_splat_pattern","dictionary_splat_pattern"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = typedParameter(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'list_splat_pattern':return listSplatPatternFrom(rest as any);case 'dictionary_splat_pattern':return dictionarySplatPatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["list_splat_pattern","dictionary_splat_pattern"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'list_splat_pattern':return listSplatPatternFrom(rest as any);case 'dictionary_splat_pattern':return dictionarySplatPatternFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["list_splat_pattern","dictionary_splat_pattern"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2469,7 +2729,7 @@ export function unaryOperatorFrom(input: any): UnaryOperatorFromNode {
   if (typeof input.field === 'function') {
     const base: any = unaryOperator.assign(input);
     const _orig_operator = base.operator;
-    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+','-','~'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
+    base.operator = (v: any) => _orig_operator(((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+','-','~'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(v)));
     const _orig_argument = base.argument;
     base.argument = (v: any) => _orig_argument((isNodeData(v) ? v : Array.isArray(v) ? primaryExpressionFrom(v as any) : typeof v === 'object' ? primaryExpressionFrom(v as any) : v));
     return base;
@@ -2477,7 +2737,7 @@ export function unaryOperatorFrom(input: any): UnaryOperatorFromNode {
   const obj: any = input;
   const resolved: any = {};
   if (obj['operator'] !== undefined) {
-    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){if(['+','-','~'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
+    resolved['operator'] = ((v => {if(isNodeData(v))return v;if(typeof v==='string'){if(['+','-','~'].includes(v))return{type:v,fields:{},text:v} as any;return{type:'string',fields:{},text:v} as any;}if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');}throw new Error('Cannot resolve .from() value');})(obj['operator']));
   }
   if (obj['argument'] !== undefined) {
     resolved['argument'] = (isNodeData(obj['argument']) ? obj['argument'] : Array.isArray(obj['argument']) ? primaryExpressionFrom(obj['argument'] as any) : typeof obj['argument'] === 'object' ? primaryExpressionFrom(obj['argument'] as any) : obj['argument']);
@@ -2503,7 +2763,11 @@ export function unionPatternFrom(input: any): UnionPatternFromNode {
     resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return true_(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = unionPattern(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return true_(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return true_(v as any);}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest as any);case 'splat_pattern':return splatPatternFrom(rest as any);case 'union_pattern':return unionPatternFrom(rest as any);case 'list_pattern':return listPatternFrom(rest as any);case 'tuple_pattern':return tuplePatternFrom(rest as any);case 'dict_pattern':return dictPatternFrom(rest as any);case 'string':return stringFrom(rest as any);case 'concatenated_string':return concatenatedStringFrom(rest as any);case 'complex_pattern':return complexPatternFrom(rest as any);case 'dotted_name':return dottedNameFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["class_pattern","splat_pattern","union_pattern","list_pattern","tuple_pattern","dict_pattern","string","concatenated_string","complex_pattern","dotted_name"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }
 
@@ -2523,7 +2787,11 @@ export function unionTypeFrom(input: any): UnionTypeFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v as any) : v));
   }
   const base: any = unionType(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? type_From(e as any) : typeof e === 'object' ? type_From(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? type_From(e as any) : typeof e === 'object' ? type_From(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2573,7 +2841,11 @@ export function withClauseFrom(input: any): WithClauseFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? withItemFrom(v as any) : typeof v === 'object' ? withItemFrom(v as any) : v));
   }
   const base: any = withClause(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? withItemFrom(e as any) : typeof e === 'object' ? withItemFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? withItemFrom(e as any) : typeof e === 'object' ? withItemFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2616,7 +2888,11 @@ export function withStatementFrom(input: any): WithStatementFromNode {
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? withClauseFrom(v as any) : typeof v === 'object' ? withClauseFrom(v as any) : v));
   }
   const base: any = withStatement(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? withClauseFrom(e as any) : typeof e === 'object' ? withClauseFrom(e as any) : e)); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => (isNodeData(e) ? e : Array.isArray(e) ? withClauseFrom(e as any) : typeof e === 'object' ? withClauseFrom(e as any) : e));
+    return base;
+  };
   return base;
 }
 
@@ -2626,16 +2902,20 @@ export function yield_From(input: any): YieldFromNode {
   if (typeof input.field === 'function') {
     const base: any = yield_.assign(input);
     const _orig_children = base.children;
-    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
+    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))));
     return base;
   }
   const obj: any = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
-    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
+    resolved['children'] = arr.map((v: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(v)));
   }
   const base: any = yield_(resolved);
-  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='boolean')return booleanLiteral(String(v) as any);if(typeof v==='number')return integerLiteral(String(v) as any);if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e))); return base; };
+  base.children = (...v: any[]) => {
+    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;
+    (base.fields as any).children = arr.map((e: any) => ((v => {if(isNodeData(v))return v;if(typeof v==='string'){return{type:'string',fields:{},text:v} as any;}if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression':return expressionFrom(rest as any);case 'expression_list':return expressionListFrom(rest as any);}return _resolveByKind(k,rest);}return _inferBranch(v,["expression","expression_list"]);}throw new Error('Cannot resolve .from() value');})(e)));
+    return base;
+  };
   return base;
 }

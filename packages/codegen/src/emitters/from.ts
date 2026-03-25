@@ -162,7 +162,11 @@ function emitErgonomicSetters(
 			types: node.children.types,
 			namedTypes: node.children.namedTypes,
 		};
-		lines.push(`  ${baseVar}.children = (...v: any[]) => { (${baseVar}.fields as any).children = v.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes)}); return ${baseVar}; };`);
+		lines.push(`  ${baseVar}.children = (...v: any[]) => {`);
+		lines.push(`    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
+		lines.push(`    (${baseVar}.fields as any).children = arr.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+		lines.push(`    return ${baseVar};`);
+		lines.push(`  };`);
 	}
 
 	return lines;
@@ -336,14 +340,14 @@ function emitResolveBody(
 	// NodeData passthrough
 	parts.push(`if(isNodeData(${v}))return ${v};`);
 
-	// Boolean → boolean_literal (if accepted)
-	if (leafTypes.includes('boolean_literal') || leafTypes.length === 0) {
+	// Boolean → boolean_literal (if accepted, or fallback when field has no leaf types but grammar has the kind)
+	if (leafTypes.includes('boolean_literal') || (leafTypes.length === 0 && leafSet.has('boolean_literal'))) {
 		parts.push(`if(typeof ${v}==='boolean')return booleanLiteral(String(${v}) as any);`);
 	}
 
 	// Number → integer_literal or float_literal
-	const hasInt = leafTypes.includes('integer_literal') || leafTypes.length === 0;
-	const hasFloat = leafTypes.includes('float_literal');
+	const hasInt = leafTypes.includes('integer_literal') || (leafTypes.length === 0 && leafSet.has('integer_literal'));
+	const hasFloat = leafTypes.includes('float_literal') || (leafTypes.length === 0 && leafSet.has('float_literal'));
 	if (hasInt && hasFloat) {
 		parts.push(`if(typeof ${v}==='number')return Number.isInteger(${v})?integerLiteral(String(${v}) as any):floatLiteral(String(${v}) as any);`);
 	} else if (hasInt) {
