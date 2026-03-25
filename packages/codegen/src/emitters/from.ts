@@ -271,7 +271,13 @@ function emitResolveExpr(
 
 	// Simple case: single leaf type, no branches, no anon tokens
 	if (leafTypes.length === 1 && branchTypes.length === 0 && anonTokens.length === 0) {
-		const factory = toFactoryName(leafTypes[0]!);
+		const lt = leafTypes[0]!;
+		if (keywordKinds.has(lt)) {
+			// Keyword — 0-arg factory, match exact text
+			const text = keywordKinds.get(lt)!;
+			return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' && ${varName} === '${escapeString(text)}' ? ${toFactoryName(lt)}() : ${varName})`;
+		}
+		const factory = toFactoryName(lt);
 		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(String(${varName}) as any) : ${varName})`;
 	}
 
@@ -323,7 +329,7 @@ function emitResolveBody(
 	}
 
 	// String resolution
-	parts.push(`if(typeof ${v}==='string'){${emitStringResolve(v, leafTypes, anonTokens, leafSet, leafValueMap, grammar)}}`);
+	parts.push(`if(typeof ${v}==='string'){${emitStringResolve(v, leafTypes, anonTokens, leafSet, leafValueMap, keywordKinds, grammar)}}`);
 
 	// Array → wrap in single branch type as children
 	if (branchTypes.length > 0) {
@@ -354,13 +360,23 @@ function emitStringResolve(
 	anonTokens: string[],
 	_leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
+	keywordKinds: Map<string, string>,
 	grammar?: string,
 ): string {
 	const parts: string[] = [];
 
+	// Helper: emit factory call — keyword factories take 0 args, text factories take 1
+	const callLeaf = (kind: string, textVar: string) => {
+		if (keywordKinds.has(kind)) {
+			const expectedText = keywordKinds.get(kind)!;
+			return `(${textVar}==='${escapeString(expectedText)}'?${toFactoryName(kind)}():(()=>{throw new Error(\`Expected '${escapeString(expectedText)}' for ${kind}, got '\${${textVar}}'\`)})())`;
+		}
+		return `${toFactoryName(kind)}(${textVar} as any)`;
+	};
+
 	// Exactly one leaf type → use directly
 	if (leafTypes.length === 1) {
-		parts.push(`return ${toFactoryName(leafTypes[0]!)}(${v} as any);`);
+		parts.push(`return ${callLeaf(leafTypes[0]!, v)};`);
 		return parts.join('');
 	}
 
@@ -370,7 +386,7 @@ function emitStringResolve(
 			const vals = leafValueMap.get(lt);
 			if (vals && vals.length > 0) {
 				const valSet = vals.map(val => `'${escapeString(val)}'`).join(',');
-				parts.push(`if([${valSet}].includes(${v}))return ${toFactoryName(lt)}(${v} as any);`);
+				parts.push(`if([${valSet}].includes(${v}))return ${callLeaf(lt, v)};`);
 			}
 		}
 	}
@@ -398,7 +414,7 @@ function emitStringResolve(
 				try {
 					const flags = pattern.includes('\\p{') ? 'u' : '';
 					new RegExp(`^${pattern}$`, flags);
-					parts.push(`if(/^${pattern.replace(/`/g, '\\`')}$/${flags}.test(${v}))return ${toFactoryName(lt)}(${v} as any);`);
+					parts.push(`if(/^${pattern.replace(/`/g, '\\`')}$/${flags}.test(${v}))return ${callLeaf(lt, v)};`);
 				} catch {
 					// Pattern not safe for JS — skip
 				}
@@ -410,14 +426,14 @@ function emitStringResolve(
 	const hasTypeIdent = leafTypes.includes('type_identifier');
 	const hasIdent = leafTypes.includes('identifier');
 	if (hasTypeIdent && hasIdent) {
-		parts.push(`return typeIdentifier(${v});`);
+		parts.push(`return ${callLeaf('type_identifier', v)};`);
 		return parts.join('');
 	}
 
 	const identPriority = ['identifier', 'type_identifier', 'field_identifier', 'shorthand_field_identifier'];
 	for (const ik of identPriority) {
 		if (leafTypes.includes(ik)) {
-			parts.push(`return ${toFactoryName(ik)}(${v} as any);`);
+			parts.push(`return ${callLeaf(ik, v)};`);
 			return parts.join('');
 		}
 	}
@@ -426,13 +442,13 @@ function emitStringResolve(
 	if (leafTypes.length > 0 && grammar) {
 		const noPatternKind = leafTypes.find(lt => !extractLeafPattern(grammar, lt));
 		if (noPatternKind) {
-			parts.push(`return ${toFactoryName(noPatternKind)}(${v} as any);`);
+			parts.push(`return ${callLeaf(noPatternKind, v)};`);
 			return parts.join('');
 		}
 	}
 	// Last resort: first leaf type
 	if (leafTypes.length > 0) {
-		parts.push(`return ${toFactoryName(leafTypes[0]!)}(${v} as any);`);
+		parts.push(`return ${callLeaf(leafTypes[0]!, v)};`);
 		return parts.join('');
 	}
 
