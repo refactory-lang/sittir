@@ -14,34 +14,6 @@ function isNodeData(v: any): v is NodeData {
   return v !== null && typeof v === 'object' && 'type' in v && 'fields' in v;
 }
 
-function resolveInput(v: any): NodeData {
-  if (typeof v === 'string') return { type: 'string', fields: {}, text: v };
-  if (typeof v === 'number') return { type: 'number', fields: {}, text: String(v) };
-  return v;
-}
-
-const LEAF_PATTERNS: Record<string, RegExp> = {
-  'meta_property': /^(?:new\.target|import\.meta)$/,
-  'hash_bang_line': /^#!.*$/,
-  'number': /^(?:(?:0x|0X)[\da-fA-F](_?[\da-fA-F])*|(?:(?:0|0?[1-9]_?\d(_?\d)*?)\.\d(_?\d)*?(?:e|E)(?:-|\+)?\d(_?\d)*?|\.\d(_?\d)*(?:e|E)(?:-|\+)?\d(_?\d)*?|(?:0|0?[1-9]_?\d(_?\d)*?)(?:e|E)(?:-|\+)?\d(_?\d)*|\d(_?\d)*)|(?:0b|0B)[0-1](_?[0-1])*|(?:0o|0O)[0-7](_?[0-7])*|(?:(?:0x|0X)[\da-fA-F](_?[\da-fA-F])*|(?:0b|0B)[0-1](_?[0-1])*|(?:0o|0O)[0-7](_?[0-7])*|\d(_?\d)*)n)$/,
-  'regex_flags': /^[a-z]+$/,
-  'regex_pattern': /^(?:(?:\[(?:(?:\\.|[^\]\n\\]))*\]|\\.|[^/\\\[\n]))+$/,
-};
-
-function validateNodeText(node: NodeData): void {
-  if (node.text === undefined) return;
-  const pattern = LEAF_PATTERNS[node.type];
-  if (pattern && !pattern.test(node.text)) {
-    throw new Error(`Invalid ${node.type}: '${node.text}' does not match grammar pattern`);
-  }
-}
-
-function resolveAndValidate(v: any): NodeData {
-  const node = resolveInput(v);
-  validateNodeText(node);
-  return node;
-}
-
 const RESERVED_KEYWORDS = new Set([
   'abstract',
   'accessor',
@@ -153,13 +125,13 @@ export function abstractClassDeclaration(
   config?: Partial<AbstractClassDeclarationConfig>,
 ): AbstractClassDeclarationNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'abstract_class_declaration', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -185,9 +157,9 @@ abstractClassDeclaration.assign = function(target: AssignableNode<'abstract_clas
   };
   const node: any = { get type() { return 'abstract_class_declaration'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -241,13 +213,13 @@ export function abstractMethodSignature(
   config?: Partial<AbstractMethodSignatureConfig>,
 ): AbstractMethodSignatureNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'abstract_method_signature', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -272,10 +244,10 @@ abstractMethodSignature.assign = function(target: AssignableNode<'abstract_metho
     return merged;
   };
   const node: any = { get type() { return 'abstract_method_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -322,7 +294,7 @@ export function addingTypeAnnotation(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'adding_type_annotation', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -393,7 +365,7 @@ export function ambientDeclaration(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'ambient_declaration', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -464,7 +436,7 @@ export function arguments_(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'arguments', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -535,7 +507,7 @@ export function array(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'array', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -606,7 +578,7 @@ export function arrayPattern(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'array_pattern', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -677,7 +649,7 @@ export function arrayType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'array_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -755,13 +727,13 @@ export function arrowFunction(
   config?: Partial<ArrowFunctionConfig>,
 ): ArrowFunctionNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'arrow_function', fields };
-  node.parameter = (v: any) => { validateNodeText(v); fields['parameter'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.parameter = (v: any) => { fields['parameter'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -784,11 +756,11 @@ arrowFunction.assign = function(target: AssignableNode<'arrow_function'>): Arrow
     return merged;
   };
   const node: any = { get type() { return 'arrow_function'; }, get fields() { return getFields(); } };
-  node.parameter = (v: any) => { validateNodeText(v); overrides['parameter'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.parameter = (v: any) => { overrides['parameter'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -834,7 +806,7 @@ export function asExpression(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'as_expression', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -905,7 +877,7 @@ export function asserts(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'asserts', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -976,7 +948,7 @@ export function assertsAnnotation(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'asserts_annotation', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1042,10 +1014,10 @@ export function assignmentExpression(
   config?: Partial<AssignmentExpressionConfig>,
 ): AssignmentExpressionNode {
   const fields: any = isNodeData(leftOrConfig)
-    ? (validateNodeText(leftOrConfig), { 'left': leftOrConfig, ...config })
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'assignment_expression', fields };
-  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
+  node.right = (v: any) => { fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1068,8 +1040,8 @@ assignmentExpression.assign = function(target: AssignableNode<'assignment_expres
     return merged;
   };
   const node: any = { get type() { return 'assignment_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
+  node.left = (v: any) => { overrides['left'] = v; return node; };
+  node.right = (v: any) => { overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1110,10 +1082,10 @@ export function assignmentPattern(
   config?: Partial<AssignmentPatternConfig>,
 ): AssignmentPatternNode {
   const fields: any = isNodeData(leftOrConfig)
-    ? (validateNodeText(leftOrConfig), { 'left': leftOrConfig, ...config })
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'assignment_pattern', fields };
-  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
+  node.right = (v: any) => { fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1136,8 +1108,8 @@ assignmentPattern.assign = function(target: AssignableNode<'assignment_pattern'>
     return merged;
   };
   const node: any = { get type() { return 'assignment_pattern'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
+  node.left = (v: any) => { overrides['left'] = v; return node; };
+  node.right = (v: any) => { overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1182,11 +1154,11 @@ export function augmentedAssignmentExpression(
   config?: Partial<AugmentedAssignmentExpressionConfig>,
 ): AugmentedAssignmentExpressionNode {
   const fields: any = isNodeData(leftOrConfig)
-    ? (validateNodeText(leftOrConfig), { 'left': leftOrConfig, ...config })
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'augmented_assignment_expression', fields };
-  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
+  node.operator = (v: any) => { fields['operator'] = v; return node; };
+  node.right = (v: any) => { fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1209,9 +1181,9 @@ augmentedAssignmentExpression.assign = function(target: AssignableNode<'augmente
     return merged;
   };
   const node: any = { get type() { return 'augmented_assignment_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
-  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
+  node.left = (v: any) => { overrides['left'] = v; return node; };
+  node.operator = (v: any) => { overrides['operator'] = v; return node; };
+  node.right = (v: any) => { overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1257,7 +1229,7 @@ export function awaitExpression(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'await_expression', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1327,11 +1299,11 @@ export function binaryExpression(
   config?: Partial<BinaryExpressionConfig>,
 ): BinaryExpressionNode {
   const fields: any = isNodeData(leftOrConfig)
-    ? (validateNodeText(leftOrConfig), { 'left': leftOrConfig, ...config })
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'binary_expression', fields };
-  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
+  node.operator = (v: any) => { fields['operator'] = v; return node; };
+  node.right = (v: any) => { fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1354,9 +1326,9 @@ binaryExpression.assign = function(target: AssignableNode<'binary_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'binary_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
-  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
+  node.left = (v: any) => { overrides['left'] = v; return node; };
+  node.operator = (v: any) => { overrides['operator'] = v; return node; };
+  node.right = (v: any) => { overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1395,7 +1367,7 @@ export function breakStatement(
 ): BreakStatementNode {
   const fields: any = config ?? {};
   const node: any = { type: 'break_statement', fields };
-  node.label = (v: any) => { validateNodeText(v); fields['label'] = v; return node; };
+  node.label = (v: any) => { fields['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1418,7 +1390,7 @@ breakStatement.assign = function(target: AssignableNode<'break_statement'>): Bre
     return merged;
   };
   const node: any = { get type() { return 'break_statement'; }, get fields() { return getFields(); } };
-  node.label = (v: any) => { validateNodeText(v); overrides['label'] = v; return node; };
+  node.label = (v: any) => { overrides['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1463,11 +1435,11 @@ export function callExpression(
   config?: Partial<CallExpressionConfig>,
 ): CallExpressionNode {
   const fields: any = isNodeData(functionOrConfig)
-    ? (validateNodeText(functionOrConfig), { 'function': functionOrConfig, ...config })
+    ? { 'function': functionOrConfig, ...config }
     : functionOrConfig;
   const node: any = { type: 'call_expression', fields };
-  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
-  node.arguments = (v: any) => { validateNodeText(v); fields['arguments'] = v; return node; };
+  node.typeArguments = (v: any) => { fields['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { fields['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1490,9 +1462,9 @@ callExpression.assign = function(target: AssignableNode<'call_expression'>): Cal
     return merged;
   };
   const node: any = { get type() { return 'call_expression'; }, get fields() { return getFields(); } };
-  node.function = (v: any) => { validateNodeText(v); overrides['function'] = v; return node; };
-  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
-  node.arguments = (v: any) => { validateNodeText(v); overrides['arguments'] = v; return node; };
+  node.function = (v: any) => { overrides['function'] = v; return node; };
+  node.typeArguments = (v: any) => { overrides['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { overrides['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1537,11 +1509,11 @@ export function callSignature(
   config?: Partial<CallSignatureConfig>,
 ): CallSignatureNode {
   const fields: any = isNodeData(parametersOrConfig)
-    ? (validateNodeText(parametersOrConfig), { 'parameters': parametersOrConfig, ...config })
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'call_signature', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1564,9 +1536,9 @@ callSignature.assign = function(target: AssignableNode<'call_signature'>): CallS
     return merged;
   };
   const node: any = { get type() { return 'call_signature'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1611,11 +1583,11 @@ export function catchClause(
   config?: Partial<CatchClauseConfig>,
 ): CatchClauseNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'catch_clause', fields };
-  node.parameter = (v: any) => { validateNodeText(v); fields['parameter'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.parameter = (v: any) => { fields['parameter'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1638,9 +1610,9 @@ catchClause.assign = function(target: AssignableNode<'catch_clause'>): CatchClau
     return merged;
   };
   const node: any = { get type() { return 'catch_clause'; }, get fields() { return getFields(); } };
-  node.parameter = (v: any) => { validateNodeText(v); overrides['parameter'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.parameter = (v: any) => { overrides['parameter'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1693,13 +1665,13 @@ export function class_(
   config?: Partial<ClassConfig>,
 ): ClassNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'class', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.name = (v: any) => { fields['name'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1725,9 +1697,9 @@ class_.assign = function(target: AssignableNode<'class'>): ClassNode {
   };
   const node: any = { get type() { return 'class'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -1779,7 +1751,7 @@ export function classBody(
   }
   const node: any = { type: 'class_body', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1858,13 +1830,13 @@ export function classDeclaration(
   config?: Partial<ClassDeclarationConfig>,
 ): ClassDeclarationNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'class_declaration', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1890,9 +1862,9 @@ classDeclaration.assign = function(target: AssignableNode<'class_declaration'>):
   };
   const node: any = { get type() { return 'class_declaration'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -1939,7 +1911,7 @@ export function classHeritage(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'class_heritage', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2001,7 +1973,7 @@ export function classStaticBlock(
   config?: Partial<ClassStaticBlockConfig>,
 ): ClassStaticBlockNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'class_static_block', fields };
   node.render = () => render(node, rules, joinBy);
@@ -2026,7 +1998,7 @@ classStaticBlock.assign = function(target: AssignableNode<'class_static_block'>)
     return merged;
   };
   const node: any = { get type() { return 'class_static_block'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2072,7 +2044,7 @@ export function computedPropertyName(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'computed_property_name', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2146,12 +2118,12 @@ export function conditionalType(
   config?: Partial<ConditionalTypeConfig>,
 ): ConditionalTypeNode {
   const fields: any = isNodeData(leftOrConfig)
-    ? (validateNodeText(leftOrConfig), { 'left': leftOrConfig, ...config })
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'conditional_type', fields };
-  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
-  node.consequence = (v: any) => { validateNodeText(v); fields['consequence'] = v; return node; };
-  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
+  node.right = (v: any) => { fields['right'] = v; return node; };
+  node.consequence = (v: any) => { fields['consequence'] = v; return node; };
+  node.alternative = (v: any) => { fields['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2174,10 +2146,10 @@ conditionalType.assign = function(target: AssignableNode<'conditional_type'>): C
     return merged;
   };
   const node: any = { get type() { return 'conditional_type'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
-  node.consequence = (v: any) => { validateNodeText(v); overrides['consequence'] = v; return node; };
-  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
+  node.left = (v: any) => { overrides['left'] = v; return node; };
+  node.right = (v: any) => { overrides['right'] = v; return node; };
+  node.consequence = (v: any) => { overrides['consequence'] = v; return node; };
+  node.alternative = (v: any) => { overrides['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2223,7 +2195,7 @@ export function constraint(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'constraint', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2293,11 +2265,11 @@ export function constructSignature(
   config?: Partial<ConstructSignatureConfig>,
 ): ConstructSignatureNode {
   const fields: any = isNodeData(parametersOrConfig)
-    ? (validateNodeText(parametersOrConfig), { 'parameters': parametersOrConfig, ...config })
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'construct_signature', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2320,9 +2292,9 @@ constructSignature.assign = function(target: AssignableNode<'construct_signature
     return merged;
   };
   const node: any = { get type() { return 'construct_signature'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2367,11 +2339,11 @@ export function constructorType(
   config?: Partial<ConstructorTypeConfig>,
 ): ConstructorTypeNode {
   const fields: any = isNodeData(parametersOrConfig)
-    ? (validateNodeText(parametersOrConfig), { 'parameters': parametersOrConfig, ...config })
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'constructor_type', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2394,9 +2366,9 @@ constructorType.assign = function(target: AssignableNode<'constructor_type'>): C
     return merged;
   };
   const node: any = { get type() { return 'constructor_type'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2435,7 +2407,7 @@ export function continueStatement(
 ): ContinueStatementNode {
   const fields: any = config ?? {};
   const node: any = { type: 'continue_statement', fields };
-  node.label = (v: any) => { validateNodeText(v); fields['label'] = v; return node; };
+  node.label = (v: any) => { fields['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2458,7 +2430,7 @@ continueStatement.assign = function(target: AssignableNode<'continue_statement'>
     return merged;
   };
   const node: any = { get type() { return 'continue_statement'; }, get fields() { return getFields(); } };
-  node.label = (v: any) => { validateNodeText(v); overrides['label'] = v; return node; };
+  node.label = (v: any) => { overrides['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2504,7 +2476,7 @@ export function decorator(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'decorator', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2575,7 +2547,7 @@ export function defaultType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'default_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2641,10 +2613,10 @@ export function doStatement(
   config?: Partial<DoStatementConfig>,
 ): DoStatementNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'do_statement', fields };
-  node.condition = (v: any) => { validateNodeText(v); fields['condition'] = v; return node; };
+  node.condition = (v: any) => { fields['condition'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2667,8 +2639,8 @@ doStatement.assign = function(target: AssignableNode<'do_statement'>): DoStateme
     return merged;
   };
   const node: any = { get type() { return 'do_statement'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
-  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
+  node.condition = (v: any) => { overrides['condition'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2714,7 +2686,7 @@ export function elseClause(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'else_clause', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2780,10 +2752,10 @@ export function enumAssignment(
   config?: Partial<EnumAssignmentConfig>,
 ): EnumAssignmentNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'enum_assignment', fields };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2806,8 +2778,8 @@ enumAssignment.assign = function(target: AssignableNode<'enum_assignment'>): Enu
     return merged;
   };
   const node: any = { get type() { return 'enum_assignment'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2858,7 +2830,7 @@ export function enumBody(
   }
   const node: any = { type: 'enum_body', fields };
   node.name = (...v: any[]) => { fields['name'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2925,10 +2897,10 @@ export function enumDeclaration(
   config?: Partial<EnumDeclarationConfig>,
 ): EnumDeclarationNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'enum_declaration', fields };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2951,8 +2923,8 @@ enumDeclaration.assign = function(target: AssignableNode<'enum_declaration'>): E
     return merged;
   };
   const node: any = { get type() { return 'enum_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2998,7 +2970,7 @@ export function exportClause(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'export_clause', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3064,10 +3036,10 @@ export function exportSpecifier(
   config?: Partial<ExportSpecifierConfig>,
 ): ExportSpecifierNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'export_specifier', fields };
-  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
+  node.alias = (v: any) => { fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3090,8 +3062,8 @@ exportSpecifier.assign = function(target: AssignableNode<'export_specifier'>): E
     return merged;
   };
   const node: any = { get type() { return 'export_specifier'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.alias = (v: any) => { overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3146,11 +3118,11 @@ export function exportStatement(
 ): ExportStatementNode {
   const fields: any = config ?? {};
   const node: any = { type: 'export_statement', fields };
-  node.source = (v: any) => { validateNodeText(v); fields['source'] = v; return node; };
+  node.source = (v: any) => { fields['source'] = v; return node; };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.declaration = (v: any) => { validateNodeText(v); fields['declaration'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.declaration = (v: any) => { fields['declaration'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3175,10 +3147,10 @@ exportStatement.assign = function(target: AssignableNode<'export_statement'>): E
     return merged;
   };
   const node: any = { get type() { return 'export_statement'; }, get fields() { return getFields(); } };
-  node.source = (v: any) => { validateNodeText(v); overrides['source'] = v; return node; };
+  node.source = (v: any) => { overrides['source'] = v; return node; };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.declaration = (v: any) => { validateNodeText(v); overrides['declaration'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.declaration = (v: any) => { overrides['declaration'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -3225,7 +3197,7 @@ export function expressionStatement(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'expression_statement', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3417,7 +3389,7 @@ export function finallyClause(
   config?: Partial<FinallyClauseConfig>,
 ): FinallyClauseNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'finally_clause', fields };
   node.render = () => render(node, rules, joinBy);
@@ -3442,7 +3414,7 @@ finallyClause.assign = function(target: AssignableNode<'finally_clause'>): Final
     return merged;
   };
   const node: any = { get type() { return 'finally_clause'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3488,7 +3460,7 @@ export function flowMaybeType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'flow_maybe_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3570,14 +3542,14 @@ export function forInStatement(
   config?: Partial<ForInStatementConfig>,
 ): ForInStatementNode {
   const fields: any = isNodeData(leftOrConfig)
-    ? (validateNodeText(leftOrConfig), { 'left': leftOrConfig, ...config })
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'for_in_statement', fields };
-  node.kind = (v: any) => { validateNodeText(v); fields['kind'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
-  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.kind = (v: any) => { fields['kind'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
+  node.operator = (v: any) => { fields['operator'] = v; return node; };
+  node.right = (v: any) => { fields['right'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3600,12 +3572,12 @@ forInStatement.assign = function(target: AssignableNode<'for_in_statement'>): Fo
     return merged;
   };
   const node: any = { get type() { return 'for_in_statement'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
-  node.kind = (v: any) => { validateNodeText(v); overrides['kind'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
-  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.left = (v: any) => { overrides['left'] = v; return node; };
+  node.kind = (v: any) => { overrides['kind'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
+  node.operator = (v: any) => { overrides['operator'] = v; return node; };
+  node.right = (v: any) => { overrides['right'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3654,12 +3626,12 @@ export function forStatement(
   config?: Partial<ForStatementConfig>,
 ): ForStatementNode {
   const fields: any = isNodeData(initializerOrConfig)
-    ? (validateNodeText(initializerOrConfig), { 'initializer': initializerOrConfig, ...config })
+    ? { 'initializer': initializerOrConfig, ...config }
     : initializerOrConfig;
   const node: any = { type: 'for_statement', fields };
   node.condition = (...v: any[]) => { fields['condition'] = v; return node; };
-  node.increment = (v: any) => { validateNodeText(v); fields['increment'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.increment = (v: any) => { fields['increment'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3682,10 +3654,10 @@ forStatement.assign = function(target: AssignableNode<'for_statement'>): ForStat
     return merged;
   };
   const node: any = { get type() { return 'for_statement'; }, get fields() { return getFields(); } };
-  node.initializer = (v: any) => { validateNodeText(v); overrides['initializer'] = v; return node; };
+  node.initializer = (v: any) => { overrides['initializer'] = v; return node; };
   node.condition = (...v: any[]) => { overrides['condition'] = v; return node; };
-  node.increment = (v: any) => { validateNodeText(v); overrides['increment'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.increment = (v: any) => { overrides['increment'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3731,7 +3703,7 @@ export function formalParameters(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'formal_parameters', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3809,13 +3781,13 @@ export function functionDeclaration(
   config?: Partial<FunctionDeclarationConfig>,
 ): FunctionDeclarationNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'function_declaration', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3838,11 +3810,11 @@ functionDeclaration.assign = function(target: AssignableNode<'function_declarati
     return merged;
   };
   const node: any = { get type() { return 'function_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3895,13 +3867,13 @@ export function functionExpression(
   config?: Partial<FunctionExpressionConfig>,
 ): FunctionExpressionNode {
   const fields: any = isNodeData(parametersOrConfig)
-    ? (validateNodeText(parametersOrConfig), { 'parameters': parametersOrConfig, ...config })
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'function_expression', fields };
-  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.name = (v: any) => { fields['name'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3924,11 +3896,11 @@ functionExpression.assign = function(target: AssignableNode<'function_expression
     return merged;
   };
   const node: any = { get type() { return 'function_expression'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3977,12 +3949,12 @@ export function functionSignature(
   config?: Partial<FunctionSignatureConfig>,
 ): FunctionSignatureNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'function_signature', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4005,10 +3977,10 @@ functionSignature.assign = function(target: AssignableNode<'function_signature'>
     return merged;
   };
   const node: any = { get type() { return 'function_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4053,11 +4025,11 @@ export function functionType(
   config?: Partial<FunctionTypeConfig>,
 ): FunctionTypeNode {
   const fields: any = isNodeData(parametersOrConfig)
-    ? (validateNodeText(parametersOrConfig), { 'parameters': parametersOrConfig, ...config })
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'function_type', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4080,9 +4052,9 @@ functionType.assign = function(target: AssignableNode<'function_type'>): Functio
     return merged;
   };
   const node: any = { get type() { return 'function_type'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4135,13 +4107,13 @@ export function generatorFunction(
   config?: Partial<GeneratorFunctionConfig>,
 ): GeneratorFunctionNode {
   const fields: any = isNodeData(parametersOrConfig)
-    ? (validateNodeText(parametersOrConfig), { 'parameters': parametersOrConfig, ...config })
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'generator_function', fields };
-  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.name = (v: any) => { fields['name'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4164,11 +4136,11 @@ generatorFunction.assign = function(target: AssignableNode<'generator_function'>
     return merged;
   };
   const node: any = { get type() { return 'generator_function'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4221,13 +4193,13 @@ export function generatorFunctionDeclaration(
   config?: Partial<GeneratorFunctionDeclarationConfig>,
 ): GeneratorFunctionDeclarationNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'generator_function_declaration', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4250,11 +4222,11 @@ generatorFunctionDeclaration.assign = function(target: AssignableNode<'generator
     return merged;
   };
   const node: any = { get type() { return 'generator_function_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4295,10 +4267,10 @@ export function genericType(
   config?: Partial<GenericTypeConfig>,
 ): GenericTypeNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'generic_type', fields };
-  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
+  node.typeArguments = (v: any) => { fields['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4321,8 +4293,8 @@ genericType.assign = function(target: AssignableNode<'generic_type'>): GenericTy
     return merged;
   };
   const node: any = { get type() { return 'generic_type'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeArguments = (v: any) => { overrides['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4367,11 +4339,11 @@ export function ifStatement(
   config?: Partial<IfStatementConfig>,
 ): IfStatementNode {
   const fields: any = isNodeData(conditionOrConfig)
-    ? (validateNodeText(conditionOrConfig), { 'condition': conditionOrConfig, ...config })
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'if_statement', fields };
-  node.consequence = (v: any) => { validateNodeText(v); fields['consequence'] = v; return node; };
-  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
+  node.consequence = (v: any) => { fields['consequence'] = v; return node; };
+  node.alternative = (v: any) => { fields['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4394,9 +4366,9 @@ ifStatement.assign = function(target: AssignableNode<'if_statement'>): IfStateme
     return merged;
   };
   const node: any = { get type() { return 'if_statement'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
-  node.consequence = (v: any) => { validateNodeText(v); overrides['consequence'] = v; return node; };
-  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
+  node.condition = (v: any) => { overrides['condition'] = v; return node; };
+  node.consequence = (v: any) => { overrides['consequence'] = v; return node; };
+  node.alternative = (v: any) => { overrides['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4442,7 +4414,7 @@ export function implementsClause(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'implements_clause', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4513,7 +4485,7 @@ export function importAlias(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'import_alias', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4584,7 +4556,7 @@ export function importAttribute(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'import_attribute', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4655,7 +4627,7 @@ export function importClause(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'import_clause', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4721,10 +4693,10 @@ export function importRequireClause(
   config?: Partial<ImportRequireClauseConfig>,
 ): ImportRequireClauseNode {
   const fields: any = isNodeData(sourceOrConfig)
-    ? (validateNodeText(sourceOrConfig), { 'source': sourceOrConfig, ...config })
+    ? { 'source': sourceOrConfig, ...config }
     : sourceOrConfig;
   const node: any = { type: 'import_require_clause', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4749,7 +4721,7 @@ importRequireClause.assign = function(target: AssignableNode<'import_require_cla
     return merged;
   };
   const node: any = { get type() { return 'import_require_clause'; }, get fields() { return getFields(); } };
-  node.source = (v: any) => { validateNodeText(v); overrides['source'] = v; return node; };
+  node.source = (v: any) => { overrides['source'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4791,10 +4763,10 @@ export function importSpecifier(
   config?: Partial<ImportSpecifierConfig>,
 ): ImportSpecifierNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'import_specifier', fields };
-  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
+  node.alias = (v: any) => { fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4817,8 +4789,8 @@ importSpecifier.assign = function(target: AssignableNode<'import_specifier'>): I
     return merged;
   };
   const node: any = { get type() { return 'import_specifier'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.alias = (v: any) => { overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4868,8 +4840,8 @@ export function importStatement(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'import_statement', fields };
-  node.source = (v: any) => { validateNodeText(v); fields['source'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.source = (v: any) => { fields['source'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4894,7 +4866,7 @@ importStatement.assign = function(target: AssignableNode<'import_statement'>): I
     return merged;
   };
   const node: any = { get type() { return 'import_statement'; }, get fields() { return getFields(); } };
-  node.source = (v: any) => { validateNodeText(v); overrides['source'] = v; return node; };
+  node.source = (v: any) => { overrides['source'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4948,13 +4920,13 @@ export function indexSignature(
   config?: Partial<IndexSignatureConfig>,
 ): IndexSignatureNode {
   const fields: any = isNodeData(typeOrConfig)
-    ? (validateNodeText(typeOrConfig), { 'type': typeOrConfig, ...config })
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'index_signature', fields };
-  node.sign = (v: any) => { validateNodeText(v); fields['sign'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
-  node.indexType = (v: any) => { validateNodeText(v); fields['index_type'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.sign = (v: any) => { fields['sign'] = v; return node; };
+  node.name = (v: any) => { fields['name'] = v; return node; };
+  node.indexType = (v: any) => { fields['index_type'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4979,10 +4951,10 @@ indexSignature.assign = function(target: AssignableNode<'index_signature'>): Ind
     return merged;
   };
   const node: any = { get type() { return 'index_signature'; }, get fields() { return getFields(); } };
-  node.sign = (v: any) => { validateNodeText(v); overrides['sign'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.indexType = (v: any) => { validateNodeText(v); overrides['index_type'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.sign = (v: any) => { overrides['sign'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.indexType = (v: any) => { overrides['index_type'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5029,7 +5001,7 @@ export function indexTypeQuery(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'index_type_query', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5100,7 +5072,7 @@ export function inferType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'infer_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5170,11 +5142,11 @@ export function instantiationExpression(
   config?: Partial<InstantiationExpressionConfig>,
 ): InstantiationExpressionNode {
   const fields: any = isNodeData(typeArgumentsOrConfig)
-    ? (validateNodeText(typeArgumentsOrConfig), { 'type_arguments': typeArgumentsOrConfig, ...config })
+    ? { 'type_arguments': typeArgumentsOrConfig, ...config }
     : typeArgumentsOrConfig;
   const node: any = { type: 'instantiation_expression', fields };
-  node.function = (v: any) => { validateNodeText(v); fields['function'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.function = (v: any) => { fields['function'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5199,8 +5171,8 @@ instantiationExpression.assign = function(target: AssignableNode<'instantiation_
     return merged;
   };
   const node: any = { get type() { return 'instantiation_expression'; }, get fields() { return getFields(); } };
-  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
-  node.function = (v: any) => { validateNodeText(v); overrides['function'] = v; return node; };
+  node.typeArguments = (v: any) => { overrides['type_arguments'] = v; return node; };
+  node.function = (v: any) => { overrides['function'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5247,7 +5219,7 @@ export function interfaceBody(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'interface_body', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5321,12 +5293,12 @@ export function interfaceDeclaration(
   config?: Partial<InterfaceDeclarationConfig>,
 ): InterfaceDeclarationNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'interface_declaration', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5351,9 +5323,9 @@ interfaceDeclaration.assign = function(target: AssignableNode<'interface_declara
     return merged;
   };
   const node: any = { get type() { return 'interface_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5395,10 +5367,10 @@ export function internalModule(
   config?: Partial<InternalModuleConfig>,
 ): InternalModuleNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'internal_module', fields };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5421,8 +5393,8 @@ internalModule.assign = function(target: AssignableNode<'internal_module'>): Int
     return merged;
   };
   const node: any = { get type() { return 'internal_module'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5468,7 +5440,7 @@ export function intersectionType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'intersection_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5534,10 +5506,10 @@ export function labeledStatement(
   config?: Partial<LabeledStatementConfig>,
 ): LabeledStatementNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'labeled_statement', fields };
-  node.label = (v: any) => { validateNodeText(v); fields['label'] = v; return node; };
+  node.label = (v: any) => { fields['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5560,8 +5532,8 @@ labeledStatement.assign = function(target: AssignableNode<'labeled_statement'>):
     return merged;
   };
   const node: any = { get type() { return 'labeled_statement'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
-  node.label = (v: any) => { validateNodeText(v); overrides['label'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
+  node.label = (v: any) => { overrides['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5602,10 +5574,10 @@ export function lexicalDeclaration(
   config?: Partial<LexicalDeclarationConfig>,
 ): LexicalDeclarationNode {
   const fields: any = isNodeData(kindOrConfig)
-    ? (validateNodeText(kindOrConfig), { 'kind': kindOrConfig, ...config })
+    ? { 'kind': kindOrConfig, ...config }
     : kindOrConfig;
   const node: any = { type: 'lexical_declaration', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5630,7 +5602,7 @@ lexicalDeclaration.assign = function(target: AssignableNode<'lexical_declaration
     return merged;
   };
   const node: any = { get type() { return 'lexical_declaration'; }, get fields() { return getFields(); } };
-  node.kind = (v: any) => { validateNodeText(v); overrides['kind'] = v; return node; };
+  node.kind = (v: any) => { overrides['kind'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5677,7 +5649,7 @@ export function literalType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'literal_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5748,7 +5720,7 @@ export function lookupType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'lookup_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5818,11 +5790,11 @@ export function mappedTypeClause(
   config?: Partial<MappedTypeClauseConfig>,
 ): MappedTypeClauseNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'mapped_type_clause', fields };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
-  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
+  node.alias = (v: any) => { fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5845,9 +5817,9 @@ mappedTypeClause.assign = function(target: AssignableNode<'mapped_type_clause'>)
     return merged;
   };
   const node: any = { get type() { return 'mapped_type_clause'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
-  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
+  node.alias = (v: any) => { overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5892,11 +5864,11 @@ export function memberExpression(
   config?: Partial<MemberExpressionConfig>,
 ): MemberExpressionNode {
   const fields: any = isNodeData(objectOrConfig)
-    ? (validateNodeText(objectOrConfig), { 'object': objectOrConfig, ...config })
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'member_expression', fields };
-  node.optionalChain = (v: any) => { validateNodeText(v); fields['optional_chain'] = v; return node; };
-  node.property = (v: any) => { validateNodeText(v); fields['property'] = v; return node; };
+  node.optionalChain = (v: any) => { fields['optional_chain'] = v; return node; };
+  node.property = (v: any) => { fields['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5919,9 +5891,9 @@ memberExpression.assign = function(target: AssignableNode<'member_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'member_expression'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
-  node.optionalChain = (v: any) => { validateNodeText(v); overrides['optional_chain'] = v; return node; };
-  node.property = (v: any) => { validateNodeText(v); overrides['property'] = v; return node; };
+  node.object = (v: any) => { overrides['object'] = v; return node; };
+  node.optionalChain = (v: any) => { overrides['optional_chain'] = v; return node; };
+  node.property = (v: any) => { overrides['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5978,14 +5950,14 @@ export function methodDefinition(
   config?: Partial<MethodDefinitionConfig>,
 ): MethodDefinitionNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'method_definition', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6010,11 +5982,11 @@ methodDefinition.assign = function(target: AssignableNode<'method_definition'>):
     return merged;
   };
   const node: any = { get type() { return 'method_definition'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6068,13 +6040,13 @@ export function methodSignature(
   config?: Partial<MethodSignatureConfig>,
 ): MethodSignatureNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'method_signature', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { fields['return_type'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6099,10 +6071,10 @@ methodSignature.assign = function(target: AssignableNode<'method_signature'>): M
     return merged;
   };
   const node: any = { get type() { return 'method_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
-  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { overrides['return_type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6144,10 +6116,10 @@ export function module(
   config?: Partial<ModuleConfig>,
 ): ModuleNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'module', fields };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6170,8 +6142,8 @@ module.assign = function(target: AssignableNode<'module'>): ModuleNode {
     return merged;
   };
   const node: any = { get type() { return 'module'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6217,7 +6189,7 @@ export function namedImports(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'named_imports', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6288,7 +6260,7 @@ export function namespaceExport(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'namespace_export', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6359,7 +6331,7 @@ export function namespaceImport(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'namespace_import', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6425,10 +6397,10 @@ export function nestedIdentifier(
   config?: Partial<NestedIdentifierConfig>,
 ): NestedIdentifierNode {
   const fields: any = isNodeData(objectOrConfig)
-    ? (validateNodeText(objectOrConfig), { 'object': objectOrConfig, ...config })
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'nested_identifier', fields };
-  node.property = (v: any) => { validateNodeText(v); fields['property'] = v; return node; };
+  node.property = (v: any) => { fields['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6451,8 +6423,8 @@ nestedIdentifier.assign = function(target: AssignableNode<'nested_identifier'>):
     return merged;
   };
   const node: any = { get type() { return 'nested_identifier'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
-  node.property = (v: any) => { validateNodeText(v); overrides['property'] = v; return node; };
+  node.object = (v: any) => { overrides['object'] = v; return node; };
+  node.property = (v: any) => { overrides['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6493,10 +6465,10 @@ export function nestedTypeIdentifier(
   config?: Partial<NestedTypeIdentifierConfig>,
 ): NestedTypeIdentifierNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'nested_type_identifier', fields };
-  node.module = (v: any) => { validateNodeText(v); fields['module'] = v; return node; };
+  node.module = (v: any) => { fields['module'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6519,8 +6491,8 @@ nestedTypeIdentifier.assign = function(target: AssignableNode<'nested_type_ident
     return merged;
   };
   const node: any = { get type() { return 'nested_type_identifier'; }, get fields() { return getFields(); } };
-  node.module = (v: any) => { validateNodeText(v); overrides['module'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.module = (v: any) => { overrides['module'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6565,11 +6537,11 @@ export function newExpression(
   config?: Partial<NewExpressionConfig>,
 ): NewExpressionNode {
   const fields: any = isNodeData(constructorOrConfig)
-    ? (validateNodeText(constructorOrConfig), { 'constructor': constructorOrConfig, ...config })
+    ? { 'constructor': constructorOrConfig, ...config }
     : constructorOrConfig;
   const node: any = { type: 'new_expression', fields };
-  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
-  node.arguments = (v: any) => { validateNodeText(v); fields['arguments'] = v; return node; };
+  node.typeArguments = (v: any) => { fields['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { fields['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6592,9 +6564,9 @@ newExpression.assign = function(target: AssignableNode<'new_expression'>): NewEx
     return merged;
   };
   const node: any = { get type() { return 'new_expression'; }, get fields() { return getFields(); } };
-  node.constructor = (v: any) => { validateNodeText(v); overrides['constructor'] = v; return node; };
-  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
-  node.arguments = (v: any) => { validateNodeText(v); overrides['arguments'] = v; return node; };
+  node.constructor = (v: any) => { overrides['constructor'] = v; return node; };
+  node.typeArguments = (v: any) => { overrides['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { overrides['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6640,7 +6612,7 @@ export function nonNullExpression(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'non_null_expression', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6711,7 +6683,7 @@ export function object(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'object', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6777,10 +6749,10 @@ export function objectAssignmentPattern(
   config?: Partial<ObjectAssignmentPatternConfig>,
 ): ObjectAssignmentPatternNode {
   const fields: any = isNodeData(leftOrConfig)
-    ? (validateNodeText(leftOrConfig), { 'left': leftOrConfig, ...config })
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'object_assignment_pattern', fields };
-  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
+  node.right = (v: any) => { fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6803,8 +6775,8 @@ objectAssignmentPattern.assign = function(target: AssignableNode<'object_assignm
     return merged;
   };
   const node: any = { get type() { return 'object_assignment_pattern'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
-  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
+  node.left = (v: any) => { overrides['left'] = v; return node; };
+  node.right = (v: any) => { overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6850,7 +6822,7 @@ export function objectPattern(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'object_pattern', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6921,7 +6893,7 @@ export function objectType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'object_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6992,7 +6964,7 @@ export function omittingTypeAnnotation(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'omitting_type_annotation', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7063,7 +7035,7 @@ export function optingTypeAnnotation(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'opting_type_annotation', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7148,11 +7120,11 @@ export function optionalParameter(
   const fields: any = config ?? {};
   const node: any = { type: 'optional_parameter', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.pattern = (v: any) => { validateNodeText(v); fields['pattern'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.pattern = (v: any) => { fields['pattern'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
+  node.name = (v: any) => { fields['name'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7178,10 +7150,10 @@ optionalParameter.assign = function(target: AssignableNode<'optional_parameter'>
   };
   const node: any = { get type() { return 'optional_parameter'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.pattern = (v: any) => { overrides['pattern'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7228,7 +7200,7 @@ export function optionalType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'optional_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7294,10 +7266,10 @@ export function pair(
   config?: Partial<PairConfig>,
 ): PairNode {
   const fields: any = isNodeData(keyOrConfig)
-    ? (validateNodeText(keyOrConfig), { 'key': keyOrConfig, ...config })
+    ? { 'key': keyOrConfig, ...config }
     : keyOrConfig;
   const node: any = { type: 'pair', fields };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7320,8 +7292,8 @@ pair.assign = function(target: AssignableNode<'pair'>): PairNode {
     return merged;
   };
   const node: any = { get type() { return 'pair'; }, get fields() { return getFields(); } };
-  node.key = (v: any) => { validateNodeText(v); overrides['key'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.key = (v: any) => { overrides['key'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7362,10 +7334,10 @@ export function pairPattern(
   config?: Partial<PairPatternConfig>,
 ): PairPatternNode {
   const fields: any = isNodeData(keyOrConfig)
-    ? (validateNodeText(keyOrConfig), { 'key': keyOrConfig, ...config })
+    ? { 'key': keyOrConfig, ...config }
     : keyOrConfig;
   const node: any = { type: 'pair_pattern', fields };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7388,8 +7360,8 @@ pairPattern.assign = function(target: AssignableNode<'pair_pattern'>): PairPatte
     return merged;
   };
   const node: any = { get type() { return 'pair_pattern'; }, get fields() { return getFields(); } };
-  node.key = (v: any) => { validateNodeText(v); overrides['key'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.key = (v: any) => { overrides['key'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7439,8 +7411,8 @@ export function parenthesizedExpression(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'parenthesized_expression', fields };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7465,7 +7437,7 @@ parenthesizedExpression.assign = function(target: AssignableNode<'parenthesized_
     return merged;
   };
   const node: any = { get type() { return 'parenthesized_expression'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7512,7 +7484,7 @@ export function parenthesizedType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'parenthesized_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7583,7 +7555,7 @@ export function program(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'program', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7653,11 +7625,11 @@ export function propertySignature(
   config?: Partial<PropertySignatureConfig>,
 ): PropertySignatureNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'property_signature', fields };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7682,8 +7654,8 @@ propertySignature.assign = function(target: AssignableNode<'property_signature'>
     return merged;
   };
   const node: any = { get type() { return 'property_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7737,13 +7709,13 @@ export function publicFieldDefinition(
   config?: Partial<PublicFieldDefinitionConfig>,
 ): PublicFieldDefinitionNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'public_field_definition', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7769,9 +7741,9 @@ publicFieldDefinition.assign = function(target: AssignableNode<'public_field_def
   };
   const node: any = { get type() { return 'public_field_definition'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7818,7 +7790,7 @@ export function readonlyType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'readonly_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7884,10 +7856,10 @@ export function regex(
   config?: Partial<RegexConfig>,
 ): RegexNode {
   const fields: any = isNodeData(patternOrConfig)
-    ? (validateNodeText(patternOrConfig), { 'pattern': patternOrConfig, ...config })
+    ? { 'pattern': patternOrConfig, ...config }
     : patternOrConfig;
   const node: any = { type: 'regex', fields };
-  node.flags = (v: any) => { validateNodeText(v); fields['flags'] = v; return node; };
+  node.flags = (v: any) => { fields['flags'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7910,8 +7882,8 @@ regex.assign = function(target: AssignableNode<'regex'>): RegexNode {
     return merged;
   };
   const node: any = { get type() { return 'regex'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
-  node.flags = (v: any) => { validateNodeText(v); overrides['flags'] = v; return node; };
+  node.pattern = (v: any) => { overrides['pattern'] = v; return node; };
+  node.flags = (v: any) => { overrides['flags'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7971,11 +7943,11 @@ export function requiredParameter(
   const fields: any = config ?? {};
   const node: any = { type: 'required_parameter', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.pattern = (v: any) => { validateNodeText(v); fields['pattern'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.pattern = (v: any) => { fields['pattern'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
+  node.name = (v: any) => { fields['name'] = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8001,10 +7973,10 @@ requiredParameter.assign = function(target: AssignableNode<'required_parameter'>
   };
   const node: any = { get type() { return 'required_parameter'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.pattern = (v: any) => { overrides['pattern'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -8051,7 +8023,7 @@ export function restPattern(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'rest_pattern', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8122,7 +8094,7 @@ export function restType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'rest_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8193,7 +8165,7 @@ export function returnStatement(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'return_statement', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8264,7 +8236,7 @@ export function satisfiesExpression(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'satisfies_expression', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8335,7 +8307,7 @@ export function sequenceExpression(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'sequence_expression', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8406,7 +8378,7 @@ export function spreadElement(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'spread_element', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8477,7 +8449,7 @@ export function statementBlock(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'statement_block', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8548,7 +8520,7 @@ export function string(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'string', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8618,11 +8590,11 @@ export function subscriptExpression(
   config?: Partial<SubscriptExpressionConfig>,
 ): SubscriptExpressionNode {
   const fields: any = isNodeData(objectOrConfig)
-    ? (validateNodeText(objectOrConfig), { 'object': objectOrConfig, ...config })
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'subscript_expression', fields };
-  node.optionalChain = (v: any) => { validateNodeText(v); fields['optional_chain'] = v; return node; };
-  node.index = (v: any) => { validateNodeText(v); fields['index'] = v; return node; };
+  node.optionalChain = (v: any) => { fields['optional_chain'] = v; return node; };
+  node.index = (v: any) => { fields['index'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8645,9 +8617,9 @@ subscriptExpression.assign = function(target: AssignableNode<'subscript_expressi
     return merged;
   };
   const node: any = { get type() { return 'subscript_expression'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
-  node.optionalChain = (v: any) => { validateNodeText(v); overrides['optional_chain'] = v; return node; };
-  node.index = (v: any) => { validateNodeText(v); overrides['index'] = v; return node; };
+  node.object = (v: any) => { overrides['object'] = v; return node; };
+  node.optionalChain = (v: any) => { overrides['optional_chain'] = v; return node; };
+  node.index = (v: any) => { overrides['index'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8693,7 +8665,7 @@ export function switchBody(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'switch_body', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8759,7 +8731,7 @@ export function switchCase(
   config?: Partial<SwitchCaseConfig>,
 ): SwitchCaseNode {
   const fields: any = isNodeData(valueOrConfig)
-    ? (validateNodeText(valueOrConfig), { 'value': valueOrConfig, ...config })
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'switch_case', fields };
   node.body = (...v: any[]) => { fields['body'] = v; return node; };
@@ -8785,7 +8757,7 @@ switchCase.assign = function(target: AssignableNode<'switch_case'>): SwitchCaseN
     return merged;
   };
   const node: any = { get type() { return 'switch_case'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.body = (...v: any[]) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -8889,10 +8861,10 @@ export function switchStatement(
   config?: Partial<SwitchStatementConfig>,
 ): SwitchStatementNode {
   const fields: any = isNodeData(valueOrConfig)
-    ? (validateNodeText(valueOrConfig), { 'value': valueOrConfig, ...config })
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'switch_statement', fields };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8915,8 +8887,8 @@ switchStatement.assign = function(target: AssignableNode<'switch_statement'>): S
     return merged;
   };
   const node: any = { get type() { return 'switch_statement'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8962,7 +8934,7 @@ export function templateLiteralType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'template_literal_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9033,7 +9005,7 @@ export function templateString(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'template_string', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9104,7 +9076,7 @@ export function templateSubstitution(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'template_substitution', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9175,7 +9147,7 @@ export function templateType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'template_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9245,11 +9217,11 @@ export function ternaryExpression(
   config?: Partial<TernaryExpressionConfig>,
 ): TernaryExpressionNode {
   const fields: any = isNodeData(conditionOrConfig)
-    ? (validateNodeText(conditionOrConfig), { 'condition': conditionOrConfig, ...config })
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'ternary_expression', fields };
-  node.consequence = (v: any) => { validateNodeText(v); fields['consequence'] = v; return node; };
-  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
+  node.consequence = (v: any) => { fields['consequence'] = v; return node; };
+  node.alternative = (v: any) => { fields['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9272,9 +9244,9 @@ ternaryExpression.assign = function(target: AssignableNode<'ternary_expression'>
     return merged;
   };
   const node: any = { get type() { return 'ternary_expression'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
-  node.consequence = (v: any) => { validateNodeText(v); overrides['consequence'] = v; return node; };
-  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
+  node.condition = (v: any) => { overrides['condition'] = v; return node; };
+  node.consequence = (v: any) => { overrides['consequence'] = v; return node; };
+  node.alternative = (v: any) => { overrides['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -9320,7 +9292,7 @@ export function throwStatement(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'throw_statement', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9390,11 +9362,11 @@ export function tryStatement(
   config?: Partial<TryStatementConfig>,
 ): TryStatementNode {
   const fields: any = isNodeData(bodyOrConfig)
-    ? (validateNodeText(bodyOrConfig), { 'body': bodyOrConfig, ...config })
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'try_statement', fields };
-  node.handler = (v: any) => { validateNodeText(v); fields['handler'] = v; return node; };
-  node.finalizer = (v: any) => { validateNodeText(v); fields['finalizer'] = v; return node; };
+  node.handler = (v: any) => { fields['handler'] = v; return node; };
+  node.finalizer = (v: any) => { fields['finalizer'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9417,9 +9389,9 @@ tryStatement.assign = function(target: AssignableNode<'try_statement'>): TryStat
     return merged;
   };
   const node: any = { get type() { return 'try_statement'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
-  node.handler = (v: any) => { validateNodeText(v); overrides['handler'] = v; return node; };
-  node.finalizer = (v: any) => { validateNodeText(v); overrides['finalizer'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
+  node.handler = (v: any) => { overrides['handler'] = v; return node; };
+  node.finalizer = (v: any) => { overrides['finalizer'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -9465,7 +9437,7 @@ export function tupleType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'tuple_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9535,11 +9507,11 @@ export function typeAliasDeclaration(
   config?: Partial<TypeAliasDeclarationConfig>,
 ): TypeAliasDeclarationNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_alias_declaration', fields };
-  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.typeParameters = (v: any) => { fields['type_parameters'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9562,9 +9534,9 @@ typeAliasDeclaration.assign = function(target: AssignableNode<'type_alias_declar
     return merged;
   };
   const node: any = { get type() { return 'type_alias_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { overrides['type_parameters'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -9610,7 +9582,7 @@ export function typeAnnotation(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'type_annotation', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9681,7 +9653,7 @@ export function typeArguments(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'type_arguments', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9752,7 +9724,7 @@ export function typeAssertion(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'type_assertion', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9822,11 +9794,11 @@ export function typeParameter(
   config?: Partial<TypeParameterConfig>,
 ): TypeParameterNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_parameter', fields };
-  node.constraint = (v: any) => { validateNodeText(v); fields['constraint'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.constraint = (v: any) => { fields['constraint'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9849,9 +9821,9 @@ typeParameter.assign = function(target: AssignableNode<'type_parameter'>): TypeP
     return merged;
   };
   const node: any = { get type() { return 'type_parameter'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.constraint = (v: any) => { validateNodeText(v); overrides['constraint'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.constraint = (v: any) => { overrides['constraint'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -9897,7 +9869,7 @@ export function typeParameters(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'type_parameters', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9963,10 +9935,10 @@ export function typePredicate(
   config?: Partial<TypePredicateConfig>,
 ): TypePredicateNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_predicate', fields };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -9989,8 +9961,8 @@ typePredicate.assign = function(target: AssignableNode<'type_predicate'>): TypeP
     return merged;
   };
   const node: any = { get type() { return 'type_predicate'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -10036,7 +10008,7 @@ export function typePredicateAnnotation(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'type_predicate_annotation', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10107,7 +10079,7 @@ export function typeQuery(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'type_query', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10173,10 +10145,10 @@ export function unaryExpression(
   config?: Partial<UnaryExpressionConfig>,
 ): UnaryExpressionNode {
   const fields: any = isNodeData(operatorOrConfig)
-    ? (validateNodeText(operatorOrConfig), { 'operator': operatorOrConfig, ...config })
+    ? { 'operator': operatorOrConfig, ...config }
     : operatorOrConfig;
   const node: any = { type: 'unary_expression', fields };
-  node.argument = (v: any) => { validateNodeText(v); fields['argument'] = v; return node; };
+  node.argument = (v: any) => { fields['argument'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10199,8 +10171,8 @@ unaryExpression.assign = function(target: AssignableNode<'unary_expression'>): U
     return merged;
   };
   const node: any = { get type() { return 'unary_expression'; }, get fields() { return getFields(); } };
-  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
-  node.argument = (v: any) => { validateNodeText(v); overrides['argument'] = v; return node; };
+  node.operator = (v: any) => { overrides['operator'] = v; return node; };
+  node.argument = (v: any) => { overrides['argument'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -10246,7 +10218,7 @@ export function unionType(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'union_type', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10312,10 +10284,10 @@ export function updateExpression(
   config?: Partial<UpdateExpressionConfig>,
 ): UpdateExpressionNode {
   const fields: any = isNodeData(argumentOrConfig)
-    ? (validateNodeText(argumentOrConfig), { 'argument': argumentOrConfig, ...config })
+    ? { 'argument': argumentOrConfig, ...config }
     : argumentOrConfig;
   const node: any = { type: 'update_expression', fields };
-  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
+  node.operator = (v: any) => { fields['operator'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10338,8 +10310,8 @@ updateExpression.assign = function(target: AssignableNode<'update_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'update_expression'; }, get fields() { return getFields(); } };
-  node.argument = (v: any) => { validateNodeText(v); overrides['argument'] = v; return node; };
-  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
+  node.argument = (v: any) => { overrides['argument'] = v; return node; };
+  node.operator = (v: any) => { overrides['operator'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -10385,7 +10357,7 @@ export function variableDeclaration(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'variable_declaration', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10455,11 +10427,11 @@ export function variableDeclarator(
   config?: Partial<VariableDeclaratorConfig>,
 ): VariableDeclaratorNode {
   const fields: any = isNodeData(nameOrConfig)
-    ? (validateNodeText(nameOrConfig), { 'name': nameOrConfig, ...config })
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'variable_declarator', fields };
-  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.typeField = (v: any) => { fields['type'] = v; return node; };
+  node.value = (v: any) => { fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10482,9 +10454,9 @@ variableDeclarator.assign = function(target: AssignableNode<'variable_declarator
     return merged;
   };
   const node: any = { get type() { return 'variable_declarator'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
-  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
-  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.name = (v: any) => { overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { overrides['type'] = v; return node; };
+  node.value = (v: any) => { overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -10525,10 +10497,10 @@ export function whileStatement(
   config?: Partial<WhileStatementConfig>,
 ): WhileStatementNode {
   const fields: any = isNodeData(conditionOrConfig)
-    ? (validateNodeText(conditionOrConfig), { 'condition': conditionOrConfig, ...config })
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'while_statement', fields };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10551,8 +10523,8 @@ whileStatement.assign = function(target: AssignableNode<'while_statement'>): Whi
     return merged;
   };
   const node: any = { get type() { return 'while_statement'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.condition = (v: any) => { overrides['condition'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -10593,10 +10565,10 @@ export function withStatement(
   config?: Partial<WithStatementConfig>,
 ): WithStatementNode {
   const fields: any = isNodeData(objectOrConfig)
-    ? (validateNodeText(objectOrConfig), { 'object': objectOrConfig, ...config })
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'with_statement', fields };
-  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.body = (v: any) => { fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -10619,8 +10591,8 @@ withStatement.assign = function(target: AssignableNode<'with_statement'>): WithS
     return merged;
   };
   const node: any = { get type() { return 'with_statement'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
-  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.object = (v: any) => { overrides['object'] = v; return node; };
+  node.body = (v: any) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -10666,7 +10638,7 @@ export function yieldExpression(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'yield_expression', fields };
-  node.children = (...v: any[]) => { v.forEach(validateNodeText); fields.children = v; return node; };
+  node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
