@@ -237,6 +237,43 @@ describe('.from() — render integration', () => {
 	});
 });
 
+describe('.from() — ergonomic setters on plain .from() nodes', () => {
+	it('resolves string via ergonomic setter on .from() node', () => {
+		const fn = ir.function.from({
+			name: 'main',
+			parameters: [],
+			body: [],
+		});
+		// Ergonomic setter should resolve 'i32' to a leaf type
+		const updated = fn.returnType('i32');
+		expect(updated.fields.return_type).toBeDefined();
+		expect(updated.fields.return_type.text).toBe('i32');
+	});
+
+	it('resolves NodeData via ergonomic setter on .from() node', () => {
+		const fn = ir.function.from({
+			name: 'main',
+			parameters: [],
+			body: [],
+		});
+		const updated = fn.returnType(ir.primitiveType('bool'));
+		expect(updated.fields.return_type.type).toBe('primitive_type');
+		expect(updated.fields.return_type.text).toBe('bool');
+	});
+});
+
+describe('.from() — error handling', () => {
+	it('throws on unknown kind via _resolveByKind', () => {
+		expect(() => {
+			// Use _resolveByKind dispatch by passing explicit kind on a multi-type field
+			ir.letDeclaration.from({
+				pattern: 'x',
+				value: { kind: 'nonexistent_kind' as any },
+			});
+		}).toThrow(/Unknown kind/);
+	});
+});
+
 describe('.from() — SgNode dispatch', () => {
 	it('detects SgNode-like input and delegates to .assign()', () => {
 		// Mock an SgNode-like object (has field(), text(), children(), type, range())

@@ -1,13 +1,16 @@
 /**
  * Emits from.ts — the .from() API with inlined resolution per factory.
  *
- * Resolution logic is generated per-field based on known accepted types,
- * so there is no generic resolver or FromContext round-trip. Each .from()
- * directly calls sibling factories, and validation happens automatically
- * through the leaf factory functions.
+ * Resolution logic is generated per-field based on known accepted types.
+ * Each .from() directly calls sibling factories, and validation happens
+ * automatically through the leaf factory functions.
  *
  * Separated from factories.ts for tree-shaking: users who only use the
  * regular API never load .from() resolution code.
+ *
+ * Note: @sittir/core also exports a generic FromContext/resolveFromInput
+ * for non-codegen consumers. The generated code does NOT use it — all
+ * resolution is inlined here for performance and tree-shaking.
  */
 
 import type { KindMeta, FieldMeta } from '../grammar-reader.ts';
@@ -35,7 +38,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('// .from() API — ergonomic resolution with inlined per-field logic');
 	lines.push('');
 
-	// Import types from core (only types, no runtime resolution)
+	// Type-only import — generated .from() inlines resolution, no core runtime dependency
 	lines.push("import type { NodeData, AssignableNode } from '@sittir/core';");
 	lines.push('');
 
@@ -61,7 +64,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	// the regular factories, which already close over rules + render methods.
 	lines.push('');
 
-	// Grammar-specific FromValue type (for array compression)
+	// Grammar-specific recursive value type
 	const branchKinds = nodes.map(n => n.kind);
 	const allKinds = [...branchKinds, ...leafKinds];
 	lines.push(`type FromKind = ${allKinds.map(k => `'${k}'`).join(' | ')};`);
@@ -69,13 +72,12 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;');
 	lines.push('');
 
-	// isNodeData helper
 	lines.push('function isNodeData(v: any): v is NodeData {');
-	lines.push("  return v !== null && typeof v === 'object' && 'type' in v && 'fields' in v;");
+	lines.push("  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';");
 	lines.push('}');
 	lines.push('');
 
-	// _resolveByKind — dispatch table for explicit { kind: '...' } objects
+	// Dispatch explicit { kind } objects to the right .from() function
 	lines.push('function _resolveByKind(kind: string, rest: any): any {');
 	lines.push('  switch (kind) {');
 	for (const node of nodes) {
@@ -87,7 +89,11 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	// _inferBranch — score object by field name matching against candidate branch types
+	// _inferBranch — score object by field name matching against candidate branch types.
+	// Scoring: matches count double, misses subtract once. This ensures a candidate
+	// with all fields matching but one extra key still wins over a candidate with fewer
+	// matches. Requires at least one match to prevent empty/wrong-shaped objects from
+	// silently resolving to an arbitrary candidate.
 	lines.push('const _BRANCH_FIELDS: Record<string, string[]> = {');
 	for (const node of nodes) {
 		const fieldNames = node.fields.map(f => f.name);
@@ -100,18 +106,20 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('function _inferBranch(obj: any, candidates: string[]): any {');
 	lines.push("  const keys = Object.keys(obj).filter(k => k !== 'children');");
 	lines.push('  let best: string | null = null;');
-	lines.push('  let bestScore = -1;');
+	lines.push('  let bestScore = 0;');
+	lines.push('  let bestMatches = 0;');
 	lines.push('  for (const c of candidates) {');
 	lines.push('    const fields = _BRANCH_FIELDS[c];');
 	lines.push('    if (!fields) continue;');
 	lines.push('    const fieldSet = new Set(fields);');
 	lines.push('    let matches = 0, misses = 0;');
 	lines.push('    for (const k of keys) { if (fieldSet.has(k)) matches++; else misses++; }');
+	lines.push('    if (matches === 0) continue;');
 	lines.push('    const score = matches * 2 - misses;');
-	lines.push('    if (score > bestScore) { bestScore = score; best = c; }');
+	lines.push('    if (score > bestScore || (score === bestScore && matches > bestMatches)) { bestScore = score; bestMatches = matches; best = c; }');
 	lines.push('  }');
 	lines.push('  if (best) return _resolveByKind(best, obj);');
-	lines.push("  throw new Error(`Cannot infer kind for object with keys: ${keys.join(', ')}`);");
+	lines.push("  throw new Error(`Cannot infer kind for object with keys: ${keys.join(', ')}. Candidates: ${candidates.join(', ')}. Use { kind: '...' } to disambiguate.`);");
 	lines.push('}');
 	lines.push('');
 
@@ -307,7 +315,7 @@ function emitResolveExpr(
 	// Simple case: single leaf type, no branches, no anon tokens
 	if (leafTypes.length === 1 && branchTypes.length === 0 && anonTokens.length === 0) {
 		const factory = toFactoryName(leafTypes[0]!);
-		return `(isNodeData(${varName}) ? ${varName} : ${factory}(String(${varName}) as any))`;
+		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(String(${varName}) as any) : ${varName})`;
 	}
 
 	// Simple case: single branch type, no leaves
@@ -373,8 +381,8 @@ function emitResolveBody(
 	// Object resolution
 	parts.push(`if(typeof ${v}==='object'&&${v}!==null){${emitObjectResolve(v, branchTypes, allNodes)}}`);
 
-	// Fallback error
-	parts.push(`throw new Error('Cannot resolve .from() value');`);
+	// Fallback error with diagnostic context
+	parts.push(`throw new Error(\`Cannot resolve .from() value: got \${typeof ${v}}\`);`);
 
 	return parts.join('');
 }
@@ -436,8 +444,8 @@ function emitStringResolve(
 		return parts.join('');
 	}
 
-	// No leaf types — plain text node
-	parts.push(`return{type:'string',fields:{},text:${v}} as any;`);
+	// No leaf types — cannot resolve string
+	parts.push(`throw new Error(\`Cannot resolve string value: no leaf types accepted for this field\`);`);
 	return parts.join('');
 }
 
@@ -498,7 +506,7 @@ function collectReferencedFactories(
 
 	// Leaf factories referenced by field resolution
 	for (const node of nodes) {
-		for (const field of [...node.fields, ...(node.children ? [node.children as FieldMeta] : [])]) {
+		for (const field of [...node.fields, ...(node.children ? [{ name: 'children', required: node.children.required, multiple: true, types: node.children.types, namedTypes: node.children.namedTypes } satisfies FieldMeta] : [])]) {
 			for (const t of field.namedTypes) {
 				if (leafSet.has(t)) {
 					refs.add(toFactoryName(t));

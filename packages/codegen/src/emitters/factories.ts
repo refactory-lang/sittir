@@ -362,9 +362,8 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	lines.push('type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;');
 	lines.push('');
 
-	// Helper functions
 	lines.push('function isNodeData(v: any): v is NodeData {');
-	lines.push("  return v !== null && typeof v === 'object' && 'type' in v && 'fields' in v;");
+	lines.push("  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';");
 	lines.push('}');
 	lines.push('');
 
@@ -393,12 +392,6 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		lines.push('');
 	}
 
-	// edit() — returns a factory pre-loaded with the target's byte range
-	lines.push('/**');
-	lines.push(' * Create an editor for a target node. Returns a factory');
-	lines.push(' * for the target\'s kind, pre-loaded with its byte range.');
-	lines.push(' * Call .toEdit() with no args to produce the Edit.');
-	lines.push(' */');
 	lines.push('/**');
 	lines.push(' * Create an in-place editor for a parsed tree node.');
 	lines.push(" * Hydrates a factory from the target node's fields,");

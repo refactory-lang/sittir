@@ -53,7 +53,7 @@ export interface FromContext {
 // ---------------------------------------------------------------------------
 
 function isNodeData(v: unknown): v is NodeData {
-	return v !== null && typeof v === 'object' && 'type' in (v as Record<string, unknown>) && 'fields' in (v as Record<string, unknown>);
+	return v !== null && typeof v === 'object' && typeof (v as any).type === 'string' && typeof (v as any).fields === 'object';
 }
 
 // ---------------------------------------------------------------------------
@@ -71,6 +71,18 @@ export function resolveFromInput(
 ): NodeData {
 	const fieldInfos = ctx.getFields(kind);
 	if (!fieldInfos) throw new Error(`Unknown kind for .from(): '${kind}'`);
+
+	// Detect unknown fields (likely typos)
+	const knownFields = new Set(fieldInfos.map(f => f.name));
+	knownFields.add('children');
+	knownFields.add('kind');
+	const unknownKeys = Object.keys(input).filter(k => !knownFields.has(k));
+	if (unknownKeys.length > 0) {
+		throw new Error(
+			`Unknown fields for kind '${kind}': ${unknownKeys.join(', ')}. ` +
+			`Known fields: ${[...knownFields].filter(k => k !== 'kind').join(', ')}`,
+		);
+	}
 
 	const resolved: Record<string, unknown> = {};
 
@@ -130,14 +142,26 @@ function resolveValue(
 	// Already NodeData → pass through
 	if (isNodeData(value)) return value;
 
-	// Boolean → boolean_literal
+	// Boolean → boolean_literal (only if accepted or no leaf types specified)
 	if (typeof value === 'boolean') {
-		return ctx.createLeaf('boolean_literal', String(value));
+		if (!acceptedNamedTypes.length || acceptedNamedTypes.includes('boolean_literal') || ctx.isLeaf('boolean_literal')) {
+			return ctx.createLeaf('boolean_literal', String(value));
+		}
+		throw new Error(`Boolean value not accepted for this field. Accepted types: ${acceptedNamedTypes.join(', ')}`);
 	}
 
-	// Number → integer_literal
+	// Number → integer_literal or float_literal
 	if (typeof value === 'number') {
-		return ctx.createLeaf('integer_literal', String(value));
+		const hasInt = acceptedNamedTypes.includes('integer_literal') || (!acceptedNamedTypes.length && ctx.isLeaf('integer_literal'));
+		const hasFloat = acceptedNamedTypes.includes('float_literal') || (!acceptedNamedTypes.length && ctx.isLeaf('float_literal'));
+		if (hasInt && hasFloat) {
+			return Number.isInteger(value)
+				? ctx.createLeaf('integer_literal', String(value))
+				: ctx.createLeaf('float_literal', String(value));
+		}
+		if (hasInt) return ctx.createLeaf('integer_literal', String(value));
+		if (hasFloat) return ctx.createLeaf('float_literal', String(value));
+		throw new Error(`Number value not accepted for this field. Accepted types: ${acceptedNamedTypes.join(', ')}`);
 	}
 
 	// String → resolve based on accepted types
@@ -192,8 +216,8 @@ function resolveString(
 
 	// Prefer identifier-like leaf types.
 	// When both identifier and type_identifier are accepted, prefer type_identifier
-	// (type contexts should resolve to type_identifier, not identifier).
-	// When only identifier is accepted, use it.
+	// because fields that accept both typically appear in type positions (e.g.,
+	// return_type, generic arguments), making type_identifier the safer default.
 	const hasTypeIdent = leafTypes.includes('type_identifier');
 	const hasIdent = leafTypes.includes('identifier');
 	if (hasTypeIdent && hasIdent) {
@@ -212,8 +236,11 @@ function resolveString(
 		return ctx.createLeaf(leafTypes[0]!, value);
 	}
 
-	// No leaf types at all — plain text node
-	return { type: 'string', fields: {}, text: value } as NodeData;
+	// No leaf types — cannot resolve string
+	throw new Error(
+		`Cannot resolve string '${value}': no leaf types accepted. ` +
+		`Accepted types: ${acceptedNamedTypes.join(', ') || 'none'}`,
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -273,11 +300,14 @@ function resolveObject(
 		return resolveFromInput(branchTypes[0]!, obj, ctx);
 	}
 
-	// Multiple candidates → score by field name matching
+	// Multiple candidates → score by field name matching.
+	// Scoring: matches count double, misses subtract once. Requires at least one
+	// match to prevent empty/wrong-shaped objects from resolving to arbitrary types.
 	const objKeys = Object.keys(obj).filter(k => k !== 'children');
 
 	let best: string | null = null;
-	let bestScore = -1;
+	let bestScore = 0;
+	let bestMatches = 0;
 
 	for (const candidate of branchTypes) {
 		const fieldInfo = ctx.getFields(candidate);
@@ -291,9 +321,11 @@ function resolveObject(
 			else misses++;
 		}
 
+		if (matches === 0) continue;
 		const score = matches * 2 - misses;
-		if (score > bestScore) {
+		if (score > bestScore || (score === bestScore && matches > bestMatches)) {
 			bestScore = score;
+			bestMatches = matches;
 			best = candidate;
 		}
 	}

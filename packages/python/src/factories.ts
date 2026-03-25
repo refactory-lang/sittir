@@ -11,7 +11,7 @@ interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }
 type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;
 
 function isNodeData(v: any): v is NodeData {
-  return v !== null && typeof v === 'object' && 'type' in v && 'fields' in v;
+  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';
 }
 
 const RESERVED_KEYWORDS = new Set([
@@ -7541,11 +7541,6 @@ export function typeConversion(text: string): NodeData<'type_conversion'> & { re
   return node;
 }
 
-/**
- * Create an editor for a target node. Returns a factory
- * for the target's kind, pre-loaded with its byte range.
- * Call .toEdit() with no args to produce the Edit.
- */
 /**
  * Create an in-place editor for a parsed tree node.
  * Hydrates a factory from the target node's fields,
