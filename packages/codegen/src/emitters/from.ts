@@ -40,7 +40,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('');
 
 	// Type-only import — generated .from() inlines resolution, no core runtime dependency
-	lines.push("import type { NodeData, AssignableNode } from '@sittir/core';");
+	lines.push("import type { NodeData, AssignableNode } from '@sittir/types';");
 	lines.push("import { isNodeData, _inferBranch, type FromValue } from './utils.js';");
 	lines.push('');
 

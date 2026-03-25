@@ -33,7 +33,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 	lines.push(`import type { ${grammarAlias} } from './grammar.js';`);
 	lines.push("import type { NodeType } from '@sittir/types';");
-	lines.push("import type { NodeData } from '@sittir/core';");
+	lines.push("import type { NodeData } from '@sittir/types';");
 	lines.push('');
 	lines.push(`export type { ${grammarAlias} };`);
 	lines.push('');

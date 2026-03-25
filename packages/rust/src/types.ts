@@ -2,7 +2,7 @@
 
 import type { RustGrammar } from './grammar.js';
 import type { NodeType } from '@sittir/types';
-import type { NodeData } from '@sittir/core';
+import type { NodeData } from '@sittir/types';
 
 export type { RustGrammar };
 
