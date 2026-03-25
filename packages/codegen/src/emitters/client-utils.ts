@@ -27,7 +27,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Shared client-side resolution utilities for .from() and factories');
 	lines.push('');
 
-	lines.push("import type { NodeData } from '@sittir/types';");
+	lines.push("import type { NodeData } from './types.js';");
 	lines.push('');
 
 	// Types

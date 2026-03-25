@@ -41,7 +41,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('');
 
 	// Type-only import — generated .from() inlines resolution, no core runtime dependency
-	lines.push("import type { NodeData, AssignableNode } from '@sittir/types';");
+	lines.push("import type { NodeData, TreeNode } from './types.js';");
 	lines.push("import { isNodeData, _inferBranch, type FromValue } from './utils.js';");
 	lines.push('');
 
@@ -141,7 +141,7 @@ function emitErgonomicSetters(
  * Accepts three input shapes:
  *   1. FromInput object — resolved recursively into NodeData
  *   2. FromValue[] (array compression) — wrapped as children
- *   3. AssignableNode (SgNode) — delegates to .assign(), with ergonomic setters
+ *   3. TreeNode (SgNode) — delegates to .assign(), with ergonomic setters
  */
 function emitFromFunction(
 	node: KindMeta,
@@ -159,8 +159,8 @@ function emitFromFunction(
 
 	// Function overloads for strict typing
 	const exportName = `${factoryName}From`;
-	// Overload 1: AssignableNode → FromNode (SgNode dispatch)
-	lines.push(`export function ${exportName}(input: AssignableNode<'${node.kind}'>): ${typeName}FromNode;`);
+	// Overload 1: TreeNode → FromNode (SgNode dispatch)
+	lines.push(`export function ${exportName}(input: TreeNode<'${node.kind}'>): ${typeName}FromNode;`);
 	// Overload 2: FromInput → FromNode (plain object resolution)
 	if (node.hasChildren) {
 		lines.push(`export function ${exportName}(input: ${typeName}FromInput | FromValue[]): ${typeName}FromNode;`);
