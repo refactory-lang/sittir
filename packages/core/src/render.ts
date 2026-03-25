@@ -1,16 +1,8 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { NodeData, RenderRule, ParsedTemplate, TemplateElement } from './types.ts';
+import type { NodeData, RenderRule, ParsedTemplate, TemplateElement, RulesRegistry, JoinByMap } from './types.ts';
 import { parseTemplate } from './sexpr.ts';
 
-/**
- * A rules registry mapping node type → S-expression render template.
- */
-export type RulesRegistry = Record<string, RenderRule>;
-
-/**
- * A joinBy map: node type → separator string for joining list children.
- */
-export type JoinByMap = Record<string, string>;
+export type { RulesRegistry, JoinByMap };
 
 // ---------------------------------------------------------------------------
 // Template cache

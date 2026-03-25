@@ -1,7 +1,8 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { NodeData, Edit, ByteRange } from './types.ts';
-import type { RulesRegistry, JoinByMap } from './render.ts';
+import type { NodeData, Edit, ByteRange, ReplaceTarget, AssignableNode, Renderable, KindOf, RulesRegistry, JoinByMap } from './types.ts';
 import { render } from './render.ts';
+
+export type { ReplaceTarget, AssignableNode, Renderable, KindOf };
 
 // ---------------------------------------------------------------------------
 // toEdit — overloaded for raw offsets and Range objects
@@ -37,42 +38,6 @@ export function toEdit(
 		insertedText,
 	};
 }
-
-// ---------------------------------------------------------------------------
-// ReplaceTarget — structural type for ast-grep SgNode compatibility
-// ---------------------------------------------------------------------------
-
-export interface ReplaceTarget<T extends string = string> {
-	readonly type: T;
-	range(): ByteRange;
-}
-
-/**
- * A parsed tree node that can be assigned to a factory.
- * Structurally compatible with ast-grep SgNode and tree-sitter Node.
- */
-export interface AssignableNode<T extends string = string> extends ReplaceTarget<T> {
-	/** Access a named field's child node. */
-	field(name: string): AssignableNode | null;
-	/** Get the source text of this node. */
-	text(): string;
-	/** Get child nodes. */
-	children(): AssignableNode[];
-}
-
-// ---------------------------------------------------------------------------
-// Renderable — factory outputs that can render themselves
-// ---------------------------------------------------------------------------
-
-export interface Renderable {
-	render(): string;
-}
-
-// ---------------------------------------------------------------------------
-// KindOf — extract type string(s) from a navigation node type
-// ---------------------------------------------------------------------------
-
-export type KindOf<T> = T extends { readonly type: infer K extends string } ? K : never;
 
 // ---------------------------------------------------------------------------
 // replace — loosely typed, any NodeData

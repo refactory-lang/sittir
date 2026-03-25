@@ -86,6 +86,10 @@ importers:
         version: 5.5.0
 
   packages/core:
+    dependencies:
+      '@sittir/types':
+        specifier: workspace:*
+        version: link:../types
     devDependencies:
       '@ast-grep/napi':
         specifier: ^0.42.0
@@ -122,9 +126,6 @@ importers:
 
   packages/types:
     dependencies:
-      '@sittir/core':
-        specifier: workspace:*
-        version: link:../core
       type-fest:
         specifier: ^5.5.0
         version: 5.5.0

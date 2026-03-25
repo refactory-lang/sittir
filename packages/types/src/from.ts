@@ -3,7 +3,7 @@
  * Used by @sittir/core runtime resolver and generated packages.
  */
 
-import type { NodeData } from '@sittir/core';
+import type { NodeData } from './core-types.ts';
 
 // ---------------------------------------------------------------------------
 // .from() input types

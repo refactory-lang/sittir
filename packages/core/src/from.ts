@@ -1,53 +1,10 @@
 // @sittir/core — .from() resolution engine
 // Resolves plain objects + scalars into NodeData based on grammar field types.
-//
-// Types (FromValue, FromObject, FromFieldInfo, FromContext) are defined in
-// @sittir/types and re-exported here for convenience.
+// Types are defined in @sittir/types — imported via local re-export.
 
-import type { NodeData } from './types.ts';
+import type { NodeData, FromValue, FromObject, FromFieldInfo, FromContext } from './types.ts';
 
-// ---------------------------------------------------------------------------
-// Types — canonical definitions in @sittir/types, re-exported here for
-// consumers who import from @sittir/core. The interfaces are duplicated
-// to avoid a circular package dependency (types → core → types).
-// ---------------------------------------------------------------------------
-
-/** Base type for any value accepted by .from() resolution. */
-export type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;
-
-/** Plain object with optional kind discriminant for .from() resolution. */
-export interface FromObject {
-	kind?: string;
-	[key: string]: FromValue | undefined;
-}
-
-/** Field type info for .from() resolution. */
-export interface FromFieldInfo {
-	name: string;
-	/** Named types this field accepts (concrete node kinds). */
-	namedTypes: string[];
-	/** Anonymous tokens this field accepts (operators, keywords). */
-	anonymousTokens?: string[];
-	multiple: boolean;
-}
-
-/** Context for .from() resolution — provided by each generated package. */
-export interface FromContext {
-	/** Get field metadata for a branch kind. */
-	getFields(kind: string): FromFieldInfo[] | undefined;
-	/** Get accepted child types for a branch kind. */
-	getChildrenTypes(kind: string): string[] | undefined;
-	/** True if kind is a leaf (terminal) node. */
-	isLeaf(kind: string): boolean;
-	/** True if kind is a branch (non-terminal) node. */
-	isBranch(kind: string): boolean;
-	/** Get enum values for a leaf kind (e.g., primitive_type → ['bool', ...]). */
-	getLeafValues(kind: string): readonly string[] | undefined;
-	/** Create a leaf node via the factory (with validation). */
-	createLeaf(kind: string, text: string): NodeData;
-	/** Create a branch node from an already-resolved config. */
-	createBranch(kind: string, config: Record<string, unknown>): NodeData;
-}
+export type { FromValue, FromObject, FromFieldInfo, FromContext };
 
 // ---------------------------------------------------------------------------
 // Internals

@@ -35,7 +35,6 @@
     "type-check": "tsgo --noEmit"
   },
   "dependencies": {
-    "@sittir/core": "workspace:*",
     "type-fest": "^5.5.0"
   }
 }

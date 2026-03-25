@@ -1,5 +1,6 @@
 // @sittir/core — Grammar-driven render engine
-// TODO: Planned migration to Rust/WASM via @refactory/typescript-to-rust
+// All type definitions live in @sittir/types. Core re-exports them for
+// backward compatibility — consumers can import types from either package.
 
 export type {
 	NodeData,
@@ -12,7 +13,7 @@ export type {
 	Position,
 	CSTNode,
 	RenderContext,
-} from './types.ts';
+} from '@sittir/types';
 
 export { parseTemplate } from './sexpr.ts';
 export { render } from './render.ts';

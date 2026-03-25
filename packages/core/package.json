@@ -35,6 +35,9 @@
     "type-check": "tsgo --noEmit",
     "test": "vitest run"
   },
+  "dependencies": {
+    "@sittir/types": "workspace:*"
+  },
   "devDependencies": {
     "@ast-grep/napi": "^0.42.0"
   }
