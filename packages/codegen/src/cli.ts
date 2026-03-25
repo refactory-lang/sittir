@@ -102,6 +102,7 @@ writeFile(join(outDir, 'grammar.ts'), result.grammar);
 writeFile(join(outDir, 'types.ts'), result.types);
 writeFile(join(outDir, 'rules.ts'), result.rules);
 writeFile(join(outDir, 'factories.ts'), result.factories);
+writeFile(join(outDir, 'from.ts'), result.from);
 writeFile(join(outDir, 'ir.ts'), result.irNamespace);
 writeFile(join(outDir, 'joinby.ts'), result.joinBy);
 writeFile(join(outDir, 'consts.ts'), result.consts);
@@ -116,6 +117,6 @@ writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
 console.log(`
 Done! Generated:
-  grammar.ts, types.ts, rules.ts, factories.ts, consts.ts, index.ts
+  grammar.ts, types.ts, rules.ts, factories.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);

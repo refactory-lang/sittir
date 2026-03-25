@@ -3,8 +3,11 @@
 // Types (grammar + construction types + navigation types + enums)
 export * from './types.js';
 
-// Factories (ir namespace)
+// Factories (ir namespace with .from())
 export { ir } from './ir.js';
+
+// .from() resolution (tree-shakeable, separate from factories)
+export * from './from.js';
 
 // Render templates
 export { rules } from './rules.js';

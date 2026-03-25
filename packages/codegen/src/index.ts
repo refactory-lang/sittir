@@ -23,6 +23,7 @@ import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
 import { emitRules, emitRule } from './emitters/rules.ts';
 import { emitFactories } from './emitters/factories.ts';
+import { emitFrom } from './emitters/from.ts';
 import { emitConsts } from './emitters/consts.ts';
 import { emitIrNamespace } from './emitters/ir-namespace.ts';
 import { emitJoinBy } from './emitters/joinby.ts';
@@ -52,6 +53,8 @@ export interface GeneratedFiles {
 	rules: string;
 	/** factories.ts — unified factory functions (declarative + fluent + mixed) */
 	factories: string;
+	/** from.ts — .from() resolution functions (tree-shakeable, separate from factories) */
+	from: string;
 	/** ir.ts — ir namespace re-exporting all factories with short names */
 	irNamespace: string;
 	/** joinby.ts — separator map for list children */
@@ -101,6 +104,13 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 			keywordTokens,
 			operatorTokens,
 			supertypes,
+		}),
+		from: emitFrom({
+			grammar: config.grammar,
+			nodes,
+			leafKinds,
+			keywordKinds,
+			leafValues: new Map(leafValueKinds.map(lv => [lv.kind, lv.values])),
 		}),
 		irNamespace: emitIrNamespace({ grammar: config.grammar, branchKinds, leafKinds, keywordKinds, operatorContexts: listOperatorContexts(config.grammar), supertypes }),
 		joinBy: emitJoinBy({ grammar: config.grammar, nodes }),
