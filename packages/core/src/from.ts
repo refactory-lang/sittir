@@ -98,6 +98,26 @@ export function resolveFromInput(
 }
 
 // ---------------------------------------------------------------------------
+// Single-field resolution — used by ergonomic fluent setters on .from() nodes
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve a single field value using .from() resolution rules.
+ * Used by ergonomic fluent setters on nodes returned by .from().
+ */
+export function resolveFieldValue(
+	value: unknown,
+	field: FromFieldInfo,
+	ctx: FromContext,
+): NodeData | NodeData[] {
+	if (field.multiple) {
+		const arr = Array.isArray(value) ? value : [value];
+		return arr.map(v => resolveValue(v, field.namedTypes, field.anonymousTokens, ctx));
+	}
+	return resolveValue(value, field.namedTypes, field.anonymousTokens, ctx);
+}
+
+// ---------------------------------------------------------------------------
 // Value resolution
 // ---------------------------------------------------------------------------
 
