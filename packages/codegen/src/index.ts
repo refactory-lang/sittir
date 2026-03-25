@@ -99,6 +99,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 			keywordKinds,
 			leafValues: new Map(leafValueKinds.map(lv => [lv.kind, lv.values])),
 			keywordTokens,
+			operatorTokens,
 			supertypes,
 		}),
 		irNamespace: emitIrNamespace({ grammar: config.grammar, branchKinds, leafKinds, keywordKinds, operatorContexts: listOperatorContexts(config.grammar), supertypes }),
