@@ -99,13 +99,13 @@ const RESERVED_KEYWORDS = new Set([
 ]);
 
 export interface AbstractTypeConfig {
-  trait: NodeData;
+  trait: NodeData<'type_identifier' | 'scoped_type_identifier' | 'removed_trait_bound' | 'generic_type' | 'function_type' | 'tuple_type' | 'bounded_type'>;
   children?: NodeData[];
 }
 
 export interface AbstractTypeFromInput {
-  trait: FromValue;
-  children?: FromValue | FromValue[];
+  trait: NodeData<'type_identifier' | 'scoped_type_identifier' | 'removed_trait_bound' | 'generic_type' | 'function_type' | 'tuple_type' | 'bounded_type'> | string | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | FromValue[];
+  children?: (NodeData<'type_parameters'> | TypeParametersFromInput)[];
 }
 
 export type AbstractTypeNode = NodeData<'abstract_type'> & {
@@ -117,11 +117,11 @@ export type AbstractTypeNode = NodeData<'abstract_type'> & {
 };
 
 export function abstractType(
-  traitOrConfig: NodeData | AbstractTypeConfig,
+  traitOrConfig: NodeData<'type_identifier' | 'scoped_type_identifier' | 'removed_trait_bound' | 'generic_type' | 'function_type' | 'tuple_type' | 'bounded_type'> | AbstractTypeConfig,
   config?: Partial<AbstractTypeConfig>,
 ): AbstractTypeNode {
-  const fields: any = isNodeData(traitOrConfig) || typeof traitOrConfig === 'string'
-    ? { 'trait': resolveAndValidate(traitOrConfig), ...config }
+  const fields: any = isNodeData(traitOrConfig)
+    ? { 'trait': traitOrConfig, ...config }
     : traitOrConfig;
   const node: any = { type: 'abstract_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -149,7 +149,7 @@ abstractType.assign = function(target: AssignableNode<'abstract_type'>): Abstrac
     return merged;
   };
   const node: any = { get type() { return 'abstract_type'; }, get fields() { return getFields(); } };
-  node.trait = (v: any) => { overrides['trait'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.trait = (v: any) => { validateNodeText(v); overrides['trait'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -165,7 +165,7 @@ export interface ArgumentsConfig {
 }
 
 export interface ArgumentsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type ArgumentsNode = NodeData<'arguments'> & {
@@ -177,9 +177,16 @@ export type ArgumentsNode = NodeData<'arguments'> & {
 };
 
 export function arguments_(
-  config?: ArgumentsConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | ArgumentsConfig,
 ): ArgumentsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'arguments', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -217,17 +224,17 @@ arguments_.assign = function(target: AssignableNode<'arguments'>): ArgumentsNode
 } as any;
 
 export interface ArrayExpressionConfig {
-  length?: NodeData;
+  length?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
   children?: NodeData[];
 }
 
 export interface ArrayExpressionFromInput {
-  length?: FromValue;
-  children?: FromValue | FromValue[];
+  length?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  children?: (NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type ArrayExpressionNode = NodeData<'array_expression'> & {
-  length(value: NodeData): ArrayExpressionNode;
+  length(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): ArrayExpressionNode;
   children(...value: NodeData[]): ArrayExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -236,11 +243,18 @@ export type ArrayExpressionNode = NodeData<'array_expression'> & {
 };
 
 export function arrayExpression(
-  config?: ArrayExpressionConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | ArrayExpressionConfig,
 ): ArrayExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'array_expression', fields };
-  node.length = (v: any) => { fields['length'] = resolveAndValidate(v); return node; };
+  node.length = (v: any) => { validateNodeText(v); fields['length'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -266,7 +280,7 @@ arrayExpression.assign = function(target: AssignableNode<'array_expression'>): A
     return merged;
   };
   const node: any = { get type() { return 'array_expression'; }, get fields() { return getFields(); } };
-  node.length = (v: any) => { overrides['length'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.length = (v: any) => { validateNodeText(v); overrides['length'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -278,17 +292,17 @@ arrayExpression.assign = function(target: AssignableNode<'array_expression'>): A
 } as any;
 
 export interface ArrayTypeConfig {
-  element: NodeData;
-  length?: NodeData;
+  element: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  length?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
 }
 
 export interface ArrayTypeFromInput {
-  element: FromValue;
-  length?: FromValue;
+  element: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  length?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
 }
 
 export type ArrayTypeNode = NodeData<'array_type'> & {
-  length(value: NodeData): ArrayTypeNode;
+  length(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): ArrayTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -296,14 +310,14 @@ export type ArrayTypeNode = NodeData<'array_type'> & {
 };
 
 export function arrayType(
-  elementOrConfig: NodeData | ArrayTypeConfig,
+  elementOrConfig: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | ArrayTypeConfig,
   config?: Partial<ArrayTypeConfig>,
 ): ArrayTypeNode {
-  const fields: any = isNodeData(elementOrConfig) || typeof elementOrConfig === 'string'
-    ? { 'element': resolveAndValidate(elementOrConfig), ...config }
+  const fields: any = isNodeData(elementOrConfig)
+    ? { 'element': elementOrConfig, ...config }
     : elementOrConfig;
   const node: any = { type: 'array_type', fields };
-  node.length = (v: any) => { fields['length'] = resolveAndValidate(v); return node; };
+  node.length = (v: any) => { validateNodeText(v); fields['length'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -326,8 +340,8 @@ arrayType.assign = function(target: AssignableNode<'array_type'>): ArrayTypeNode
     return merged;
   };
   const node: any = { get type() { return 'array_type'; }, get fields() { return getFields(); } };
-  node.element = (v: any) => { overrides['element'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.length = (v: any) => { overrides['length'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.element = (v: any) => { validateNodeText(v); overrides['element'] = v; return node; };
+  node.length = (v: any) => { validateNodeText(v); overrides['length'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -338,17 +352,17 @@ arrayType.assign = function(target: AssignableNode<'array_type'>): ArrayTypeNode
 } as any;
 
 export interface AssignmentExpressionConfig {
-  left: NodeData;
-  right: NodeData;
+  left: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  right: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
 }
 
 export interface AssignmentExpressionFromInput {
-  left: FromValue;
-  right: FromValue;
+  left: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  right: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
 }
 
 export type AssignmentExpressionNode = NodeData<'assignment_expression'> & {
-  right(value: NodeData): AssignmentExpressionNode;
+  right(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): AssignmentExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -356,14 +370,14 @@ export type AssignmentExpressionNode = NodeData<'assignment_expression'> & {
 };
 
 export function assignmentExpression(
-  leftOrConfig: NodeData | AssignmentExpressionConfig,
+  leftOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | AssignmentExpressionConfig,
   config?: Partial<AssignmentExpressionConfig>,
 ): AssignmentExpressionNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'assignment_expression', fields };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -386,8 +400,8 @@ assignmentExpression.assign = function(target: AssignableNode<'assignment_expres
     return merged;
   };
   const node: any = { get type() { return 'assignment_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -398,22 +412,22 @@ assignmentExpression.assign = function(target: AssignableNode<'assignment_expres
 } as any;
 
 export interface AssociatedTypeConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  bounds?: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  bounds?: NodeData<'trait_bounds'>;
   children?: NodeData[];
 }
 
 export interface AssociatedTypeFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  bounds?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  bounds?: NodeData<'trait_bounds'> | TraitBoundsFromInput | FromValue[];
+  children?: (NodeData<'where_clause'> | WhereClauseFromInput)[];
 }
 
 export type AssociatedTypeNode = NodeData<'associated_type'> & {
-  typeParameters(value: NodeData): AssociatedTypeNode;
-  bounds(value: NodeData): AssociatedTypeNode;
+  typeParameters(value: NodeData<'type_parameters'>): AssociatedTypeNode;
+  bounds(value: NodeData<'trait_bounds'>): AssociatedTypeNode;
   children(...value: NodeData[]): AssociatedTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -422,15 +436,15 @@ export type AssociatedTypeNode = NodeData<'associated_type'> & {
 };
 
 export function associatedType(
-  nameOrConfig: NodeData | string | AssociatedTypeConfig,
+  nameOrConfig: NodeData<'type_identifier'> | AssociatedTypeConfig,
   config?: Partial<AssociatedTypeConfig>,
 ): AssociatedTypeNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'associated_type', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.bounds = (v: any) => { fields['bounds'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.bounds = (v: any) => { validateNodeText(v); fields['bounds'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -456,9 +470,9 @@ associatedType.assign = function(target: AssignableNode<'associated_type'>): Ass
     return merged;
   };
   const node: any = { get type() { return 'associated_type'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.bounds = (v: any) => { overrides['bounds'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.bounds = (v: any) => { validateNodeText(v); overrides['bounds'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -474,7 +488,7 @@ export interface AsyncBlockConfig {
 }
 
 export interface AsyncBlockFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'block'> | BlockFromInput)[];
 }
 
 export type AsyncBlockNode = NodeData<'async_block'> & {
@@ -486,9 +500,16 @@ export type AsyncBlockNode = NodeData<'async_block'> & {
 };
 
 export function asyncBlock(
-  config?: AsyncBlockConfig,
+  childrenOrConfig?: NodeData<'block'> | NodeData<'block'>[] | AsyncBlockConfig,
 ): AsyncBlockNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'async_block', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -526,20 +547,20 @@ asyncBlock.assign = function(target: AssignableNode<'async_block'>): AsyncBlockN
 } as any;
 
 export interface AttributeConfig {
-  value?: NodeData;
-  arguments?: NodeData;
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  arguments?: NodeData<'token_tree'>;
   children?: NodeData[];
 }
 
 export interface AttributeFromInput {
-  value?: FromValue;
-  arguments?: FromValue;
-  children?: FromValue | FromValue[];
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  arguments?: NodeData<'token_tree'> | TokenTreeFromInput | FromValue[];
+  children?: (NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | string | ScopedIdentifierFromInput)[];
 }
 
 export type AttributeNode = NodeData<'attribute'> & {
-  value(value: NodeData): AttributeNode;
-  arguments(value: NodeData): AttributeNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): AttributeNode;
+  arguments(value: NodeData<'token_tree'>): AttributeNode;
   children(...value: NodeData[]): AttributeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -552,8 +573,8 @@ export function attribute(
 ): AttributeNode {
   const fields: any = config ?? {};
   const node: any = { type: 'attribute', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
-  node.arguments = (v: any) => { fields['arguments'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.arguments = (v: any) => { validateNodeText(v); fields['arguments'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -579,8 +600,8 @@ attribute.assign = function(target: AssignableNode<'attribute'>): AttributeNode 
     return merged;
   };
   const node: any = { get type() { return 'attribute'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.arguments = (v: any) => { overrides['arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.arguments = (v: any) => { validateNodeText(v); overrides['arguments'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -596,7 +617,7 @@ export interface AttributeItemConfig {
 }
 
 export interface AttributeItemFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute'> | AttributeFromInput)[];
 }
 
 export type AttributeItemNode = NodeData<'attribute_item'> & {
@@ -608,9 +629,16 @@ export type AttributeItemNode = NodeData<'attribute_item'> & {
 };
 
 export function attributeItem(
-  config?: AttributeItemConfig,
+  childrenOrConfig?: NodeData<'attribute'> | NodeData<'attribute'>[] | AttributeItemConfig,
 ): AttributeItemNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'attribute_item', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -652,7 +680,7 @@ export interface AwaitExpressionConfig {
 }
 
 export interface AwaitExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type AwaitExpressionNode = NodeData<'await_expression'> & {
@@ -664,9 +692,16 @@ export type AwaitExpressionNode = NodeData<'await_expression'> & {
 };
 
 export function awaitExpression(
-  config?: AwaitExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | AwaitExpressionConfig,
 ): AwaitExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'await_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -708,7 +743,7 @@ export interface BaseFieldInitializerConfig {
 }
 
 export interface BaseFieldInitializerFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type BaseFieldInitializerNode = NodeData<'base_field_initializer'> & {
@@ -720,9 +755,16 @@ export type BaseFieldInitializerNode = NodeData<'base_field_initializer'> & {
 };
 
 export function baseFieldInitializer(
-  config?: BaseFieldInitializerConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | BaseFieldInitializerConfig,
 ): BaseFieldInitializerNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'base_field_initializer', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -760,20 +802,20 @@ baseFieldInitializer.assign = function(target: AssignableNode<'base_field_initia
 } as any;
 
 export interface BinaryExpressionConfig {
-  left: NodeData;
-  operator: NodeData;
-  right: NodeData;
+  left: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  operator: NodeData<string>;
+  right: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
 }
 
 export interface BinaryExpressionFromInput {
-  left: FromValue;
+  left: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
   operator: NodeData | '&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%';
-  right: FromValue;
+  right: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
 }
 
 export type BinaryExpressionNode = NodeData<'binary_expression'> & {
-  operator(value: NodeData): BinaryExpressionNode;
-  right(value: NodeData): BinaryExpressionNode;
+  operator(value: NodeData<string>): BinaryExpressionNode;
+  right(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): BinaryExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -781,15 +823,15 @@ export type BinaryExpressionNode = NodeData<'binary_expression'> & {
 };
 
 export function binaryExpression(
-  leftOrConfig: NodeData | BinaryExpressionConfig,
+  leftOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | BinaryExpressionConfig,
   config?: Partial<BinaryExpressionConfig>,
 ): BinaryExpressionNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'binary_expression', fields };
-  node.operator = (v: any) => { fields['operator'] = resolveAndValidate(v); return node; };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -812,9 +854,9 @@ binaryExpression.assign = function(target: AssignableNode<'binary_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'binary_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.operator = (v: any) => { overrides['operator'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -829,7 +871,7 @@ export interface BlockConfig {
 }
 
 export interface BlockFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'label' | 'expression_statement' | 'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'label' } & LabelFromInput) | ({ kind: 'expression_statement' } & ExpressionStatementFromInput) | ({ kind: 'const_item' } & ConstItemFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'macro_definition' } & MacroDefinitionFromInput) | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'inner_attribute_item' } & InnerAttributeItemFromInput) | ({ kind: 'mod_item' } & ModItemFromInput) | ({ kind: 'foreign_mod_item' } & ForeignModItemFromInput) | ({ kind: 'struct_item' } & StructItemFromInput) | ({ kind: 'union_item' } & UnionItemFromInput) | ({ kind: 'enum_item' } & EnumItemFromInput) | ({ kind: 'type_item' } & TypeItemFromInput) | ({ kind: 'function_item' } & FunctionItemFromInput) | ({ kind: 'function_signature_item' } & FunctionSignatureItemFromInput) | ({ kind: 'impl_item' } & ImplItemFromInput) | ({ kind: 'trait_item' } & TraitItemFromInput) | ({ kind: 'associated_type' } & AssociatedTypeFromInput) | ({ kind: 'let_declaration' } & LetDeclarationFromInput) | ({ kind: 'use_declaration' } & UseDeclarationFromInput) | ({ kind: 'extern_crate_declaration' } & ExternCrateDeclarationFromInput) | ({ kind: 'static_item' } & StaticItemFromInput) | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type BlockNode = NodeData<'block'> & {
@@ -841,9 +883,16 @@ export type BlockNode = NodeData<'block'> & {
 };
 
 export function block(
-  config?: BlockConfig,
+  childrenOrConfig?: NodeData<'label' | 'expression_statement' | 'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'label' | 'expression_statement' | 'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | BlockConfig,
 ): BlockNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'block', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -881,21 +930,21 @@ block.assign = function(target: AssignableNode<'block'>): BlockNode {
 } as any;
 
 export interface BlockCommentConfig {
-  outer?: NodeData | string;
-  inner?: NodeData | string;
-  doc?: NodeData | string;
+  outer?: NodeData<'outer_doc_comment_marker'>;
+  inner?: NodeData<'inner_doc_comment_marker'>;
+  doc?: NodeData<'doc_comment'>;
 }
 
 export interface BlockCommentFromInput {
-  outer?: NodeData | string;
-  inner?: NodeData | string;
-  doc?: NodeData | string;
+  outer?: NodeData<'outer_doc_comment_marker'> | string;
+  inner?: NodeData<'inner_doc_comment_marker'> | string;
+  doc?: NodeData<'doc_comment'> | string;
 }
 
 export type BlockCommentNode = NodeData<'block_comment'> & {
-  outer(value: NodeData | string): BlockCommentNode;
-  inner(value: NodeData | string): BlockCommentNode;
-  doc(value: NodeData | string): BlockCommentNode;
+  outer(value: NodeData<'outer_doc_comment_marker'>): BlockCommentNode;
+  inner(value: NodeData<'inner_doc_comment_marker'>): BlockCommentNode;
+  doc(value: NodeData<'doc_comment'>): BlockCommentNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -907,9 +956,9 @@ export function blockComment(
 ): BlockCommentNode {
   const fields: any = config ?? {};
   const node: any = { type: 'block_comment', fields };
-  node.outer = (v: any) => { fields['outer'] = resolveAndValidate(v); return node; };
-  node.inner = (v: any) => { fields['inner'] = resolveAndValidate(v); return node; };
-  node.doc = (v: any) => { fields['doc'] = resolveAndValidate(v); return node; };
+  node.outer = (v: any) => { validateNodeText(v); fields['outer'] = v; return node; };
+  node.inner = (v: any) => { validateNodeText(v); fields['inner'] = v; return node; };
+  node.doc = (v: any) => { validateNodeText(v); fields['doc'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -932,9 +981,9 @@ blockComment.assign = function(target: AssignableNode<'block_comment'>): BlockCo
     return merged;
   };
   const node: any = { get type() { return 'block_comment'; }, get fields() { return getFields(); } };
-  node.outer = (v: any) => { overrides['outer'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.inner = (v: any) => { overrides['inner'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.doc = (v: any) => { overrides['doc'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.outer = (v: any) => { validateNodeText(v); overrides['outer'] = v; return node; };
+  node.inner = (v: any) => { validateNodeText(v); overrides['inner'] = v; return node; };
+  node.doc = (v: any) => { validateNodeText(v); overrides['doc'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -949,7 +998,7 @@ export interface BoundedTypeConfig {
 }
 
 export interface BoundedTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'lifetime' | 'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'use_bounds'> | string | ({ kind: 'lifetime' } & LifetimeFromInput) | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | ({ kind: 'use_bounds' } & UseBoundsFromInput))[];
 }
 
 export type BoundedTypeNode = NodeData<'bounded_type'> & {
@@ -961,9 +1010,16 @@ export type BoundedTypeNode = NodeData<'bounded_type'> & {
 };
 
 export function boundedType(
-  config?: BoundedTypeConfig,
+  childrenOrConfig?: NodeData<'lifetime' | 'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'use_bounds'> | NodeData<'lifetime' | 'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'use_bounds'>[] | BoundedTypeConfig,
 ): BoundedTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'bounded_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1005,7 +1061,7 @@ export interface BracketedTypeConfig {
 }
 
 export interface BracketedTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'qualified_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | ({ kind: 'qualified_type' } & QualifiedTypeFromInput))[];
 }
 
 export type BracketedTypeNode = NodeData<'bracketed_type'> & {
@@ -1017,9 +1073,16 @@ export type BracketedTypeNode = NodeData<'bracketed_type'> & {
 };
 
 export function bracketedType(
-  config?: BracketedTypeConfig,
+  childrenOrConfig?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'qualified_type'> | NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'qualified_type'>[] | BracketedTypeConfig,
 ): BracketedTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'bracketed_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1061,7 +1124,7 @@ export interface BreakExpressionConfig {
 }
 
 export interface BreakExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'label' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'label' } & LabelFromInput) | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type BreakExpressionNode = NodeData<'break_expression'> & {
@@ -1073,9 +1136,16 @@ export type BreakExpressionNode = NodeData<'break_expression'> & {
 };
 
 export function breakExpression(
-  config?: BreakExpressionConfig,
+  childrenOrConfig?: NodeData<'label' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'label' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | BreakExpressionConfig,
 ): BreakExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'break_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1113,17 +1183,17 @@ breakExpression.assign = function(target: AssignableNode<'break_expression'>): B
 } as any;
 
 export interface CallExpressionConfig {
-  function: NodeData;
-  arguments: NodeData;
+  function: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block'>;
+  arguments: NodeData<'arguments'>;
 }
 
 export interface CallExpressionFromInput {
-  function: FromValue;
-  arguments: FromValue;
+  function: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | FromValue[];
+  arguments: NodeData<'arguments'> | ArgumentsFromInput | FromValue[];
 }
 
 export type CallExpressionNode = NodeData<'call_expression'> & {
-  arguments(value: NodeData): CallExpressionNode;
+  arguments(value: NodeData<'arguments'>): CallExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1131,14 +1201,14 @@ export type CallExpressionNode = NodeData<'call_expression'> & {
 };
 
 export function callExpression(
-  functionOrConfig: NodeData | CallExpressionConfig,
+  functionOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block'> | CallExpressionConfig,
   config?: Partial<CallExpressionConfig>,
 ): CallExpressionNode {
-  const fields: any = isNodeData(functionOrConfig) || typeof functionOrConfig === 'string'
-    ? { 'function': resolveAndValidate(functionOrConfig), ...config }
+  const fields: any = isNodeData(functionOrConfig)
+    ? { 'function': functionOrConfig, ...config }
     : functionOrConfig;
   const node: any = { type: 'call_expression', fields };
-  node.arguments = (v: any) => { fields['arguments'] = resolveAndValidate(v); return node; };
+  node.arguments = (v: any) => { validateNodeText(v); fields['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1161,8 +1231,8 @@ callExpression.assign = function(target: AssignableNode<'call_expression'>): Cal
     return merged;
   };
   const node: any = { get type() { return 'call_expression'; }, get fields() { return getFields(); } };
-  node.function = (v: any) => { overrides['function'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.arguments = (v: any) => { overrides['arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.function = (v: any) => { validateNodeText(v); overrides['function'] = v; return node; };
+  node.arguments = (v: any) => { validateNodeText(v); overrides['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1177,7 +1247,7 @@ export interface CapturedPatternConfig {
 }
 
 export interface CapturedPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'identifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type CapturedPatternNode = NodeData<'captured_pattern'> & {
@@ -1189,9 +1259,16 @@ export type CapturedPatternNode = NodeData<'captured_pattern'> & {
 };
 
 export function capturedPattern(
-  config?: CapturedPatternConfig,
+  childrenOrConfig?: NodeData<'identifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | NodeData<'identifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>[] | CapturedPatternConfig,
 ): CapturedPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'captured_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1229,20 +1306,20 @@ capturedPattern.assign = function(target: AssignableNode<'captured_pattern'>): C
 } as any;
 
 export interface ClosureExpressionConfig {
-  parameters: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  parameters: NodeData<'closure_parameters'>;
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  body: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | '_'>;
 }
 
 export interface ClosureExpressionFromInput {
-  parameters: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
+  parameters: NodeData<'closure_parameters'> | ClosureParametersFromInput | FromValue[];
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  body: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | '_'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | ({ kind: '_' } & _FromInput) | FromValue[];
 }
 
 export type ClosureExpressionNode = NodeData<'closure_expression'> & {
-  returnType(value: NodeData): ClosureExpressionNode;
-  body(value: NodeData): ClosureExpressionNode;
+  returnType(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): ClosureExpressionNode;
+  body(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | '_'>): ClosureExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1250,15 +1327,15 @@ export type ClosureExpressionNode = NodeData<'closure_expression'> & {
 };
 
 export function closureExpression(
-  parametersOrConfig: NodeData | ClosureExpressionConfig,
+  parametersOrConfig: NodeData<'closure_parameters'> | ClosureExpressionConfig,
   config?: Partial<ClosureExpressionConfig>,
 ): ClosureExpressionNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'closure_expression', fields };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1281,9 +1358,9 @@ closureExpression.assign = function(target: AssignableNode<'closure_expression'>
     return merged;
   };
   const node: any = { get type() { return 'closure_expression'; }, get fields() { return getFields(); } };
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1298,7 +1375,7 @@ export interface ClosureParametersConfig {
 }
 
 export interface ClosureParametersFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'parameter'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'parameter' } & ParameterFromInput))[];
 }
 
 export type ClosureParametersNode = NodeData<'closure_parameters'> & {
@@ -1310,9 +1387,16 @@ export type ClosureParametersNode = NodeData<'closure_parameters'> & {
 };
 
 export function closureParameters(
-  config?: ClosureParametersConfig,
+  childrenOrConfig?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'parameter'> | NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'parameter'>[] | ClosureParametersConfig,
 ): ClosureParametersNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'closure_parameters', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1350,20 +1434,20 @@ closureParameters.assign = function(target: AssignableNode<'closure_parameters'>
 } as any;
 
 export interface CompoundAssignmentExprConfig {
-  left: NodeData;
-  operator: NodeData;
-  right: NodeData;
+  left: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  operator: NodeData<string>;
+  right: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
 }
 
 export interface CompoundAssignmentExprFromInput {
-  left: FromValue;
+  left: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
   operator: NodeData | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
-  right: FromValue;
+  right: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
 }
 
 export type CompoundAssignmentExprNode = NodeData<'compound_assignment_expr'> & {
-  operator(value: NodeData): CompoundAssignmentExprNode;
-  right(value: NodeData): CompoundAssignmentExprNode;
+  operator(value: NodeData<string>): CompoundAssignmentExprNode;
+  right(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): CompoundAssignmentExprNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1371,15 +1455,15 @@ export type CompoundAssignmentExprNode = NodeData<'compound_assignment_expr'> & 
 };
 
 export function compoundAssignmentExpr(
-  leftOrConfig: NodeData | CompoundAssignmentExprConfig,
+  leftOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | CompoundAssignmentExprConfig,
   config?: Partial<CompoundAssignmentExprConfig>,
 ): CompoundAssignmentExprNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'compound_assignment_expr', fields };
-  node.operator = (v: any) => { fields['operator'] = resolveAndValidate(v); return node; };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1402,9 +1486,9 @@ compoundAssignmentExpr.assign = function(target: AssignableNode<'compound_assign
     return merged;
   };
   const node: any = { get type() { return 'compound_assignment_expr'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.operator = (v: any) => { overrides['operator'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1415,11 +1499,11 @@ compoundAssignmentExpr.assign = function(target: AssignableNode<'compound_assign
 } as any;
 
 export interface ConstBlockConfig {
-  body: NodeData;
+  body: NodeData<'block'>;
 }
 
 export interface ConstBlockFromInput {
-  body: FromValue;
+  body: NodeData<'block'> | BlockFromInput | FromValue[];
 }
 
 export type ConstBlockNode = NodeData<'const_block'> & {
@@ -1430,11 +1514,11 @@ export type ConstBlockNode = NodeData<'const_block'> & {
 };
 
 export function constBlock(
-  bodyOrConfig: NodeData | ConstBlockConfig,
+  bodyOrConfig: NodeData<'block'> | ConstBlockConfig,
   config?: Partial<ConstBlockConfig>,
 ): ConstBlockNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'const_block', fields };
   node.render = () => render(node, rules, joinBy);
@@ -1459,7 +1543,7 @@ constBlock.assign = function(target: AssignableNode<'const_block'>): ConstBlockN
     return merged;
   };
   const node: any = { get type() { return 'const_block'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1470,22 +1554,22 @@ constBlock.assign = function(target: AssignableNode<'const_block'>): ConstBlockN
 } as any;
 
 export interface ConstItemConfig {
-  name: NodeData | string;
-  type: NodeData;
-  value?: NodeData;
+  name: NodeData<'identifier'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
   children?: NodeData[];
 }
 
 export interface ConstItemFromInput {
-  name: NodeData | string;
-  type: FromValue;
-  value?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier'> | string;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier'> | VisibilityModifierFromInput)[];
 }
 
 export type ConstItemNode = NodeData<'const_item'> & {
-  typeField(value: NodeData): ConstItemNode;
-  value(value: NodeData): ConstItemNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): ConstItemNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): ConstItemNode;
   children(...value: NodeData[]): ConstItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1494,15 +1578,15 @@ export type ConstItemNode = NodeData<'const_item'> & {
 };
 
 export function constItem(
-  nameOrConfig: NodeData | string | ConstItemConfig,
+  nameOrConfig: NodeData<'identifier'> | ConstItemConfig,
   config?: Partial<ConstItemConfig>,
 ): ConstItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'const_item', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -1528,9 +1612,9 @@ constItem.assign = function(target: AssignableNode<'const_item'>): ConstItemNode
     return merged;
   };
   const node: any = { get type() { return 'const_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -1542,20 +1626,20 @@ constItem.assign = function(target: AssignableNode<'const_item'>): ConstItemNode
 } as any;
 
 export interface ConstParameterConfig {
-  name: NodeData | string;
-  type: NodeData;
-  value?: NodeData;
+  name: NodeData<'identifier'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  value?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'block' | 'identifier' | 'negative_literal'>;
 }
 
 export interface ConstParameterFromInput {
-  name: NodeData | string;
-  type: FromValue;
-  value?: FromValue;
+  name: NodeData<'identifier'> | string;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  value?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'block' | 'identifier' | 'negative_literal'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | FromValue[];
 }
 
 export type ConstParameterNode = NodeData<'const_parameter'> & {
-  typeField(value: NodeData): ConstParameterNode;
-  value(value: NodeData): ConstParameterNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): ConstParameterNode;
+  value(value: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'block' | 'identifier' | 'negative_literal'>): ConstParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1563,15 +1647,15 @@ export type ConstParameterNode = NodeData<'const_parameter'> & {
 };
 
 export function constParameter(
-  nameOrConfig: NodeData | string | ConstParameterConfig,
+  nameOrConfig: NodeData<'identifier'> | ConstParameterConfig,
   config?: Partial<ConstParameterConfig>,
 ): ConstParameterNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'const_parameter', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1594,9 +1678,9 @@ constParameter.assign = function(target: AssignableNode<'const_parameter'>): Con
     return merged;
   };
   const node: any = { get type() { return 'const_parameter'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1611,7 +1695,7 @@ export interface ContinueExpressionConfig {
 }
 
 export interface ContinueExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'label'> | LabelFromInput)[];
 }
 
 export type ContinueExpressionNode = NodeData<'continue_expression'> & {
@@ -1623,9 +1707,16 @@ export type ContinueExpressionNode = NodeData<'continue_expression'> & {
 };
 
 export function continueExpression(
-  config?: ContinueExpressionConfig,
+  childrenOrConfig?: NodeData<'label'> | NodeData<'label'>[] | ContinueExpressionConfig,
 ): ContinueExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'continue_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1667,7 +1758,7 @@ export interface DeclarationListConfig {
 }
 
 export interface DeclarationListFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item'> | string | ({ kind: 'const_item' } & ConstItemFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'macro_definition' } & MacroDefinitionFromInput) | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'inner_attribute_item' } & InnerAttributeItemFromInput) | ({ kind: 'mod_item' } & ModItemFromInput) | ({ kind: 'foreign_mod_item' } & ForeignModItemFromInput) | ({ kind: 'struct_item' } & StructItemFromInput) | ({ kind: 'union_item' } & UnionItemFromInput) | ({ kind: 'enum_item' } & EnumItemFromInput) | ({ kind: 'type_item' } & TypeItemFromInput) | ({ kind: 'function_item' } & FunctionItemFromInput) | ({ kind: 'function_signature_item' } & FunctionSignatureItemFromInput) | ({ kind: 'impl_item' } & ImplItemFromInput) | ({ kind: 'trait_item' } & TraitItemFromInput) | ({ kind: 'associated_type' } & AssociatedTypeFromInput) | ({ kind: 'let_declaration' } & LetDeclarationFromInput) | ({ kind: 'use_declaration' } & UseDeclarationFromInput) | ({ kind: 'extern_crate_declaration' } & ExternCrateDeclarationFromInput) | ({ kind: 'static_item' } & StaticItemFromInput))[];
 }
 
 export type DeclarationListNode = NodeData<'declaration_list'> & {
@@ -1679,9 +1770,16 @@ export type DeclarationListNode = NodeData<'declaration_list'> & {
 };
 
 export function declarationList(
-  config?: DeclarationListConfig,
+  childrenOrConfig?: NodeData<'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item'> | NodeData<'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item'>[] | DeclarationListConfig,
 ): DeclarationListNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'declaration_list', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1719,11 +1817,11 @@ declarationList.assign = function(target: AssignableNode<'declaration_list'>): D
 } as any;
 
 export interface DynamicTypeConfig {
-  trait: NodeData;
+  trait: NodeData<'type_identifier' | 'higher_ranked_trait_bound' | 'scoped_type_identifier' | 'generic_type' | 'function_type' | 'tuple_type'>;
 }
 
 export interface DynamicTypeFromInput {
-  trait: FromValue;
+  trait: NodeData<'type_identifier' | 'higher_ranked_trait_bound' | 'scoped_type_identifier' | 'generic_type' | 'function_type' | 'tuple_type'> | string | ({ kind: 'higher_ranked_trait_bound' } & HigherRankedTraitBoundFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | FromValue[];
 }
 
 export type DynamicTypeNode = NodeData<'dynamic_type'> & {
@@ -1734,11 +1832,11 @@ export type DynamicTypeNode = NodeData<'dynamic_type'> & {
 };
 
 export function dynamicType(
-  traitOrConfig: NodeData | DynamicTypeConfig,
+  traitOrConfig: NodeData<'type_identifier' | 'higher_ranked_trait_bound' | 'scoped_type_identifier' | 'generic_type' | 'function_type' | 'tuple_type'> | DynamicTypeConfig,
   config?: Partial<DynamicTypeConfig>,
 ): DynamicTypeNode {
-  const fields: any = isNodeData(traitOrConfig) || typeof traitOrConfig === 'string'
-    ? { 'trait': resolveAndValidate(traitOrConfig), ...config }
+  const fields: any = isNodeData(traitOrConfig)
+    ? { 'trait': traitOrConfig, ...config }
     : traitOrConfig;
   const node: any = { type: 'dynamic_type', fields };
   node.render = () => render(node, rules, joinBy);
@@ -1763,7 +1861,7 @@ dynamicType.assign = function(target: AssignableNode<'dynamic_type'>): DynamicTy
     return merged;
   };
   const node: any = { get type() { return 'dynamic_type'; }, get fields() { return getFields(); } };
-  node.trait = (v: any) => { overrides['trait'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.trait = (v: any) => { validateNodeText(v); overrides['trait'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1778,7 +1876,7 @@ export interface ElseClauseConfig {
 }
 
 export interface ElseClauseFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'block' | 'if_expression'> | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput))[];
 }
 
 export type ElseClauseNode = NodeData<'else_clause'> & {
@@ -1790,9 +1888,16 @@ export type ElseClauseNode = NodeData<'else_clause'> & {
 };
 
 export function elseClause(
-  config?: ElseClauseConfig,
+  childrenOrConfig?: NodeData<'block' | 'if_expression'> | NodeData<'block' | 'if_expression'>[] | ElseClauseConfig,
 ): ElseClauseNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'else_clause', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1830,22 +1935,22 @@ elseClause.assign = function(target: AssignableNode<'else_clause'>): ElseClauseN
 } as any;
 
 export interface EnumItemConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  body: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  body: NodeData<'enum_variant_list'>;
   children?: NodeData[];
 }
 
 export interface EnumItemFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  body: NodeData<'enum_variant_list'> | EnumVariantListFromInput | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'where_clause'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'where_clause' } & WhereClauseFromInput))[];
 }
 
 export type EnumItemNode = NodeData<'enum_item'> & {
-  typeParameters(value: NodeData): EnumItemNode;
-  body(value: NodeData): EnumItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): EnumItemNode;
+  body(value: NodeData<'enum_variant_list'>): EnumItemNode;
   children(...value: NodeData[]): EnumItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1854,15 +1959,15 @@ export type EnumItemNode = NodeData<'enum_item'> & {
 };
 
 export function enumItem(
-  nameOrConfig: NodeData | string | EnumItemConfig,
+  nameOrConfig: NodeData<'type_identifier'> | EnumItemConfig,
   config?: Partial<EnumItemConfig>,
 ): EnumItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'enum_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -1888,9 +1993,9 @@ enumItem.assign = function(target: AssignableNode<'enum_item'>): EnumItemNode {
     return merged;
   };
   const node: any = { get type() { return 'enum_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -1902,22 +2007,22 @@ enumItem.assign = function(target: AssignableNode<'enum_item'>): EnumItemNode {
 } as any;
 
 export interface EnumVariantConfig {
-  name: NodeData | string;
-  body?: NodeData;
-  value?: NodeData;
+  name: NodeData<'identifier'>;
+  body?: NodeData<'field_declaration_list' | 'ordered_field_declaration_list'>;
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
   children?: NodeData[];
 }
 
 export interface EnumVariantFromInput {
-  name: NodeData | string;
-  body?: FromValue;
-  value?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier'> | string;
+  body?: NodeData<'field_declaration_list' | 'ordered_field_declaration_list'> | ({ kind: 'field_declaration_list' } & FieldDeclarationListFromInput) | ({ kind: 'ordered_field_declaration_list' } & OrderedFieldDeclarationListFromInput) | FromValue[];
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier'> | VisibilityModifierFromInput)[];
 }
 
 export type EnumVariantNode = NodeData<'enum_variant'> & {
-  body(value: NodeData): EnumVariantNode;
-  value(value: NodeData): EnumVariantNode;
+  body(value: NodeData<'field_declaration_list' | 'ordered_field_declaration_list'>): EnumVariantNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): EnumVariantNode;
   children(...value: NodeData[]): EnumVariantNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1926,15 +2031,15 @@ export type EnumVariantNode = NodeData<'enum_variant'> & {
 };
 
 export function enumVariant(
-  nameOrConfig: NodeData | string | EnumVariantConfig,
+  nameOrConfig: NodeData<'identifier'> | EnumVariantConfig,
   config?: Partial<EnumVariantConfig>,
 ): EnumVariantNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'enum_variant', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -1960,9 +2065,9 @@ enumVariant.assign = function(target: AssignableNode<'enum_variant'>): EnumVaria
     return merged;
   };
   const node: any = { get type() { return 'enum_variant'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -1978,7 +2083,7 @@ export interface EnumVariantListConfig {
 }
 
 export interface EnumVariantListFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute_item' | 'enum_variant'> | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'enum_variant' } & EnumVariantFromInput))[];
 }
 
 export type EnumVariantListNode = NodeData<'enum_variant_list'> & {
@@ -1990,9 +2095,16 @@ export type EnumVariantListNode = NodeData<'enum_variant_list'> & {
 };
 
 export function enumVariantList(
-  config?: EnumVariantListConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'enum_variant'> | NodeData<'attribute_item' | 'enum_variant'>[] | EnumVariantListConfig,
 ): EnumVariantListNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'enum_variant_list', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2034,7 +2146,7 @@ export interface ExpressionStatementConfig {
 }
 
 export interface ExpressionStatementFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type ExpressionStatementNode = NodeData<'expression_statement'> & {
@@ -2046,9 +2158,16 @@ export type ExpressionStatementNode = NodeData<'expression_statement'> & {
 };
 
 export function expressionStatement(
-  config?: ExpressionStatementConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | ExpressionStatementConfig,
 ): ExpressionStatementNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'expression_statement', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2086,19 +2205,19 @@ expressionStatement.assign = function(target: AssignableNode<'expression_stateme
 } as any;
 
 export interface ExternCrateDeclarationConfig {
-  name: NodeData | string;
-  alias?: NodeData | string;
+  name: NodeData<'identifier'>;
+  alias?: NodeData<'identifier'>;
   children?: NodeData[];
 }
 
 export interface ExternCrateDeclarationFromInput {
-  name: NodeData | string;
-  alias?: NodeData | string;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier'> | string;
+  alias?: NodeData<'identifier'> | string;
+  children?: (NodeData<'visibility_modifier' | 'crate'> | string | VisibilityModifierFromInput)[];
 }
 
 export type ExternCrateDeclarationNode = NodeData<'extern_crate_declaration'> & {
-  alias(value: NodeData | string): ExternCrateDeclarationNode;
+  alias(value: NodeData<'identifier'>): ExternCrateDeclarationNode;
   children(...value: NodeData[]): ExternCrateDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2107,14 +2226,14 @@ export type ExternCrateDeclarationNode = NodeData<'extern_crate_declaration'> & 
 };
 
 export function externCrateDeclaration(
-  nameOrConfig: NodeData | string | ExternCrateDeclarationConfig,
+  nameOrConfig: NodeData<'identifier'> | ExternCrateDeclarationConfig,
   config?: Partial<ExternCrateDeclarationConfig>,
 ): ExternCrateDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'extern_crate_declaration', fields };
-  node.alias = (v: any) => { fields['alias'] = resolveAndValidate(v); return node; };
+  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2140,8 +2259,8 @@ externCrateDeclaration.assign = function(target: AssignableNode<'extern_crate_de
     return merged;
   };
   const node: any = { get type() { return 'extern_crate_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alias = (v: any) => { overrides['alias'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2157,7 +2276,7 @@ export interface ExternModifierConfig {
 }
 
 export interface ExternModifierFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_literal'> | StringLiteralFromInput)[];
 }
 
 export type ExternModifierNode = NodeData<'extern_modifier'> & {
@@ -2169,9 +2288,16 @@ export type ExternModifierNode = NodeData<'extern_modifier'> & {
 };
 
 export function externModifier(
-  config?: ExternModifierConfig,
+  childrenOrConfig?: NodeData<'string_literal'> | NodeData<'string_literal'>[] | ExternModifierConfig,
 ): ExternModifierNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'extern_modifier', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2209,19 +2335,19 @@ externModifier.assign = function(target: AssignableNode<'extern_modifier'>): Ext
 } as any;
 
 export interface FieldDeclarationConfig {
-  name: NodeData | string;
-  type: NodeData;
+  name: NodeData<'field_identifier'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
   children?: NodeData[];
 }
 
 export interface FieldDeclarationFromInput {
-  name: NodeData | string;
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'field_identifier'> | string;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier'> | VisibilityModifierFromInput)[];
 }
 
 export type FieldDeclarationNode = NodeData<'field_declaration'> & {
-  typeField(value: NodeData): FieldDeclarationNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): FieldDeclarationNode;
   children(...value: NodeData[]): FieldDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2230,14 +2356,14 @@ export type FieldDeclarationNode = NodeData<'field_declaration'> & {
 };
 
 export function fieldDeclaration(
-  nameOrConfig: NodeData | string | FieldDeclarationConfig,
+  nameOrConfig: NodeData<'field_identifier'> | FieldDeclarationConfig,
   config?: Partial<FieldDeclarationConfig>,
 ): FieldDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'field_declaration', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2263,8 +2389,8 @@ fieldDeclaration.assign = function(target: AssignableNode<'field_declaration'>):
     return merged;
   };
   const node: any = { get type() { return 'field_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2280,7 +2406,7 @@ export interface FieldDeclarationListConfig {
 }
 
 export interface FieldDeclarationListFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute_item' | 'field_declaration'> | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'field_declaration' } & FieldDeclarationFromInput))[];
 }
 
 export type FieldDeclarationListNode = NodeData<'field_declaration_list'> & {
@@ -2292,9 +2418,16 @@ export type FieldDeclarationListNode = NodeData<'field_declaration_list'> & {
 };
 
 export function fieldDeclarationList(
-  config?: FieldDeclarationListConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'field_declaration'> | NodeData<'attribute_item' | 'field_declaration'>[] | FieldDeclarationListConfig,
 ): FieldDeclarationListNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'field_declaration_list', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2332,17 +2465,17 @@ fieldDeclarationList.assign = function(target: AssignableNode<'field_declaration
 } as any;
 
 export interface FieldExpressionConfig {
-  value: NodeData;
-  field: NodeData | string;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  field: NodeData<'field_identifier' | 'integer_literal'>;
 }
 
 export interface FieldExpressionFromInput {
-  value: FromValue;
-  field: NodeData | string | number;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  field: NodeData<'field_identifier' | 'integer_literal'> | string | number;
 }
 
 export type FieldExpressionNode = NodeData<'field_expression'> & {
-  field(value: NodeData | string): FieldExpressionNode;
+  field(value: NodeData<'field_identifier' | 'integer_literal'>): FieldExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2350,14 +2483,14 @@ export type FieldExpressionNode = NodeData<'field_expression'> & {
 };
 
 export function fieldExpression(
-  valueOrConfig: NodeData | FieldExpressionConfig,
+  valueOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | FieldExpressionConfig,
   config?: Partial<FieldExpressionConfig>,
 ): FieldExpressionNode {
-  const fields: any = isNodeData(valueOrConfig) || typeof valueOrConfig === 'string'
-    ? { 'value': resolveAndValidate(valueOrConfig), ...config }
+  const fields: any = isNodeData(valueOrConfig)
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'field_expression', fields };
-  node.field = (v: any) => { fields['field'] = resolveAndValidate(v); return node; };
+  node.field = (v: any) => { validateNodeText(v); fields['field'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2380,8 +2513,8 @@ fieldExpression.assign = function(target: AssignableNode<'field_expression'>): F
     return merged;
   };
   const node: any = { get type() { return 'field_expression'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.field = (v: any) => { overrides['field'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.field = (v: any) => { validateNodeText(v); overrides['field'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2392,19 +2525,19 @@ fieldExpression.assign = function(target: AssignableNode<'field_expression'>): F
 } as any;
 
 export interface FieldInitializerConfig {
-  field: NodeData | string;
-  value: NodeData;
+  field: NodeData<'field_identifier' | 'integer_literal'>;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
   children?: NodeData[];
 }
 
 export interface FieldInitializerFromInput {
-  field: NodeData | string | number;
-  value: FromValue;
-  children?: FromValue | FromValue[];
+  field: NodeData<'field_identifier' | 'integer_literal'> | string | number;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  children?: (NodeData<'attribute_item'> | AttributeItemFromInput)[];
 }
 
 export type FieldInitializerNode = NodeData<'field_initializer'> & {
-  value(value: NodeData): FieldInitializerNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): FieldInitializerNode;
   children(...value: NodeData[]): FieldInitializerNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2413,14 +2546,14 @@ export type FieldInitializerNode = NodeData<'field_initializer'> & {
 };
 
 export function fieldInitializer(
-  fieldOrConfig: NodeData | string | FieldInitializerConfig,
+  fieldOrConfig: NodeData<'field_identifier' | 'integer_literal'> | FieldInitializerConfig,
   config?: Partial<FieldInitializerConfig>,
 ): FieldInitializerNode {
-  const fields: any = isNodeData(fieldOrConfig) || typeof fieldOrConfig === 'string'
-    ? { 'field': resolveAndValidate(fieldOrConfig), ...config }
+  const fields: any = isNodeData(fieldOrConfig)
+    ? { 'field': fieldOrConfig, ...config }
     : fieldOrConfig;
   const node: any = { type: 'field_initializer', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2446,8 +2579,8 @@ fieldInitializer.assign = function(target: AssignableNode<'field_initializer'>):
     return merged;
   };
   const node: any = { get type() { return 'field_initializer'; }, get fields() { return getFields(); } };
-  node.field = (v: any) => { overrides['field'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.field = (v: any) => { validateNodeText(v); overrides['field'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2463,7 +2596,7 @@ export interface FieldInitializerListConfig {
 }
 
 export interface FieldInitializerListFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'shorthand_field_initializer' | 'field_initializer' | 'base_field_initializer'> | ({ kind: 'shorthand_field_initializer' } & ShorthandFieldInitializerFromInput) | ({ kind: 'field_initializer' } & FieldInitializerFromInput) | ({ kind: 'base_field_initializer' } & BaseFieldInitializerFromInput))[];
 }
 
 export type FieldInitializerListNode = NodeData<'field_initializer_list'> & {
@@ -2475,9 +2608,16 @@ export type FieldInitializerListNode = NodeData<'field_initializer_list'> & {
 };
 
 export function fieldInitializerList(
-  config?: FieldInitializerListConfig,
+  childrenOrConfig?: NodeData<'shorthand_field_initializer' | 'field_initializer' | 'base_field_initializer'> | NodeData<'shorthand_field_initializer' | 'field_initializer' | 'base_field_initializer'>[] | FieldInitializerListConfig,
 ): FieldInitializerListNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'field_initializer_list', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2515,19 +2655,19 @@ fieldInitializerList.assign = function(target: AssignableNode<'field_initializer
 } as any;
 
 export interface FieldPatternConfig {
-  name: NodeData | string;
-  pattern?: NodeData;
+  name: NodeData<'field_identifier' | 'shorthand_field_identifier'>;
+  pattern?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>;
   children?: NodeData[];
 }
 
 export interface FieldPatternFromInput {
-  name: NodeData | string;
-  pattern?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'field_identifier' | 'shorthand_field_identifier'> | string;
+  pattern?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | FromValue[];
+  children?: (NodeData<'mutable_specifier'> | string)[];
 }
 
 export type FieldPatternNode = NodeData<'field_pattern'> & {
-  pattern(value: NodeData): FieldPatternNode;
+  pattern(value: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>): FieldPatternNode;
   children(...value: NodeData[]): FieldPatternNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2536,14 +2676,14 @@ export type FieldPatternNode = NodeData<'field_pattern'> & {
 };
 
 export function fieldPattern(
-  nameOrConfig: NodeData | string | FieldPatternConfig,
+  nameOrConfig: NodeData<'field_identifier' | 'shorthand_field_identifier'> | FieldPatternConfig,
   config?: Partial<FieldPatternConfig>,
 ): FieldPatternNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'field_pattern', fields };
-  node.pattern = (v: any) => { fields['pattern'] = resolveAndValidate(v); return node; };
+  node.pattern = (v: any) => { validateNodeText(v); fields['pattern'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2569,8 +2709,8 @@ fieldPattern.assign = function(target: AssignableNode<'field_pattern'>): FieldPa
     return merged;
   };
   const node: any = { get type() { return 'field_pattern'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2582,22 +2722,22 @@ fieldPattern.assign = function(target: AssignableNode<'field_pattern'>): FieldPa
 } as any;
 
 export interface ForExpressionConfig {
-  pattern: NodeData;
-  value: NodeData;
-  body: NodeData;
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  body: NodeData<'block'>;
   children?: NodeData[];
 }
 
 export interface ForExpressionFromInput {
-  pattern: FromValue;
-  value: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | FromValue[];
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  body: NodeData<'block'> | BlockFromInput | FromValue[];
+  children?: (NodeData<'label'> | LabelFromInput)[];
 }
 
 export type ForExpressionNode = NodeData<'for_expression'> & {
-  value(value: NodeData): ForExpressionNode;
-  body(value: NodeData): ForExpressionNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): ForExpressionNode;
+  body(value: NodeData<'block'>): ForExpressionNode;
   children(...value: NodeData[]): ForExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2606,15 +2746,15 @@ export type ForExpressionNode = NodeData<'for_expression'> & {
 };
 
 export function forExpression(
-  patternOrConfig: NodeData | ForExpressionConfig,
+  patternOrConfig: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | ForExpressionConfig,
   config?: Partial<ForExpressionConfig>,
 ): ForExpressionNode {
-  const fields: any = isNodeData(patternOrConfig) || typeof patternOrConfig === 'string'
-    ? { 'pattern': resolveAndValidate(patternOrConfig), ...config }
+  const fields: any = isNodeData(patternOrConfig)
+    ? { 'pattern': patternOrConfig, ...config }
     : patternOrConfig;
   const node: any = { type: 'for_expression', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2640,9 +2780,9 @@ forExpression.assign = function(target: AssignableNode<'for_expression'>): ForEx
     return merged;
   };
   const node: any = { get type() { return 'for_expression'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2658,7 +2798,7 @@ export interface ForLifetimesConfig {
 }
 
 export interface ForLifetimesFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'lifetime'> | LifetimeFromInput)[];
 }
 
 export type ForLifetimesNode = NodeData<'for_lifetimes'> & {
@@ -2670,9 +2810,16 @@ export type ForLifetimesNode = NodeData<'for_lifetimes'> & {
 };
 
 export function forLifetimes(
-  config?: ForLifetimesConfig,
+  childrenOrConfig?: NodeData<'lifetime'> | NodeData<'lifetime'>[] | ForLifetimesConfig,
 ): ForLifetimesNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'for_lifetimes', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2710,17 +2857,17 @@ forLifetimes.assign = function(target: AssignableNode<'for_lifetimes'>): ForLife
 } as any;
 
 export interface ForeignModItemConfig {
-  body?: NodeData;
+  body?: NodeData<'declaration_list'>;
   children?: NodeData[];
 }
 
 export interface ForeignModItemFromInput {
-  body?: FromValue;
-  children?: FromValue | FromValue[];
+  body?: NodeData<'declaration_list'> | DeclarationListFromInput | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'extern_modifier'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'extern_modifier' } & ExternModifierFromInput))[];
 }
 
 export type ForeignModItemNode = NodeData<'foreign_mod_item'> & {
-  body(value: NodeData): ForeignModItemNode;
+  body(value: NodeData<'declaration_list'>): ForeignModItemNode;
   children(...value: NodeData[]): ForeignModItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2729,11 +2876,18 @@ export type ForeignModItemNode = NodeData<'foreign_mod_item'> & {
 };
 
 export function foreignModItem(
-  config?: ForeignModItemConfig,
+  childrenOrConfig?: NodeData<'visibility_modifier' | 'extern_modifier'> | NodeData<'visibility_modifier' | 'extern_modifier'>[] | ForeignModItemConfig,
 ): ForeignModItemNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'foreign_mod_item', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2759,7 +2913,7 @@ foreignModItem.assign = function(target: AssignableNode<'foreign_mod_item'>): Fo
     return merged;
   };
   const node: any = { get type() { return 'foreign_mod_item'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2771,28 +2925,28 @@ foreignModItem.assign = function(target: AssignableNode<'foreign_mod_item'>): Fo
 } as any;
 
 export interface FunctionItemConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  name: NodeData<'identifier' | 'metavariable'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'parameters'>;
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  body: NodeData<'block'>;
   children?: NodeData[];
 }
 
 export interface FunctionItemFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier' | 'metavariable'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'parameters'> | ParametersFromInput | FromValue[];
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  body: NodeData<'block'> | BlockFromInput | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'function_modifiers' | 'where_clause'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'function_modifiers' } & FunctionModifiersFromInput) | ({ kind: 'where_clause' } & WhereClauseFromInput))[];
 }
 
 export type FunctionItemNode = NodeData<'function_item'> & {
-  typeParameters(value: NodeData): FunctionItemNode;
-  parameters(value: NodeData): FunctionItemNode;
-  returnType(value: NodeData): FunctionItemNode;
-  body(value: NodeData): FunctionItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): FunctionItemNode;
+  parameters(value: NodeData<'parameters'>): FunctionItemNode;
+  returnType(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): FunctionItemNode;
+  body(value: NodeData<'block'>): FunctionItemNode;
   children(...value: NodeData[]): FunctionItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2801,17 +2955,17 @@ export type FunctionItemNode = NodeData<'function_item'> & {
 };
 
 export function functionItem(
-  nameOrConfig: NodeData | string | FunctionItemConfig,
+  nameOrConfig: NodeData<'identifier' | 'metavariable'> | FunctionItemConfig,
   config?: Partial<FunctionItemConfig>,
 ): FunctionItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'function_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2837,11 +2991,11 @@ functionItem.assign = function(target: AssignableNode<'function_item'>): Functio
     return merged;
   };
   const node: any = { get type() { return 'function_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2857,7 +3011,7 @@ export interface FunctionModifiersConfig {
 }
 
 export interface FunctionModifiersFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'extern_modifier'> | ExternModifierFromInput)[];
 }
 
 export type FunctionModifiersNode = NodeData<'function_modifiers'> & {
@@ -2869,9 +3023,16 @@ export type FunctionModifiersNode = NodeData<'function_modifiers'> & {
 };
 
 export function functionModifiers(
-  config?: FunctionModifiersConfig,
+  childrenOrConfig?: NodeData<'extern_modifier'> | NodeData<'extern_modifier'>[] | FunctionModifiersConfig,
 ): FunctionModifiersNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'function_modifiers', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2909,25 +3070,25 @@ functionModifiers.assign = function(target: AssignableNode<'function_modifiers'>
 } as any;
 
 export interface FunctionSignatureItemConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
+  name: NodeData<'identifier' | 'metavariable'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'parameters'>;
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
   children?: NodeData[];
 }
 
 export interface FunctionSignatureItemFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier' | 'metavariable'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'parameters'> | ParametersFromInput | FromValue[];
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'function_modifiers' | 'where_clause'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'function_modifiers' } & FunctionModifiersFromInput) | ({ kind: 'where_clause' } & WhereClauseFromInput))[];
 }
 
 export type FunctionSignatureItemNode = NodeData<'function_signature_item'> & {
-  typeParameters(value: NodeData): FunctionSignatureItemNode;
-  parameters(value: NodeData): FunctionSignatureItemNode;
-  returnType(value: NodeData): FunctionSignatureItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): FunctionSignatureItemNode;
+  parameters(value: NodeData<'parameters'>): FunctionSignatureItemNode;
+  returnType(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): FunctionSignatureItemNode;
   children(...value: NodeData[]): FunctionSignatureItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2936,16 +3097,16 @@ export type FunctionSignatureItemNode = NodeData<'function_signature_item'> & {
 };
 
 export function functionSignatureItem(
-  nameOrConfig: NodeData | string | FunctionSignatureItemConfig,
+  nameOrConfig: NodeData<'identifier' | 'metavariable'> | FunctionSignatureItemConfig,
   config?: Partial<FunctionSignatureItemConfig>,
 ): FunctionSignatureItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'function_signature_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2971,10 +3132,10 @@ functionSignatureItem.assign = function(target: AssignableNode<'function_signatu
     return merged;
   };
   const node: any = { get type() { return 'function_signature_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2986,22 +3147,22 @@ functionSignatureItem.assign = function(target: AssignableNode<'function_signatu
 } as any;
 
 export interface FunctionTypeConfig {
-  trait?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
+  trait?: NodeData<'type_identifier' | 'scoped_type_identifier'>;
+  parameters: NodeData<'parameters'>;
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
   children?: NodeData[];
 }
 
 export interface FunctionTypeFromInput {
-  trait?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  children?: FromValue | FromValue[];
+  trait?: NodeData<'type_identifier' | 'scoped_type_identifier'> | string | ScopedTypeIdentifierFromInput | FromValue[];
+  parameters: NodeData<'parameters'> | ParametersFromInput | FromValue[];
+  return_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  children?: (NodeData<'for_lifetimes' | 'function_modifiers'> | ({ kind: 'for_lifetimes' } & ForLifetimesFromInput) | ({ kind: 'function_modifiers' } & FunctionModifiersFromInput))[];
 }
 
 export type FunctionTypeNode = NodeData<'function_type'> & {
-  trait(value: NodeData): FunctionTypeNode;
-  returnType(value: NodeData): FunctionTypeNode;
+  trait(value: NodeData<'type_identifier' | 'scoped_type_identifier'>): FunctionTypeNode;
+  returnType(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): FunctionTypeNode;
   children(...value: NodeData[]): FunctionTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -3010,15 +3171,15 @@ export type FunctionTypeNode = NodeData<'function_type'> & {
 };
 
 export function functionType(
-  parametersOrConfig: NodeData | FunctionTypeConfig,
+  parametersOrConfig: NodeData<'parameters'> | FunctionTypeConfig,
   config?: Partial<FunctionTypeConfig>,
 ): FunctionTypeNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'function_type', fields };
-  node.trait = (v: any) => { fields['trait'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.trait = (v: any) => { validateNodeText(v); fields['trait'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -3044,9 +3205,9 @@ functionType.assign = function(target: AssignableNode<'function_type'>): Functio
     return merged;
   };
   const node: any = { get type() { return 'function_type'; }, get fields() { return getFields(); } };
-  node.trait = (v: any) => { overrides['trait'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.trait = (v: any) => { validateNodeText(v); overrides['trait'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -3062,7 +3223,7 @@ export interface GenBlockConfig {
 }
 
 export interface GenBlockFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'block'> | BlockFromInput)[];
 }
 
 export type GenBlockNode = NodeData<'gen_block'> & {
@@ -3074,9 +3235,16 @@ export type GenBlockNode = NodeData<'gen_block'> & {
 };
 
 export function genBlock(
-  config?: GenBlockConfig,
+  childrenOrConfig?: NodeData<'block'> | NodeData<'block'>[] | GenBlockConfig,
 ): GenBlockNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'gen_block', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3114,17 +3282,17 @@ genBlock.assign = function(target: AssignableNode<'gen_block'>): GenBlockNode {
 } as any;
 
 export interface GenericFunctionConfig {
-  function: NodeData;
-  type_arguments: NodeData;
+  function: NodeData<'identifier' | 'scoped_identifier' | 'field_expression'>;
+  type_arguments: NodeData<'type_arguments'>;
 }
 
 export interface GenericFunctionFromInput {
-  function: FromValue;
-  type_arguments: FromValue;
+  function: NodeData<'identifier' | 'scoped_identifier' | 'field_expression'> | string | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | FromValue[];
+  type_arguments: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
 }
 
 export type GenericFunctionNode = NodeData<'generic_function'> & {
-  typeArguments(value: NodeData): GenericFunctionNode;
+  typeArguments(value: NodeData<'type_arguments'>): GenericFunctionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3132,14 +3300,14 @@ export type GenericFunctionNode = NodeData<'generic_function'> & {
 };
 
 export function genericFunction(
-  functionOrConfig: NodeData | GenericFunctionConfig,
+  functionOrConfig: NodeData<'identifier' | 'scoped_identifier' | 'field_expression'> | GenericFunctionConfig,
   config?: Partial<GenericFunctionConfig>,
 ): GenericFunctionNode {
-  const fields: any = isNodeData(functionOrConfig) || typeof functionOrConfig === 'string'
-    ? { 'function': resolveAndValidate(functionOrConfig), ...config }
+  const fields: any = isNodeData(functionOrConfig)
+    ? { 'function': functionOrConfig, ...config }
     : functionOrConfig;
   const node: any = { type: 'generic_function', fields };
-  node.typeArguments = (v: any) => { fields['type_arguments'] = resolveAndValidate(v); return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3162,8 +3330,8 @@ genericFunction.assign = function(target: AssignableNode<'generic_function'>): G
     return merged;
   };
   const node: any = { get type() { return 'generic_function'; }, get fields() { return getFields(); } };
-  node.function = (v: any) => { overrides['function'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.function = (v: any) => { validateNodeText(v); overrides['function'] = v; return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3174,13 +3342,13 @@ genericFunction.assign = function(target: AssignableNode<'generic_function'>): G
 } as any;
 
 export interface GenericPatternConfig {
-  type_arguments: NodeData;
+  type_arguments: NodeData<'type_arguments'>;
   children?: NodeData[];
 }
 
 export interface GenericPatternFromInput {
-  type_arguments: FromValue;
-  children?: FromValue | FromValue[];
+  type_arguments: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
+  children?: (NodeData<'identifier' | 'scoped_identifier'> | string | ScopedIdentifierFromInput)[];
 }
 
 export type GenericPatternNode = NodeData<'generic_pattern'> & {
@@ -3192,11 +3360,11 @@ export type GenericPatternNode = NodeData<'generic_pattern'> & {
 };
 
 export function genericPattern(
-  typeArgumentsOrConfig: NodeData | GenericPatternConfig,
+  typeArgumentsOrConfig: NodeData<'type_arguments'> | GenericPatternConfig,
   config?: Partial<GenericPatternConfig>,
 ): GenericPatternNode {
-  const fields: any = isNodeData(typeArgumentsOrConfig) || typeof typeArgumentsOrConfig === 'string'
-    ? { 'type_arguments': resolveAndValidate(typeArgumentsOrConfig), ...config }
+  const fields: any = isNodeData(typeArgumentsOrConfig)
+    ? { 'type_arguments': typeArgumentsOrConfig, ...config }
     : typeArgumentsOrConfig;
   const node: any = { type: 'generic_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -3224,7 +3392,7 @@ genericPattern.assign = function(target: AssignableNode<'generic_pattern'>): Gen
     return merged;
   };
   const node: any = { get type() { return 'generic_pattern'; }, get fields() { return getFields(); } };
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -3236,17 +3404,17 @@ genericPattern.assign = function(target: AssignableNode<'generic_pattern'>): Gen
 } as any;
 
 export interface GenericTypeConfig {
-  type: NodeData;
-  type_arguments: NodeData;
+  type: NodeData<'type_identifier' | 'identifier' | 'scoped_type_identifier'>;
+  type_arguments: NodeData<'type_arguments'>;
 }
 
 export interface GenericTypeFromInput {
-  type: FromValue;
-  type_arguments: FromValue;
+  type: NodeData<'type_identifier' | 'identifier' | 'scoped_type_identifier'> | string | ScopedTypeIdentifierFromInput | FromValue[];
+  type_arguments: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
 }
 
 export type GenericTypeNode = NodeData<'generic_type'> & {
-  typeArguments(value: NodeData): GenericTypeNode;
+  typeArguments(value: NodeData<'type_arguments'>): GenericTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3254,14 +3422,14 @@ export type GenericTypeNode = NodeData<'generic_type'> & {
 };
 
 export function genericType(
-  typeOrConfig: NodeData | GenericTypeConfig,
+  typeOrConfig: NodeData<'type_identifier' | 'identifier' | 'scoped_type_identifier'> | GenericTypeConfig,
   config?: Partial<GenericTypeConfig>,
 ): GenericTypeNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'generic_type', fields };
-  node.typeArguments = (v: any) => { fields['type_arguments'] = resolveAndValidate(v); return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3284,8 +3452,8 @@ genericType.assign = function(target: AssignableNode<'generic_type'>): GenericTy
     return merged;
   };
   const node: any = { get type() { return 'generic_type'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3296,17 +3464,17 @@ genericType.assign = function(target: AssignableNode<'generic_type'>): GenericTy
 } as any;
 
 export interface GenericTypeWithTurbofishConfig {
-  type: NodeData;
-  type_arguments: NodeData;
+  type: NodeData<'type_identifier' | 'scoped_identifier'>;
+  type_arguments: NodeData<'type_arguments'>;
 }
 
 export interface GenericTypeWithTurbofishFromInput {
-  type: FromValue;
-  type_arguments: FromValue;
+  type: NodeData<'type_identifier' | 'scoped_identifier'> | string | ScopedIdentifierFromInput | FromValue[];
+  type_arguments: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
 }
 
 export type GenericTypeWithTurbofishNode = NodeData<'generic_type_with_turbofish'> & {
-  typeArguments(value: NodeData): GenericTypeWithTurbofishNode;
+  typeArguments(value: NodeData<'type_arguments'>): GenericTypeWithTurbofishNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3314,14 +3482,14 @@ export type GenericTypeWithTurbofishNode = NodeData<'generic_type_with_turbofish
 };
 
 export function genericTypeWithTurbofish(
-  typeOrConfig: NodeData | GenericTypeWithTurbofishConfig,
+  typeOrConfig: NodeData<'type_identifier' | 'scoped_identifier'> | GenericTypeWithTurbofishConfig,
   config?: Partial<GenericTypeWithTurbofishConfig>,
 ): GenericTypeWithTurbofishNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'generic_type_with_turbofish', fields };
-  node.typeArguments = (v: any) => { fields['type_arguments'] = resolveAndValidate(v); return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3344,8 +3512,8 @@ genericTypeWithTurbofish.assign = function(target: AssignableNode<'generic_type_
     return merged;
   };
   const node: any = { get type() { return 'generic_type_with_turbofish'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3356,17 +3524,17 @@ genericTypeWithTurbofish.assign = function(target: AssignableNode<'generic_type_
 } as any;
 
 export interface HigherRankedTraitBoundConfig {
-  type_parameters: NodeData;
-  type: NodeData;
+  type_parameters: NodeData<'type_parameters'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
 }
 
 export interface HigherRankedTraitBoundFromInput {
-  type_parameters: FromValue;
-  type: FromValue;
+  type_parameters: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
 }
 
 export type HigherRankedTraitBoundNode = NodeData<'higher_ranked_trait_bound'> & {
-  typeField(value: NodeData): HigherRankedTraitBoundNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): HigherRankedTraitBoundNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3374,14 +3542,14 @@ export type HigherRankedTraitBoundNode = NodeData<'higher_ranked_trait_bound'> &
 };
 
 export function higherRankedTraitBound(
-  typeParametersOrConfig: NodeData | HigherRankedTraitBoundConfig,
+  typeParametersOrConfig: NodeData<'type_parameters'> | HigherRankedTraitBoundConfig,
   config?: Partial<HigherRankedTraitBoundConfig>,
 ): HigherRankedTraitBoundNode {
-  const fields: any = isNodeData(typeParametersOrConfig) || typeof typeParametersOrConfig === 'string'
-    ? { 'type_parameters': resolveAndValidate(typeParametersOrConfig), ...config }
+  const fields: any = isNodeData(typeParametersOrConfig)
+    ? { 'type_parameters': typeParametersOrConfig, ...config }
     : typeParametersOrConfig;
   const node: any = { type: 'higher_ranked_trait_bound', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3404,8 +3572,8 @@ higherRankedTraitBound.assign = function(target: AssignableNode<'higher_ranked_t
     return merged;
   };
   const node: any = { get type() { return 'higher_ranked_trait_bound'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3416,20 +3584,20 @@ higherRankedTraitBound.assign = function(target: AssignableNode<'higher_ranked_t
 } as any;
 
 export interface IfExpressionConfig {
-  condition: NodeData;
-  consequence: NodeData;
-  alternative?: NodeData;
+  condition: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'>;
+  consequence: NodeData<'block'>;
+  alternative?: NodeData<'else_clause'>;
 }
 
 export interface IfExpressionFromInput {
-  condition: FromValue;
-  consequence: FromValue;
-  alternative?: FromValue;
+  condition: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | ({ kind: 'let_condition' } & LetConditionFromInput) | ({ kind: 'let_chain' } & LetChainFromInput) | FromValue[];
+  consequence: NodeData<'block'> | BlockFromInput | FromValue[];
+  alternative?: NodeData<'else_clause'> | ElseClauseFromInput | FromValue[];
 }
 
 export type IfExpressionNode = NodeData<'if_expression'> & {
-  consequence(value: NodeData): IfExpressionNode;
-  alternative(value: NodeData): IfExpressionNode;
+  consequence(value: NodeData<'block'>): IfExpressionNode;
+  alternative(value: NodeData<'else_clause'>): IfExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3437,15 +3605,15 @@ export type IfExpressionNode = NodeData<'if_expression'> & {
 };
 
 export function ifExpression(
-  conditionOrConfig: NodeData | IfExpressionConfig,
+  conditionOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'> | IfExpressionConfig,
   config?: Partial<IfExpressionConfig>,
 ): IfExpressionNode {
-  const fields: any = isNodeData(conditionOrConfig) || typeof conditionOrConfig === 'string'
-    ? { 'condition': resolveAndValidate(conditionOrConfig), ...config }
+  const fields: any = isNodeData(conditionOrConfig)
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'if_expression', fields };
-  node.consequence = (v: any) => { fields['consequence'] = resolveAndValidate(v); return node; };
-  node.alternative = (v: any) => { fields['alternative'] = resolveAndValidate(v); return node; };
+  node.consequence = (v: any) => { validateNodeText(v); fields['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3468,9 +3636,9 @@ ifExpression.assign = function(target: AssignableNode<'if_expression'>): IfExpre
     return merged;
   };
   const node: any = { get type() { return 'if_expression'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { overrides['condition'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.consequence = (v: any) => { overrides['consequence'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alternative = (v: any) => { overrides['alternative'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
+  node.consequence = (v: any) => { validateNodeText(v); overrides['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3481,25 +3649,25 @@ ifExpression.assign = function(target: AssignableNode<'if_expression'>): IfExpre
 } as any;
 
 export interface ImplItemConfig {
-  type_parameters?: NodeData;
-  trait?: NodeData;
-  type: NodeData;
-  body?: NodeData;
+  type_parameters?: NodeData<'type_parameters'>;
+  trait?: NodeData<'type_identifier' | 'scoped_type_identifier' | 'generic_type'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  body?: NodeData<'declaration_list'>;
   children?: NodeData[];
 }
 
 export interface ImplItemFromInput {
-  type_parameters?: FromValue;
-  trait?: FromValue;
-  type: FromValue;
-  body?: FromValue;
-  children?: FromValue | FromValue[];
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  trait?: NodeData<'type_identifier' | 'scoped_type_identifier' | 'generic_type'> | string | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  body?: NodeData<'declaration_list'> | DeclarationListFromInput | FromValue[];
+  children?: (NodeData<'where_clause'> | WhereClauseFromInput)[];
 }
 
 export type ImplItemNode = NodeData<'impl_item'> & {
-  typeParameters(value: NodeData): ImplItemNode;
-  trait(value: NodeData): ImplItemNode;
-  body(value: NodeData): ImplItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): ImplItemNode;
+  trait(value: NodeData<'type_identifier' | 'scoped_type_identifier' | 'generic_type'>): ImplItemNode;
+  body(value: NodeData<'declaration_list'>): ImplItemNode;
   children(...value: NodeData[]): ImplItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -3508,16 +3676,16 @@ export type ImplItemNode = NodeData<'impl_item'> & {
 };
 
 export function implItem(
-  typeOrConfig: NodeData | ImplItemConfig,
+  typeOrConfig: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | ImplItemConfig,
   config?: Partial<ImplItemConfig>,
 ): ImplItemNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'impl_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.trait = (v: any) => { fields['trait'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.trait = (v: any) => { validateNodeText(v); fields['trait'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -3543,10 +3711,10 @@ implItem.assign = function(target: AssignableNode<'impl_item'>): ImplItemNode {
     return merged;
   };
   const node: any = { get type() { return 'impl_item'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.trait = (v: any) => { overrides['trait'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.trait = (v: any) => { validateNodeText(v); overrides['trait'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -3562,7 +3730,7 @@ export interface IndexExpressionConfig {
 }
 
 export interface IndexExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type IndexExpressionNode = NodeData<'index_expression'> & {
@@ -3574,9 +3742,16 @@ export type IndexExpressionNode = NodeData<'index_expression'> & {
 };
 
 export function indexExpression(
-  config?: IndexExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | IndexExpressionConfig,
 ): IndexExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'index_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3618,7 +3793,7 @@ export interface InnerAttributeItemConfig {
 }
 
 export interface InnerAttributeItemFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute'> | AttributeFromInput)[];
 }
 
 export type InnerAttributeItemNode = NodeData<'inner_attribute_item'> & {
@@ -3630,9 +3805,16 @@ export type InnerAttributeItemNode = NodeData<'inner_attribute_item'> & {
 };
 
 export function innerAttributeItem(
-  config?: InnerAttributeItemConfig,
+  childrenOrConfig?: NodeData<'attribute'> | NodeData<'attribute'>[] | InnerAttributeItemConfig,
 ): InnerAttributeItemNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'inner_attribute_item', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3674,7 +3856,7 @@ export interface LabelConfig {
 }
 
 export interface LabelFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'identifier'> | string)[];
 }
 
 export type LabelNode = NodeData<'label'> & {
@@ -3686,12 +3868,10 @@ export type LabelNode = NodeData<'label'> & {
 };
 
 export function label(
-  childrenOrConfig?: string | NodeData | NodeData[] | LabelConfig,
+  childrenOrConfig?: NodeData<'identifier'> | NodeData<'identifier'>[] | LabelConfig,
 ): LabelNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'identifier', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -3739,7 +3919,7 @@ export interface LetChainConfig {
 }
 
 export interface LetChainFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'_expression' | 'let_condition'> | ({ kind: '_expression' } & ExpressionFromInput) | ({ kind: 'let_condition' } & LetConditionFromInput))[];
 }
 
 export type LetChainNode = NodeData<'let_chain'> & {
@@ -3751,9 +3931,16 @@ export type LetChainNode = NodeData<'let_chain'> & {
 };
 
 export function letChain(
-  config?: LetChainConfig,
+  childrenOrConfig?: NodeData<'_expression' | 'let_condition'> | NodeData<'_expression' | 'let_condition'>[] | LetChainConfig,
 ): LetChainNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'let_chain', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3791,17 +3978,17 @@ letChain.assign = function(target: AssignableNode<'let_chain'>): LetChainNode {
 } as any;
 
 export interface LetConditionConfig {
-  pattern: NodeData;
-  value: NodeData;
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
 }
 
 export interface LetConditionFromInput {
-  pattern: FromValue;
-  value: FromValue;
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | FromValue[];
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
 }
 
 export type LetConditionNode = NodeData<'let_condition'> & {
-  value(value: NodeData): LetConditionNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): LetConditionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3809,14 +3996,14 @@ export type LetConditionNode = NodeData<'let_condition'> & {
 };
 
 export function letCondition(
-  patternOrConfig: NodeData | LetConditionConfig,
+  patternOrConfig: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | LetConditionConfig,
   config?: Partial<LetConditionConfig>,
 ): LetConditionNode {
-  const fields: any = isNodeData(patternOrConfig) || typeof patternOrConfig === 'string'
-    ? { 'pattern': resolveAndValidate(patternOrConfig), ...config }
+  const fields: any = isNodeData(patternOrConfig)
+    ? { 'pattern': patternOrConfig, ...config }
     : patternOrConfig;
   const node: any = { type: 'let_condition', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3839,8 +4026,8 @@ letCondition.assign = function(target: AssignableNode<'let_condition'>): LetCond
     return merged;
   };
   const node: any = { get type() { return 'let_condition'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3851,25 +4038,25 @@ letCondition.assign = function(target: AssignableNode<'let_condition'>): LetCond
 } as any;
 
 export interface LetDeclarationConfig {
-  pattern: NodeData;
-  type?: NodeData;
-  value?: NodeData;
-  alternative?: NodeData;
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>;
+  type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  alternative?: NodeData<'block'>;
   children?: NodeData[];
 }
 
 export interface LetDeclarationFromInput {
-  pattern: FromValue;
-  type?: FromValue;
-  value?: FromValue;
-  alternative?: FromValue;
-  children?: FromValue | FromValue[];
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | FromValue[];
+  type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  alternative?: NodeData<'block'> | BlockFromInput | FromValue[];
+  children?: (NodeData<'mutable_specifier'> | string)[];
 }
 
 export type LetDeclarationNode = NodeData<'let_declaration'> & {
-  typeField(value: NodeData): LetDeclarationNode;
-  value(value: NodeData): LetDeclarationNode;
-  alternative(value: NodeData): LetDeclarationNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): LetDeclarationNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): LetDeclarationNode;
+  alternative(value: NodeData<'block'>): LetDeclarationNode;
   children(...value: NodeData[]): LetDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -3878,16 +4065,16 @@ export type LetDeclarationNode = NodeData<'let_declaration'> & {
 };
 
 export function letDeclaration(
-  patternOrConfig: NodeData | LetDeclarationConfig,
+  patternOrConfig: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | LetDeclarationConfig,
   config?: Partial<LetDeclarationConfig>,
 ): LetDeclarationNode {
-  const fields: any = isNodeData(patternOrConfig) || typeof patternOrConfig === 'string'
-    ? { 'pattern': resolveAndValidate(patternOrConfig), ...config }
+  const fields: any = isNodeData(patternOrConfig)
+    ? { 'pattern': patternOrConfig, ...config }
     : patternOrConfig;
   const node: any = { type: 'let_declaration', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
-  node.alternative = (v: any) => { fields['alternative'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -3913,10 +4100,10 @@ letDeclaration.assign = function(target: AssignableNode<'let_declaration'>): Let
     return merged;
   };
   const node: any = { get type() { return 'let_declaration'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alternative = (v: any) => { overrides['alternative'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -3932,7 +4119,7 @@ export interface LifetimeConfig {
 }
 
 export interface LifetimeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'identifier'> | string)[];
 }
 
 export type LifetimeNode = NodeData<'lifetime'> & {
@@ -3944,12 +4131,10 @@ export type LifetimeNode = NodeData<'lifetime'> & {
 };
 
 export function lifetime(
-  childrenOrConfig?: string | NodeData | NodeData[] | LifetimeConfig,
+  childrenOrConfig?: NodeData<'identifier'> | NodeData<'identifier'>[] | LifetimeConfig,
 ): LifetimeNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'identifier', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -3993,17 +4178,17 @@ lifetime.assign = function(target: AssignableNode<'lifetime'>): LifetimeNode {
 } as any;
 
 export interface LifetimeParameterConfig {
-  name: NodeData;
-  bounds?: NodeData;
+  name: NodeData<'lifetime'>;
+  bounds?: NodeData<'trait_bounds'>;
 }
 
 export interface LifetimeParameterFromInput {
-  name: FromValue;
-  bounds?: FromValue;
+  name: NodeData<'lifetime'> | LifetimeFromInput | FromValue[];
+  bounds?: NodeData<'trait_bounds'> | TraitBoundsFromInput | FromValue[];
 }
 
 export type LifetimeParameterNode = NodeData<'lifetime_parameter'> & {
-  bounds(value: NodeData): LifetimeParameterNode;
+  bounds(value: NodeData<'trait_bounds'>): LifetimeParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4011,14 +4196,14 @@ export type LifetimeParameterNode = NodeData<'lifetime_parameter'> & {
 };
 
 export function lifetimeParameter(
-  nameOrConfig: NodeData | LifetimeParameterConfig,
+  nameOrConfig: NodeData<'lifetime'> | LifetimeParameterConfig,
   config?: Partial<LifetimeParameterConfig>,
 ): LifetimeParameterNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'lifetime_parameter', fields };
-  node.bounds = (v: any) => { fields['bounds'] = resolveAndValidate(v); return node; };
+  node.bounds = (v: any) => { validateNodeText(v); fields['bounds'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4041,8 +4226,8 @@ lifetimeParameter.assign = function(target: AssignableNode<'lifetime_parameter'>
     return merged;
   };
   const node: any = { get type() { return 'lifetime_parameter'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.bounds = (v: any) => { overrides['bounds'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.bounds = (v: any) => { validateNodeText(v); overrides['bounds'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4053,21 +4238,21 @@ lifetimeParameter.assign = function(target: AssignableNode<'lifetime_parameter'>
 } as any;
 
 export interface LineCommentConfig {
-  outer?: NodeData | string;
-  inner?: NodeData | string;
-  doc?: NodeData | string;
+  outer?: NodeData<'outer_doc_comment_marker'>;
+  inner?: NodeData<'inner_doc_comment_marker'>;
+  doc?: NodeData<'doc_comment'>;
 }
 
 export interface LineCommentFromInput {
-  outer?: NodeData | string;
-  inner?: NodeData | string;
-  doc?: NodeData | string;
+  outer?: NodeData<'outer_doc_comment_marker'> | string;
+  inner?: NodeData<'inner_doc_comment_marker'> | string;
+  doc?: NodeData<'doc_comment'> | string;
 }
 
 export type LineCommentNode = NodeData<'line_comment'> & {
-  outer(value: NodeData | string): LineCommentNode;
-  inner(value: NodeData | string): LineCommentNode;
-  doc(value: NodeData | string): LineCommentNode;
+  outer(value: NodeData<'outer_doc_comment_marker'>): LineCommentNode;
+  inner(value: NodeData<'inner_doc_comment_marker'>): LineCommentNode;
+  doc(value: NodeData<'doc_comment'>): LineCommentNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4079,9 +4264,9 @@ export function lineComment(
 ): LineCommentNode {
   const fields: any = config ?? {};
   const node: any = { type: 'line_comment', fields };
-  node.outer = (v: any) => { fields['outer'] = resolveAndValidate(v); return node; };
-  node.inner = (v: any) => { fields['inner'] = resolveAndValidate(v); return node; };
-  node.doc = (v: any) => { fields['doc'] = resolveAndValidate(v); return node; };
+  node.outer = (v: any) => { validateNodeText(v); fields['outer'] = v; return node; };
+  node.inner = (v: any) => { validateNodeText(v); fields['inner'] = v; return node; };
+  node.doc = (v: any) => { validateNodeText(v); fields['doc'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4104,9 +4289,9 @@ lineComment.assign = function(target: AssignableNode<'line_comment'>): LineComme
     return merged;
   };
   const node: any = { get type() { return 'line_comment'; }, get fields() { return getFields(); } };
-  node.outer = (v: any) => { overrides['outer'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.inner = (v: any) => { overrides['inner'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.doc = (v: any) => { overrides['doc'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.outer = (v: any) => { validateNodeText(v); overrides['outer'] = v; return node; };
+  node.inner = (v: any) => { validateNodeText(v); overrides['inner'] = v; return node; };
+  node.doc = (v: any) => { validateNodeText(v); overrides['doc'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4117,13 +4302,13 @@ lineComment.assign = function(target: AssignableNode<'line_comment'>): LineComme
 } as any;
 
 export interface LoopExpressionConfig {
-  body: NodeData;
+  body: NodeData<'block'>;
   children?: NodeData[];
 }
 
 export interface LoopExpressionFromInput {
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  body: NodeData<'block'> | BlockFromInput | FromValue[];
+  children?: (NodeData<'label'> | LabelFromInput)[];
 }
 
 export type LoopExpressionNode = NodeData<'loop_expression'> & {
@@ -4135,11 +4320,11 @@ export type LoopExpressionNode = NodeData<'loop_expression'> & {
 };
 
 export function loopExpression(
-  bodyOrConfig: NodeData | LoopExpressionConfig,
+  bodyOrConfig: NodeData<'block'> | LoopExpressionConfig,
   config?: Partial<LoopExpressionConfig>,
 ): LoopExpressionNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'loop_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -4167,7 +4352,7 @@ loopExpression.assign = function(target: AssignableNode<'loop_expression'>): Loo
     return merged;
   };
   const node: any = { get type() { return 'loop_expression'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4179,13 +4364,13 @@ loopExpression.assign = function(target: AssignableNode<'loop_expression'>): Loo
 } as any;
 
 export interface MacroDefinitionConfig {
-  name: NodeData | string;
+  name: NodeData<'identifier'>;
   children?: NodeData[];
 }
 
 export interface MacroDefinitionFromInput {
-  name: NodeData | string;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier'> | string;
+  children?: (NodeData<'macro_rule'> | MacroRuleFromInput)[];
 }
 
 export type MacroDefinitionNode = NodeData<'macro_definition'> & {
@@ -4197,11 +4382,11 @@ export type MacroDefinitionNode = NodeData<'macro_definition'> & {
 };
 
 export function macroDefinition(
-  nameOrConfig: NodeData | string | MacroDefinitionConfig,
+  nameOrConfig: NodeData<'identifier'> | MacroDefinitionConfig,
   config?: Partial<MacroDefinitionConfig>,
 ): MacroDefinitionNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'macro_definition', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -4229,7 +4414,7 @@ macroDefinition.assign = function(target: AssignableNode<'macro_definition'>): M
     return merged;
   };
   const node: any = { get type() { return 'macro_definition'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4241,13 +4426,13 @@ macroDefinition.assign = function(target: AssignableNode<'macro_definition'>): M
 } as any;
 
 export interface MacroInvocationConfig {
-  macro: NodeData;
+  macro: NodeData<'identifier' | 'scoped_identifier'>;
   children?: NodeData[];
 }
 
 export interface MacroInvocationFromInput {
-  macro: FromValue;
-  children?: FromValue | FromValue[];
+  macro: NodeData<'identifier' | 'scoped_identifier'> | string | ScopedIdentifierFromInput | FromValue[];
+  children?: (NodeData<'token_tree'> | TokenTreeFromInput)[];
 }
 
 export type MacroInvocationNode = NodeData<'macro_invocation'> & {
@@ -4259,11 +4444,11 @@ export type MacroInvocationNode = NodeData<'macro_invocation'> & {
 };
 
 export function macroInvocation(
-  macroOrConfig: NodeData | MacroInvocationConfig,
+  macroOrConfig: NodeData<'identifier' | 'scoped_identifier'> | MacroInvocationConfig,
   config?: Partial<MacroInvocationConfig>,
 ): MacroInvocationNode {
-  const fields: any = isNodeData(macroOrConfig) || typeof macroOrConfig === 'string'
-    ? { 'macro': resolveAndValidate(macroOrConfig), ...config }
+  const fields: any = isNodeData(macroOrConfig)
+    ? { 'macro': macroOrConfig, ...config }
     : macroOrConfig;
   const node: any = { type: 'macro_invocation', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -4291,7 +4476,7 @@ macroInvocation.assign = function(target: AssignableNode<'macro_invocation'>): M
     return merged;
   };
   const node: any = { get type() { return 'macro_invocation'; }, get fields() { return getFields(); } };
-  node.macro = (v: any) => { overrides['macro'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.macro = (v: any) => { validateNodeText(v); overrides['macro'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4303,17 +4488,17 @@ macroInvocation.assign = function(target: AssignableNode<'macro_invocation'>): M
 } as any;
 
 export interface MacroRuleConfig {
-  left: NodeData;
-  right: NodeData;
+  left: NodeData<'token_tree_pattern'>;
+  right: NodeData<'token_tree'>;
 }
 
 export interface MacroRuleFromInput {
-  left: FromValue;
-  right: FromValue;
+  left: NodeData<'token_tree_pattern'> | TokenTreePatternFromInput | FromValue[];
+  right: NodeData<'token_tree'> | TokenTreeFromInput | FromValue[];
 }
 
 export type MacroRuleNode = NodeData<'macro_rule'> & {
-  right(value: NodeData): MacroRuleNode;
+  right(value: NodeData<'token_tree'>): MacroRuleNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4321,14 +4506,14 @@ export type MacroRuleNode = NodeData<'macro_rule'> & {
 };
 
 export function macroRule(
-  leftOrConfig: NodeData | MacroRuleConfig,
+  leftOrConfig: NodeData<'token_tree_pattern'> | MacroRuleConfig,
   config?: Partial<MacroRuleConfig>,
 ): MacroRuleNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'macro_rule', fields };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4351,8 +4536,8 @@ macroRule.assign = function(target: AssignableNode<'macro_rule'>): MacroRuleNode
     return merged;
   };
   const node: any = { get type() { return 'macro_rule'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4363,19 +4548,19 @@ macroRule.assign = function(target: AssignableNode<'macro_rule'>): MacroRuleNode
 } as any;
 
 export interface MatchArmConfig {
-  pattern: NodeData;
-  value: NodeData;
+  pattern: NodeData<'match_pattern'>;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
   children?: NodeData[];
 }
 
 export interface MatchArmFromInput {
-  pattern: FromValue;
-  value: FromValue;
-  children?: FromValue | FromValue[];
+  pattern: NodeData<'match_pattern'> | MatchPatternFromInput | FromValue[];
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  children?: (NodeData<'attribute_item' | 'inner_attribute_item'> | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'inner_attribute_item' } & InnerAttributeItemFromInput))[];
 }
 
 export type MatchArmNode = NodeData<'match_arm'> & {
-  value(value: NodeData): MatchArmNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): MatchArmNode;
   children(...value: NodeData[]): MatchArmNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4384,14 +4569,14 @@ export type MatchArmNode = NodeData<'match_arm'> & {
 };
 
 export function matchArm(
-  patternOrConfig: NodeData | MatchArmConfig,
+  patternOrConfig: NodeData<'match_pattern'> | MatchArmConfig,
   config?: Partial<MatchArmConfig>,
 ): MatchArmNode {
-  const fields: any = isNodeData(patternOrConfig) || typeof patternOrConfig === 'string'
-    ? { 'pattern': resolveAndValidate(patternOrConfig), ...config }
+  const fields: any = isNodeData(patternOrConfig)
+    ? { 'pattern': patternOrConfig, ...config }
     : patternOrConfig;
   const node: any = { type: 'match_arm', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4417,8 +4602,8 @@ matchArm.assign = function(target: AssignableNode<'match_arm'>): MatchArmNode {
     return merged;
   };
   const node: any = { get type() { return 'match_arm'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4434,7 +4619,7 @@ export interface MatchBlockConfig {
 }
 
 export interface MatchBlockFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'match_arm'> | MatchArmFromInput)[];
 }
 
 export type MatchBlockNode = NodeData<'match_block'> & {
@@ -4446,9 +4631,16 @@ export type MatchBlockNode = NodeData<'match_block'> & {
 };
 
 export function matchBlock(
-  config?: MatchBlockConfig,
+  childrenOrConfig?: NodeData<'match_arm'> | NodeData<'match_arm'>[] | MatchBlockConfig,
 ): MatchBlockNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'match_block', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4486,17 +4678,17 @@ matchBlock.assign = function(target: AssignableNode<'match_block'>): MatchBlockN
 } as any;
 
 export interface MatchExpressionConfig {
-  value: NodeData;
-  body: NodeData;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  body: NodeData<'match_block'>;
 }
 
 export interface MatchExpressionFromInput {
-  value: FromValue;
-  body: FromValue;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  body: NodeData<'match_block'> | MatchBlockFromInput | FromValue[];
 }
 
 export type MatchExpressionNode = NodeData<'match_expression'> & {
-  body(value: NodeData): MatchExpressionNode;
+  body(value: NodeData<'match_block'>): MatchExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4504,14 +4696,14 @@ export type MatchExpressionNode = NodeData<'match_expression'> & {
 };
 
 export function matchExpression(
-  valueOrConfig: NodeData | MatchExpressionConfig,
+  valueOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | MatchExpressionConfig,
   config?: Partial<MatchExpressionConfig>,
 ): MatchExpressionNode {
-  const fields: any = isNodeData(valueOrConfig) || typeof valueOrConfig === 'string'
-    ? { 'value': resolveAndValidate(valueOrConfig), ...config }
+  const fields: any = isNodeData(valueOrConfig)
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'match_expression', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4534,8 +4726,8 @@ matchExpression.assign = function(target: AssignableNode<'match_expression'>): M
     return merged;
   };
   const node: any = { get type() { return 'match_expression'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4546,17 +4738,17 @@ matchExpression.assign = function(target: AssignableNode<'match_expression'>): M
 } as any;
 
 export interface MatchPatternConfig {
-  condition?: NodeData;
+  condition?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'>;
   children?: NodeData[];
 }
 
 export interface MatchPatternFromInput {
-  condition?: FromValue;
-  children?: FromValue | FromValue[];
+  condition?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | ({ kind: 'let_condition' } & LetConditionFromInput) | ({ kind: 'let_chain' } & LetChainFromInput) | FromValue[];
+  children?: (NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type MatchPatternNode = NodeData<'match_pattern'> & {
-  condition(value: NodeData): MatchPatternNode;
+  condition(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'>): MatchPatternNode;
   children(...value: NodeData[]): MatchPatternNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4565,11 +4757,18 @@ export type MatchPatternNode = NodeData<'match_pattern'> & {
 };
 
 export function matchPattern(
-  config?: MatchPatternConfig,
+  childrenOrConfig?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>[] | MatchPatternConfig,
 ): MatchPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'match_pattern', fields };
-  node.condition = (v: any) => { fields['condition'] = resolveAndValidate(v); return node; };
+  node.condition = (v: any) => { validateNodeText(v); fields['condition'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4595,7 +4794,7 @@ matchPattern.assign = function(target: AssignableNode<'match_pattern'>): MatchPa
     return merged;
   };
   const node: any = { get type() { return 'match_pattern'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { overrides['condition'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4607,19 +4806,19 @@ matchPattern.assign = function(target: AssignableNode<'match_pattern'>): MatchPa
 } as any;
 
 export interface ModItemConfig {
-  name: NodeData | string;
-  body?: NodeData;
+  name: NodeData<'identifier'>;
+  body?: NodeData<'declaration_list'>;
   children?: NodeData[];
 }
 
 export interface ModItemFromInput {
-  name: NodeData | string;
-  body?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier'> | string;
+  body?: NodeData<'declaration_list'> | DeclarationListFromInput | FromValue[];
+  children?: (NodeData<'visibility_modifier'> | VisibilityModifierFromInput)[];
 }
 
 export type ModItemNode = NodeData<'mod_item'> & {
-  body(value: NodeData): ModItemNode;
+  body(value: NodeData<'declaration_list'>): ModItemNode;
   children(...value: NodeData[]): ModItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4628,14 +4827,14 @@ export type ModItemNode = NodeData<'mod_item'> & {
 };
 
 export function modItem(
-  nameOrConfig: NodeData | string | ModItemConfig,
+  nameOrConfig: NodeData<'identifier'> | ModItemConfig,
   config?: Partial<ModItemConfig>,
 ): ModItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'mod_item', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4661,8 +4860,8 @@ modItem.assign = function(target: AssignableNode<'mod_item'>): ModItemNode {
     return merged;
   };
   const node: any = { get type() { return 'mod_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4678,7 +4877,7 @@ export interface MutPatternConfig {
 }
 
 export interface MutPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'mutable_specifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type MutPatternNode = NodeData<'mut_pattern'> & {
@@ -4690,9 +4889,16 @@ export type MutPatternNode = NodeData<'mut_pattern'> & {
 };
 
 export function mutPattern(
-  config?: MutPatternConfig,
+  childrenOrConfig?: NodeData<'mutable_specifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | NodeData<'mutable_specifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>[] | MutPatternConfig,
 ): MutPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'mut_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4734,7 +4940,7 @@ export interface NegativeLiteralConfig {
 }
 
 export interface NegativeLiteralFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'integer_literal' | 'float_literal'> | string)[];
 }
 
 export type NegativeLiteralNode = NodeData<'negative_literal'> & {
@@ -4746,12 +4952,10 @@ export type NegativeLiteralNode = NodeData<'negative_literal'> & {
 };
 
 export function negativeLiteral(
-  childrenOrConfig?: string | NodeData | NodeData[] | NegativeLiteralConfig,
+  childrenOrConfig?: NodeData<'integer_literal' | 'float_literal'> | NodeData<'integer_literal' | 'float_literal'>[] | NegativeLiteralConfig,
 ): NegativeLiteralNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'integer_literal', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -4799,7 +5003,7 @@ export interface OrPatternConfig {
 }
 
 export interface OrPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type OrPatternNode = NodeData<'or_pattern'> & {
@@ -4811,9 +5015,16 @@ export type OrPatternNode = NodeData<'or_pattern'> & {
 };
 
 export function orPattern(
-  config?: OrPatternConfig,
+  childrenOrConfig?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>[] | OrPatternConfig,
 ): OrPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'or_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4851,17 +5062,17 @@ orPattern.assign = function(target: AssignableNode<'or_pattern'>): OrPatternNode
 } as any;
 
 export interface OrderedFieldDeclarationListConfig {
-  type?: NodeData[];
+  type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>[];
   children?: NodeData[];
 }
 
 export interface OrderedFieldDeclarationListFromInput {
-  type?: FromValue[];
-  children?: FromValue | FromValue[];
+  type?: (NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput))[] | NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput);
+  children?: (NodeData<'attribute_item' | 'visibility_modifier'> | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput))[];
 }
 
 export type OrderedFieldDeclarationListNode = NodeData<'ordered_field_declaration_list'> & {
-  typeField(value: NodeData[]): OrderedFieldDeclarationListNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>[]): OrderedFieldDeclarationListNode;
   children(...value: NodeData[]): OrderedFieldDeclarationListNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4870,9 +5081,16 @@ export type OrderedFieldDeclarationListNode = NodeData<'ordered_field_declaratio
 };
 
 export function orderedFieldDeclarationList(
-  config?: OrderedFieldDeclarationListConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'visibility_modifier'> | NodeData<'attribute_item' | 'visibility_modifier'>[] | OrderedFieldDeclarationListConfig,
 ): OrderedFieldDeclarationListNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'ordered_field_declaration_list', fields };
   node.typeField = (...v: any[]) => { fields['type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -4912,19 +5130,19 @@ orderedFieldDeclarationList.assign = function(target: AssignableNode<'ordered_fi
 } as any;
 
 export interface ParameterConfig {
-  pattern: NodeData;
-  type: NodeData;
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'self'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
   children?: NodeData[];
 }
 
 export interface ParameterFromInput {
-  pattern: FromValue;
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  pattern: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'self'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  children?: (NodeData<'mutable_specifier'> | string)[];
 }
 
 export type ParameterNode = NodeData<'parameter'> & {
-  typeField(value: NodeData): ParameterNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): ParameterNode;
   children(...value: NodeData[]): ParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4933,14 +5151,14 @@ export type ParameterNode = NodeData<'parameter'> & {
 };
 
 export function parameter(
-  patternOrConfig: NodeData | ParameterConfig,
+  patternOrConfig: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'self'> | ParameterConfig,
   config?: Partial<ParameterConfig>,
 ): ParameterNode {
-  const fields: any = isNodeData(patternOrConfig) || typeof patternOrConfig === 'string'
-    ? { 'pattern': resolveAndValidate(patternOrConfig), ...config }
+  const fields: any = isNodeData(patternOrConfig)
+    ? { 'pattern': patternOrConfig, ...config }
     : patternOrConfig;
   const node: any = { type: 'parameter', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4966,8 +5184,8 @@ parameter.assign = function(target: AssignableNode<'parameter'>): ParameterNode 
     return merged;
   };
   const node: any = { get type() { return 'parameter'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4983,7 +5201,7 @@ export interface ParametersConfig {
 }
 
 export interface ParametersFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute_item' | 'parameter' | 'self_parameter' | 'variadic_parameter' | 'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'parameter' } & ParameterFromInput) | ({ kind: 'self_parameter' } & SelfParameterFromInput) | ({ kind: 'variadic_parameter' } & VariadicParameterFromInput) | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput))[];
 }
 
 export type ParametersNode = NodeData<'parameters'> & {
@@ -4995,9 +5213,16 @@ export type ParametersNode = NodeData<'parameters'> & {
 };
 
 export function parameters(
-  config?: ParametersConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'parameter' | 'self_parameter' | 'variadic_parameter' | 'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | NodeData<'attribute_item' | 'parameter' | 'self_parameter' | 'variadic_parameter' | 'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>[] | ParametersConfig,
 ): ParametersNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'parameters', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5039,7 +5264,7 @@ export interface ParenthesizedExpressionConfig {
 }
 
 export interface ParenthesizedExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type ParenthesizedExpressionNode = NodeData<'parenthesized_expression'> & {
@@ -5051,9 +5276,16 @@ export type ParenthesizedExpressionNode = NodeData<'parenthesized_expression'> &
 };
 
 export function parenthesizedExpression(
-  config?: ParenthesizedExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | ParenthesizedExpressionConfig,
 ): ParenthesizedExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'parenthesized_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5091,13 +5323,13 @@ parenthesizedExpression.assign = function(target: AssignableNode<'parenthesized_
 } as any;
 
 export interface PointerTypeConfig {
-  type: NodeData;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
   children?: NodeData[];
 }
 
 export interface PointerTypeFromInput {
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  children?: (NodeData<'mutable_specifier'> | string)[];
 }
 
 export type PointerTypeNode = NodeData<'pointer_type'> & {
@@ -5109,11 +5341,11 @@ export type PointerTypeNode = NodeData<'pointer_type'> & {
 };
 
 export function pointerType(
-  typeOrConfig: NodeData | PointerTypeConfig,
+  typeOrConfig: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | PointerTypeConfig,
   config?: Partial<PointerTypeConfig>,
 ): PointerTypeNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'pointer_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -5141,7 +5373,7 @@ pointerType.assign = function(target: AssignableNode<'pointer_type'>): PointerTy
     return merged;
   };
   const node: any = { get type() { return 'pointer_type'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5153,17 +5385,17 @@ pointerType.assign = function(target: AssignableNode<'pointer_type'>): PointerTy
 } as any;
 
 export interface QualifiedTypeConfig {
-  type: NodeData;
-  alias: NodeData;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  alias: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
 }
 
 export interface QualifiedTypeFromInput {
-  type: FromValue;
-  alias: FromValue;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  alias: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
 }
 
 export type QualifiedTypeNode = NodeData<'qualified_type'> & {
-  alias(value: NodeData): QualifiedTypeNode;
+  alias(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): QualifiedTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5171,14 +5403,14 @@ export type QualifiedTypeNode = NodeData<'qualified_type'> & {
 };
 
 export function qualifiedType(
-  typeOrConfig: NodeData | QualifiedTypeConfig,
+  typeOrConfig: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | QualifiedTypeConfig,
   config?: Partial<QualifiedTypeConfig>,
 ): QualifiedTypeNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'qualified_type', fields };
-  node.alias = (v: any) => { fields['alias'] = resolveAndValidate(v); return node; };
+  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5201,8 +5433,8 @@ qualifiedType.assign = function(target: AssignableNode<'qualified_type'>): Quali
     return merged;
   };
   const node: any = { get type() { return 'qualified_type'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alias = (v: any) => { overrides['alias'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5217,7 +5449,7 @@ export interface RangeExpressionConfig {
 }
 
 export interface RangeExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type RangeExpressionNode = NodeData<'range_expression'> & {
@@ -5229,9 +5461,16 @@ export type RangeExpressionNode = NodeData<'range_expression'> & {
 };
 
 export function rangeExpression(
-  config?: RangeExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | RangeExpressionConfig,
 ): RangeExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'range_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5269,18 +5508,18 @@ rangeExpression.assign = function(target: AssignableNode<'range_expression'>): R
 } as any;
 
 export interface RangePatternConfig {
-  left?: NodeData;
-  right?: NodeData;
+  left?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>;
+  right?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>;
 }
 
 export interface RangePatternFromInput {
-  left?: FromValue;
-  right?: FromValue;
+  left?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | FromValue[];
+  right?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | FromValue[];
 }
 
 export type RangePatternNode = NodeData<'range_pattern'> & {
-  left(value: NodeData): RangePatternNode;
-  right(value: NodeData): RangePatternNode;
+  left(value: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>): RangePatternNode;
+  right(value: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>): RangePatternNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5292,8 +5531,8 @@ export function rangePattern(
 ): RangePatternNode {
   const fields: any = config ?? {};
   const node: any = { type: 'range_pattern', fields };
-  node.left = (v: any) => { fields['left'] = resolveAndValidate(v); return node; };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.left = (v: any) => { validateNodeText(v); fields['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5316,8 +5555,8 @@ rangePattern.assign = function(target: AssignableNode<'range_pattern'>): RangePa
     return merged;
   };
   const node: any = { get type() { return 'range_pattern'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5332,7 +5571,7 @@ export interface RawStringLiteralConfig {
 }
 
 export interface RawStringLiteralFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_content'> | string)[];
 }
 
 export type RawStringLiteralNode = NodeData<'raw_string_literal'> & {
@@ -5344,12 +5583,10 @@ export type RawStringLiteralNode = NodeData<'raw_string_literal'> & {
 };
 
 export function rawStringLiteral(
-  childrenOrConfig?: string | NodeData | NodeData[] | RawStringLiteralConfig,
+  childrenOrConfig?: NodeData<'string_content'> | NodeData<'string_content'>[] | RawStringLiteralConfig,
 ): RawStringLiteralNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'string_content', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -5397,7 +5634,7 @@ export interface RefPatternConfig {
 }
 
 export interface RefPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type RefPatternNode = NodeData<'ref_pattern'> & {
@@ -5409,9 +5646,16 @@ export type RefPatternNode = NodeData<'ref_pattern'> & {
 };
 
 export function refPattern(
-  config?: RefPatternConfig,
+  childrenOrConfig?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>[] | RefPatternConfig,
 ): RefPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'ref_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5449,13 +5693,13 @@ refPattern.assign = function(target: AssignableNode<'ref_pattern'>): RefPatternN
 } as any;
 
 export interface ReferenceExpressionConfig {
-  value: NodeData;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
   children?: NodeData[];
 }
 
 export interface ReferenceExpressionFromInput {
-  value: FromValue;
-  children?: FromValue | FromValue[];
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  children?: (NodeData<'mutable_specifier'> | string)[];
 }
 
 export type ReferenceExpressionNode = NodeData<'reference_expression'> & {
@@ -5467,11 +5711,11 @@ export type ReferenceExpressionNode = NodeData<'reference_expression'> & {
 };
 
 export function referenceExpression(
-  valueOrConfig: NodeData | ReferenceExpressionConfig,
+  valueOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | ReferenceExpressionConfig,
   config?: Partial<ReferenceExpressionConfig>,
 ): ReferenceExpressionNode {
-  const fields: any = isNodeData(valueOrConfig) || typeof valueOrConfig === 'string'
-    ? { 'value': resolveAndValidate(valueOrConfig), ...config }
+  const fields: any = isNodeData(valueOrConfig)
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'reference_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -5499,7 +5743,7 @@ referenceExpression.assign = function(target: AssignableNode<'reference_expressi
     return merged;
   };
   const node: any = { get type() { return 'reference_expression'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5515,7 +5759,7 @@ export interface ReferencePatternConfig {
 }
 
 export interface ReferencePatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'mutable_specifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type ReferencePatternNode = NodeData<'reference_pattern'> & {
@@ -5527,9 +5771,16 @@ export type ReferencePatternNode = NodeData<'reference_pattern'> & {
 };
 
 export function referencePattern(
-  config?: ReferencePatternConfig,
+  childrenOrConfig?: NodeData<'mutable_specifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | NodeData<'mutable_specifier' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>[] | ReferencePatternConfig,
 ): ReferencePatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'reference_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5567,13 +5818,13 @@ referencePattern.assign = function(target: AssignableNode<'reference_pattern'>):
 } as any;
 
 export interface ReferenceTypeConfig {
-  type: NodeData;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
   children?: NodeData[];
 }
 
 export interface ReferenceTypeFromInput {
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  children?: (NodeData<'lifetime' | 'mutable_specifier'> | string | LifetimeFromInput)[];
 }
 
 export type ReferenceTypeNode = NodeData<'reference_type'> & {
@@ -5585,11 +5836,11 @@ export type ReferenceTypeNode = NodeData<'reference_type'> & {
 };
 
 export function referenceType(
-  typeOrConfig: NodeData | ReferenceTypeConfig,
+  typeOrConfig: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | ReferenceTypeConfig,
   config?: Partial<ReferenceTypeConfig>,
 ): ReferenceTypeNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'reference_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -5617,7 +5868,7 @@ referenceType.assign = function(target: AssignableNode<'reference_type'>): Refer
     return merged;
   };
   const node: any = { get type() { return 'reference_type'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5633,7 +5884,7 @@ export interface RemovedTraitBoundConfig {
 }
 
 export interface RemovedTraitBoundFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput))[];
 }
 
 export type RemovedTraitBoundNode = NodeData<'removed_trait_bound'> & {
@@ -5645,9 +5896,16 @@ export type RemovedTraitBoundNode = NodeData<'removed_trait_bound'> & {
 };
 
 export function removedTraitBound(
-  config?: RemovedTraitBoundConfig,
+  childrenOrConfig?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>[] | RemovedTraitBoundConfig,
 ): RemovedTraitBoundNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'removed_trait_bound', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5689,7 +5947,7 @@ export interface ReturnExpressionConfig {
 }
 
 export interface ReturnExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type ReturnExpressionNode = NodeData<'return_expression'> & {
@@ -5701,9 +5959,16 @@ export type ReturnExpressionNode = NodeData<'return_expression'> & {
 };
 
 export function returnExpression(
-  config?: ReturnExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | ReturnExpressionConfig,
 ): ReturnExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'return_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5741,17 +6006,17 @@ returnExpression.assign = function(target: AssignableNode<'return_expression'>):
 } as any;
 
 export interface ScopedIdentifierConfig {
-  path?: NodeData;
-  name: NodeData | string;
+  path?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'bracketed_type' | 'generic_type'>;
+  name: NodeData<'identifier' | 'super'>;
 }
 
 export interface ScopedIdentifierFromInput {
-  path?: FromValue;
-  name: NodeData | string;
+  path?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'bracketed_type' | 'generic_type'> | string | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'bracketed_type' } & BracketedTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | FromValue[];
+  name: NodeData<'identifier' | 'super'> | string;
 }
 
 export type ScopedIdentifierNode = NodeData<'scoped_identifier'> & {
-  path(value: NodeData): ScopedIdentifierNode;
+  path(value: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'bracketed_type' | 'generic_type'>): ScopedIdentifierNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5759,14 +6024,14 @@ export type ScopedIdentifierNode = NodeData<'scoped_identifier'> & {
 };
 
 export function scopedIdentifier(
-  nameOrConfig: NodeData | string | ScopedIdentifierConfig,
+  nameOrConfig: NodeData<'identifier' | 'super'> | ScopedIdentifierConfig,
   config?: Partial<ScopedIdentifierConfig>,
 ): ScopedIdentifierNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'scoped_identifier', fields };
-  node.path = (v: any) => { fields['path'] = resolveAndValidate(v); return node; };
+  node.path = (v: any) => { validateNodeText(v); fields['path'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5789,8 +6054,8 @@ scopedIdentifier.assign = function(target: AssignableNode<'scoped_identifier'>):
     return merged;
   };
   const node: any = { get type() { return 'scoped_identifier'; }, get fields() { return getFields(); } };
-  node.path = (v: any) => { overrides['path'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.path = (v: any) => { validateNodeText(v); overrides['path'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5801,17 +6066,17 @@ scopedIdentifier.assign = function(target: AssignableNode<'scoped_identifier'>):
 } as any;
 
 export interface ScopedTypeIdentifierConfig {
-  path?: NodeData;
-  name: NodeData | string;
+  path?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'generic_type' | 'bracketed_type'>;
+  name: NodeData<'type_identifier'>;
 }
 
 export interface ScopedTypeIdentifierFromInput {
-  path?: FromValue;
-  name: NodeData | string;
+  path?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'generic_type' | 'bracketed_type'> | string | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'bracketed_type' } & BracketedTypeFromInput) | FromValue[];
+  name: NodeData<'type_identifier'> | string;
 }
 
 export type ScopedTypeIdentifierNode = NodeData<'scoped_type_identifier'> & {
-  path(value: NodeData): ScopedTypeIdentifierNode;
+  path(value: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'generic_type' | 'bracketed_type'>): ScopedTypeIdentifierNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5819,14 +6084,14 @@ export type ScopedTypeIdentifierNode = NodeData<'scoped_type_identifier'> & {
 };
 
 export function scopedTypeIdentifier(
-  nameOrConfig: NodeData | string | ScopedTypeIdentifierConfig,
+  nameOrConfig: NodeData<'type_identifier'> | ScopedTypeIdentifierConfig,
   config?: Partial<ScopedTypeIdentifierConfig>,
 ): ScopedTypeIdentifierNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'scoped_type_identifier', fields };
-  node.path = (v: any) => { fields['path'] = resolveAndValidate(v); return node; };
+  node.path = (v: any) => { validateNodeText(v); fields['path'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5849,8 +6114,8 @@ scopedTypeIdentifier.assign = function(target: AssignableNode<'scoped_type_ident
     return merged;
   };
   const node: any = { get type() { return 'scoped_type_identifier'; }, get fields() { return getFields(); } };
-  node.path = (v: any) => { overrides['path'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.path = (v: any) => { validateNodeText(v); overrides['path'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5861,17 +6126,17 @@ scopedTypeIdentifier.assign = function(target: AssignableNode<'scoped_type_ident
 } as any;
 
 export interface ScopedUseListConfig {
-  path?: NodeData;
-  list: NodeData;
+  path?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>;
+  list: NodeData<'use_list'>;
 }
 
 export interface ScopedUseListFromInput {
-  path?: FromValue;
-  list: FromValue;
+  path?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | string | ScopedIdentifierFromInput | FromValue[];
+  list: NodeData<'use_list'> | UseListFromInput | FromValue[];
 }
 
 export type ScopedUseListNode = NodeData<'scoped_use_list'> & {
-  path(value: NodeData): ScopedUseListNode;
+  path(value: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>): ScopedUseListNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5879,14 +6144,14 @@ export type ScopedUseListNode = NodeData<'scoped_use_list'> & {
 };
 
 export function scopedUseList(
-  listOrConfig: NodeData | ScopedUseListConfig,
+  listOrConfig: NodeData<'use_list'> | ScopedUseListConfig,
   config?: Partial<ScopedUseListConfig>,
 ): ScopedUseListNode {
-  const fields: any = isNodeData(listOrConfig) || typeof listOrConfig === 'string'
-    ? { 'list': resolveAndValidate(listOrConfig), ...config }
+  const fields: any = isNodeData(listOrConfig)
+    ? { 'list': listOrConfig, ...config }
     : listOrConfig;
   const node: any = { type: 'scoped_use_list', fields };
-  node.path = (v: any) => { fields['path'] = resolveAndValidate(v); return node; };
+  node.path = (v: any) => { validateNodeText(v); fields['path'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5909,8 +6174,8 @@ scopedUseList.assign = function(target: AssignableNode<'scoped_use_list'>): Scop
     return merged;
   };
   const node: any = { get type() { return 'scoped_use_list'; }, get fields() { return getFields(); } };
-  node.path = (v: any) => { overrides['path'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.list = (v: any) => { overrides['list'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.path = (v: any) => { validateNodeText(v); overrides['path'] = v; return node; };
+  node.list = (v: any) => { validateNodeText(v); overrides['list'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5925,7 +6190,7 @@ export interface SelfParameterConfig {
 }
 
 export interface SelfParameterFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'lifetime' | 'mutable_specifier' | 'self'> | string | LifetimeFromInput)[];
 }
 
 export type SelfParameterNode = NodeData<'self_parameter'> & {
@@ -5937,9 +6202,16 @@ export type SelfParameterNode = NodeData<'self_parameter'> & {
 };
 
 export function selfParameter(
-  config?: SelfParameterConfig,
+  childrenOrConfig?: NodeData<'lifetime' | 'mutable_specifier' | 'self'> | NodeData<'lifetime' | 'mutable_specifier' | 'self'>[] | SelfParameterConfig,
 ): SelfParameterNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'self_parameter', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5981,7 +6253,7 @@ export interface ShorthandFieldInitializerConfig {
 }
 
 export interface ShorthandFieldInitializerFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute_item' | 'identifier'> | string | AttributeItemFromInput)[];
 }
 
 export type ShorthandFieldInitializerNode = NodeData<'shorthand_field_initializer'> & {
@@ -5993,9 +6265,16 @@ export type ShorthandFieldInitializerNode = NodeData<'shorthand_field_initialize
 };
 
 export function shorthandFieldInitializer(
-  config?: ShorthandFieldInitializerConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'identifier'> | NodeData<'attribute_item' | 'identifier'>[] | ShorthandFieldInitializerConfig,
 ): ShorthandFieldInitializerNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'shorthand_field_initializer', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6037,7 +6316,7 @@ export interface SlicePatternConfig {
 }
 
 export interface SlicePatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type SlicePatternNode = NodeData<'slice_pattern'> & {
@@ -6049,9 +6328,16 @@ export type SlicePatternNode = NodeData<'slice_pattern'> & {
 };
 
 export function slicePattern(
-  config?: SlicePatternConfig,
+  childrenOrConfig?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>[] | SlicePatternConfig,
 ): SlicePatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'slice_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6093,7 +6379,7 @@ export interface SourceFileConfig {
 }
 
 export interface SourceFileFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'shebang' | 'expression_statement' | 'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item'> | string | ({ kind: 'expression_statement' } & ExpressionStatementFromInput) | ({ kind: 'const_item' } & ConstItemFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'macro_definition' } & MacroDefinitionFromInput) | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'inner_attribute_item' } & InnerAttributeItemFromInput) | ({ kind: 'mod_item' } & ModItemFromInput) | ({ kind: 'foreign_mod_item' } & ForeignModItemFromInput) | ({ kind: 'struct_item' } & StructItemFromInput) | ({ kind: 'union_item' } & UnionItemFromInput) | ({ kind: 'enum_item' } & EnumItemFromInput) | ({ kind: 'type_item' } & TypeItemFromInput) | ({ kind: 'function_item' } & FunctionItemFromInput) | ({ kind: 'function_signature_item' } & FunctionSignatureItemFromInput) | ({ kind: 'impl_item' } & ImplItemFromInput) | ({ kind: 'trait_item' } & TraitItemFromInput) | ({ kind: 'associated_type' } & AssociatedTypeFromInput) | ({ kind: 'let_declaration' } & LetDeclarationFromInput) | ({ kind: 'use_declaration' } & UseDeclarationFromInput) | ({ kind: 'extern_crate_declaration' } & ExternCrateDeclarationFromInput) | ({ kind: 'static_item' } & StaticItemFromInput))[];
 }
 
 export type SourceFileNode = NodeData<'source_file'> & {
@@ -6105,9 +6391,16 @@ export type SourceFileNode = NodeData<'source_file'> & {
 };
 
 export function sourceFile(
-  config?: SourceFileConfig,
+  childrenOrConfig?: NodeData<'shebang' | 'expression_statement' | 'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item'> | NodeData<'shebang' | 'expression_statement' | 'const_item' | 'macro_invocation' | 'macro_definition' | 'empty_statement' | 'attribute_item' | 'inner_attribute_item' | 'mod_item' | 'foreign_mod_item' | 'struct_item' | 'union_item' | 'enum_item' | 'type_item' | 'function_item' | 'function_signature_item' | 'impl_item' | 'trait_item' | 'associated_type' | 'let_declaration' | 'use_declaration' | 'extern_crate_declaration' | 'static_item'>[] | SourceFileConfig,
 ): SourceFileNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'source_file', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6145,22 +6438,22 @@ sourceFile.assign = function(target: AssignableNode<'source_file'>): SourceFileN
 } as any;
 
 export interface StaticItemConfig {
-  name: NodeData | string;
-  type: NodeData;
-  value?: NodeData;
+  name: NodeData<'identifier'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
   children?: NodeData[];
 }
 
 export interface StaticItemFromInput {
-  name: NodeData | string;
-  type: FromValue;
-  value?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'identifier'> | string;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  value?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'mutable_specifier'> | string | VisibilityModifierFromInput)[];
 }
 
 export type StaticItemNode = NodeData<'static_item'> & {
-  typeField(value: NodeData): StaticItemNode;
-  value(value: NodeData): StaticItemNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): StaticItemNode;
+  value(value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>): StaticItemNode;
   children(...value: NodeData[]): StaticItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6169,15 +6462,15 @@ export type StaticItemNode = NodeData<'static_item'> & {
 };
 
 export function staticItem(
-  nameOrConfig: NodeData | string | StaticItemConfig,
+  nameOrConfig: NodeData<'identifier'> | StaticItemConfig,
   config?: Partial<StaticItemConfig>,
 ): StaticItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'static_item', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6203,9 +6496,9 @@ staticItem.assign = function(target: AssignableNode<'static_item'>): StaticItemN
     return merged;
   };
   const node: any = { get type() { return 'static_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6221,7 +6514,7 @@ export interface StringLiteralConfig {
 }
 
 export interface StringLiteralFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'escape_sequence' | 'string_content'> | string)[];
 }
 
 export type StringLiteralNode = NodeData<'string_literal'> & {
@@ -6233,12 +6526,10 @@ export type StringLiteralNode = NodeData<'string_literal'> & {
 };
 
 export function stringLiteral(
-  childrenOrConfig?: string | NodeData | NodeData[] | StringLiteralConfig,
+  childrenOrConfig?: NodeData<'escape_sequence' | 'string_content'> | NodeData<'escape_sequence' | 'string_content'>[] | StringLiteralConfig,
 ): StringLiteralNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'string_content', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -6282,17 +6573,17 @@ stringLiteral.assign = function(target: AssignableNode<'string_literal'>): Strin
 } as any;
 
 export interface StructExpressionConfig {
-  name: NodeData;
-  body: NodeData;
+  name: NodeData<'type_identifier' | 'scoped_type_identifier' | 'generic_type_with_turbofish'>;
+  body: NodeData<'field_initializer_list'>;
 }
 
 export interface StructExpressionFromInput {
-  name: FromValue;
-  body: FromValue;
+  name: NodeData<'type_identifier' | 'scoped_type_identifier' | 'generic_type_with_turbofish'> | string | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'generic_type_with_turbofish' } & GenericTypeWithTurbofishFromInput) | FromValue[];
+  body: NodeData<'field_initializer_list'> | FieldInitializerListFromInput | FromValue[];
 }
 
 export type StructExpressionNode = NodeData<'struct_expression'> & {
-  body(value: NodeData): StructExpressionNode;
+  body(value: NodeData<'field_initializer_list'>): StructExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -6300,14 +6591,14 @@ export type StructExpressionNode = NodeData<'struct_expression'> & {
 };
 
 export function structExpression(
-  nameOrConfig: NodeData | StructExpressionConfig,
+  nameOrConfig: NodeData<'type_identifier' | 'scoped_type_identifier' | 'generic_type_with_turbofish'> | StructExpressionConfig,
   config?: Partial<StructExpressionConfig>,
 ): StructExpressionNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'struct_expression', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6330,8 +6621,8 @@ structExpression.assign = function(target: AssignableNode<'struct_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'struct_expression'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6342,22 +6633,22 @@ structExpression.assign = function(target: AssignableNode<'struct_expression'>):
 } as any;
 
 export interface StructItemConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  body?: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  body?: NodeData<'field_declaration_list' | 'ordered_field_declaration_list'>;
   children?: NodeData[];
 }
 
 export interface StructItemFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  body?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  body?: NodeData<'field_declaration_list' | 'ordered_field_declaration_list'> | ({ kind: 'field_declaration_list' } & FieldDeclarationListFromInput) | ({ kind: 'ordered_field_declaration_list' } & OrderedFieldDeclarationListFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'where_clause'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'where_clause' } & WhereClauseFromInput))[];
 }
 
 export type StructItemNode = NodeData<'struct_item'> & {
-  typeParameters(value: NodeData): StructItemNode;
-  body(value: NodeData): StructItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): StructItemNode;
+  body(value: NodeData<'field_declaration_list' | 'ordered_field_declaration_list'>): StructItemNode;
   children(...value: NodeData[]): StructItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6366,15 +6657,15 @@ export type StructItemNode = NodeData<'struct_item'> & {
 };
 
 export function structItem(
-  nameOrConfig: NodeData | string | StructItemConfig,
+  nameOrConfig: NodeData<'type_identifier'> | StructItemConfig,
   config?: Partial<StructItemConfig>,
 ): StructItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'struct_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6400,9 +6691,9 @@ structItem.assign = function(target: AssignableNode<'struct_item'>): StructItemN
     return merged;
   };
   const node: any = { get type() { return 'struct_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6414,13 +6705,13 @@ structItem.assign = function(target: AssignableNode<'struct_item'>): StructItemN
 } as any;
 
 export interface StructPatternConfig {
-  type: NodeData;
+  type: NodeData<'type_identifier' | 'scoped_type_identifier'>;
   children?: NodeData[];
 }
 
 export interface StructPatternFromInput {
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  type: NodeData<'type_identifier' | 'scoped_type_identifier'> | string | ScopedTypeIdentifierFromInput | FromValue[];
+  children?: (NodeData<'field_pattern' | 'remaining_field_pattern'> | string | FieldPatternFromInput)[];
 }
 
 export type StructPatternNode = NodeData<'struct_pattern'> & {
@@ -6432,11 +6723,11 @@ export type StructPatternNode = NodeData<'struct_pattern'> & {
 };
 
 export function structPattern(
-  typeOrConfig: NodeData | StructPatternConfig,
+  typeOrConfig: NodeData<'type_identifier' | 'scoped_type_identifier'> | StructPatternConfig,
   config?: Partial<StructPatternConfig>,
 ): StructPatternNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'struct_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -6464,7 +6755,7 @@ structPattern.assign = function(target: AssignableNode<'struct_pattern'>): Struc
     return merged;
   };
   const node: any = { get type() { return 'struct_pattern'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6476,17 +6767,17 @@ structPattern.assign = function(target: AssignableNode<'struct_pattern'>): Struc
 } as any;
 
 export interface TokenBindingPatternConfig {
-  name: NodeData | string;
-  type: NodeData | string;
+  name: NodeData<'metavariable'>;
+  type: NodeData<'fragment_specifier'>;
 }
 
 export interface TokenBindingPatternFromInput {
-  name: NodeData | string;
-  type: NodeData | string;
+  name: NodeData<'metavariable'> | string;
+  type: NodeData<'fragment_specifier'> | string;
 }
 
 export type TokenBindingPatternNode = NodeData<'token_binding_pattern'> & {
-  typeField(value: NodeData | string): TokenBindingPatternNode;
+  typeField(value: NodeData<'fragment_specifier'>): TokenBindingPatternNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -6494,14 +6785,14 @@ export type TokenBindingPatternNode = NodeData<'token_binding_pattern'> & {
 };
 
 export function tokenBindingPattern(
-  nameOrConfig: NodeData | string | TokenBindingPatternConfig,
+  nameOrConfig: NodeData<'metavariable'> | TokenBindingPatternConfig,
   config?: Partial<TokenBindingPatternConfig>,
 ): TokenBindingPatternNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'token_binding_pattern', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6524,8 +6815,8 @@ tokenBindingPattern.assign = function(target: AssignableNode<'token_binding_patt
     return merged;
   };
   const node: any = { get type() { return 'token_binding_pattern'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6540,7 +6831,7 @@ export interface TokenRepetitionConfig {
 }
 
 export interface TokenRepetitionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'token_tree' | 'token_repetition' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | string | ({ kind: 'token_tree' } & TokenTreeFromInput) | ({ kind: 'token_repetition' } & TokenRepetitionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput))[];
 }
 
 export type TokenRepetitionNode = NodeData<'token_repetition'> & {
@@ -6552,9 +6843,16 @@ export type TokenRepetitionNode = NodeData<'token_repetition'> & {
 };
 
 export function tokenRepetition(
-  config?: TokenRepetitionConfig,
+  childrenOrConfig?: NodeData<'token_tree' | 'token_repetition' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | NodeData<'token_tree' | 'token_repetition' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'>[] | TokenRepetitionConfig,
 ): TokenRepetitionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'token_repetition', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6596,7 +6894,7 @@ export interface TokenRepetitionPatternConfig {
 }
 
 export interface TokenRepetitionPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'token_tree_pattern' | 'token_repetition_pattern' | 'token_binding_pattern' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | string | ({ kind: 'token_tree_pattern' } & TokenTreePatternFromInput) | ({ kind: 'token_repetition_pattern' } & TokenRepetitionPatternFromInput) | ({ kind: 'token_binding_pattern' } & TokenBindingPatternFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput))[];
 }
 
 export type TokenRepetitionPatternNode = NodeData<'token_repetition_pattern'> & {
@@ -6608,9 +6906,16 @@ export type TokenRepetitionPatternNode = NodeData<'token_repetition_pattern'> & 
 };
 
 export function tokenRepetitionPattern(
-  config?: TokenRepetitionPatternConfig,
+  childrenOrConfig?: NodeData<'token_tree_pattern' | 'token_repetition_pattern' | 'token_binding_pattern' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | NodeData<'token_tree_pattern' | 'token_repetition_pattern' | 'token_binding_pattern' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'>[] | TokenRepetitionPatternConfig,
 ): TokenRepetitionPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'token_repetition_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6652,7 +6957,7 @@ export interface TokenTreeConfig {
 }
 
 export interface TokenTreeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'token_tree' | 'token_repetition' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | string | ({ kind: 'token_tree' } & TokenTreeFromInput) | ({ kind: 'token_repetition' } & TokenRepetitionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput))[];
 }
 
 export type TokenTreeNode = NodeData<'token_tree'> & {
@@ -6664,9 +6969,16 @@ export type TokenTreeNode = NodeData<'token_tree'> & {
 };
 
 export function tokenTree(
-  config?: TokenTreeConfig,
+  childrenOrConfig?: NodeData<'token_tree' | 'token_repetition' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | NodeData<'token_tree' | 'token_repetition' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'>[] | TokenTreeConfig,
 ): TokenTreeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'token_tree', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6708,7 +7020,7 @@ export interface TokenTreePatternConfig {
 }
 
 export interface TokenTreePatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'token_tree_pattern' | 'token_repetition_pattern' | 'token_binding_pattern' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | string | ({ kind: 'token_tree_pattern' } & TokenTreePatternFromInput) | ({ kind: 'token_repetition_pattern' } & TokenRepetitionPatternFromInput) | ({ kind: 'token_binding_pattern' } & TokenBindingPatternFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput))[];
 }
 
 export type TokenTreePatternNode = NodeData<'token_tree_pattern'> & {
@@ -6720,9 +7032,16 @@ export type TokenTreePatternNode = NodeData<'token_tree_pattern'> & {
 };
 
 export function tokenTreePattern(
-  config?: TokenTreePatternConfig,
+  childrenOrConfig?: NodeData<'token_tree_pattern' | 'token_repetition_pattern' | 'token_binding_pattern' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'> | NodeData<'token_tree_pattern' | 'token_repetition_pattern' | 'token_binding_pattern' | 'metavariable' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'mutable_specifier' | 'self' | 'super' | 'crate' | 'primitive_type'>[] | TokenTreePatternConfig,
 ): TokenTreePatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'token_tree_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6764,7 +7083,7 @@ export interface TraitBoundsConfig {
 }
 
 export interface TraitBoundsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'lifetime' | 'higher_ranked_trait_bound'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | ({ kind: 'lifetime' } & LifetimeFromInput) | ({ kind: 'higher_ranked_trait_bound' } & HigherRankedTraitBoundFromInput))[];
 }
 
 export type TraitBoundsNode = NodeData<'trait_bounds'> & {
@@ -6776,9 +7095,16 @@ export type TraitBoundsNode = NodeData<'trait_bounds'> & {
 };
 
 export function traitBounds(
-  config?: TraitBoundsConfig,
+  childrenOrConfig?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'lifetime' | 'higher_ranked_trait_bound'> | NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'lifetime' | 'higher_ranked_trait_bound'>[] | TraitBoundsConfig,
 ): TraitBoundsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'trait_bounds', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6816,25 +7142,25 @@ traitBounds.assign = function(target: AssignableNode<'trait_bounds'>): TraitBoun
 } as any;
 
 export interface TraitItemConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  bounds?: NodeData;
-  body: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  bounds?: NodeData<'trait_bounds'>;
+  body: NodeData<'declaration_list'>;
   children?: NodeData[];
 }
 
 export interface TraitItemFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  bounds?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  bounds?: NodeData<'trait_bounds'> | TraitBoundsFromInput | FromValue[];
+  body: NodeData<'declaration_list'> | DeclarationListFromInput | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'where_clause'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'where_clause' } & WhereClauseFromInput))[];
 }
 
 export type TraitItemNode = NodeData<'trait_item'> & {
-  typeParameters(value: NodeData): TraitItemNode;
-  bounds(value: NodeData): TraitItemNode;
-  body(value: NodeData): TraitItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): TraitItemNode;
+  bounds(value: NodeData<'trait_bounds'>): TraitItemNode;
+  body(value: NodeData<'declaration_list'>): TraitItemNode;
   children(...value: NodeData[]): TraitItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6843,16 +7169,16 @@ export type TraitItemNode = NodeData<'trait_item'> & {
 };
 
 export function traitItem(
-  nameOrConfig: NodeData | string | TraitItemConfig,
+  nameOrConfig: NodeData<'type_identifier'> | TraitItemConfig,
   config?: Partial<TraitItemConfig>,
 ): TraitItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'trait_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.bounds = (v: any) => { fields['bounds'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.bounds = (v: any) => { validateNodeText(v); fields['bounds'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6878,10 +7204,10 @@ traitItem.assign = function(target: AssignableNode<'trait_item'>): TraitItemNode
     return merged;
   };
   const node: any = { get type() { return 'trait_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.bounds = (v: any) => { overrides['bounds'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.bounds = (v: any) => { validateNodeText(v); overrides['bounds'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6897,7 +7223,7 @@ export interface TryBlockConfig {
 }
 
 export interface TryBlockFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'block'> | BlockFromInput)[];
 }
 
 export type TryBlockNode = NodeData<'try_block'> & {
@@ -6909,9 +7235,16 @@ export type TryBlockNode = NodeData<'try_block'> & {
 };
 
 export function tryBlock(
-  config?: TryBlockConfig,
+  childrenOrConfig?: NodeData<'block'> | NodeData<'block'>[] | TryBlockConfig,
 ): TryBlockNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'try_block', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6953,7 +7286,7 @@ export interface TryExpressionConfig {
 }
 
 export interface TryExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type TryExpressionNode = NodeData<'try_expression'> & {
@@ -6965,9 +7298,16 @@ export type TryExpressionNode = NodeData<'try_expression'> & {
 };
 
 export function tryExpression(
-  config?: TryExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | TryExpressionConfig,
 ): TryExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'try_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7009,7 +7349,7 @@ export interface TupleExpressionConfig {
 }
 
 export interface TupleExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type TupleExpressionNode = NodeData<'tuple_expression'> & {
@@ -7021,9 +7361,16 @@ export type TupleExpressionNode = NodeData<'tuple_expression'> & {
 };
 
 export function tupleExpression(
-  config?: TupleExpressionConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'attribute_item' | 'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | TupleExpressionConfig,
 ): TupleExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'tuple_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7065,7 +7412,7 @@ export interface TuplePatternConfig {
 }
 
 export interface TuplePatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'closure_expression'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput))[];
 }
 
 export type TuplePatternNode = NodeData<'tuple_pattern'> & {
@@ -7077,9 +7424,16 @@ export type TuplePatternNode = NodeData<'tuple_pattern'> & {
 };
 
 export function tuplePattern(
-  config?: TuplePatternConfig,
+  childrenOrConfig?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'closure_expression'> | NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation' | 'closure_expression'>[] | TuplePatternConfig,
 ): TuplePatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'tuple_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7117,13 +7471,13 @@ tuplePattern.assign = function(target: AssignableNode<'tuple_pattern'>): TuplePa
 } as any;
 
 export interface TupleStructPatternConfig {
-  type: NodeData;
+  type: NodeData<'identifier' | 'scoped_identifier' | 'generic_type'>;
   children?: NodeData[];
 }
 
 export interface TupleStructPatternFromInput {
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  type: NodeData<'identifier' | 'scoped_identifier' | 'generic_type'> | string | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | FromValue[];
+  children?: (NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput))[];
 }
 
 export type TupleStructPatternNode = NodeData<'tuple_struct_pattern'> & {
@@ -7135,11 +7489,11 @@ export type TupleStructPatternNode = NodeData<'tuple_struct_pattern'> & {
 };
 
 export function tupleStructPattern(
-  typeOrConfig: NodeData | TupleStructPatternConfig,
+  typeOrConfig: NodeData<'identifier' | 'scoped_identifier' | 'generic_type'> | TupleStructPatternConfig,
   config?: Partial<TupleStructPatternConfig>,
 ): TupleStructPatternNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'tuple_struct_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -7167,7 +7521,7 @@ tupleStructPattern.assign = function(target: AssignableNode<'tuple_struct_patter
     return merged;
   };
   const node: any = { get type() { return 'tuple_struct_pattern'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7183,7 +7537,7 @@ export interface TupleTypeConfig {
 }
 
 export interface TupleTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput))[];
 }
 
 export type TupleTypeNode = NodeData<'tuple_type'> & {
@@ -7195,9 +7549,16 @@ export type TupleTypeNode = NodeData<'tuple_type'> & {
 };
 
 export function tupleType(
-  config?: TupleTypeConfig,
+  childrenOrConfig?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>[] | TupleTypeConfig,
 ): TupleTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'tuple_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7239,7 +7600,7 @@ export interface TypeArgumentsConfig {
 }
 
 export interface TypeArgumentsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'type_binding' | 'lifetime' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'block' | 'trait_bounds'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | ({ kind: 'type_binding' } & TypeBindingFromInput) | ({ kind: 'lifetime' } & LifetimeFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'trait_bounds' } & TraitBoundsFromInput))[];
 }
 
 export type TypeArgumentsNode = NodeData<'type_arguments'> & {
@@ -7251,9 +7612,16 @@ export type TypeArgumentsNode = NodeData<'type_arguments'> & {
 };
 
 export function typeArguments(
-  config?: TypeArgumentsConfig,
+  childrenOrConfig?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'type_binding' | 'lifetime' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'block' | 'trait_bounds'> | NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type' | 'type_binding' | 'lifetime' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'block' | 'trait_bounds'>[] | TypeArgumentsConfig,
 ): TypeArgumentsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_arguments', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7291,20 +7659,20 @@ typeArguments.assign = function(target: AssignableNode<'type_arguments'>): TypeA
 } as any;
 
 export interface TypeBindingConfig {
-  name: NodeData | string;
-  type_arguments?: NodeData;
-  type: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_arguments?: NodeData<'type_arguments'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
 }
 
 export interface TypeBindingFromInput {
-  name: NodeData | string;
-  type_arguments?: FromValue;
-  type: FromValue;
+  name: NodeData<'type_identifier'> | string;
+  type_arguments?: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
 }
 
 export type TypeBindingNode = NodeData<'type_binding'> & {
-  typeArguments(value: NodeData): TypeBindingNode;
-  typeField(value: NodeData): TypeBindingNode;
+  typeArguments(value: NodeData<'type_arguments'>): TypeBindingNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): TypeBindingNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7312,15 +7680,15 @@ export type TypeBindingNode = NodeData<'type_binding'> & {
 };
 
 export function typeBinding(
-  nameOrConfig: NodeData | string | TypeBindingConfig,
+  nameOrConfig: NodeData<'type_identifier'> | TypeBindingConfig,
   config?: Partial<TypeBindingConfig>,
 ): TypeBindingNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_binding', fields };
-  node.typeArguments = (v: any) => { fields['type_arguments'] = resolveAndValidate(v); return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7343,9 +7711,9 @@ typeBinding.assign = function(target: AssignableNode<'type_binding'>): TypeBindi
     return merged;
   };
   const node: any = { get type() { return 'type_binding'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7356,17 +7724,17 @@ typeBinding.assign = function(target: AssignableNode<'type_binding'>): TypeBindi
 } as any;
 
 export interface TypeCastExpressionConfig {
-  value: NodeData;
-  type: NodeData;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
 }
 
 export interface TypeCastExpressionFromInput {
-  value: FromValue;
-  type: FromValue;
+  value: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
 }
 
 export type TypeCastExpressionNode = NodeData<'type_cast_expression'> & {
-  typeField(value: NodeData): TypeCastExpressionNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): TypeCastExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7374,14 +7742,14 @@ export type TypeCastExpressionNode = NodeData<'type_cast_expression'> & {
 };
 
 export function typeCastExpression(
-  valueOrConfig: NodeData | TypeCastExpressionConfig,
+  valueOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | TypeCastExpressionConfig,
   config?: Partial<TypeCastExpressionConfig>,
 ): TypeCastExpressionNode {
-  const fields: any = isNodeData(valueOrConfig) || typeof valueOrConfig === 'string'
-    ? { 'value': resolveAndValidate(valueOrConfig), ...config }
+  const fields: any = isNodeData(valueOrConfig)
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'type_cast_expression', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7404,8 +7772,8 @@ typeCastExpression.assign = function(target: AssignableNode<'type_cast_expressio
     return merged;
   };
   const node: any = { get type() { return 'type_cast_expression'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7416,22 +7784,22 @@ typeCastExpression.assign = function(target: AssignableNode<'type_cast_expressio
 } as any;
 
 export interface TypeItemConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  type: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
   children?: NodeData[];
 }
 
 export interface TypeItemFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  type: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'where_clause'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'where_clause' } & WhereClauseFromInput))[];
 }
 
 export type TypeItemNode = NodeData<'type_item'> & {
-  typeParameters(value: NodeData): TypeItemNode;
-  typeField(value: NodeData): TypeItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): TypeItemNode;
+  typeField(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): TypeItemNode;
   children(...value: NodeData[]): TypeItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -7440,15 +7808,15 @@ export type TypeItemNode = NodeData<'type_item'> & {
 };
 
 export function typeItem(
-  nameOrConfig: NodeData | string | TypeItemConfig,
+  nameOrConfig: NodeData<'type_identifier'> | TypeItemConfig,
   config?: Partial<TypeItemConfig>,
 ): TypeItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -7474,9 +7842,9 @@ typeItem.assign = function(target: AssignableNode<'type_item'>): TypeItemNode {
     return merged;
   };
   const node: any = { get type() { return 'type_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7488,20 +7856,20 @@ typeItem.assign = function(target: AssignableNode<'type_item'>): TypeItemNode {
 } as any;
 
 export interface TypeParameterConfig {
-  name: NodeData | string;
-  bounds?: NodeData;
-  default_type?: NodeData;
+  name: NodeData<'type_identifier'>;
+  bounds?: NodeData<'trait_bounds'>;
+  default_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>;
 }
 
 export interface TypeParameterFromInput {
-  name: NodeData | string;
-  bounds?: FromValue;
-  default_type?: FromValue;
+  name: NodeData<'type_identifier'> | string;
+  bounds?: NodeData<'trait_bounds'> | TraitBoundsFromInput | FromValue[];
+  default_type?: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'> | string | ({ kind: 'abstract_type' } & AbstractTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'function_type' } & FunctionTypeFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'dynamic_type' } & DynamicTypeFromInput) | ({ kind: 'bounded_type' } & BoundedTypeFromInput) | ({ kind: 'removed_trait_bound' } & RemovedTraitBoundFromInput) | FromValue[];
 }
 
 export type TypeParameterNode = NodeData<'type_parameter'> & {
-  bounds(value: NodeData): TypeParameterNode;
-  defaultType(value: NodeData): TypeParameterNode;
+  bounds(value: NodeData<'trait_bounds'>): TypeParameterNode;
+  defaultType(value: NodeData<'abstract_type' | 'reference_type' | 'metavariable' | 'pointer_type' | 'generic_type' | 'scoped_type_identifier' | 'tuple_type' | 'unit_type' | 'array_type' | 'function_type' | 'type_identifier' | 'macro_invocation' | 'never_type' | 'dynamic_type' | 'bounded_type' | 'removed_trait_bound' | 'primitive_type'>): TypeParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7509,15 +7877,15 @@ export type TypeParameterNode = NodeData<'type_parameter'> & {
 };
 
 export function typeParameter(
-  nameOrConfig: NodeData | string | TypeParameterConfig,
+  nameOrConfig: NodeData<'type_identifier'> | TypeParameterConfig,
   config?: Partial<TypeParameterConfig>,
 ): TypeParameterNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_parameter', fields };
-  node.bounds = (v: any) => { fields['bounds'] = resolveAndValidate(v); return node; };
-  node.defaultType = (v: any) => { fields['default_type'] = resolveAndValidate(v); return node; };
+  node.bounds = (v: any) => { validateNodeText(v); fields['bounds'] = v; return node; };
+  node.defaultType = (v: any) => { validateNodeText(v); fields['default_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7540,9 +7908,9 @@ typeParameter.assign = function(target: AssignableNode<'type_parameter'>): TypeP
     return merged;
   };
   const node: any = { get type() { return 'type_parameter'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.bounds = (v: any) => { overrides['bounds'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.defaultType = (v: any) => { overrides['default_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.bounds = (v: any) => { validateNodeText(v); overrides['bounds'] = v; return node; };
+  node.defaultType = (v: any) => { validateNodeText(v); overrides['default_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7557,7 +7925,7 @@ export interface TypeParametersConfig {
 }
 
 export interface TypeParametersFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'attribute_item' | 'metavariable' | 'type_parameter' | 'lifetime_parameter' | 'const_parameter'> | string | ({ kind: 'attribute_item' } & AttributeItemFromInput) | ({ kind: 'type_parameter' } & TypeParameterFromInput) | ({ kind: 'lifetime_parameter' } & LifetimeParameterFromInput) | ({ kind: 'const_parameter' } & ConstParameterFromInput))[];
 }
 
 export type TypeParametersNode = NodeData<'type_parameters'> & {
@@ -7569,9 +7937,16 @@ export type TypeParametersNode = NodeData<'type_parameters'> & {
 };
 
 export function typeParameters(
-  config?: TypeParametersConfig,
+  childrenOrConfig?: NodeData<'attribute_item' | 'metavariable' | 'type_parameter' | 'lifetime_parameter' | 'const_parameter'> | NodeData<'attribute_item' | 'metavariable' | 'type_parameter' | 'lifetime_parameter' | 'const_parameter'>[] | TypeParametersConfig,
 ): TypeParametersNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_parameters', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7613,7 +7988,7 @@ export interface UnaryExpressionConfig {
 }
 
 export interface UnaryExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type UnaryExpressionNode = NodeData<'unary_expression'> & {
@@ -7625,9 +8000,16 @@ export type UnaryExpressionNode = NodeData<'unary_expression'> & {
 };
 
 export function unaryExpression(
-  config?: UnaryExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | UnaryExpressionConfig,
 ): UnaryExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'unary_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7665,22 +8047,22 @@ unaryExpression.assign = function(target: AssignableNode<'unary_expression'>): U
 } as any;
 
 export interface UnionItemConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  body: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  body: NodeData<'field_declaration_list'>;
   children?: NodeData[];
 }
 
 export interface UnionItemFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  body: NodeData<'field_declaration_list'> | FieldDeclarationListFromInput | FromValue[];
+  children?: (NodeData<'visibility_modifier' | 'where_clause'> | ({ kind: 'visibility_modifier' } & VisibilityModifierFromInput) | ({ kind: 'where_clause' } & WhereClauseFromInput))[];
 }
 
 export type UnionItemNode = NodeData<'union_item'> & {
-  typeParameters(value: NodeData): UnionItemNode;
-  body(value: NodeData): UnionItemNode;
+  typeParameters(value: NodeData<'type_parameters'>): UnionItemNode;
+  body(value: NodeData<'field_declaration_list'>): UnionItemNode;
   children(...value: NodeData[]): UnionItemNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -7689,15 +8071,15 @@ export type UnionItemNode = NodeData<'union_item'> & {
 };
 
 export function unionItem(
-  nameOrConfig: NodeData | string | UnionItemConfig,
+  nameOrConfig: NodeData<'type_identifier'> | UnionItemConfig,
   config?: Partial<UnionItemConfig>,
 ): UnionItemNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'union_item', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -7723,9 +8105,9 @@ unionItem.assign = function(target: AssignableNode<'union_item'>): UnionItemNode
     return merged;
   };
   const node: any = { get type() { return 'union_item'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7741,7 +8123,7 @@ export interface UnsafeBlockConfig {
 }
 
 export interface UnsafeBlockFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'block'> | BlockFromInput)[];
 }
 
 export type UnsafeBlockNode = NodeData<'unsafe_block'> & {
@@ -7753,9 +8135,16 @@ export type UnsafeBlockNode = NodeData<'unsafe_block'> & {
 };
 
 export function unsafeBlock(
-  config?: UnsafeBlockConfig,
+  childrenOrConfig?: NodeData<'block'> | NodeData<'block'>[] | UnsafeBlockConfig,
 ): UnsafeBlockNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'unsafe_block', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7793,17 +8182,17 @@ unsafeBlock.assign = function(target: AssignableNode<'unsafe_block'>): UnsafeBlo
 } as any;
 
 export interface UseAsClauseConfig {
-  path: NodeData;
-  alias: NodeData | string;
+  path: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>;
+  alias: NodeData<'identifier'>;
 }
 
 export interface UseAsClauseFromInput {
-  path: FromValue;
-  alias: NodeData | string;
+  path: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | string | ScopedIdentifierFromInput | FromValue[];
+  alias: NodeData<'identifier'> | string;
 }
 
 export type UseAsClauseNode = NodeData<'use_as_clause'> & {
-  alias(value: NodeData | string): UseAsClauseNode;
+  alias(value: NodeData<'identifier'>): UseAsClauseNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7811,14 +8200,14 @@ export type UseAsClauseNode = NodeData<'use_as_clause'> & {
 };
 
 export function useAsClause(
-  pathOrConfig: NodeData | UseAsClauseConfig,
+  pathOrConfig: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | UseAsClauseConfig,
   config?: Partial<UseAsClauseConfig>,
 ): UseAsClauseNode {
-  const fields: any = isNodeData(pathOrConfig) || typeof pathOrConfig === 'string'
-    ? { 'path': resolveAndValidate(pathOrConfig), ...config }
+  const fields: any = isNodeData(pathOrConfig)
+    ? { 'path': pathOrConfig, ...config }
     : pathOrConfig;
   const node: any = { type: 'use_as_clause', fields };
-  node.alias = (v: any) => { fields['alias'] = resolveAndValidate(v); return node; };
+  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7841,8 +8230,8 @@ useAsClause.assign = function(target: AssignableNode<'use_as_clause'>): UseAsCla
     return merged;
   };
   const node: any = { get type() { return 'use_as_clause'; }, get fields() { return getFields(); } };
-  node.path = (v: any) => { overrides['path'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alias = (v: any) => { overrides['alias'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.path = (v: any) => { validateNodeText(v); overrides['path'] = v; return node; };
+  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7857,7 +8246,7 @@ export interface UseBoundsConfig {
 }
 
 export interface UseBoundsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'lifetime' | 'type_identifier'> | string | LifetimeFromInput)[];
 }
 
 export type UseBoundsNode = NodeData<'use_bounds'> & {
@@ -7869,9 +8258,16 @@ export type UseBoundsNode = NodeData<'use_bounds'> & {
 };
 
 export function useBounds(
-  config?: UseBoundsConfig,
+  childrenOrConfig?: NodeData<'lifetime' | 'type_identifier'> | NodeData<'lifetime' | 'type_identifier'>[] | UseBoundsConfig,
 ): UseBoundsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'use_bounds', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7909,13 +8305,13 @@ useBounds.assign = function(target: AssignableNode<'use_bounds'>): UseBoundsNode
 } as any;
 
 export interface UseDeclarationConfig {
-  argument: NodeData;
+  argument: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'use_as_clause' | 'use_list' | 'scoped_use_list' | 'use_wildcard'>;
   children?: NodeData[];
 }
 
 export interface UseDeclarationFromInput {
-  argument: FromValue;
-  children?: FromValue | FromValue[];
+  argument: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'use_as_clause' | 'use_list' | 'scoped_use_list' | 'use_wildcard'> | string | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'use_as_clause' } & UseAsClauseFromInput) | ({ kind: 'use_list' } & UseListFromInput) | ({ kind: 'scoped_use_list' } & ScopedUseListFromInput) | ({ kind: 'use_wildcard' } & UseWildcardFromInput) | FromValue[];
+  children?: (NodeData<'visibility_modifier'> | VisibilityModifierFromInput)[];
 }
 
 export type UseDeclarationNode = NodeData<'use_declaration'> & {
@@ -7927,11 +8323,11 @@ export type UseDeclarationNode = NodeData<'use_declaration'> & {
 };
 
 export function useDeclaration(
-  argumentOrConfig: NodeData | UseDeclarationConfig,
+  argumentOrConfig: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'use_as_clause' | 'use_list' | 'scoped_use_list' | 'use_wildcard'> | UseDeclarationConfig,
   config?: Partial<UseDeclarationConfig>,
 ): UseDeclarationNode {
-  const fields: any = isNodeData(argumentOrConfig) || typeof argumentOrConfig === 'string'
-    ? { 'argument': resolveAndValidate(argumentOrConfig), ...config }
+  const fields: any = isNodeData(argumentOrConfig)
+    ? { 'argument': argumentOrConfig, ...config }
     : argumentOrConfig;
   const node: any = { type: 'use_declaration', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -7959,7 +8355,7 @@ useDeclaration.assign = function(target: AssignableNode<'use_declaration'>): Use
     return merged;
   };
   const node: any = { get type() { return 'use_declaration'; }, get fields() { return getFields(); } };
-  node.argument = (v: any) => { overrides['argument'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.argument = (v: any) => { validateNodeText(v); overrides['argument'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7975,7 +8371,7 @@ export interface UseListConfig {
 }
 
 export interface UseListFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'use_as_clause' | 'use_list' | 'scoped_use_list' | 'use_wildcard'> | string | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'use_as_clause' } & UseAsClauseFromInput) | ({ kind: 'use_list' } & UseListFromInput) | ({ kind: 'scoped_use_list' } & ScopedUseListFromInput) | ({ kind: 'use_wildcard' } & UseWildcardFromInput))[];
 }
 
 export type UseListNode = NodeData<'use_list'> & {
@@ -7987,9 +8383,16 @@ export type UseListNode = NodeData<'use_list'> & {
 };
 
 export function useList(
-  config?: UseListConfig,
+  childrenOrConfig?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'use_as_clause' | 'use_list' | 'scoped_use_list' | 'use_wildcard'> | NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier' | 'use_as_clause' | 'use_list' | 'scoped_use_list' | 'use_wildcard'>[] | UseListConfig,
 ): UseListNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'use_list', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8031,7 +8434,7 @@ export interface UseWildcardConfig {
 }
 
 export interface UseWildcardFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | string | ScopedIdentifierFromInput)[];
 }
 
 export type UseWildcardNode = NodeData<'use_wildcard'> & {
@@ -8043,9 +8446,16 @@ export type UseWildcardNode = NodeData<'use_wildcard'> & {
 };
 
 export function useWildcard(
-  config?: UseWildcardConfig,
+  childrenOrConfig?: NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'> | NodeData<'self' | 'identifier' | 'metavariable' | 'super' | 'crate' | 'scoped_identifier'>[] | UseWildcardConfig,
 ): UseWildcardNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'use_wildcard', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8083,17 +8493,17 @@ useWildcard.assign = function(target: AssignableNode<'use_wildcard'>): UseWildca
 } as any;
 
 export interface VariadicParameterConfig {
-  pattern?: NodeData;
+  pattern?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>;
   children?: NodeData[];
 }
 
 export interface VariadicParameterFromInput {
-  pattern?: FromValue;
-  children?: FromValue | FromValue[];
+  pattern?: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'> | string | number | boolean | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'negative_literal' } & NegativeLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_pattern' } & GenericPatternFromInput) | ({ kind: 'tuple_pattern' } & TuplePatternFromInput) | ({ kind: 'tuple_struct_pattern' } & TupleStructPatternFromInput) | ({ kind: 'struct_pattern' } & StructPatternFromInput) | ({ kind: 'ref_pattern' } & RefPatternFromInput) | ({ kind: 'slice_pattern' } & SlicePatternFromInput) | ({ kind: 'captured_pattern' } & CapturedPatternFromInput) | ({ kind: 'reference_pattern' } & ReferencePatternFromInput) | ({ kind: 'mut_pattern' } & MutPatternFromInput) | ({ kind: 'range_pattern' } & RangePatternFromInput) | ({ kind: 'or_pattern' } & OrPatternFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | FromValue[];
+  children?: (NodeData<'mutable_specifier'> | string)[];
 }
 
 export type VariadicParameterNode = NodeData<'variadic_parameter'> & {
-  pattern(value: NodeData): VariadicParameterNode;
+  pattern(value: NodeData<'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'negative_literal' | 'identifier' | 'scoped_identifier' | 'generic_pattern' | 'tuple_pattern' | 'tuple_struct_pattern' | 'struct_pattern' | 'ref_pattern' | 'slice_pattern' | 'captured_pattern' | 'reference_pattern' | 'remaining_field_pattern' | 'mut_pattern' | 'range_pattern' | 'or_pattern' | 'const_block' | 'macro_invocation'>): VariadicParameterNode;
   children(...value: NodeData[]): VariadicParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -8102,12 +8512,10 @@ export type VariadicParameterNode = NodeData<'variadic_parameter'> & {
 };
 
 export function variadicParameter(
-  childrenOrConfig?: string | NodeData | NodeData[] | VariadicParameterConfig,
+  childrenOrConfig?: NodeData<'mutable_specifier'> | NodeData<'mutable_specifier'>[] | VariadicParameterConfig,
 ): VariadicParameterNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'mutable_specifier', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -8115,7 +8523,7 @@ export function variadicParameter(
     fields = childrenOrConfig ?? {};
   }
   const node: any = { type: 'variadic_parameter', fields };
-  node.pattern = (v: any) => { fields['pattern'] = resolveAndValidate(v); return node; };
+  node.pattern = (v: any) => { validateNodeText(v); fields['pattern'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -8141,7 +8549,7 @@ variadicParameter.assign = function(target: AssignableNode<'variadic_parameter'>
     return merged;
   };
   const node: any = { get type() { return 'variadic_parameter'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -8157,7 +8565,7 @@ export interface VisibilityModifierConfig {
 }
 
 export interface VisibilityModifierFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'crate' | 'self' | 'super' | 'identifier' | 'metavariable' | 'scoped_identifier'> | string | ScopedIdentifierFromInput)[];
 }
 
 export type VisibilityModifierNode = NodeData<'visibility_modifier'> & {
@@ -8169,9 +8577,16 @@ export type VisibilityModifierNode = NodeData<'visibility_modifier'> & {
 };
 
 export function visibilityModifier(
-  config?: VisibilityModifierConfig,
+  childrenOrConfig?: NodeData<'crate' | 'self' | 'super' | 'identifier' | 'metavariable' | 'scoped_identifier'> | NodeData<'crate' | 'self' | 'super' | 'identifier' | 'metavariable' | 'scoped_identifier'>[] | VisibilityModifierConfig,
 ): VisibilityModifierNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'visibility_modifier', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8213,7 +8628,7 @@ export interface WhereClauseConfig {
 }
 
 export interface WhereClauseFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'where_predicate'> | WherePredicateFromInput)[];
 }
 
 export type WhereClauseNode = NodeData<'where_clause'> & {
@@ -8225,9 +8640,16 @@ export type WhereClauseNode = NodeData<'where_clause'> & {
 };
 
 export function whereClause(
-  config?: WhereClauseConfig,
+  childrenOrConfig?: NodeData<'where_predicate'> | NodeData<'where_predicate'>[] | WhereClauseConfig,
 ): WhereClauseNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'where_clause', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8265,17 +8687,17 @@ whereClause.assign = function(target: AssignableNode<'where_clause'>): WhereClau
 } as any;
 
 export interface WherePredicateConfig {
-  left: NodeData;
-  bounds: NodeData;
+  left: NodeData<'type_identifier' | 'lifetime' | 'scoped_type_identifier' | 'generic_type' | 'reference_type' | 'pointer_type' | 'tuple_type' | 'array_type' | 'higher_ranked_trait_bound' | 'primitive_type'>;
+  bounds: NodeData<'trait_bounds'>;
 }
 
 export interface WherePredicateFromInput {
-  left: FromValue;
-  bounds: FromValue;
+  left: NodeData<'type_identifier' | 'lifetime' | 'scoped_type_identifier' | 'generic_type' | 'reference_type' | 'pointer_type' | 'tuple_type' | 'array_type' | 'higher_ranked_trait_bound' | 'primitive_type'> | string | ({ kind: 'lifetime' } & LifetimeFromInput) | ({ kind: 'scoped_type_identifier' } & ScopedTypeIdentifierFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput) | ({ kind: 'reference_type' } & ReferenceTypeFromInput) | ({ kind: 'pointer_type' } & PointerTypeFromInput) | ({ kind: 'tuple_type' } & TupleTypeFromInput) | ({ kind: 'array_type' } & ArrayTypeFromInput) | ({ kind: 'higher_ranked_trait_bound' } & HigherRankedTraitBoundFromInput) | FromValue[];
+  bounds: NodeData<'trait_bounds'> | TraitBoundsFromInput | FromValue[];
 }
 
 export type WherePredicateNode = NodeData<'where_predicate'> & {
-  bounds(value: NodeData): WherePredicateNode;
+  bounds(value: NodeData<'trait_bounds'>): WherePredicateNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8283,14 +8705,14 @@ export type WherePredicateNode = NodeData<'where_predicate'> & {
 };
 
 export function wherePredicate(
-  leftOrConfig: NodeData | WherePredicateConfig,
+  leftOrConfig: NodeData<'type_identifier' | 'lifetime' | 'scoped_type_identifier' | 'generic_type' | 'reference_type' | 'pointer_type' | 'tuple_type' | 'array_type' | 'higher_ranked_trait_bound' | 'primitive_type'> | WherePredicateConfig,
   config?: Partial<WherePredicateConfig>,
 ): WherePredicateNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'where_predicate', fields };
-  node.bounds = (v: any) => { fields['bounds'] = resolveAndValidate(v); return node; };
+  node.bounds = (v: any) => { validateNodeText(v); fields['bounds'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8313,8 +8735,8 @@ wherePredicate.assign = function(target: AssignableNode<'where_predicate'>): Whe
     return merged;
   };
   const node: any = { get type() { return 'where_predicate'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.bounds = (v: any) => { overrides['bounds'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.bounds = (v: any) => { validateNodeText(v); overrides['bounds'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8325,19 +8747,19 @@ wherePredicate.assign = function(target: AssignableNode<'where_predicate'>): Whe
 } as any;
 
 export interface WhileExpressionConfig {
-  condition: NodeData;
-  body: NodeData;
+  condition: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'>;
+  body: NodeData<'block'>;
   children?: NodeData[];
 }
 
 export interface WhileExpressionFromInput {
-  condition: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  condition: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'> | string | number | boolean | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput) | ({ kind: 'let_condition' } & LetConditionFromInput) | ({ kind: 'let_chain' } & LetChainFromInput) | FromValue[];
+  body: NodeData<'block'> | BlockFromInput | FromValue[];
+  children?: (NodeData<'label'> | LabelFromInput)[];
 }
 
 export type WhileExpressionNode = NodeData<'while_expression'> & {
-  body(value: NodeData): WhileExpressionNode;
+  body(value: NodeData<'block'>): WhileExpressionNode;
   children(...value: NodeData[]): WhileExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -8346,14 +8768,14 @@ export type WhileExpressionNode = NodeData<'while_expression'> & {
 };
 
 export function whileExpression(
-  conditionOrConfig: NodeData | WhileExpressionConfig,
+  conditionOrConfig: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression' | 'let_condition' | 'let_chain'> | WhileExpressionConfig,
   config?: Partial<WhileExpressionConfig>,
 ): WhileExpressionNode {
-  const fields: any = isNodeData(conditionOrConfig) || typeof conditionOrConfig === 'string'
-    ? { 'condition': resolveAndValidate(conditionOrConfig), ...config }
+  const fields: any = isNodeData(conditionOrConfig)
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'while_expression', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -8379,8 +8801,8 @@ whileExpression.assign = function(target: AssignableNode<'while_expression'>): W
     return merged;
   };
   const node: any = { get type() { return 'while_expression'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { overrides['condition'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -8396,7 +8818,7 @@ export interface YieldExpressionConfig {
 }
 
 export interface YieldExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'reference_expression' } & ReferenceExpressionFromInput) | ({ kind: 'try_expression' } & TryExpressionFromInput) | ({ kind: 'binary_expression' } & BinaryExpressionFromInput) | ({ kind: 'assignment_expression' } & AssignmentExpressionFromInput) | ({ kind: 'compound_assignment_expr' } & CompoundAssignmentExprFromInput) | ({ kind: 'type_cast_expression' } & TypeCastExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'return_expression' } & ReturnExpressionFromInput) | ({ kind: 'yield_expression' } & YieldExpressionFromInput) | ({ kind: 'string_literal' } & StringLiteralFromInput) | ({ kind: 'raw_string_literal' } & RawStringLiteralFromInput) | ({ kind: 'scoped_identifier' } & ScopedIdentifierFromInput) | ({ kind: 'generic_function' } & GenericFunctionFromInput) | ({ kind: 'await_expression' } & AwaitExpressionFromInput) | ({ kind: 'field_expression' } & FieldExpressionFromInput) | ({ kind: 'array_expression' } & ArrayExpressionFromInput) | ({ kind: 'tuple_expression' } & TupleExpressionFromInput) | ({ kind: 'macro_invocation' } & MacroInvocationFromInput) | ({ kind: 'break_expression' } & BreakExpressionFromInput) | ({ kind: 'continue_expression' } & ContinueExpressionFromInput) | ({ kind: 'index_expression' } & IndexExpressionFromInput) | ({ kind: 'closure_expression' } & ClosureExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'struct_expression' } & StructExpressionFromInput) | ({ kind: 'unsafe_block' } & UnsafeBlockFromInput) | ({ kind: 'async_block' } & AsyncBlockFromInput) | ({ kind: 'gen_block' } & GenBlockFromInput) | ({ kind: 'try_block' } & TryBlockFromInput) | ({ kind: 'block' } & BlockFromInput) | ({ kind: 'if_expression' } & IfExpressionFromInput) | ({ kind: 'match_expression' } & MatchExpressionFromInput) | ({ kind: 'while_expression' } & WhileExpressionFromInput) | ({ kind: 'loop_expression' } & LoopExpressionFromInput) | ({ kind: 'for_expression' } & ForExpressionFromInput) | ({ kind: 'const_block' } & ConstBlockFromInput) | ({ kind: 'range_expression' } & RangeExpressionFromInput))[];
 }
 
 export type YieldExpressionNode = NodeData<'yield_expression'> & {
@@ -8408,9 +8830,16 @@ export type YieldExpressionNode = NodeData<'yield_expression'> & {
 };
 
 export function yieldExpression(
-  config?: YieldExpressionConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'> | NodeData<'unary_expression' | 'reference_expression' | 'try_expression' | 'binary_expression' | 'assignment_expression' | 'compound_assignment_expr' | 'type_cast_expression' | 'call_expression' | 'return_expression' | 'yield_expression' | 'string_literal' | 'raw_string_literal' | 'char_literal' | 'boolean_literal' | 'integer_literal' | 'float_literal' | 'identifier' | 'self' | 'scoped_identifier' | 'generic_function' | 'await_expression' | 'field_expression' | 'array_expression' | 'tuple_expression' | 'macro_invocation' | 'unit_expression' | 'break_expression' | 'continue_expression' | 'index_expression' | 'metavariable' | 'closure_expression' | 'parenthesized_expression' | 'struct_expression' | 'unsafe_block' | 'async_block' | 'gen_block' | 'try_block' | 'block' | 'if_expression' | 'match_expression' | 'while_expression' | 'loop_expression' | 'for_expression' | 'const_block' | 'range_expression'>[] | YieldExpressionConfig,
 ): YieldExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'yield_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -9725,20 +10154,23 @@ function getFromContext(): FromContext {
 }
 
 export namespace abstractType {
-  export function from(input: AbstractTypeFromInput): AbstractTypeNode {
-    return resolveFromInput('abstract_type', input as any, getFromContext()) as any;
+  export function from(input: AbstractTypeFromInput | FromValue[]): AbstractTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('abstract_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace arguments_ {
-  export function from(input: ArgumentsFromInput): ArgumentsNode {
-    return resolveFromInput('arguments', input as any, getFromContext()) as any;
+  export function from(input: ArgumentsFromInput | FromValue[]): ArgumentsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('arguments', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace arrayExpression {
-  export function from(input: ArrayExpressionFromInput): ArrayExpressionNode {
-    return resolveFromInput('array_expression', input as any, getFromContext()) as any;
+  export function from(input: ArrayExpressionFromInput | FromValue[]): ArrayExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('array_expression', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9755,38 +10187,44 @@ export namespace assignmentExpression {
 }
 
 export namespace associatedType {
-  export function from(input: AssociatedTypeFromInput): AssociatedTypeNode {
-    return resolveFromInput('associated_type', input as any, getFromContext()) as any;
+  export function from(input: AssociatedTypeFromInput | FromValue[]): AssociatedTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('associated_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace asyncBlock {
-  export function from(input: AsyncBlockFromInput): AsyncBlockNode {
-    return resolveFromInput('async_block', input as any, getFromContext()) as any;
+  export function from(input: AsyncBlockFromInput | FromValue[]): AsyncBlockNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('async_block', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace attribute {
-  export function from(input: AttributeFromInput): AttributeNode {
-    return resolveFromInput('attribute', input as any, getFromContext()) as any;
+  export function from(input: AttributeFromInput | FromValue[]): AttributeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('attribute', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace attributeItem {
-  export function from(input: AttributeItemFromInput): AttributeItemNode {
-    return resolveFromInput('attribute_item', input as any, getFromContext()) as any;
+  export function from(input: AttributeItemFromInput | FromValue[]): AttributeItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('attribute_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace awaitExpression {
-  export function from(input: AwaitExpressionFromInput): AwaitExpressionNode {
-    return resolveFromInput('await_expression', input as any, getFromContext()) as any;
+  export function from(input: AwaitExpressionFromInput | FromValue[]): AwaitExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('await_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace baseFieldInitializer {
-  export function from(input: BaseFieldInitializerFromInput): BaseFieldInitializerNode {
-    return resolveFromInput('base_field_initializer', input as any, getFromContext()) as any;
+  export function from(input: BaseFieldInitializerFromInput | FromValue[]): BaseFieldInitializerNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('base_field_initializer', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9797,8 +10235,9 @@ export namespace binaryExpression {
 }
 
 export namespace block {
-  export function from(input: BlockFromInput): BlockNode {
-    return resolveFromInput('block', input as any, getFromContext()) as any;
+  export function from(input: BlockFromInput | FromValue[]): BlockNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('block', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9809,20 +10248,23 @@ export namespace blockComment {
 }
 
 export namespace boundedType {
-  export function from(input: BoundedTypeFromInput): BoundedTypeNode {
-    return resolveFromInput('bounded_type', input as any, getFromContext()) as any;
+  export function from(input: BoundedTypeFromInput | FromValue[]): BoundedTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('bounded_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace bracketedType {
-  export function from(input: BracketedTypeFromInput): BracketedTypeNode {
-    return resolveFromInput('bracketed_type', input as any, getFromContext()) as any;
+  export function from(input: BracketedTypeFromInput | FromValue[]): BracketedTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('bracketed_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace breakExpression {
-  export function from(input: BreakExpressionFromInput): BreakExpressionNode {
-    return resolveFromInput('break_expression', input as any, getFromContext()) as any;
+  export function from(input: BreakExpressionFromInput | FromValue[]): BreakExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('break_expression', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9833,8 +10275,9 @@ export namespace callExpression {
 }
 
 export namespace capturedPattern {
-  export function from(input: CapturedPatternFromInput): CapturedPatternNode {
-    return resolveFromInput('captured_pattern', input as any, getFromContext()) as any;
+  export function from(input: CapturedPatternFromInput | FromValue[]): CapturedPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('captured_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9845,8 +10288,9 @@ export namespace closureExpression {
 }
 
 export namespace closureParameters {
-  export function from(input: ClosureParametersFromInput): ClosureParametersNode {
-    return resolveFromInput('closure_parameters', input as any, getFromContext()) as any;
+  export function from(input: ClosureParametersFromInput | FromValue[]): ClosureParametersNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('closure_parameters', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9863,8 +10307,9 @@ export namespace constBlock {
 }
 
 export namespace constItem {
-  export function from(input: ConstItemFromInput): ConstItemNode {
-    return resolveFromInput('const_item', input as any, getFromContext()) as any;
+  export function from(input: ConstItemFromInput | FromValue[]): ConstItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('const_item', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9875,14 +10320,16 @@ export namespace constParameter {
 }
 
 export namespace continueExpression {
-  export function from(input: ContinueExpressionFromInput): ContinueExpressionNode {
-    return resolveFromInput('continue_expression', input as any, getFromContext()) as any;
+  export function from(input: ContinueExpressionFromInput | FromValue[]): ContinueExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('continue_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace declarationList {
-  export function from(input: DeclarationListFromInput): DeclarationListNode {
-    return resolveFromInput('declaration_list', input as any, getFromContext()) as any;
+  export function from(input: DeclarationListFromInput | FromValue[]): DeclarationListNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('declaration_list', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9893,56 +10340,65 @@ export namespace dynamicType {
 }
 
 export namespace elseClause {
-  export function from(input: ElseClauseFromInput): ElseClauseNode {
-    return resolveFromInput('else_clause', input as any, getFromContext()) as any;
+  export function from(input: ElseClauseFromInput | FromValue[]): ElseClauseNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('else_clause', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace enumItem {
-  export function from(input: EnumItemFromInput): EnumItemNode {
-    return resolveFromInput('enum_item', input as any, getFromContext()) as any;
+  export function from(input: EnumItemFromInput | FromValue[]): EnumItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('enum_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace enumVariant {
-  export function from(input: EnumVariantFromInput): EnumVariantNode {
-    return resolveFromInput('enum_variant', input as any, getFromContext()) as any;
+  export function from(input: EnumVariantFromInput | FromValue[]): EnumVariantNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('enum_variant', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace enumVariantList {
-  export function from(input: EnumVariantListFromInput): EnumVariantListNode {
-    return resolveFromInput('enum_variant_list', input as any, getFromContext()) as any;
+  export function from(input: EnumVariantListFromInput | FromValue[]): EnumVariantListNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('enum_variant_list', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace expressionStatement {
-  export function from(input: ExpressionStatementFromInput): ExpressionStatementNode {
-    return resolveFromInput('expression_statement', input as any, getFromContext()) as any;
+  export function from(input: ExpressionStatementFromInput | FromValue[]): ExpressionStatementNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('expression_statement', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace externCrateDeclaration {
-  export function from(input: ExternCrateDeclarationFromInput): ExternCrateDeclarationNode {
-    return resolveFromInput('extern_crate_declaration', input as any, getFromContext()) as any;
+  export function from(input: ExternCrateDeclarationFromInput | FromValue[]): ExternCrateDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('extern_crate_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace externModifier {
-  export function from(input: ExternModifierFromInput): ExternModifierNode {
-    return resolveFromInput('extern_modifier', input as any, getFromContext()) as any;
+  export function from(input: ExternModifierFromInput | FromValue[]): ExternModifierNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('extern_modifier', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace fieldDeclaration {
-  export function from(input: FieldDeclarationFromInput): FieldDeclarationNode {
-    return resolveFromInput('field_declaration', input as any, getFromContext()) as any;
+  export function from(input: FieldDeclarationFromInput | FromValue[]): FieldDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('field_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace fieldDeclarationList {
-  export function from(input: FieldDeclarationListFromInput): FieldDeclarationListNode {
-    return resolveFromInput('field_declaration_list', input as any, getFromContext()) as any;
+  export function from(input: FieldDeclarationListFromInput | FromValue[]): FieldDeclarationListNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('field_declaration_list', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -9953,68 +10409,79 @@ export namespace fieldExpression {
 }
 
 export namespace fieldInitializer {
-  export function from(input: FieldInitializerFromInput): FieldInitializerNode {
-    return resolveFromInput('field_initializer', input as any, getFromContext()) as any;
+  export function from(input: FieldInitializerFromInput | FromValue[]): FieldInitializerNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('field_initializer', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace fieldInitializerList {
-  export function from(input: FieldInitializerListFromInput): FieldInitializerListNode {
-    return resolveFromInput('field_initializer_list', input as any, getFromContext()) as any;
+  export function from(input: FieldInitializerListFromInput | FromValue[]): FieldInitializerListNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('field_initializer_list', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace fieldPattern {
-  export function from(input: FieldPatternFromInput): FieldPatternNode {
-    return resolveFromInput('field_pattern', input as any, getFromContext()) as any;
+  export function from(input: FieldPatternFromInput | FromValue[]): FieldPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('field_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace forExpression {
-  export function from(input: ForExpressionFromInput): ForExpressionNode {
-    return resolveFromInput('for_expression', input as any, getFromContext()) as any;
+  export function from(input: ForExpressionFromInput | FromValue[]): ForExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('for_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace forLifetimes {
-  export function from(input: ForLifetimesFromInput): ForLifetimesNode {
-    return resolveFromInput('for_lifetimes', input as any, getFromContext()) as any;
+  export function from(input: ForLifetimesFromInput | FromValue[]): ForLifetimesNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('for_lifetimes', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace foreignModItem {
-  export function from(input: ForeignModItemFromInput): ForeignModItemNode {
-    return resolveFromInput('foreign_mod_item', input as any, getFromContext()) as any;
+  export function from(input: ForeignModItemFromInput | FromValue[]): ForeignModItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('foreign_mod_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace functionItem {
-  export function from(input: FunctionItemFromInput): FunctionItemNode {
-    return resolveFromInput('function_item', input as any, getFromContext()) as any;
+  export function from(input: FunctionItemFromInput | FromValue[]): FunctionItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('function_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace functionModifiers {
-  export function from(input: FunctionModifiersFromInput): FunctionModifiersNode {
-    return resolveFromInput('function_modifiers', input as any, getFromContext()) as any;
+  export function from(input: FunctionModifiersFromInput | FromValue[]): FunctionModifiersNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('function_modifiers', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace functionSignatureItem {
-  export function from(input: FunctionSignatureItemFromInput): FunctionSignatureItemNode {
-    return resolveFromInput('function_signature_item', input as any, getFromContext()) as any;
+  export function from(input: FunctionSignatureItemFromInput | FromValue[]): FunctionSignatureItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('function_signature_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace functionType {
-  export function from(input: FunctionTypeFromInput): FunctionTypeNode {
-    return resolveFromInput('function_type', input as any, getFromContext()) as any;
+  export function from(input: FunctionTypeFromInput | FromValue[]): FunctionTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('function_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace genBlock {
-  export function from(input: GenBlockFromInput): GenBlockNode {
-    return resolveFromInput('gen_block', input as any, getFromContext()) as any;
+  export function from(input: GenBlockFromInput | FromValue[]): GenBlockNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('gen_block', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10025,8 +10492,9 @@ export namespace genericFunction {
 }
 
 export namespace genericPattern {
-  export function from(input: GenericPatternFromInput): GenericPatternNode {
-    return resolveFromInput('generic_pattern', input as any, getFromContext()) as any;
+  export function from(input: GenericPatternFromInput | FromValue[]): GenericPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('generic_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10055,32 +10523,37 @@ export namespace ifExpression {
 }
 
 export namespace implItem {
-  export function from(input: ImplItemFromInput): ImplItemNode {
-    return resolveFromInput('impl_item', input as any, getFromContext()) as any;
+  export function from(input: ImplItemFromInput | FromValue[]): ImplItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('impl_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace indexExpression {
-  export function from(input: IndexExpressionFromInput): IndexExpressionNode {
-    return resolveFromInput('index_expression', input as any, getFromContext()) as any;
+  export function from(input: IndexExpressionFromInput | FromValue[]): IndexExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('index_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace innerAttributeItem {
-  export function from(input: InnerAttributeItemFromInput): InnerAttributeItemNode {
-    return resolveFromInput('inner_attribute_item', input as any, getFromContext()) as any;
+  export function from(input: InnerAttributeItemFromInput | FromValue[]): InnerAttributeItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('inner_attribute_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace label {
-  export function from(input: LabelFromInput): LabelNode {
-    return resolveFromInput('label', input as any, getFromContext()) as any;
+  export function from(input: LabelFromInput | FromValue[]): LabelNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('label', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace letChain {
-  export function from(input: LetChainFromInput): LetChainNode {
-    return resolveFromInput('let_chain', input as any, getFromContext()) as any;
+  export function from(input: LetChainFromInput | FromValue[]): LetChainNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('let_chain', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10091,14 +10564,16 @@ export namespace letCondition {
 }
 
 export namespace letDeclaration {
-  export function from(input: LetDeclarationFromInput): LetDeclarationNode {
-    return resolveFromInput('let_declaration', input as any, getFromContext()) as any;
+  export function from(input: LetDeclarationFromInput | FromValue[]): LetDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('let_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace lifetime {
-  export function from(input: LifetimeFromInput): LifetimeNode {
-    return resolveFromInput('lifetime', input as any, getFromContext()) as any;
+  export function from(input: LifetimeFromInput | FromValue[]): LifetimeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('lifetime', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10115,20 +10590,23 @@ export namespace lineComment {
 }
 
 export namespace loopExpression {
-  export function from(input: LoopExpressionFromInput): LoopExpressionNode {
-    return resolveFromInput('loop_expression', input as any, getFromContext()) as any;
+  export function from(input: LoopExpressionFromInput | FromValue[]): LoopExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('loop_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace macroDefinition {
-  export function from(input: MacroDefinitionFromInput): MacroDefinitionNode {
-    return resolveFromInput('macro_definition', input as any, getFromContext()) as any;
+  export function from(input: MacroDefinitionFromInput | FromValue[]): MacroDefinitionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('macro_definition', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace macroInvocation {
-  export function from(input: MacroInvocationFromInput): MacroInvocationNode {
-    return resolveFromInput('macro_invocation', input as any, getFromContext()) as any;
+  export function from(input: MacroInvocationFromInput | FromValue[]): MacroInvocationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('macro_invocation', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10139,14 +10617,16 @@ export namespace macroRule {
 }
 
 export namespace matchArm {
-  export function from(input: MatchArmFromInput): MatchArmNode {
-    return resolveFromInput('match_arm', input as any, getFromContext()) as any;
+  export function from(input: MatchArmFromInput | FromValue[]): MatchArmNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('match_arm', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace matchBlock {
-  export function from(input: MatchBlockFromInput): MatchBlockNode {
-    return resolveFromInput('match_block', input as any, getFromContext()) as any;
+  export function from(input: MatchBlockFromInput | FromValue[]): MatchBlockNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('match_block', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10157,62 +10637,72 @@ export namespace matchExpression {
 }
 
 export namespace matchPattern {
-  export function from(input: MatchPatternFromInput): MatchPatternNode {
-    return resolveFromInput('match_pattern', input as any, getFromContext()) as any;
+  export function from(input: MatchPatternFromInput | FromValue[]): MatchPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('match_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace modItem {
-  export function from(input: ModItemFromInput): ModItemNode {
-    return resolveFromInput('mod_item', input as any, getFromContext()) as any;
+  export function from(input: ModItemFromInput | FromValue[]): ModItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('mod_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace mutPattern {
-  export function from(input: MutPatternFromInput): MutPatternNode {
-    return resolveFromInput('mut_pattern', input as any, getFromContext()) as any;
+  export function from(input: MutPatternFromInput | FromValue[]): MutPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('mut_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace negativeLiteral {
-  export function from(input: NegativeLiteralFromInput): NegativeLiteralNode {
-    return resolveFromInput('negative_literal', input as any, getFromContext()) as any;
+  export function from(input: NegativeLiteralFromInput | FromValue[]): NegativeLiteralNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('negative_literal', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace orPattern {
-  export function from(input: OrPatternFromInput): OrPatternNode {
-    return resolveFromInput('or_pattern', input as any, getFromContext()) as any;
+  export function from(input: OrPatternFromInput | FromValue[]): OrPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('or_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace orderedFieldDeclarationList {
-  export function from(input: OrderedFieldDeclarationListFromInput): OrderedFieldDeclarationListNode {
-    return resolveFromInput('ordered_field_declaration_list', input as any, getFromContext()) as any;
+  export function from(input: OrderedFieldDeclarationListFromInput | FromValue[]): OrderedFieldDeclarationListNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('ordered_field_declaration_list', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace parameter {
-  export function from(input: ParameterFromInput): ParameterNode {
-    return resolveFromInput('parameter', input as any, getFromContext()) as any;
+  export function from(input: ParameterFromInput | FromValue[]): ParameterNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('parameter', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace parameters {
-  export function from(input: ParametersFromInput): ParametersNode {
-    return resolveFromInput('parameters', input as any, getFromContext()) as any;
+  export function from(input: ParametersFromInput | FromValue[]): ParametersNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('parameters', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace parenthesizedExpression {
-  export function from(input: ParenthesizedExpressionFromInput): ParenthesizedExpressionNode {
-    return resolveFromInput('parenthesized_expression', input as any, getFromContext()) as any;
+  export function from(input: ParenthesizedExpressionFromInput | FromValue[]): ParenthesizedExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('parenthesized_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace pointerType {
-  export function from(input: PointerTypeFromInput): PointerTypeNode {
-    return resolveFromInput('pointer_type', input as any, getFromContext()) as any;
+  export function from(input: PointerTypeFromInput | FromValue[]): PointerTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('pointer_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10223,8 +10713,9 @@ export namespace qualifiedType {
 }
 
 export namespace rangeExpression {
-  export function from(input: RangeExpressionFromInput): RangeExpressionNode {
-    return resolveFromInput('range_expression', input as any, getFromContext()) as any;
+  export function from(input: RangeExpressionFromInput | FromValue[]): RangeExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('range_expression', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10235,44 +10726,51 @@ export namespace rangePattern {
 }
 
 export namespace rawStringLiteral {
-  export function from(input: RawStringLiteralFromInput): RawStringLiteralNode {
-    return resolveFromInput('raw_string_literal', input as any, getFromContext()) as any;
+  export function from(input: RawStringLiteralFromInput | FromValue[]): RawStringLiteralNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('raw_string_literal', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace refPattern {
-  export function from(input: RefPatternFromInput): RefPatternNode {
-    return resolveFromInput('ref_pattern', input as any, getFromContext()) as any;
+  export function from(input: RefPatternFromInput | FromValue[]): RefPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('ref_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace referenceExpression {
-  export function from(input: ReferenceExpressionFromInput): ReferenceExpressionNode {
-    return resolveFromInput('reference_expression', input as any, getFromContext()) as any;
+  export function from(input: ReferenceExpressionFromInput | FromValue[]): ReferenceExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('reference_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace referencePattern {
-  export function from(input: ReferencePatternFromInput): ReferencePatternNode {
-    return resolveFromInput('reference_pattern', input as any, getFromContext()) as any;
+  export function from(input: ReferencePatternFromInput | FromValue[]): ReferencePatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('reference_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace referenceType {
-  export function from(input: ReferenceTypeFromInput): ReferenceTypeNode {
-    return resolveFromInput('reference_type', input as any, getFromContext()) as any;
+  export function from(input: ReferenceTypeFromInput | FromValue[]): ReferenceTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('reference_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace removedTraitBound {
-  export function from(input: RemovedTraitBoundFromInput): RemovedTraitBoundNode {
-    return resolveFromInput('removed_trait_bound', input as any, getFromContext()) as any;
+  export function from(input: RemovedTraitBoundFromInput | FromValue[]): RemovedTraitBoundNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('removed_trait_bound', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace returnExpression {
-  export function from(input: ReturnExpressionFromInput): ReturnExpressionNode {
-    return resolveFromInput('return_expression', input as any, getFromContext()) as any;
+  export function from(input: ReturnExpressionFromInput | FromValue[]): ReturnExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('return_expression', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10295,38 +10793,44 @@ export namespace scopedUseList {
 }
 
 export namespace selfParameter {
-  export function from(input: SelfParameterFromInput): SelfParameterNode {
-    return resolveFromInput('self_parameter', input as any, getFromContext()) as any;
+  export function from(input: SelfParameterFromInput | FromValue[]): SelfParameterNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('self_parameter', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace shorthandFieldInitializer {
-  export function from(input: ShorthandFieldInitializerFromInput): ShorthandFieldInitializerNode {
-    return resolveFromInput('shorthand_field_initializer', input as any, getFromContext()) as any;
+  export function from(input: ShorthandFieldInitializerFromInput | FromValue[]): ShorthandFieldInitializerNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('shorthand_field_initializer', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace slicePattern {
-  export function from(input: SlicePatternFromInput): SlicePatternNode {
-    return resolveFromInput('slice_pattern', input as any, getFromContext()) as any;
+  export function from(input: SlicePatternFromInput | FromValue[]): SlicePatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('slice_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace sourceFile {
-  export function from(input: SourceFileFromInput): SourceFileNode {
-    return resolveFromInput('source_file', input as any, getFromContext()) as any;
+  export function from(input: SourceFileFromInput | FromValue[]): SourceFileNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('source_file', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace staticItem {
-  export function from(input: StaticItemFromInput): StaticItemNode {
-    return resolveFromInput('static_item', input as any, getFromContext()) as any;
+  export function from(input: StaticItemFromInput | FromValue[]): StaticItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('static_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace stringLiteral {
-  export function from(input: StringLiteralFromInput): StringLiteralNode {
-    return resolveFromInput('string_literal', input as any, getFromContext()) as any;
+  export function from(input: StringLiteralFromInput | FromValue[]): StringLiteralNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('string_literal', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10337,14 +10841,16 @@ export namespace structExpression {
 }
 
 export namespace structItem {
-  export function from(input: StructItemFromInput): StructItemNode {
-    return resolveFromInput('struct_item', input as any, getFromContext()) as any;
+  export function from(input: StructItemFromInput | FromValue[]): StructItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('struct_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace structPattern {
-  export function from(input: StructPatternFromInput): StructPatternNode {
-    return resolveFromInput('struct_pattern', input as any, getFromContext()) as any;
+  export function from(input: StructPatternFromInput | FromValue[]): StructPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('struct_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10355,80 +10861,93 @@ export namespace tokenBindingPattern {
 }
 
 export namespace tokenRepetition {
-  export function from(input: TokenRepetitionFromInput): TokenRepetitionNode {
-    return resolveFromInput('token_repetition', input as any, getFromContext()) as any;
+  export function from(input: TokenRepetitionFromInput | FromValue[]): TokenRepetitionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('token_repetition', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tokenRepetitionPattern {
-  export function from(input: TokenRepetitionPatternFromInput): TokenRepetitionPatternNode {
-    return resolveFromInput('token_repetition_pattern', input as any, getFromContext()) as any;
+  export function from(input: TokenRepetitionPatternFromInput | FromValue[]): TokenRepetitionPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('token_repetition_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tokenTree {
-  export function from(input: TokenTreeFromInput): TokenTreeNode {
-    return resolveFromInput('token_tree', input as any, getFromContext()) as any;
+  export function from(input: TokenTreeFromInput | FromValue[]): TokenTreeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('token_tree', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tokenTreePattern {
-  export function from(input: TokenTreePatternFromInput): TokenTreePatternNode {
-    return resolveFromInput('token_tree_pattern', input as any, getFromContext()) as any;
+  export function from(input: TokenTreePatternFromInput | FromValue[]): TokenTreePatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('token_tree_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace traitBounds {
-  export function from(input: TraitBoundsFromInput): TraitBoundsNode {
-    return resolveFromInput('trait_bounds', input as any, getFromContext()) as any;
+  export function from(input: TraitBoundsFromInput | FromValue[]): TraitBoundsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('trait_bounds', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace traitItem {
-  export function from(input: TraitItemFromInput): TraitItemNode {
-    return resolveFromInput('trait_item', input as any, getFromContext()) as any;
+  export function from(input: TraitItemFromInput | FromValue[]): TraitItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('trait_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tryBlock {
-  export function from(input: TryBlockFromInput): TryBlockNode {
-    return resolveFromInput('try_block', input as any, getFromContext()) as any;
+  export function from(input: TryBlockFromInput | FromValue[]): TryBlockNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('try_block', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tryExpression {
-  export function from(input: TryExpressionFromInput): TryExpressionNode {
-    return resolveFromInput('try_expression', input as any, getFromContext()) as any;
+  export function from(input: TryExpressionFromInput | FromValue[]): TryExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('try_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tupleExpression {
-  export function from(input: TupleExpressionFromInput): TupleExpressionNode {
-    return resolveFromInput('tuple_expression', input as any, getFromContext()) as any;
+  export function from(input: TupleExpressionFromInput | FromValue[]): TupleExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('tuple_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tuplePattern {
-  export function from(input: TuplePatternFromInput): TuplePatternNode {
-    return resolveFromInput('tuple_pattern', input as any, getFromContext()) as any;
+  export function from(input: TuplePatternFromInput | FromValue[]): TuplePatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('tuple_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tupleStructPattern {
-  export function from(input: TupleStructPatternFromInput): TupleStructPatternNode {
-    return resolveFromInput('tuple_struct_pattern', input as any, getFromContext()) as any;
+  export function from(input: TupleStructPatternFromInput | FromValue[]): TupleStructPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('tuple_struct_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace tupleType {
-  export function from(input: TupleTypeFromInput): TupleTypeNode {
-    return resolveFromInput('tuple_type', input as any, getFromContext()) as any;
+  export function from(input: TupleTypeFromInput | FromValue[]): TupleTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('tuple_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace typeArguments {
-  export function from(input: TypeArgumentsFromInput): TypeArgumentsNode {
-    return resolveFromInput('type_arguments', input as any, getFromContext()) as any;
+  export function from(input: TypeArgumentsFromInput | FromValue[]): TypeArgumentsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_arguments', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10445,8 +10964,9 @@ export namespace typeCastExpression {
 }
 
 export namespace typeItem {
-  export function from(input: TypeItemFromInput): TypeItemNode {
-    return resolveFromInput('type_item', input as any, getFromContext()) as any;
+  export function from(input: TypeItemFromInput | FromValue[]): TypeItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_item', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10457,26 +10977,30 @@ export namespace typeParameter {
 }
 
 export namespace typeParameters {
-  export function from(input: TypeParametersFromInput): TypeParametersNode {
-    return resolveFromInput('type_parameters', input as any, getFromContext()) as any;
+  export function from(input: TypeParametersFromInput | FromValue[]): TypeParametersNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_parameters', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace unaryExpression {
-  export function from(input: UnaryExpressionFromInput): UnaryExpressionNode {
-    return resolveFromInput('unary_expression', input as any, getFromContext()) as any;
+  export function from(input: UnaryExpressionFromInput | FromValue[]): UnaryExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('unary_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace unionItem {
-  export function from(input: UnionItemFromInput): UnionItemNode {
-    return resolveFromInput('union_item', input as any, getFromContext()) as any;
+  export function from(input: UnionItemFromInput | FromValue[]): UnionItemNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('union_item', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace unsafeBlock {
-  export function from(input: UnsafeBlockFromInput): UnsafeBlockNode {
-    return resolveFromInput('unsafe_block', input as any, getFromContext()) as any;
+  export function from(input: UnsafeBlockFromInput | FromValue[]): UnsafeBlockNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('unsafe_block', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10487,44 +11011,51 @@ export namespace useAsClause {
 }
 
 export namespace useBounds {
-  export function from(input: UseBoundsFromInput): UseBoundsNode {
-    return resolveFromInput('use_bounds', input as any, getFromContext()) as any;
+  export function from(input: UseBoundsFromInput | FromValue[]): UseBoundsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('use_bounds', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace useDeclaration {
-  export function from(input: UseDeclarationFromInput): UseDeclarationNode {
-    return resolveFromInput('use_declaration', input as any, getFromContext()) as any;
+  export function from(input: UseDeclarationFromInput | FromValue[]): UseDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('use_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace useList {
-  export function from(input: UseListFromInput): UseListNode {
-    return resolveFromInput('use_list', input as any, getFromContext()) as any;
+  export function from(input: UseListFromInput | FromValue[]): UseListNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('use_list', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace useWildcard {
-  export function from(input: UseWildcardFromInput): UseWildcardNode {
-    return resolveFromInput('use_wildcard', input as any, getFromContext()) as any;
+  export function from(input: UseWildcardFromInput | FromValue[]): UseWildcardNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('use_wildcard', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace variadicParameter {
-  export function from(input: VariadicParameterFromInput): VariadicParameterNode {
-    return resolveFromInput('variadic_parameter', input as any, getFromContext()) as any;
+  export function from(input: VariadicParameterFromInput | FromValue[]): VariadicParameterNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('variadic_parameter', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace visibilityModifier {
-  export function from(input: VisibilityModifierFromInput): VisibilityModifierNode {
-    return resolveFromInput('visibility_modifier', input as any, getFromContext()) as any;
+  export function from(input: VisibilityModifierFromInput | FromValue[]): VisibilityModifierNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('visibility_modifier', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace whereClause {
-  export function from(input: WhereClauseFromInput): WhereClauseNode {
-    return resolveFromInput('where_clause', input as any, getFromContext()) as any;
+  export function from(input: WhereClauseFromInput | FromValue[]): WhereClauseNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('where_clause', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10535,13 +11066,15 @@ export namespace wherePredicate {
 }
 
 export namespace whileExpression {
-  export function from(input: WhileExpressionFromInput): WhileExpressionNode {
-    return resolveFromInput('while_expression', input as any, getFromContext()) as any;
+  export function from(input: WhileExpressionFromInput | FromValue[]): WhileExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('while_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace yieldExpression {
-  export function from(input: YieldExpressionFromInput): YieldExpressionNode {
-    return resolveFromInput('yield_expression', input as any, getFromContext()) as any;
+  export function from(input: YieldExpressionFromInput | FromValue[]): YieldExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('yield_expression', resolved as any, getFromContext()) as any;
   }
 }

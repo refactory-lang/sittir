@@ -83,8 +83,25 @@ export function emitFactory(config: {
 		const opt = !f.required ? '?' : '';
 		lines.push(`  ${f.name}${opt}: ${fieldType};`);
 	}
-	if (node.hasChildren) {
-		lines.push(`  children?: FromValue | FromValue[];`);
+	if (node.hasChildren && node.children) {
+		const childTypes = node.children.namedTypes;
+		const childLeaf = childTypes.filter(t => leafSet.has(t));
+		const childBranch = childTypes.filter(t => !leafSet.has(t));
+		const childParts: string[] = [];
+		if (childTypes.length > 0) {
+			childParts.push(`NodeData<${childTypes.map(t => `'${t}'`).join(' | ')}>`);
+		}
+		if (childLeaf.length > 0) childParts.push('string');
+		if (childBranch.length === 1) {
+			childParts.push(`${toTypeName(childBranch[0]!)}FromInput`);
+		} else {
+			for (const bt of childBranch) {
+				childParts.push(`({ kind: '${bt}' } & ${toTypeName(bt)}FromInput)`);
+			}
+		}
+		lines.push(`  children?: (${childParts.join(' | ')})[];`);
+	} else if (node.hasChildren) {
+		lines.push(`  children?: FromValue[];`);
 	}
 	lines.push(`}`);
 	lines.push('');
@@ -113,7 +130,7 @@ export function emitFactory(config: {
 	const isSingleField = node.fields.length === 1 || (node.fields.length === 0 && node.hasChildren);
 	const childrenAreLeaf = node.children?.namedTypes.every(t => leafSet.has(t)) ?? false;
 
-	// Factory function
+	// Factory function — no runtime type inference (FR-016), only NodeData accepted
 	if (ctorField) {
 		const ctorType = fieldTypeExpr(ctorField, leafSet);
 		const ctorCamel = toFieldName(ctorField.name);
@@ -121,20 +138,17 @@ export function emitFactory(config: {
 		lines.push(`  ${ctorCamel}OrConfig: ${ctorType} | ${typeName}Config,`);
 		lines.push(`  config?: Partial<${typeName}Config>,`);
 		lines.push(`): ${typeName}Node {`);
-		lines.push(`  const fields: any = isNodeData(${ctorCamel}OrConfig) || typeof ${ctorCamel}OrConfig === 'string'`);
-		lines.push(`    ? { '${ctorField.name}': resolveAndValidate(${ctorCamel}OrConfig), ...config }`);
+		lines.push(`  const fields: any = isNodeData(${ctorCamel}OrConfig)`);
+		lines.push(`    ? { '${ctorField.name}': ${ctorCamel}OrConfig, ...config }`);
 		lines.push(`    : ${ctorCamel}OrConfig;`);
-	} else if (isSingleField && node.hasChildren && childrenAreLeaf) {
-		// Children-only node with leaf children — accept string shorthand (FR-022)
+	} else if (isSingleField && node.hasChildren) {
+		// Children-only node — accept array or single NodeData (FR-022)
+		const childKindUnion = node.children?.namedTypes.map(t => `'${t}'`).join(' | ') ?? 'string';
 		lines.push(`export function ${factoryName}(`);
-		lines.push(`  childrenOrConfig?: string | NodeData | NodeData[] | ${typeName}Config,`);
+		lines.push(`  childrenOrConfig?: NodeData<${childKindUnion}> | NodeData<${childKindUnion}>[] | ${typeName}Config,`);
 		lines.push(`): ${typeName}Node {`);
 		lines.push(`  let fields: any;`);
-		lines.push(`  if (typeof childrenOrConfig === 'string') {`);
-		// Default to the first non-escape leaf kind, or first kind
-		const defaultChildKind = node.children!.namedTypes.find(t => !t.includes('escape')) ?? node.children!.namedTypes[0]!;
-		lines.push(`    fields = { children: [{ type: '${defaultChildKind}', fields: {}, text: childrenOrConfig }] };`);
-		lines.push(`  } else if (Array.isArray(childrenOrConfig)) {`);
+		lines.push(`  if (Array.isArray(childrenOrConfig)) {`);
 		lines.push(`    fields = { children: childrenOrConfig };`);
 		lines.push(`  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {`);
 		lines.push(`    fields = { children: [childrenOrConfig] };`);
@@ -159,7 +173,7 @@ export function emitFactory(config: {
 		if (f.multiple) {
 			lines.push(`  node.${setterName} = (...v: any[]) => { fields['${f.name}'] = v; return node; };`);
 		} else {
-			lines.push(`  node.${setterName} = (v: any) => { fields['${f.name}'] = resolveAndValidate(v); return node; };`);
+			lines.push(`  node.${setterName} = (v: any) => { validateNodeText(v); fields['${f.name}'] = v; return node; };`);
 		}
 	}
 	if (node.hasChildren) {
@@ -205,7 +219,7 @@ export function emitFactory(config: {
 		if (f.multiple) {
 			lines.push(`  node.${setterName} = (...v: any[]) => { overrides['${f.name}'] = v; return node; };`);
 		} else {
-			lines.push(`  node.${setterName} = (v: any) => { overrides['${f.name}'] = resolveAndValidate(v); return node; };  // validate user-provided overrides`);
+			lines.push(`  node.${setterName} = (v: any) => { validateNodeText(v); overrides['${f.name}'] = v; return node; };`);
 		}
 	}
 	if (node.hasChildren) {
@@ -527,8 +541,18 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		const factoryName = toFactoryName(node.kind);
 		const typeName = toTypeName(node.kind);
 		lines.push(`export namespace ${factoryName} {`);
-		lines.push(`  export function from(input: ${typeName}FromInput): ${typeName}Node {`);
-		lines.push(`    return resolveFromInput('${node.kind}', input as any, getFromContext()) as any;`);
+
+		if (node.hasChildren) {
+			// Array compression: nodes with children accept array shorthand
+			// .from([child1, child2]) → .from({ children: [child1, child2] })
+			lines.push(`  export function from(input: ${typeName}FromInput | FromValue[]): ${typeName}Node {`);
+			lines.push(`    const resolved = Array.isArray(input) ? { children: input } : input;`);
+			lines.push(`    return resolveFromInput('${node.kind}', resolved as any, getFromContext()) as any;`);
+		} else {
+			lines.push(`  export function from(input: ${typeName}FromInput): ${typeName}Node {`);
+			lines.push(`    return resolveFromInput('${node.kind}', input as any, getFromContext()) as any;`);
+		}
+
 		lines.push(`  }`);
 		lines.push(`}`);
 		lines.push('');
@@ -543,46 +567,76 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 
 /**
  * Compute the TypeScript type for a field in a FromInput interface.
- * Uses field metadata to determine what .from() resolution accepts.
+ * Recursively typed: branch fields reference other FromInput types.
+ *
+ * - Leaf-only fields: `string | NodeData<NarrowKinds>`
+ * - Operator-only fields: `'+' | '-' | ... | NodeData`
+ * - Single branch type: `NodeData<K> | BranchFromInput` (no kind needed)
+ * - Multiple branch types: `NodeData<K> | ({ kind: K } & BranchFromInput)` (discriminated)
+ * - Array wrapping: `FromValue[]` (elements resolve recursively at runtime)
  */
 function fromInputFieldType(field: FieldMeta, leafSet: Set<string>): string {
 	const leafTypes = field.namedTypes.filter(t => leafSet.has(t));
 	const branchTypes = field.namedTypes.filter(t => !leafSet.has(t));
 	const anonTokens = field.types.filter(t => !field.namedTypes.includes(t) && !t.startsWith('_'));
 
-	// If field accepts branch types, use broad FromValue (handles string, array, nested object)
-	if (branchTypes.length > 0) {
-		if (field.multiple) return 'FromValue[]';
-		return 'FromValue';
+	const parts: string[] = [];
+
+	// 1. NodeData passthrough — narrowed to accepted kinds
+	if (field.namedTypes.length > 0) {
+		const kindUnion = field.namedTypes.map(t => `'${t}'`).join(' | ');
+		parts.push(`NodeData<${kindUnion}>`);
+	} else if (anonTokens.length > 0) {
+		parts.push('NodeData'); // operator-only fields
 	}
 
-	// Leaf-only (and/or anonymous tokens)
-	const parts: string[] = ['NodeData'];
-
+	// 2. Scalars from leaf type resolution
 	if (leafTypes.length > 0) parts.push('string');
 	if (leafTypes.some(t => t === 'integer_literal' || t === 'float_literal')) parts.push('number');
 	if (leafTypes.includes('boolean_literal')) parts.push('boolean');
 
+	// 3. Operator literals (when field has only anonymous tokens)
 	if (anonTokens.length > 0 && leafTypes.length === 0) {
-		// Only anonymous tokens (operators) — use literal union
-		for (const t of anonTokens) {
-			parts.push(`'${escapeString(t)}'`);
+		for (const t of anonTokens) parts.push(`'${escapeString(t)}'`);
+	}
+
+	// 4. Branch type FromInput references (recursive)
+	if (branchTypes.length === 1) {
+		// Single branch type — no kind discriminant needed
+		parts.push(`${toTypeName(branchTypes[0]!)}FromInput`);
+	} else if (branchTypes.length > 0) {
+		// Multiple branch types — discriminated by kind
+		for (const bt of branchTypes) {
+			parts.push(`({ kind: '${bt}' } & ${toTypeName(bt)}FromInput)`);
 		}
 	}
 
+	// 5. Array wrapping (from() wraps arrays into container branch types)
+	if (branchTypes.length > 0 && !field.multiple) {
+		parts.push('FromValue[]');
+	}
+
 	const union = [...new Set(parts)].join(' | ');
-	if (field.multiple) return `(${union})[]`;
+	if (field.multiple) {
+		// Array fields accept both array and unwrapped single element
+		return `(${union})[] | ${union}`;
+	}
 	return union;
 }
 
-function fieldTypeExpr(field: FieldMeta, leafSet: Set<string>): string {
-	// If all types are leaves, accept string shorthand
-	const allLeaf = field.namedTypes.length > 0 && field.namedTypes.every(t => leafSet.has(t));
+/**
+ * Compute the TypeScript type for a field in a Config interface or fluent setter.
+ * Regular API: narrow NodeData<Kind> per field, no raw strings (FR-016).
+ */
+function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>): string {
+	const kindUnion = field.namedTypes.length > 0
+		? field.namedTypes.map(t => `'${t}'`).join(' | ')
+		: 'string';
 
 	if (field.multiple) {
-		return allLeaf ? '(NodeData | string)[]' : 'NodeData[]';
+		return `NodeData<${kindUnion}>[]`;
 	}
-	return allLeaf ? 'NodeData | string' : 'NodeData';
+	return `NodeData<${kindUnion}>`;
 }
 
 function escapeString(s: string): string {

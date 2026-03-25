@@ -111,25 +111,25 @@ const RESERVED_KEYWORDS = new Set([
 ]);
 
 export interface AbstractClassDeclarationConfig {
-  decorator?: NodeData[];
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  body: NodeData;
+  decorator?: NodeData<'decorator'>[];
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  body: NodeData<'class_body'>;
   children?: NodeData[];
 }
 
 export interface AbstractClassDeclarationFromInput {
-  decorator?: FromValue[];
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  body: NodeData<'class_body'> | ClassBodyFromInput | FromValue[];
+  children?: (NodeData<'class_heritage'> | ClassHeritageFromInput)[];
 }
 
 export type AbstractClassDeclarationNode = NodeData<'abstract_class_declaration'> & {
-  decorator(value: NodeData[]): AbstractClassDeclarationNode;
-  typeParameters(value: NodeData): AbstractClassDeclarationNode;
-  body(value: NodeData): AbstractClassDeclarationNode;
+  decorator(value: NodeData<'decorator'>[]): AbstractClassDeclarationNode;
+  typeParameters(value: NodeData<'type_parameters'>): AbstractClassDeclarationNode;
+  body(value: NodeData<'class_body'>): AbstractClassDeclarationNode;
   children(...value: NodeData[]): AbstractClassDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -138,16 +138,16 @@ export type AbstractClassDeclarationNode = NodeData<'abstract_class_declaration'
 };
 
 export function abstractClassDeclaration(
-  nameOrConfig: NodeData | string | AbstractClassDeclarationConfig,
+  nameOrConfig: NodeData<'type_identifier'> | AbstractClassDeclarationConfig,
   config?: Partial<AbstractClassDeclarationConfig>,
 ): AbstractClassDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'abstract_class_declaration', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -174,9 +174,9 @@ abstractClassDeclaration.assign = function(target: AssignableNode<'abstract_clas
   };
   const node: any = { get type() { return 'abstract_class_declaration'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -188,25 +188,25 @@ abstractClassDeclaration.assign = function(target: AssignableNode<'abstract_clas
 } as any;
 
 export interface AbstractMethodSignatureConfig {
-  name: NodeData;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
   children?: NodeData[];
 }
 
 export interface AbstractMethodSignatureFromInput {
-  name: FromValue;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  children?: (NodeData<'accessibility_modifier' | 'override_modifier'> | string)[];
 }
 
 export type AbstractMethodSignatureNode = NodeData<'abstract_method_signature'> & {
-  typeParameters(value: NodeData): AbstractMethodSignatureNode;
-  parameters(value: NodeData): AbstractMethodSignatureNode;
-  returnType(value: NodeData): AbstractMethodSignatureNode;
+  typeParameters(value: NodeData<'type_parameters'>): AbstractMethodSignatureNode;
+  parameters(value: NodeData<'formal_parameters'>): AbstractMethodSignatureNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): AbstractMethodSignatureNode;
   children(...value: NodeData[]): AbstractMethodSignatureNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -215,16 +215,16 @@ export type AbstractMethodSignatureNode = NodeData<'abstract_method_signature'> 
 };
 
 export function abstractMethodSignature(
-  nameOrConfig: NodeData | AbstractMethodSignatureConfig,
+  nameOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | AbstractMethodSignatureConfig,
   config?: Partial<AbstractMethodSignatureConfig>,
 ): AbstractMethodSignatureNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'abstract_method_signature', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -250,10 +250,10 @@ abstractMethodSignature.assign = function(target: AssignableNode<'abstract_metho
     return merged;
   };
   const node: any = { get type() { return 'abstract_method_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -269,7 +269,7 @@ export interface AddingTypeAnnotationConfig {
 }
 
 export interface AddingTypeAnnotationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type AddingTypeAnnotationNode = NodeData<'adding_type_annotation'> & {
@@ -281,9 +281,16 @@ export type AddingTypeAnnotationNode = NodeData<'adding_type_annotation'> & {
 };
 
 export function addingTypeAnnotation(
-  config?: AddingTypeAnnotationConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | AddingTypeAnnotationConfig,
 ): AddingTypeAnnotationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'adding_type_annotation', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -325,7 +332,7 @@ export interface AmbientDeclarationConfig {
 }
 
 export interface AmbientDeclarationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'declaration' | 'statement_block' | 'property_identifier' | 'type'> | string | ({ kind: 'declaration' } & DeclarationFromInput) | ({ kind: 'statement_block' } & StatementBlockFromInput) | ({ kind: 'type' } & TypeFromInput))[];
 }
 
 export type AmbientDeclarationNode = NodeData<'ambient_declaration'> & {
@@ -337,9 +344,16 @@ export type AmbientDeclarationNode = NodeData<'ambient_declaration'> & {
 };
 
 export function ambientDeclaration(
-  config?: AmbientDeclarationConfig,
+  childrenOrConfig?: NodeData<'declaration' | 'statement_block' | 'property_identifier' | 'type'> | NodeData<'declaration' | 'statement_block' | 'property_identifier' | 'type'>[] | AmbientDeclarationConfig,
 ): AmbientDeclarationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'ambient_declaration', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -381,7 +395,7 @@ export interface ArgumentsConfig {
 }
 
 export interface ArgumentsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'spread_element'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'spread_element' } & SpreadElementFromInput))[];
 }
 
 export type ArgumentsNode = NodeData<'arguments'> & {
@@ -393,9 +407,16 @@ export type ArgumentsNode = NodeData<'arguments'> & {
 };
 
 export function arguments_(
-  config?: ArgumentsConfig,
+  childrenOrConfig?: NodeData<'expression' | 'spread_element'> | NodeData<'expression' | 'spread_element'>[] | ArgumentsConfig,
 ): ArgumentsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'arguments', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -437,7 +458,7 @@ export interface ArrayConfig {
 }
 
 export interface ArrayFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'spread_element'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'spread_element' } & SpreadElementFromInput))[];
 }
 
 export type ArrayNode = NodeData<'array'> & {
@@ -449,9 +470,16 @@ export type ArrayNode = NodeData<'array'> & {
 };
 
 export function array(
-  config?: ArrayConfig,
+  childrenOrConfig?: NodeData<'expression' | 'spread_element'> | NodeData<'expression' | 'spread_element'>[] | ArrayConfig,
 ): ArrayNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'array', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -493,7 +521,7 @@ export interface ArrayPatternConfig {
 }
 
 export interface ArrayPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'pattern' | 'assignment_pattern'> | ({ kind: 'pattern' } & PatternFromInput) | ({ kind: 'assignment_pattern' } & AssignmentPatternFromInput))[];
 }
 
 export type ArrayPatternNode = NodeData<'array_pattern'> & {
@@ -505,9 +533,16 @@ export type ArrayPatternNode = NodeData<'array_pattern'> & {
 };
 
 export function arrayPattern(
-  config?: ArrayPatternConfig,
+  childrenOrConfig?: NodeData<'pattern' | 'assignment_pattern'> | NodeData<'pattern' | 'assignment_pattern'>[] | ArrayPatternConfig,
 ): ArrayPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'array_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -549,7 +584,7 @@ export interface ArrayTypeConfig {
 }
 
 export interface ArrayTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'primary_type'> | PrimaryTypeFromInput)[];
 }
 
 export type ArrayTypeNode = NodeData<'array_type'> & {
@@ -561,9 +596,16 @@ export type ArrayTypeNode = NodeData<'array_type'> & {
 };
 
 export function arrayType(
-  config?: ArrayTypeConfig,
+  childrenOrConfig?: NodeData<'primary_type'> | NodeData<'primary_type'>[] | ArrayTypeConfig,
 ): ArrayTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'array_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -601,26 +643,26 @@ arrayType.assign = function(target: AssignableNode<'array_type'>): ArrayTypeNode
 } as any;
 
 export interface ArrowFunctionConfig {
-  parameter?: NodeData | string;
-  type_parameters?: NodeData;
-  parameters?: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  parameter?: NodeData<'identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters?: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
+  body: NodeData<'expression' | 'statement_block'>;
 }
 
 export interface ArrowFunctionFromInput {
-  parameter?: NodeData | string;
-  type_parameters?: FromValue;
-  parameters?: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
+  parameter?: NodeData<'identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters?: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  body: NodeData<'expression' | 'statement_block'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'statement_block' } & StatementBlockFromInput) | FromValue[];
 }
 
 export type ArrowFunctionNode = NodeData<'arrow_function'> & {
-  parameter(value: NodeData | string): ArrowFunctionNode;
-  typeParameters(value: NodeData): ArrowFunctionNode;
-  parameters(value: NodeData): ArrowFunctionNode;
-  returnType(value: NodeData): ArrowFunctionNode;
+  parameter(value: NodeData<'identifier'>): ArrowFunctionNode;
+  typeParameters(value: NodeData<'type_parameters'>): ArrowFunctionNode;
+  parameters(value: NodeData<'formal_parameters'>): ArrowFunctionNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): ArrowFunctionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -628,17 +670,17 @@ export type ArrowFunctionNode = NodeData<'arrow_function'> & {
 };
 
 export function arrowFunction(
-  bodyOrConfig: NodeData | ArrowFunctionConfig,
+  bodyOrConfig: NodeData<'expression' | 'statement_block'> | ArrowFunctionConfig,
   config?: Partial<ArrowFunctionConfig>,
 ): ArrowFunctionNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'arrow_function', fields };
-  node.parameter = (v: any) => { fields['parameter'] = resolveAndValidate(v); return node; };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.parameter = (v: any) => { validateNodeText(v); fields['parameter'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -661,11 +703,11 @@ arrowFunction.assign = function(target: AssignableNode<'arrow_function'>): Arrow
     return merged;
   };
   const node: any = { get type() { return 'arrow_function'; }, get fields() { return getFields(); } };
-  node.parameter = (v: any) => { overrides['parameter'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.parameter = (v: any) => { validateNodeText(v); overrides['parameter'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -680,7 +722,7 @@ export interface AsExpressionConfig {
 }
 
 export interface AsExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'type'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'type' } & TypeFromInput))[];
 }
 
 export type AsExpressionNode = NodeData<'as_expression'> & {
@@ -692,9 +734,16 @@ export type AsExpressionNode = NodeData<'as_expression'> & {
 };
 
 export function asExpression(
-  config?: AsExpressionConfig,
+  childrenOrConfig?: NodeData<'expression' | 'type'> | NodeData<'expression' | 'type'>[] | AsExpressionConfig,
 ): AsExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'as_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -736,7 +785,7 @@ export interface AssertsConfig {
 }
 
 export interface AssertsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type_predicate' | 'identifier' | 'this'> | string | TypePredicateFromInput)[];
 }
 
 export type AssertsNode = NodeData<'asserts'> & {
@@ -748,9 +797,16 @@ export type AssertsNode = NodeData<'asserts'> & {
 };
 
 export function asserts(
-  config?: AssertsConfig,
+  childrenOrConfig?: NodeData<'type_predicate' | 'identifier' | 'this'> | NodeData<'type_predicate' | 'identifier' | 'this'>[] | AssertsConfig,
 ): AssertsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'asserts', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -792,7 +848,7 @@ export interface AssertsAnnotationConfig {
 }
 
 export interface AssertsAnnotationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'asserts'> | AssertsFromInput)[];
 }
 
 export type AssertsAnnotationNode = NodeData<'asserts_annotation'> & {
@@ -804,9 +860,16 @@ export type AssertsAnnotationNode = NodeData<'asserts_annotation'> & {
 };
 
 export function assertsAnnotation(
-  config?: AssertsAnnotationConfig,
+  childrenOrConfig?: NodeData<'asserts'> | NodeData<'asserts'>[] | AssertsAnnotationConfig,
 ): AssertsAnnotationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'asserts_annotation', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -844,17 +907,17 @@ assertsAnnotation.assign = function(target: AssignableNode<'asserts_annotation'>
 } as any;
 
 export interface AssignmentExpressionConfig {
-  left: NodeData;
-  right: NodeData;
+  left: NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression' | 'parenthesized_expression'>;
+  right: NodeData<'expression'>;
 }
 
 export interface AssignmentExpressionFromInput {
-  left: FromValue;
-  right: FromValue;
+  left: NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression' | 'parenthesized_expression'> | string | ({ kind: 'member_expression' } & MemberExpressionFromInput) | ({ kind: 'subscript_expression' } & SubscriptExpressionFromInput) | ({ kind: 'object_pattern' } & ObjectPatternFromInput) | ({ kind: 'array_pattern' } & ArrayPatternFromInput) | ({ kind: 'non_null_expression' } & NonNullExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | FromValue[];
+  right: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type AssignmentExpressionNode = NodeData<'assignment_expression'> & {
-  right(value: NodeData): AssignmentExpressionNode;
+  right(value: NodeData<'expression'>): AssignmentExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -862,14 +925,14 @@ export type AssignmentExpressionNode = NodeData<'assignment_expression'> & {
 };
 
 export function assignmentExpression(
-  leftOrConfig: NodeData | AssignmentExpressionConfig,
+  leftOrConfig: NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression' | 'parenthesized_expression'> | AssignmentExpressionConfig,
   config?: Partial<AssignmentExpressionConfig>,
 ): AssignmentExpressionNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'assignment_expression', fields };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -892,8 +955,8 @@ assignmentExpression.assign = function(target: AssignableNode<'assignment_expres
     return merged;
   };
   const node: any = { get type() { return 'assignment_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -904,17 +967,17 @@ assignmentExpression.assign = function(target: AssignableNode<'assignment_expres
 } as any;
 
 export interface AssignmentPatternConfig {
-  left: NodeData;
-  right: NodeData;
+  left: NodeData<'pattern'>;
+  right: NodeData<'expression'>;
 }
 
 export interface AssignmentPatternFromInput {
-  left: FromValue;
-  right: FromValue;
+  left: NodeData<'pattern'> | PatternFromInput | FromValue[];
+  right: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type AssignmentPatternNode = NodeData<'assignment_pattern'> & {
-  right(value: NodeData): AssignmentPatternNode;
+  right(value: NodeData<'expression'>): AssignmentPatternNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -922,14 +985,14 @@ export type AssignmentPatternNode = NodeData<'assignment_pattern'> & {
 };
 
 export function assignmentPattern(
-  leftOrConfig: NodeData | AssignmentPatternConfig,
+  leftOrConfig: NodeData<'pattern'> | AssignmentPatternConfig,
   config?: Partial<AssignmentPatternConfig>,
 ): AssignmentPatternNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'assignment_pattern', fields };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -952,8 +1015,8 @@ assignmentPattern.assign = function(target: AssignableNode<'assignment_pattern'>
     return merged;
   };
   const node: any = { get type() { return 'assignment_pattern'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -964,20 +1027,20 @@ assignmentPattern.assign = function(target: AssignableNode<'assignment_pattern'>
 } as any;
 
 export interface AugmentedAssignmentExpressionConfig {
-  left: NodeData;
-  operator: NodeData;
-  right: NodeData;
+  left: NodeData<'member_expression' | 'subscript_expression' | 'identifier' | 'parenthesized_expression' | 'non_null_expression'>;
+  operator: NodeData<string>;
+  right: NodeData<'expression'>;
 }
 
 export interface AugmentedAssignmentExpressionFromInput {
-  left: FromValue;
+  left: NodeData<'member_expression' | 'subscript_expression' | 'identifier' | 'parenthesized_expression' | 'non_null_expression'> | string | ({ kind: 'member_expression' } & MemberExpressionFromInput) | ({ kind: 'subscript_expression' } & SubscriptExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | ({ kind: 'non_null_expression' } & NonNullExpressionFromInput) | FromValue[];
   operator: NodeData | '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??=';
-  right: FromValue;
+  right: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type AugmentedAssignmentExpressionNode = NodeData<'augmented_assignment_expression'> & {
-  operator(value: NodeData): AugmentedAssignmentExpressionNode;
-  right(value: NodeData): AugmentedAssignmentExpressionNode;
+  operator(value: NodeData<string>): AugmentedAssignmentExpressionNode;
+  right(value: NodeData<'expression'>): AugmentedAssignmentExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -985,15 +1048,15 @@ export type AugmentedAssignmentExpressionNode = NodeData<'augmented_assignment_e
 };
 
 export function augmentedAssignmentExpression(
-  leftOrConfig: NodeData | AugmentedAssignmentExpressionConfig,
+  leftOrConfig: NodeData<'member_expression' | 'subscript_expression' | 'identifier' | 'parenthesized_expression' | 'non_null_expression'> | AugmentedAssignmentExpressionConfig,
   config?: Partial<AugmentedAssignmentExpressionConfig>,
 ): AugmentedAssignmentExpressionNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'augmented_assignment_expression', fields };
-  node.operator = (v: any) => { fields['operator'] = resolveAndValidate(v); return node; };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1016,9 +1079,9 @@ augmentedAssignmentExpression.assign = function(target: AssignableNode<'augmente
     return merged;
   };
   const node: any = { get type() { return 'augmented_assignment_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.operator = (v: any) => { overrides['operator'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1033,7 +1096,7 @@ export interface AwaitExpressionConfig {
 }
 
 export interface AwaitExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression'> | ExpressionFromInput)[];
 }
 
 export type AwaitExpressionNode = NodeData<'await_expression'> & {
@@ -1045,9 +1108,16 @@ export type AwaitExpressionNode = NodeData<'await_expression'> & {
 };
 
 export function awaitExpression(
-  config?: AwaitExpressionConfig,
+  childrenOrConfig?: NodeData<'expression'> | NodeData<'expression'>[] | AwaitExpressionConfig,
 ): AwaitExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'await_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1085,20 +1155,20 @@ awaitExpression.assign = function(target: AssignableNode<'await_expression'>): A
 } as any;
 
 export interface BinaryExpressionConfig {
-  left: NodeData;
-  operator: NodeData;
-  right: NodeData;
+  left: NodeData<'expression' | 'private_property_identifier'>;
+  operator: NodeData<string>;
+  right: NodeData<'expression'>;
 }
 
 export interface BinaryExpressionFromInput {
-  left: FromValue;
+  left: NodeData<'expression' | 'private_property_identifier'> | string | ExpressionFromInput | FromValue[];
   operator: NodeData | '&&' | '||' | '>>' | '>>>' | '<<' | '&' | '^' | '|' | '+' | '-' | '*' | '/' | '%' | '**' | '<' | '<=' | '==' | '===' | '!=' | '!==' | '>=' | '>' | '??' | 'instanceof' | 'in';
-  right: FromValue;
+  right: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type BinaryExpressionNode = NodeData<'binary_expression'> & {
-  operator(value: NodeData): BinaryExpressionNode;
-  right(value: NodeData): BinaryExpressionNode;
+  operator(value: NodeData<string>): BinaryExpressionNode;
+  right(value: NodeData<'expression'>): BinaryExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1106,15 +1176,15 @@ export type BinaryExpressionNode = NodeData<'binary_expression'> & {
 };
 
 export function binaryExpression(
-  leftOrConfig: NodeData | BinaryExpressionConfig,
+  leftOrConfig: NodeData<'expression' | 'private_property_identifier'> | BinaryExpressionConfig,
   config?: Partial<BinaryExpressionConfig>,
 ): BinaryExpressionNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'binary_expression', fields };
-  node.operator = (v: any) => { fields['operator'] = resolveAndValidate(v); return node; };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1137,9 +1207,9 @@ binaryExpression.assign = function(target: AssignableNode<'binary_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'binary_expression'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.operator = (v: any) => { overrides['operator'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1150,15 +1220,15 @@ binaryExpression.assign = function(target: AssignableNode<'binary_expression'>):
 } as any;
 
 export interface BreakStatementConfig {
-  label?: NodeData | string;
+  label?: NodeData<'statement_identifier'>;
 }
 
 export interface BreakStatementFromInput {
-  label?: NodeData | string;
+  label?: NodeData<'statement_identifier'> | string;
 }
 
 export type BreakStatementNode = NodeData<'break_statement'> & {
-  label(value: NodeData | string): BreakStatementNode;
+  label(value: NodeData<'statement_identifier'>): BreakStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1170,7 +1240,7 @@ export function breakStatement(
 ): BreakStatementNode {
   const fields: any = config ?? {};
   const node: any = { type: 'break_statement', fields };
-  node.label = (v: any) => { fields['label'] = resolveAndValidate(v); return node; };
+  node.label = (v: any) => { validateNodeText(v); fields['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1193,7 +1263,7 @@ breakStatement.assign = function(target: AssignableNode<'break_statement'>): Bre
     return merged;
   };
   const node: any = { get type() { return 'break_statement'; }, get fields() { return getFields(); } };
-  node.label = (v: any) => { overrides['label'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.label = (v: any) => { validateNodeText(v); overrides['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1204,20 +1274,20 @@ breakStatement.assign = function(target: AssignableNode<'break_statement'>): Bre
 } as any;
 
 export interface CallExpressionConfig {
-  function: NodeData;
-  type_arguments?: NodeData;
-  arguments: NodeData;
+  function: NodeData<'expression' | 'import' | 'primary_expression' | 'new_expression'>;
+  type_arguments?: NodeData<'type_arguments'>;
+  arguments: NodeData<'arguments' | 'template_string'>;
 }
 
 export interface CallExpressionFromInput {
-  function: FromValue;
-  type_arguments?: FromValue;
-  arguments: FromValue;
+  function: NodeData<'expression' | 'import' | 'primary_expression' | 'new_expression'> | string | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'primary_expression' } & PrimaryExpressionFromInput) | ({ kind: 'new_expression' } & NewExpressionFromInput) | FromValue[];
+  type_arguments?: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
+  arguments: NodeData<'arguments' | 'template_string'> | ({ kind: 'arguments' } & ArgumentsFromInput) | ({ kind: 'template_string' } & TemplateStringFromInput) | FromValue[];
 }
 
 export type CallExpressionNode = NodeData<'call_expression'> & {
-  typeArguments(value: NodeData): CallExpressionNode;
-  arguments(value: NodeData): CallExpressionNode;
+  typeArguments(value: NodeData<'type_arguments'>): CallExpressionNode;
+  arguments(value: NodeData<'arguments' | 'template_string'>): CallExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1225,15 +1295,15 @@ export type CallExpressionNode = NodeData<'call_expression'> & {
 };
 
 export function callExpression(
-  functionOrConfig: NodeData | CallExpressionConfig,
+  functionOrConfig: NodeData<'expression' | 'import' | 'primary_expression' | 'new_expression'> | CallExpressionConfig,
   config?: Partial<CallExpressionConfig>,
 ): CallExpressionNode {
-  const fields: any = isNodeData(functionOrConfig) || typeof functionOrConfig === 'string'
-    ? { 'function': resolveAndValidate(functionOrConfig), ...config }
+  const fields: any = isNodeData(functionOrConfig)
+    ? { 'function': functionOrConfig, ...config }
     : functionOrConfig;
   const node: any = { type: 'call_expression', fields };
-  node.typeArguments = (v: any) => { fields['type_arguments'] = resolveAndValidate(v); return node; };
-  node.arguments = (v: any) => { fields['arguments'] = resolveAndValidate(v); return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { validateNodeText(v); fields['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1256,9 +1326,9 @@ callExpression.assign = function(target: AssignableNode<'call_expression'>): Cal
     return merged;
   };
   const node: any = { get type() { return 'call_expression'; }, get fields() { return getFields(); } };
-  node.function = (v: any) => { overrides['function'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.arguments = (v: any) => { overrides['arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.function = (v: any) => { validateNodeText(v); overrides['function'] = v; return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { validateNodeText(v); overrides['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1269,20 +1339,20 @@ callExpression.assign = function(target: AssignableNode<'call_expression'>): Cal
 } as any;
 
 export interface CallSignatureConfig {
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
 }
 
 export interface CallSignatureFromInput {
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
 }
 
 export type CallSignatureNode = NodeData<'call_signature'> & {
-  typeParameters(value: NodeData): CallSignatureNode;
-  returnType(value: NodeData): CallSignatureNode;
+  typeParameters(value: NodeData<'type_parameters'>): CallSignatureNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): CallSignatureNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1290,15 +1360,15 @@ export type CallSignatureNode = NodeData<'call_signature'> & {
 };
 
 export function callSignature(
-  parametersOrConfig: NodeData | CallSignatureConfig,
+  parametersOrConfig: NodeData<'formal_parameters'> | CallSignatureConfig,
   config?: Partial<CallSignatureConfig>,
 ): CallSignatureNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'call_signature', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1321,9 +1391,9 @@ callSignature.assign = function(target: AssignableNode<'call_signature'>): CallS
     return merged;
   };
   const node: any = { get type() { return 'call_signature'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1334,20 +1404,20 @@ callSignature.assign = function(target: AssignableNode<'call_signature'>): CallS
 } as any;
 
 export interface CatchClauseConfig {
-  parameter?: NodeData;
-  type?: NodeData;
-  body: NodeData;
+  parameter?: NodeData<'object_pattern' | 'array_pattern' | 'identifier'>;
+  type?: NodeData<'type_annotation'>;
+  body: NodeData<'statement_block'>;
 }
 
 export interface CatchClauseFromInput {
-  parameter?: FromValue;
-  type?: FromValue;
-  body: FromValue;
+  parameter?: NodeData<'object_pattern' | 'array_pattern' | 'identifier'> | string | ({ kind: 'object_pattern' } & ObjectPatternFromInput) | ({ kind: 'array_pattern' } & ArrayPatternFromInput) | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type CatchClauseNode = NodeData<'catch_clause'> & {
-  parameter(value: NodeData): CatchClauseNode;
-  typeField(value: NodeData): CatchClauseNode;
+  parameter(value: NodeData<'object_pattern' | 'array_pattern' | 'identifier'>): CatchClauseNode;
+  typeField(value: NodeData<'type_annotation'>): CatchClauseNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1355,15 +1425,15 @@ export type CatchClauseNode = NodeData<'catch_clause'> & {
 };
 
 export function catchClause(
-  bodyOrConfig: NodeData | CatchClauseConfig,
+  bodyOrConfig: NodeData<'statement_block'> | CatchClauseConfig,
   config?: Partial<CatchClauseConfig>,
 ): CatchClauseNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'catch_clause', fields };
-  node.parameter = (v: any) => { fields['parameter'] = resolveAndValidate(v); return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.parameter = (v: any) => { validateNodeText(v); fields['parameter'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1386,9 +1456,9 @@ catchClause.assign = function(target: AssignableNode<'catch_clause'>): CatchClau
     return merged;
   };
   const node: any = { get type() { return 'catch_clause'; }, get fields() { return getFields(); } };
-  node.parameter = (v: any) => { overrides['parameter'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.parameter = (v: any) => { validateNodeText(v); overrides['parameter'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1399,25 +1469,25 @@ catchClause.assign = function(target: AssignableNode<'catch_clause'>): CatchClau
 } as any;
 
 export interface ClassConfig {
-  decorator?: NodeData[];
-  name?: NodeData | string;
-  type_parameters?: NodeData;
-  body: NodeData;
+  decorator?: NodeData<'decorator'>[];
+  name?: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  body: NodeData<'class_body'>;
   children?: NodeData[];
 }
 
 export interface ClassFromInput {
-  decorator?: FromValue[];
-  name?: NodeData | string;
-  type_parameters?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  name?: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  body: NodeData<'class_body'> | ClassBodyFromInput | FromValue[];
+  children?: (NodeData<'class_heritage'> | ClassHeritageFromInput)[];
 }
 
 export type ClassNode = NodeData<'class'> & {
-  decorator(value: NodeData[]): ClassNode;
-  name(value: NodeData | string): ClassNode;
-  typeParameters(value: NodeData): ClassNode;
+  decorator(value: NodeData<'decorator'>[]): ClassNode;
+  name(value: NodeData<'type_identifier'>): ClassNode;
+  typeParameters(value: NodeData<'type_parameters'>): ClassNode;
   children(...value: NodeData[]): ClassNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1426,16 +1496,16 @@ export type ClassNode = NodeData<'class'> & {
 };
 
 export function class_(
-  bodyOrConfig: NodeData | ClassConfig,
+  bodyOrConfig: NodeData<'class_body'> | ClassConfig,
   config?: Partial<ClassConfig>,
 ): ClassNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'class', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.name = (v: any) => { fields['name'] = resolveAndValidate(v); return node; };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
+  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -1462,9 +1532,9 @@ class_.assign = function(target: AssignableNode<'class'>): ClassNode {
   };
   const node: any = { get type() { return 'class'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -1476,17 +1546,17 @@ class_.assign = function(target: AssignableNode<'class'>): ClassNode {
 } as any;
 
 export interface ClassBodyConfig {
-  decorator?: NodeData[];
+  decorator?: NodeData<'decorator'>[];
   children?: NodeData[];
 }
 
 export interface ClassBodyFromInput {
-  decorator?: FromValue[];
-  children?: FromValue | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  children?: (NodeData<'method_definition' | 'method_signature' | 'class_static_block' | 'abstract_method_signature' | 'index_signature' | 'public_field_definition'> | ({ kind: 'method_definition' } & MethodDefinitionFromInput) | ({ kind: 'method_signature' } & MethodSignatureFromInput) | ({ kind: 'class_static_block' } & ClassStaticBlockFromInput) | ({ kind: 'abstract_method_signature' } & AbstractMethodSignatureFromInput) | ({ kind: 'index_signature' } & IndexSignatureFromInput) | ({ kind: 'public_field_definition' } & PublicFieldDefinitionFromInput))[];
 }
 
 export type ClassBodyNode = NodeData<'class_body'> & {
-  decorator(value: NodeData[]): ClassBodyNode;
+  decorator(value: NodeData<'decorator'>[]): ClassBodyNode;
   children(...value: NodeData[]): ClassBodyNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1495,9 +1565,16 @@ export type ClassBodyNode = NodeData<'class_body'> & {
 };
 
 export function classBody(
-  config?: ClassBodyConfig,
+  childrenOrConfig?: NodeData<'method_definition' | 'method_signature' | 'class_static_block' | 'abstract_method_signature' | 'index_signature' | 'public_field_definition'> | NodeData<'method_definition' | 'method_signature' | 'class_static_block' | 'abstract_method_signature' | 'index_signature' | 'public_field_definition'>[] | ClassBodyConfig,
 ): ClassBodyNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'class_body', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -1537,25 +1614,25 @@ classBody.assign = function(target: AssignableNode<'class_body'>): ClassBodyNode
 } as any;
 
 export interface ClassDeclarationConfig {
-  decorator?: NodeData[];
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  body: NodeData;
+  decorator?: NodeData<'decorator'>[];
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  body: NodeData<'class_body'>;
   children?: NodeData[];
 }
 
 export interface ClassDeclarationFromInput {
-  decorator?: FromValue[];
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  body: NodeData<'class_body'> | ClassBodyFromInput | FromValue[];
+  children?: (NodeData<'class_heritage'> | ClassHeritageFromInput)[];
 }
 
 export type ClassDeclarationNode = NodeData<'class_declaration'> & {
-  decorator(value: NodeData[]): ClassDeclarationNode;
-  typeParameters(value: NodeData): ClassDeclarationNode;
-  body(value: NodeData): ClassDeclarationNode;
+  decorator(value: NodeData<'decorator'>[]): ClassDeclarationNode;
+  typeParameters(value: NodeData<'type_parameters'>): ClassDeclarationNode;
+  body(value: NodeData<'class_body'>): ClassDeclarationNode;
   children(...value: NodeData[]): ClassDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1564,16 +1641,16 @@ export type ClassDeclarationNode = NodeData<'class_declaration'> & {
 };
 
 export function classDeclaration(
-  nameOrConfig: NodeData | string | ClassDeclarationConfig,
+  nameOrConfig: NodeData<'type_identifier'> | ClassDeclarationConfig,
   config?: Partial<ClassDeclarationConfig>,
 ): ClassDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'class_declaration', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -1600,9 +1677,9 @@ classDeclaration.assign = function(target: AssignableNode<'class_declaration'>):
   };
   const node: any = { get type() { return 'class_declaration'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -1618,7 +1695,7 @@ export interface ClassHeritageConfig {
 }
 
 export interface ClassHeritageFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'extends_clause' | 'implements_clause'> | ({ kind: 'extends_clause' } & ExtendsClauseFromInput) | ({ kind: 'implements_clause' } & ImplementsClauseFromInput))[];
 }
 
 export type ClassHeritageNode = NodeData<'class_heritage'> & {
@@ -1630,9 +1707,16 @@ export type ClassHeritageNode = NodeData<'class_heritage'> & {
 };
 
 export function classHeritage(
-  config?: ClassHeritageConfig,
+  childrenOrConfig?: NodeData<'extends_clause' | 'implements_clause'> | NodeData<'extends_clause' | 'implements_clause'>[] | ClassHeritageConfig,
 ): ClassHeritageNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'class_heritage', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1670,11 +1754,11 @@ classHeritage.assign = function(target: AssignableNode<'class_heritage'>): Class
 } as any;
 
 export interface ClassStaticBlockConfig {
-  body: NodeData;
+  body: NodeData<'statement_block'>;
 }
 
 export interface ClassStaticBlockFromInput {
-  body: FromValue;
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type ClassStaticBlockNode = NodeData<'class_static_block'> & {
@@ -1685,11 +1769,11 @@ export type ClassStaticBlockNode = NodeData<'class_static_block'> & {
 };
 
 export function classStaticBlock(
-  bodyOrConfig: NodeData | ClassStaticBlockConfig,
+  bodyOrConfig: NodeData<'statement_block'> | ClassStaticBlockConfig,
   config?: Partial<ClassStaticBlockConfig>,
 ): ClassStaticBlockNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'class_static_block', fields };
   node.render = () => render(node, rules, joinBy);
@@ -1714,7 +1798,7 @@ classStaticBlock.assign = function(target: AssignableNode<'class_static_block'>)
     return merged;
   };
   const node: any = { get type() { return 'class_static_block'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1729,7 +1813,7 @@ export interface ComputedPropertyNameConfig {
 }
 
 export interface ComputedPropertyNameFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression'> | ExpressionFromInput)[];
 }
 
 export type ComputedPropertyNameNode = NodeData<'computed_property_name'> & {
@@ -1741,9 +1825,16 @@ export type ComputedPropertyNameNode = NodeData<'computed_property_name'> & {
 };
 
 export function computedPropertyName(
-  config?: ComputedPropertyNameConfig,
+  childrenOrConfig?: NodeData<'expression'> | NodeData<'expression'>[] | ComputedPropertyNameConfig,
 ): ComputedPropertyNameNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'computed_property_name', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1781,23 +1872,23 @@ computedPropertyName.assign = function(target: AssignableNode<'computed_property
 } as any;
 
 export interface ConditionalTypeConfig {
-  left: NodeData;
-  right: NodeData;
-  consequence: NodeData;
-  alternative: NodeData;
+  left: NodeData<'type'>;
+  right: NodeData<'type'>;
+  consequence: NodeData<'type'>;
+  alternative: NodeData<'type'>;
 }
 
 export interface ConditionalTypeFromInput {
-  left: FromValue;
-  right: FromValue;
-  consequence: FromValue;
-  alternative: FromValue;
+  left: NodeData<'type'> | TypeFromInput | FromValue[];
+  right: NodeData<'type'> | TypeFromInput | FromValue[];
+  consequence: NodeData<'type'> | TypeFromInput | FromValue[];
+  alternative: NodeData<'type'> | TypeFromInput | FromValue[];
 }
 
 export type ConditionalTypeNode = NodeData<'conditional_type'> & {
-  right(value: NodeData): ConditionalTypeNode;
-  consequence(value: NodeData): ConditionalTypeNode;
-  alternative(value: NodeData): ConditionalTypeNode;
+  right(value: NodeData<'type'>): ConditionalTypeNode;
+  consequence(value: NodeData<'type'>): ConditionalTypeNode;
+  alternative(value: NodeData<'type'>): ConditionalTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1805,16 +1896,16 @@ export type ConditionalTypeNode = NodeData<'conditional_type'> & {
 };
 
 export function conditionalType(
-  leftOrConfig: NodeData | ConditionalTypeConfig,
+  leftOrConfig: NodeData<'type'> | ConditionalTypeConfig,
   config?: Partial<ConditionalTypeConfig>,
 ): ConditionalTypeNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'conditional_type', fields };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
-  node.consequence = (v: any) => { fields['consequence'] = resolveAndValidate(v); return node; };
-  node.alternative = (v: any) => { fields['alternative'] = resolveAndValidate(v); return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
+  node.consequence = (v: any) => { validateNodeText(v); fields['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1837,10 +1928,10 @@ conditionalType.assign = function(target: AssignableNode<'conditional_type'>): C
     return merged;
   };
   const node: any = { get type() { return 'conditional_type'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.consequence = (v: any) => { overrides['consequence'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alternative = (v: any) => { overrides['alternative'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
+  node.consequence = (v: any) => { validateNodeText(v); overrides['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1855,7 +1946,7 @@ export interface ConstraintConfig {
 }
 
 export interface ConstraintFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type ConstraintNode = NodeData<'constraint'> & {
@@ -1867,9 +1958,16 @@ export type ConstraintNode = NodeData<'constraint'> & {
 };
 
 export function constraint(
-  config?: ConstraintConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | ConstraintConfig,
 ): ConstraintNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'constraint', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -1907,20 +2005,20 @@ constraint.assign = function(target: AssignableNode<'constraint'>): ConstraintNo
 } as any;
 
 export interface ConstructSignatureConfig {
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  type?: NodeData;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  type?: NodeData<'type_annotation'>;
 }
 
 export interface ConstructSignatureFromInput {
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  type?: FromValue;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
 }
 
 export type ConstructSignatureNode = NodeData<'construct_signature'> & {
-  typeParameters(value: NodeData): ConstructSignatureNode;
-  typeField(value: NodeData): ConstructSignatureNode;
+  typeParameters(value: NodeData<'type_parameters'>): ConstructSignatureNode;
+  typeField(value: NodeData<'type_annotation'>): ConstructSignatureNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1928,15 +2026,15 @@ export type ConstructSignatureNode = NodeData<'construct_signature'> & {
 };
 
 export function constructSignature(
-  parametersOrConfig: NodeData | ConstructSignatureConfig,
+  parametersOrConfig: NodeData<'formal_parameters'> | ConstructSignatureConfig,
   config?: Partial<ConstructSignatureConfig>,
 ): ConstructSignatureNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'construct_signature', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -1959,9 +2057,9 @@ constructSignature.assign = function(target: AssignableNode<'construct_signature
     return merged;
   };
   const node: any = { get type() { return 'construct_signature'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -1972,20 +2070,20 @@ constructSignature.assign = function(target: AssignableNode<'construct_signature
 } as any;
 
 export interface ConstructorTypeConfig {
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  type: NodeData;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  type: NodeData<'type'>;
 }
 
 export interface ConstructorTypeFromInput {
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  type: FromValue;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  type: NodeData<'type'> | TypeFromInput | FromValue[];
 }
 
 export type ConstructorTypeNode = NodeData<'constructor_type'> & {
-  typeParameters(value: NodeData): ConstructorTypeNode;
-  typeField(value: NodeData): ConstructorTypeNode;
+  typeParameters(value: NodeData<'type_parameters'>): ConstructorTypeNode;
+  typeField(value: NodeData<'type'>): ConstructorTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -1993,15 +2091,15 @@ export type ConstructorTypeNode = NodeData<'constructor_type'> & {
 };
 
 export function constructorType(
-  parametersOrConfig: NodeData | ConstructorTypeConfig,
+  parametersOrConfig: NodeData<'formal_parameters'> | ConstructorTypeConfig,
   config?: Partial<ConstructorTypeConfig>,
 ): ConstructorTypeNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'constructor_type', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2024,9 +2122,9 @@ constructorType.assign = function(target: AssignableNode<'constructor_type'>): C
     return merged;
   };
   const node: any = { get type() { return 'constructor_type'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2037,15 +2135,15 @@ constructorType.assign = function(target: AssignableNode<'constructor_type'>): C
 } as any;
 
 export interface ContinueStatementConfig {
-  label?: NodeData | string;
+  label?: NodeData<'statement_identifier'>;
 }
 
 export interface ContinueStatementFromInput {
-  label?: NodeData | string;
+  label?: NodeData<'statement_identifier'> | string;
 }
 
 export type ContinueStatementNode = NodeData<'continue_statement'> & {
-  label(value: NodeData | string): ContinueStatementNode;
+  label(value: NodeData<'statement_identifier'>): ContinueStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2057,7 +2155,7 @@ export function continueStatement(
 ): ContinueStatementNode {
   const fields: any = config ?? {};
   const node: any = { type: 'continue_statement', fields };
-  node.label = (v: any) => { fields['label'] = resolveAndValidate(v); return node; };
+  node.label = (v: any) => { validateNodeText(v); fields['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2080,7 +2178,7 @@ continueStatement.assign = function(target: AssignableNode<'continue_statement'>
     return merged;
   };
   const node: any = { get type() { return 'continue_statement'; }, get fields() { return getFields(); } };
-  node.label = (v: any) => { overrides['label'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.label = (v: any) => { validateNodeText(v); overrides['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2095,7 +2193,7 @@ export interface DecoratorConfig {
 }
 
 export interface DecoratorFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'identifier' | 'member_expression' | 'call_expression' | 'parenthesized_expression'> | string | ({ kind: 'member_expression' } & MemberExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput))[];
 }
 
 export type DecoratorNode = NodeData<'decorator'> & {
@@ -2107,9 +2205,16 @@ export type DecoratorNode = NodeData<'decorator'> & {
 };
 
 export function decorator(
-  config?: DecoratorConfig,
+  childrenOrConfig?: NodeData<'identifier' | 'member_expression' | 'call_expression' | 'parenthesized_expression'> | NodeData<'identifier' | 'member_expression' | 'call_expression' | 'parenthesized_expression'>[] | DecoratorConfig,
 ): DecoratorNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'decorator', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2151,7 +2256,7 @@ export interface DefaultTypeConfig {
 }
 
 export interface DefaultTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type DefaultTypeNode = NodeData<'default_type'> & {
@@ -2163,9 +2268,16 @@ export type DefaultTypeNode = NodeData<'default_type'> & {
 };
 
 export function defaultType(
-  config?: DefaultTypeConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | DefaultTypeConfig,
 ): DefaultTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'default_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2203,17 +2315,17 @@ defaultType.assign = function(target: AssignableNode<'default_type'>): DefaultTy
 } as any;
 
 export interface DoStatementConfig {
-  body: NodeData;
-  condition: NodeData;
+  body: NodeData<'statement'>;
+  condition: NodeData<'parenthesized_expression'>;
 }
 
 export interface DoStatementFromInput {
-  body: FromValue;
-  condition: FromValue;
+  body: NodeData<'statement'> | StatementFromInput | FromValue[];
+  condition: NodeData<'parenthesized_expression'> | ParenthesizedExpressionFromInput | FromValue[];
 }
 
 export type DoStatementNode = NodeData<'do_statement'> & {
-  condition(value: NodeData): DoStatementNode;
+  condition(value: NodeData<'parenthesized_expression'>): DoStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2221,14 +2333,14 @@ export type DoStatementNode = NodeData<'do_statement'> & {
 };
 
 export function doStatement(
-  bodyOrConfig: NodeData | DoStatementConfig,
+  bodyOrConfig: NodeData<'statement'> | DoStatementConfig,
   config?: Partial<DoStatementConfig>,
 ): DoStatementNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'do_statement', fields };
-  node.condition = (v: any) => { fields['condition'] = resolveAndValidate(v); return node; };
+  node.condition = (v: any) => { validateNodeText(v); fields['condition'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2251,8 +2363,8 @@ doStatement.assign = function(target: AssignableNode<'do_statement'>): DoStateme
     return merged;
   };
   const node: any = { get type() { return 'do_statement'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.condition = (v: any) => { overrides['condition'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2267,7 +2379,7 @@ export interface ElseClauseConfig {
 }
 
 export interface ElseClauseFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'statement'> | StatementFromInput)[];
 }
 
 export type ElseClauseNode = NodeData<'else_clause'> & {
@@ -2279,9 +2391,16 @@ export type ElseClauseNode = NodeData<'else_clause'> & {
 };
 
 export function elseClause(
-  config?: ElseClauseConfig,
+  childrenOrConfig?: NodeData<'statement'> | NodeData<'statement'>[] | ElseClauseConfig,
 ): ElseClauseNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'else_clause', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2319,17 +2438,17 @@ elseClause.assign = function(target: AssignableNode<'else_clause'>): ElseClauseN
 } as any;
 
 export interface EnumAssignmentConfig {
-  name: NodeData;
-  value: NodeData;
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  value: NodeData<'expression'>;
 }
 
 export interface EnumAssignmentFromInput {
-  name: FromValue;
-  value: FromValue;
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  value: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type EnumAssignmentNode = NodeData<'enum_assignment'> & {
-  value(value: NodeData): EnumAssignmentNode;
+  value(value: NodeData<'expression'>): EnumAssignmentNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2337,14 +2456,14 @@ export type EnumAssignmentNode = NodeData<'enum_assignment'> & {
 };
 
 export function enumAssignment(
-  nameOrConfig: NodeData | EnumAssignmentConfig,
+  nameOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | EnumAssignmentConfig,
   config?: Partial<EnumAssignmentConfig>,
 ): EnumAssignmentNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'enum_assignment', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2367,8 +2486,8 @@ enumAssignment.assign = function(target: AssignableNode<'enum_assignment'>): Enu
     return merged;
   };
   const node: any = { get type() { return 'enum_assignment'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2379,17 +2498,17 @@ enumAssignment.assign = function(target: AssignableNode<'enum_assignment'>): Enu
 } as any;
 
 export interface EnumBodyConfig {
-  name?: NodeData[];
+  name?: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>[];
   children?: NodeData[];
 }
 
 export interface EnumBodyFromInput {
-  name?: FromValue[];
-  children?: FromValue | FromValue[];
+  name?: (NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput))[] | NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput);
+  children?: (NodeData<'enum_assignment'> | EnumAssignmentFromInput)[];
 }
 
 export type EnumBodyNode = NodeData<'enum_body'> & {
-  name(value: NodeData[]): EnumBodyNode;
+  name(value: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>[]): EnumBodyNode;
   children(...value: NodeData[]): EnumBodyNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2398,9 +2517,16 @@ export type EnumBodyNode = NodeData<'enum_body'> & {
 };
 
 export function enumBody(
-  config?: EnumBodyConfig,
+  childrenOrConfig?: NodeData<'enum_assignment'> | NodeData<'enum_assignment'>[] | EnumBodyConfig,
 ): EnumBodyNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'enum_body', fields };
   node.name = (...v: any[]) => { fields['name'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -2440,17 +2566,17 @@ enumBody.assign = function(target: AssignableNode<'enum_body'>): EnumBodyNode {
 } as any;
 
 export interface EnumDeclarationConfig {
-  name: NodeData | string;
-  body: NodeData;
+  name: NodeData<'identifier'>;
+  body: NodeData<'enum_body'>;
 }
 
 export interface EnumDeclarationFromInput {
-  name: NodeData | string;
-  body: FromValue;
+  name: NodeData<'identifier'> | string;
+  body: NodeData<'enum_body'> | EnumBodyFromInput | FromValue[];
 }
 
 export type EnumDeclarationNode = NodeData<'enum_declaration'> & {
-  body(value: NodeData): EnumDeclarationNode;
+  body(value: NodeData<'enum_body'>): EnumDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2458,14 +2584,14 @@ export type EnumDeclarationNode = NodeData<'enum_declaration'> & {
 };
 
 export function enumDeclaration(
-  nameOrConfig: NodeData | string | EnumDeclarationConfig,
+  nameOrConfig: NodeData<'identifier'> | EnumDeclarationConfig,
   config?: Partial<EnumDeclarationConfig>,
 ): EnumDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'enum_declaration', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2488,8 +2614,8 @@ enumDeclaration.assign = function(target: AssignableNode<'enum_declaration'>): E
     return merged;
   };
   const node: any = { get type() { return 'enum_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2504,7 +2630,7 @@ export interface ExportClauseConfig {
 }
 
 export interface ExportClauseFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'export_specifier'> | ExportSpecifierFromInput)[];
 }
 
 export type ExportClauseNode = NodeData<'export_clause'> & {
@@ -2516,9 +2642,16 @@ export type ExportClauseNode = NodeData<'export_clause'> & {
 };
 
 export function exportClause(
-  config?: ExportClauseConfig,
+  childrenOrConfig?: NodeData<'export_specifier'> | NodeData<'export_specifier'>[] | ExportClauseConfig,
 ): ExportClauseNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'export_clause', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2556,17 +2689,17 @@ exportClause.assign = function(target: AssignableNode<'export_clause'>): ExportC
 } as any;
 
 export interface ExportSpecifierConfig {
-  name: NodeData;
-  alias?: NodeData;
+  name: NodeData<'identifier' | 'string'>;
+  alias?: NodeData<'identifier' | 'string'>;
 }
 
 export interface ExportSpecifierFromInput {
-  name: FromValue;
-  alias?: FromValue;
+  name: NodeData<'identifier' | 'string'> | string | StringFromInput | FromValue[];
+  alias?: NodeData<'identifier' | 'string'> | string | StringFromInput | FromValue[];
 }
 
 export type ExportSpecifierNode = NodeData<'export_specifier'> & {
-  alias(value: NodeData): ExportSpecifierNode;
+  alias(value: NodeData<'identifier' | 'string'>): ExportSpecifierNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2574,14 +2707,14 @@ export type ExportSpecifierNode = NodeData<'export_specifier'> & {
 };
 
 export function exportSpecifier(
-  nameOrConfig: NodeData | ExportSpecifierConfig,
+  nameOrConfig: NodeData<'identifier' | 'string'> | ExportSpecifierConfig,
   config?: Partial<ExportSpecifierConfig>,
 ): ExportSpecifierNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'export_specifier', fields };
-  node.alias = (v: any) => { fields['alias'] = resolveAndValidate(v); return node; };
+  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -2604,8 +2737,8 @@ exportSpecifier.assign = function(target: AssignableNode<'export_specifier'>): E
     return merged;
   };
   const node: any = { get type() { return 'export_specifier'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alias = (v: any) => { overrides['alias'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2616,26 +2749,26 @@ exportSpecifier.assign = function(target: AssignableNode<'export_specifier'>): E
 } as any;
 
 export interface ExportStatementConfig {
-  source?: NodeData;
-  decorator?: NodeData[];
-  declaration?: NodeData;
-  value?: NodeData;
+  source?: NodeData<'string'>;
+  decorator?: NodeData<'decorator'>[];
+  declaration?: NodeData<'declaration'>;
+  value?: NodeData<'expression'>;
   children?: NodeData[];
 }
 
 export interface ExportStatementFromInput {
-  source?: FromValue;
-  decorator?: FromValue[];
-  declaration?: FromValue;
-  value?: FromValue;
-  children?: FromValue | FromValue[];
+  source?: NodeData<'string'> | StringFromInput | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  declaration?: NodeData<'declaration'> | DeclarationFromInput | FromValue[];
+  value?: NodeData<'expression'> | ExpressionFromInput | FromValue[];
+  children?: (NodeData<'namespace_export' | 'export_clause' | 'expression' | 'identifier'> | string | ({ kind: 'namespace_export' } & NamespaceExportFromInput) | ({ kind: 'export_clause' } & ExportClauseFromInput) | ({ kind: 'expression' } & ExpressionFromInput))[];
 }
 
 export type ExportStatementNode = NodeData<'export_statement'> & {
-  source(value: NodeData): ExportStatementNode;
-  decorator(value: NodeData[]): ExportStatementNode;
-  declaration(value: NodeData): ExportStatementNode;
-  value(value: NodeData): ExportStatementNode;
+  source(value: NodeData<'string'>): ExportStatementNode;
+  decorator(value: NodeData<'decorator'>[]): ExportStatementNode;
+  declaration(value: NodeData<'declaration'>): ExportStatementNode;
+  value(value: NodeData<'expression'>): ExportStatementNode;
   children(...value: NodeData[]): ExportStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -2648,10 +2781,10 @@ export function exportStatement(
 ): ExportStatementNode {
   const fields: any = config ?? {};
   const node: any = { type: 'export_statement', fields };
-  node.source = (v: any) => { fields['source'] = resolveAndValidate(v); return node; };
+  node.source = (v: any) => { validateNodeText(v); fields['source'] = v; return node; };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.declaration = (v: any) => { fields['declaration'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.declaration = (v: any) => { validateNodeText(v); fields['declaration'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -2677,10 +2810,10 @@ exportStatement.assign = function(target: AssignableNode<'export_statement'>): E
     return merged;
   };
   const node: any = { get type() { return 'export_statement'; }, get fields() { return getFields(); } };
-  node.source = (v: any) => { overrides['source'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.source = (v: any) => { validateNodeText(v); overrides['source'] = v; return node; };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.declaration = (v: any) => { overrides['declaration'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.declaration = (v: any) => { validateNodeText(v); overrides['declaration'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -2696,7 +2829,7 @@ export interface ExpressionStatementConfig {
 }
 
 export interface ExpressionStatementFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput))[];
 }
 
 export type ExpressionStatementNode = NodeData<'expression_statement'> & {
@@ -2708,9 +2841,16 @@ export type ExpressionStatementNode = NodeData<'expression_statement'> & {
 };
 
 export function expressionStatement(
-  config?: ExpressionStatementConfig,
+  childrenOrConfig?: NodeData<'expression' | 'sequence_expression'> | NodeData<'expression' | 'sequence_expression'>[] | ExpressionStatementConfig,
 ): ExpressionStatementNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'expression_statement', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2748,18 +2888,18 @@ expressionStatement.assign = function(target: AssignableNode<'expression_stateme
 } as any;
 
 export interface ExtendsClauseConfig {
-  value: NodeData[];
-  type_arguments?: NodeData[];
+  value: NodeData<'expression'>[];
+  type_arguments?: NodeData<'type_arguments'>[];
 }
 
 export interface ExtendsClauseFromInput {
-  value: FromValue[];
-  type_arguments?: FromValue[];
+  value: (NodeData<'expression'> | ExpressionFromInput)[] | NodeData<'expression'> | ExpressionFromInput;
+  type_arguments?: (NodeData<'type_arguments'> | TypeArgumentsFromInput)[] | NodeData<'type_arguments'> | TypeArgumentsFromInput;
 }
 
 export type ExtendsClauseNode = NodeData<'extends_clause'> & {
-  value(value: NodeData[]): ExtendsClauseNode;
-  typeArguments(value: NodeData[]): ExtendsClauseNode;
+  value(value: NodeData<'expression'>[]): ExtendsClauseNode;
+  typeArguments(value: NodeData<'type_arguments'>[]): ExtendsClauseNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2807,15 +2947,15 @@ extendsClause.assign = function(target: AssignableNode<'extends_clause'>): Exten
 } as any;
 
 export interface ExtendsTypeClauseConfig {
-  type: NodeData[];
+  type: NodeData<'type_identifier' | 'nested_type_identifier' | 'generic_type'>[];
 }
 
 export interface ExtendsTypeClauseFromInput {
-  type: FromValue[];
+  type: (NodeData<'type_identifier' | 'nested_type_identifier' | 'generic_type'> | string | ({ kind: 'nested_type_identifier' } & NestedTypeIdentifierFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput))[] | NodeData<'type_identifier' | 'nested_type_identifier' | 'generic_type'> | string | ({ kind: 'nested_type_identifier' } & NestedTypeIdentifierFromInput) | ({ kind: 'generic_type' } & GenericTypeFromInput);
 }
 
 export type ExtendsTypeClauseNode = NodeData<'extends_type_clause'> & {
-  typeField(value: NodeData[]): ExtendsTypeClauseNode;
+  typeField(value: NodeData<'type_identifier' | 'nested_type_identifier' | 'generic_type'>[]): ExtendsTypeClauseNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -2861,11 +3001,11 @@ extendsTypeClause.assign = function(target: AssignableNode<'extends_type_clause'
 } as any;
 
 export interface FinallyClauseConfig {
-  body: NodeData;
+  body: NodeData<'statement_block'>;
 }
 
 export interface FinallyClauseFromInput {
-  body: FromValue;
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type FinallyClauseNode = NodeData<'finally_clause'> & {
@@ -2876,11 +3016,11 @@ export type FinallyClauseNode = NodeData<'finally_clause'> & {
 };
 
 export function finallyClause(
-  bodyOrConfig: NodeData | FinallyClauseConfig,
+  bodyOrConfig: NodeData<'statement_block'> | FinallyClauseConfig,
   config?: Partial<FinallyClauseConfig>,
 ): FinallyClauseNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'finally_clause', fields };
   node.render = () => render(node, rules, joinBy);
@@ -2905,7 +3045,7 @@ finallyClause.assign = function(target: AssignableNode<'finally_clause'>): Final
     return merged;
   };
   const node: any = { get type() { return 'finally_clause'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -2920,7 +3060,7 @@ export interface FlowMaybeTypeConfig {
 }
 
 export interface FlowMaybeTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'primary_type'> | PrimaryTypeFromInput)[];
 }
 
 export type FlowMaybeTypeNode = NodeData<'flow_maybe_type'> & {
@@ -2932,9 +3072,16 @@ export type FlowMaybeTypeNode = NodeData<'flow_maybe_type'> & {
 };
 
 export function flowMaybeType(
-  config?: FlowMaybeTypeConfig,
+  childrenOrConfig?: NodeData<'primary_type'> | NodeData<'primary_type'>[] | FlowMaybeTypeConfig,
 ): FlowMaybeTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'flow_maybe_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -2972,29 +3119,29 @@ flowMaybeType.assign = function(target: AssignableNode<'flow_maybe_type'>): Flow
 } as any;
 
 export interface ForInStatementConfig {
-  left: NodeData;
-  kind?: NodeData;
-  value?: NodeData;
-  operator: NodeData;
-  right: NodeData;
-  body: NodeData;
+  left: NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression' | 'parenthesized_expression'>;
+  kind?: NodeData<string>;
+  value?: NodeData<'expression'>;
+  operator: NodeData<string>;
+  right: NodeData<'expression' | 'sequence_expression'>;
+  body: NodeData<'statement'>;
 }
 
 export interface ForInStatementFromInput {
-  left: FromValue;
+  left: NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression' | 'parenthesized_expression'> | string | ({ kind: 'member_expression' } & MemberExpressionFromInput) | ({ kind: 'subscript_expression' } & SubscriptExpressionFromInput) | ({ kind: 'object_pattern' } & ObjectPatternFromInput) | ({ kind: 'array_pattern' } & ArrayPatternFromInput) | ({ kind: 'non_null_expression' } & NonNullExpressionFromInput) | ({ kind: 'parenthesized_expression' } & ParenthesizedExpressionFromInput) | FromValue[];
   kind?: NodeData | 'var' | 'let' | 'const';
-  value?: FromValue;
+  value?: NodeData<'expression'> | ExpressionFromInput | FromValue[];
   operator: NodeData | 'in' | 'of';
-  right: FromValue;
-  body: FromValue;
+  right: NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput) | FromValue[];
+  body: NodeData<'statement'> | StatementFromInput | FromValue[];
 }
 
 export type ForInStatementNode = NodeData<'for_in_statement'> & {
-  kind(value: NodeData): ForInStatementNode;
-  value(value: NodeData): ForInStatementNode;
-  operator(value: NodeData): ForInStatementNode;
-  right(value: NodeData): ForInStatementNode;
-  body(value: NodeData): ForInStatementNode;
+  kind(value: NodeData<string>): ForInStatementNode;
+  value(value: NodeData<'expression'>): ForInStatementNode;
+  operator(value: NodeData<string>): ForInStatementNode;
+  right(value: NodeData<'expression' | 'sequence_expression'>): ForInStatementNode;
+  body(value: NodeData<'statement'>): ForInStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3002,18 +3149,18 @@ export type ForInStatementNode = NodeData<'for_in_statement'> & {
 };
 
 export function forInStatement(
-  leftOrConfig: NodeData | ForInStatementConfig,
+  leftOrConfig: NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression' | 'parenthesized_expression'> | ForInStatementConfig,
   config?: Partial<ForInStatementConfig>,
 ): ForInStatementNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'for_in_statement', fields };
-  node.kind = (v: any) => { fields['kind'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
-  node.operator = (v: any) => { fields['operator'] = resolveAndValidate(v); return node; };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.kind = (v: any) => { validateNodeText(v); fields['kind'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3036,12 +3183,12 @@ forInStatement.assign = function(target: AssignableNode<'for_in_statement'>): Fo
     return merged;
   };
   const node: any = { get type() { return 'for_in_statement'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.kind = (v: any) => { overrides['kind'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.operator = (v: any) => { overrides['operator'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.kind = (v: any) => { validateNodeText(v); overrides['kind'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3052,23 +3199,23 @@ forInStatement.assign = function(target: AssignableNode<'for_in_statement'>): Fo
 } as any;
 
 export interface ForStatementConfig {
-  initializer: NodeData;
-  condition: NodeData[];
-  increment?: NodeData;
-  body: NodeData;
+  initializer: NodeData<'expression' | 'sequence_expression' | 'lexical_declaration' | 'variable_declaration' | 'empty_statement'>;
+  condition: NodeData<'expression' | 'sequence_expression' | 'empty_statement'>[];
+  increment?: NodeData<'expression' | 'sequence_expression'>;
+  body: NodeData<'statement'>;
 }
 
 export interface ForStatementFromInput {
-  initializer: FromValue;
-  condition: FromValue[];
-  increment?: FromValue;
-  body: FromValue;
+  initializer: NodeData<'expression' | 'sequence_expression' | 'lexical_declaration' | 'variable_declaration' | 'empty_statement'> | string | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput) | ({ kind: 'lexical_declaration' } & LexicalDeclarationFromInput) | ({ kind: 'variable_declaration' } & VariableDeclarationFromInput) | FromValue[];
+  condition: (NodeData<'expression' | 'sequence_expression' | 'empty_statement'> | string | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput))[] | NodeData<'expression' | 'sequence_expression' | 'empty_statement'> | string | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput);
+  increment?: NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput) | FromValue[];
+  body: NodeData<'statement'> | StatementFromInput | FromValue[];
 }
 
 export type ForStatementNode = NodeData<'for_statement'> & {
-  condition(value: NodeData[]): ForStatementNode;
-  increment(value: NodeData): ForStatementNode;
-  body(value: NodeData): ForStatementNode;
+  condition(value: NodeData<'expression' | 'sequence_expression' | 'empty_statement'>[]): ForStatementNode;
+  increment(value: NodeData<'expression' | 'sequence_expression'>): ForStatementNode;
+  body(value: NodeData<'statement'>): ForStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3076,16 +3223,16 @@ export type ForStatementNode = NodeData<'for_statement'> & {
 };
 
 export function forStatement(
-  initializerOrConfig: NodeData | ForStatementConfig,
+  initializerOrConfig: NodeData<'expression' | 'sequence_expression' | 'lexical_declaration' | 'variable_declaration' | 'empty_statement'> | ForStatementConfig,
   config?: Partial<ForStatementConfig>,
 ): ForStatementNode {
-  const fields: any = isNodeData(initializerOrConfig) || typeof initializerOrConfig === 'string'
-    ? { 'initializer': resolveAndValidate(initializerOrConfig), ...config }
+  const fields: any = isNodeData(initializerOrConfig)
+    ? { 'initializer': initializerOrConfig, ...config }
     : initializerOrConfig;
   const node: any = { type: 'for_statement', fields };
   node.condition = (...v: any[]) => { fields['condition'] = v; return node; };
-  node.increment = (v: any) => { fields['increment'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.increment = (v: any) => { validateNodeText(v); fields['increment'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3108,10 +3255,10 @@ forStatement.assign = function(target: AssignableNode<'for_statement'>): ForStat
     return merged;
   };
   const node: any = { get type() { return 'for_statement'; }, get fields() { return getFields(); } };
-  node.initializer = (v: any) => { overrides['initializer'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.initializer = (v: any) => { validateNodeText(v); overrides['initializer'] = v; return node; };
   node.condition = (...v: any[]) => { overrides['condition'] = v; return node; };
-  node.increment = (v: any) => { overrides['increment'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.increment = (v: any) => { validateNodeText(v); overrides['increment'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3126,7 +3273,7 @@ export interface FormalParametersConfig {
 }
 
 export interface FormalParametersFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'required_parameter' | 'optional_parameter'> | ({ kind: 'required_parameter' } & RequiredParameterFromInput) | ({ kind: 'optional_parameter' } & OptionalParameterFromInput))[];
 }
 
 export type FormalParametersNode = NodeData<'formal_parameters'> & {
@@ -3138,9 +3285,16 @@ export type FormalParametersNode = NodeData<'formal_parameters'> & {
 };
 
 export function formalParameters(
-  config?: FormalParametersConfig,
+  childrenOrConfig?: NodeData<'required_parameter' | 'optional_parameter'> | NodeData<'required_parameter' | 'optional_parameter'>[] | FormalParametersConfig,
 ): FormalParametersNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'formal_parameters', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3178,26 +3332,26 @@ formalParameters.assign = function(target: AssignableNode<'formal_parameters'>):
 } as any;
 
 export interface FunctionDeclarationConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  name: NodeData<'identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
+  body: NodeData<'statement_block'>;
 }
 
 export interface FunctionDeclarationFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
+  name: NodeData<'identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type FunctionDeclarationNode = NodeData<'function_declaration'> & {
-  typeParameters(value: NodeData): FunctionDeclarationNode;
-  parameters(value: NodeData): FunctionDeclarationNode;
-  returnType(value: NodeData): FunctionDeclarationNode;
-  body(value: NodeData): FunctionDeclarationNode;
+  typeParameters(value: NodeData<'type_parameters'>): FunctionDeclarationNode;
+  parameters(value: NodeData<'formal_parameters'>): FunctionDeclarationNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): FunctionDeclarationNode;
+  body(value: NodeData<'statement_block'>): FunctionDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3205,17 +3359,17 @@ export type FunctionDeclarationNode = NodeData<'function_declaration'> & {
 };
 
 export function functionDeclaration(
-  nameOrConfig: NodeData | string | FunctionDeclarationConfig,
+  nameOrConfig: NodeData<'identifier'> | FunctionDeclarationConfig,
   config?: Partial<FunctionDeclarationConfig>,
 ): FunctionDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'function_declaration', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3238,11 +3392,11 @@ functionDeclaration.assign = function(target: AssignableNode<'function_declarati
     return merged;
   };
   const node: any = { get type() { return 'function_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3253,26 +3407,26 @@ functionDeclaration.assign = function(target: AssignableNode<'function_declarati
 } as any;
 
 export interface FunctionExpressionConfig {
-  name?: NodeData | string;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  name?: NodeData<'identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
+  body: NodeData<'statement_block'>;
 }
 
 export interface FunctionExpressionFromInput {
-  name?: NodeData | string;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
+  name?: NodeData<'identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type FunctionExpressionNode = NodeData<'function_expression'> & {
-  name(value: NodeData | string): FunctionExpressionNode;
-  typeParameters(value: NodeData): FunctionExpressionNode;
-  returnType(value: NodeData): FunctionExpressionNode;
-  body(value: NodeData): FunctionExpressionNode;
+  name(value: NodeData<'identifier'>): FunctionExpressionNode;
+  typeParameters(value: NodeData<'type_parameters'>): FunctionExpressionNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): FunctionExpressionNode;
+  body(value: NodeData<'statement_block'>): FunctionExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3280,17 +3434,17 @@ export type FunctionExpressionNode = NodeData<'function_expression'> & {
 };
 
 export function functionExpression(
-  parametersOrConfig: NodeData | FunctionExpressionConfig,
+  parametersOrConfig: NodeData<'formal_parameters'> | FunctionExpressionConfig,
   config?: Partial<FunctionExpressionConfig>,
 ): FunctionExpressionNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'function_expression', fields };
-  node.name = (v: any) => { fields['name'] = resolveAndValidate(v); return node; };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3313,11 +3467,11 @@ functionExpression.assign = function(target: AssignableNode<'function_expression
     return merged;
   };
   const node: any = { get type() { return 'function_expression'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3328,23 +3482,23 @@ functionExpression.assign = function(target: AssignableNode<'function_expression
 } as any;
 
 export interface FunctionSignatureConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
+  name: NodeData<'identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
 }
 
 export interface FunctionSignatureFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
+  name: NodeData<'identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
 }
 
 export type FunctionSignatureNode = NodeData<'function_signature'> & {
-  typeParameters(value: NodeData): FunctionSignatureNode;
-  parameters(value: NodeData): FunctionSignatureNode;
-  returnType(value: NodeData): FunctionSignatureNode;
+  typeParameters(value: NodeData<'type_parameters'>): FunctionSignatureNode;
+  parameters(value: NodeData<'formal_parameters'>): FunctionSignatureNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): FunctionSignatureNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3352,16 +3506,16 @@ export type FunctionSignatureNode = NodeData<'function_signature'> & {
 };
 
 export function functionSignature(
-  nameOrConfig: NodeData | string | FunctionSignatureConfig,
+  nameOrConfig: NodeData<'identifier'> | FunctionSignatureConfig,
   config?: Partial<FunctionSignatureConfig>,
 ): FunctionSignatureNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'function_signature', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3384,10 +3538,10 @@ functionSignature.assign = function(target: AssignableNode<'function_signature'>
     return merged;
   };
   const node: any = { get type() { return 'function_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3398,20 +3552,20 @@ functionSignature.assign = function(target: AssignableNode<'function_signature'>
 } as any;
 
 export interface FunctionTypeConfig {
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type: NodeData;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type: NodeData<'type' | 'asserts' | 'type_predicate'>;
 }
 
 export interface FunctionTypeFromInput {
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type: FromValue;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type: NodeData<'type' | 'asserts' | 'type_predicate'> | ({ kind: 'type' } & TypeFromInput) | ({ kind: 'asserts' } & AssertsFromInput) | ({ kind: 'type_predicate' } & TypePredicateFromInput) | FromValue[];
 }
 
 export type FunctionTypeNode = NodeData<'function_type'> & {
-  typeParameters(value: NodeData): FunctionTypeNode;
-  returnType(value: NodeData): FunctionTypeNode;
+  typeParameters(value: NodeData<'type_parameters'>): FunctionTypeNode;
+  returnType(value: NodeData<'type' | 'asserts' | 'type_predicate'>): FunctionTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3419,15 +3573,15 @@ export type FunctionTypeNode = NodeData<'function_type'> & {
 };
 
 export function functionType(
-  parametersOrConfig: NodeData | FunctionTypeConfig,
+  parametersOrConfig: NodeData<'formal_parameters'> | FunctionTypeConfig,
   config?: Partial<FunctionTypeConfig>,
 ): FunctionTypeNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'function_type', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3450,9 +3604,9 @@ functionType.assign = function(target: AssignableNode<'function_type'>): Functio
     return merged;
   };
   const node: any = { get type() { return 'function_type'; }, get fields() { return getFields(); } };
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3463,26 +3617,26 @@ functionType.assign = function(target: AssignableNode<'function_type'>): Functio
 } as any;
 
 export interface GeneratorFunctionConfig {
-  name?: NodeData | string;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  name?: NodeData<'identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
+  body: NodeData<'statement_block'>;
 }
 
 export interface GeneratorFunctionFromInput {
-  name?: NodeData | string;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
+  name?: NodeData<'identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type GeneratorFunctionNode = NodeData<'generator_function'> & {
-  name(value: NodeData | string): GeneratorFunctionNode;
-  typeParameters(value: NodeData): GeneratorFunctionNode;
-  returnType(value: NodeData): GeneratorFunctionNode;
-  body(value: NodeData): GeneratorFunctionNode;
+  name(value: NodeData<'identifier'>): GeneratorFunctionNode;
+  typeParameters(value: NodeData<'type_parameters'>): GeneratorFunctionNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): GeneratorFunctionNode;
+  body(value: NodeData<'statement_block'>): GeneratorFunctionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3490,17 +3644,17 @@ export type GeneratorFunctionNode = NodeData<'generator_function'> & {
 };
 
 export function generatorFunction(
-  parametersOrConfig: NodeData | GeneratorFunctionConfig,
+  parametersOrConfig: NodeData<'formal_parameters'> | GeneratorFunctionConfig,
   config?: Partial<GeneratorFunctionConfig>,
 ): GeneratorFunctionNode {
-  const fields: any = isNodeData(parametersOrConfig) || typeof parametersOrConfig === 'string'
-    ? { 'parameters': resolveAndValidate(parametersOrConfig), ...config }
+  const fields: any = isNodeData(parametersOrConfig)
+    ? { 'parameters': parametersOrConfig, ...config }
     : parametersOrConfig;
   const node: any = { type: 'generator_function', fields };
-  node.name = (v: any) => { fields['name'] = resolveAndValidate(v); return node; };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3523,11 +3677,11 @@ generatorFunction.assign = function(target: AssignableNode<'generator_function'>
     return merged;
   };
   const node: any = { get type() { return 'generator_function'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3538,26 +3692,26 @@ generatorFunction.assign = function(target: AssignableNode<'generator_function'>
 } as any;
 
 export interface GeneratorFunctionDeclarationConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  name: NodeData<'identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
+  body: NodeData<'statement_block'>;
 }
 
 export interface GeneratorFunctionDeclarationFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
+  name: NodeData<'identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type GeneratorFunctionDeclarationNode = NodeData<'generator_function_declaration'> & {
-  typeParameters(value: NodeData): GeneratorFunctionDeclarationNode;
-  parameters(value: NodeData): GeneratorFunctionDeclarationNode;
-  returnType(value: NodeData): GeneratorFunctionDeclarationNode;
-  body(value: NodeData): GeneratorFunctionDeclarationNode;
+  typeParameters(value: NodeData<'type_parameters'>): GeneratorFunctionDeclarationNode;
+  parameters(value: NodeData<'formal_parameters'>): GeneratorFunctionDeclarationNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): GeneratorFunctionDeclarationNode;
+  body(value: NodeData<'statement_block'>): GeneratorFunctionDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3565,17 +3719,17 @@ export type GeneratorFunctionDeclarationNode = NodeData<'generator_function_decl
 };
 
 export function generatorFunctionDeclaration(
-  nameOrConfig: NodeData | string | GeneratorFunctionDeclarationConfig,
+  nameOrConfig: NodeData<'identifier'> | GeneratorFunctionDeclarationConfig,
   config?: Partial<GeneratorFunctionDeclarationConfig>,
 ): GeneratorFunctionDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'generator_function_declaration', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3598,11 +3752,11 @@ generatorFunctionDeclaration.assign = function(target: AssignableNode<'generator
     return merged;
   };
   const node: any = { get type() { return 'generator_function_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3613,17 +3767,17 @@ generatorFunctionDeclaration.assign = function(target: AssignableNode<'generator
 } as any;
 
 export interface GenericTypeConfig {
-  name: NodeData;
-  type_arguments: NodeData;
+  name: NodeData<'type_identifier' | 'nested_type_identifier'>;
+  type_arguments: NodeData<'type_arguments'>;
 }
 
 export interface GenericTypeFromInput {
-  name: FromValue;
-  type_arguments: FromValue;
+  name: NodeData<'type_identifier' | 'nested_type_identifier'> | string | NestedTypeIdentifierFromInput | FromValue[];
+  type_arguments: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
 }
 
 export type GenericTypeNode = NodeData<'generic_type'> & {
-  typeArguments(value: NodeData): GenericTypeNode;
+  typeArguments(value: NodeData<'type_arguments'>): GenericTypeNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3631,14 +3785,14 @@ export type GenericTypeNode = NodeData<'generic_type'> & {
 };
 
 export function genericType(
-  nameOrConfig: NodeData | GenericTypeConfig,
+  nameOrConfig: NodeData<'type_identifier' | 'nested_type_identifier'> | GenericTypeConfig,
   config?: Partial<GenericTypeConfig>,
 ): GenericTypeNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'generic_type', fields };
-  node.typeArguments = (v: any) => { fields['type_arguments'] = resolveAndValidate(v); return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3661,8 +3815,8 @@ genericType.assign = function(target: AssignableNode<'generic_type'>): GenericTy
     return merged;
   };
   const node: any = { get type() { return 'generic_type'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3673,20 +3827,20 @@ genericType.assign = function(target: AssignableNode<'generic_type'>): GenericTy
 } as any;
 
 export interface IfStatementConfig {
-  condition: NodeData;
-  consequence: NodeData;
-  alternative?: NodeData;
+  condition: NodeData<'parenthesized_expression'>;
+  consequence: NodeData<'statement'>;
+  alternative?: NodeData<'else_clause'>;
 }
 
 export interface IfStatementFromInput {
-  condition: FromValue;
-  consequence: FromValue;
-  alternative?: FromValue;
+  condition: NodeData<'parenthesized_expression'> | ParenthesizedExpressionFromInput | FromValue[];
+  consequence: NodeData<'statement'> | StatementFromInput | FromValue[];
+  alternative?: NodeData<'else_clause'> | ElseClauseFromInput | FromValue[];
 }
 
 export type IfStatementNode = NodeData<'if_statement'> & {
-  consequence(value: NodeData): IfStatementNode;
-  alternative(value: NodeData): IfStatementNode;
+  consequence(value: NodeData<'statement'>): IfStatementNode;
+  alternative(value: NodeData<'else_clause'>): IfStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -3694,15 +3848,15 @@ export type IfStatementNode = NodeData<'if_statement'> & {
 };
 
 export function ifStatement(
-  conditionOrConfig: NodeData | IfStatementConfig,
+  conditionOrConfig: NodeData<'parenthesized_expression'> | IfStatementConfig,
   config?: Partial<IfStatementConfig>,
 ): IfStatementNode {
-  const fields: any = isNodeData(conditionOrConfig) || typeof conditionOrConfig === 'string'
-    ? { 'condition': resolveAndValidate(conditionOrConfig), ...config }
+  const fields: any = isNodeData(conditionOrConfig)
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'if_statement', fields };
-  node.consequence = (v: any) => { fields['consequence'] = resolveAndValidate(v); return node; };
-  node.alternative = (v: any) => { fields['alternative'] = resolveAndValidate(v); return node; };
+  node.consequence = (v: any) => { validateNodeText(v); fields['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -3725,9 +3879,9 @@ ifStatement.assign = function(target: AssignableNode<'if_statement'>): IfStateme
     return merged;
   };
   const node: any = { get type() { return 'if_statement'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { overrides['condition'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.consequence = (v: any) => { overrides['consequence'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alternative = (v: any) => { overrides['alternative'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
+  node.consequence = (v: any) => { validateNodeText(v); overrides['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -3742,7 +3896,7 @@ export interface ImplementsClauseConfig {
 }
 
 export interface ImplementsClauseFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type ImplementsClauseNode = NodeData<'implements_clause'> & {
@@ -3754,9 +3908,16 @@ export type ImplementsClauseNode = NodeData<'implements_clause'> & {
 };
 
 export function implementsClause(
-  config?: ImplementsClauseConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | ImplementsClauseConfig,
 ): ImplementsClauseNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'implements_clause', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3798,7 +3959,7 @@ export interface ImportAliasConfig {
 }
 
 export interface ImportAliasFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'identifier' | 'nested_identifier'> | string | NestedIdentifierFromInput)[];
 }
 
 export type ImportAliasNode = NodeData<'import_alias'> & {
@@ -3810,9 +3971,16 @@ export type ImportAliasNode = NodeData<'import_alias'> & {
 };
 
 export function importAlias(
-  config?: ImportAliasConfig,
+  childrenOrConfig?: NodeData<'identifier' | 'nested_identifier'> | NodeData<'identifier' | 'nested_identifier'>[] | ImportAliasConfig,
 ): ImportAliasNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'import_alias', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3854,7 +4022,7 @@ export interface ImportAttributeConfig {
 }
 
 export interface ImportAttributeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'object'> | ObjectFromInput)[];
 }
 
 export type ImportAttributeNode = NodeData<'import_attribute'> & {
@@ -3866,9 +4034,16 @@ export type ImportAttributeNode = NodeData<'import_attribute'> & {
 };
 
 export function importAttribute(
-  config?: ImportAttributeConfig,
+  childrenOrConfig?: NodeData<'object'> | NodeData<'object'>[] | ImportAttributeConfig,
 ): ImportAttributeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'import_attribute', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3910,7 +4085,7 @@ export interface ImportClauseConfig {
 }
 
 export interface ImportClauseFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'namespace_import' | 'named_imports' | 'identifier'> | string | ({ kind: 'namespace_import' } & NamespaceImportFromInput) | ({ kind: 'named_imports' } & NamedImportsFromInput))[];
 }
 
 export type ImportClauseNode = NodeData<'import_clause'> & {
@@ -3922,9 +4097,16 @@ export type ImportClauseNode = NodeData<'import_clause'> & {
 };
 
 export function importClause(
-  config?: ImportClauseConfig,
+  childrenOrConfig?: NodeData<'namespace_import' | 'named_imports' | 'identifier'> | NodeData<'namespace_import' | 'named_imports' | 'identifier'>[] | ImportClauseConfig,
 ): ImportClauseNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'import_clause', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -3962,13 +4144,13 @@ importClause.assign = function(target: AssignableNode<'import_clause'>): ImportC
 } as any;
 
 export interface ImportRequireClauseConfig {
-  source: NodeData;
+  source: NodeData<'string'>;
   children?: NodeData[];
 }
 
 export interface ImportRequireClauseFromInput {
-  source: FromValue;
-  children?: FromValue | FromValue[];
+  source: NodeData<'string'> | StringFromInput | FromValue[];
+  children?: (NodeData<'identifier'> | string)[];
 }
 
 export type ImportRequireClauseNode = NodeData<'import_require_clause'> & {
@@ -3980,11 +4162,11 @@ export type ImportRequireClauseNode = NodeData<'import_require_clause'> & {
 };
 
 export function importRequireClause(
-  sourceOrConfig: NodeData | ImportRequireClauseConfig,
+  sourceOrConfig: NodeData<'string'> | ImportRequireClauseConfig,
   config?: Partial<ImportRequireClauseConfig>,
 ): ImportRequireClauseNode {
-  const fields: any = isNodeData(sourceOrConfig) || typeof sourceOrConfig === 'string'
-    ? { 'source': resolveAndValidate(sourceOrConfig), ...config }
+  const fields: any = isNodeData(sourceOrConfig)
+    ? { 'source': sourceOrConfig, ...config }
     : sourceOrConfig;
   const node: any = { type: 'import_require_clause', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -4012,7 +4194,7 @@ importRequireClause.assign = function(target: AssignableNode<'import_require_cla
     return merged;
   };
   const node: any = { get type() { return 'import_require_clause'; }, get fields() { return getFields(); } };
-  node.source = (v: any) => { overrides['source'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.source = (v: any) => { validateNodeText(v); overrides['source'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4024,17 +4206,17 @@ importRequireClause.assign = function(target: AssignableNode<'import_require_cla
 } as any;
 
 export interface ImportSpecifierConfig {
-  name: NodeData;
-  alias?: NodeData | string;
+  name: NodeData<'identifier' | 'string'>;
+  alias?: NodeData<'identifier'>;
 }
 
 export interface ImportSpecifierFromInput {
-  name: FromValue;
-  alias?: NodeData | string;
+  name: NodeData<'identifier' | 'string'> | string | StringFromInput | FromValue[];
+  alias?: NodeData<'identifier'> | string;
 }
 
 export type ImportSpecifierNode = NodeData<'import_specifier'> & {
-  alias(value: NodeData | string): ImportSpecifierNode;
+  alias(value: NodeData<'identifier'>): ImportSpecifierNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4042,14 +4224,14 @@ export type ImportSpecifierNode = NodeData<'import_specifier'> & {
 };
 
 export function importSpecifier(
-  nameOrConfig: NodeData | ImportSpecifierConfig,
+  nameOrConfig: NodeData<'identifier' | 'string'> | ImportSpecifierConfig,
   config?: Partial<ImportSpecifierConfig>,
 ): ImportSpecifierNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'import_specifier', fields };
-  node.alias = (v: any) => { fields['alias'] = resolveAndValidate(v); return node; };
+  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4072,8 +4254,8 @@ importSpecifier.assign = function(target: AssignableNode<'import_specifier'>): I
     return merged;
   };
   const node: any = { get type() { return 'import_specifier'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alias = (v: any) => { overrides['alias'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4084,17 +4266,17 @@ importSpecifier.assign = function(target: AssignableNode<'import_specifier'>): I
 } as any;
 
 export interface ImportStatementConfig {
-  source?: NodeData;
+  source?: NodeData<'string'>;
   children?: NodeData[];
 }
 
 export interface ImportStatementFromInput {
-  source?: FromValue;
-  children?: FromValue | FromValue[];
+  source?: NodeData<'string'> | StringFromInput | FromValue[];
+  children?: (NodeData<'import_clause' | 'import_require_clause' | 'import_attribute'> | ({ kind: 'import_clause' } & ImportClauseFromInput) | ({ kind: 'import_require_clause' } & ImportRequireClauseFromInput) | ({ kind: 'import_attribute' } & ImportAttributeFromInput))[];
 }
 
 export type ImportStatementNode = NodeData<'import_statement'> & {
-  source(value: NodeData): ImportStatementNode;
+  source(value: NodeData<'string'>): ImportStatementNode;
   children(...value: NodeData[]): ImportStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4103,11 +4285,18 @@ export type ImportStatementNode = NodeData<'import_statement'> & {
 };
 
 export function importStatement(
-  config?: ImportStatementConfig,
+  childrenOrConfig?: NodeData<'import_clause' | 'import_require_clause' | 'import_attribute'> | NodeData<'import_clause' | 'import_require_clause' | 'import_attribute'>[] | ImportStatementConfig,
 ): ImportStatementNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'import_statement', fields };
-  node.source = (v: any) => { fields['source'] = resolveAndValidate(v); return node; };
+  node.source = (v: any) => { validateNodeText(v); fields['source'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4133,7 +4322,7 @@ importStatement.assign = function(target: AssignableNode<'import_statement'>): I
     return merged;
   };
   const node: any = { get type() { return 'import_statement'; }, get fields() { return getFields(); } };
-  node.source = (v: any) => { overrides['source'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.source = (v: any) => { validateNodeText(v); overrides['source'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4145,25 +4334,25 @@ importStatement.assign = function(target: AssignableNode<'import_statement'>): I
 } as any;
 
 export interface IndexSignatureConfig {
-  sign?: NodeData;
-  name?: NodeData | string;
-  index_type?: NodeData;
-  type: NodeData;
+  sign?: NodeData<string>;
+  name?: NodeData<'identifier'>;
+  index_type?: NodeData<'type'>;
+  type: NodeData<'type_annotation' | 'omitting_type_annotation' | 'adding_type_annotation' | 'opting_type_annotation'>;
   children?: NodeData[];
 }
 
 export interface IndexSignatureFromInput {
   sign?: NodeData | '-' | '+';
-  name?: NodeData | string;
-  index_type?: FromValue;
-  type: FromValue;
-  children?: FromValue | FromValue[];
+  name?: NodeData<'identifier'> | string;
+  index_type?: NodeData<'type'> | TypeFromInput | FromValue[];
+  type: NodeData<'type_annotation' | 'omitting_type_annotation' | 'adding_type_annotation' | 'opting_type_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'omitting_type_annotation' } & OmittingTypeAnnotationFromInput) | ({ kind: 'adding_type_annotation' } & AddingTypeAnnotationFromInput) | ({ kind: 'opting_type_annotation' } & OptingTypeAnnotationFromInput) | FromValue[];
+  children?: (NodeData<'mapped_type_clause'> | MappedTypeClauseFromInput)[];
 }
 
 export type IndexSignatureNode = NodeData<'index_signature'> & {
-  sign(value: NodeData): IndexSignatureNode;
-  name(value: NodeData | string): IndexSignatureNode;
-  indexType(value: NodeData): IndexSignatureNode;
+  sign(value: NodeData<string>): IndexSignatureNode;
+  name(value: NodeData<'identifier'>): IndexSignatureNode;
+  indexType(value: NodeData<'type'>): IndexSignatureNode;
   children(...value: NodeData[]): IndexSignatureNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4172,16 +4361,16 @@ export type IndexSignatureNode = NodeData<'index_signature'> & {
 };
 
 export function indexSignature(
-  typeOrConfig: NodeData | IndexSignatureConfig,
+  typeOrConfig: NodeData<'type_annotation' | 'omitting_type_annotation' | 'adding_type_annotation' | 'opting_type_annotation'> | IndexSignatureConfig,
   config?: Partial<IndexSignatureConfig>,
 ): IndexSignatureNode {
-  const fields: any = isNodeData(typeOrConfig) || typeof typeOrConfig === 'string'
-    ? { 'type': resolveAndValidate(typeOrConfig), ...config }
+  const fields: any = isNodeData(typeOrConfig)
+    ? { 'type': typeOrConfig, ...config }
     : typeOrConfig;
   const node: any = { type: 'index_signature', fields };
-  node.sign = (v: any) => { fields['sign'] = resolveAndValidate(v); return node; };
-  node.name = (v: any) => { fields['name'] = resolveAndValidate(v); return node; };
-  node.indexType = (v: any) => { fields['index_type'] = resolveAndValidate(v); return node; };
+  node.sign = (v: any) => { validateNodeText(v); fields['sign'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
+  node.indexType = (v: any) => { validateNodeText(v); fields['index_type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4207,10 +4396,10 @@ indexSignature.assign = function(target: AssignableNode<'index_signature'>): Ind
     return merged;
   };
   const node: any = { get type() { return 'index_signature'; }, get fields() { return getFields(); } };
-  node.sign = (v: any) => { overrides['sign'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.indexType = (v: any) => { overrides['index_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.sign = (v: any) => { validateNodeText(v); overrides['sign'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.indexType = (v: any) => { validateNodeText(v); overrides['index_type'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4226,7 +4415,7 @@ export interface IndexTypeQueryConfig {
 }
 
 export interface IndexTypeQueryFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'primary_type'> | PrimaryTypeFromInput)[];
 }
 
 export type IndexTypeQueryNode = NodeData<'index_type_query'> & {
@@ -4238,9 +4427,16 @@ export type IndexTypeQueryNode = NodeData<'index_type_query'> & {
 };
 
 export function indexTypeQuery(
-  config?: IndexTypeQueryConfig,
+  childrenOrConfig?: NodeData<'primary_type'> | NodeData<'primary_type'>[] | IndexTypeQueryConfig,
 ): IndexTypeQueryNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'index_type_query', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4282,7 +4478,7 @@ export interface InferTypeConfig {
 }
 
 export interface InferTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type_identifier' | 'type'> | string | TypeFromInput)[];
 }
 
 export type InferTypeNode = NodeData<'infer_type'> & {
@@ -4294,9 +4490,16 @@ export type InferTypeNode = NodeData<'infer_type'> & {
 };
 
 export function inferType(
-  config?: InferTypeConfig,
+  childrenOrConfig?: NodeData<'type_identifier' | 'type'> | NodeData<'type_identifier' | 'type'>[] | InferTypeConfig,
 ): InferTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'infer_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4334,19 +4537,19 @@ inferType.assign = function(target: AssignableNode<'infer_type'>): InferTypeNode
 } as any;
 
 export interface InstantiationExpressionConfig {
-  type_arguments: NodeData;
-  function?: NodeData;
+  type_arguments: NodeData<'type_arguments'>;
+  function?: NodeData<'identifier' | 'import' | 'member_expression' | 'subscript_expression'>;
   children?: NodeData[];
 }
 
 export interface InstantiationExpressionFromInput {
-  type_arguments: FromValue;
-  function?: FromValue;
-  children?: FromValue | FromValue[];
+  type_arguments: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
+  function?: NodeData<'identifier' | 'import' | 'member_expression' | 'subscript_expression'> | string | ({ kind: 'member_expression' } & MemberExpressionFromInput) | ({ kind: 'subscript_expression' } & SubscriptExpressionFromInput) | FromValue[];
+  children?: (NodeData<'expression'> | ExpressionFromInput)[];
 }
 
 export type InstantiationExpressionNode = NodeData<'instantiation_expression'> & {
-  function(value: NodeData): InstantiationExpressionNode;
+  function(value: NodeData<'identifier' | 'import' | 'member_expression' | 'subscript_expression'>): InstantiationExpressionNode;
   children(...value: NodeData[]): InstantiationExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4355,14 +4558,14 @@ export type InstantiationExpressionNode = NodeData<'instantiation_expression'> &
 };
 
 export function instantiationExpression(
-  typeArgumentsOrConfig: NodeData | InstantiationExpressionConfig,
+  typeArgumentsOrConfig: NodeData<'type_arguments'> | InstantiationExpressionConfig,
   config?: Partial<InstantiationExpressionConfig>,
 ): InstantiationExpressionNode {
-  const fields: any = isNodeData(typeArgumentsOrConfig) || typeof typeArgumentsOrConfig === 'string'
-    ? { 'type_arguments': resolveAndValidate(typeArgumentsOrConfig), ...config }
+  const fields: any = isNodeData(typeArgumentsOrConfig)
+    ? { 'type_arguments': typeArgumentsOrConfig, ...config }
     : typeArgumentsOrConfig;
   const node: any = { type: 'instantiation_expression', fields };
-  node.function = (v: any) => { fields['function'] = resolveAndValidate(v); return node; };
+  node.function = (v: any) => { validateNodeText(v); fields['function'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4388,8 +4591,8 @@ instantiationExpression.assign = function(target: AssignableNode<'instantiation_
     return merged;
   };
   const node: any = { get type() { return 'instantiation_expression'; }, get fields() { return getFields(); } };
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.function = (v: any) => { overrides['function'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
+  node.function = (v: any) => { validateNodeText(v); overrides['function'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4405,7 +4608,7 @@ export interface InterfaceBodyConfig {
 }
 
 export interface InterfaceBodyFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'call_signature' | 'construct_signature' | 'export_statement' | 'index_signature' | 'method_signature' | 'property_signature'> | ({ kind: 'call_signature' } & CallSignatureFromInput) | ({ kind: 'construct_signature' } & ConstructSignatureFromInput) | ({ kind: 'export_statement' } & ExportStatementFromInput) | ({ kind: 'index_signature' } & IndexSignatureFromInput) | ({ kind: 'method_signature' } & MethodSignatureFromInput) | ({ kind: 'property_signature' } & PropertySignatureFromInput))[];
 }
 
 export type InterfaceBodyNode = NodeData<'interface_body'> & {
@@ -4417,9 +4620,16 @@ export type InterfaceBodyNode = NodeData<'interface_body'> & {
 };
 
 export function interfaceBody(
-  config?: InterfaceBodyConfig,
+  childrenOrConfig?: NodeData<'call_signature' | 'construct_signature' | 'export_statement' | 'index_signature' | 'method_signature' | 'property_signature'> | NodeData<'call_signature' | 'construct_signature' | 'export_statement' | 'index_signature' | 'method_signature' | 'property_signature'>[] | InterfaceBodyConfig,
 ): InterfaceBodyNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'interface_body', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4457,22 +4667,22 @@ interfaceBody.assign = function(target: AssignableNode<'interface_body'>): Inter
 } as any;
 
 export interface InterfaceDeclarationConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  body: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  body: NodeData<'interface_body'>;
   children?: NodeData[];
 }
 
 export interface InterfaceDeclarationFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  body: NodeData<'interface_body'> | InterfaceBodyFromInput | FromValue[];
+  children?: (NodeData<'extends_type_clause'> | ExtendsTypeClauseFromInput)[];
 }
 
 export type InterfaceDeclarationNode = NodeData<'interface_declaration'> & {
-  typeParameters(value: NodeData): InterfaceDeclarationNode;
-  body(value: NodeData): InterfaceDeclarationNode;
+  typeParameters(value: NodeData<'type_parameters'>): InterfaceDeclarationNode;
+  body(value: NodeData<'interface_body'>): InterfaceDeclarationNode;
   children(...value: NodeData[]): InterfaceDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -4481,15 +4691,15 @@ export type InterfaceDeclarationNode = NodeData<'interface_declaration'> & {
 };
 
 export function interfaceDeclaration(
-  nameOrConfig: NodeData | string | InterfaceDeclarationConfig,
+  nameOrConfig: NodeData<'type_identifier'> | InterfaceDeclarationConfig,
   config?: Partial<InterfaceDeclarationConfig>,
 ): InterfaceDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'interface_declaration', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -4515,9 +4725,9 @@ interfaceDeclaration.assign = function(target: AssignableNode<'interface_declara
     return merged;
   };
   const node: any = { get type() { return 'interface_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4529,17 +4739,17 @@ interfaceDeclaration.assign = function(target: AssignableNode<'interface_declara
 } as any;
 
 export interface InternalModuleConfig {
-  name: NodeData;
-  body?: NodeData;
+  name: NodeData<'string' | 'identifier' | 'nested_identifier'>;
+  body?: NodeData<'statement_block'>;
 }
 
 export interface InternalModuleFromInput {
-  name: FromValue;
-  body?: FromValue;
+  name: NodeData<'string' | 'identifier' | 'nested_identifier'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'nested_identifier' } & NestedIdentifierFromInput) | FromValue[];
+  body?: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type InternalModuleNode = NodeData<'internal_module'> & {
-  body(value: NodeData): InternalModuleNode;
+  body(value: NodeData<'statement_block'>): InternalModuleNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4547,14 +4757,14 @@ export type InternalModuleNode = NodeData<'internal_module'> & {
 };
 
 export function internalModule(
-  nameOrConfig: NodeData | InternalModuleConfig,
+  nameOrConfig: NodeData<'string' | 'identifier' | 'nested_identifier'> | InternalModuleConfig,
   config?: Partial<InternalModuleConfig>,
 ): InternalModuleNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'internal_module', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4577,8 +4787,8 @@ internalModule.assign = function(target: AssignableNode<'internal_module'>): Int
     return merged;
   };
   const node: any = { get type() { return 'internal_module'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4593,7 +4803,7 @@ export interface IntersectionTypeConfig {
 }
 
 export interface IntersectionTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type IntersectionTypeNode = NodeData<'intersection_type'> & {
@@ -4605,9 +4815,16 @@ export type IntersectionTypeNode = NodeData<'intersection_type'> & {
 };
 
 export function intersectionType(
-  config?: IntersectionTypeConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | IntersectionTypeConfig,
 ): IntersectionTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'intersection_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4645,17 +4862,17 @@ intersectionType.assign = function(target: AssignableNode<'intersection_type'>):
 } as any;
 
 export interface LabeledStatementConfig {
-  body: NodeData;
-  label: NodeData | string;
+  body: NodeData<'statement'>;
+  label: NodeData<'statement_identifier'>;
 }
 
 export interface LabeledStatementFromInput {
-  body: FromValue;
-  label: NodeData | string;
+  body: NodeData<'statement'> | StatementFromInput | FromValue[];
+  label: NodeData<'statement_identifier'> | string;
 }
 
 export type LabeledStatementNode = NodeData<'labeled_statement'> & {
-  label(value: NodeData | string): LabeledStatementNode;
+  label(value: NodeData<'statement_identifier'>): LabeledStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4663,14 +4880,14 @@ export type LabeledStatementNode = NodeData<'labeled_statement'> & {
 };
 
 export function labeledStatement(
-  bodyOrConfig: NodeData | LabeledStatementConfig,
+  bodyOrConfig: NodeData<'statement'> | LabeledStatementConfig,
   config?: Partial<LabeledStatementConfig>,
 ): LabeledStatementNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'labeled_statement', fields };
-  node.label = (v: any) => { fields['label'] = resolveAndValidate(v); return node; };
+  node.label = (v: any) => { validateNodeText(v); fields['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4693,8 +4910,8 @@ labeledStatement.assign = function(target: AssignableNode<'labeled_statement'>):
     return merged;
   };
   const node: any = { get type() { return 'labeled_statement'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.label = (v: any) => { overrides['label'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.label = (v: any) => { validateNodeText(v); overrides['label'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4705,13 +4922,13 @@ labeledStatement.assign = function(target: AssignableNode<'labeled_statement'>):
 } as any;
 
 export interface LexicalDeclarationConfig {
-  kind: NodeData;
+  kind: NodeData<string>;
   children?: NodeData[];
 }
 
 export interface LexicalDeclarationFromInput {
   kind: NodeData | 'let' | 'const';
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'variable_declarator'> | VariableDeclaratorFromInput)[];
 }
 
 export type LexicalDeclarationNode = NodeData<'lexical_declaration'> & {
@@ -4723,11 +4940,11 @@ export type LexicalDeclarationNode = NodeData<'lexical_declaration'> & {
 };
 
 export function lexicalDeclaration(
-  kindOrConfig: NodeData | LexicalDeclarationConfig,
+  kindOrConfig: NodeData<string> | LexicalDeclarationConfig,
   config?: Partial<LexicalDeclarationConfig>,
 ): LexicalDeclarationNode {
-  const fields: any = isNodeData(kindOrConfig) || typeof kindOrConfig === 'string'
-    ? { 'kind': resolveAndValidate(kindOrConfig), ...config }
+  const fields: any = isNodeData(kindOrConfig)
+    ? { 'kind': kindOrConfig, ...config }
     : kindOrConfig;
   const node: any = { type: 'lexical_declaration', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
@@ -4755,7 +4972,7 @@ lexicalDeclaration.assign = function(target: AssignableNode<'lexical_declaration
     return merged;
   };
   const node: any = { get type() { return 'lexical_declaration'; }, get fields() { return getFields(); } };
-  node.kind = (v: any) => { overrides['kind'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.kind = (v: any) => { validateNodeText(v); overrides['kind'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -4771,7 +4988,7 @@ export interface LiteralTypeConfig {
 }
 
 export interface LiteralTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'unary_expression' | 'number' | 'string' | 'true' | 'false' | 'null' | 'undefined'> | string | ({ kind: 'unary_expression' } & UnaryExpressionFromInput) | ({ kind: 'string' } & StringFromInput))[];
 }
 
 export type LiteralTypeNode = NodeData<'literal_type'> & {
@@ -4783,9 +5000,16 @@ export type LiteralTypeNode = NodeData<'literal_type'> & {
 };
 
 export function literalType(
-  config?: LiteralTypeConfig,
+  childrenOrConfig?: NodeData<'unary_expression' | 'number' | 'string' | 'true' | 'false' | 'null' | 'undefined'> | NodeData<'unary_expression' | 'number' | 'string' | 'true' | 'false' | 'null' | 'undefined'>[] | LiteralTypeConfig,
 ): LiteralTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'literal_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4827,7 +5051,7 @@ export interface LookupTypeConfig {
 }
 
 export interface LookupTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'primary_type' | 'type'> | ({ kind: 'primary_type' } & PrimaryTypeFromInput) | ({ kind: 'type' } & TypeFromInput))[];
 }
 
 export type LookupTypeNode = NodeData<'lookup_type'> & {
@@ -4839,9 +5063,16 @@ export type LookupTypeNode = NodeData<'lookup_type'> & {
 };
 
 export function lookupType(
-  config?: LookupTypeConfig,
+  childrenOrConfig?: NodeData<'primary_type' | 'type'> | NodeData<'primary_type' | 'type'>[] | LookupTypeConfig,
 ): LookupTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'lookup_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -4879,20 +5110,20 @@ lookupType.assign = function(target: AssignableNode<'lookup_type'>): LookupTypeN
 } as any;
 
 export interface MappedTypeClauseConfig {
-  name: NodeData | string;
-  type: NodeData;
-  alias?: NodeData;
+  name: NodeData<'type_identifier'>;
+  type: NodeData<'type'>;
+  alias?: NodeData<'type'>;
 }
 
 export interface MappedTypeClauseFromInput {
-  name: NodeData | string;
-  type: FromValue;
-  alias?: FromValue;
+  name: NodeData<'type_identifier'> | string;
+  type: NodeData<'type'> | TypeFromInput | FromValue[];
+  alias?: NodeData<'type'> | TypeFromInput | FromValue[];
 }
 
 export type MappedTypeClauseNode = NodeData<'mapped_type_clause'> & {
-  typeField(value: NodeData): MappedTypeClauseNode;
-  alias(value: NodeData): MappedTypeClauseNode;
+  typeField(value: NodeData<'type'>): MappedTypeClauseNode;
+  alias(value: NodeData<'type'>): MappedTypeClauseNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4900,15 +5131,15 @@ export type MappedTypeClauseNode = NodeData<'mapped_type_clause'> & {
 };
 
 export function mappedTypeClause(
-  nameOrConfig: NodeData | string | MappedTypeClauseConfig,
+  nameOrConfig: NodeData<'type_identifier'> | MappedTypeClauseConfig,
   config?: Partial<MappedTypeClauseConfig>,
 ): MappedTypeClauseNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'mapped_type_clause', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.alias = (v: any) => { fields['alias'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.alias = (v: any) => { validateNodeText(v); fields['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4931,9 +5162,9 @@ mappedTypeClause.assign = function(target: AssignableNode<'mapped_type_clause'>)
     return merged;
   };
   const node: any = { get type() { return 'mapped_type_clause'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alias = (v: any) => { overrides['alias'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.alias = (v: any) => { validateNodeText(v); overrides['alias'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -4944,20 +5175,20 @@ mappedTypeClause.assign = function(target: AssignableNode<'mapped_type_clause'>)
 } as any;
 
 export interface MemberExpressionConfig {
-  object: NodeData;
-  optional_chain?: NodeData | string;
-  property: NodeData | string;
+  object: NodeData<'expression' | 'primary_expression' | 'import'>;
+  optional_chain?: NodeData<'optional_chain'>;
+  property: NodeData<'private_property_identifier' | 'property_identifier'>;
 }
 
 export interface MemberExpressionFromInput {
-  object: FromValue;
-  optional_chain?: NodeData | string;
-  property: NodeData | string;
+  object: NodeData<'expression' | 'primary_expression' | 'import'> | string | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'primary_expression' } & PrimaryExpressionFromInput) | FromValue[];
+  optional_chain?: NodeData<'optional_chain'> | string;
+  property: NodeData<'private_property_identifier' | 'property_identifier'> | string;
 }
 
 export type MemberExpressionNode = NodeData<'member_expression'> & {
-  optionalChain(value: NodeData | string): MemberExpressionNode;
-  property(value: NodeData | string): MemberExpressionNode;
+  optionalChain(value: NodeData<'optional_chain'>): MemberExpressionNode;
+  property(value: NodeData<'private_property_identifier' | 'property_identifier'>): MemberExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -4965,15 +5196,15 @@ export type MemberExpressionNode = NodeData<'member_expression'> & {
 };
 
 export function memberExpression(
-  objectOrConfig: NodeData | MemberExpressionConfig,
+  objectOrConfig: NodeData<'expression' | 'primary_expression' | 'import'> | MemberExpressionConfig,
   config?: Partial<MemberExpressionConfig>,
 ): MemberExpressionNode {
-  const fields: any = isNodeData(objectOrConfig) || typeof objectOrConfig === 'string'
-    ? { 'object': resolveAndValidate(objectOrConfig), ...config }
+  const fields: any = isNodeData(objectOrConfig)
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'member_expression', fields };
-  node.optionalChain = (v: any) => { fields['optional_chain'] = resolveAndValidate(v); return node; };
-  node.property = (v: any) => { fields['property'] = resolveAndValidate(v); return node; };
+  node.optionalChain = (v: any) => { validateNodeText(v); fields['optional_chain'] = v; return node; };
+  node.property = (v: any) => { validateNodeText(v); fields['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -4996,9 +5227,9 @@ memberExpression.assign = function(target: AssignableNode<'member_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'member_expression'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { overrides['object'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.optionalChain = (v: any) => { overrides['optional_chain'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.property = (v: any) => { overrides['property'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
+  node.optionalChain = (v: any) => { validateNodeText(v); overrides['optional_chain'] = v; return node; };
+  node.property = (v: any) => { validateNodeText(v); overrides['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5009,28 +5240,28 @@ memberExpression.assign = function(target: AssignableNode<'member_expression'>):
 } as any;
 
 export interface MethodDefinitionConfig {
-  name: NodeData;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
-  body: NodeData;
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
+  body: NodeData<'statement_block'>;
   children?: NodeData[];
 }
 
 export interface MethodDefinitionFromInput {
-  name: FromValue;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  body: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
+  children?: (NodeData<'accessibility_modifier' | 'override_modifier'> | string)[];
 }
 
 export type MethodDefinitionNode = NodeData<'method_definition'> & {
-  typeParameters(value: NodeData): MethodDefinitionNode;
-  parameters(value: NodeData): MethodDefinitionNode;
-  returnType(value: NodeData): MethodDefinitionNode;
-  body(value: NodeData): MethodDefinitionNode;
+  typeParameters(value: NodeData<'type_parameters'>): MethodDefinitionNode;
+  parameters(value: NodeData<'formal_parameters'>): MethodDefinitionNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): MethodDefinitionNode;
+  body(value: NodeData<'statement_block'>): MethodDefinitionNode;
   children(...value: NodeData[]): MethodDefinitionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -5039,17 +5270,17 @@ export type MethodDefinitionNode = NodeData<'method_definition'> & {
 };
 
 export function methodDefinition(
-  nameOrConfig: NodeData | MethodDefinitionConfig,
+  nameOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | MethodDefinitionConfig,
   config?: Partial<MethodDefinitionConfig>,
 ): MethodDefinitionNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'method_definition', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -5075,11 +5306,11 @@ methodDefinition.assign = function(target: AssignableNode<'method_definition'>):
     return merged;
   };
   const node: any = { get type() { return 'method_definition'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5091,25 +5322,25 @@ methodDefinition.assign = function(target: AssignableNode<'method_definition'>):
 } as any;
 
 export interface MethodSignatureConfig {
-  name: NodeData;
-  type_parameters?: NodeData;
-  parameters: NodeData;
-  return_type?: NodeData;
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  parameters: NodeData<'formal_parameters'>;
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>;
   children?: NodeData[];
 }
 
 export interface MethodSignatureFromInput {
-  name: FromValue;
-  type_parameters?: FromValue;
-  parameters: FromValue;
-  return_type?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  parameters: NodeData<'formal_parameters'> | FormalParametersFromInput | FromValue[];
+  return_type?: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'> | ({ kind: 'type_annotation' } & TypeAnnotationFromInput) | ({ kind: 'asserts_annotation' } & AssertsAnnotationFromInput) | ({ kind: 'type_predicate_annotation' } & TypePredicateAnnotationFromInput) | FromValue[];
+  children?: (NodeData<'accessibility_modifier' | 'override_modifier'> | string)[];
 }
 
 export type MethodSignatureNode = NodeData<'method_signature'> & {
-  typeParameters(value: NodeData): MethodSignatureNode;
-  parameters(value: NodeData): MethodSignatureNode;
-  returnType(value: NodeData): MethodSignatureNode;
+  typeParameters(value: NodeData<'type_parameters'>): MethodSignatureNode;
+  parameters(value: NodeData<'formal_parameters'>): MethodSignatureNode;
+  returnType(value: NodeData<'type_annotation' | 'asserts_annotation' | 'type_predicate_annotation'>): MethodSignatureNode;
   children(...value: NodeData[]): MethodSignatureNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -5118,16 +5349,16 @@ export type MethodSignatureNode = NodeData<'method_signature'> & {
 };
 
 export function methodSignature(
-  nameOrConfig: NodeData | MethodSignatureConfig,
+  nameOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | MethodSignatureConfig,
   config?: Partial<MethodSignatureConfig>,
 ): MethodSignatureNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'method_signature', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.parameters = (v: any) => { fields['parameters'] = resolveAndValidate(v); return node; };
-  node.returnType = (v: any) => { fields['return_type'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); fields['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); fields['return_type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -5153,10 +5384,10 @@ methodSignature.assign = function(target: AssignableNode<'method_signature'>): M
     return merged;
   };
   const node: any = { get type() { return 'method_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.parameters = (v: any) => { overrides['parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.returnType = (v: any) => { overrides['return_type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.parameters = (v: any) => { validateNodeText(v); overrides['parameters'] = v; return node; };
+  node.returnType = (v: any) => { validateNodeText(v); overrides['return_type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -5168,17 +5399,17 @@ methodSignature.assign = function(target: AssignableNode<'method_signature'>): M
 } as any;
 
 export interface ModuleConfig {
-  name: NodeData;
-  body?: NodeData;
+  name: NodeData<'string' | 'identifier' | 'nested_identifier'>;
+  body?: NodeData<'statement_block'>;
 }
 
 export interface ModuleFromInput {
-  name: FromValue;
-  body?: FromValue;
+  name: NodeData<'string' | 'identifier' | 'nested_identifier'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'nested_identifier' } & NestedIdentifierFromInput) | FromValue[];
+  body?: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
 }
 
 export type ModuleNode = NodeData<'module'> & {
-  body(value: NodeData): ModuleNode;
+  body(value: NodeData<'statement_block'>): ModuleNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5186,14 +5417,14 @@ export type ModuleNode = NodeData<'module'> & {
 };
 
 export function module(
-  nameOrConfig: NodeData | ModuleConfig,
+  nameOrConfig: NodeData<'string' | 'identifier' | 'nested_identifier'> | ModuleConfig,
   config?: Partial<ModuleConfig>,
 ): ModuleNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'module', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5216,8 +5447,8 @@ module.assign = function(target: AssignableNode<'module'>): ModuleNode {
     return merged;
   };
   const node: any = { get type() { return 'module'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5232,7 +5463,7 @@ export interface NamedImportsConfig {
 }
 
 export interface NamedImportsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'import_specifier'> | ImportSpecifierFromInput)[];
 }
 
 export type NamedImportsNode = NodeData<'named_imports'> & {
@@ -5244,9 +5475,16 @@ export type NamedImportsNode = NodeData<'named_imports'> & {
 };
 
 export function namedImports(
-  config?: NamedImportsConfig,
+  childrenOrConfig?: NodeData<'import_specifier'> | NodeData<'import_specifier'>[] | NamedImportsConfig,
 ): NamedImportsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'named_imports', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5288,7 +5526,7 @@ export interface NamespaceExportConfig {
 }
 
 export interface NamespaceExportFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'identifier' | 'string'> | string | StringFromInput)[];
 }
 
 export type NamespaceExportNode = NodeData<'namespace_export'> & {
@@ -5300,9 +5538,16 @@ export type NamespaceExportNode = NodeData<'namespace_export'> & {
 };
 
 export function namespaceExport(
-  config?: NamespaceExportConfig,
+  childrenOrConfig?: NodeData<'identifier' | 'string'> | NodeData<'identifier' | 'string'>[] | NamespaceExportConfig,
 ): NamespaceExportNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'namespace_export', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5344,7 +5589,7 @@ export interface NamespaceImportConfig {
 }
 
 export interface NamespaceImportFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'identifier'> | string)[];
 }
 
 export type NamespaceImportNode = NodeData<'namespace_import'> & {
@@ -5356,12 +5601,10 @@ export type NamespaceImportNode = NodeData<'namespace_import'> & {
 };
 
 export function namespaceImport(
-  childrenOrConfig?: string | NodeData | NodeData[] | NamespaceImportConfig,
+  childrenOrConfig?: NodeData<'identifier'> | NodeData<'identifier'>[] | NamespaceImportConfig,
 ): NamespaceImportNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'identifier', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -5405,17 +5648,17 @@ namespaceImport.assign = function(target: AssignableNode<'namespace_import'>): N
 } as any;
 
 export interface NestedIdentifierConfig {
-  object: NodeData;
-  property: NodeData | string;
+  object: NodeData<'identifier' | 'member_expression'>;
+  property: NodeData<'property_identifier'>;
 }
 
 export interface NestedIdentifierFromInput {
-  object: FromValue;
-  property: NodeData | string;
+  object: NodeData<'identifier' | 'member_expression'> | string | MemberExpressionFromInput | FromValue[];
+  property: NodeData<'property_identifier'> | string;
 }
 
 export type NestedIdentifierNode = NodeData<'nested_identifier'> & {
-  property(value: NodeData | string): NestedIdentifierNode;
+  property(value: NodeData<'property_identifier'>): NestedIdentifierNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5423,14 +5666,14 @@ export type NestedIdentifierNode = NodeData<'nested_identifier'> & {
 };
 
 export function nestedIdentifier(
-  objectOrConfig: NodeData | NestedIdentifierConfig,
+  objectOrConfig: NodeData<'identifier' | 'member_expression'> | NestedIdentifierConfig,
   config?: Partial<NestedIdentifierConfig>,
 ): NestedIdentifierNode {
-  const fields: any = isNodeData(objectOrConfig) || typeof objectOrConfig === 'string'
-    ? { 'object': resolveAndValidate(objectOrConfig), ...config }
+  const fields: any = isNodeData(objectOrConfig)
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'nested_identifier', fields };
-  node.property = (v: any) => { fields['property'] = resolveAndValidate(v); return node; };
+  node.property = (v: any) => { validateNodeText(v); fields['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5453,8 +5696,8 @@ nestedIdentifier.assign = function(target: AssignableNode<'nested_identifier'>):
     return merged;
   };
   const node: any = { get type() { return 'nested_identifier'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { overrides['object'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.property = (v: any) => { overrides['property'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
+  node.property = (v: any) => { validateNodeText(v); overrides['property'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5465,17 +5708,17 @@ nestedIdentifier.assign = function(target: AssignableNode<'nested_identifier'>):
 } as any;
 
 export interface NestedTypeIdentifierConfig {
-  module: NodeData;
-  name: NodeData | string;
+  module: NodeData<'identifier' | 'nested_identifier'>;
+  name: NodeData<'type_identifier'>;
 }
 
 export interface NestedTypeIdentifierFromInput {
-  module: FromValue;
-  name: NodeData | string;
+  module: NodeData<'identifier' | 'nested_identifier'> | string | NestedIdentifierFromInput | FromValue[];
+  name: NodeData<'type_identifier'> | string;
 }
 
 export type NestedTypeIdentifierNode = NodeData<'nested_type_identifier'> & {
-  module(value: NodeData): NestedTypeIdentifierNode;
+  module(value: NodeData<'identifier' | 'nested_identifier'>): NestedTypeIdentifierNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5483,14 +5726,14 @@ export type NestedTypeIdentifierNode = NodeData<'nested_type_identifier'> & {
 };
 
 export function nestedTypeIdentifier(
-  nameOrConfig: NodeData | string | NestedTypeIdentifierConfig,
+  nameOrConfig: NodeData<'type_identifier'> | NestedTypeIdentifierConfig,
   config?: Partial<NestedTypeIdentifierConfig>,
 ): NestedTypeIdentifierNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'nested_type_identifier', fields };
-  node.module = (v: any) => { fields['module'] = resolveAndValidate(v); return node; };
+  node.module = (v: any) => { validateNodeText(v); fields['module'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5513,8 +5756,8 @@ nestedTypeIdentifier.assign = function(target: AssignableNode<'nested_type_ident
     return merged;
   };
   const node: any = { get type() { return 'nested_type_identifier'; }, get fields() { return getFields(); } };
-  node.module = (v: any) => { overrides['module'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.module = (v: any) => { validateNodeText(v); overrides['module'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5525,20 +5768,20 @@ nestedTypeIdentifier.assign = function(target: AssignableNode<'nested_type_ident
 } as any;
 
 export interface NewExpressionConfig {
-  constructor: NodeData;
-  type_arguments?: NodeData;
-  arguments?: NodeData;
+  constructor: NodeData<'primary_expression'>;
+  type_arguments?: NodeData<'type_arguments'>;
+  arguments?: NodeData<'arguments'>;
 }
 
 export interface NewExpressionFromInput {
-  constructor: FromValue;
-  type_arguments?: FromValue;
-  arguments?: FromValue;
+  constructor: NodeData<'primary_expression'> | PrimaryExpressionFromInput | FromValue[];
+  type_arguments?: NodeData<'type_arguments'> | TypeArgumentsFromInput | FromValue[];
+  arguments?: NodeData<'arguments'> | ArgumentsFromInput | FromValue[];
 }
 
 export type NewExpressionNode = NodeData<'new_expression'> & {
-  typeArguments(value: NodeData): NewExpressionNode;
-  arguments(value: NodeData): NewExpressionNode;
+  typeArguments(value: NodeData<'type_arguments'>): NewExpressionNode;
+  arguments(value: NodeData<'arguments'>): NewExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5546,15 +5789,15 @@ export type NewExpressionNode = NodeData<'new_expression'> & {
 };
 
 export function newExpression(
-  constructorOrConfig: NodeData | NewExpressionConfig,
+  constructorOrConfig: NodeData<'primary_expression'> | NewExpressionConfig,
   config?: Partial<NewExpressionConfig>,
 ): NewExpressionNode {
-  const fields: any = isNodeData(constructorOrConfig) || typeof constructorOrConfig === 'string'
-    ? { 'constructor': resolveAndValidate(constructorOrConfig), ...config }
+  const fields: any = isNodeData(constructorOrConfig)
+    ? { 'constructor': constructorOrConfig, ...config }
     : constructorOrConfig;
   const node: any = { type: 'new_expression', fields };
-  node.typeArguments = (v: any) => { fields['type_arguments'] = resolveAndValidate(v); return node; };
-  node.arguments = (v: any) => { fields['arguments'] = resolveAndValidate(v); return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); fields['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { validateNodeText(v); fields['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5577,9 +5820,9 @@ newExpression.assign = function(target: AssignableNode<'new_expression'>): NewEx
     return merged;
   };
   const node: any = { get type() { return 'new_expression'; }, get fields() { return getFields(); } };
-  node.constructor = (v: any) => { overrides['constructor'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeArguments = (v: any) => { overrides['type_arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.arguments = (v: any) => { overrides['arguments'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.constructor = (v: any) => { validateNodeText(v); overrides['constructor'] = v; return node; };
+  node.typeArguments = (v: any) => { validateNodeText(v); overrides['type_arguments'] = v; return node; };
+  node.arguments = (v: any) => { validateNodeText(v); overrides['arguments'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5594,7 +5837,7 @@ export interface NonNullExpressionConfig {
 }
 
 export interface NonNullExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression'> | ExpressionFromInput)[];
 }
 
 export type NonNullExpressionNode = NodeData<'non_null_expression'> & {
@@ -5606,9 +5849,16 @@ export type NonNullExpressionNode = NodeData<'non_null_expression'> & {
 };
 
 export function nonNullExpression(
-  config?: NonNullExpressionConfig,
+  childrenOrConfig?: NodeData<'expression'> | NodeData<'expression'>[] | NonNullExpressionConfig,
 ): NonNullExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'non_null_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5650,7 +5900,7 @@ export interface ObjectConfig {
 }
 
 export interface ObjectFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'pair' | 'spread_element' | 'method_definition' | 'shorthand_property_identifier'> | string | ({ kind: 'pair' } & PairFromInput) | ({ kind: 'spread_element' } & SpreadElementFromInput) | ({ kind: 'method_definition' } & MethodDefinitionFromInput))[];
 }
 
 export type ObjectNode = NodeData<'object'> & {
@@ -5662,9 +5912,16 @@ export type ObjectNode = NodeData<'object'> & {
 };
 
 export function object(
-  config?: ObjectConfig,
+  childrenOrConfig?: NodeData<'pair' | 'spread_element' | 'method_definition' | 'shorthand_property_identifier'> | NodeData<'pair' | 'spread_element' | 'method_definition' | 'shorthand_property_identifier'>[] | ObjectConfig,
 ): ObjectNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'object', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5702,17 +5959,17 @@ object.assign = function(target: AssignableNode<'object'>): ObjectNode {
 } as any;
 
 export interface ObjectAssignmentPatternConfig {
-  left: NodeData;
-  right: NodeData;
+  left: NodeData<'object_pattern' | 'array_pattern' | 'shorthand_property_identifier_pattern'>;
+  right: NodeData<'expression'>;
 }
 
 export interface ObjectAssignmentPatternFromInput {
-  left: FromValue;
-  right: FromValue;
+  left: NodeData<'object_pattern' | 'array_pattern' | 'shorthand_property_identifier_pattern'> | string | ({ kind: 'object_pattern' } & ObjectPatternFromInput) | ({ kind: 'array_pattern' } & ArrayPatternFromInput) | FromValue[];
+  right: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type ObjectAssignmentPatternNode = NodeData<'object_assignment_pattern'> & {
-  right(value: NodeData): ObjectAssignmentPatternNode;
+  right(value: NodeData<'expression'>): ObjectAssignmentPatternNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -5720,14 +5977,14 @@ export type ObjectAssignmentPatternNode = NodeData<'object_assignment_pattern'> 
 };
 
 export function objectAssignmentPattern(
-  leftOrConfig: NodeData | ObjectAssignmentPatternConfig,
+  leftOrConfig: NodeData<'object_pattern' | 'array_pattern' | 'shorthand_property_identifier_pattern'> | ObjectAssignmentPatternConfig,
   config?: Partial<ObjectAssignmentPatternConfig>,
 ): ObjectAssignmentPatternNode {
-  const fields: any = isNodeData(leftOrConfig) || typeof leftOrConfig === 'string'
-    ? { 'left': resolveAndValidate(leftOrConfig), ...config }
+  const fields: any = isNodeData(leftOrConfig)
+    ? { 'left': leftOrConfig, ...config }
     : leftOrConfig;
   const node: any = { type: 'object_assignment_pattern', fields };
-  node.right = (v: any) => { fields['right'] = resolveAndValidate(v); return node; };
+  node.right = (v: any) => { validateNodeText(v); fields['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -5750,8 +6007,8 @@ objectAssignmentPattern.assign = function(target: AssignableNode<'object_assignm
     return merged;
   };
   const node: any = { get type() { return 'object_assignment_pattern'; }, get fields() { return getFields(); } };
-  node.left = (v: any) => { overrides['left'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.right = (v: any) => { overrides['right'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.left = (v: any) => { validateNodeText(v); overrides['left'] = v; return node; };
+  node.right = (v: any) => { validateNodeText(v); overrides['right'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -5766,7 +6023,7 @@ export interface ObjectPatternConfig {
 }
 
 export interface ObjectPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'pair_pattern' | 'rest_pattern' | 'object_assignment_pattern' | 'shorthand_property_identifier_pattern'> | string | ({ kind: 'pair_pattern' } & PairPatternFromInput) | ({ kind: 'rest_pattern' } & RestPatternFromInput) | ({ kind: 'object_assignment_pattern' } & ObjectAssignmentPatternFromInput))[];
 }
 
 export type ObjectPatternNode = NodeData<'object_pattern'> & {
@@ -5778,9 +6035,16 @@ export type ObjectPatternNode = NodeData<'object_pattern'> & {
 };
 
 export function objectPattern(
-  config?: ObjectPatternConfig,
+  childrenOrConfig?: NodeData<'pair_pattern' | 'rest_pattern' | 'object_assignment_pattern' | 'shorthand_property_identifier_pattern'> | NodeData<'pair_pattern' | 'rest_pattern' | 'object_assignment_pattern' | 'shorthand_property_identifier_pattern'>[] | ObjectPatternConfig,
 ): ObjectPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'object_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5822,7 +6086,7 @@ export interface ObjectTypeConfig {
 }
 
 export interface ObjectTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'export_statement' | 'property_signature' | 'call_signature' | 'construct_signature' | 'index_signature' | 'method_signature'> | ({ kind: 'export_statement' } & ExportStatementFromInput) | ({ kind: 'property_signature' } & PropertySignatureFromInput) | ({ kind: 'call_signature' } & CallSignatureFromInput) | ({ kind: 'construct_signature' } & ConstructSignatureFromInput) | ({ kind: 'index_signature' } & IndexSignatureFromInput) | ({ kind: 'method_signature' } & MethodSignatureFromInput))[];
 }
 
 export type ObjectTypeNode = NodeData<'object_type'> & {
@@ -5834,9 +6098,16 @@ export type ObjectTypeNode = NodeData<'object_type'> & {
 };
 
 export function objectType(
-  config?: ObjectTypeConfig,
+  childrenOrConfig?: NodeData<'export_statement' | 'property_signature' | 'call_signature' | 'construct_signature' | 'index_signature' | 'method_signature'> | NodeData<'export_statement' | 'property_signature' | 'call_signature' | 'construct_signature' | 'index_signature' | 'method_signature'>[] | ObjectTypeConfig,
 ): ObjectTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'object_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5878,7 +6149,7 @@ export interface OmittingTypeAnnotationConfig {
 }
 
 export interface OmittingTypeAnnotationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type OmittingTypeAnnotationNode = NodeData<'omitting_type_annotation'> & {
@@ -5890,9 +6161,16 @@ export type OmittingTypeAnnotationNode = NodeData<'omitting_type_annotation'> & 
 };
 
 export function omittingTypeAnnotation(
-  config?: OmittingTypeAnnotationConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | OmittingTypeAnnotationConfig,
 ): OmittingTypeAnnotationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'omitting_type_annotation', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5934,7 +6212,7 @@ export interface OptingTypeAnnotationConfig {
 }
 
 export interface OptingTypeAnnotationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type OptingTypeAnnotationNode = NodeData<'opting_type_annotation'> & {
@@ -5946,9 +6224,16 @@ export type OptingTypeAnnotationNode = NodeData<'opting_type_annotation'> & {
 };
 
 export function optingTypeAnnotation(
-  config?: OptingTypeAnnotationConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | OptingTypeAnnotationConfig,
 ): OptingTypeAnnotationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'opting_type_annotation', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -5986,29 +6271,29 @@ optingTypeAnnotation.assign = function(target: AssignableNode<'opting_type_annot
 } as any;
 
 export interface OptionalParameterConfig {
-  decorator?: NodeData[];
-  pattern?: NodeData;
-  type?: NodeData;
-  value?: NodeData;
-  name?: NodeData | string;
+  decorator?: NodeData<'decorator'>[];
+  pattern?: NodeData<'pattern' | 'this'>;
+  type?: NodeData<'type_annotation'>;
+  value?: NodeData<'expression'>;
+  name?: NodeData<'identifier'>;
   children?: NodeData[];
 }
 
 export interface OptionalParameterFromInput {
-  decorator?: FromValue[];
-  pattern?: FromValue;
-  type?: FromValue;
-  value?: FromValue;
-  name?: NodeData | string;
-  children?: FromValue | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  pattern?: NodeData<'pattern' | 'this'> | string | PatternFromInput | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
+  value?: NodeData<'expression'> | ExpressionFromInput | FromValue[];
+  name?: NodeData<'identifier'> | string;
+  children?: (NodeData<'accessibility_modifier' | 'override_modifier'> | string)[];
 }
 
 export type OptionalParameterNode = NodeData<'optional_parameter'> & {
-  decorator(value: NodeData[]): OptionalParameterNode;
-  pattern(value: NodeData): OptionalParameterNode;
-  typeField(value: NodeData): OptionalParameterNode;
-  value(value: NodeData): OptionalParameterNode;
-  name(value: NodeData | string): OptionalParameterNode;
+  decorator(value: NodeData<'decorator'>[]): OptionalParameterNode;
+  pattern(value: NodeData<'pattern' | 'this'>): OptionalParameterNode;
+  typeField(value: NodeData<'type_annotation'>): OptionalParameterNode;
+  value(value: NodeData<'expression'>): OptionalParameterNode;
+  name(value: NodeData<'identifier'>): OptionalParameterNode;
   children(...value: NodeData[]): OptionalParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6022,10 +6307,10 @@ export function optionalParameter(
   const fields: any = config ?? {};
   const node: any = { type: 'optional_parameter', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.pattern = (v: any) => { fields['pattern'] = resolveAndValidate(v); return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
-  node.name = (v: any) => { fields['name'] = resolveAndValidate(v); return node; };
+  node.pattern = (v: any) => { validateNodeText(v); fields['pattern'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6052,10 +6337,10 @@ optionalParameter.assign = function(target: AssignableNode<'optional_parameter'>
   };
   const node: any = { get type() { return 'optional_parameter'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6071,7 +6356,7 @@ export interface OptionalTypeConfig {
 }
 
 export interface OptionalTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type OptionalTypeNode = NodeData<'optional_type'> & {
@@ -6083,9 +6368,16 @@ export type OptionalTypeNode = NodeData<'optional_type'> & {
 };
 
 export function optionalType(
-  config?: OptionalTypeConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | OptionalTypeConfig,
 ): OptionalTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'optional_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6123,17 +6415,17 @@ optionalType.assign = function(target: AssignableNode<'optional_type'>): Optiona
 } as any;
 
 export interface PairConfig {
-  key: NodeData;
-  value: NodeData;
+  key: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  value: NodeData<'expression'>;
 }
 
 export interface PairFromInput {
-  key: FromValue;
-  value: FromValue;
+  key: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  value: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type PairNode = NodeData<'pair'> & {
-  value(value: NodeData): PairNode;
+  value(value: NodeData<'expression'>): PairNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -6141,14 +6433,14 @@ export type PairNode = NodeData<'pair'> & {
 };
 
 export function pair(
-  keyOrConfig: NodeData | PairConfig,
+  keyOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | PairConfig,
   config?: Partial<PairConfig>,
 ): PairNode {
-  const fields: any = isNodeData(keyOrConfig) || typeof keyOrConfig === 'string'
-    ? { 'key': resolveAndValidate(keyOrConfig), ...config }
+  const fields: any = isNodeData(keyOrConfig)
+    ? { 'key': keyOrConfig, ...config }
     : keyOrConfig;
   const node: any = { type: 'pair', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6171,8 +6463,8 @@ pair.assign = function(target: AssignableNode<'pair'>): PairNode {
     return merged;
   };
   const node: any = { get type() { return 'pair'; }, get fields() { return getFields(); } };
-  node.key = (v: any) => { overrides['key'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.key = (v: any) => { validateNodeText(v); overrides['key'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6183,17 +6475,17 @@ pair.assign = function(target: AssignableNode<'pair'>): PairNode {
 } as any;
 
 export interface PairPatternConfig {
-  key: NodeData;
-  value: NodeData;
+  key: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  value: NodeData<'pattern' | 'assignment_pattern'>;
 }
 
 export interface PairPatternFromInput {
-  key: FromValue;
-  value: FromValue;
+  key: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  value: NodeData<'pattern' | 'assignment_pattern'> | ({ kind: 'pattern' } & PatternFromInput) | ({ kind: 'assignment_pattern' } & AssignmentPatternFromInput) | FromValue[];
 }
 
 export type PairPatternNode = NodeData<'pair_pattern'> & {
-  value(value: NodeData): PairPatternNode;
+  value(value: NodeData<'pattern' | 'assignment_pattern'>): PairPatternNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -6201,14 +6493,14 @@ export type PairPatternNode = NodeData<'pair_pattern'> & {
 };
 
 export function pairPattern(
-  keyOrConfig: NodeData | PairPatternConfig,
+  keyOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | PairPatternConfig,
   config?: Partial<PairPatternConfig>,
 ): PairPatternNode {
-  const fields: any = isNodeData(keyOrConfig) || typeof keyOrConfig === 'string'
-    ? { 'key': resolveAndValidate(keyOrConfig), ...config }
+  const fields: any = isNodeData(keyOrConfig)
+    ? { 'key': keyOrConfig, ...config }
     : keyOrConfig;
   const node: any = { type: 'pair_pattern', fields };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6231,8 +6523,8 @@ pairPattern.assign = function(target: AssignableNode<'pair_pattern'>): PairPatte
     return merged;
   };
   const node: any = { get type() { return 'pair_pattern'; }, get fields() { return getFields(); } };
-  node.key = (v: any) => { overrides['key'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.key = (v: any) => { validateNodeText(v); overrides['key'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6243,17 +6535,17 @@ pairPattern.assign = function(target: AssignableNode<'pair_pattern'>): PairPatte
 } as any;
 
 export interface ParenthesizedExpressionConfig {
-  type?: NodeData;
+  type?: NodeData<'type_annotation'>;
   children?: NodeData[];
 }
 
 export interface ParenthesizedExpressionFromInput {
-  type?: FromValue;
-  children?: FromValue | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
+  children?: (NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput))[];
 }
 
 export type ParenthesizedExpressionNode = NodeData<'parenthesized_expression'> & {
-  typeField(value: NodeData): ParenthesizedExpressionNode;
+  typeField(value: NodeData<'type_annotation'>): ParenthesizedExpressionNode;
   children(...value: NodeData[]): ParenthesizedExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6262,11 +6554,18 @@ export type ParenthesizedExpressionNode = NodeData<'parenthesized_expression'> &
 };
 
 export function parenthesizedExpression(
-  config?: ParenthesizedExpressionConfig,
+  childrenOrConfig?: NodeData<'expression' | 'sequence_expression'> | NodeData<'expression' | 'sequence_expression'>[] | ParenthesizedExpressionConfig,
 ): ParenthesizedExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'parenthesized_expression', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6292,7 +6591,7 @@ parenthesizedExpression.assign = function(target: AssignableNode<'parenthesized_
     return merged;
   };
   const node: any = { get type() { return 'parenthesized_expression'; }, get fields() { return getFields(); } };
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6308,7 +6607,7 @@ export interface ParenthesizedTypeConfig {
 }
 
 export interface ParenthesizedTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type ParenthesizedTypeNode = NodeData<'parenthesized_type'> & {
@@ -6320,9 +6619,16 @@ export type ParenthesizedTypeNode = NodeData<'parenthesized_type'> & {
 };
 
 export function parenthesizedType(
-  config?: ParenthesizedTypeConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | ParenthesizedTypeConfig,
 ): ParenthesizedTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'parenthesized_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6364,7 +6670,7 @@ export interface ProgramConfig {
 }
 
 export interface ProgramFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'hash_bang_line' | 'statement'> | string | StatementFromInput)[];
 }
 
 export type ProgramNode = NodeData<'program'> & {
@@ -6376,9 +6682,16 @@ export type ProgramNode = NodeData<'program'> & {
 };
 
 export function program(
-  config?: ProgramConfig,
+  childrenOrConfig?: NodeData<'hash_bang_line' | 'statement'> | NodeData<'hash_bang_line' | 'statement'>[] | ProgramConfig,
 ): ProgramNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'program', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6416,19 +6729,19 @@ program.assign = function(target: AssignableNode<'program'>): ProgramNode {
 } as any;
 
 export interface PropertySignatureConfig {
-  name: NodeData;
-  type?: NodeData;
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  type?: NodeData<'type_annotation'>;
   children?: NodeData[];
 }
 
 export interface PropertySignatureFromInput {
-  name: FromValue;
-  type?: FromValue;
-  children?: FromValue | FromValue[];
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
+  children?: (NodeData<'accessibility_modifier' | 'override_modifier'> | string)[];
 }
 
 export type PropertySignatureNode = NodeData<'property_signature'> & {
-  typeField(value: NodeData): PropertySignatureNode;
+  typeField(value: NodeData<'type_annotation'>): PropertySignatureNode;
   children(...value: NodeData[]): PropertySignatureNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6437,14 +6750,14 @@ export type PropertySignatureNode = NodeData<'property_signature'> & {
 };
 
 export function propertySignature(
-  nameOrConfig: NodeData | PropertySignatureConfig,
+  nameOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | PropertySignatureConfig,
   config?: Partial<PropertySignatureConfig>,
 ): PropertySignatureNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'property_signature', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6470,8 +6783,8 @@ propertySignature.assign = function(target: AssignableNode<'property_signature'>
     return merged;
   };
   const node: any = { get type() { return 'property_signature'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6483,25 +6796,25 @@ propertySignature.assign = function(target: AssignableNode<'property_signature'>
 } as any;
 
 export interface PublicFieldDefinitionConfig {
-  decorator?: NodeData[];
-  name: NodeData;
-  type?: NodeData;
-  value?: NodeData;
+  decorator?: NodeData<'decorator'>[];
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'>;
+  type?: NodeData<'type_annotation'>;
+  value?: NodeData<'expression'>;
   children?: NodeData[];
 }
 
 export interface PublicFieldDefinitionFromInput {
-  decorator?: FromValue[];
-  name: FromValue;
-  type?: FromValue;
-  value?: FromValue;
-  children?: FromValue | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  name: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | string | ({ kind: 'string' } & StringFromInput) | ({ kind: 'computed_property_name' } & ComputedPropertyNameFromInput) | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
+  value?: NodeData<'expression'> | ExpressionFromInput | FromValue[];
+  children?: (NodeData<'accessibility_modifier' | 'override_modifier'> | string)[];
 }
 
 export type PublicFieldDefinitionNode = NodeData<'public_field_definition'> & {
-  decorator(value: NodeData[]): PublicFieldDefinitionNode;
-  typeField(value: NodeData): PublicFieldDefinitionNode;
-  value(value: NodeData): PublicFieldDefinitionNode;
+  decorator(value: NodeData<'decorator'>[]): PublicFieldDefinitionNode;
+  typeField(value: NodeData<'type_annotation'>): PublicFieldDefinitionNode;
+  value(value: NodeData<'expression'>): PublicFieldDefinitionNode;
   children(...value: NodeData[]): PublicFieldDefinitionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6510,16 +6823,16 @@ export type PublicFieldDefinitionNode = NodeData<'public_field_definition'> & {
 };
 
 export function publicFieldDefinition(
-  nameOrConfig: NodeData | PublicFieldDefinitionConfig,
+  nameOrConfig: NodeData<'property_identifier' | 'private_property_identifier' | 'string' | 'number' | 'computed_property_name'> | PublicFieldDefinitionConfig,
   config?: Partial<PublicFieldDefinitionConfig>,
 ): PublicFieldDefinitionNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'public_field_definition', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6546,9 +6859,9 @@ publicFieldDefinition.assign = function(target: AssignableNode<'public_field_def
   };
   const node: any = { get type() { return 'public_field_definition'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6564,7 +6877,7 @@ export interface ReadonlyTypeConfig {
 }
 
 export interface ReadonlyTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type ReadonlyTypeNode = NodeData<'readonly_type'> & {
@@ -6576,9 +6889,16 @@ export type ReadonlyTypeNode = NodeData<'readonly_type'> & {
 };
 
 export function readonlyType(
-  config?: ReadonlyTypeConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | ReadonlyTypeConfig,
 ): ReadonlyTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'readonly_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6616,17 +6936,17 @@ readonlyType.assign = function(target: AssignableNode<'readonly_type'>): Readonl
 } as any;
 
 export interface RegexConfig {
-  pattern: NodeData | string;
-  flags?: NodeData | string;
+  pattern: NodeData<'regex_pattern'>;
+  flags?: NodeData<'regex_flags'>;
 }
 
 export interface RegexFromInput {
-  pattern: NodeData | string;
-  flags?: NodeData | string;
+  pattern: NodeData<'regex_pattern'> | string;
+  flags?: NodeData<'regex_flags'> | string;
 }
 
 export type RegexNode = NodeData<'regex'> & {
-  flags(value: NodeData | string): RegexNode;
+  flags(value: NodeData<'regex_flags'>): RegexNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -6634,14 +6954,14 @@ export type RegexNode = NodeData<'regex'> & {
 };
 
 export function regex(
-  patternOrConfig: NodeData | string | RegexConfig,
+  patternOrConfig: NodeData<'regex_pattern'> | RegexConfig,
   config?: Partial<RegexConfig>,
 ): RegexNode {
-  const fields: any = isNodeData(patternOrConfig) || typeof patternOrConfig === 'string'
-    ? { 'pattern': resolveAndValidate(patternOrConfig), ...config }
+  const fields: any = isNodeData(patternOrConfig)
+    ? { 'pattern': patternOrConfig, ...config }
     : patternOrConfig;
   const node: any = { type: 'regex', fields };
-  node.flags = (v: any) => { fields['flags'] = resolveAndValidate(v); return node; };
+  node.flags = (v: any) => { validateNodeText(v); fields['flags'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -6664,8 +6984,8 @@ regex.assign = function(target: AssignableNode<'regex'>): RegexNode {
     return merged;
   };
   const node: any = { get type() { return 'regex'; }, get fields() { return getFields(); } };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.flags = (v: any) => { overrides['flags'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.flags = (v: any) => { validateNodeText(v); overrides['flags'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -6676,29 +6996,29 @@ regex.assign = function(target: AssignableNode<'regex'>): RegexNode {
 } as any;
 
 export interface RequiredParameterConfig {
-  decorator?: NodeData[];
-  pattern?: NodeData;
-  type?: NodeData;
-  value?: NodeData;
-  name?: NodeData;
+  decorator?: NodeData<'decorator'>[];
+  pattern?: NodeData<'pattern' | 'this'>;
+  type?: NodeData<'type_annotation'>;
+  value?: NodeData<'expression'>;
+  name?: NodeData<'identifier' | 'rest_pattern'>;
   children?: NodeData[];
 }
 
 export interface RequiredParameterFromInput {
-  decorator?: FromValue[];
-  pattern?: FromValue;
-  type?: FromValue;
-  value?: FromValue;
-  name?: FromValue;
-  children?: FromValue | FromValue[];
+  decorator?: (NodeData<'decorator'> | DecoratorFromInput)[] | NodeData<'decorator'> | DecoratorFromInput;
+  pattern?: NodeData<'pattern' | 'this'> | string | PatternFromInput | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
+  value?: NodeData<'expression'> | ExpressionFromInput | FromValue[];
+  name?: NodeData<'identifier' | 'rest_pattern'> | string | RestPatternFromInput | FromValue[];
+  children?: (NodeData<'accessibility_modifier' | 'override_modifier'> | string)[];
 }
 
 export type RequiredParameterNode = NodeData<'required_parameter'> & {
-  decorator(value: NodeData[]): RequiredParameterNode;
-  pattern(value: NodeData): RequiredParameterNode;
-  typeField(value: NodeData): RequiredParameterNode;
-  value(value: NodeData): RequiredParameterNode;
-  name(value: NodeData): RequiredParameterNode;
+  decorator(value: NodeData<'decorator'>[]): RequiredParameterNode;
+  pattern(value: NodeData<'pattern' | 'this'>): RequiredParameterNode;
+  typeField(value: NodeData<'type_annotation'>): RequiredParameterNode;
+  value(value: NodeData<'expression'>): RequiredParameterNode;
+  name(value: NodeData<'identifier' | 'rest_pattern'>): RequiredParameterNode;
   children(...value: NodeData[]): RequiredParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -6712,10 +7032,10 @@ export function requiredParameter(
   const fields: any = config ?? {};
   const node: any = { type: 'required_parameter', fields };
   node.decorator = (...v: any[]) => { fields['decorator'] = v; return node; };
-  node.pattern = (v: any) => { fields['pattern'] = resolveAndValidate(v); return node; };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
-  node.name = (v: any) => { fields['name'] = resolveAndValidate(v); return node; };
+  node.pattern = (v: any) => { validateNodeText(v); fields['pattern'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); fields['name'] = v; return node; };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -6742,10 +7062,10 @@ requiredParameter.assign = function(target: AssignableNode<'required_parameter'>
   };
   const node: any = { get type() { return 'required_parameter'; }, get fields() { return getFields(); } };
   node.decorator = (...v: any[]) => { overrides['decorator'] = v; return node; };
-  node.pattern = (v: any) => { overrides['pattern'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.pattern = (v: any) => { validateNodeText(v); overrides['pattern'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
   node.children = (...v: any[]) => { overrides.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -6761,7 +7081,7 @@ export interface RestPatternConfig {
 }
 
 export interface RestPatternFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression'> | string | ({ kind: 'member_expression' } & MemberExpressionFromInput) | ({ kind: 'subscript_expression' } & SubscriptExpressionFromInput) | ({ kind: 'object_pattern' } & ObjectPatternFromInput) | ({ kind: 'array_pattern' } & ArrayPatternFromInput) | ({ kind: 'non_null_expression' } & NonNullExpressionFromInput))[];
 }
 
 export type RestPatternNode = NodeData<'rest_pattern'> & {
@@ -6773,9 +7093,16 @@ export type RestPatternNode = NodeData<'rest_pattern'> & {
 };
 
 export function restPattern(
-  config?: RestPatternConfig,
+  childrenOrConfig?: NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression'> | NodeData<'member_expression' | 'subscript_expression' | 'undefined' | 'identifier' | 'object_pattern' | 'array_pattern' | 'non_null_expression'>[] | RestPatternConfig,
 ): RestPatternNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'rest_pattern', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6817,7 +7144,7 @@ export interface RestTypeConfig {
 }
 
 export interface RestTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type RestTypeNode = NodeData<'rest_type'> & {
@@ -6829,9 +7156,16 @@ export type RestTypeNode = NodeData<'rest_type'> & {
 };
 
 export function restType(
-  config?: RestTypeConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | RestTypeConfig,
 ): RestTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'rest_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6873,7 +7207,7 @@ export interface ReturnStatementConfig {
 }
 
 export interface ReturnStatementFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput))[];
 }
 
 export type ReturnStatementNode = NodeData<'return_statement'> & {
@@ -6885,9 +7219,16 @@ export type ReturnStatementNode = NodeData<'return_statement'> & {
 };
 
 export function returnStatement(
-  config?: ReturnStatementConfig,
+  childrenOrConfig?: NodeData<'expression' | 'sequence_expression'> | NodeData<'expression' | 'sequence_expression'>[] | ReturnStatementConfig,
 ): ReturnStatementNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'return_statement', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6929,7 +7270,7 @@ export interface SatisfiesExpressionConfig {
 }
 
 export interface SatisfiesExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'type'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'type' } & TypeFromInput))[];
 }
 
 export type SatisfiesExpressionNode = NodeData<'satisfies_expression'> & {
@@ -6941,9 +7282,16 @@ export type SatisfiesExpressionNode = NodeData<'satisfies_expression'> & {
 };
 
 export function satisfiesExpression(
-  config?: SatisfiesExpressionConfig,
+  childrenOrConfig?: NodeData<'expression' | 'type'> | NodeData<'expression' | 'type'>[] | SatisfiesExpressionConfig,
 ): SatisfiesExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'satisfies_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -6985,7 +7333,7 @@ export interface SequenceExpressionConfig {
 }
 
 export interface SequenceExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression'> | ExpressionFromInput)[];
 }
 
 export type SequenceExpressionNode = NodeData<'sequence_expression'> & {
@@ -6997,9 +7345,16 @@ export type SequenceExpressionNode = NodeData<'sequence_expression'> & {
 };
 
 export function sequenceExpression(
-  config?: SequenceExpressionConfig,
+  childrenOrConfig?: NodeData<'expression'> | NodeData<'expression'>[] | SequenceExpressionConfig,
 ): SequenceExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'sequence_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7041,7 +7396,7 @@ export interface SpreadElementConfig {
 }
 
 export interface SpreadElementFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression'> | ExpressionFromInput)[];
 }
 
 export type SpreadElementNode = NodeData<'spread_element'> & {
@@ -7053,9 +7408,16 @@ export type SpreadElementNode = NodeData<'spread_element'> & {
 };
 
 export function spreadElement(
-  config?: SpreadElementConfig,
+  childrenOrConfig?: NodeData<'expression'> | NodeData<'expression'>[] | SpreadElementConfig,
 ): SpreadElementNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'spread_element', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7097,7 +7459,7 @@ export interface StatementBlockConfig {
 }
 
 export interface StatementBlockFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'statement'> | StatementFromInput)[];
 }
 
 export type StatementBlockNode = NodeData<'statement_block'> & {
@@ -7109,9 +7471,16 @@ export type StatementBlockNode = NodeData<'statement_block'> & {
 };
 
 export function statementBlock(
-  config?: StatementBlockConfig,
+  childrenOrConfig?: NodeData<'statement'> | NodeData<'statement'>[] | StatementBlockConfig,
 ): StatementBlockNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'statement_block', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7153,7 +7522,7 @@ export interface StringConfig {
 }
 
 export interface StringFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_fragment' | 'escape_sequence'> | string)[];
 }
 
 export type StringNode = NodeData<'string'> & {
@@ -7165,12 +7534,10 @@ export type StringNode = NodeData<'string'> & {
 };
 
 export function string(
-  childrenOrConfig?: string | NodeData | NodeData[] | StringConfig,
+  childrenOrConfig?: NodeData<'string_fragment' | 'escape_sequence'> | NodeData<'string_fragment' | 'escape_sequence'>[] | StringConfig,
 ): StringNode {
   let fields: any;
-  if (typeof childrenOrConfig === 'string') {
-    fields = { children: [{ type: 'string_fragment', fields: {}, text: childrenOrConfig }] };
-  } else if (Array.isArray(childrenOrConfig)) {
+  if (Array.isArray(childrenOrConfig)) {
     fields = { children: childrenOrConfig };
   } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
     fields = { children: [childrenOrConfig] };
@@ -7214,20 +7581,20 @@ string.assign = function(target: AssignableNode<'string'>): StringNode {
 } as any;
 
 export interface SubscriptExpressionConfig {
-  object: NodeData;
-  optional_chain?: NodeData | string;
-  index: NodeData;
+  object: NodeData<'expression' | 'primary_expression'>;
+  optional_chain?: NodeData<'optional_chain'>;
+  index: NodeData<'expression' | 'sequence_expression'>;
 }
 
 export interface SubscriptExpressionFromInput {
-  object: FromValue;
-  optional_chain?: NodeData | string;
-  index: FromValue;
+  object: NodeData<'expression' | 'primary_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'primary_expression' } & PrimaryExpressionFromInput) | FromValue[];
+  optional_chain?: NodeData<'optional_chain'> | string;
+  index: NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput) | FromValue[];
 }
 
 export type SubscriptExpressionNode = NodeData<'subscript_expression'> & {
-  optionalChain(value: NodeData | string): SubscriptExpressionNode;
-  index(value: NodeData): SubscriptExpressionNode;
+  optionalChain(value: NodeData<'optional_chain'>): SubscriptExpressionNode;
+  index(value: NodeData<'expression' | 'sequence_expression'>): SubscriptExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7235,15 +7602,15 @@ export type SubscriptExpressionNode = NodeData<'subscript_expression'> & {
 };
 
 export function subscriptExpression(
-  objectOrConfig: NodeData | SubscriptExpressionConfig,
+  objectOrConfig: NodeData<'expression' | 'primary_expression'> | SubscriptExpressionConfig,
   config?: Partial<SubscriptExpressionConfig>,
 ): SubscriptExpressionNode {
-  const fields: any = isNodeData(objectOrConfig) || typeof objectOrConfig === 'string'
-    ? { 'object': resolveAndValidate(objectOrConfig), ...config }
+  const fields: any = isNodeData(objectOrConfig)
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'subscript_expression', fields };
-  node.optionalChain = (v: any) => { fields['optional_chain'] = resolveAndValidate(v); return node; };
-  node.index = (v: any) => { fields['index'] = resolveAndValidate(v); return node; };
+  node.optionalChain = (v: any) => { validateNodeText(v); fields['optional_chain'] = v; return node; };
+  node.index = (v: any) => { validateNodeText(v); fields['index'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7266,9 +7633,9 @@ subscriptExpression.assign = function(target: AssignableNode<'subscript_expressi
     return merged;
   };
   const node: any = { get type() { return 'subscript_expression'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { overrides['object'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.optionalChain = (v: any) => { overrides['optional_chain'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.index = (v: any) => { overrides['index'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
+  node.optionalChain = (v: any) => { validateNodeText(v); overrides['optional_chain'] = v; return node; };
+  node.index = (v: any) => { validateNodeText(v); overrides['index'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7283,7 +7650,7 @@ export interface SwitchBodyConfig {
 }
 
 export interface SwitchBodyFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'switch_case' | 'switch_default'> | ({ kind: 'switch_case' } & SwitchCaseFromInput) | ({ kind: 'switch_default' } & SwitchDefaultFromInput))[];
 }
 
 export type SwitchBodyNode = NodeData<'switch_body'> & {
@@ -7295,9 +7662,16 @@ export type SwitchBodyNode = NodeData<'switch_body'> & {
 };
 
 export function switchBody(
-  config?: SwitchBodyConfig,
+  childrenOrConfig?: NodeData<'switch_case' | 'switch_default'> | NodeData<'switch_case' | 'switch_default'>[] | SwitchBodyConfig,
 ): SwitchBodyNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'switch_body', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7335,17 +7709,17 @@ switchBody.assign = function(target: AssignableNode<'switch_body'>): SwitchBodyN
 } as any;
 
 export interface SwitchCaseConfig {
-  value: NodeData;
-  body?: NodeData[];
+  value: NodeData<'expression' | 'sequence_expression'>;
+  body?: NodeData<'statement'>[];
 }
 
 export interface SwitchCaseFromInput {
-  value: FromValue;
-  body?: FromValue[];
+  value: NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput) | FromValue[];
+  body?: (NodeData<'statement'> | StatementFromInput)[] | NodeData<'statement'> | StatementFromInput;
 }
 
 export type SwitchCaseNode = NodeData<'switch_case'> & {
-  body(value: NodeData[]): SwitchCaseNode;
+  body(value: NodeData<'statement'>[]): SwitchCaseNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7353,11 +7727,11 @@ export type SwitchCaseNode = NodeData<'switch_case'> & {
 };
 
 export function switchCase(
-  valueOrConfig: NodeData | SwitchCaseConfig,
+  valueOrConfig: NodeData<'expression' | 'sequence_expression'> | SwitchCaseConfig,
   config?: Partial<SwitchCaseConfig>,
 ): SwitchCaseNode {
-  const fields: any = isNodeData(valueOrConfig) || typeof valueOrConfig === 'string'
-    ? { 'value': resolveAndValidate(valueOrConfig), ...config }
+  const fields: any = isNodeData(valueOrConfig)
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'switch_case', fields };
   node.body = (...v: any[]) => { fields['body'] = v; return node; };
@@ -7383,7 +7757,7 @@ switchCase.assign = function(target: AssignableNode<'switch_case'>): SwitchCaseN
     return merged;
   };
   const node: any = { get type() { return 'switch_case'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.body = (...v: any[]) => { overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
@@ -7395,15 +7769,15 @@ switchCase.assign = function(target: AssignableNode<'switch_case'>): SwitchCaseN
 } as any;
 
 export interface SwitchDefaultConfig {
-  body?: NodeData[];
+  body?: NodeData<'statement'>[];
 }
 
 export interface SwitchDefaultFromInput {
-  body?: FromValue[];
+  body?: (NodeData<'statement'> | StatementFromInput)[] | NodeData<'statement'> | StatementFromInput;
 }
 
 export type SwitchDefaultNode = NodeData<'switch_default'> & {
-  body(value: NodeData[]): SwitchDefaultNode;
+  body(value: NodeData<'statement'>[]): SwitchDefaultNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7449,17 +7823,17 @@ switchDefault.assign = function(target: AssignableNode<'switch_default'>): Switc
 } as any;
 
 export interface SwitchStatementConfig {
-  value: NodeData;
-  body: NodeData;
+  value: NodeData<'parenthesized_expression'>;
+  body: NodeData<'switch_body'>;
 }
 
 export interface SwitchStatementFromInput {
-  value: FromValue;
-  body: FromValue;
+  value: NodeData<'parenthesized_expression'> | ParenthesizedExpressionFromInput | FromValue[];
+  body: NodeData<'switch_body'> | SwitchBodyFromInput | FromValue[];
 }
 
 export type SwitchStatementNode = NodeData<'switch_statement'> & {
-  body(value: NodeData): SwitchStatementNode;
+  body(value: NodeData<'switch_body'>): SwitchStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7467,14 +7841,14 @@ export type SwitchStatementNode = NodeData<'switch_statement'> & {
 };
 
 export function switchStatement(
-  valueOrConfig: NodeData | SwitchStatementConfig,
+  valueOrConfig: NodeData<'parenthesized_expression'> | SwitchStatementConfig,
   config?: Partial<SwitchStatementConfig>,
 ): SwitchStatementNode {
-  const fields: any = isNodeData(valueOrConfig) || typeof valueOrConfig === 'string'
-    ? { 'value': resolveAndValidate(valueOrConfig), ...config }
+  const fields: any = isNodeData(valueOrConfig)
+    ? { 'value': valueOrConfig, ...config }
     : valueOrConfig;
   const node: any = { type: 'switch_statement', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7497,8 +7871,8 @@ switchStatement.assign = function(target: AssignableNode<'switch_statement'>): S
     return merged;
   };
   const node: any = { get type() { return 'switch_statement'; }, get fields() { return getFields(); } };
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7513,7 +7887,7 @@ export interface TemplateLiteralTypeConfig {
 }
 
 export interface TemplateLiteralTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_fragment' | 'template_type'> | string | TemplateTypeFromInput)[];
 }
 
 export type TemplateLiteralTypeNode = NodeData<'template_literal_type'> & {
@@ -7525,9 +7899,16 @@ export type TemplateLiteralTypeNode = NodeData<'template_literal_type'> & {
 };
 
 export function templateLiteralType(
-  config?: TemplateLiteralTypeConfig,
+  childrenOrConfig?: NodeData<'string_fragment' | 'template_type'> | NodeData<'string_fragment' | 'template_type'>[] | TemplateLiteralTypeConfig,
 ): TemplateLiteralTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'template_literal_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7569,7 +7950,7 @@ export interface TemplateStringConfig {
 }
 
 export interface TemplateStringFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'string_fragment' | 'escape_sequence' | 'template_substitution'> | string | TemplateSubstitutionFromInput)[];
 }
 
 export type TemplateStringNode = NodeData<'template_string'> & {
@@ -7581,9 +7962,16 @@ export type TemplateStringNode = NodeData<'template_string'> & {
 };
 
 export function templateString(
-  config?: TemplateStringConfig,
+  childrenOrConfig?: NodeData<'string_fragment' | 'escape_sequence' | 'template_substitution'> | NodeData<'string_fragment' | 'escape_sequence' | 'template_substitution'>[] | TemplateStringConfig,
 ): TemplateStringNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'template_string', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7625,7 +8013,7 @@ export interface TemplateSubstitutionConfig {
 }
 
 export interface TemplateSubstitutionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput))[];
 }
 
 export type TemplateSubstitutionNode = NodeData<'template_substitution'> & {
@@ -7637,9 +8025,16 @@ export type TemplateSubstitutionNode = NodeData<'template_substitution'> & {
 };
 
 export function templateSubstitution(
-  config?: TemplateSubstitutionConfig,
+  childrenOrConfig?: NodeData<'expression' | 'sequence_expression'> | NodeData<'expression' | 'sequence_expression'>[] | TemplateSubstitutionConfig,
 ): TemplateSubstitutionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'template_substitution', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7681,7 +8076,7 @@ export interface TemplateTypeConfig {
 }
 
 export interface TemplateTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'primary_type' | 'infer_type'> | ({ kind: 'primary_type' } & PrimaryTypeFromInput) | ({ kind: 'infer_type' } & InferTypeFromInput))[];
 }
 
 export type TemplateTypeNode = NodeData<'template_type'> & {
@@ -7693,9 +8088,16 @@ export type TemplateTypeNode = NodeData<'template_type'> & {
 };
 
 export function templateType(
-  config?: TemplateTypeConfig,
+  childrenOrConfig?: NodeData<'primary_type' | 'infer_type'> | NodeData<'primary_type' | 'infer_type'>[] | TemplateTypeConfig,
 ): TemplateTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'template_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7733,20 +8135,20 @@ templateType.assign = function(target: AssignableNode<'template_type'>): Templat
 } as any;
 
 export interface TernaryExpressionConfig {
-  condition: NodeData;
-  consequence: NodeData;
-  alternative: NodeData;
+  condition: NodeData<'expression'>;
+  consequence: NodeData<'expression'>;
+  alternative: NodeData<'expression'>;
 }
 
 export interface TernaryExpressionFromInput {
-  condition: FromValue;
-  consequence: FromValue;
-  alternative: FromValue;
+  condition: NodeData<'expression'> | ExpressionFromInput | FromValue[];
+  consequence: NodeData<'expression'> | ExpressionFromInput | FromValue[];
+  alternative: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type TernaryExpressionNode = NodeData<'ternary_expression'> & {
-  consequence(value: NodeData): TernaryExpressionNode;
-  alternative(value: NodeData): TernaryExpressionNode;
+  consequence(value: NodeData<'expression'>): TernaryExpressionNode;
+  alternative(value: NodeData<'expression'>): TernaryExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7754,15 +8156,15 @@ export type TernaryExpressionNode = NodeData<'ternary_expression'> & {
 };
 
 export function ternaryExpression(
-  conditionOrConfig: NodeData | TernaryExpressionConfig,
+  conditionOrConfig: NodeData<'expression'> | TernaryExpressionConfig,
   config?: Partial<TernaryExpressionConfig>,
 ): TernaryExpressionNode {
-  const fields: any = isNodeData(conditionOrConfig) || typeof conditionOrConfig === 'string'
-    ? { 'condition': resolveAndValidate(conditionOrConfig), ...config }
+  const fields: any = isNodeData(conditionOrConfig)
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'ternary_expression', fields };
-  node.consequence = (v: any) => { fields['consequence'] = resolveAndValidate(v); return node; };
-  node.alternative = (v: any) => { fields['alternative'] = resolveAndValidate(v); return node; };
+  node.consequence = (v: any) => { validateNodeText(v); fields['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); fields['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7785,9 +8187,9 @@ ternaryExpression.assign = function(target: AssignableNode<'ternary_expression'>
     return merged;
   };
   const node: any = { get type() { return 'ternary_expression'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { overrides['condition'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.consequence = (v: any) => { overrides['consequence'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.alternative = (v: any) => { overrides['alternative'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
+  node.consequence = (v: any) => { validateNodeText(v); overrides['consequence'] = v; return node; };
+  node.alternative = (v: any) => { validateNodeText(v); overrides['alternative'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7802,7 +8204,7 @@ export interface ThrowStatementConfig {
 }
 
 export interface ThrowStatementFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression' | 'sequence_expression'> | ({ kind: 'expression' } & ExpressionFromInput) | ({ kind: 'sequence_expression' } & SequenceExpressionFromInput))[];
 }
 
 export type ThrowStatementNode = NodeData<'throw_statement'> & {
@@ -7814,9 +8216,16 @@ export type ThrowStatementNode = NodeData<'throw_statement'> & {
 };
 
 export function throwStatement(
-  config?: ThrowStatementConfig,
+  childrenOrConfig?: NodeData<'expression' | 'sequence_expression'> | NodeData<'expression' | 'sequence_expression'>[] | ThrowStatementConfig,
 ): ThrowStatementNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'throw_statement', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7854,20 +8263,20 @@ throwStatement.assign = function(target: AssignableNode<'throw_statement'>): Thr
 } as any;
 
 export interface TryStatementConfig {
-  body: NodeData;
-  handler?: NodeData;
-  finalizer?: NodeData;
+  body: NodeData<'statement_block'>;
+  handler?: NodeData<'catch_clause'>;
+  finalizer?: NodeData<'finally_clause'>;
 }
 
 export interface TryStatementFromInput {
-  body: FromValue;
-  handler?: FromValue;
-  finalizer?: FromValue;
+  body: NodeData<'statement_block'> | StatementBlockFromInput | FromValue[];
+  handler?: NodeData<'catch_clause'> | CatchClauseFromInput | FromValue[];
+  finalizer?: NodeData<'finally_clause'> | FinallyClauseFromInput | FromValue[];
 }
 
 export type TryStatementNode = NodeData<'try_statement'> & {
-  handler(value: NodeData): TryStatementNode;
-  finalizer(value: NodeData): TryStatementNode;
+  handler(value: NodeData<'catch_clause'>): TryStatementNode;
+  finalizer(value: NodeData<'finally_clause'>): TryStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7875,15 +8284,15 @@ export type TryStatementNode = NodeData<'try_statement'> & {
 };
 
 export function tryStatement(
-  bodyOrConfig: NodeData | TryStatementConfig,
+  bodyOrConfig: NodeData<'statement_block'> | TryStatementConfig,
   config?: Partial<TryStatementConfig>,
 ): TryStatementNode {
-  const fields: any = isNodeData(bodyOrConfig) || typeof bodyOrConfig === 'string'
-    ? { 'body': resolveAndValidate(bodyOrConfig), ...config }
+  const fields: any = isNodeData(bodyOrConfig)
+    ? { 'body': bodyOrConfig, ...config }
     : bodyOrConfig;
   const node: any = { type: 'try_statement', fields };
-  node.handler = (v: any) => { fields['handler'] = resolveAndValidate(v); return node; };
-  node.finalizer = (v: any) => { fields['finalizer'] = resolveAndValidate(v); return node; };
+  node.handler = (v: any) => { validateNodeText(v); fields['handler'] = v; return node; };
+  node.finalizer = (v: any) => { validateNodeText(v); fields['finalizer'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -7906,9 +8315,9 @@ tryStatement.assign = function(target: AssignableNode<'try_statement'>): TryStat
     return merged;
   };
   const node: any = { get type() { return 'try_statement'; }, get fields() { return getFields(); } };
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.handler = (v: any) => { overrides['handler'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.finalizer = (v: any) => { overrides['finalizer'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
+  node.handler = (v: any) => { validateNodeText(v); overrides['handler'] = v; return node; };
+  node.finalizer = (v: any) => { validateNodeText(v); overrides['finalizer'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -7923,7 +8332,7 @@ export interface TupleTypeConfig {
 }
 
 export interface TupleTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'required_parameter' | 'optional_parameter' | 'optional_type' | 'rest_type' | 'type'> | ({ kind: 'required_parameter' } & RequiredParameterFromInput) | ({ kind: 'optional_parameter' } & OptionalParameterFromInput) | ({ kind: 'optional_type' } & OptionalTypeFromInput) | ({ kind: 'rest_type' } & RestTypeFromInput) | ({ kind: 'type' } & TypeFromInput))[];
 }
 
 export type TupleTypeNode = NodeData<'tuple_type'> & {
@@ -7935,9 +8344,16 @@ export type TupleTypeNode = NodeData<'tuple_type'> & {
 };
 
 export function tupleType(
-  config?: TupleTypeConfig,
+  childrenOrConfig?: NodeData<'required_parameter' | 'optional_parameter' | 'optional_type' | 'rest_type' | 'type'> | NodeData<'required_parameter' | 'optional_parameter' | 'optional_type' | 'rest_type' | 'type'>[] | TupleTypeConfig,
 ): TupleTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'tuple_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -7975,20 +8391,20 @@ tupleType.assign = function(target: AssignableNode<'tuple_type'>): TupleTypeNode
 } as any;
 
 export interface TypeAliasDeclarationConfig {
-  name: NodeData | string;
-  type_parameters?: NodeData;
-  value: NodeData;
+  name: NodeData<'type_identifier'>;
+  type_parameters?: NodeData<'type_parameters'>;
+  value: NodeData<'type'>;
 }
 
 export interface TypeAliasDeclarationFromInput {
-  name: NodeData | string;
-  type_parameters?: FromValue;
-  value: FromValue;
+  name: NodeData<'type_identifier'> | string;
+  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput | FromValue[];
+  value: NodeData<'type'> | TypeFromInput | FromValue[];
 }
 
 export type TypeAliasDeclarationNode = NodeData<'type_alias_declaration'> & {
-  typeParameters(value: NodeData): TypeAliasDeclarationNode;
-  value(value: NodeData): TypeAliasDeclarationNode;
+  typeParameters(value: NodeData<'type_parameters'>): TypeAliasDeclarationNode;
+  value(value: NodeData<'type'>): TypeAliasDeclarationNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -7996,15 +8412,15 @@ export type TypeAliasDeclarationNode = NodeData<'type_alias_declaration'> & {
 };
 
 export function typeAliasDeclaration(
-  nameOrConfig: NodeData | string | TypeAliasDeclarationConfig,
+  nameOrConfig: NodeData<'type_identifier'> | TypeAliasDeclarationConfig,
   config?: Partial<TypeAliasDeclarationConfig>,
 ): TypeAliasDeclarationNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_alias_declaration', fields };
-  node.typeParameters = (v: any) => { fields['type_parameters'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); fields['type_parameters'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8027,9 +8443,9 @@ typeAliasDeclaration.assign = function(target: AssignableNode<'type_alias_declar
     return merged;
   };
   const node: any = { get type() { return 'type_alias_declaration'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeParameters = (v: any) => { overrides['type_parameters'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeParameters = (v: any) => { validateNodeText(v); overrides['type_parameters'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8044,7 +8460,7 @@ export interface TypeAnnotationConfig {
 }
 
 export interface TypeAnnotationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type TypeAnnotationNode = NodeData<'type_annotation'> & {
@@ -8056,9 +8472,16 @@ export type TypeAnnotationNode = NodeData<'type_annotation'> & {
 };
 
 export function typeAnnotation(
-  config?: TypeAnnotationConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | TypeAnnotationConfig,
 ): TypeAnnotationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_annotation', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8100,7 +8523,7 @@ export interface TypeArgumentsConfig {
 }
 
 export interface TypeArgumentsFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type TypeArgumentsNode = NodeData<'type_arguments'> & {
@@ -8112,9 +8535,16 @@ export type TypeArgumentsNode = NodeData<'type_arguments'> & {
 };
 
 export function typeArguments(
-  config?: TypeArgumentsConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | TypeArgumentsConfig,
 ): TypeArgumentsNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_arguments', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8156,7 +8586,7 @@ export interface TypeAssertionConfig {
 }
 
 export interface TypeAssertionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type_arguments' | 'expression'> | ({ kind: 'type_arguments' } & TypeArgumentsFromInput) | ({ kind: 'expression' } & ExpressionFromInput))[];
 }
 
 export type TypeAssertionNode = NodeData<'type_assertion'> & {
@@ -8168,9 +8598,16 @@ export type TypeAssertionNode = NodeData<'type_assertion'> & {
 };
 
 export function typeAssertion(
-  config?: TypeAssertionConfig,
+  childrenOrConfig?: NodeData<'type_arguments' | 'expression'> | NodeData<'type_arguments' | 'expression'>[] | TypeAssertionConfig,
 ): TypeAssertionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_assertion', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8208,20 +8645,20 @@ typeAssertion.assign = function(target: AssignableNode<'type_assertion'>): TypeA
 } as any;
 
 export interface TypeParameterConfig {
-  name: NodeData | string;
-  constraint?: NodeData;
-  value?: NodeData;
+  name: NodeData<'type_identifier'>;
+  constraint?: NodeData<'constraint'>;
+  value?: NodeData<'default_type'>;
 }
 
 export interface TypeParameterFromInput {
-  name: NodeData | string;
-  constraint?: FromValue;
-  value?: FromValue;
+  name: NodeData<'type_identifier'> | string;
+  constraint?: NodeData<'constraint'> | ConstraintFromInput | FromValue[];
+  value?: NodeData<'default_type'> | DefaultTypeFromInput | FromValue[];
 }
 
 export type TypeParameterNode = NodeData<'type_parameter'> & {
-  constraint(value: NodeData): TypeParameterNode;
-  value(value: NodeData): TypeParameterNode;
+  constraint(value: NodeData<'constraint'>): TypeParameterNode;
+  value(value: NodeData<'default_type'>): TypeParameterNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8229,15 +8666,15 @@ export type TypeParameterNode = NodeData<'type_parameter'> & {
 };
 
 export function typeParameter(
-  nameOrConfig: NodeData | string | TypeParameterConfig,
+  nameOrConfig: NodeData<'type_identifier'> | TypeParameterConfig,
   config?: Partial<TypeParameterConfig>,
 ): TypeParameterNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_parameter', fields };
-  node.constraint = (v: any) => { fields['constraint'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.constraint = (v: any) => { validateNodeText(v); fields['constraint'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8260,9 +8697,9 @@ typeParameter.assign = function(target: AssignableNode<'type_parameter'>): TypeP
     return merged;
   };
   const node: any = { get type() { return 'type_parameter'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.constraint = (v: any) => { overrides['constraint'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.constraint = (v: any) => { validateNodeText(v); overrides['constraint'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8277,7 +8714,7 @@ export interface TypeParametersConfig {
 }
 
 export interface TypeParametersFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type_parameter'> | TypeParameterFromInput)[];
 }
 
 export type TypeParametersNode = NodeData<'type_parameters'> & {
@@ -8289,9 +8726,16 @@ export type TypeParametersNode = NodeData<'type_parameters'> & {
 };
 
 export function typeParameters(
-  config?: TypeParametersConfig,
+  childrenOrConfig?: NodeData<'type_parameter'> | NodeData<'type_parameter'>[] | TypeParametersConfig,
 ): TypeParametersNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_parameters', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8329,17 +8773,17 @@ typeParameters.assign = function(target: AssignableNode<'type_parameters'>): Typ
 } as any;
 
 export interface TypePredicateConfig {
-  name: NodeData | string;
-  type: NodeData;
+  name: NodeData<'identifier' | 'this'>;
+  type: NodeData<'type'>;
 }
 
 export interface TypePredicateFromInput {
-  name: NodeData | string;
-  type: FromValue;
+  name: NodeData<'identifier' | 'this'> | string;
+  type: NodeData<'type'> | TypeFromInput | FromValue[];
 }
 
 export type TypePredicateNode = NodeData<'type_predicate'> & {
-  typeField(value: NodeData): TypePredicateNode;
+  typeField(value: NodeData<'type'>): TypePredicateNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8347,14 +8791,14 @@ export type TypePredicateNode = NodeData<'type_predicate'> & {
 };
 
 export function typePredicate(
-  nameOrConfig: NodeData | string | TypePredicateConfig,
+  nameOrConfig: NodeData<'identifier' | 'this'> | TypePredicateConfig,
   config?: Partial<TypePredicateConfig>,
 ): TypePredicateNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'type_predicate', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8377,8 +8821,8 @@ typePredicate.assign = function(target: AssignableNode<'type_predicate'>): TypeP
     return merged;
   };
   const node: any = { get type() { return 'type_predicate'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8393,7 +8837,7 @@ export interface TypePredicateAnnotationConfig {
 }
 
 export interface TypePredicateAnnotationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type_predicate'> | TypePredicateFromInput)[];
 }
 
 export type TypePredicateAnnotationNode = NodeData<'type_predicate_annotation'> & {
@@ -8405,9 +8849,16 @@ export type TypePredicateAnnotationNode = NodeData<'type_predicate_annotation'> 
 };
 
 export function typePredicateAnnotation(
-  config?: TypePredicateAnnotationConfig,
+  childrenOrConfig?: NodeData<'type_predicate'> | NodeData<'type_predicate'>[] | TypePredicateAnnotationConfig,
 ): TypePredicateAnnotationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_predicate_annotation', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8449,7 +8900,7 @@ export interface TypeQueryConfig {
 }
 
 export interface TypeQueryFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'subscript_expression' | 'member_expression' | 'call_expression' | 'instantiation_expression' | 'identifier' | 'this'> | string | ({ kind: 'subscript_expression' } & SubscriptExpressionFromInput) | ({ kind: 'member_expression' } & MemberExpressionFromInput) | ({ kind: 'call_expression' } & CallExpressionFromInput) | ({ kind: 'instantiation_expression' } & InstantiationExpressionFromInput))[];
 }
 
 export type TypeQueryNode = NodeData<'type_query'> & {
@@ -8461,9 +8912,16 @@ export type TypeQueryNode = NodeData<'type_query'> & {
 };
 
 export function typeQuery(
-  config?: TypeQueryConfig,
+  childrenOrConfig?: NodeData<'subscript_expression' | 'member_expression' | 'call_expression' | 'instantiation_expression' | 'identifier' | 'this'> | NodeData<'subscript_expression' | 'member_expression' | 'call_expression' | 'instantiation_expression' | 'identifier' | 'this'>[] | TypeQueryConfig,
 ): TypeQueryNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'type_query', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8501,17 +8959,17 @@ typeQuery.assign = function(target: AssignableNode<'type_query'>): TypeQueryNode
 } as any;
 
 export interface UnaryExpressionConfig {
-  operator: NodeData;
-  argument: NodeData;
+  operator: NodeData<string>;
+  argument: NodeData<'expression'>;
 }
 
 export interface UnaryExpressionFromInput {
   operator: NodeData | '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete';
-  argument: FromValue;
+  argument: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type UnaryExpressionNode = NodeData<'unary_expression'> & {
-  argument(value: NodeData): UnaryExpressionNode;
+  argument(value: NodeData<'expression'>): UnaryExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8519,14 +8977,14 @@ export type UnaryExpressionNode = NodeData<'unary_expression'> & {
 };
 
 export function unaryExpression(
-  operatorOrConfig: NodeData | UnaryExpressionConfig,
+  operatorOrConfig: NodeData<string> | UnaryExpressionConfig,
   config?: Partial<UnaryExpressionConfig>,
 ): UnaryExpressionNode {
-  const fields: any = isNodeData(operatorOrConfig) || typeof operatorOrConfig === 'string'
-    ? { 'operator': resolveAndValidate(operatorOrConfig), ...config }
+  const fields: any = isNodeData(operatorOrConfig)
+    ? { 'operator': operatorOrConfig, ...config }
     : operatorOrConfig;
   const node: any = { type: 'unary_expression', fields };
-  node.argument = (v: any) => { fields['argument'] = resolveAndValidate(v); return node; };
+  node.argument = (v: any) => { validateNodeText(v); fields['argument'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8549,8 +9007,8 @@ unaryExpression.assign = function(target: AssignableNode<'unary_expression'>): U
     return merged;
   };
   const node: any = { get type() { return 'unary_expression'; }, get fields() { return getFields(); } };
-  node.operator = (v: any) => { overrides['operator'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.argument = (v: any) => { overrides['argument'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
+  node.argument = (v: any) => { validateNodeText(v); overrides['argument'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8565,7 +9023,7 @@ export interface UnionTypeConfig {
 }
 
 export interface UnionTypeFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'type'> | TypeFromInput)[];
 }
 
 export type UnionTypeNode = NodeData<'union_type'> & {
@@ -8577,9 +9035,16 @@ export type UnionTypeNode = NodeData<'union_type'> & {
 };
 
 export function unionType(
-  config?: UnionTypeConfig,
+  childrenOrConfig?: NodeData<'type'> | NodeData<'type'>[] | UnionTypeConfig,
 ): UnionTypeNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'union_type', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8617,17 +9082,17 @@ unionType.assign = function(target: AssignableNode<'union_type'>): UnionTypeNode
 } as any;
 
 export interface UpdateExpressionConfig {
-  argument: NodeData;
-  operator: NodeData;
+  argument: NodeData<'expression'>;
+  operator: NodeData<string>;
 }
 
 export interface UpdateExpressionFromInput {
-  argument: FromValue;
+  argument: NodeData<'expression'> | ExpressionFromInput | FromValue[];
   operator: NodeData | '++' | '--';
 }
 
 export type UpdateExpressionNode = NodeData<'update_expression'> & {
-  operator(value: NodeData): UpdateExpressionNode;
+  operator(value: NodeData<string>): UpdateExpressionNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8635,14 +9100,14 @@ export type UpdateExpressionNode = NodeData<'update_expression'> & {
 };
 
 export function updateExpression(
-  argumentOrConfig: NodeData | UpdateExpressionConfig,
+  argumentOrConfig: NodeData<'expression'> | UpdateExpressionConfig,
   config?: Partial<UpdateExpressionConfig>,
 ): UpdateExpressionNode {
-  const fields: any = isNodeData(argumentOrConfig) || typeof argumentOrConfig === 'string'
-    ? { 'argument': resolveAndValidate(argumentOrConfig), ...config }
+  const fields: any = isNodeData(argumentOrConfig)
+    ? { 'argument': argumentOrConfig, ...config }
     : argumentOrConfig;
   const node: any = { type: 'update_expression', fields };
-  node.operator = (v: any) => { fields['operator'] = resolveAndValidate(v); return node; };
+  node.operator = (v: any) => { validateNodeText(v); fields['operator'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8665,8 +9130,8 @@ updateExpression.assign = function(target: AssignableNode<'update_expression'>):
     return merged;
   };
   const node: any = { get type() { return 'update_expression'; }, get fields() { return getFields(); } };
-  node.argument = (v: any) => { overrides['argument'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.operator = (v: any) => { overrides['operator'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.argument = (v: any) => { validateNodeText(v); overrides['argument'] = v; return node; };
+  node.operator = (v: any) => { validateNodeText(v); overrides['operator'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8681,7 +9146,7 @@ export interface VariableDeclarationConfig {
 }
 
 export interface VariableDeclarationFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'variable_declarator'> | VariableDeclaratorFromInput)[];
 }
 
 export type VariableDeclarationNode = NodeData<'variable_declaration'> & {
@@ -8693,9 +9158,16 @@ export type VariableDeclarationNode = NodeData<'variable_declaration'> & {
 };
 
 export function variableDeclaration(
-  config?: VariableDeclarationConfig,
+  childrenOrConfig?: NodeData<'variable_declarator'> | NodeData<'variable_declarator'>[] | VariableDeclarationConfig,
 ): VariableDeclarationNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'variable_declaration', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -8733,20 +9205,20 @@ variableDeclaration.assign = function(target: AssignableNode<'variable_declarati
 } as any;
 
 export interface VariableDeclaratorConfig {
-  name: NodeData;
-  type?: NodeData;
-  value?: NodeData;
+  name: NodeData<'object_pattern' | 'array_pattern' | 'identifier'>;
+  type?: NodeData<'type_annotation'>;
+  value?: NodeData<'expression'>;
 }
 
 export interface VariableDeclaratorFromInput {
-  name: FromValue;
-  type?: FromValue;
-  value?: FromValue;
+  name: NodeData<'object_pattern' | 'array_pattern' | 'identifier'> | string | ({ kind: 'object_pattern' } & ObjectPatternFromInput) | ({ kind: 'array_pattern' } & ArrayPatternFromInput) | FromValue[];
+  type?: NodeData<'type_annotation'> | TypeAnnotationFromInput | FromValue[];
+  value?: NodeData<'expression'> | ExpressionFromInput | FromValue[];
 }
 
 export type VariableDeclaratorNode = NodeData<'variable_declarator'> & {
-  typeField(value: NodeData): VariableDeclaratorNode;
-  value(value: NodeData): VariableDeclaratorNode;
+  typeField(value: NodeData<'type_annotation'>): VariableDeclaratorNode;
+  value(value: NodeData<'expression'>): VariableDeclaratorNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8754,15 +9226,15 @@ export type VariableDeclaratorNode = NodeData<'variable_declarator'> & {
 };
 
 export function variableDeclarator(
-  nameOrConfig: NodeData | VariableDeclaratorConfig,
+  nameOrConfig: NodeData<'object_pattern' | 'array_pattern' | 'identifier'> | VariableDeclaratorConfig,
   config?: Partial<VariableDeclaratorConfig>,
 ): VariableDeclaratorNode {
-  const fields: any = isNodeData(nameOrConfig) || typeof nameOrConfig === 'string'
-    ? { 'name': resolveAndValidate(nameOrConfig), ...config }
+  const fields: any = isNodeData(nameOrConfig)
+    ? { 'name': nameOrConfig, ...config }
     : nameOrConfig;
   const node: any = { type: 'variable_declarator', fields };
-  node.typeField = (v: any) => { fields['type'] = resolveAndValidate(v); return node; };
-  node.value = (v: any) => { fields['value'] = resolveAndValidate(v); return node; };
+  node.typeField = (v: any) => { validateNodeText(v); fields['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); fields['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8785,9 +9257,9 @@ variableDeclarator.assign = function(target: AssignableNode<'variable_declarator
     return merged;
   };
   const node: any = { get type() { return 'variable_declarator'; }, get fields() { return getFields(); } };
-  node.name = (v: any) => { overrides['name'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.typeField = (v: any) => { overrides['type'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.value = (v: any) => { overrides['value'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.name = (v: any) => { validateNodeText(v); overrides['name'] = v; return node; };
+  node.typeField = (v: any) => { validateNodeText(v); overrides['type'] = v; return node; };
+  node.value = (v: any) => { validateNodeText(v); overrides['value'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8798,17 +9270,17 @@ variableDeclarator.assign = function(target: AssignableNode<'variable_declarator
 } as any;
 
 export interface WhileStatementConfig {
-  condition: NodeData;
-  body: NodeData;
+  condition: NodeData<'parenthesized_expression'>;
+  body: NodeData<'statement'>;
 }
 
 export interface WhileStatementFromInput {
-  condition: FromValue;
-  body: FromValue;
+  condition: NodeData<'parenthesized_expression'> | ParenthesizedExpressionFromInput | FromValue[];
+  body: NodeData<'statement'> | StatementFromInput | FromValue[];
 }
 
 export type WhileStatementNode = NodeData<'while_statement'> & {
-  body(value: NodeData): WhileStatementNode;
+  body(value: NodeData<'statement'>): WhileStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8816,14 +9288,14 @@ export type WhileStatementNode = NodeData<'while_statement'> & {
 };
 
 export function whileStatement(
-  conditionOrConfig: NodeData | WhileStatementConfig,
+  conditionOrConfig: NodeData<'parenthesized_expression'> | WhileStatementConfig,
   config?: Partial<WhileStatementConfig>,
 ): WhileStatementNode {
-  const fields: any = isNodeData(conditionOrConfig) || typeof conditionOrConfig === 'string'
-    ? { 'condition': resolveAndValidate(conditionOrConfig), ...config }
+  const fields: any = isNodeData(conditionOrConfig)
+    ? { 'condition': conditionOrConfig, ...config }
     : conditionOrConfig;
   const node: any = { type: 'while_statement', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8846,8 +9318,8 @@ whileStatement.assign = function(target: AssignableNode<'while_statement'>): Whi
     return merged;
   };
   const node: any = { get type() { return 'while_statement'; }, get fields() { return getFields(); } };
-  node.condition = (v: any) => { overrides['condition'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.condition = (v: any) => { validateNodeText(v); overrides['condition'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8858,17 +9330,17 @@ whileStatement.assign = function(target: AssignableNode<'while_statement'>): Whi
 } as any;
 
 export interface WithStatementConfig {
-  object: NodeData;
-  body: NodeData;
+  object: NodeData<'parenthesized_expression'>;
+  body: NodeData<'statement'>;
 }
 
 export interface WithStatementFromInput {
-  object: FromValue;
-  body: FromValue;
+  object: NodeData<'parenthesized_expression'> | ParenthesizedExpressionFromInput | FromValue[];
+  body: NodeData<'statement'> | StatementFromInput | FromValue[];
 }
 
 export type WithStatementNode = NodeData<'with_statement'> & {
-  body(value: NodeData): WithStatementNode;
+  body(value: NodeData<'statement'>): WithStatementNode;
   render(): string;
   toEdit(start: number, end: number): Edit;
   toEdit(range: { start: { index: number }, end: { index: number } }): Edit;
@@ -8876,14 +9348,14 @@ export type WithStatementNode = NodeData<'with_statement'> & {
 };
 
 export function withStatement(
-  objectOrConfig: NodeData | WithStatementConfig,
+  objectOrConfig: NodeData<'parenthesized_expression'> | WithStatementConfig,
   config?: Partial<WithStatementConfig>,
 ): WithStatementNode {
-  const fields: any = isNodeData(objectOrConfig) || typeof objectOrConfig === 'string'
-    ? { 'object': resolveAndValidate(objectOrConfig), ...config }
+  const fields: any = isNodeData(objectOrConfig)
+    ? { 'object': objectOrConfig, ...config }
     : objectOrConfig;
   const node: any = { type: 'with_statement', fields };
-  node.body = (v: any) => { fields['body'] = resolveAndValidate(v); return node; };
+  node.body = (v: any) => { validateNodeText(v); fields['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = (startOrRange: any, endPos?: number) => {
     if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);
@@ -8906,8 +9378,8 @@ withStatement.assign = function(target: AssignableNode<'with_statement'>): WithS
     return merged;
   };
   const node: any = { get type() { return 'with_statement'; }, get fields() { return getFields(); } };
-  node.object = (v: any) => { overrides['object'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
-  node.body = (v: any) => { overrides['body'] = resolveAndValidate(v); return node; };  // validate user-provided overrides
+  node.object = (v: any) => { validateNodeText(v); overrides['object'] = v; return node; };
+  node.body = (v: any) => { validateNodeText(v); overrides['body'] = v; return node; };
   node.render = () => render(node, rules, joinBy);
   node.toEdit = () => {
     const r = target.range();
@@ -8922,7 +9394,7 @@ export interface YieldExpressionConfig {
 }
 
 export interface YieldExpressionFromInput {
-  children?: FromValue | FromValue[];
+  children?: (NodeData<'expression'> | ExpressionFromInput)[];
 }
 
 export type YieldExpressionNode = NodeData<'yield_expression'> & {
@@ -8934,9 +9406,16 @@ export type YieldExpressionNode = NodeData<'yield_expression'> & {
 };
 
 export function yieldExpression(
-  config?: YieldExpressionConfig,
+  childrenOrConfig?: NodeData<'expression'> | NodeData<'expression'>[] | YieldExpressionConfig,
 ): YieldExpressionNode {
-  const fields: any = config ?? {};
+  let fields: any;
+  if (Array.isArray(childrenOrConfig)) {
+    fields = { children: childrenOrConfig };
+  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {
+    fields = { children: [childrenOrConfig] };
+  } else {
+    fields = childrenOrConfig ?? {};
+  }
   const node: any = { type: 'yield_expression', fields };
   node.children = (...v: any[]) => { fields.children = v; return node; };
   node.render = () => render(node, rules, joinBy);
@@ -10393,50 +10872,58 @@ function getFromContext(): FromContext {
 }
 
 export namespace abstractClassDeclaration {
-  export function from(input: AbstractClassDeclarationFromInput): AbstractClassDeclarationNode {
-    return resolveFromInput('abstract_class_declaration', input as any, getFromContext()) as any;
+  export function from(input: AbstractClassDeclarationFromInput | FromValue[]): AbstractClassDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('abstract_class_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace abstractMethodSignature {
-  export function from(input: AbstractMethodSignatureFromInput): AbstractMethodSignatureNode {
-    return resolveFromInput('abstract_method_signature', input as any, getFromContext()) as any;
+  export function from(input: AbstractMethodSignatureFromInput | FromValue[]): AbstractMethodSignatureNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('abstract_method_signature', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace addingTypeAnnotation {
-  export function from(input: AddingTypeAnnotationFromInput): AddingTypeAnnotationNode {
-    return resolveFromInput('adding_type_annotation', input as any, getFromContext()) as any;
+  export function from(input: AddingTypeAnnotationFromInput | FromValue[]): AddingTypeAnnotationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('adding_type_annotation', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace ambientDeclaration {
-  export function from(input: AmbientDeclarationFromInput): AmbientDeclarationNode {
-    return resolveFromInput('ambient_declaration', input as any, getFromContext()) as any;
+  export function from(input: AmbientDeclarationFromInput | FromValue[]): AmbientDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('ambient_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace arguments_ {
-  export function from(input: ArgumentsFromInput): ArgumentsNode {
-    return resolveFromInput('arguments', input as any, getFromContext()) as any;
+  export function from(input: ArgumentsFromInput | FromValue[]): ArgumentsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('arguments', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace array {
-  export function from(input: ArrayFromInput): ArrayNode {
-    return resolveFromInput('array', input as any, getFromContext()) as any;
+  export function from(input: ArrayFromInput | FromValue[]): ArrayNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('array', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace arrayPattern {
-  export function from(input: ArrayPatternFromInput): ArrayPatternNode {
-    return resolveFromInput('array_pattern', input as any, getFromContext()) as any;
+  export function from(input: ArrayPatternFromInput | FromValue[]): ArrayPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('array_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace arrayType {
-  export function from(input: ArrayTypeFromInput): ArrayTypeNode {
-    return resolveFromInput('array_type', input as any, getFromContext()) as any;
+  export function from(input: ArrayTypeFromInput | FromValue[]): ArrayTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('array_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10447,20 +10934,23 @@ export namespace arrowFunction {
 }
 
 export namespace asExpression {
-  export function from(input: AsExpressionFromInput): AsExpressionNode {
-    return resolveFromInput('as_expression', input as any, getFromContext()) as any;
+  export function from(input: AsExpressionFromInput | FromValue[]): AsExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('as_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace asserts {
-  export function from(input: AssertsFromInput): AssertsNode {
-    return resolveFromInput('asserts', input as any, getFromContext()) as any;
+  export function from(input: AssertsFromInput | FromValue[]): AssertsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('asserts', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace assertsAnnotation {
-  export function from(input: AssertsAnnotationFromInput): AssertsAnnotationNode {
-    return resolveFromInput('asserts_annotation', input as any, getFromContext()) as any;
+  export function from(input: AssertsAnnotationFromInput | FromValue[]): AssertsAnnotationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('asserts_annotation', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10483,8 +10973,9 @@ export namespace augmentedAssignmentExpression {
 }
 
 export namespace awaitExpression {
-  export function from(input: AwaitExpressionFromInput): AwaitExpressionNode {
-    return resolveFromInput('await_expression', input as any, getFromContext()) as any;
+  export function from(input: AwaitExpressionFromInput | FromValue[]): AwaitExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('await_expression', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10519,26 +11010,30 @@ export namespace catchClause {
 }
 
 export namespace class_ {
-  export function from(input: ClassFromInput): ClassNode {
-    return resolveFromInput('class', input as any, getFromContext()) as any;
+  export function from(input: ClassFromInput | FromValue[]): ClassNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('class', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace classBody {
-  export function from(input: ClassBodyFromInput): ClassBodyNode {
-    return resolveFromInput('class_body', input as any, getFromContext()) as any;
+  export function from(input: ClassBodyFromInput | FromValue[]): ClassBodyNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('class_body', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace classDeclaration {
-  export function from(input: ClassDeclarationFromInput): ClassDeclarationNode {
-    return resolveFromInput('class_declaration', input as any, getFromContext()) as any;
+  export function from(input: ClassDeclarationFromInput | FromValue[]): ClassDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('class_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace classHeritage {
-  export function from(input: ClassHeritageFromInput): ClassHeritageNode {
-    return resolveFromInput('class_heritage', input as any, getFromContext()) as any;
+  export function from(input: ClassHeritageFromInput | FromValue[]): ClassHeritageNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('class_heritage', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10549,8 +11044,9 @@ export namespace classStaticBlock {
 }
 
 export namespace computedPropertyName {
-  export function from(input: ComputedPropertyNameFromInput): ComputedPropertyNameNode {
-    return resolveFromInput('computed_property_name', input as any, getFromContext()) as any;
+  export function from(input: ComputedPropertyNameFromInput | FromValue[]): ComputedPropertyNameNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('computed_property_name', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10561,8 +11057,9 @@ export namespace conditionalType {
 }
 
 export namespace constraint {
-  export function from(input: ConstraintFromInput): ConstraintNode {
-    return resolveFromInput('constraint', input as any, getFromContext()) as any;
+  export function from(input: ConstraintFromInput | FromValue[]): ConstraintNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('constraint', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10585,14 +11082,16 @@ export namespace continueStatement {
 }
 
 export namespace decorator {
-  export function from(input: DecoratorFromInput): DecoratorNode {
-    return resolveFromInput('decorator', input as any, getFromContext()) as any;
+  export function from(input: DecoratorFromInput | FromValue[]): DecoratorNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('decorator', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace defaultType {
-  export function from(input: DefaultTypeFromInput): DefaultTypeNode {
-    return resolveFromInput('default_type', input as any, getFromContext()) as any;
+  export function from(input: DefaultTypeFromInput | FromValue[]): DefaultTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('default_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10603,8 +11102,9 @@ export namespace doStatement {
 }
 
 export namespace elseClause {
-  export function from(input: ElseClauseFromInput): ElseClauseNode {
-    return resolveFromInput('else_clause', input as any, getFromContext()) as any;
+  export function from(input: ElseClauseFromInput | FromValue[]): ElseClauseNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('else_clause', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10615,8 +11115,9 @@ export namespace enumAssignment {
 }
 
 export namespace enumBody {
-  export function from(input: EnumBodyFromInput): EnumBodyNode {
-    return resolveFromInput('enum_body', input as any, getFromContext()) as any;
+  export function from(input: EnumBodyFromInput | FromValue[]): EnumBodyNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('enum_body', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10627,8 +11128,9 @@ export namespace enumDeclaration {
 }
 
 export namespace exportClause {
-  export function from(input: ExportClauseFromInput): ExportClauseNode {
-    return resolveFromInput('export_clause', input as any, getFromContext()) as any;
+  export function from(input: ExportClauseFromInput | FromValue[]): ExportClauseNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('export_clause', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10639,14 +11141,16 @@ export namespace exportSpecifier {
 }
 
 export namespace exportStatement {
-  export function from(input: ExportStatementFromInput): ExportStatementNode {
-    return resolveFromInput('export_statement', input as any, getFromContext()) as any;
+  export function from(input: ExportStatementFromInput | FromValue[]): ExportStatementNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('export_statement', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace expressionStatement {
-  export function from(input: ExpressionStatementFromInput): ExpressionStatementNode {
-    return resolveFromInput('expression_statement', input as any, getFromContext()) as any;
+  export function from(input: ExpressionStatementFromInput | FromValue[]): ExpressionStatementNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('expression_statement', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10669,8 +11173,9 @@ export namespace finallyClause {
 }
 
 export namespace flowMaybeType {
-  export function from(input: FlowMaybeTypeFromInput): FlowMaybeTypeNode {
-    return resolveFromInput('flow_maybe_type', input as any, getFromContext()) as any;
+  export function from(input: FlowMaybeTypeFromInput | FromValue[]): FlowMaybeTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('flow_maybe_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10687,8 +11192,9 @@ export namespace forStatement {
 }
 
 export namespace formalParameters {
-  export function from(input: FormalParametersFromInput): FormalParametersNode {
-    return resolveFromInput('formal_parameters', input as any, getFromContext()) as any;
+  export function from(input: FormalParametersFromInput | FromValue[]): FormalParametersNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('formal_parameters', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10741,32 +11247,37 @@ export namespace ifStatement {
 }
 
 export namespace implementsClause {
-  export function from(input: ImplementsClauseFromInput): ImplementsClauseNode {
-    return resolveFromInput('implements_clause', input as any, getFromContext()) as any;
+  export function from(input: ImplementsClauseFromInput | FromValue[]): ImplementsClauseNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('implements_clause', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace importAlias {
-  export function from(input: ImportAliasFromInput): ImportAliasNode {
-    return resolveFromInput('import_alias', input as any, getFromContext()) as any;
+  export function from(input: ImportAliasFromInput | FromValue[]): ImportAliasNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('import_alias', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace importAttribute {
-  export function from(input: ImportAttributeFromInput): ImportAttributeNode {
-    return resolveFromInput('import_attribute', input as any, getFromContext()) as any;
+  export function from(input: ImportAttributeFromInput | FromValue[]): ImportAttributeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('import_attribute', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace importClause {
-  export function from(input: ImportClauseFromInput): ImportClauseNode {
-    return resolveFromInput('import_clause', input as any, getFromContext()) as any;
+  export function from(input: ImportClauseFromInput | FromValue[]): ImportClauseNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('import_clause', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace importRequireClause {
-  export function from(input: ImportRequireClauseFromInput): ImportRequireClauseNode {
-    return resolveFromInput('import_require_clause', input as any, getFromContext()) as any;
+  export function from(input: ImportRequireClauseFromInput | FromValue[]): ImportRequireClauseNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('import_require_clause', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10777,44 +11288,51 @@ export namespace importSpecifier {
 }
 
 export namespace importStatement {
-  export function from(input: ImportStatementFromInput): ImportStatementNode {
-    return resolveFromInput('import_statement', input as any, getFromContext()) as any;
+  export function from(input: ImportStatementFromInput | FromValue[]): ImportStatementNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('import_statement', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace indexSignature {
-  export function from(input: IndexSignatureFromInput): IndexSignatureNode {
-    return resolveFromInput('index_signature', input as any, getFromContext()) as any;
+  export function from(input: IndexSignatureFromInput | FromValue[]): IndexSignatureNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('index_signature', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace indexTypeQuery {
-  export function from(input: IndexTypeQueryFromInput): IndexTypeQueryNode {
-    return resolveFromInput('index_type_query', input as any, getFromContext()) as any;
+  export function from(input: IndexTypeQueryFromInput | FromValue[]): IndexTypeQueryNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('index_type_query', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace inferType {
-  export function from(input: InferTypeFromInput): InferTypeNode {
-    return resolveFromInput('infer_type', input as any, getFromContext()) as any;
+  export function from(input: InferTypeFromInput | FromValue[]): InferTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('infer_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace instantiationExpression {
-  export function from(input: InstantiationExpressionFromInput): InstantiationExpressionNode {
-    return resolveFromInput('instantiation_expression', input as any, getFromContext()) as any;
+  export function from(input: InstantiationExpressionFromInput | FromValue[]): InstantiationExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('instantiation_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace interfaceBody {
-  export function from(input: InterfaceBodyFromInput): InterfaceBodyNode {
-    return resolveFromInput('interface_body', input as any, getFromContext()) as any;
+  export function from(input: InterfaceBodyFromInput | FromValue[]): InterfaceBodyNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('interface_body', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace interfaceDeclaration {
-  export function from(input: InterfaceDeclarationFromInput): InterfaceDeclarationNode {
-    return resolveFromInput('interface_declaration', input as any, getFromContext()) as any;
+  export function from(input: InterfaceDeclarationFromInput | FromValue[]): InterfaceDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('interface_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10825,8 +11343,9 @@ export namespace internalModule {
 }
 
 export namespace intersectionType {
-  export function from(input: IntersectionTypeFromInput): IntersectionTypeNode {
-    return resolveFromInput('intersection_type', input as any, getFromContext()) as any;
+  export function from(input: IntersectionTypeFromInput | FromValue[]): IntersectionTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('intersection_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10837,20 +11356,23 @@ export namespace labeledStatement {
 }
 
 export namespace lexicalDeclaration {
-  export function from(input: LexicalDeclarationFromInput): LexicalDeclarationNode {
-    return resolveFromInput('lexical_declaration', input as any, getFromContext()) as any;
+  export function from(input: LexicalDeclarationFromInput | FromValue[]): LexicalDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('lexical_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace literalType {
-  export function from(input: LiteralTypeFromInput): LiteralTypeNode {
-    return resolveFromInput('literal_type', input as any, getFromContext()) as any;
+  export function from(input: LiteralTypeFromInput | FromValue[]): LiteralTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('literal_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace lookupType {
-  export function from(input: LookupTypeFromInput): LookupTypeNode {
-    return resolveFromInput('lookup_type', input as any, getFromContext()) as any;
+  export function from(input: LookupTypeFromInput | FromValue[]): LookupTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('lookup_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10867,14 +11389,16 @@ export namespace memberExpression {
 }
 
 export namespace methodDefinition {
-  export function from(input: MethodDefinitionFromInput): MethodDefinitionNode {
-    return resolveFromInput('method_definition', input as any, getFromContext()) as any;
+  export function from(input: MethodDefinitionFromInput | FromValue[]): MethodDefinitionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('method_definition', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace methodSignature {
-  export function from(input: MethodSignatureFromInput): MethodSignatureNode {
-    return resolveFromInput('method_signature', input as any, getFromContext()) as any;
+  export function from(input: MethodSignatureFromInput | FromValue[]): MethodSignatureNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('method_signature', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10885,20 +11409,23 @@ export namespace module {
 }
 
 export namespace namedImports {
-  export function from(input: NamedImportsFromInput): NamedImportsNode {
-    return resolveFromInput('named_imports', input as any, getFromContext()) as any;
+  export function from(input: NamedImportsFromInput | FromValue[]): NamedImportsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('named_imports', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace namespaceExport {
-  export function from(input: NamespaceExportFromInput): NamespaceExportNode {
-    return resolveFromInput('namespace_export', input as any, getFromContext()) as any;
+  export function from(input: NamespaceExportFromInput | FromValue[]): NamespaceExportNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('namespace_export', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace namespaceImport {
-  export function from(input: NamespaceImportFromInput): NamespaceImportNode {
-    return resolveFromInput('namespace_import', input as any, getFromContext()) as any;
+  export function from(input: NamespaceImportFromInput | FromValue[]): NamespaceImportNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('namespace_import', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10921,14 +11448,16 @@ export namespace newExpression {
 }
 
 export namespace nonNullExpression {
-  export function from(input: NonNullExpressionFromInput): NonNullExpressionNode {
-    return resolveFromInput('non_null_expression', input as any, getFromContext()) as any;
+  export function from(input: NonNullExpressionFromInput | FromValue[]): NonNullExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('non_null_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace object {
-  export function from(input: ObjectFromInput): ObjectNode {
-    return resolveFromInput('object', input as any, getFromContext()) as any;
+  export function from(input: ObjectFromInput | FromValue[]): ObjectNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('object', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10939,38 +11468,44 @@ export namespace objectAssignmentPattern {
 }
 
 export namespace objectPattern {
-  export function from(input: ObjectPatternFromInput): ObjectPatternNode {
-    return resolveFromInput('object_pattern', input as any, getFromContext()) as any;
+  export function from(input: ObjectPatternFromInput | FromValue[]): ObjectPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('object_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace objectType {
-  export function from(input: ObjectTypeFromInput): ObjectTypeNode {
-    return resolveFromInput('object_type', input as any, getFromContext()) as any;
+  export function from(input: ObjectTypeFromInput | FromValue[]): ObjectTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('object_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace omittingTypeAnnotation {
-  export function from(input: OmittingTypeAnnotationFromInput): OmittingTypeAnnotationNode {
-    return resolveFromInput('omitting_type_annotation', input as any, getFromContext()) as any;
+  export function from(input: OmittingTypeAnnotationFromInput | FromValue[]): OmittingTypeAnnotationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('omitting_type_annotation', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace optingTypeAnnotation {
-  export function from(input: OptingTypeAnnotationFromInput): OptingTypeAnnotationNode {
-    return resolveFromInput('opting_type_annotation', input as any, getFromContext()) as any;
+  export function from(input: OptingTypeAnnotationFromInput | FromValue[]): OptingTypeAnnotationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('opting_type_annotation', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace optionalParameter {
-  export function from(input: OptionalParameterFromInput): OptionalParameterNode {
-    return resolveFromInput('optional_parameter', input as any, getFromContext()) as any;
+  export function from(input: OptionalParameterFromInput | FromValue[]): OptionalParameterNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('optional_parameter', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace optionalType {
-  export function from(input: OptionalTypeFromInput): OptionalTypeNode {
-    return resolveFromInput('optional_type', input as any, getFromContext()) as any;
+  export function from(input: OptionalTypeFromInput | FromValue[]): OptionalTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('optional_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -10987,38 +11522,44 @@ export namespace pairPattern {
 }
 
 export namespace parenthesizedExpression {
-  export function from(input: ParenthesizedExpressionFromInput): ParenthesizedExpressionNode {
-    return resolveFromInput('parenthesized_expression', input as any, getFromContext()) as any;
+  export function from(input: ParenthesizedExpressionFromInput | FromValue[]): ParenthesizedExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('parenthesized_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace parenthesizedType {
-  export function from(input: ParenthesizedTypeFromInput): ParenthesizedTypeNode {
-    return resolveFromInput('parenthesized_type', input as any, getFromContext()) as any;
+  export function from(input: ParenthesizedTypeFromInput | FromValue[]): ParenthesizedTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('parenthesized_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace program {
-  export function from(input: ProgramFromInput): ProgramNode {
-    return resolveFromInput('program', input as any, getFromContext()) as any;
+  export function from(input: ProgramFromInput | FromValue[]): ProgramNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('program', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace propertySignature {
-  export function from(input: PropertySignatureFromInput): PropertySignatureNode {
-    return resolveFromInput('property_signature', input as any, getFromContext()) as any;
+  export function from(input: PropertySignatureFromInput | FromValue[]): PropertySignatureNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('property_signature', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace publicFieldDefinition {
-  export function from(input: PublicFieldDefinitionFromInput): PublicFieldDefinitionNode {
-    return resolveFromInput('public_field_definition', input as any, getFromContext()) as any;
+  export function from(input: PublicFieldDefinitionFromInput | FromValue[]): PublicFieldDefinitionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('public_field_definition', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace readonlyType {
-  export function from(input: ReadonlyTypeFromInput): ReadonlyTypeNode {
-    return resolveFromInput('readonly_type', input as any, getFromContext()) as any;
+  export function from(input: ReadonlyTypeFromInput | FromValue[]): ReadonlyTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('readonly_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11029,56 +11570,65 @@ export namespace regex {
 }
 
 export namespace requiredParameter {
-  export function from(input: RequiredParameterFromInput): RequiredParameterNode {
-    return resolveFromInput('required_parameter', input as any, getFromContext()) as any;
+  export function from(input: RequiredParameterFromInput | FromValue[]): RequiredParameterNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('required_parameter', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace restPattern {
-  export function from(input: RestPatternFromInput): RestPatternNode {
-    return resolveFromInput('rest_pattern', input as any, getFromContext()) as any;
+  export function from(input: RestPatternFromInput | FromValue[]): RestPatternNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('rest_pattern', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace restType {
-  export function from(input: RestTypeFromInput): RestTypeNode {
-    return resolveFromInput('rest_type', input as any, getFromContext()) as any;
+  export function from(input: RestTypeFromInput | FromValue[]): RestTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('rest_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace returnStatement {
-  export function from(input: ReturnStatementFromInput): ReturnStatementNode {
-    return resolveFromInput('return_statement', input as any, getFromContext()) as any;
+  export function from(input: ReturnStatementFromInput | FromValue[]): ReturnStatementNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('return_statement', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace satisfiesExpression {
-  export function from(input: SatisfiesExpressionFromInput): SatisfiesExpressionNode {
-    return resolveFromInput('satisfies_expression', input as any, getFromContext()) as any;
+  export function from(input: SatisfiesExpressionFromInput | FromValue[]): SatisfiesExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('satisfies_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace sequenceExpression {
-  export function from(input: SequenceExpressionFromInput): SequenceExpressionNode {
-    return resolveFromInput('sequence_expression', input as any, getFromContext()) as any;
+  export function from(input: SequenceExpressionFromInput | FromValue[]): SequenceExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('sequence_expression', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace spreadElement {
-  export function from(input: SpreadElementFromInput): SpreadElementNode {
-    return resolveFromInput('spread_element', input as any, getFromContext()) as any;
+  export function from(input: SpreadElementFromInput | FromValue[]): SpreadElementNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('spread_element', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace statementBlock {
-  export function from(input: StatementBlockFromInput): StatementBlockNode {
-    return resolveFromInput('statement_block', input as any, getFromContext()) as any;
+  export function from(input: StatementBlockFromInput | FromValue[]): StatementBlockNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('statement_block', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace string {
-  export function from(input: StringFromInput): StringNode {
-    return resolveFromInput('string', input as any, getFromContext()) as any;
+  export function from(input: StringFromInput | FromValue[]): StringNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('string', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11089,8 +11639,9 @@ export namespace subscriptExpression {
 }
 
 export namespace switchBody {
-  export function from(input: SwitchBodyFromInput): SwitchBodyNode {
-    return resolveFromInput('switch_body', input as any, getFromContext()) as any;
+  export function from(input: SwitchBodyFromInput | FromValue[]): SwitchBodyNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('switch_body', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11113,26 +11664,30 @@ export namespace switchStatement {
 }
 
 export namespace templateLiteralType {
-  export function from(input: TemplateLiteralTypeFromInput): TemplateLiteralTypeNode {
-    return resolveFromInput('template_literal_type', input as any, getFromContext()) as any;
+  export function from(input: TemplateLiteralTypeFromInput | FromValue[]): TemplateLiteralTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('template_literal_type', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace templateString {
-  export function from(input: TemplateStringFromInput): TemplateStringNode {
-    return resolveFromInput('template_string', input as any, getFromContext()) as any;
+  export function from(input: TemplateStringFromInput | FromValue[]): TemplateStringNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('template_string', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace templateSubstitution {
-  export function from(input: TemplateSubstitutionFromInput): TemplateSubstitutionNode {
-    return resolveFromInput('template_substitution', input as any, getFromContext()) as any;
+  export function from(input: TemplateSubstitutionFromInput | FromValue[]): TemplateSubstitutionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('template_substitution', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace templateType {
-  export function from(input: TemplateTypeFromInput): TemplateTypeNode {
-    return resolveFromInput('template_type', input as any, getFromContext()) as any;
+  export function from(input: TemplateTypeFromInput | FromValue[]): TemplateTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('template_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11143,8 +11698,9 @@ export namespace ternaryExpression {
 }
 
 export namespace throwStatement {
-  export function from(input: ThrowStatementFromInput): ThrowStatementNode {
-    return resolveFromInput('throw_statement', input as any, getFromContext()) as any;
+  export function from(input: ThrowStatementFromInput | FromValue[]): ThrowStatementNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('throw_statement', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11155,8 +11711,9 @@ export namespace tryStatement {
 }
 
 export namespace tupleType {
-  export function from(input: TupleTypeFromInput): TupleTypeNode {
-    return resolveFromInput('tuple_type', input as any, getFromContext()) as any;
+  export function from(input: TupleTypeFromInput | FromValue[]): TupleTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('tuple_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11167,20 +11724,23 @@ export namespace typeAliasDeclaration {
 }
 
 export namespace typeAnnotation {
-  export function from(input: TypeAnnotationFromInput): TypeAnnotationNode {
-    return resolveFromInput('type_annotation', input as any, getFromContext()) as any;
+  export function from(input: TypeAnnotationFromInput | FromValue[]): TypeAnnotationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_annotation', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace typeArguments {
-  export function from(input: TypeArgumentsFromInput): TypeArgumentsNode {
-    return resolveFromInput('type_arguments', input as any, getFromContext()) as any;
+  export function from(input: TypeArgumentsFromInput | FromValue[]): TypeArgumentsNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_arguments', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace typeAssertion {
-  export function from(input: TypeAssertionFromInput): TypeAssertionNode {
-    return resolveFromInput('type_assertion', input as any, getFromContext()) as any;
+  export function from(input: TypeAssertionFromInput | FromValue[]): TypeAssertionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_assertion', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11191,8 +11751,9 @@ export namespace typeParameter {
 }
 
 export namespace typeParameters {
-  export function from(input: TypeParametersFromInput): TypeParametersNode {
-    return resolveFromInput('type_parameters', input as any, getFromContext()) as any;
+  export function from(input: TypeParametersFromInput | FromValue[]): TypeParametersNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_parameters', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11203,14 +11764,16 @@ export namespace typePredicate {
 }
 
 export namespace typePredicateAnnotation {
-  export function from(input: TypePredicateAnnotationFromInput): TypePredicateAnnotationNode {
-    return resolveFromInput('type_predicate_annotation', input as any, getFromContext()) as any;
+  export function from(input: TypePredicateAnnotationFromInput | FromValue[]): TypePredicateAnnotationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_predicate_annotation', resolved as any, getFromContext()) as any;
   }
 }
 
 export namespace typeQuery {
-  export function from(input: TypeQueryFromInput): TypeQueryNode {
-    return resolveFromInput('type_query', input as any, getFromContext()) as any;
+  export function from(input: TypeQueryFromInput | FromValue[]): TypeQueryNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('type_query', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11221,8 +11784,9 @@ export namespace unaryExpression {
 }
 
 export namespace unionType {
-  export function from(input: UnionTypeFromInput): UnionTypeNode {
-    return resolveFromInput('union_type', input as any, getFromContext()) as any;
+  export function from(input: UnionTypeFromInput | FromValue[]): UnionTypeNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('union_type', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11233,8 +11797,9 @@ export namespace updateExpression {
 }
 
 export namespace variableDeclaration {
-  export function from(input: VariableDeclarationFromInput): VariableDeclarationNode {
-    return resolveFromInput('variable_declaration', input as any, getFromContext()) as any;
+  export function from(input: VariableDeclarationFromInput | FromValue[]): VariableDeclarationNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('variable_declaration', resolved as any, getFromContext()) as any;
   }
 }
 
@@ -11257,7 +11822,8 @@ export namespace withStatement {
 }
 
 export namespace yieldExpression {
-  export function from(input: YieldExpressionFromInput): YieldExpressionNode {
-    return resolveFromInput('yield_expression', input as any, getFromContext()) as any;
+  export function from(input: YieldExpressionFromInput | FromValue[]): YieldExpressionNode {
+    const resolved = Array.isArray(input) ? { children: input } : input;
+    return resolveFromInput('yield_expression', resolved as any, getFromContext()) as any;
   }
 }
