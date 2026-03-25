@@ -78,6 +78,45 @@ export function replace(
 }
 
 // ---------------------------------------------------------------------------
+// edit() — wrap a target node to get a pre-positioned editor
+// ---------------------------------------------------------------------------
+
+/**
+ * Wrap a target node to create an editor pre-loaded with the node's byte range.
+ *
+ * Returns the replacement NodeData with `.toEdit()` (no args) and `.update()`
+ * methods that use the target's range automatically.
+ *
+ * @example
+ * ```ts
+ * const e = edit(matchedNode, ir.identifier('newName'));
+ * const editObj = e.toEdit();  // range from matchedNode, text from replacement
+ *
+ * // Or build replacement inline:
+ * const editObj = edit(matchedNode, ir.function(ir.identifier('newName'))
+ *   .parameters(ir.parameters())
+ *   .body(ir.block())
+ * ).toEdit();
+ * ```
+ */
+export function edit<T extends string>(
+	target: ReplaceTarget<T>,
+	replacement: NodeData & Renderable,
+): NodeData & Renderable & {
+	/** Produce an Edit using the target's range. No args needed. */
+	toEdit(): Edit;
+} {
+	const range = target.range();
+	const result = Object.create(replacement);
+	result.toEdit = () => ({
+		startPos: range.start.index,
+		endPos: range.end.index,
+		insertedText: replacement.render(),
+	});
+	return result;
+}
+
+// ---------------------------------------------------------------------------
 // replaceField — type-safe field replacement via selector lambda
 // ---------------------------------------------------------------------------
 

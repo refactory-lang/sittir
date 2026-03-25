@@ -3,7 +3,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { ir } from '../rust/src/ir.ts';
-import { render, toEdit, replace, replaceField } from '../core/src/index.ts';
+import { render, toEdit, replace, edit, replaceField } from '../core/src/index.ts';
 import type { ReplaceTarget } from '../core/src/index.ts';
 import { rules } from '../rust/src/rules.ts';
 import { joinBy } from '../rust/src/joinby.ts';
@@ -147,6 +147,36 @@ describe('Apply multiple non-overlapping edits', () => {
 			toEdit(ir.identifier('second'), rules, 4, 5),
 		];
 		expect(applyEdits(source, edits)).toBe('first + second');
+	});
+});
+
+describe('edit() — pre-positioned editor', () => {
+	it('wraps target range and produces Edit with no args', () => {
+		const target = mockTarget('identifier', 4, 8);
+		const e = edit(target, ir.identifier('newVar'));
+		const editObj = e.toEdit();
+		expect(editObj.startPos).toBe(4);
+		expect(editObj.endPos).toBe(8);
+		expect(editObj.insertedText).toBe('newVar');
+	});
+
+	it('preserves the replacement render', () => {
+		const target = mockTarget('binary_expression', 0, 5);
+		const replacement = ir.binaryExpression({
+			left: ir.identifier('x'),
+			operator: ir.mul(),
+			right: ir.integerLiteral('2'),
+		});
+		const e = edit(target, replacement);
+		expect(e.render()).toBe('x * 2');
+		expect(e.toEdit().insertedText).toBe('x * 2');
+	});
+
+	it('applies correctly to source', () => {
+		const source = 'let name = 42;';
+		const target = mockTarget('identifier', 4, 8);
+		const e = edit(target, ir.identifier('count'));
+		expect(applyEdit(source, e.toEdit())).toBe('let count = 42;');
 	});
 });
 
