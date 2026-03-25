@@ -107,7 +107,7 @@ export function emitFactory(config: {
 		lines.push(`  config?: Partial<${typeName}Config>,`);
 		lines.push(`): ${typeName}Node {`);
 		lines.push(`  const fields: any = isNodeData(${ctorCamel}OrConfig) || typeof ${ctorCamel}OrConfig === 'string'`);
-		lines.push(`    ? { '${ctorField.name}': resolveInput(${ctorCamel}OrConfig), ...config }`);
+		lines.push(`    ? { '${ctorField.name}': resolveAndValidate(${ctorCamel}OrConfig), ...config }`);
 		lines.push(`    : ${ctorCamel}OrConfig;`);
 	} else if (isSingleField && node.hasChildren && childrenAreLeaf) {
 		// Children-only node with leaf children — accept string shorthand (FR-022)
@@ -144,7 +144,7 @@ export function emitFactory(config: {
 		if (f.multiple) {
 			lines.push(`  node.${setterName} = (...v: any[]) => { fields['${f.name}'] = v; return node; };`);
 		} else {
-			lines.push(`  node.${setterName} = (v: any) => { fields['${f.name}'] = resolveInput(v); return node; };`);
+			lines.push(`  node.${setterName} = (v: any) => { fields['${f.name}'] = resolveAndValidate(v); return node; };`);
 		}
 	}
 	if (node.hasChildren) {
@@ -187,7 +187,7 @@ export function emitFactory(config: {
 		if (f.multiple) {
 			lines.push(`  node.${setterName} = (...v: any[]) => { overrides['${f.name}'] = v; return node; };`);
 		} else {
-			lines.push(`  node.${setterName} = (v: any) => { overrides['${f.name}'] = resolveInput(v); return node; };`);
+			lines.push(`  node.${setterName} = (v: any) => { overrides['${f.name}'] = resolveAndValidate(v); return node; };  // validate user-provided overrides`);
 		}
 	}
 	if (node.hasChildren) {
@@ -304,6 +304,39 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	lines.push("  if (typeof v === 'string') return { type: 'string', fields: {}, text: v };");
 	lines.push("  if (typeof v === 'number') return { type: 'number', fields: {}, text: String(v) };");
 	lines.push('  return v;');
+	lines.push('}');
+	lines.push('');
+
+	// Leaf pattern registry — grammar-derived regex for each leaf kind
+	lines.push('const LEAF_PATTERNS: Record<string, RegExp> = {');
+	for (const kind of leafKinds) {
+		if (keywordKinds.has(kind)) continue; // keywords have fixed text, no pattern needed
+		const enumVals = leafValueMap.get(kind);
+		if (enumVals && enumVals.length > 0) continue; // enum kinds validated by type system
+		const pattern = extractLeafPattern(config.grammar, kind);
+		if (pattern) {
+			const flags = pattern.includes('\\p{') ? 'u' : '';
+			lines.push(`  '${kind}': /^${pattern.replace(/`/g, '\\`')}$/${flags},`);
+		}
+	}
+	lines.push('};');
+	lines.push('');
+
+	// validateNodeText — validates a NodeData's text against its kind's grammar pattern
+	lines.push('function validateNodeText(node: NodeData): void {');
+	lines.push('  if (node.text === undefined) return;');
+	lines.push('  const pattern = LEAF_PATTERNS[node.type];');
+	lines.push('  if (pattern && !pattern.test(node.text)) {');
+	lines.push("    throw new Error(`Invalid ${node.type}: '${node.text}' does not match grammar pattern`);");
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+
+	// resolveAndValidate — resolve string/number shorthand + validate
+	lines.push('function resolveAndValidate(v: any): NodeData {');
+	lines.push('  const node = resolveInput(v);');
+	lines.push('  validateNodeText(node);');
+	lines.push('  return node;');
 	lines.push('}');
 	lines.push('');
 
