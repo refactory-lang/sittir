@@ -1,10 +1,15 @@
 // @sittir/core — .from() resolution engine
 // Resolves plain objects + scalars into NodeData based on grammar field types.
+//
+// Types (FromValue, FromObject, FromFieldInfo, FromContext) are defined in
+// @sittir/types and re-exported here for convenience.
 
 import type { NodeData } from './types.ts';
 
 // ---------------------------------------------------------------------------
-// Public types — .from() input typing
+// Types — canonical definitions in @sittir/types, re-exported here for
+// consumers who import from @sittir/core. The interfaces are duplicated
+// to avoid a circular package dependency (types → core → types).
 // ---------------------------------------------------------------------------
 
 /** Base type for any value accepted by .from() resolution. */
@@ -15,10 +20,6 @@ export interface FromObject {
 	kind?: string;
 	[key: string]: FromValue | undefined;
 }
-
-// ---------------------------------------------------------------------------
-// Public types — implemented by generated packages
-// ---------------------------------------------------------------------------
 
 /** Field type info for .from() resolution. */
 export interface FromFieldInfo {

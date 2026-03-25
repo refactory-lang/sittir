@@ -13,6 +13,7 @@
 import type { KindMeta, FieldMeta, SupertypeInfo } from '../grammar-reader.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
+import { selectConstructorField, escapeString } from './utils.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
@@ -27,23 +28,6 @@ export interface EmitFactoriesConfig {
 	operatorTokens?: string[];
 	/** Supertype info — for typed replace validation */
 	supertypes?: SupertypeInfo[];
-}
-
-/**
- * Select the constructor field — the most important required field.
- * Used as the first positional argument in the factory.
- */
-function selectConstructorField(node: KindMeta): FieldMeta | null {
-	// Prefer single required, non-multiple field
-	const required = node.fields.filter(f => f.required && !f.multiple);
-	if (required.length === 1) return required[0]!;
-
-	// If multiple required, pick 'name' if available
-	const name = required.find(f => f.name === 'name');
-	if (name) return name;
-
-	// Fall back to first required
-	return required[0] ?? null;
 }
 
 /**
@@ -350,21 +334,9 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	lines.push('');
 	lines.push("import type { NodeData, Edit, AssignableNode } from '@sittir/core';");
 	lines.push("import { render, toEdit } from '@sittir/core';");
+	lines.push("import { isNodeData, type FromValue } from './utils.js';");
 	lines.push("import { rules } from './rules.js';");
 	lines.push("import { joinBy } from './joinby.js';");
-	lines.push('');
-
-	// Grammar-specific FromValue/FromObject types — constrains kind to valid values
-	const allKinds = [...branchKinds, ...leafKinds];
-	lines.push('// .from() input types — kind constrained to valid grammar kinds');
-	lines.push(`type FromKind = ${allKinds.map(k => `'${k}'`).join(' | ')};`);
-	lines.push('interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }');
-	lines.push('type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;');
-	lines.push('');
-
-	lines.push('function isNodeData(v: any): v is NodeData {');
-	lines.push("  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';");
-	lines.push('}');
 	lines.push('');
 
 	// Reserved keywords set for input validation (FR-023)
@@ -491,10 +463,6 @@ function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>): string {
 		return `NodeData<${kindUnion}>[]`;
 	}
 	return `NodeData<${kindUnion}>`;
-}
-
-function escapeString(s: string): string {
-	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
 /** Check if a pattern can be safely embedded as a JS regex literal. */

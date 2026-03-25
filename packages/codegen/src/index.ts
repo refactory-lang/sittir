@@ -24,6 +24,7 @@ import { emitTypes } from './emitters/types.ts';
 import { emitRules, emitRule } from './emitters/rules.ts';
 import { emitFactories } from './emitters/factories.ts';
 import { emitFrom } from './emitters/from.ts';
+import { emitClientUtils } from './emitters/client-utils.ts';
 import { emitConsts } from './emitters/consts.ts';
 import { emitIrNamespace } from './emitters/ir-namespace.ts';
 import { emitJoinBy } from './emitters/joinby.ts';
@@ -53,6 +54,8 @@ export interface GeneratedFiles {
 	rules: string;
 	/** factories.ts — unified factory functions (declarative + fluent + mixed) */
 	factories: string;
+	/** utils.ts — shared client-side resolution utilities (isNodeData, _inferBranch, types) */
+	utils: string;
 	/** from.ts — .from() resolution functions (tree-shakeable, separate from factories) */
 	from: string;
 	/** ir.ts — ir namespace re-exporting all factories with short names */
@@ -105,6 +108,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 			operatorTokens,
 			supertypes,
 		}),
+		utils: emitClientUtils({ nodes, leafKinds }),
 		from: emitFrom({
 			grammar: config.grammar,
 			nodes,

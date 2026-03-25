@@ -15,6 +15,7 @@
 
 import type { KindMeta, FieldMeta } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
+import { selectConstructorField, escapeString } from './utils.ts';
 
 export interface EmitFromConfig {
 	grammar: string;
@@ -40,6 +41,7 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// Type-only import — generated .from() inlines resolution, no core runtime dependency
 	lines.push("import type { NodeData, AssignableNode } from '@sittir/core';");
+	lines.push("import { isNodeData, _inferBranch, type FromValue } from './utils.js';");
 	lines.push('');
 
 	// Import factory functions — only the ones actually referenced by .from() resolution
@@ -60,24 +62,9 @@ export function emitFrom(config: EmitFromConfig): string {
 		lines.push(`import type { ${typeImports.join(', ')} } from './factories.js';`);
 	}
 
-	// No rules/joinby/render imports needed — .from() creates nodes via
-	// the regular factories, which already close over rules + render methods.
 	lines.push('');
 
-	// Grammar-specific recursive value type
-	const branchKinds = nodes.map(n => n.kind);
-	const allKinds = [...branchKinds, ...leafKinds];
-	lines.push(`type FromKind = ${allKinds.map(k => `'${k}'`).join(' | ')};`);
-	lines.push('interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }');
-	lines.push('type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;');
-	lines.push('');
-
-	lines.push('function isNodeData(v: any): v is NodeData {');
-	lines.push("  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';");
-	lines.push('}');
-	lines.push('');
-
-	// Dispatch explicit { kind } objects to the right .from() function
+	// _resolveByKind stays in from.ts — it references all *From functions
 	lines.push('function _resolveByKind(kind: string, rest: any): any {');
 	lines.push('  switch (kind) {');
 	for (const node of nodes) {
@@ -86,40 +73,6 @@ export function emitFrom(config: EmitFromConfig): string {
 	}
 	lines.push(`    default: throw new Error(\`Unknown kind for .from(): '\${kind}'\`);`);
 	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-
-	// _inferBranch — score object by field name matching against candidate branch types.
-	// Scoring: matches count double, misses subtract once. This ensures a candidate
-	// with all fields matching but one extra key still wins over a candidate with fewer
-	// matches. Requires at least one match to prevent empty/wrong-shaped objects from
-	// silently resolving to an arbitrary candidate.
-	lines.push('const _BRANCH_FIELDS: Record<string, string[]> = {');
-	for (const node of nodes) {
-		const fieldNames = node.fields.map(f => f.name);
-		if (fieldNames.length > 0) {
-			lines.push(`  '${node.kind}': ${JSON.stringify(fieldNames)},`);
-		}
-	}
-	lines.push('};');
-	lines.push('');
-	lines.push('function _inferBranch(obj: any, candidates: string[]): any {');
-	lines.push("  const keys = Object.keys(obj).filter(k => k !== 'children');");
-	lines.push('  let best: string | null = null;');
-	lines.push('  let bestScore = 0;');
-	lines.push('  let bestMatches = 0;');
-	lines.push('  for (const c of candidates) {');
-	lines.push('    const fields = _BRANCH_FIELDS[c];');
-	lines.push('    if (!fields) continue;');
-	lines.push('    const fieldSet = new Set(fields);');
-	lines.push('    let matches = 0, misses = 0;');
-	lines.push('    for (const k of keys) { if (fieldSet.has(k)) matches++; else misses++; }');
-	lines.push('    if (matches === 0) continue;');
-	lines.push('    const score = matches * 2 - misses;');
-	lines.push('    if (score > bestScore || (score === bestScore && matches > bestMatches)) { bestScore = score; bestMatches = matches; best = c; }');
-	lines.push('  }');
-	lines.push('  if (best) return _resolveByKind(best, obj);');
-	lines.push("  throw new Error(`Cannot infer kind for object with keys: ${keys.join(', ')}. Candidates: ${candidates.join(', ')}. Use { kind: '...' } to disambiguate.`);");
 	lines.push('}');
 	lines.push('');
 
@@ -479,8 +432,10 @@ function emitObjectResolve(
 	if (branchTypes.length === 1) {
 		parts.push(`return ${toFactoryName(branchTypes[0]!)}From(${v} as any);`);
 	} else if (branchTypes.length > 1) {
-		// Multiple → score by field matching
-		parts.push(`return _inferBranch(${v},${JSON.stringify(branchTypes)});`);
+		// Multiple → score by field matching, then dispatch
+		parts.push(`const _k=_inferBranch(${v},${JSON.stringify(branchTypes)});`);
+		parts.push(`if(_k)return _resolveByKind(_k,${v});`);
+		parts.push(`throw new Error(\`Cannot infer kind for object with keys: \${Object.keys(${v}).join(', ')}. Candidates: ${branchTypes.join(', ')}. Use { kind: '...' } to disambiguate.\`);`);
 	} else {
 		parts.push(`throw new Error('No branch types accepted for object value');`);
 	}
@@ -522,14 +477,3 @@ function collectReferencedFactories(
 	return refs;
 }
 
-function selectConstructorField(node: KindMeta): FieldMeta | null {
-	const required = node.fields.filter(f => f.required && !f.multiple);
-	if (required.length === 1) return required[0]!;
-	const name = required.find(f => f.name === 'name');
-	if (name) return name;
-	return required[0] ?? null;
-}
-
-function escapeString(s: string): string {
-	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}

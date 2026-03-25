@@ -12,6 +12,7 @@
 
 import type { KindMeta, SupertypeInfo, OperatorContext } from '../grammar-reader.ts';
 import { toIrKey, toFactoryName, toShortName, toTypeName } from '../naming.ts';
+import { escapeString } from './utils.ts';
 
 export interface EmitIrNamespaceConfig {
 	grammar: string;
@@ -148,6 +149,3 @@ function operatorAlias(token: string): string | undefined {
 	return aliases[token];
 }
 
-function escapeString(s: string): string {
-	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}

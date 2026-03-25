@@ -2,17 +2,9 @@
 
 import type { NodeData, Edit, AssignableNode } from '@sittir/core';
 import { render, toEdit } from '@sittir/core';
+import { isNodeData, type FromValue } from './utils.js';
 import { rules } from './rules.js';
 import { joinBy } from './joinby.js';
-
-// .from() input types — kind constrained to valid grammar kinds
-type FromKind = 'aliased_import' | 'argument_list' | 'as_pattern' | 'assert_statement' | 'assignment' | 'attribute' | 'augmented_assignment' | 'await' | 'binary_operator' | 'block' | 'boolean_operator' | 'call' | 'case_clause' | 'case_pattern' | 'chevron' | 'class_definition' | 'class_pattern' | 'comparison_operator' | 'complex_pattern' | 'concatenated_string' | 'conditional_expression' | 'constrained_type' | 'decorated_definition' | 'decorator' | 'default_parameter' | 'delete_statement' | 'dict_pattern' | 'dictionary' | 'dictionary_comprehension' | 'dictionary_splat' | 'dictionary_splat_pattern' | 'dotted_name' | 'elif_clause' | 'else_clause' | 'except_clause' | 'exec_statement' | 'expression_list' | 'expression_statement' | 'finally_clause' | 'for_in_clause' | 'for_statement' | 'format_expression' | 'format_specifier' | 'function_definition' | 'future_import_statement' | 'generator_expression' | 'generic_type' | 'global_statement' | 'if_clause' | 'if_statement' | 'import_from_statement' | 'import_statement' | 'interpolation' | 'keyword_argument' | 'keyword_pattern' | 'lambda' | 'lambda_parameters' | 'list' | 'list_comprehension' | 'list_pattern' | 'list_splat' | 'list_splat_pattern' | 'match_statement' | 'member_type' | 'module' | 'named_expression' | 'nonlocal_statement' | 'not_operator' | 'pair' | 'parameters' | 'parenthesized_expression' | 'parenthesized_list_splat' | 'pattern_list' | 'print_statement' | 'raise_statement' | 'relative_import' | 'return_statement' | 'set' | 'set_comprehension' | 'slice' | 'splat_pattern' | 'splat_type' | 'string' | 'string_content' | 'subscript' | 'try_statement' | 'tuple' | 'tuple_pattern' | 'type' | 'type_alias_statement' | 'type_parameter' | 'typed_default_parameter' | 'typed_parameter' | 'unary_operator' | 'union_pattern' | 'union_type' | 'while_statement' | 'with_clause' | 'with_item' | 'with_statement' | 'yield' | 'break_statement' | 'continue_statement' | 'import_prefix' | 'keyword_separator' | 'pass_statement' | 'positional_separator' | 'wildcard_import' | 'comment' | 'ellipsis' | 'escape_interpolation' | 'escape_sequence' | 'false' | 'float' | 'identifier' | 'integer' | 'line_continuation' | 'none' | 'string_end' | 'string_start' | 'true' | 'type_conversion';
-interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }
-type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;
-
-function isNodeData(v: any): v is NodeData {
-  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';
-}
 
 const RESERVED_KEYWORDS = new Set([
   '_',

@@ -6,6 +6,9 @@ export * from './types.js';
 // Factories (ir namespace with .from())
 export { ir } from './ir.js';
 
+// Shared resolution utilities
+export * from './utils.js';
+
 // .from() resolution (tree-shakeable, separate from factories)
 export * from './from.js';
 
