@@ -300,10 +300,6 @@ function emitResolveExpr(
 	const branchTypes = field.namedTypes.filter(t => !leafSet.has(t));
 	const anonTokens = field.types.filter(t => !field.namedTypes.includes(t) && !t.startsWith('_'));
 
-	// Build a helper function name unique to this resolution context
-	// For simple cases, inline directly. For complex cases, emit a helper call.
-	const resolverName = `_resolve_${field.name}_${Math.random().toString(36).slice(2, 8)}`;
-
 	// Simple case: single leaf type, no branches, no anon tokens
 	if (leafTypes.length === 1 && branchTypes.length === 0 && anonTokens.length === 0) {
 		const factory = toFactoryName(leafTypes[0]!);

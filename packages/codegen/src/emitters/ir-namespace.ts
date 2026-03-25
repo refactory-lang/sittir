@@ -107,7 +107,7 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 				const alias = operatorAlias(token);
 				if (alias && !usedKeys.has(alias)) {
 					usedKeys.set(alias, `operator:${token}`);
-					lines.push(`  ${alias}: () => ({ kind: '${ctx.field}', fields: {}, text: '${escapeString(token)}' }),`);
+					lines.push(`  ${alias}: () => ({ type: '${ctx.field}', fields: {}, text: '${escapeString(token)}' }),`);
 				}
 			}
 		}
