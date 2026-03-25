@@ -11,6 +11,7 @@
  */
 
 import type { KindMeta, FieldMeta, SupertypeInfo } from '../grammar-reader.ts';
+import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
 
 export interface EmitFactoriesConfig {
@@ -213,6 +214,7 @@ export function emitTerminalFactory(
 	fixedText?: string,
 	enumValues?: string[],
 	keywordTokens?: Set<string>,
+	grammar?: string,
 ): string {
 	const factoryName = toFactoryName(kind);
 
@@ -246,10 +248,21 @@ export function emitTerminalFactory(
 	const needsKeywordValidation = keywordTokens && keywordTokens.size > 0 &&
 		(kind === 'identifier' || kind === 'type_identifier' || kind === 'field_identifier');
 
+	// Extract grammar-derived regex pattern for full syntax validation
+	const leafPattern = grammar ? extractLeafPattern(grammar, kind) : undefined;
+
 	const lines: string[] = [];
 	lines.push(`export function ${factoryName}(text: ${textType}): NodeData<'${kind}'> & { render(): string; replace(target: { type: '${kind}'; range(): { start: { index: number }; end: { index: number } } }): Edit } {`);
 	if (needsKeywordValidation) {
 		lines.push(`  if (RESERVED_KEYWORDS.has(text)) throw new Error(\`'\${text}' is a reserved keyword, not a valid ${kind}\`);`);
+	}
+	if (leafPattern && !enumValues?.length) {
+		// Emit regex validation from grammar pattern
+		// Don't double-escape backslashes — pattern is already valid regex
+		const escaped = leafPattern.replace(/`/g, '\\`');
+		// Use 'u' flag if pattern contains Unicode property escapes
+		const flags = leafPattern.includes('\\p{') ? 'u' : '';
+		lines.push(`  if (!/^${escaped}$/${flags}.test(text)) throw new Error(\`Invalid ${kind}: '\${text}' does not match grammar pattern\`);`);
 	}
 	lines.push(`  const node: any = { type: '${kind}', fields: {}, text };`);
 	lines.push(`  node.render = () => text;`);
@@ -315,7 +328,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	for (const kind of leafKinds) {
 		const fixedText = keywordKinds.get(kind);
 		const enumVals = leafValueMap.get(kind);
-		lines.push(emitTerminalFactory(kind, fixedText, enumVals, keywordTokenSet));
+		lines.push(emitTerminalFactory(kind, fixedText, enumVals, keywordTokenSet, config.grammar));
 		lines.push('');
 	}
 

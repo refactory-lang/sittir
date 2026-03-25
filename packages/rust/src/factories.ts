@@ -7435,6 +7435,7 @@ export function unitType(): NodeData<'unit_type'> & { render(): string; replace(
 }
 
 export function charLiteral(text: string): NodeData<'char_literal'> & { render(): string; replace(target: { type: 'char_literal'; range(): { start: { index: number }; end: { index: number } } }): Edit } {
+  if (!/^b?'(?:\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})|[^\\'])?'$/.test(text)) throw new Error(`Invalid char_literal: '${text}' does not match grammar pattern`);
   const node: any = { type: 'char_literal', fields: {}, text };
   node.render = () => text;
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -7468,6 +7469,7 @@ export function docComment(text: string): NodeData<'doc_comment'> & { render(): 
 }
 
 export function escapeSequence(text: `\\${string}`): NodeData<'escape_sequence'> & { render(): string; replace(target: { type: 'escape_sequence'; range(): { start: { index: number }; end: { index: number } } }): Edit } {
+  if (!/^\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})$/.test(text)) throw new Error(`Invalid escape_sequence: '${text}' does not match grammar pattern`);
   const node: any = { type: 'escape_sequence', fields: {}, text };
   node.render = () => text;
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -7503,6 +7505,7 @@ export function floatLiteral(text: string): NodeData<'float_literal'> & { render
 
 export function identifier(text: string): NodeData<'identifier'> & { render(): string; replace(target: { type: 'identifier'; range(): { start: { index: number }; end: { index: number } } }): Edit } {
   if (RESERVED_KEYWORDS.has(text)) throw new Error(`'${text}' is a reserved keyword, not a valid identifier`);
+  if (!/^(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*$/u.test(text)) throw new Error(`Invalid identifier: '${text}' does not match grammar pattern`);
   const node: any = { type: 'identifier', fields: {}, text };
   node.render = () => text;
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -7514,6 +7517,7 @@ export function identifier(text: string): NodeData<'identifier'> & { render(): s
 }
 
 export function integerLiteral(text: string): NodeData<'integer_literal'> & { render(): string; replace(target: { type: 'integer_literal'; range(): { start: { index: number }; end: { index: number } } }): Edit } {
+  if (!/^(?:[0-9][0-9_]*|0x[0-9a-fA-F_]+|0b[01_]+|0o[0-7_]+)(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64)?$/.test(text)) throw new Error(`Invalid integer_literal: '${text}' does not match grammar pattern`);
   const node: any = { type: 'integer_literal', fields: {}, text };
   node.render = () => text;
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -7525,6 +7529,7 @@ export function integerLiteral(text: string): NodeData<'integer_literal'> & { re
 }
 
 export function metavariable(text: string): NodeData<'metavariable'> & { render(): string; replace(target: { type: 'metavariable'; range(): { start: { index: number }; end: { index: number } } }): Edit } {
+  if (!/^\$[a-zA-Z_]\w*$/.test(text)) throw new Error(`Invalid metavariable: '${text}' does not match grammar pattern`);
   const node: any = { type: 'metavariable', fields: {}, text };
   node.render = () => text;
   node.toEdit = (startOrRange: any, endPos?: number) => {
@@ -7569,6 +7574,7 @@ export function self(): NodeData<'self'> & { render(): string; replace(target: {
 }
 
 export function shebang(text: string): NodeData<'shebang'> & { render(): string; replace(target: { type: 'shebang'; range(): { start: { index: number }; end: { index: number } } }): Edit } {
+  if (!/^#![\r\f\t\v ]*([^\[\n].*)?\n$/.test(text)) throw new Error(`Invalid shebang: '${text}' does not match grammar pattern`);
   const node: any = { type: 'shebang', fields: {}, text };
   node.render = () => text;
   node.toEdit = (startOrRange: any, endPos?: number) => {

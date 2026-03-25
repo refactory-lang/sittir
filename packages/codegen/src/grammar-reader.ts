@@ -588,6 +588,56 @@ function collectConcreteTypes(grammar: string, rule: GrammarRule, types: string[
 }
 
 /**
+ * Extract the validation regex pattern from a leaf kind's grammar rule.
+ * Returns the pattern string if found, undefined otherwise.
+ * Handles: PATTERN, TOKEN(PATTERN), precedence wrappers.
+ */
+export function extractLeafPattern(grammar: string, kind: string): string | undefined {
+	const rule = readGrammarRule(grammar, kind);
+	if (!rule) return undefined;
+	return extractPattern(rule);
+}
+
+function extractPattern(rule: GrammarRule): string | undefined {
+	switch (rule.type) {
+		case 'PATTERN':
+			return rule.value;
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN':
+			return extractPattern(rule.content);
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+			return extractPattern(rule.content);
+		case 'SEQ': {
+			// SEQ of patterns → concatenate
+			const parts = rule.members.map(m => extractPattern(m));
+			if (parts.every((p): p is string => p !== undefined)) return parts.join('');
+			return undefined;
+		}
+		case 'CHOICE': {
+			const hasBlank = rule.members.some(m => m.type === 'BLANK');
+			const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
+			const patterns = nonBlank.map(m => extractPattern(m));
+			if (patterns.every((p): p is string => p !== undefined)) {
+				const group = patterns.length === 1 ? patterns[0]! : `(?:${patterns.join('|')})`;
+				return hasBlank ? `${group}?` : group;
+			}
+			return undefined;
+		}
+		case 'REPEAT':
+			{ const inner = extractPattern(rule.content); return inner ? `(?:${inner})*` : undefined; }
+		case 'REPEAT1':
+			{ const inner = extractPattern(rule.content); return inner ? `(?:${inner})+` : undefined; }
+		case 'STRING':
+			// Escape for regex
+			return rule.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		default:
+			return undefined;
+	}
+}
+
+/**
  * Determine if a grammar rule represents a leaf node (no fields, no named children).
  * Leaf rules are pure STRING, PATTERN, CHOICE-of-STRINGs, or TOKEN wrapping those.
  */
