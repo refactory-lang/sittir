@@ -23,4 +23,5 @@ export * from './consts.js';
 
 // Core re-exports
 export { render, toEdit, toCst } from '@sittir/core';
-export type { NodeData, Edit, CSTNode, RenderContext } from '@sittir/types';
+export type { NodeData, NodeFields, TreeNode } from './types.js';
+export type { Edit, CSTNode, RenderContext } from '@sittir/types';

@@ -196,48 +196,61 @@ export function emitFactory(config: {
 	lines.push(`}`);
 	lines.push('');
 
-	// .assign() — hydrate factory from a parsed tree node
+	// .assign() — recursively hydrate from a parsed tree node
 	lines.push(`${factoryName}.assign = function(target: TreeNode<'${node.kind}'>): ${typeName}Node {`);
-	lines.push(`  const overrides: any = {};`);
-	// Build fields: read from target, overrides take precedence
-	const fieldNames = node.fields.map(f => f.name);
-	lines.push(`  const fieldList: string[] = [${fieldNames.map(f => `'${f}'`).join(', ')}];`);
-	lines.push(`  const getFields = () => {`);
-	lines.push(`    const merged: any = {};`);
-	lines.push(`    for (const f of fieldList) {`);
-	lines.push(`      if (f in overrides) { merged[f] = overrides[f]; continue; }`);
-	lines.push(`      const child = target.field(f);`);
-	lines.push(`      if (child) merged[f] = { type: child.type, fields: {}, text: child.text() };`);
-	lines.push(`    }`);
-	if (node.hasChildren) {
-		lines.push(`    if ('children' in overrides) { merged.children = overrides.children; }`);
-		lines.push(`    else { merged.children = target.children().map(c => ({ type: c.type, fields: {}, text: c.text() })); }`);
-	}
-	lines.push(`    return merged;`);
-	lines.push(`  };`);
-	lines.push(`  const node: any = { get type() { return '${node.kind}'; }, get fields() { return getFields(); } };`);
+	lines.push(`  const result = ${factoryName}({`);
 
-	// Fluent setters — ALL fields (including constructor field)
+	// Each field: call the correct factory's .assign() on the child tree node
 	for (const f of node.fields) {
-		const camel = toFieldName(f.name);
-		const setterName = camel === 'type' ? 'typeField' : camel;
-		if (f.multiple) {
-			lines.push(`  node.${setterName} = (...v: any[]) => { overrides['${f.name}'] = v; return node; };`);
+		if (f.namedTypes.length === 0) continue;
+
+		if (f.required) {
+			// Required field — trust the parse, non-null assert
+			if (f.multiple) {
+				// Multiple required: map children
+				lines.push(`    ${f.name}: target.field('${f.name}') ? [assignByKind[target.field('${f.name}')!.type]!(target.field('${f.name}')!)] : [],`);
+			} else if (f.namedTypes.length === 1) {
+				// Single kind — call specific factory
+				const childFactory = f.namedTypes[0]!;
+				if (leafSet.has(childFactory)) {
+					lines.push(`    ${f.name}: ${toFactoryName(childFactory)}(target.field('${f.name}')!.text()),`);
+				} else {
+					lines.push(`    ${f.name}: ${toFactoryName(childFactory)}.assign(target.field('${f.name}')!),`);
+				}
+			} else {
+				// Multi-kind — dispatch via assignByKind
+				lines.push(`    ${f.name}: assignByKind[target.field('${f.name}')!.type]!(target.field('${f.name}')!),`);
+			}
 		} else {
-			lines.push(`  node.${setterName} = (v: any) => { overrides['${f.name}'] = v; return node; };`);
+			// Optional field
+			if (f.multiple) {
+				lines.push(`    ${f.name}: target.field('${f.name}') ? [assignByKind[target.field('${f.name}')!.type]!(target.field('${f.name}')!)] : undefined,`);
+			} else if (f.namedTypes.length === 1) {
+				const childFactory = f.namedTypes[0]!;
+				if (leafSet.has(childFactory)) {
+					lines.push(`    ${f.name}: target.field('${f.name}') ? ${toFactoryName(childFactory)}(target.field('${f.name}')!.text()) : undefined,`);
+				} else {
+					lines.push(`    ${f.name}: target.field('${f.name}') ? ${toFactoryName(childFactory)}.assign(target.field('${f.name}')!) : undefined,`);
+				}
+			} else {
+				lines.push(`    ${f.name}: target.field('${f.name}') ? assignByKind[target.field('${f.name}')!.type]!(target.field('${f.name}')!) : undefined,`);
+			}
 		}
 	}
-	if (node.hasChildren) {
-		lines.push(`  node.children = (...v: any[]) => { overrides.children = v; return node; };`);
-	}
 
-	lines.push(`  node.render = () => render(node, rules, joinBy);`);
-	lines.push(`  node.toEdit = () => {`);
-	lines.push(`    const r = target.range();`);
-	lines.push(`    return { startPos: r.start.index, endPos: r.end.index, insertedText: node.render() };`);
+	lines.push(`  } as any);`);
+
+	// Attach toEdit using target's range
+	lines.push(`  const _origToEdit = result.toEdit;`);
+	lines.push(`  result.toEdit = (...args: any[]) => {`);
+	lines.push(`    if (args.length === 0) {`);
+	lines.push(`      const r = target.range();`);
+	lines.push(`      return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() };`);
+	lines.push(`    }`);
+	lines.push(`    return _origToEdit(...args);`);
 	lines.push(`  };`);
-	lines.push(`  node.replace = node.toEdit;`);
-	lines.push(`  return node;`);
+	lines.push(`  result.replace = () => result.toEdit();`);
+	lines.push(`  return result;`);
 	lines.push(`} as any;`);
 
 	return lines.join('\n');
@@ -382,23 +395,38 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		lines.push('');
 	}
 
-	lines.push('/**');
-	lines.push(' * Create an in-place editor for a parsed tree node.');
-	lines.push(" * Hydrates a factory from the target node's fields,");
-	lines.push(" * then allows fluent modification. .toEdit() uses the target's range.");
-	lines.push(' *');
-	lines.push(' * Usage: edit(matchedNode).returnType(ir.primitiveType("i64")).toEdit()');
-	lines.push(' */');
-	lines.push('export function edit<K extends string>(target: TreeNode<K>): any {');
-	lines.push('  const factories: Record<string, { assign: (t: any) => any }> = {');
+	// assignByKind table — maps kind → assign function for dispatch
+	lines.push('/** Kind → assign function. Used by .assign() for multi-kind dispatch and edit(). */');
+	lines.push('export const assignByKind: Record<string, (target: any) => any> = {');
+	// Branch kinds — call .assign()
 	for (const node of nodes) {
 		const factoryName = toFactoryName(node.kind);
-		lines.push(`    '${node.kind}': ${factoryName},`);
+		lines.push(`  '${node.kind}': (t) => ${factoryName}.assign(t),`);
 	}
-	lines.push('  };');
-	lines.push('  const factory = factories[target.type];');
-	lines.push("  if (!factory) throw new Error(`No factory for kind '${target.type}'`);");
-	lines.push('  return factory.assign(target);');
+	// Leaf kinds — read text()
+	for (const kind of leafKinds) {
+		const factoryName = toFactoryName(kind);
+		const fixedText = keywordKinds.get(kind);
+		if (fixedText !== undefined) {
+			// Keyword — ignore text, call with 0 args
+			lines.push(`  '${kind}': () => ${factoryName}(),`);
+		} else {
+			// Text leaf — read text()
+			lines.push(`  '${kind}': (t) => ${factoryName}(t.text()),`);
+		}
+	}
+	lines.push('};');
+	lines.push('');
+
+	// edit() — uses assignByKind
+	lines.push('/**');
+	lines.push(' * Create an in-place editor for a parsed tree node.');
+	lines.push(' * Recursively hydrates via assignByKind, attaches range for .toEdit().');
+	lines.push(' */');
+	lines.push('export function edit<K extends string>(target: TreeNode<K>) {');
+	lines.push('  const assign = assignByKind[target.type];');
+	lines.push("  if (!assign) throw new Error(`No factory for kind '${target.type}'`);");
+	lines.push('  return assign(target);');
 	lines.push('}');
 	lines.push('');
 
