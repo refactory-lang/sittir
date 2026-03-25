@@ -82,38 +82,24 @@ export function replace(
 // ---------------------------------------------------------------------------
 
 /**
- * Wrap a target node to create an editor pre-loaded with the node's byte range.
+ * Attach a target's byte range to a factory output, enabling no-arg `.toEdit()`.
  *
- * Returns the replacement NodeData with `.toEdit()` (no args) and `.update()`
- * methods that use the target's range automatically.
- *
- * @example
- * ```ts
- * const e = edit(matchedNode, ir.identifier('newName'));
- * const editObj = e.toEdit();  // range from matchedNode, text from replacement
- *
- * // Or build replacement inline:
- * const editObj = edit(matchedNode, ir.function(ir.identifier('newName'))
- *   .parameters(ir.parameters())
- *   .body(ir.block())
- * ).toEdit();
- * ```
+ * This is the low-level helper used by generated `edit()` functions.
+ * The generated `edit(target)` creates the right factory for the target's kind,
+ * then calls `bindRange()` to attach the range.
  */
-export function edit<T extends string>(
-	target: ReplaceTarget<T>,
-	replacement: NodeData & Renderable,
-): NodeData & Renderable & {
-	/** Produce an Edit using the target's range. No args needed. */
-	toEdit(): Edit;
-} {
+export function bindRange<T extends NodeData & Renderable>(
+	target: ReplaceTarget,
+	factoryOutput: T,
+): T & { toEdit(): Edit } {
 	const range = target.range();
-	const result = Object.create(replacement);
-	result.toEdit = () => ({
+	// Override toEdit to use the bound range when called with no args
+	(factoryOutput as any).toEdit = () => ({
 		startPos: range.start.index,
 		endPos: range.end.index,
-		insertedText: replacement.render(),
+		insertedText: factoryOutput.render(),
 	});
-	return result;
+	return factoryOutput as T & { toEdit(): Edit };
 }
 
 // ---------------------------------------------------------------------------

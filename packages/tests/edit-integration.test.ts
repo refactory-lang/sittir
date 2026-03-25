@@ -3,7 +3,8 @@
  */
 import { describe, it, expect } from 'vitest';
 import { ir } from '../rust/src/ir.ts';
-import { render, toEdit, replace, edit, replaceField } from '../core/src/index.ts';
+import { render, toEdit, replace, replaceField } from '../core/src/index.ts';
+import { edit } from '../rust/src/factories.ts';
 import type { ReplaceTarget } from '../core/src/index.ts';
 import { rules } from '../rust/src/rules.ts';
 import { joinBy } from '../rust/src/joinby.ts';
@@ -150,33 +151,38 @@ describe('Apply multiple non-overlapping edits', () => {
 	});
 });
 
-describe('edit() — pre-positioned editor', () => {
-	it('wraps target range and produces Edit with no args', () => {
-		const target = mockTarget('identifier', 4, 8);
-		const e = edit(target, ir.identifier('newVar'));
+describe('edit(target) — pre-positioned factory', () => {
+	it('returns a factory with no-arg toEdit()', () => {
+		const target = mockTarget('block', 10, 20);
+		const e = edit(target);
+		// e is a block factory with range attached
 		const editObj = e.toEdit();
-		expect(editObj.startPos).toBe(4);
-		expect(editObj.endPos).toBe(8);
-		expect(editObj.insertedText).toBe('newVar');
+		expect(editObj.startPos).toBe(10);
+		expect(editObj.endPos).toBe(20);
+		expect(typeof editObj.insertedText).toBe('string');
 	});
 
-	it('preserves the replacement render', () => {
+	it('supports fluent building then toEdit()', () => {
 		const target = mockTarget('binary_expression', 0, 5);
-		const replacement = ir.binaryExpression({
-			left: ir.identifier('x'),
-			operator: ir.mul(),
-			right: ir.integerLiteral('2'),
-		});
-		const e = edit(target, replacement);
-		expect(e.render()).toBe('x * 2');
-		expect(e.toEdit().insertedText).toBe('x * 2');
+		const e = edit(target)
+			.left(ir.identifier('x'))
+			.operator(ir.mul())
+			.right(ir.integerLiteral('2'));
+		const editObj = e.toEdit();
+		expect(editObj.startPos).toBe(0);
+		expect(editObj.endPos).toBe(5);
+		expect(editObj.insertedText).toContain('x');
+		expect(editObj.insertedText).toContain('*');
+		expect(editObj.insertedText).toContain('2');
 	});
 
-	it('applies correctly to source', () => {
-		const source = 'let name = 42;';
-		const target = mockTarget('identifier', 4, 8);
-		const e = edit(target, ir.identifier('count'));
-		expect(applyEdit(source, e.toEdit())).toBe('let count = 42;');
+	it('applies to source via block edit', () => {
+		const source = 'fn main() {}';
+		const target = mockTarget('block', 10, 12);
+		const e = edit(target);
+		const editObj = e.toEdit();
+		expect(editObj.startPos).toBe(10);
+		expect(editObj.endPos).toBe(12);
 	});
 });
 

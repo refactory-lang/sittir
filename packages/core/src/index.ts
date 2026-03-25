@@ -18,6 +18,6 @@ export { parseTemplate } from './sexpr.ts';
 export { render } from './render.ts';
 export type { RulesRegistry, JoinByMap } from './render.ts';
 export { validateFull } from './validate.ts';
-export { toEdit, replace, edit, replaceField } from './edit.ts';
+export { toEdit, replace, bindRange, replaceField } from './edit.ts';
 export type { ReplaceTarget, KindOf, Renderable } from './edit.ts';
 export { toCst } from './cst.ts';
