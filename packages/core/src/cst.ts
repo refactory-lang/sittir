@@ -1,5 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { NodeData, CSTNode, Position } from './types.ts';
+import type { AnyNodeData, CSTNode, Position } from './types.ts';
 import type { RulesRegistry, JoinByMap } from './render.ts';
 import { render } from './render.ts';
 
@@ -16,7 +16,7 @@ function offsetToPosition(offset: number, fullText: string, baseOffset: number):
  * Build a lightweight CST node tree with byte offsets.
  */
 export function toCst(
-	node: NodeData,
+	node: AnyNodeData,
 	registry: RulesRegistry,
 	offset = 0,
 	joinBy?: JoinByMap,

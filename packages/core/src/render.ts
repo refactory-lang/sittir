@@ -1,5 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { NodeData, RenderRule, ParsedTemplate, TemplateElement, RulesRegistry, JoinByMap } from './types.ts';
+import type { AnyNodeData, RenderRule, ParsedTemplate, TemplateElement, RulesRegistry, JoinByMap } from './types.ts';
 import { parseTemplate } from './sexpr.ts';
 
 export type { RulesRegistry, JoinByMap };
@@ -23,7 +23,7 @@ function getParsed(template: RenderRule): ParsedTemplate {
 // Render engine
 // ---------------------------------------------------------------------------
 
-export function render(node: NodeData, registry: RulesRegistry, joinBy?: JoinByMap): string {
+export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: JoinByMap): string {
 	if (node.text !== undefined) return node.text;
 
 	const template = registry[node.type];
@@ -82,8 +82,8 @@ export function render(node: NodeData, registry: RulesRegistry, joinBy?: JoinByM
 	return parts.join(' ').replace(/\s+/g, ' ').trim();
 }
 
-/** Render a field value — handles NodeData, string, and number. */
-function renderValue(value: NodeData | string | number, registry: RulesRegistry, joinBy?: JoinByMap): string {
+/** Render a field value — handles AnyNodeData, string, and number. */
+function renderValue(value: AnyNodeData | string | number, registry: RulesRegistry, joinBy?: JoinByMap): string {
 	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return String(value);
 	return render(value, registry, joinBy);

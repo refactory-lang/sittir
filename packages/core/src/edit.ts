@@ -1,17 +1,17 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { NodeData, Edit, ByteRange, ReplaceTarget, AssignableNode, Renderable, KindOf, RulesRegistry, JoinByMap } from './types.ts';
+import type { AnyNodeData, Edit, ByteRange, ReplaceTarget, AnyTreeNode, Renderable, KindOf, RulesRegistry, JoinByMap } from './types.ts';
 import { render } from './render.ts';
 
-export type { ReplaceTarget, AssignableNode, Renderable, KindOf };
+export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 
 // ---------------------------------------------------------------------------
 // toEdit — overloaded for raw offsets and Range objects
 // ---------------------------------------------------------------------------
 
-export function toEdit(node: NodeData, registry: RulesRegistry, start: number, end: number, joinBy?: JoinByMap): Edit;
-export function toEdit(node: NodeData, registry: RulesRegistry, range: ByteRange, joinBy?: JoinByMap): Edit;
+export function toEdit(node: AnyNodeData, registry: RulesRegistry, start: number, end: number, joinBy?: JoinByMap): Edit;
+export function toEdit(node: AnyNodeData, registry: RulesRegistry, range: ByteRange, joinBy?: JoinByMap): Edit;
 export function toEdit(
-	node: NodeData,
+	node: AnyNodeData,
 	registry: RulesRegistry,
 	startOrRange: number | ByteRange,
 	endOrJoinBy?: number | JoinByMap,
@@ -40,12 +40,12 @@ export function toEdit(
 }
 
 // ---------------------------------------------------------------------------
-// replace — loosely typed, any NodeData
+// replace — loosely typed, any AnyNodeData
 // ---------------------------------------------------------------------------
 
 export function replace(
 	target: ReplaceTarget,
-	replacement: NodeData & Renderable,
+	replacement: AnyNodeData & Renderable,
 ): Edit {
 	const range = target.range();
 	return {
@@ -66,7 +66,7 @@ export function replace(
  * The generated `edit(target)` creates the right factory for the target's kind,
  * then calls `bindRange()` to attach the range.
  */
-export function bindRange<T extends NodeData & Renderable>(
+export function bindRange<T extends AnyNodeData & Renderable>(
 	target: ReplaceTarget,
 	factoryOutput: T,
 ): T & { toEdit(): Edit } {
@@ -90,7 +90,7 @@ export function replaceField<
 >(
 	target: TNode,
 	selector: (node: TNode) => TField | undefined,
-	replacement: NodeData<KindOf<TField>> & Renderable,
+	replacement: AnyNodeData & Renderable,
 ): Edit {
 	const fieldNode = selector(target);
 	if (!fieldNode) {

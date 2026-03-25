@@ -1,9 +1,10 @@
 // @sittir/core — type re-exports from @sittir/types
-// All type definitions live in @sittir/types. This file re-exports them
-// for internal use within core (so internal imports don't need to change).
+// Core is grammar-agnostic: uses AnyNodeData/AnyTreeNode (loose runtime types).
+// Consumers use NodeData<G,K>/TreeNode<G,K> from @sittir/types for grammar-derived typing.
 
 export type {
-	NodeData,
+	AnyNodeData,
+	AnyTreeNode,
 	RenderTemplate,
 	RenderRule,
 	TemplateElement,
@@ -16,7 +17,6 @@ export type {
 	RulesRegistry,
 	JoinByMap,
 	ReplaceTarget,
-	AssignableNode,
 	Renderable,
 	KindOf,
 	FromValue,

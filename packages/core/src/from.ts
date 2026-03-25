@@ -1,8 +1,8 @@
 // @sittir/core — .from() resolution engine
-// Resolves plain objects + scalars into NodeData based on grammar field types.
+// Resolves plain objects + scalars into AnyNodeData based on grammar field types.
 // Types are defined in @sittir/types — imported via local re-export.
 
-import type { NodeData, FromValue, FromObject, FromFieldInfo, FromContext } from './types.ts';
+import type { AnyNodeData, FromValue, FromObject, FromFieldInfo, FromContext } from './types.ts';
 
 export type { FromValue, FromObject, FromFieldInfo, FromContext };
 
@@ -10,7 +10,7 @@ export type { FromValue, FromObject, FromFieldInfo, FromContext };
 // Internals
 // ---------------------------------------------------------------------------
 
-function isNodeData(v: unknown): v is NodeData {
+function isAnyNodeData(v: unknown): v is AnyNodeData {
 	return v !== null && typeof v === 'object' && typeof (v as any).type === 'string' && typeof (v as any).fields === 'object';
 }
 
@@ -19,14 +19,14 @@ function isNodeData(v: unknown): v is NodeData {
 // ---------------------------------------------------------------------------
 
 /**
- * Resolve a plain object into NodeData using .from() resolution rules.
+ * Resolve a plain object into AnyNodeData using .from() resolution rules.
  * Called by generated .from() methods.
  */
 export function resolveFromInput(
 	kind: string,
 	input: Record<string, unknown>,
 	ctx: FromContext,
-): NodeData {
+): AnyNodeData {
 	const fieldInfos = ctx.getFields(kind);
 	if (!fieldInfos) throw new Error(`Unknown kind for .from(): '${kind}'`);
 
@@ -79,7 +79,7 @@ export function resolveFieldValue(
 	value: unknown,
 	field: FromFieldInfo,
 	ctx: FromContext,
-): NodeData | NodeData[] {
+): AnyNodeData | AnyNodeData[] {
 	if (field.multiple) {
 		const arr = Array.isArray(value) ? value : [value];
 		return arr.map(v => resolveValue(v, field.namedTypes, field.anonymousTokens, ctx));
@@ -96,9 +96,9 @@ function resolveValue(
 	acceptedNamedTypes: string[],
 	anonymousTokens: string[] | undefined,
 	ctx: FromContext,
-): NodeData {
-	// Already NodeData → pass through
-	if (isNodeData(value)) return value;
+): AnyNodeData {
+	// Already AnyNodeData → pass through
+	if (isAnyNodeData(value)) return value;
 
 	// Boolean → boolean_literal (only if accepted or no leaf types specified)
 	if (typeof value === 'boolean') {
@@ -149,7 +149,7 @@ function resolveString(
 	acceptedNamedTypes: string[],
 	anonymousTokens: string[] | undefined,
 	ctx: FromContext,
-): NodeData {
+): AnyNodeData {
 	const leafTypes = acceptedNamedTypes.filter(t => ctx.isLeaf(t));
 
 	// Exactly one leaf type → use it directly
@@ -169,7 +169,7 @@ function resolveString(
 
 	// Check anonymous tokens (operators like '+', '==', etc.)
 	if (anonymousTokens && anonymousTokens.includes(value)) {
-		return { type: value, fields: {}, text: value } as NodeData;
+		return { type: value, fields: {}, text: value } as AnyNodeData;
 	}
 
 	// Prefer identifier-like leaf types.
@@ -209,7 +209,7 @@ function resolveArray(
 	value: unknown[],
 	acceptedNamedTypes: string[],
 	ctx: FromContext,
-): NodeData {
+): AnyNodeData {
 	// Array in a non-multiple field → wrap as the single accepted branch type's children
 	const branchTypes = acceptedNamedTypes.filter(t => ctx.isBranch(t));
 
@@ -240,7 +240,7 @@ function resolveObject(
 	obj: Record<string, unknown>,
 	acceptedNamedTypes: string[],
 	ctx: FromContext,
-): NodeData {
+): AnyNodeData {
 	// Explicit kind → recursive .from()
 	if ('kind' in obj && typeof obj['kind'] === 'string') {
 		const kind = obj['kind'] as string;
