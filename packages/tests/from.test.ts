@@ -236,3 +236,45 @@ describe('.from() — render integration', () => {
 		expect(source).toContain('f64');
 	});
 });
+
+describe('.from() — SgNode dispatch', () => {
+	it('detects SgNode-like input and delegates to .assign()', () => {
+		// Mock an SgNode-like object (has field(), text(), children(), type, range())
+		const mockSgNode = {
+			type: 'function_item' as const,
+			field(name: string) {
+				if (name === 'name') return { type: 'identifier', field: () => null, text: () => 'main', children: () => [], range: () => ({ start: { index: 0 }, end: { index: 4 } }) };
+				if (name === 'parameters') return { type: 'parameters', field: () => null, text: () => '()', children: () => [], range: () => ({ start: { index: 4 }, end: { index: 6 } }) };
+				if (name === 'body') return { type: 'block', field: () => null, text: () => '{}', children: () => [], range: () => ({ start: { index: 7 }, end: { index: 9 } }) };
+				return null;
+			},
+			text: () => 'fn main() {}',
+			children: () => [],
+			range: () => ({ start: { index: 0 }, end: { index: 12 } }),
+		};
+
+		const node = ir.function.from(mockSgNode as any);
+		expect(node.type).toBe('function_item');
+		expect(node.fields.name.type).toBe('identifier');
+		expect(node.fields.name.text).toBe('main');
+	});
+
+	it('SgNode dispatch returns ergonomic setters', () => {
+		const mockSgNode = {
+			type: 'function_item' as const,
+			field(name: string) {
+				if (name === 'name') return { type: 'identifier', field: () => null, text: () => 'old', children: () => [], range: () => ({ start: { index: 0 }, end: { index: 3 } }) };
+				if (name === 'parameters') return { type: 'parameters', field: () => null, text: () => '()', children: () => [], range: () => ({ start: { index: 3 }, end: { index: 5 } }) };
+				return null;
+			},
+			text: () => 'fn old() {}',
+			children: () => [],
+			range: () => ({ start: { index: 0 }, end: { index: 11 } }),
+		};
+
+		// Ergonomic setter: pass string, should resolve to a leaf type
+		const node = ir.function.from(mockSgNode as any).returnType('i32');
+		expect(node.type).toBe('function_item');
+		expect(node.fields.return_type).toBeDefined();
+	});
+});

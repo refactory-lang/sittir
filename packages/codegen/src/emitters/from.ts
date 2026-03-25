@@ -36,7 +36,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('');
 
 	// Import types from core (only types, no runtime resolution)
-	lines.push("import type { NodeData } from '@sittir/core';");
+	lines.push("import type { NodeData, AssignableNode } from '@sittir/core';");
 	lines.push('');
 
 	// Import factory functions — only the ones actually referenced by .from() resolution
@@ -125,7 +125,56 @@ export function emitFrom(config: EmitFromConfig): string {
 }
 
 /**
+ * Generate the ergonomic setter replacement lines for a node kind.
+ * Shared between the plain-object resolution path and the SgNode dispatch path.
+ */
+function emitErgonomicSetters(
+	node: KindMeta,
+	ctorField: FieldMeta | null,
+	baseVar: string,
+	leafSet: Set<string>,
+	leafValueMap: Map<string, string[]>,
+	keywordKinds: Map<string, string>,
+	allNodes: KindMeta[],
+): string[] {
+	const lines: string[] = [];
+
+	for (const field of node.fields) {
+		if (field === ctorField) continue;
+		const camel = toFieldName(field.name);
+		const setterName = camel === 'type' ? 'typeField' : camel;
+		if (field.multiple) {
+			lines.push(`  ${baseVar}.${setterName} = (...v: any[]) => {`);
+			lines.push(`    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
+			lines.push(`    (${baseVar}.fields as any)['${field.name}'] = arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+			lines.push(`    return ${baseVar};`);
+			lines.push(`  };`);
+		} else {
+			lines.push(`  ${baseVar}.${setterName} = (v: any) => { (${baseVar}.fields as any)['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes)}; return ${baseVar}; };`);
+		}
+	}
+
+	if (node.hasChildren && node.children) {
+		const childField: FieldMeta = {
+			name: 'children',
+			required: node.children.required,
+			multiple: true,
+			types: node.children.types,
+			namedTypes: node.children.namedTypes,
+		};
+		lines.push(`  ${baseVar}.children = (...v: any[]) => { (${baseVar}.fields as any).children = v.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes)}); return ${baseVar}; };`);
+	}
+
+	return lines;
+}
+
+/**
  * Emit a single .from() function for a branch node kind.
+ *
+ * Accepts three input shapes:
+ *   1. FromInput object — resolved recursively into NodeData
+ *   2. FromValue[] (array compression) — wrapped as children
+ *   3. AssignableNode (SgNode) — delegates to .assign(), with ergonomic setters
  */
 function emitFromFunction(
 	node: KindMeta,
@@ -140,13 +189,55 @@ function emitFromFunction(
 
 	const lines: string[] = [];
 
-	// Function signature — array compression for nodes with children
+	// Function overloads for strict typing
 	const exportName = `${factoryName}From`;
+	// Overload 1: AssignableNode → FromNode (SgNode dispatch)
+	lines.push(`export function ${exportName}(input: AssignableNode<'${node.kind}'>): ${typeName}FromNode;`);
+	// Overload 2: FromInput → FromNode (plain object resolution)
 	if (node.hasChildren) {
-		lines.push(`export function ${exportName}(input: ${typeName}FromInput | FromValue[]): ${typeName}FromNode {`);
+		lines.push(`export function ${exportName}(input: ${typeName}FromInput | FromValue[]): ${typeName}FromNode;`);
+	} else {
+		lines.push(`export function ${exportName}(input: ${typeName}FromInput): ${typeName}FromNode;`);
+	}
+	// Implementation signature
+	lines.push(`export function ${exportName}(input: any): ${typeName}FromNode {`);
+
+	// SgNode detection — delegate to .assign() with ergonomic setters
+	// .assign() nodes use an overrides mechanism (getters), so we wrap
+	// the strict setters: resolve the value, then call the original setter.
+	lines.push(`  if (typeof input.field === 'function') {`);
+	lines.push(`    const base: any = ${factoryName}.assign(input);`);
+	for (const field of node.fields) {
+		const camel = toFieldName(field.name);
+		const setterName = camel === 'type' ? 'typeField' : camel;
+		lines.push(`    const _orig_${field.name} = base.${setterName};`);
+		if (field.multiple) {
+			lines.push(`    base.${setterName} = (...v: any[]) => {`);
+			lines.push(`      const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
+			lines.push(`      return _orig_${field.name}(...arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes)}));`);
+			lines.push(`    };`);
+		} else {
+			lines.push(`    base.${setterName} = (v: any) => _orig_${field.name}(${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes)});`);
+		}
+	}
+	if (node.hasChildren && node.children) {
+		const childField: FieldMeta = {
+			name: 'children',
+			required: node.children.required,
+			multiple: true,
+			types: node.children.types,
+			namedTypes: node.children.namedTypes,
+		};
+		lines.push(`    const _orig_children = base.children;`);
+		lines.push(`    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes)}));`);
+	}
+	lines.push(`    return base;`);
+	lines.push(`  }`);
+
+	// Array compression
+	if (node.hasChildren) {
 		lines.push(`  const obj: any = Array.isArray(input) ? { children: input } : input;`);
 	} else {
-		lines.push(`export function ${exportName}(input: ${typeName}FromInput): ${typeName}FromNode {`);
 		lines.push(`  const obj: any = input;`);
 	}
 
@@ -183,31 +274,7 @@ function emitFromFunction(
 	lines.push(`  const base: any = ${factoryName}(resolved);`);
 
 	// Replace fluent setters with ergonomic ones
-	for (const field of node.fields) {
-		if (field === ctorField) continue;
-		const camel = toFieldName(field.name);
-		const setterName = camel === 'type' ? 'typeField' : camel;
-		if (field.multiple) {
-			lines.push(`  base.${setterName} = (...v: any[]) => {`);
-			lines.push(`    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
-			lines.push(`    (base.fields as any)['${field.name}'] = arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes)});`);
-			lines.push(`    return base;`);
-			lines.push(`  };`);
-		} else {
-			lines.push(`  base.${setterName} = (v: any) => { (base.fields as any)['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes)}; return base; };`);
-		}
-	}
-
-	if (node.hasChildren && node.children) {
-		const childField: FieldMeta = {
-			name: 'children',
-			required: node.children.required,
-			multiple: true,
-			types: node.children.types,
-			namedTypes: node.children.namedTypes,
-		};
-		lines.push(`  base.children = (...v: any[]) => { (base.fields as any).children = v.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes)}); return base; };`);
-	}
+	lines.push(...emitErgonomicSetters(node, ctorField, 'base', leafSet, leafValueMap, keywordKinds, allNodes));
 
 	lines.push(`  return base;`);
 	lines.push(`}`);
