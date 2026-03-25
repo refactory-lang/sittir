@@ -19,5 +19,5 @@ export { render } from './render.ts';
 export type { RulesRegistry, JoinByMap } from './render.ts';
 export { validateFull } from './validate.ts';
 export { toEdit, replace, bindRange, replaceField } from './edit.ts';
-export type { ReplaceTarget, KindOf, Renderable } from './edit.ts';
+export type { ReplaceTarget, AssignableNode, KindOf, Renderable } from './edit.ts';
 export { toCst } from './cst.ts';

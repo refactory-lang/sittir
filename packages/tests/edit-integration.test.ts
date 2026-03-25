@@ -4,8 +4,8 @@
 import { describe, it, expect } from 'vitest';
 import { ir } from '../rust/src/ir.ts';
 import { render, toEdit, replace, replaceField } from '../core/src/index.ts';
+import type { AssignableNode, ReplaceTarget } from '../core/src/index.ts';
 import { edit } from '../rust/src/factories.ts';
-import type { ReplaceTarget } from '../core/src/index.ts';
 import { rules } from '../rust/src/rules.ts';
 import { joinBy } from '../rust/src/joinby.ts';
 
@@ -151,38 +151,97 @@ describe('Apply multiple non-overlapping edits', () => {
 	});
 });
 
-describe('edit(target) — pre-positioned factory', () => {
-	it('returns a factory with no-arg toEdit()', () => {
-		const target = mockTarget('block', 10, 20);
-		const e = edit(target);
-		// e is a block factory with range attached
-		const editObj = e.toEdit();
-		expect(editObj.startPos).toBe(10);
-		expect(editObj.endPos).toBe(20);
-		expect(typeof editObj.insertedText).toBe('string');
-	});
+/** Mock an AssignableNode (simulates a parsed tree node with field access). */
+function mockAssignable<K extends string>(
+	kind: K,
+	startIndex: number,
+	endIndex: number,
+	fieldValues: Record<string, { type: string; text: string }> = {},
+	childValues: { type: string; text: string }[] = [],
+): AssignableNode<K> {
+	return {
+		type: kind,
+		range: () => ({ start: { index: startIndex }, end: { index: endIndex } }),
+		field: (name: string) => {
+			const v = fieldValues[name];
+			if (!v) return null;
+			return {
+				type: v.type,
+				range: () => ({ start: { index: 0 }, end: { index: v.text.length } }),
+				field: () => null,
+				text: () => v.text,
+				children: () => [],
+			};
+		},
+		text: () => Object.values(fieldValues).map(v => v.text).join(' '),
+		children: () => childValues.map(v => ({
+			type: v.type,
+			range: () => ({ start: { index: 0 }, end: { index: v.text.length } }),
+			field: () => null,
+			text: () => v.text,
+			children: () => [],
+		})),
+	};
+}
 
-	it('supports fluent building then toEdit()', () => {
-		const target = mockTarget('binary_expression', 0, 5);
-		const e = edit(target)
-			.left(ir.identifier('x'))
-			.operator(ir.mul())
-			.right(ir.integerLiteral('2'));
-		const editObj = e.toEdit();
+describe('ir.*.assign() — hydrate from parsed node', () => {
+	it('hydrates a binary_expression from an assignable node', () => {
+		const target = mockAssignable('binary_expression', 0, 5, {
+			left: { type: 'identifier', text: 'a' },
+			operator: { type: 'binary_operator', text: '+' },
+			right: { type: 'integer_literal', text: '1' },
+		});
+		const node = ir.binaryExpression.assign(target);
+		expect(node.type).toBe('binary_expression');
+		const editObj = node.toEdit();
 		expect(editObj.startPos).toBe(0);
 		expect(editObj.endPos).toBe(5);
-		expect(editObj.insertedText).toContain('x');
-		expect(editObj.insertedText).toContain('*');
-		expect(editObj.insertedText).toContain('2');
+		expect(editObj.insertedText).toContain('a');
+		expect(editObj.insertedText).toContain('+');
+		expect(editObj.insertedText).toContain('1');
 	});
 
-	it('applies to source via block edit', () => {
-		const source = 'fn main() {}';
-		const target = mockTarget('block', 10, 12);
-		const e = edit(target);
-		const editObj = e.toEdit();
+	it('allows overriding a single field', () => {
+		const target = mockAssignable('binary_expression', 10, 15, {
+			left: { type: 'identifier', text: 'a' },
+			operator: { type: 'binary_operator', text: '+' },
+			right: { type: 'integer_literal', text: '1' },
+		});
+		const node = ir.binaryExpression.assign(target)
+			.right(ir.integerLiteral('99'));
+		const editObj = node.toEdit();
 		expect(editObj.startPos).toBe(10);
-		expect(editObj.endPos).toBe(12);
+		expect(editObj.endPos).toBe(15);
+		expect(editObj.insertedText).toContain('a');
+		expect(editObj.insertedText).toContain('99');
+	});
+});
+
+describe('edit(target) — sugar for ir[kind].assign(target)', () => {
+	it('dispatches to the right factory', () => {
+		const target = mockAssignable('binary_expression', 0, 5, {
+			left: { type: 'identifier', text: 'x' },
+			operator: { type: 'binary_operator', text: '*' },
+			right: { type: 'integer_literal', text: '2' },
+		});
+		const node = edit(target);
+		expect(node.type).toBe('binary_expression');
+	});
+
+	it('supports fluent override then toEdit()', () => {
+		const target = mockAssignable('binary_expression', 0, 5, {
+			left: { type: 'identifier', text: 'x' },
+			operator: { type: 'binary_operator', text: '*' },
+			right: { type: 'integer_literal', text: '2' },
+		});
+		const editObj = edit(target)
+			.left(ir.identifier('y'))
+			.toEdit();
+		expect(editObj.startPos).toBe(0);
+		expect(editObj.endPos).toBe(5);
+		expect(editObj.insertedText).toContain('y');
+		expect(editObj.insertedText).toContain('*');
+		expect(editObj.insertedText).toContain('2');
 	});
 });
 

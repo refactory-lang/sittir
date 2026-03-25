@@ -47,6 +47,19 @@ export interface ReplaceTarget<T extends string = string> {
 	range(): ByteRange;
 }
 
+/**
+ * A parsed tree node that can be assigned to a factory.
+ * Structurally compatible with ast-grep SgNode and tree-sitter Node.
+ */
+export interface AssignableNode<T extends string = string> extends ReplaceTarget<T> {
+	/** Access a named field's child node. */
+	field(name: string): AssignableNode | null;
+	/** Get the source text of this node. */
+	text(): string;
+	/** Get child nodes. */
+	children(): AssignableNode[];
+}
+
 // ---------------------------------------------------------------------------
 // Renderable — factory outputs that can render themselves
 // ---------------------------------------------------------------------------
