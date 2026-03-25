@@ -5,6 +5,11 @@ import { render, toEdit, bindRange, resolveFromInput } from '@sittir/core';
 import { rules } from './rules.js';
 import { joinBy } from './joinby.js';
 
+// .from() input types — kind constrained to valid grammar kinds
+type FromKind = 'abstract_type' | 'arguments' | 'array_expression' | 'array_type' | 'assignment_expression' | 'associated_type' | 'async_block' | 'attribute' | 'attribute_item' | 'await_expression' | 'base_field_initializer' | 'binary_expression' | 'block' | 'block_comment' | 'bounded_type' | 'bracketed_type' | 'break_expression' | 'call_expression' | 'captured_pattern' | 'closure_expression' | 'closure_parameters' | 'compound_assignment_expr' | 'const_block' | 'const_item' | 'const_parameter' | 'continue_expression' | 'declaration_list' | 'dynamic_type' | 'else_clause' | 'enum_item' | 'enum_variant' | 'enum_variant_list' | 'expression_statement' | 'extern_crate_declaration' | 'extern_modifier' | 'field_declaration' | 'field_declaration_list' | 'field_expression' | 'field_initializer' | 'field_initializer_list' | 'field_pattern' | 'for_expression' | 'for_lifetimes' | 'foreign_mod_item' | 'function_item' | 'function_modifiers' | 'function_signature_item' | 'function_type' | 'gen_block' | 'generic_function' | 'generic_pattern' | 'generic_type' | 'generic_type_with_turbofish' | 'higher_ranked_trait_bound' | 'if_expression' | 'impl_item' | 'index_expression' | 'inner_attribute_item' | 'label' | 'let_chain' | 'let_condition' | 'let_declaration' | 'lifetime' | 'lifetime_parameter' | 'line_comment' | 'loop_expression' | 'macro_definition' | 'macro_invocation' | 'macro_rule' | 'match_arm' | 'match_block' | 'match_expression' | 'match_pattern' | 'mod_item' | 'mut_pattern' | 'negative_literal' | 'or_pattern' | 'ordered_field_declaration_list' | 'parameter' | 'parameters' | 'parenthesized_expression' | 'pointer_type' | 'qualified_type' | 'range_expression' | 'range_pattern' | 'raw_string_literal' | 'ref_pattern' | 'reference_expression' | 'reference_pattern' | 'reference_type' | 'removed_trait_bound' | 'return_expression' | 'scoped_identifier' | 'scoped_type_identifier' | 'scoped_use_list' | 'self_parameter' | 'shorthand_field_initializer' | 'slice_pattern' | 'source_file' | 'static_item' | 'string_literal' | 'struct_expression' | 'struct_item' | 'struct_pattern' | 'token_binding_pattern' | 'token_repetition' | 'token_repetition_pattern' | 'token_tree' | 'token_tree_pattern' | 'trait_bounds' | 'trait_item' | 'try_block' | 'try_expression' | 'tuple_expression' | 'tuple_pattern' | 'tuple_struct_pattern' | 'tuple_type' | 'type_arguments' | 'type_binding' | 'type_cast_expression' | 'type_item' | 'type_parameter' | 'type_parameters' | 'unary_expression' | 'union_item' | 'unsafe_block' | 'use_as_clause' | 'use_bounds' | 'use_declaration' | 'use_list' | 'use_wildcard' | 'variadic_parameter' | 'visibility_modifier' | 'where_clause' | 'where_predicate' | 'while_expression' | 'yield_expression' | 'boolean_literal' | 'empty_statement' | 'fragment_specifier' | 'inner_doc_comment_marker' | 'never_type' | 'outer_doc_comment_marker' | 'remaining_field_pattern' | 'unit_expression' | 'unit_type' | 'char_literal' | 'crate' | 'doc_comment' | 'escape_sequence' | 'field_identifier' | 'float_literal' | 'identifier' | 'integer_literal' | 'metavariable' | 'mutable_specifier' | 'primitive_type' | 'self' | 'shebang' | 'shorthand_field_identifier' | 'string_content' | 'super' | 'type_identifier';
+interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }
+type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;
+
 function isNodeData(v: any): v is NodeData {
   return v !== null && typeof v === 'object' && 'type' in v && 'fields' in v;
 }
@@ -98,6 +103,11 @@ export interface AbstractTypeConfig {
   children?: NodeData[];
 }
 
+export interface AbstractTypeFromInput {
+  trait: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type AbstractTypeNode = NodeData<'abstract_type'> & {
   children(...value: NodeData[]): AbstractTypeNode;
   render(): string;
@@ -154,6 +164,10 @@ export interface ArgumentsConfig {
   children?: NodeData[];
 }
 
+export interface ArgumentsFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ArgumentsNode = NodeData<'arguments'> & {
   children(...value: NodeData[]): ArgumentsNode;
   render(): string;
@@ -205,6 +219,11 @@ arguments_.assign = function(target: AssignableNode<'arguments'>): ArgumentsNode
 export interface ArrayExpressionConfig {
   length?: NodeData;
   children?: NodeData[];
+}
+
+export interface ArrayExpressionFromInput {
+  length?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ArrayExpressionNode = NodeData<'array_expression'> & {
@@ -263,6 +282,11 @@ export interface ArrayTypeConfig {
   length?: NodeData;
 }
 
+export interface ArrayTypeFromInput {
+  element: FromValue;
+  length?: FromValue;
+}
+
 export type ArrayTypeNode = NodeData<'array_type'> & {
   length(value: NodeData): ArrayTypeNode;
   render(): string;
@@ -316,6 +340,11 @@ arrayType.assign = function(target: AssignableNode<'array_type'>): ArrayTypeNode
 export interface AssignmentExpressionConfig {
   left: NodeData;
   right: NodeData;
+}
+
+export interface AssignmentExpressionFromInput {
+  left: FromValue;
+  right: FromValue;
 }
 
 export type AssignmentExpressionNode = NodeData<'assignment_expression'> & {
@@ -373,6 +402,13 @@ export interface AssociatedTypeConfig {
   type_parameters?: NodeData;
   bounds?: NodeData;
   children?: NodeData[];
+}
+
+export interface AssociatedTypeFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  bounds?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type AssociatedTypeNode = NodeData<'associated_type'> & {
@@ -437,6 +473,10 @@ export interface AsyncBlockConfig {
   children?: NodeData[];
 }
 
+export interface AsyncBlockFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type AsyncBlockNode = NodeData<'async_block'> & {
   children(...value: NodeData[]): AsyncBlockNode;
   render(): string;
@@ -489,6 +529,12 @@ export interface AttributeConfig {
   value?: NodeData;
   arguments?: NodeData;
   children?: NodeData[];
+}
+
+export interface AttributeFromInput {
+  value?: FromValue;
+  arguments?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type AttributeNode = NodeData<'attribute'> & {
@@ -549,6 +595,10 @@ export interface AttributeItemConfig {
   children?: NodeData[];
 }
 
+export interface AttributeItemFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type AttributeItemNode = NodeData<'attribute_item'> & {
   children(...value: NodeData[]): AttributeItemNode;
   render(): string;
@@ -599,6 +649,10 @@ attributeItem.assign = function(target: AssignableNode<'attribute_item'>): Attri
 
 export interface AwaitExpressionConfig {
   children?: NodeData[];
+}
+
+export interface AwaitExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type AwaitExpressionNode = NodeData<'await_expression'> & {
@@ -653,6 +707,10 @@ export interface BaseFieldInitializerConfig {
   children?: NodeData[];
 }
 
+export interface BaseFieldInitializerFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type BaseFieldInitializerNode = NodeData<'base_field_initializer'> & {
   children(...value: NodeData[]): BaseFieldInitializerNode;
   render(): string;
@@ -705,6 +763,12 @@ export interface BinaryExpressionConfig {
   left: NodeData;
   operator: NodeData;
   right: NodeData;
+}
+
+export interface BinaryExpressionFromInput {
+  left: FromValue;
+  operator: NodeData | '&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%';
+  right: FromValue;
 }
 
 export type BinaryExpressionNode = NodeData<'binary_expression'> & {
@@ -764,6 +828,10 @@ export interface BlockConfig {
   children?: NodeData[];
 }
 
+export interface BlockFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type BlockNode = NodeData<'block'> & {
   children(...value: NodeData[]): BlockNode;
   render(): string;
@@ -813,6 +881,12 @@ block.assign = function(target: AssignableNode<'block'>): BlockNode {
 } as any;
 
 export interface BlockCommentConfig {
+  outer?: NodeData | string;
+  inner?: NodeData | string;
+  doc?: NodeData | string;
+}
+
+export interface BlockCommentFromInput {
   outer?: NodeData | string;
   inner?: NodeData | string;
   doc?: NodeData | string;
@@ -874,6 +948,10 @@ export interface BoundedTypeConfig {
   children?: NodeData[];
 }
 
+export interface BoundedTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type BoundedTypeNode = NodeData<'bounded_type'> & {
   children(...value: NodeData[]): BoundedTypeNode;
   render(): string;
@@ -924,6 +1002,10 @@ boundedType.assign = function(target: AssignableNode<'bounded_type'>): BoundedTy
 
 export interface BracketedTypeConfig {
   children?: NodeData[];
+}
+
+export interface BracketedTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type BracketedTypeNode = NodeData<'bracketed_type'> & {
@@ -978,6 +1060,10 @@ export interface BreakExpressionConfig {
   children?: NodeData[];
 }
 
+export interface BreakExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type BreakExpressionNode = NodeData<'break_expression'> & {
   children(...value: NodeData[]): BreakExpressionNode;
   render(): string;
@@ -1029,6 +1115,11 @@ breakExpression.assign = function(target: AssignableNode<'break_expression'>): B
 export interface CallExpressionConfig {
   function: NodeData;
   arguments: NodeData;
+}
+
+export interface CallExpressionFromInput {
+  function: FromValue;
+  arguments: FromValue;
 }
 
 export type CallExpressionNode = NodeData<'call_expression'> & {
@@ -1085,6 +1176,10 @@ export interface CapturedPatternConfig {
   children?: NodeData[];
 }
 
+export interface CapturedPatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type CapturedPatternNode = NodeData<'captured_pattern'> & {
   children(...value: NodeData[]): CapturedPatternNode;
   render(): string;
@@ -1137,6 +1232,12 @@ export interface ClosureExpressionConfig {
   parameters: NodeData;
   return_type?: NodeData;
   body: NodeData;
+}
+
+export interface ClosureExpressionFromInput {
+  parameters: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
 }
 
 export type ClosureExpressionNode = NodeData<'closure_expression'> & {
@@ -1196,6 +1297,10 @@ export interface ClosureParametersConfig {
   children?: NodeData[];
 }
 
+export interface ClosureParametersFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ClosureParametersNode = NodeData<'closure_parameters'> & {
   children(...value: NodeData[]): ClosureParametersNode;
   render(): string;
@@ -1248,6 +1353,12 @@ export interface CompoundAssignmentExprConfig {
   left: NodeData;
   operator: NodeData;
   right: NodeData;
+}
+
+export interface CompoundAssignmentExprFromInput {
+  left: FromValue;
+  operator: NodeData | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
+  right: FromValue;
 }
 
 export type CompoundAssignmentExprNode = NodeData<'compound_assignment_expr'> & {
@@ -1307,6 +1418,10 @@ export interface ConstBlockConfig {
   body: NodeData;
 }
 
+export interface ConstBlockFromInput {
+  body: FromValue;
+}
+
 export type ConstBlockNode = NodeData<'const_block'> & {
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1359,6 +1474,13 @@ export interface ConstItemConfig {
   type: NodeData;
   value?: NodeData;
   children?: NodeData[];
+}
+
+export interface ConstItemFromInput {
+  name: NodeData | string;
+  type: FromValue;
+  value?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ConstItemNode = NodeData<'const_item'> & {
@@ -1425,6 +1547,12 @@ export interface ConstParameterConfig {
   value?: NodeData;
 }
 
+export interface ConstParameterFromInput {
+  name: NodeData | string;
+  type: FromValue;
+  value?: FromValue;
+}
+
 export type ConstParameterNode = NodeData<'const_parameter'> & {
   typeField(value: NodeData): ConstParameterNode;
   value(value: NodeData): ConstParameterNode;
@@ -1482,6 +1610,10 @@ export interface ContinueExpressionConfig {
   children?: NodeData[];
 }
 
+export interface ContinueExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ContinueExpressionNode = NodeData<'continue_expression'> & {
   children(...value: NodeData[]): ContinueExpressionNode;
   render(): string;
@@ -1532,6 +1664,10 @@ continueExpression.assign = function(target: AssignableNode<'continue_expression
 
 export interface DeclarationListConfig {
   children?: NodeData[];
+}
+
+export interface DeclarationListFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type DeclarationListNode = NodeData<'declaration_list'> & {
@@ -1586,6 +1722,10 @@ export interface DynamicTypeConfig {
   trait: NodeData;
 }
 
+export interface DynamicTypeFromInput {
+  trait: FromValue;
+}
+
 export type DynamicTypeNode = NodeData<'dynamic_type'> & {
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1635,6 +1775,10 @@ dynamicType.assign = function(target: AssignableNode<'dynamic_type'>): DynamicTy
 
 export interface ElseClauseConfig {
   children?: NodeData[];
+}
+
+export interface ElseClauseFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ElseClauseNode = NodeData<'else_clause'> & {
@@ -1690,6 +1834,13 @@ export interface EnumItemConfig {
   type_parameters?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface EnumItemFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type EnumItemNode = NodeData<'enum_item'> & {
@@ -1757,6 +1908,13 @@ export interface EnumVariantConfig {
   children?: NodeData[];
 }
 
+export interface EnumVariantFromInput {
+  name: NodeData | string;
+  body?: FromValue;
+  value?: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type EnumVariantNode = NodeData<'enum_variant'> & {
   body(value: NodeData): EnumVariantNode;
   value(value: NodeData): EnumVariantNode;
@@ -1819,6 +1977,10 @@ export interface EnumVariantListConfig {
   children?: NodeData[];
 }
 
+export interface EnumVariantListFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type EnumVariantListNode = NodeData<'enum_variant_list'> & {
   children(...value: NodeData[]): EnumVariantListNode;
   render(): string;
@@ -1869,6 +2031,10 @@ enumVariantList.assign = function(target: AssignableNode<'enum_variant_list'>): 
 
 export interface ExpressionStatementConfig {
   children?: NodeData[];
+}
+
+export interface ExpressionStatementFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ExpressionStatementNode = NodeData<'expression_statement'> & {
@@ -1923,6 +2089,12 @@ export interface ExternCrateDeclarationConfig {
   name: NodeData | string;
   alias?: NodeData | string;
   children?: NodeData[];
+}
+
+export interface ExternCrateDeclarationFromInput {
+  name: NodeData | string;
+  alias?: NodeData | string;
+  children?: FromValue | FromValue[];
 }
 
 export type ExternCrateDeclarationNode = NodeData<'extern_crate_declaration'> & {
@@ -1984,6 +2156,10 @@ export interface ExternModifierConfig {
   children?: NodeData[];
 }
 
+export interface ExternModifierFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ExternModifierNode = NodeData<'extern_modifier'> & {
   children(...value: NodeData[]): ExternModifierNode;
   render(): string;
@@ -2036,6 +2212,12 @@ export interface FieldDeclarationConfig {
   name: NodeData | string;
   type: NodeData;
   children?: NodeData[];
+}
+
+export interface FieldDeclarationFromInput {
+  name: NodeData | string;
+  type: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type FieldDeclarationNode = NodeData<'field_declaration'> & {
@@ -2097,6 +2279,10 @@ export interface FieldDeclarationListConfig {
   children?: NodeData[];
 }
 
+export interface FieldDeclarationListFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type FieldDeclarationListNode = NodeData<'field_declaration_list'> & {
   children(...value: NodeData[]): FieldDeclarationListNode;
   render(): string;
@@ -2148,6 +2334,11 @@ fieldDeclarationList.assign = function(target: AssignableNode<'field_declaration
 export interface FieldExpressionConfig {
   value: NodeData;
   field: NodeData | string;
+}
+
+export interface FieldExpressionFromInput {
+  value: FromValue;
+  field: NodeData | string | number;
 }
 
 export type FieldExpressionNode = NodeData<'field_expression'> & {
@@ -2204,6 +2395,12 @@ export interface FieldInitializerConfig {
   field: NodeData | string;
   value: NodeData;
   children?: NodeData[];
+}
+
+export interface FieldInitializerFromInput {
+  field: NodeData | string | number;
+  value: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type FieldInitializerNode = NodeData<'field_initializer'> & {
@@ -2265,6 +2462,10 @@ export interface FieldInitializerListConfig {
   children?: NodeData[];
 }
 
+export interface FieldInitializerListFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type FieldInitializerListNode = NodeData<'field_initializer_list'> & {
   children(...value: NodeData[]): FieldInitializerListNode;
   render(): string;
@@ -2317,6 +2518,12 @@ export interface FieldPatternConfig {
   name: NodeData | string;
   pattern?: NodeData;
   children?: NodeData[];
+}
+
+export interface FieldPatternFromInput {
+  name: NodeData | string;
+  pattern?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type FieldPatternNode = NodeData<'field_pattern'> & {
@@ -2381,6 +2588,13 @@ export interface ForExpressionConfig {
   children?: NodeData[];
 }
 
+export interface ForExpressionFromInput {
+  pattern: FromValue;
+  value: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type ForExpressionNode = NodeData<'for_expression'> & {
   value(value: NodeData): ForExpressionNode;
   body(value: NodeData): ForExpressionNode;
@@ -2443,6 +2657,10 @@ export interface ForLifetimesConfig {
   children?: NodeData[];
 }
 
+export interface ForLifetimesFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ForLifetimesNode = NodeData<'for_lifetimes'> & {
   children(...value: NodeData[]): ForLifetimesNode;
   render(): string;
@@ -2494,6 +2712,11 @@ forLifetimes.assign = function(target: AssignableNode<'for_lifetimes'>): ForLife
 export interface ForeignModItemConfig {
   body?: NodeData;
   children?: NodeData[];
+}
+
+export interface ForeignModItemFromInput {
+  body?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ForeignModItemNode = NodeData<'foreign_mod_item'> & {
@@ -2554,6 +2777,15 @@ export interface FunctionItemConfig {
   return_type?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface FunctionItemFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type FunctionItemNode = NodeData<'function_item'> & {
@@ -2624,6 +2856,10 @@ export interface FunctionModifiersConfig {
   children?: NodeData[];
 }
 
+export interface FunctionModifiersFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type FunctionModifiersNode = NodeData<'function_modifiers'> & {
   children(...value: NodeData[]): FunctionModifiersNode;
   render(): string;
@@ -2678,6 +2914,14 @@ export interface FunctionSignatureItemConfig {
   parameters: NodeData;
   return_type?: NodeData;
   children?: NodeData[];
+}
+
+export interface FunctionSignatureItemFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type FunctionSignatureItemNode = NodeData<'function_signature_item'> & {
@@ -2748,6 +2992,13 @@ export interface FunctionTypeConfig {
   children?: NodeData[];
 }
 
+export interface FunctionTypeFromInput {
+  trait?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type FunctionTypeNode = NodeData<'function_type'> & {
   trait(value: NodeData): FunctionTypeNode;
   returnType(value: NodeData): FunctionTypeNode;
@@ -2810,6 +3061,10 @@ export interface GenBlockConfig {
   children?: NodeData[];
 }
 
+export interface GenBlockFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type GenBlockNode = NodeData<'gen_block'> & {
   children(...value: NodeData[]): GenBlockNode;
   render(): string;
@@ -2861,6 +3116,11 @@ genBlock.assign = function(target: AssignableNode<'gen_block'>): GenBlockNode {
 export interface GenericFunctionConfig {
   function: NodeData;
   type_arguments: NodeData;
+}
+
+export interface GenericFunctionFromInput {
+  function: FromValue;
+  type_arguments: FromValue;
 }
 
 export type GenericFunctionNode = NodeData<'generic_function'> & {
@@ -2916,6 +3176,11 @@ genericFunction.assign = function(target: AssignableNode<'generic_function'>): G
 export interface GenericPatternConfig {
   type_arguments: NodeData;
   children?: NodeData[];
+}
+
+export interface GenericPatternFromInput {
+  type_arguments: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type GenericPatternNode = NodeData<'generic_pattern'> & {
@@ -2975,6 +3240,11 @@ export interface GenericTypeConfig {
   type_arguments: NodeData;
 }
 
+export interface GenericTypeFromInput {
+  type: FromValue;
+  type_arguments: FromValue;
+}
+
 export type GenericTypeNode = NodeData<'generic_type'> & {
   typeArguments(value: NodeData): GenericTypeNode;
   render(): string;
@@ -3028,6 +3298,11 @@ genericType.assign = function(target: AssignableNode<'generic_type'>): GenericTy
 export interface GenericTypeWithTurbofishConfig {
   type: NodeData;
   type_arguments: NodeData;
+}
+
+export interface GenericTypeWithTurbofishFromInput {
+  type: FromValue;
+  type_arguments: FromValue;
 }
 
 export type GenericTypeWithTurbofishNode = NodeData<'generic_type_with_turbofish'> & {
@@ -3085,6 +3360,11 @@ export interface HigherRankedTraitBoundConfig {
   type: NodeData;
 }
 
+export interface HigherRankedTraitBoundFromInput {
+  type_parameters: FromValue;
+  type: FromValue;
+}
+
 export type HigherRankedTraitBoundNode = NodeData<'higher_ranked_trait_bound'> & {
   typeField(value: NodeData): HigherRankedTraitBoundNode;
   render(): string;
@@ -3139,6 +3419,12 @@ export interface IfExpressionConfig {
   condition: NodeData;
   consequence: NodeData;
   alternative?: NodeData;
+}
+
+export interface IfExpressionFromInput {
+  condition: FromValue;
+  consequence: FromValue;
+  alternative?: FromValue;
 }
 
 export type IfExpressionNode = NodeData<'if_expression'> & {
@@ -3200,6 +3486,14 @@ export interface ImplItemConfig {
   type: NodeData;
   body?: NodeData;
   children?: NodeData[];
+}
+
+export interface ImplItemFromInput {
+  type_parameters?: FromValue;
+  trait?: FromValue;
+  type: FromValue;
+  body?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ImplItemNode = NodeData<'impl_item'> & {
@@ -3267,6 +3561,10 @@ export interface IndexExpressionConfig {
   children?: NodeData[];
 }
 
+export interface IndexExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type IndexExpressionNode = NodeData<'index_expression'> & {
   children(...value: NodeData[]): IndexExpressionNode;
   render(): string;
@@ -3319,6 +3617,10 @@ export interface InnerAttributeItemConfig {
   children?: NodeData[];
 }
 
+export interface InnerAttributeItemFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type InnerAttributeItemNode = NodeData<'inner_attribute_item'> & {
   children(...value: NodeData[]): InnerAttributeItemNode;
   render(): string;
@@ -3369,6 +3671,10 @@ innerAttributeItem.assign = function(target: AssignableNode<'inner_attribute_ite
 
 export interface LabelConfig {
   children?: NodeData[];
+}
+
+export interface LabelFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type LabelNode = NodeData<'label'> & {
@@ -3432,6 +3738,10 @@ export interface LetChainConfig {
   children?: NodeData[];
 }
 
+export interface LetChainFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type LetChainNode = NodeData<'let_chain'> & {
   children(...value: NodeData[]): LetChainNode;
   render(): string;
@@ -3483,6 +3793,11 @@ letChain.assign = function(target: AssignableNode<'let_chain'>): LetChainNode {
 export interface LetConditionConfig {
   pattern: NodeData;
   value: NodeData;
+}
+
+export interface LetConditionFromInput {
+  pattern: FromValue;
+  value: FromValue;
 }
 
 export type LetConditionNode = NodeData<'let_condition'> & {
@@ -3541,6 +3856,14 @@ export interface LetDeclarationConfig {
   value?: NodeData;
   alternative?: NodeData;
   children?: NodeData[];
+}
+
+export interface LetDeclarationFromInput {
+  pattern: FromValue;
+  type?: FromValue;
+  value?: FromValue;
+  alternative?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type LetDeclarationNode = NodeData<'let_declaration'> & {
@@ -3608,6 +3931,10 @@ export interface LifetimeConfig {
   children?: NodeData[];
 }
 
+export interface LifetimeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type LifetimeNode = NodeData<'lifetime'> & {
   children(...value: NodeData[]): LifetimeNode;
   render(): string;
@@ -3670,6 +3997,11 @@ export interface LifetimeParameterConfig {
   bounds?: NodeData;
 }
 
+export interface LifetimeParameterFromInput {
+  name: FromValue;
+  bounds?: FromValue;
+}
+
 export type LifetimeParameterNode = NodeData<'lifetime_parameter'> & {
   bounds(value: NodeData): LifetimeParameterNode;
   render(): string;
@@ -3721,6 +4053,12 @@ lifetimeParameter.assign = function(target: AssignableNode<'lifetime_parameter'>
 } as any;
 
 export interface LineCommentConfig {
+  outer?: NodeData | string;
+  inner?: NodeData | string;
+  doc?: NodeData | string;
+}
+
+export interface LineCommentFromInput {
   outer?: NodeData | string;
   inner?: NodeData | string;
   doc?: NodeData | string;
@@ -3783,6 +4121,11 @@ export interface LoopExpressionConfig {
   children?: NodeData[];
 }
 
+export interface LoopExpressionFromInput {
+  body: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type LoopExpressionNode = NodeData<'loop_expression'> & {
   children(...value: NodeData[]): LoopExpressionNode;
   render(): string;
@@ -3838,6 +4181,11 @@ loopExpression.assign = function(target: AssignableNode<'loop_expression'>): Loo
 export interface MacroDefinitionConfig {
   name: NodeData | string;
   children?: NodeData[];
+}
+
+export interface MacroDefinitionFromInput {
+  name: NodeData | string;
+  children?: FromValue | FromValue[];
 }
 
 export type MacroDefinitionNode = NodeData<'macro_definition'> & {
@@ -3897,6 +4245,11 @@ export interface MacroInvocationConfig {
   children?: NodeData[];
 }
 
+export interface MacroInvocationFromInput {
+  macro: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type MacroInvocationNode = NodeData<'macro_invocation'> & {
   children(...value: NodeData[]): MacroInvocationNode;
   render(): string;
@@ -3954,6 +4307,11 @@ export interface MacroRuleConfig {
   right: NodeData;
 }
 
+export interface MacroRuleFromInput {
+  left: FromValue;
+  right: FromValue;
+}
+
 export type MacroRuleNode = NodeData<'macro_rule'> & {
   right(value: NodeData): MacroRuleNode;
   render(): string;
@@ -4008,6 +4366,12 @@ export interface MatchArmConfig {
   pattern: NodeData;
   value: NodeData;
   children?: NodeData[];
+}
+
+export interface MatchArmFromInput {
+  pattern: FromValue;
+  value: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type MatchArmNode = NodeData<'match_arm'> & {
@@ -4069,6 +4433,10 @@ export interface MatchBlockConfig {
   children?: NodeData[];
 }
 
+export interface MatchBlockFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type MatchBlockNode = NodeData<'match_block'> & {
   children(...value: NodeData[]): MatchBlockNode;
   render(): string;
@@ -4120,6 +4488,11 @@ matchBlock.assign = function(target: AssignableNode<'match_block'>): MatchBlockN
 export interface MatchExpressionConfig {
   value: NodeData;
   body: NodeData;
+}
+
+export interface MatchExpressionFromInput {
+  value: FromValue;
+  body: FromValue;
 }
 
 export type MatchExpressionNode = NodeData<'match_expression'> & {
@@ -4177,6 +4550,11 @@ export interface MatchPatternConfig {
   children?: NodeData[];
 }
 
+export interface MatchPatternFromInput {
+  condition?: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type MatchPatternNode = NodeData<'match_pattern'> & {
   condition(value: NodeData): MatchPatternNode;
   children(...value: NodeData[]): MatchPatternNode;
@@ -4232,6 +4610,12 @@ export interface ModItemConfig {
   name: NodeData | string;
   body?: NodeData;
   children?: NodeData[];
+}
+
+export interface ModItemFromInput {
+  name: NodeData | string;
+  body?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ModItemNode = NodeData<'mod_item'> & {
@@ -4293,6 +4677,10 @@ export interface MutPatternConfig {
   children?: NodeData[];
 }
 
+export interface MutPatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type MutPatternNode = NodeData<'mut_pattern'> & {
   children(...value: NodeData[]): MutPatternNode;
   render(): string;
@@ -4343,6 +4731,10 @@ mutPattern.assign = function(target: AssignableNode<'mut_pattern'>): MutPatternN
 
 export interface NegativeLiteralConfig {
   children?: NodeData[];
+}
+
+export interface NegativeLiteralFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type NegativeLiteralNode = NodeData<'negative_literal'> & {
@@ -4406,6 +4798,10 @@ export interface OrPatternConfig {
   children?: NodeData[];
 }
 
+export interface OrPatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type OrPatternNode = NodeData<'or_pattern'> & {
   children(...value: NodeData[]): OrPatternNode;
   render(): string;
@@ -4457,6 +4853,11 @@ orPattern.assign = function(target: AssignableNode<'or_pattern'>): OrPatternNode
 export interface OrderedFieldDeclarationListConfig {
   type?: NodeData[];
   children?: NodeData[];
+}
+
+export interface OrderedFieldDeclarationListFromInput {
+  type?: FromValue[];
+  children?: FromValue | FromValue[];
 }
 
 export type OrderedFieldDeclarationListNode = NodeData<'ordered_field_declaration_list'> & {
@@ -4514,6 +4915,12 @@ export interface ParameterConfig {
   pattern: NodeData;
   type: NodeData;
   children?: NodeData[];
+}
+
+export interface ParameterFromInput {
+  pattern: FromValue;
+  type: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ParameterNode = NodeData<'parameter'> & {
@@ -4575,6 +4982,10 @@ export interface ParametersConfig {
   children?: NodeData[];
 }
 
+export interface ParametersFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ParametersNode = NodeData<'parameters'> & {
   children(...value: NodeData[]): ParametersNode;
   render(): string;
@@ -4625,6 +5036,10 @@ parameters.assign = function(target: AssignableNode<'parameters'>): ParametersNo
 
 export interface ParenthesizedExpressionConfig {
   children?: NodeData[];
+}
+
+export interface ParenthesizedExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ParenthesizedExpressionNode = NodeData<'parenthesized_expression'> & {
@@ -4678,6 +5093,11 @@ parenthesizedExpression.assign = function(target: AssignableNode<'parenthesized_
 export interface PointerTypeConfig {
   type: NodeData;
   children?: NodeData[];
+}
+
+export interface PointerTypeFromInput {
+  type: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type PointerTypeNode = NodeData<'pointer_type'> & {
@@ -4737,6 +5157,11 @@ export interface QualifiedTypeConfig {
   alias: NodeData;
 }
 
+export interface QualifiedTypeFromInput {
+  type: FromValue;
+  alias: FromValue;
+}
+
 export type QualifiedTypeNode = NodeData<'qualified_type'> & {
   alias(value: NodeData): QualifiedTypeNode;
   render(): string;
@@ -4789,6 +5214,10 @@ qualifiedType.assign = function(target: AssignableNode<'qualified_type'>): Quali
 
 export interface RangeExpressionConfig {
   children?: NodeData[];
+}
+
+export interface RangeExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type RangeExpressionNode = NodeData<'range_expression'> & {
@@ -4844,6 +5273,11 @@ export interface RangePatternConfig {
   right?: NodeData;
 }
 
+export interface RangePatternFromInput {
+  left?: FromValue;
+  right?: FromValue;
+}
+
 export type RangePatternNode = NodeData<'range_pattern'> & {
   left(value: NodeData): RangePatternNode;
   right(value: NodeData): RangePatternNode;
@@ -4895,6 +5329,10 @@ rangePattern.assign = function(target: AssignableNode<'range_pattern'>): RangePa
 
 export interface RawStringLiteralConfig {
   children?: NodeData[];
+}
+
+export interface RawStringLiteralFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type RawStringLiteralNode = NodeData<'raw_string_literal'> & {
@@ -4958,6 +5396,10 @@ export interface RefPatternConfig {
   children?: NodeData[];
 }
 
+export interface RefPatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type RefPatternNode = NodeData<'ref_pattern'> & {
   children(...value: NodeData[]): RefPatternNode;
   render(): string;
@@ -5009,6 +5451,11 @@ refPattern.assign = function(target: AssignableNode<'ref_pattern'>): RefPatternN
 export interface ReferenceExpressionConfig {
   value: NodeData;
   children?: NodeData[];
+}
+
+export interface ReferenceExpressionFromInput {
+  value: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ReferenceExpressionNode = NodeData<'reference_expression'> & {
@@ -5067,6 +5514,10 @@ export interface ReferencePatternConfig {
   children?: NodeData[];
 }
 
+export interface ReferencePatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ReferencePatternNode = NodeData<'reference_pattern'> & {
   children(...value: NodeData[]): ReferencePatternNode;
   render(): string;
@@ -5118,6 +5569,11 @@ referencePattern.assign = function(target: AssignableNode<'reference_pattern'>):
 export interface ReferenceTypeConfig {
   type: NodeData;
   children?: NodeData[];
+}
+
+export interface ReferenceTypeFromInput {
+  type: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ReferenceTypeNode = NodeData<'reference_type'> & {
@@ -5176,6 +5632,10 @@ export interface RemovedTraitBoundConfig {
   children?: NodeData[];
 }
 
+export interface RemovedTraitBoundFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type RemovedTraitBoundNode = NodeData<'removed_trait_bound'> & {
   children(...value: NodeData[]): RemovedTraitBoundNode;
   render(): string;
@@ -5228,6 +5688,10 @@ export interface ReturnExpressionConfig {
   children?: NodeData[];
 }
 
+export interface ReturnExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ReturnExpressionNode = NodeData<'return_expression'> & {
   children(...value: NodeData[]): ReturnExpressionNode;
   render(): string;
@@ -5278,6 +5742,11 @@ returnExpression.assign = function(target: AssignableNode<'return_expression'>):
 
 export interface ScopedIdentifierConfig {
   path?: NodeData;
+  name: NodeData | string;
+}
+
+export interface ScopedIdentifierFromInput {
+  path?: FromValue;
   name: NodeData | string;
 }
 
@@ -5336,6 +5805,11 @@ export interface ScopedTypeIdentifierConfig {
   name: NodeData | string;
 }
 
+export interface ScopedTypeIdentifierFromInput {
+  path?: FromValue;
+  name: NodeData | string;
+}
+
 export type ScopedTypeIdentifierNode = NodeData<'scoped_type_identifier'> & {
   path(value: NodeData): ScopedTypeIdentifierNode;
   render(): string;
@@ -5389,6 +5863,11 @@ scopedTypeIdentifier.assign = function(target: AssignableNode<'scoped_type_ident
 export interface ScopedUseListConfig {
   path?: NodeData;
   list: NodeData;
+}
+
+export interface ScopedUseListFromInput {
+  path?: FromValue;
+  list: FromValue;
 }
 
 export type ScopedUseListNode = NodeData<'scoped_use_list'> & {
@@ -5445,6 +5924,10 @@ export interface SelfParameterConfig {
   children?: NodeData[];
 }
 
+export interface SelfParameterFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type SelfParameterNode = NodeData<'self_parameter'> & {
   children(...value: NodeData[]): SelfParameterNode;
   render(): string;
@@ -5495,6 +5978,10 @@ selfParameter.assign = function(target: AssignableNode<'self_parameter'>): SelfP
 
 export interface ShorthandFieldInitializerConfig {
   children?: NodeData[];
+}
+
+export interface ShorthandFieldInitializerFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ShorthandFieldInitializerNode = NodeData<'shorthand_field_initializer'> & {
@@ -5549,6 +6036,10 @@ export interface SlicePatternConfig {
   children?: NodeData[];
 }
 
+export interface SlicePatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type SlicePatternNode = NodeData<'slice_pattern'> & {
   children(...value: NodeData[]): SlicePatternNode;
   render(): string;
@@ -5599,6 +6090,10 @@ slicePattern.assign = function(target: AssignableNode<'slice_pattern'>): SlicePa
 
 export interface SourceFileConfig {
   children?: NodeData[];
+}
+
+export interface SourceFileFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type SourceFileNode = NodeData<'source_file'> & {
@@ -5654,6 +6149,13 @@ export interface StaticItemConfig {
   type: NodeData;
   value?: NodeData;
   children?: NodeData[];
+}
+
+export interface StaticItemFromInput {
+  name: NodeData | string;
+  type: FromValue;
+  value?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type StaticItemNode = NodeData<'static_item'> & {
@@ -5718,6 +6220,10 @@ export interface StringLiteralConfig {
   children?: NodeData[];
 }
 
+export interface StringLiteralFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type StringLiteralNode = NodeData<'string_literal'> & {
   children(...value: NodeData[]): StringLiteralNode;
   render(): string;
@@ -5780,6 +6286,11 @@ export interface StructExpressionConfig {
   body: NodeData;
 }
 
+export interface StructExpressionFromInput {
+  name: FromValue;
+  body: FromValue;
+}
+
 export type StructExpressionNode = NodeData<'struct_expression'> & {
   body(value: NodeData): StructExpressionNode;
   render(): string;
@@ -5835,6 +6346,13 @@ export interface StructItemConfig {
   type_parameters?: NodeData;
   body?: NodeData;
   children?: NodeData[];
+}
+
+export interface StructItemFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  body?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type StructItemNode = NodeData<'struct_item'> & {
@@ -5900,6 +6418,11 @@ export interface StructPatternConfig {
   children?: NodeData[];
 }
 
+export interface StructPatternFromInput {
+  type: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type StructPatternNode = NodeData<'struct_pattern'> & {
   children(...value: NodeData[]): StructPatternNode;
   render(): string;
@@ -5953,6 +6476,11 @@ structPattern.assign = function(target: AssignableNode<'struct_pattern'>): Struc
 } as any;
 
 export interface TokenBindingPatternConfig {
+  name: NodeData | string;
+  type: NodeData | string;
+}
+
+export interface TokenBindingPatternFromInput {
   name: NodeData | string;
   type: NodeData | string;
 }
@@ -6011,6 +6539,10 @@ export interface TokenRepetitionConfig {
   children?: NodeData[];
 }
 
+export interface TokenRepetitionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TokenRepetitionNode = NodeData<'token_repetition'> & {
   children(...value: NodeData[]): TokenRepetitionNode;
   render(): string;
@@ -6061,6 +6593,10 @@ tokenRepetition.assign = function(target: AssignableNode<'token_repetition'>): T
 
 export interface TokenRepetitionPatternConfig {
   children?: NodeData[];
+}
+
+export interface TokenRepetitionPatternFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TokenRepetitionPatternNode = NodeData<'token_repetition_pattern'> & {
@@ -6115,6 +6651,10 @@ export interface TokenTreeConfig {
   children?: NodeData[];
 }
 
+export interface TokenTreeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TokenTreeNode = NodeData<'token_tree'> & {
   children(...value: NodeData[]): TokenTreeNode;
   render(): string;
@@ -6167,6 +6707,10 @@ export interface TokenTreePatternConfig {
   children?: NodeData[];
 }
 
+export interface TokenTreePatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TokenTreePatternNode = NodeData<'token_tree_pattern'> & {
   children(...value: NodeData[]): TokenTreePatternNode;
   render(): string;
@@ -6217,6 +6761,10 @@ tokenTreePattern.assign = function(target: AssignableNode<'token_tree_pattern'>)
 
 export interface TraitBoundsConfig {
   children?: NodeData[];
+}
+
+export interface TraitBoundsFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TraitBoundsNode = NodeData<'trait_bounds'> & {
@@ -6273,6 +6821,14 @@ export interface TraitItemConfig {
   bounds?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface TraitItemFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  bounds?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type TraitItemNode = NodeData<'trait_item'> & {
@@ -6340,6 +6896,10 @@ export interface TryBlockConfig {
   children?: NodeData[];
 }
 
+export interface TryBlockFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TryBlockNode = NodeData<'try_block'> & {
   children(...value: NodeData[]): TryBlockNode;
   render(): string;
@@ -6390,6 +6950,10 @@ tryBlock.assign = function(target: AssignableNode<'try_block'>): TryBlockNode {
 
 export interface TryExpressionConfig {
   children?: NodeData[];
+}
+
+export interface TryExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TryExpressionNode = NodeData<'try_expression'> & {
@@ -6444,6 +7008,10 @@ export interface TupleExpressionConfig {
   children?: NodeData[];
 }
 
+export interface TupleExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TupleExpressionNode = NodeData<'tuple_expression'> & {
   children(...value: NodeData[]): TupleExpressionNode;
   render(): string;
@@ -6494,6 +7062,10 @@ tupleExpression.assign = function(target: AssignableNode<'tuple_expression'>): T
 
 export interface TuplePatternConfig {
   children?: NodeData[];
+}
+
+export interface TuplePatternFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TuplePatternNode = NodeData<'tuple_pattern'> & {
@@ -6547,6 +7119,11 @@ tuplePattern.assign = function(target: AssignableNode<'tuple_pattern'>): TuplePa
 export interface TupleStructPatternConfig {
   type: NodeData;
   children?: NodeData[];
+}
+
+export interface TupleStructPatternFromInput {
+  type: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type TupleStructPatternNode = NodeData<'tuple_struct_pattern'> & {
@@ -6605,6 +7182,10 @@ export interface TupleTypeConfig {
   children?: NodeData[];
 }
 
+export interface TupleTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TupleTypeNode = NodeData<'tuple_type'> & {
   children(...value: NodeData[]): TupleTypeNode;
   render(): string;
@@ -6655,6 +7236,10 @@ tupleType.assign = function(target: AssignableNode<'tuple_type'>): TupleTypeNode
 
 export interface TypeArgumentsConfig {
   children?: NodeData[];
+}
+
+export interface TypeArgumentsFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TypeArgumentsNode = NodeData<'type_arguments'> & {
@@ -6709,6 +7294,12 @@ export interface TypeBindingConfig {
   name: NodeData | string;
   type_arguments?: NodeData;
   type: NodeData;
+}
+
+export interface TypeBindingFromInput {
+  name: NodeData | string;
+  type_arguments?: FromValue;
+  type: FromValue;
 }
 
 export type TypeBindingNode = NodeData<'type_binding'> & {
@@ -6769,6 +7360,11 @@ export interface TypeCastExpressionConfig {
   type: NodeData;
 }
 
+export interface TypeCastExpressionFromInput {
+  value: FromValue;
+  type: FromValue;
+}
+
 export type TypeCastExpressionNode = NodeData<'type_cast_expression'> & {
   typeField(value: NodeData): TypeCastExpressionNode;
   render(): string;
@@ -6824,6 +7420,13 @@ export interface TypeItemConfig {
   type_parameters?: NodeData;
   type: NodeData;
   children?: NodeData[];
+}
+
+export interface TypeItemFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  type: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type TypeItemNode = NodeData<'type_item'> & {
@@ -6890,6 +7493,12 @@ export interface TypeParameterConfig {
   default_type?: NodeData;
 }
 
+export interface TypeParameterFromInput {
+  name: NodeData | string;
+  bounds?: FromValue;
+  default_type?: FromValue;
+}
+
 export type TypeParameterNode = NodeData<'type_parameter'> & {
   bounds(value: NodeData): TypeParameterNode;
   defaultType(value: NodeData): TypeParameterNode;
@@ -6947,6 +7556,10 @@ export interface TypeParametersConfig {
   children?: NodeData[];
 }
 
+export interface TypeParametersFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TypeParametersNode = NodeData<'type_parameters'> & {
   children(...value: NodeData[]): TypeParametersNode;
   render(): string;
@@ -6997,6 +7610,10 @@ typeParameters.assign = function(target: AssignableNode<'type_parameters'>): Typ
 
 export interface UnaryExpressionConfig {
   children?: NodeData[];
+}
+
+export interface UnaryExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type UnaryExpressionNode = NodeData<'unary_expression'> & {
@@ -7052,6 +7669,13 @@ export interface UnionItemConfig {
   type_parameters?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface UnionItemFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type UnionItemNode = NodeData<'union_item'> & {
@@ -7116,6 +7740,10 @@ export interface UnsafeBlockConfig {
   children?: NodeData[];
 }
 
+export interface UnsafeBlockFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type UnsafeBlockNode = NodeData<'unsafe_block'> & {
   children(...value: NodeData[]): UnsafeBlockNode;
   render(): string;
@@ -7166,6 +7794,11 @@ unsafeBlock.assign = function(target: AssignableNode<'unsafe_block'>): UnsafeBlo
 
 export interface UseAsClauseConfig {
   path: NodeData;
+  alias: NodeData | string;
+}
+
+export interface UseAsClauseFromInput {
+  path: FromValue;
   alias: NodeData | string;
 }
 
@@ -7223,6 +7856,10 @@ export interface UseBoundsConfig {
   children?: NodeData[];
 }
 
+export interface UseBoundsFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type UseBoundsNode = NodeData<'use_bounds'> & {
   children(...value: NodeData[]): UseBoundsNode;
   render(): string;
@@ -7274,6 +7911,11 @@ useBounds.assign = function(target: AssignableNode<'use_bounds'>): UseBoundsNode
 export interface UseDeclarationConfig {
   argument: NodeData;
   children?: NodeData[];
+}
+
+export interface UseDeclarationFromInput {
+  argument: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type UseDeclarationNode = NodeData<'use_declaration'> & {
@@ -7332,6 +7974,10 @@ export interface UseListConfig {
   children?: NodeData[];
 }
 
+export interface UseListFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type UseListNode = NodeData<'use_list'> & {
   children(...value: NodeData[]): UseListNode;
   render(): string;
@@ -7382,6 +8028,10 @@ useList.assign = function(target: AssignableNode<'use_list'>): UseListNode {
 
 export interface UseWildcardConfig {
   children?: NodeData[];
+}
+
+export interface UseWildcardFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type UseWildcardNode = NodeData<'use_wildcard'> & {
@@ -7435,6 +8085,11 @@ useWildcard.assign = function(target: AssignableNode<'use_wildcard'>): UseWildca
 export interface VariadicParameterConfig {
   pattern?: NodeData;
   children?: NodeData[];
+}
+
+export interface VariadicParameterFromInput {
+  pattern?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type VariadicParameterNode = NodeData<'variadic_parameter'> & {
@@ -7501,6 +8156,10 @@ export interface VisibilityModifierConfig {
   children?: NodeData[];
 }
 
+export interface VisibilityModifierFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type VisibilityModifierNode = NodeData<'visibility_modifier'> & {
   children(...value: NodeData[]): VisibilityModifierNode;
   render(): string;
@@ -7551,6 +8210,10 @@ visibilityModifier.assign = function(target: AssignableNode<'visibility_modifier
 
 export interface WhereClauseConfig {
   children?: NodeData[];
+}
+
+export interface WhereClauseFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type WhereClauseNode = NodeData<'where_clause'> & {
@@ -7604,6 +8267,11 @@ whereClause.assign = function(target: AssignableNode<'where_clause'>): WhereClau
 export interface WherePredicateConfig {
   left: NodeData;
   bounds: NodeData;
+}
+
+export interface WherePredicateFromInput {
+  left: FromValue;
+  bounds: FromValue;
 }
 
 export type WherePredicateNode = NodeData<'where_predicate'> & {
@@ -7660,6 +8328,12 @@ export interface WhileExpressionConfig {
   condition: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface WhileExpressionFromInput {
+  condition: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type WhileExpressionNode = NodeData<'while_expression'> & {
@@ -7719,6 +8393,10 @@ whileExpression.assign = function(target: AssignableNode<'while_expression'>): W
 
 export interface YieldExpressionConfig {
   children?: NodeData[];
+}
+
+export interface YieldExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type YieldExpressionNode = NodeData<'yield_expression'> & {
@@ -9046,550 +9724,824 @@ function getFromContext(): FromContext {
   return _fromCtx;
 }
 
-abstractType.from = function(input: any): AbstractTypeNode {
-  return resolveFromInput('abstract_type', input, getFromContext()) as any;
-} as any;
-
-arguments_.from = function(input: any): ArgumentsNode {
-  return resolveFromInput('arguments', input, getFromContext()) as any;
-} as any;
-
-arrayExpression.from = function(input: any): ArrayExpressionNode {
-  return resolveFromInput('array_expression', input, getFromContext()) as any;
-} as any;
-
-arrayType.from = function(input: any): ArrayTypeNode {
-  return resolveFromInput('array_type', input, getFromContext()) as any;
-} as any;
-
-assignmentExpression.from = function(input: any): AssignmentExpressionNode {
-  return resolveFromInput('assignment_expression', input, getFromContext()) as any;
-} as any;
-
-associatedType.from = function(input: any): AssociatedTypeNode {
-  return resolveFromInput('associated_type', input, getFromContext()) as any;
-} as any;
-
-asyncBlock.from = function(input: any): AsyncBlockNode {
-  return resolveFromInput('async_block', input, getFromContext()) as any;
-} as any;
-
-attribute.from = function(input: any): AttributeNode {
-  return resolveFromInput('attribute', input, getFromContext()) as any;
-} as any;
-
-attributeItem.from = function(input: any): AttributeItemNode {
-  return resolveFromInput('attribute_item', input, getFromContext()) as any;
-} as any;
-
-awaitExpression.from = function(input: any): AwaitExpressionNode {
-  return resolveFromInput('await_expression', input, getFromContext()) as any;
-} as any;
-
-baseFieldInitializer.from = function(input: any): BaseFieldInitializerNode {
-  return resolveFromInput('base_field_initializer', input, getFromContext()) as any;
-} as any;
-
-binaryExpression.from = function(input: any): BinaryExpressionNode {
-  return resolveFromInput('binary_expression', input, getFromContext()) as any;
-} as any;
-
-block.from = function(input: any): BlockNode {
-  return resolveFromInput('block', input, getFromContext()) as any;
-} as any;
-
-blockComment.from = function(input: any): BlockCommentNode {
-  return resolveFromInput('block_comment', input, getFromContext()) as any;
-} as any;
-
-boundedType.from = function(input: any): BoundedTypeNode {
-  return resolveFromInput('bounded_type', input, getFromContext()) as any;
-} as any;
-
-bracketedType.from = function(input: any): BracketedTypeNode {
-  return resolveFromInput('bracketed_type', input, getFromContext()) as any;
-} as any;
-
-breakExpression.from = function(input: any): BreakExpressionNode {
-  return resolveFromInput('break_expression', input, getFromContext()) as any;
-} as any;
-
-callExpression.from = function(input: any): CallExpressionNode {
-  return resolveFromInput('call_expression', input, getFromContext()) as any;
-} as any;
-
-capturedPattern.from = function(input: any): CapturedPatternNode {
-  return resolveFromInput('captured_pattern', input, getFromContext()) as any;
-} as any;
-
-closureExpression.from = function(input: any): ClosureExpressionNode {
-  return resolveFromInput('closure_expression', input, getFromContext()) as any;
-} as any;
-
-closureParameters.from = function(input: any): ClosureParametersNode {
-  return resolveFromInput('closure_parameters', input, getFromContext()) as any;
-} as any;
-
-compoundAssignmentExpr.from = function(input: any): CompoundAssignmentExprNode {
-  return resolveFromInput('compound_assignment_expr', input, getFromContext()) as any;
-} as any;
-
-constBlock.from = function(input: any): ConstBlockNode {
-  return resolveFromInput('const_block', input, getFromContext()) as any;
-} as any;
-
-constItem.from = function(input: any): ConstItemNode {
-  return resolveFromInput('const_item', input, getFromContext()) as any;
-} as any;
-
-constParameter.from = function(input: any): ConstParameterNode {
-  return resolveFromInput('const_parameter', input, getFromContext()) as any;
-} as any;
-
-continueExpression.from = function(input: any): ContinueExpressionNode {
-  return resolveFromInput('continue_expression', input, getFromContext()) as any;
-} as any;
-
-declarationList.from = function(input: any): DeclarationListNode {
-  return resolveFromInput('declaration_list', input, getFromContext()) as any;
-} as any;
-
-dynamicType.from = function(input: any): DynamicTypeNode {
-  return resolveFromInput('dynamic_type', input, getFromContext()) as any;
-} as any;
-
-elseClause.from = function(input: any): ElseClauseNode {
-  return resolveFromInput('else_clause', input, getFromContext()) as any;
-} as any;
-
-enumItem.from = function(input: any): EnumItemNode {
-  return resolveFromInput('enum_item', input, getFromContext()) as any;
-} as any;
-
-enumVariant.from = function(input: any): EnumVariantNode {
-  return resolveFromInput('enum_variant', input, getFromContext()) as any;
-} as any;
-
-enumVariantList.from = function(input: any): EnumVariantListNode {
-  return resolveFromInput('enum_variant_list', input, getFromContext()) as any;
-} as any;
-
-expressionStatement.from = function(input: any): ExpressionStatementNode {
-  return resolveFromInput('expression_statement', input, getFromContext()) as any;
-} as any;
-
-externCrateDeclaration.from = function(input: any): ExternCrateDeclarationNode {
-  return resolveFromInput('extern_crate_declaration', input, getFromContext()) as any;
-} as any;
-
-externModifier.from = function(input: any): ExternModifierNode {
-  return resolveFromInput('extern_modifier', input, getFromContext()) as any;
-} as any;
-
-fieldDeclaration.from = function(input: any): FieldDeclarationNode {
-  return resolveFromInput('field_declaration', input, getFromContext()) as any;
-} as any;
-
-fieldDeclarationList.from = function(input: any): FieldDeclarationListNode {
-  return resolveFromInput('field_declaration_list', input, getFromContext()) as any;
-} as any;
-
-fieldExpression.from = function(input: any): FieldExpressionNode {
-  return resolveFromInput('field_expression', input, getFromContext()) as any;
-} as any;
-
-fieldInitializer.from = function(input: any): FieldInitializerNode {
-  return resolveFromInput('field_initializer', input, getFromContext()) as any;
-} as any;
-
-fieldInitializerList.from = function(input: any): FieldInitializerListNode {
-  return resolveFromInput('field_initializer_list', input, getFromContext()) as any;
-} as any;
-
-fieldPattern.from = function(input: any): FieldPatternNode {
-  return resolveFromInput('field_pattern', input, getFromContext()) as any;
-} as any;
-
-forExpression.from = function(input: any): ForExpressionNode {
-  return resolveFromInput('for_expression', input, getFromContext()) as any;
-} as any;
-
-forLifetimes.from = function(input: any): ForLifetimesNode {
-  return resolveFromInput('for_lifetimes', input, getFromContext()) as any;
-} as any;
-
-foreignModItem.from = function(input: any): ForeignModItemNode {
-  return resolveFromInput('foreign_mod_item', input, getFromContext()) as any;
-} as any;
-
-functionItem.from = function(input: any): FunctionItemNode {
-  return resolveFromInput('function_item', input, getFromContext()) as any;
-} as any;
-
-functionModifiers.from = function(input: any): FunctionModifiersNode {
-  return resolveFromInput('function_modifiers', input, getFromContext()) as any;
-} as any;
-
-functionSignatureItem.from = function(input: any): FunctionSignatureItemNode {
-  return resolveFromInput('function_signature_item', input, getFromContext()) as any;
-} as any;
-
-functionType.from = function(input: any): FunctionTypeNode {
-  return resolveFromInput('function_type', input, getFromContext()) as any;
-} as any;
-
-genBlock.from = function(input: any): GenBlockNode {
-  return resolveFromInput('gen_block', input, getFromContext()) as any;
-} as any;
-
-genericFunction.from = function(input: any): GenericFunctionNode {
-  return resolveFromInput('generic_function', input, getFromContext()) as any;
-} as any;
-
-genericPattern.from = function(input: any): GenericPatternNode {
-  return resolveFromInput('generic_pattern', input, getFromContext()) as any;
-} as any;
-
-genericType.from = function(input: any): GenericTypeNode {
-  return resolveFromInput('generic_type', input, getFromContext()) as any;
-} as any;
-
-genericTypeWithTurbofish.from = function(input: any): GenericTypeWithTurbofishNode {
-  return resolveFromInput('generic_type_with_turbofish', input, getFromContext()) as any;
-} as any;
-
-higherRankedTraitBound.from = function(input: any): HigherRankedTraitBoundNode {
-  return resolveFromInput('higher_ranked_trait_bound', input, getFromContext()) as any;
-} as any;
-
-ifExpression.from = function(input: any): IfExpressionNode {
-  return resolveFromInput('if_expression', input, getFromContext()) as any;
-} as any;
-
-implItem.from = function(input: any): ImplItemNode {
-  return resolveFromInput('impl_item', input, getFromContext()) as any;
-} as any;
-
-indexExpression.from = function(input: any): IndexExpressionNode {
-  return resolveFromInput('index_expression', input, getFromContext()) as any;
-} as any;
-
-innerAttributeItem.from = function(input: any): InnerAttributeItemNode {
-  return resolveFromInput('inner_attribute_item', input, getFromContext()) as any;
-} as any;
-
-label.from = function(input: any): LabelNode {
-  return resolveFromInput('label', input, getFromContext()) as any;
-} as any;
-
-letChain.from = function(input: any): LetChainNode {
-  return resolveFromInput('let_chain', input, getFromContext()) as any;
-} as any;
-
-letCondition.from = function(input: any): LetConditionNode {
-  return resolveFromInput('let_condition', input, getFromContext()) as any;
-} as any;
-
-letDeclaration.from = function(input: any): LetDeclarationNode {
-  return resolveFromInput('let_declaration', input, getFromContext()) as any;
-} as any;
-
-lifetime.from = function(input: any): LifetimeNode {
-  return resolveFromInput('lifetime', input, getFromContext()) as any;
-} as any;
-
-lifetimeParameter.from = function(input: any): LifetimeParameterNode {
-  return resolveFromInput('lifetime_parameter', input, getFromContext()) as any;
-} as any;
-
-lineComment.from = function(input: any): LineCommentNode {
-  return resolveFromInput('line_comment', input, getFromContext()) as any;
-} as any;
-
-loopExpression.from = function(input: any): LoopExpressionNode {
-  return resolveFromInput('loop_expression', input, getFromContext()) as any;
-} as any;
-
-macroDefinition.from = function(input: any): MacroDefinitionNode {
-  return resolveFromInput('macro_definition', input, getFromContext()) as any;
-} as any;
-
-macroInvocation.from = function(input: any): MacroInvocationNode {
-  return resolveFromInput('macro_invocation', input, getFromContext()) as any;
-} as any;
-
-macroRule.from = function(input: any): MacroRuleNode {
-  return resolveFromInput('macro_rule', input, getFromContext()) as any;
-} as any;
-
-matchArm.from = function(input: any): MatchArmNode {
-  return resolveFromInput('match_arm', input, getFromContext()) as any;
-} as any;
-
-matchBlock.from = function(input: any): MatchBlockNode {
-  return resolveFromInput('match_block', input, getFromContext()) as any;
-} as any;
-
-matchExpression.from = function(input: any): MatchExpressionNode {
-  return resolveFromInput('match_expression', input, getFromContext()) as any;
-} as any;
-
-matchPattern.from = function(input: any): MatchPatternNode {
-  return resolveFromInput('match_pattern', input, getFromContext()) as any;
-} as any;
-
-modItem.from = function(input: any): ModItemNode {
-  return resolveFromInput('mod_item', input, getFromContext()) as any;
-} as any;
-
-mutPattern.from = function(input: any): MutPatternNode {
-  return resolveFromInput('mut_pattern', input, getFromContext()) as any;
-} as any;
-
-negativeLiteral.from = function(input: any): NegativeLiteralNode {
-  return resolveFromInput('negative_literal', input, getFromContext()) as any;
-} as any;
-
-orPattern.from = function(input: any): OrPatternNode {
-  return resolveFromInput('or_pattern', input, getFromContext()) as any;
-} as any;
-
-orderedFieldDeclarationList.from = function(input: any): OrderedFieldDeclarationListNode {
-  return resolveFromInput('ordered_field_declaration_list', input, getFromContext()) as any;
-} as any;
-
-parameter.from = function(input: any): ParameterNode {
-  return resolveFromInput('parameter', input, getFromContext()) as any;
-} as any;
-
-parameters.from = function(input: any): ParametersNode {
-  return resolveFromInput('parameters', input, getFromContext()) as any;
-} as any;
-
-parenthesizedExpression.from = function(input: any): ParenthesizedExpressionNode {
-  return resolveFromInput('parenthesized_expression', input, getFromContext()) as any;
-} as any;
-
-pointerType.from = function(input: any): PointerTypeNode {
-  return resolveFromInput('pointer_type', input, getFromContext()) as any;
-} as any;
-
-qualifiedType.from = function(input: any): QualifiedTypeNode {
-  return resolveFromInput('qualified_type', input, getFromContext()) as any;
-} as any;
-
-rangeExpression.from = function(input: any): RangeExpressionNode {
-  return resolveFromInput('range_expression', input, getFromContext()) as any;
-} as any;
-
-rangePattern.from = function(input: any): RangePatternNode {
-  return resolveFromInput('range_pattern', input, getFromContext()) as any;
-} as any;
-
-rawStringLiteral.from = function(input: any): RawStringLiteralNode {
-  return resolveFromInput('raw_string_literal', input, getFromContext()) as any;
-} as any;
-
-refPattern.from = function(input: any): RefPatternNode {
-  return resolveFromInput('ref_pattern', input, getFromContext()) as any;
-} as any;
-
-referenceExpression.from = function(input: any): ReferenceExpressionNode {
-  return resolveFromInput('reference_expression', input, getFromContext()) as any;
-} as any;
-
-referencePattern.from = function(input: any): ReferencePatternNode {
-  return resolveFromInput('reference_pattern', input, getFromContext()) as any;
-} as any;
-
-referenceType.from = function(input: any): ReferenceTypeNode {
-  return resolveFromInput('reference_type', input, getFromContext()) as any;
-} as any;
-
-removedTraitBound.from = function(input: any): RemovedTraitBoundNode {
-  return resolveFromInput('removed_trait_bound', input, getFromContext()) as any;
-} as any;
-
-returnExpression.from = function(input: any): ReturnExpressionNode {
-  return resolveFromInput('return_expression', input, getFromContext()) as any;
-} as any;
-
-scopedIdentifier.from = function(input: any): ScopedIdentifierNode {
-  return resolveFromInput('scoped_identifier', input, getFromContext()) as any;
-} as any;
-
-scopedTypeIdentifier.from = function(input: any): ScopedTypeIdentifierNode {
-  return resolveFromInput('scoped_type_identifier', input, getFromContext()) as any;
-} as any;
-
-scopedUseList.from = function(input: any): ScopedUseListNode {
-  return resolveFromInput('scoped_use_list', input, getFromContext()) as any;
-} as any;
-
-selfParameter.from = function(input: any): SelfParameterNode {
-  return resolveFromInput('self_parameter', input, getFromContext()) as any;
-} as any;
-
-shorthandFieldInitializer.from = function(input: any): ShorthandFieldInitializerNode {
-  return resolveFromInput('shorthand_field_initializer', input, getFromContext()) as any;
-} as any;
-
-slicePattern.from = function(input: any): SlicePatternNode {
-  return resolveFromInput('slice_pattern', input, getFromContext()) as any;
-} as any;
-
-sourceFile.from = function(input: any): SourceFileNode {
-  return resolveFromInput('source_file', input, getFromContext()) as any;
-} as any;
-
-staticItem.from = function(input: any): StaticItemNode {
-  return resolveFromInput('static_item', input, getFromContext()) as any;
-} as any;
-
-stringLiteral.from = function(input: any): StringLiteralNode {
-  return resolveFromInput('string_literal', input, getFromContext()) as any;
-} as any;
-
-structExpression.from = function(input: any): StructExpressionNode {
-  return resolveFromInput('struct_expression', input, getFromContext()) as any;
-} as any;
-
-structItem.from = function(input: any): StructItemNode {
-  return resolveFromInput('struct_item', input, getFromContext()) as any;
-} as any;
-
-structPattern.from = function(input: any): StructPatternNode {
-  return resolveFromInput('struct_pattern', input, getFromContext()) as any;
-} as any;
-
-tokenBindingPattern.from = function(input: any): TokenBindingPatternNode {
-  return resolveFromInput('token_binding_pattern', input, getFromContext()) as any;
-} as any;
-
-tokenRepetition.from = function(input: any): TokenRepetitionNode {
-  return resolveFromInput('token_repetition', input, getFromContext()) as any;
-} as any;
-
-tokenRepetitionPattern.from = function(input: any): TokenRepetitionPatternNode {
-  return resolveFromInput('token_repetition_pattern', input, getFromContext()) as any;
-} as any;
-
-tokenTree.from = function(input: any): TokenTreeNode {
-  return resolveFromInput('token_tree', input, getFromContext()) as any;
-} as any;
-
-tokenTreePattern.from = function(input: any): TokenTreePatternNode {
-  return resolveFromInput('token_tree_pattern', input, getFromContext()) as any;
-} as any;
-
-traitBounds.from = function(input: any): TraitBoundsNode {
-  return resolveFromInput('trait_bounds', input, getFromContext()) as any;
-} as any;
-
-traitItem.from = function(input: any): TraitItemNode {
-  return resolveFromInput('trait_item', input, getFromContext()) as any;
-} as any;
-
-tryBlock.from = function(input: any): TryBlockNode {
-  return resolveFromInput('try_block', input, getFromContext()) as any;
-} as any;
-
-tryExpression.from = function(input: any): TryExpressionNode {
-  return resolveFromInput('try_expression', input, getFromContext()) as any;
-} as any;
-
-tupleExpression.from = function(input: any): TupleExpressionNode {
-  return resolveFromInput('tuple_expression', input, getFromContext()) as any;
-} as any;
-
-tuplePattern.from = function(input: any): TuplePatternNode {
-  return resolveFromInput('tuple_pattern', input, getFromContext()) as any;
-} as any;
-
-tupleStructPattern.from = function(input: any): TupleStructPatternNode {
-  return resolveFromInput('tuple_struct_pattern', input, getFromContext()) as any;
-} as any;
-
-tupleType.from = function(input: any): TupleTypeNode {
-  return resolveFromInput('tuple_type', input, getFromContext()) as any;
-} as any;
-
-typeArguments.from = function(input: any): TypeArgumentsNode {
-  return resolveFromInput('type_arguments', input, getFromContext()) as any;
-} as any;
-
-typeBinding.from = function(input: any): TypeBindingNode {
-  return resolveFromInput('type_binding', input, getFromContext()) as any;
-} as any;
-
-typeCastExpression.from = function(input: any): TypeCastExpressionNode {
-  return resolveFromInput('type_cast_expression', input, getFromContext()) as any;
-} as any;
-
-typeItem.from = function(input: any): TypeItemNode {
-  return resolveFromInput('type_item', input, getFromContext()) as any;
-} as any;
-
-typeParameter.from = function(input: any): TypeParameterNode {
-  return resolveFromInput('type_parameter', input, getFromContext()) as any;
-} as any;
-
-typeParameters.from = function(input: any): TypeParametersNode {
-  return resolveFromInput('type_parameters', input, getFromContext()) as any;
-} as any;
-
-unaryExpression.from = function(input: any): UnaryExpressionNode {
-  return resolveFromInput('unary_expression', input, getFromContext()) as any;
-} as any;
-
-unionItem.from = function(input: any): UnionItemNode {
-  return resolveFromInput('union_item', input, getFromContext()) as any;
-} as any;
-
-unsafeBlock.from = function(input: any): UnsafeBlockNode {
-  return resolveFromInput('unsafe_block', input, getFromContext()) as any;
-} as any;
-
-useAsClause.from = function(input: any): UseAsClauseNode {
-  return resolveFromInput('use_as_clause', input, getFromContext()) as any;
-} as any;
-
-useBounds.from = function(input: any): UseBoundsNode {
-  return resolveFromInput('use_bounds', input, getFromContext()) as any;
-} as any;
-
-useDeclaration.from = function(input: any): UseDeclarationNode {
-  return resolveFromInput('use_declaration', input, getFromContext()) as any;
-} as any;
-
-useList.from = function(input: any): UseListNode {
-  return resolveFromInput('use_list', input, getFromContext()) as any;
-} as any;
-
-useWildcard.from = function(input: any): UseWildcardNode {
-  return resolveFromInput('use_wildcard', input, getFromContext()) as any;
-} as any;
-
-variadicParameter.from = function(input: any): VariadicParameterNode {
-  return resolveFromInput('variadic_parameter', input, getFromContext()) as any;
-} as any;
-
-visibilityModifier.from = function(input: any): VisibilityModifierNode {
-  return resolveFromInput('visibility_modifier', input, getFromContext()) as any;
-} as any;
-
-whereClause.from = function(input: any): WhereClauseNode {
-  return resolveFromInput('where_clause', input, getFromContext()) as any;
-} as any;
-
-wherePredicate.from = function(input: any): WherePredicateNode {
-  return resolveFromInput('where_predicate', input, getFromContext()) as any;
-} as any;
-
-whileExpression.from = function(input: any): WhileExpressionNode {
-  return resolveFromInput('while_expression', input, getFromContext()) as any;
-} as any;
-
-yieldExpression.from = function(input: any): YieldExpressionNode {
-  return resolveFromInput('yield_expression', input, getFromContext()) as any;
-} as any;
+export namespace abstractType {
+  export function from(input: AbstractTypeFromInput): AbstractTypeNode {
+    return resolveFromInput('abstract_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace arguments_ {
+  export function from(input: ArgumentsFromInput): ArgumentsNode {
+    return resolveFromInput('arguments', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace arrayExpression {
+  export function from(input: ArrayExpressionFromInput): ArrayExpressionNode {
+    return resolveFromInput('array_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace arrayType {
+  export function from(input: ArrayTypeFromInput): ArrayTypeNode {
+    return resolveFromInput('array_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace assignmentExpression {
+  export function from(input: AssignmentExpressionFromInput): AssignmentExpressionNode {
+    return resolveFromInput('assignment_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace associatedType {
+  export function from(input: AssociatedTypeFromInput): AssociatedTypeNode {
+    return resolveFromInput('associated_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace asyncBlock {
+  export function from(input: AsyncBlockFromInput): AsyncBlockNode {
+    return resolveFromInput('async_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace attribute {
+  export function from(input: AttributeFromInput): AttributeNode {
+    return resolveFromInput('attribute', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace attributeItem {
+  export function from(input: AttributeItemFromInput): AttributeItemNode {
+    return resolveFromInput('attribute_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace awaitExpression {
+  export function from(input: AwaitExpressionFromInput): AwaitExpressionNode {
+    return resolveFromInput('await_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace baseFieldInitializer {
+  export function from(input: BaseFieldInitializerFromInput): BaseFieldInitializerNode {
+    return resolveFromInput('base_field_initializer', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace binaryExpression {
+  export function from(input: BinaryExpressionFromInput): BinaryExpressionNode {
+    return resolveFromInput('binary_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace block {
+  export function from(input: BlockFromInput): BlockNode {
+    return resolveFromInput('block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace blockComment {
+  export function from(input: BlockCommentFromInput): BlockCommentNode {
+    return resolveFromInput('block_comment', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace boundedType {
+  export function from(input: BoundedTypeFromInput): BoundedTypeNode {
+    return resolveFromInput('bounded_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace bracketedType {
+  export function from(input: BracketedTypeFromInput): BracketedTypeNode {
+    return resolveFromInput('bracketed_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace breakExpression {
+  export function from(input: BreakExpressionFromInput): BreakExpressionNode {
+    return resolveFromInput('break_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace callExpression {
+  export function from(input: CallExpressionFromInput): CallExpressionNode {
+    return resolveFromInput('call_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace capturedPattern {
+  export function from(input: CapturedPatternFromInput): CapturedPatternNode {
+    return resolveFromInput('captured_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace closureExpression {
+  export function from(input: ClosureExpressionFromInput): ClosureExpressionNode {
+    return resolveFromInput('closure_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace closureParameters {
+  export function from(input: ClosureParametersFromInput): ClosureParametersNode {
+    return resolveFromInput('closure_parameters', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace compoundAssignmentExpr {
+  export function from(input: CompoundAssignmentExprFromInput): CompoundAssignmentExprNode {
+    return resolveFromInput('compound_assignment_expr', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace constBlock {
+  export function from(input: ConstBlockFromInput): ConstBlockNode {
+    return resolveFromInput('const_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace constItem {
+  export function from(input: ConstItemFromInput): ConstItemNode {
+    return resolveFromInput('const_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace constParameter {
+  export function from(input: ConstParameterFromInput): ConstParameterNode {
+    return resolveFromInput('const_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace continueExpression {
+  export function from(input: ContinueExpressionFromInput): ContinueExpressionNode {
+    return resolveFromInput('continue_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace declarationList {
+  export function from(input: DeclarationListFromInput): DeclarationListNode {
+    return resolveFromInput('declaration_list', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace dynamicType {
+  export function from(input: DynamicTypeFromInput): DynamicTypeNode {
+    return resolveFromInput('dynamic_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace elseClause {
+  export function from(input: ElseClauseFromInput): ElseClauseNode {
+    return resolveFromInput('else_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace enumItem {
+  export function from(input: EnumItemFromInput): EnumItemNode {
+    return resolveFromInput('enum_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace enumVariant {
+  export function from(input: EnumVariantFromInput): EnumVariantNode {
+    return resolveFromInput('enum_variant', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace enumVariantList {
+  export function from(input: EnumVariantListFromInput): EnumVariantListNode {
+    return resolveFromInput('enum_variant_list', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace expressionStatement {
+  export function from(input: ExpressionStatementFromInput): ExpressionStatementNode {
+    return resolveFromInput('expression_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace externCrateDeclaration {
+  export function from(input: ExternCrateDeclarationFromInput): ExternCrateDeclarationNode {
+    return resolveFromInput('extern_crate_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace externModifier {
+  export function from(input: ExternModifierFromInput): ExternModifierNode {
+    return resolveFromInput('extern_modifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace fieldDeclaration {
+  export function from(input: FieldDeclarationFromInput): FieldDeclarationNode {
+    return resolveFromInput('field_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace fieldDeclarationList {
+  export function from(input: FieldDeclarationListFromInput): FieldDeclarationListNode {
+    return resolveFromInput('field_declaration_list', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace fieldExpression {
+  export function from(input: FieldExpressionFromInput): FieldExpressionNode {
+    return resolveFromInput('field_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace fieldInitializer {
+  export function from(input: FieldInitializerFromInput): FieldInitializerNode {
+    return resolveFromInput('field_initializer', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace fieldInitializerList {
+  export function from(input: FieldInitializerListFromInput): FieldInitializerListNode {
+    return resolveFromInput('field_initializer_list', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace fieldPattern {
+  export function from(input: FieldPatternFromInput): FieldPatternNode {
+    return resolveFromInput('field_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace forExpression {
+  export function from(input: ForExpressionFromInput): ForExpressionNode {
+    return resolveFromInput('for_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace forLifetimes {
+  export function from(input: ForLifetimesFromInput): ForLifetimesNode {
+    return resolveFromInput('for_lifetimes', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace foreignModItem {
+  export function from(input: ForeignModItemFromInput): ForeignModItemNode {
+    return resolveFromInput('foreign_mod_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionItem {
+  export function from(input: FunctionItemFromInput): FunctionItemNode {
+    return resolveFromInput('function_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionModifiers {
+  export function from(input: FunctionModifiersFromInput): FunctionModifiersNode {
+    return resolveFromInput('function_modifiers', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionSignatureItem {
+  export function from(input: FunctionSignatureItemFromInput): FunctionSignatureItemNode {
+    return resolveFromInput('function_signature_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionType {
+  export function from(input: FunctionTypeFromInput): FunctionTypeNode {
+    return resolveFromInput('function_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace genBlock {
+  export function from(input: GenBlockFromInput): GenBlockNode {
+    return resolveFromInput('gen_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace genericFunction {
+  export function from(input: GenericFunctionFromInput): GenericFunctionNode {
+    return resolveFromInput('generic_function', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace genericPattern {
+  export function from(input: GenericPatternFromInput): GenericPatternNode {
+    return resolveFromInput('generic_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace genericType {
+  export function from(input: GenericTypeFromInput): GenericTypeNode {
+    return resolveFromInput('generic_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace genericTypeWithTurbofish {
+  export function from(input: GenericTypeWithTurbofishFromInput): GenericTypeWithTurbofishNode {
+    return resolveFromInput('generic_type_with_turbofish', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace higherRankedTraitBound {
+  export function from(input: HigherRankedTraitBoundFromInput): HigherRankedTraitBoundNode {
+    return resolveFromInput('higher_ranked_trait_bound', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace ifExpression {
+  export function from(input: IfExpressionFromInput): IfExpressionNode {
+    return resolveFromInput('if_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace implItem {
+  export function from(input: ImplItemFromInput): ImplItemNode {
+    return resolveFromInput('impl_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace indexExpression {
+  export function from(input: IndexExpressionFromInput): IndexExpressionNode {
+    return resolveFromInput('index_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace innerAttributeItem {
+  export function from(input: InnerAttributeItemFromInput): InnerAttributeItemNode {
+    return resolveFromInput('inner_attribute_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace label {
+  export function from(input: LabelFromInput): LabelNode {
+    return resolveFromInput('label', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace letChain {
+  export function from(input: LetChainFromInput): LetChainNode {
+    return resolveFromInput('let_chain', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace letCondition {
+  export function from(input: LetConditionFromInput): LetConditionNode {
+    return resolveFromInput('let_condition', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace letDeclaration {
+  export function from(input: LetDeclarationFromInput): LetDeclarationNode {
+    return resolveFromInput('let_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace lifetime {
+  export function from(input: LifetimeFromInput): LifetimeNode {
+    return resolveFromInput('lifetime', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace lifetimeParameter {
+  export function from(input: LifetimeParameterFromInput): LifetimeParameterNode {
+    return resolveFromInput('lifetime_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace lineComment {
+  export function from(input: LineCommentFromInput): LineCommentNode {
+    return resolveFromInput('line_comment', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace loopExpression {
+  export function from(input: LoopExpressionFromInput): LoopExpressionNode {
+    return resolveFromInput('loop_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace macroDefinition {
+  export function from(input: MacroDefinitionFromInput): MacroDefinitionNode {
+    return resolveFromInput('macro_definition', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace macroInvocation {
+  export function from(input: MacroInvocationFromInput): MacroInvocationNode {
+    return resolveFromInput('macro_invocation', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace macroRule {
+  export function from(input: MacroRuleFromInput): MacroRuleNode {
+    return resolveFromInput('macro_rule', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace matchArm {
+  export function from(input: MatchArmFromInput): MatchArmNode {
+    return resolveFromInput('match_arm', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace matchBlock {
+  export function from(input: MatchBlockFromInput): MatchBlockNode {
+    return resolveFromInput('match_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace matchExpression {
+  export function from(input: MatchExpressionFromInput): MatchExpressionNode {
+    return resolveFromInput('match_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace matchPattern {
+  export function from(input: MatchPatternFromInput): MatchPatternNode {
+    return resolveFromInput('match_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace modItem {
+  export function from(input: ModItemFromInput): ModItemNode {
+    return resolveFromInput('mod_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace mutPattern {
+  export function from(input: MutPatternFromInput): MutPatternNode {
+    return resolveFromInput('mut_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace negativeLiteral {
+  export function from(input: NegativeLiteralFromInput): NegativeLiteralNode {
+    return resolveFromInput('negative_literal', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace orPattern {
+  export function from(input: OrPatternFromInput): OrPatternNode {
+    return resolveFromInput('or_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace orderedFieldDeclarationList {
+  export function from(input: OrderedFieldDeclarationListFromInput): OrderedFieldDeclarationListNode {
+    return resolveFromInput('ordered_field_declaration_list', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace parameter {
+  export function from(input: ParameterFromInput): ParameterNode {
+    return resolveFromInput('parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace parameters {
+  export function from(input: ParametersFromInput): ParametersNode {
+    return resolveFromInput('parameters', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace parenthesizedExpression {
+  export function from(input: ParenthesizedExpressionFromInput): ParenthesizedExpressionNode {
+    return resolveFromInput('parenthesized_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace pointerType {
+  export function from(input: PointerTypeFromInput): PointerTypeNode {
+    return resolveFromInput('pointer_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace qualifiedType {
+  export function from(input: QualifiedTypeFromInput): QualifiedTypeNode {
+    return resolveFromInput('qualified_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace rangeExpression {
+  export function from(input: RangeExpressionFromInput): RangeExpressionNode {
+    return resolveFromInput('range_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace rangePattern {
+  export function from(input: RangePatternFromInput): RangePatternNode {
+    return resolveFromInput('range_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace rawStringLiteral {
+  export function from(input: RawStringLiteralFromInput): RawStringLiteralNode {
+    return resolveFromInput('raw_string_literal', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace refPattern {
+  export function from(input: RefPatternFromInput): RefPatternNode {
+    return resolveFromInput('ref_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace referenceExpression {
+  export function from(input: ReferenceExpressionFromInput): ReferenceExpressionNode {
+    return resolveFromInput('reference_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace referencePattern {
+  export function from(input: ReferencePatternFromInput): ReferencePatternNode {
+    return resolveFromInput('reference_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace referenceType {
+  export function from(input: ReferenceTypeFromInput): ReferenceTypeNode {
+    return resolveFromInput('reference_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace removedTraitBound {
+  export function from(input: RemovedTraitBoundFromInput): RemovedTraitBoundNode {
+    return resolveFromInput('removed_trait_bound', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace returnExpression {
+  export function from(input: ReturnExpressionFromInput): ReturnExpressionNode {
+    return resolveFromInput('return_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace scopedIdentifier {
+  export function from(input: ScopedIdentifierFromInput): ScopedIdentifierNode {
+    return resolveFromInput('scoped_identifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace scopedTypeIdentifier {
+  export function from(input: ScopedTypeIdentifierFromInput): ScopedTypeIdentifierNode {
+    return resolveFromInput('scoped_type_identifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace scopedUseList {
+  export function from(input: ScopedUseListFromInput): ScopedUseListNode {
+    return resolveFromInput('scoped_use_list', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace selfParameter {
+  export function from(input: SelfParameterFromInput): SelfParameterNode {
+    return resolveFromInput('self_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace shorthandFieldInitializer {
+  export function from(input: ShorthandFieldInitializerFromInput): ShorthandFieldInitializerNode {
+    return resolveFromInput('shorthand_field_initializer', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace slicePattern {
+  export function from(input: SlicePatternFromInput): SlicePatternNode {
+    return resolveFromInput('slice_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace sourceFile {
+  export function from(input: SourceFileFromInput): SourceFileNode {
+    return resolveFromInput('source_file', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace staticItem {
+  export function from(input: StaticItemFromInput): StaticItemNode {
+    return resolveFromInput('static_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace stringLiteral {
+  export function from(input: StringLiteralFromInput): StringLiteralNode {
+    return resolveFromInput('string_literal', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace structExpression {
+  export function from(input: StructExpressionFromInput): StructExpressionNode {
+    return resolveFromInput('struct_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace structItem {
+  export function from(input: StructItemFromInput): StructItemNode {
+    return resolveFromInput('struct_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace structPattern {
+  export function from(input: StructPatternFromInput): StructPatternNode {
+    return resolveFromInput('struct_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tokenBindingPattern {
+  export function from(input: TokenBindingPatternFromInput): TokenBindingPatternNode {
+    return resolveFromInput('token_binding_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tokenRepetition {
+  export function from(input: TokenRepetitionFromInput): TokenRepetitionNode {
+    return resolveFromInput('token_repetition', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tokenRepetitionPattern {
+  export function from(input: TokenRepetitionPatternFromInput): TokenRepetitionPatternNode {
+    return resolveFromInput('token_repetition_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tokenTree {
+  export function from(input: TokenTreeFromInput): TokenTreeNode {
+    return resolveFromInput('token_tree', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tokenTreePattern {
+  export function from(input: TokenTreePatternFromInput): TokenTreePatternNode {
+    return resolveFromInput('token_tree_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace traitBounds {
+  export function from(input: TraitBoundsFromInput): TraitBoundsNode {
+    return resolveFromInput('trait_bounds', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace traitItem {
+  export function from(input: TraitItemFromInput): TraitItemNode {
+    return resolveFromInput('trait_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tryBlock {
+  export function from(input: TryBlockFromInput): TryBlockNode {
+    return resolveFromInput('try_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tryExpression {
+  export function from(input: TryExpressionFromInput): TryExpressionNode {
+    return resolveFromInput('try_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tupleExpression {
+  export function from(input: TupleExpressionFromInput): TupleExpressionNode {
+    return resolveFromInput('tuple_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tuplePattern {
+  export function from(input: TuplePatternFromInput): TuplePatternNode {
+    return resolveFromInput('tuple_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tupleStructPattern {
+  export function from(input: TupleStructPatternFromInput): TupleStructPatternNode {
+    return resolveFromInput('tuple_struct_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tupleType {
+  export function from(input: TupleTypeFromInput): TupleTypeNode {
+    return resolveFromInput('tuple_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeArguments {
+  export function from(input: TypeArgumentsFromInput): TypeArgumentsNode {
+    return resolveFromInput('type_arguments', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeBinding {
+  export function from(input: TypeBindingFromInput): TypeBindingNode {
+    return resolveFromInput('type_binding', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeCastExpression {
+  export function from(input: TypeCastExpressionFromInput): TypeCastExpressionNode {
+    return resolveFromInput('type_cast_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeItem {
+  export function from(input: TypeItemFromInput): TypeItemNode {
+    return resolveFromInput('type_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeParameter {
+  export function from(input: TypeParameterFromInput): TypeParameterNode {
+    return resolveFromInput('type_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeParameters {
+  export function from(input: TypeParametersFromInput): TypeParametersNode {
+    return resolveFromInput('type_parameters', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace unaryExpression {
+  export function from(input: UnaryExpressionFromInput): UnaryExpressionNode {
+    return resolveFromInput('unary_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace unionItem {
+  export function from(input: UnionItemFromInput): UnionItemNode {
+    return resolveFromInput('union_item', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace unsafeBlock {
+  export function from(input: UnsafeBlockFromInput): UnsafeBlockNode {
+    return resolveFromInput('unsafe_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace useAsClause {
+  export function from(input: UseAsClauseFromInput): UseAsClauseNode {
+    return resolveFromInput('use_as_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace useBounds {
+  export function from(input: UseBoundsFromInput): UseBoundsNode {
+    return resolveFromInput('use_bounds', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace useDeclaration {
+  export function from(input: UseDeclarationFromInput): UseDeclarationNode {
+    return resolveFromInput('use_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace useList {
+  export function from(input: UseListFromInput): UseListNode {
+    return resolveFromInput('use_list', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace useWildcard {
+  export function from(input: UseWildcardFromInput): UseWildcardNode {
+    return resolveFromInput('use_wildcard', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace variadicParameter {
+  export function from(input: VariadicParameterFromInput): VariadicParameterNode {
+    return resolveFromInput('variadic_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace visibilityModifier {
+  export function from(input: VisibilityModifierFromInput): VisibilityModifierNode {
+    return resolveFromInput('visibility_modifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace whereClause {
+  export function from(input: WhereClauseFromInput): WhereClauseNode {
+    return resolveFromInput('where_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace wherePredicate {
+  export function from(input: WherePredicateFromInput): WherePredicateNode {
+    return resolveFromInput('where_predicate', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace whileExpression {
+  export function from(input: WhileExpressionFromInput): WhileExpressionNode {
+    return resolveFromInput('while_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace yieldExpression {
+  export function from(input: YieldExpressionFromInput): YieldExpressionNode {
+    return resolveFromInput('yield_expression', input as any, getFromContext()) as any;
+  }
+}

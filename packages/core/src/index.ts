@@ -22,4 +22,4 @@ export { toEdit, replace, bindRange, replaceField } from './edit.ts';
 export type { ReplaceTarget, AssignableNode, KindOf, Renderable } from './edit.ts';
 export { toCst } from './cst.ts';
 export { resolveFromInput } from './from.ts';
-export type { FromFieldInfo, FromContext } from './from.ts';
+export type { FromFieldInfo, FromContext, FromValue, FromObject } from './from.ts';

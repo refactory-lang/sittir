@@ -5,6 +5,11 @@ import { render, toEdit, bindRange, resolveFromInput } from '@sittir/core';
 import { rules } from './rules.js';
 import { joinBy } from './joinby.js';
 
+// .from() input types — kind constrained to valid grammar kinds
+type FromKind = 'abstract_class_declaration' | 'abstract_method_signature' | 'adding_type_annotation' | 'ambient_declaration' | 'arguments' | 'array' | 'array_pattern' | 'array_type' | 'arrow_function' | 'as_expression' | 'asserts' | 'asserts_annotation' | 'assignment_expression' | 'assignment_pattern' | 'augmented_assignment_expression' | 'await_expression' | 'binary_expression' | 'break_statement' | 'call_expression' | 'call_signature' | 'catch_clause' | 'class' | 'class_body' | 'class_declaration' | 'class_heritage' | 'class_static_block' | 'computed_property_name' | 'conditional_type' | 'constraint' | 'construct_signature' | 'constructor_type' | 'continue_statement' | 'decorator' | 'default_type' | 'do_statement' | 'else_clause' | 'enum_assignment' | 'enum_body' | 'enum_declaration' | 'export_clause' | 'export_specifier' | 'export_statement' | 'expression_statement' | 'extends_clause' | 'extends_type_clause' | 'finally_clause' | 'flow_maybe_type' | 'for_in_statement' | 'for_statement' | 'formal_parameters' | 'function_declaration' | 'function_expression' | 'function_signature' | 'function_type' | 'generator_function' | 'generator_function_declaration' | 'generic_type' | 'if_statement' | 'implements_clause' | 'import_alias' | 'import_attribute' | 'import_clause' | 'import_require_clause' | 'import_specifier' | 'import_statement' | 'index_signature' | 'index_type_query' | 'infer_type' | 'instantiation_expression' | 'interface_body' | 'interface_declaration' | 'internal_module' | 'intersection_type' | 'labeled_statement' | 'lexical_declaration' | 'literal_type' | 'lookup_type' | 'mapped_type_clause' | 'member_expression' | 'method_definition' | 'method_signature' | 'module' | 'named_imports' | 'namespace_export' | 'namespace_import' | 'nested_identifier' | 'nested_type_identifier' | 'new_expression' | 'non_null_expression' | 'object' | 'object_assignment_pattern' | 'object_pattern' | 'object_type' | 'omitting_type_annotation' | 'opting_type_annotation' | 'optional_parameter' | 'optional_type' | 'pair' | 'pair_pattern' | 'parenthesized_expression' | 'parenthesized_type' | 'program' | 'property_signature' | 'public_field_definition' | 'readonly_type' | 'regex' | 'required_parameter' | 'rest_pattern' | 'rest_type' | 'return_statement' | 'satisfies_expression' | 'sequence_expression' | 'spread_element' | 'statement_block' | 'string' | 'subscript_expression' | 'switch_body' | 'switch_case' | 'switch_default' | 'switch_statement' | 'template_literal_type' | 'template_string' | 'template_substitution' | 'template_type' | 'ternary_expression' | 'throw_statement' | 'try_statement' | 'tuple_type' | 'type_alias_declaration' | 'type_annotation' | 'type_arguments' | 'type_assertion' | 'type_parameter' | 'type_parameters' | 'type_predicate' | 'type_predicate_annotation' | 'type_query' | 'unary_expression' | 'union_type' | 'update_expression' | 'variable_declaration' | 'variable_declarator' | 'while_statement' | 'with_statement' | 'yield_expression' | 'accessibility_modifier' | 'debugger_statement' | 'empty_statement' | 'existential_type' | 'identifier' | 'import' | 'meta_property' | 'optional_chain' | 'override_modifier' | 'predefined_type' | 'comment' | 'escape_sequence' | 'false' | 'hash_bang_line' | 'html_comment' | 'null' | 'number' | 'private_property_identifier' | 'property_identifier' | 'regex_flags' | 'regex_pattern' | 'shorthand_property_identifier' | 'shorthand_property_identifier_pattern' | 'statement_identifier' | 'string_fragment' | 'super' | 'this' | 'this_type' | 'true' | 'type_identifier' | 'undefined';
+interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }
+type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;
+
 function isNodeData(v: any): v is NodeData {
   return v !== null && typeof v === 'object' && 'type' in v && 'fields' in v;
 }
@@ -113,6 +118,14 @@ export interface AbstractClassDeclarationConfig {
   children?: NodeData[];
 }
 
+export interface AbstractClassDeclarationFromInput {
+  decorator?: FromValue[];
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type AbstractClassDeclarationNode = NodeData<'abstract_class_declaration'> & {
   decorator(value: NodeData[]): AbstractClassDeclarationNode;
   typeParameters(value: NodeData): AbstractClassDeclarationNode;
@@ -182,6 +195,14 @@ export interface AbstractMethodSignatureConfig {
   children?: NodeData[];
 }
 
+export interface AbstractMethodSignatureFromInput {
+  name: FromValue;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type AbstractMethodSignatureNode = NodeData<'abstract_method_signature'> & {
   typeParameters(value: NodeData): AbstractMethodSignatureNode;
   parameters(value: NodeData): AbstractMethodSignatureNode;
@@ -247,6 +268,10 @@ export interface AddingTypeAnnotationConfig {
   children?: NodeData[];
 }
 
+export interface AddingTypeAnnotationFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type AddingTypeAnnotationNode = NodeData<'adding_type_annotation'> & {
   children(...value: NodeData[]): AddingTypeAnnotationNode;
   render(): string;
@@ -297,6 +322,10 @@ addingTypeAnnotation.assign = function(target: AssignableNode<'adding_type_annot
 
 export interface AmbientDeclarationConfig {
   children?: NodeData[];
+}
+
+export interface AmbientDeclarationFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type AmbientDeclarationNode = NodeData<'ambient_declaration'> & {
@@ -351,6 +380,10 @@ export interface ArgumentsConfig {
   children?: NodeData[];
 }
 
+export interface ArgumentsFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ArgumentsNode = NodeData<'arguments'> & {
   children(...value: NodeData[]): ArgumentsNode;
   render(): string;
@@ -401,6 +434,10 @@ arguments_.assign = function(target: AssignableNode<'arguments'>): ArgumentsNode
 
 export interface ArrayConfig {
   children?: NodeData[];
+}
+
+export interface ArrayFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ArrayNode = NodeData<'array'> & {
@@ -455,6 +492,10 @@ export interface ArrayPatternConfig {
   children?: NodeData[];
 }
 
+export interface ArrayPatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ArrayPatternNode = NodeData<'array_pattern'> & {
   children(...value: NodeData[]): ArrayPatternNode;
   render(): string;
@@ -505,6 +546,10 @@ arrayPattern.assign = function(target: AssignableNode<'array_pattern'>): ArrayPa
 
 export interface ArrayTypeConfig {
   children?: NodeData[];
+}
+
+export interface ArrayTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ArrayTypeNode = NodeData<'array_type'> & {
@@ -561,6 +606,14 @@ export interface ArrowFunctionConfig {
   parameters?: NodeData;
   return_type?: NodeData;
   body: NodeData;
+}
+
+export interface ArrowFunctionFromInput {
+  parameter?: NodeData | string;
+  type_parameters?: FromValue;
+  parameters?: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
 }
 
 export type ArrowFunctionNode = NodeData<'arrow_function'> & {
@@ -626,6 +679,10 @@ export interface AsExpressionConfig {
   children?: NodeData[];
 }
 
+export interface AsExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type AsExpressionNode = NodeData<'as_expression'> & {
   children(...value: NodeData[]): AsExpressionNode;
   render(): string;
@@ -676,6 +733,10 @@ asExpression.assign = function(target: AssignableNode<'as_expression'>): AsExpre
 
 export interface AssertsConfig {
   children?: NodeData[];
+}
+
+export interface AssertsFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type AssertsNode = NodeData<'asserts'> & {
@@ -730,6 +791,10 @@ export interface AssertsAnnotationConfig {
   children?: NodeData[];
 }
 
+export interface AssertsAnnotationFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type AssertsAnnotationNode = NodeData<'asserts_annotation'> & {
   children(...value: NodeData[]): AssertsAnnotationNode;
   render(): string;
@@ -781,6 +846,11 @@ assertsAnnotation.assign = function(target: AssignableNode<'asserts_annotation'>
 export interface AssignmentExpressionConfig {
   left: NodeData;
   right: NodeData;
+}
+
+export interface AssignmentExpressionFromInput {
+  left: FromValue;
+  right: FromValue;
 }
 
 export type AssignmentExpressionNode = NodeData<'assignment_expression'> & {
@@ -838,6 +908,11 @@ export interface AssignmentPatternConfig {
   right: NodeData;
 }
 
+export interface AssignmentPatternFromInput {
+  left: FromValue;
+  right: FromValue;
+}
+
 export type AssignmentPatternNode = NodeData<'assignment_pattern'> & {
   right(value: NodeData): AssignmentPatternNode;
   render(): string;
@@ -892,6 +967,12 @@ export interface AugmentedAssignmentExpressionConfig {
   left: NodeData;
   operator: NodeData;
   right: NodeData;
+}
+
+export interface AugmentedAssignmentExpressionFromInput {
+  left: FromValue;
+  operator: NodeData | '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??=';
+  right: FromValue;
 }
 
 export type AugmentedAssignmentExpressionNode = NodeData<'augmented_assignment_expression'> & {
@@ -951,6 +1032,10 @@ export interface AwaitExpressionConfig {
   children?: NodeData[];
 }
 
+export interface AwaitExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type AwaitExpressionNode = NodeData<'await_expression'> & {
   children(...value: NodeData[]): AwaitExpressionNode;
   render(): string;
@@ -1003,6 +1088,12 @@ export interface BinaryExpressionConfig {
   left: NodeData;
   operator: NodeData;
   right: NodeData;
+}
+
+export interface BinaryExpressionFromInput {
+  left: FromValue;
+  operator: NodeData | '&&' | '||' | '>>' | '>>>' | '<<' | '&' | '^' | '|' | '+' | '-' | '*' | '/' | '%' | '**' | '<' | '<=' | '==' | '===' | '!=' | '!==' | '>=' | '>' | '??' | 'instanceof' | 'in';
+  right: FromValue;
 }
 
 export type BinaryExpressionNode = NodeData<'binary_expression'> & {
@@ -1062,6 +1153,10 @@ export interface BreakStatementConfig {
   label?: NodeData | string;
 }
 
+export interface BreakStatementFromInput {
+  label?: NodeData | string;
+}
+
 export type BreakStatementNode = NodeData<'break_statement'> & {
   label(value: NodeData | string): BreakStatementNode;
   render(): string;
@@ -1112,6 +1207,12 @@ export interface CallExpressionConfig {
   function: NodeData;
   type_arguments?: NodeData;
   arguments: NodeData;
+}
+
+export interface CallExpressionFromInput {
+  function: FromValue;
+  type_arguments?: FromValue;
+  arguments: FromValue;
 }
 
 export type CallExpressionNode = NodeData<'call_expression'> & {
@@ -1173,6 +1274,12 @@ export interface CallSignatureConfig {
   return_type?: NodeData;
 }
 
+export interface CallSignatureFromInput {
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+}
+
 export type CallSignatureNode = NodeData<'call_signature'> & {
   typeParameters(value: NodeData): CallSignatureNode;
   returnType(value: NodeData): CallSignatureNode;
@@ -1230,6 +1337,12 @@ export interface CatchClauseConfig {
   parameter?: NodeData;
   type?: NodeData;
   body: NodeData;
+}
+
+export interface CatchClauseFromInput {
+  parameter?: FromValue;
+  type?: FromValue;
+  body: FromValue;
 }
 
 export type CatchClauseNode = NodeData<'catch_clause'> & {
@@ -1291,6 +1404,14 @@ export interface ClassConfig {
   type_parameters?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface ClassFromInput {
+  decorator?: FromValue[];
+  name?: NodeData | string;
+  type_parameters?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ClassNode = NodeData<'class'> & {
@@ -1359,6 +1480,11 @@ export interface ClassBodyConfig {
   children?: NodeData[];
 }
 
+export interface ClassBodyFromInput {
+  decorator?: FromValue[];
+  children?: FromValue | FromValue[];
+}
+
 export type ClassBodyNode = NodeData<'class_body'> & {
   decorator(value: NodeData[]): ClassBodyNode;
   children(...value: NodeData[]): ClassBodyNode;
@@ -1416,6 +1542,14 @@ export interface ClassDeclarationConfig {
   type_parameters?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface ClassDeclarationFromInput {
+  decorator?: FromValue[];
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ClassDeclarationNode = NodeData<'class_declaration'> & {
@@ -1483,6 +1617,10 @@ export interface ClassHeritageConfig {
   children?: NodeData[];
 }
 
+export interface ClassHeritageFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ClassHeritageNode = NodeData<'class_heritage'> & {
   children(...value: NodeData[]): ClassHeritageNode;
   render(): string;
@@ -1535,6 +1673,10 @@ export interface ClassStaticBlockConfig {
   body: NodeData;
 }
 
+export interface ClassStaticBlockFromInput {
+  body: FromValue;
+}
+
 export type ClassStaticBlockNode = NodeData<'class_static_block'> & {
   render(): string;
   toEdit(start: number, end: number): Edit;
@@ -1584,6 +1726,10 @@ classStaticBlock.assign = function(target: AssignableNode<'class_static_block'>)
 
 export interface ComputedPropertyNameConfig {
   children?: NodeData[];
+}
+
+export interface ComputedPropertyNameFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ComputedPropertyNameNode = NodeData<'computed_property_name'> & {
@@ -1639,6 +1785,13 @@ export interface ConditionalTypeConfig {
   right: NodeData;
   consequence: NodeData;
   alternative: NodeData;
+}
+
+export interface ConditionalTypeFromInput {
+  left: FromValue;
+  right: FromValue;
+  consequence: FromValue;
+  alternative: FromValue;
 }
 
 export type ConditionalTypeNode = NodeData<'conditional_type'> & {
@@ -1701,6 +1854,10 @@ export interface ConstraintConfig {
   children?: NodeData[];
 }
 
+export interface ConstraintFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ConstraintNode = NodeData<'constraint'> & {
   children(...value: NodeData[]): ConstraintNode;
   render(): string;
@@ -1753,6 +1910,12 @@ export interface ConstructSignatureConfig {
   type_parameters?: NodeData;
   parameters: NodeData;
   type?: NodeData;
+}
+
+export interface ConstructSignatureFromInput {
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  type?: FromValue;
 }
 
 export type ConstructSignatureNode = NodeData<'construct_signature'> & {
@@ -1814,6 +1977,12 @@ export interface ConstructorTypeConfig {
   type: NodeData;
 }
 
+export interface ConstructorTypeFromInput {
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  type: FromValue;
+}
+
 export type ConstructorTypeNode = NodeData<'constructor_type'> & {
   typeParameters(value: NodeData): ConstructorTypeNode;
   typeField(value: NodeData): ConstructorTypeNode;
@@ -1871,6 +2040,10 @@ export interface ContinueStatementConfig {
   label?: NodeData | string;
 }
 
+export interface ContinueStatementFromInput {
+  label?: NodeData | string;
+}
+
 export type ContinueStatementNode = NodeData<'continue_statement'> & {
   label(value: NodeData | string): ContinueStatementNode;
   render(): string;
@@ -1919,6 +2092,10 @@ continueStatement.assign = function(target: AssignableNode<'continue_statement'>
 
 export interface DecoratorConfig {
   children?: NodeData[];
+}
+
+export interface DecoratorFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type DecoratorNode = NodeData<'decorator'> & {
@@ -1973,6 +2150,10 @@ export interface DefaultTypeConfig {
   children?: NodeData[];
 }
 
+export interface DefaultTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type DefaultTypeNode = NodeData<'default_type'> & {
   children(...value: NodeData[]): DefaultTypeNode;
   render(): string;
@@ -2024,6 +2205,11 @@ defaultType.assign = function(target: AssignableNode<'default_type'>): DefaultTy
 export interface DoStatementConfig {
   body: NodeData;
   condition: NodeData;
+}
+
+export interface DoStatementFromInput {
+  body: FromValue;
+  condition: FromValue;
 }
 
 export type DoStatementNode = NodeData<'do_statement'> & {
@@ -2080,6 +2266,10 @@ export interface ElseClauseConfig {
   children?: NodeData[];
 }
 
+export interface ElseClauseFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ElseClauseNode = NodeData<'else_clause'> & {
   children(...value: NodeData[]): ElseClauseNode;
   render(): string;
@@ -2131,6 +2321,11 @@ elseClause.assign = function(target: AssignableNode<'else_clause'>): ElseClauseN
 export interface EnumAssignmentConfig {
   name: NodeData;
   value: NodeData;
+}
+
+export interface EnumAssignmentFromInput {
+  name: FromValue;
+  value: FromValue;
 }
 
 export type EnumAssignmentNode = NodeData<'enum_assignment'> & {
@@ -2186,6 +2381,11 @@ enumAssignment.assign = function(target: AssignableNode<'enum_assignment'>): Enu
 export interface EnumBodyConfig {
   name?: NodeData[];
   children?: NodeData[];
+}
+
+export interface EnumBodyFromInput {
+  name?: FromValue[];
+  children?: FromValue | FromValue[];
 }
 
 export type EnumBodyNode = NodeData<'enum_body'> & {
@@ -2244,6 +2444,11 @@ export interface EnumDeclarationConfig {
   body: NodeData;
 }
 
+export interface EnumDeclarationFromInput {
+  name: NodeData | string;
+  body: FromValue;
+}
+
 export type EnumDeclarationNode = NodeData<'enum_declaration'> & {
   body(value: NodeData): EnumDeclarationNode;
   render(): string;
@@ -2298,6 +2503,10 @@ export interface ExportClauseConfig {
   children?: NodeData[];
 }
 
+export interface ExportClauseFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ExportClauseNode = NodeData<'export_clause'> & {
   children(...value: NodeData[]): ExportClauseNode;
   render(): string;
@@ -2349,6 +2558,11 @@ exportClause.assign = function(target: AssignableNode<'export_clause'>): ExportC
 export interface ExportSpecifierConfig {
   name: NodeData;
   alias?: NodeData;
+}
+
+export interface ExportSpecifierFromInput {
+  name: FromValue;
+  alias?: FromValue;
 }
 
 export type ExportSpecifierNode = NodeData<'export_specifier'> & {
@@ -2407,6 +2621,14 @@ export interface ExportStatementConfig {
   declaration?: NodeData;
   value?: NodeData;
   children?: NodeData[];
+}
+
+export interface ExportStatementFromInput {
+  source?: FromValue;
+  decorator?: FromValue[];
+  declaration?: FromValue;
+  value?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ExportStatementNode = NodeData<'export_statement'> & {
@@ -2473,6 +2695,10 @@ export interface ExpressionStatementConfig {
   children?: NodeData[];
 }
 
+export interface ExpressionStatementFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ExpressionStatementNode = NodeData<'expression_statement'> & {
   children(...value: NodeData[]): ExpressionStatementNode;
   render(): string;
@@ -2524,6 +2750,11 @@ expressionStatement.assign = function(target: AssignableNode<'expression_stateme
 export interface ExtendsClauseConfig {
   value: NodeData[];
   type_arguments?: NodeData[];
+}
+
+export interface ExtendsClauseFromInput {
+  value: FromValue[];
+  type_arguments?: FromValue[];
 }
 
 export type ExtendsClauseNode = NodeData<'extends_clause'> & {
@@ -2579,6 +2810,10 @@ export interface ExtendsTypeClauseConfig {
   type: NodeData[];
 }
 
+export interface ExtendsTypeClauseFromInput {
+  type: FromValue[];
+}
+
 export type ExtendsTypeClauseNode = NodeData<'extends_type_clause'> & {
   typeField(value: NodeData[]): ExtendsTypeClauseNode;
   render(): string;
@@ -2627,6 +2862,10 @@ extendsTypeClause.assign = function(target: AssignableNode<'extends_type_clause'
 
 export interface FinallyClauseConfig {
   body: NodeData;
+}
+
+export interface FinallyClauseFromInput {
+  body: FromValue;
 }
 
 export type FinallyClauseNode = NodeData<'finally_clause'> & {
@@ -2678,6 +2917,10 @@ finallyClause.assign = function(target: AssignableNode<'finally_clause'>): Final
 
 export interface FlowMaybeTypeConfig {
   children?: NodeData[];
+}
+
+export interface FlowMaybeTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type FlowMaybeTypeNode = NodeData<'flow_maybe_type'> & {
@@ -2735,6 +2978,15 @@ export interface ForInStatementConfig {
   operator: NodeData;
   right: NodeData;
   body: NodeData;
+}
+
+export interface ForInStatementFromInput {
+  left: FromValue;
+  kind?: NodeData | 'var' | 'let' | 'const';
+  value?: FromValue;
+  operator: NodeData | 'in' | 'of';
+  right: FromValue;
+  body: FromValue;
 }
 
 export type ForInStatementNode = NodeData<'for_in_statement'> & {
@@ -2806,6 +3058,13 @@ export interface ForStatementConfig {
   body: NodeData;
 }
 
+export interface ForStatementFromInput {
+  initializer: FromValue;
+  condition: FromValue[];
+  increment?: FromValue;
+  body: FromValue;
+}
+
 export type ForStatementNode = NodeData<'for_statement'> & {
   condition(value: NodeData[]): ForStatementNode;
   increment(value: NodeData): ForStatementNode;
@@ -2866,6 +3125,10 @@ export interface FormalParametersConfig {
   children?: NodeData[];
 }
 
+export interface FormalParametersFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type FormalParametersNode = NodeData<'formal_parameters'> & {
   children(...value: NodeData[]): FormalParametersNode;
   render(): string;
@@ -2920,6 +3183,14 @@ export interface FunctionDeclarationConfig {
   parameters: NodeData;
   return_type?: NodeData;
   body: NodeData;
+}
+
+export interface FunctionDeclarationFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
 }
 
 export type FunctionDeclarationNode = NodeData<'function_declaration'> & {
@@ -2989,6 +3260,14 @@ export interface FunctionExpressionConfig {
   body: NodeData;
 }
 
+export interface FunctionExpressionFromInput {
+  name?: NodeData | string;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
+}
+
 export type FunctionExpressionNode = NodeData<'function_expression'> & {
   name(value: NodeData | string): FunctionExpressionNode;
   typeParameters(value: NodeData): FunctionExpressionNode;
@@ -3055,6 +3334,13 @@ export interface FunctionSignatureConfig {
   return_type?: NodeData;
 }
 
+export interface FunctionSignatureFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+}
+
 export type FunctionSignatureNode = NodeData<'function_signature'> & {
   typeParameters(value: NodeData): FunctionSignatureNode;
   parameters(value: NodeData): FunctionSignatureNode;
@@ -3117,6 +3403,12 @@ export interface FunctionTypeConfig {
   return_type: NodeData;
 }
 
+export interface FunctionTypeFromInput {
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type: FromValue;
+}
+
 export type FunctionTypeNode = NodeData<'function_type'> & {
   typeParameters(value: NodeData): FunctionTypeNode;
   returnType(value: NodeData): FunctionTypeNode;
@@ -3176,6 +3468,14 @@ export interface GeneratorFunctionConfig {
   parameters: NodeData;
   return_type?: NodeData;
   body: NodeData;
+}
+
+export interface GeneratorFunctionFromInput {
+  name?: NodeData | string;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
 }
 
 export type GeneratorFunctionNode = NodeData<'generator_function'> & {
@@ -3245,6 +3545,14 @@ export interface GeneratorFunctionDeclarationConfig {
   body: NodeData;
 }
 
+export interface GeneratorFunctionDeclarationFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
+}
+
 export type GeneratorFunctionDeclarationNode = NodeData<'generator_function_declaration'> & {
   typeParameters(value: NodeData): GeneratorFunctionDeclarationNode;
   parameters(value: NodeData): GeneratorFunctionDeclarationNode;
@@ -3309,6 +3617,11 @@ export interface GenericTypeConfig {
   type_arguments: NodeData;
 }
 
+export interface GenericTypeFromInput {
+  name: FromValue;
+  type_arguments: FromValue;
+}
+
 export type GenericTypeNode = NodeData<'generic_type'> & {
   typeArguments(value: NodeData): GenericTypeNode;
   render(): string;
@@ -3363,6 +3676,12 @@ export interface IfStatementConfig {
   condition: NodeData;
   consequence: NodeData;
   alternative?: NodeData;
+}
+
+export interface IfStatementFromInput {
+  condition: FromValue;
+  consequence: FromValue;
+  alternative?: FromValue;
 }
 
 export type IfStatementNode = NodeData<'if_statement'> & {
@@ -3422,6 +3741,10 @@ export interface ImplementsClauseConfig {
   children?: NodeData[];
 }
 
+export interface ImplementsClauseFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ImplementsClauseNode = NodeData<'implements_clause'> & {
   children(...value: NodeData[]): ImplementsClauseNode;
   render(): string;
@@ -3472,6 +3795,10 @@ implementsClause.assign = function(target: AssignableNode<'implements_clause'>):
 
 export interface ImportAliasConfig {
   children?: NodeData[];
+}
+
+export interface ImportAliasFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ImportAliasNode = NodeData<'import_alias'> & {
@@ -3526,6 +3853,10 @@ export interface ImportAttributeConfig {
   children?: NodeData[];
 }
 
+export interface ImportAttributeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ImportAttributeNode = NodeData<'import_attribute'> & {
   children(...value: NodeData[]): ImportAttributeNode;
   render(): string;
@@ -3576,6 +3907,10 @@ importAttribute.assign = function(target: AssignableNode<'import_attribute'>): I
 
 export interface ImportClauseConfig {
   children?: NodeData[];
+}
+
+export interface ImportClauseFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ImportClauseNode = NodeData<'import_clause'> & {
@@ -3629,6 +3964,11 @@ importClause.assign = function(target: AssignableNode<'import_clause'>): ImportC
 export interface ImportRequireClauseConfig {
   source: NodeData;
   children?: NodeData[];
+}
+
+export interface ImportRequireClauseFromInput {
+  source: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ImportRequireClauseNode = NodeData<'import_require_clause'> & {
@@ -3688,6 +4028,11 @@ export interface ImportSpecifierConfig {
   alias?: NodeData | string;
 }
 
+export interface ImportSpecifierFromInput {
+  name: FromValue;
+  alias?: NodeData | string;
+}
+
 export type ImportSpecifierNode = NodeData<'import_specifier'> & {
   alias(value: NodeData | string): ImportSpecifierNode;
   render(): string;
@@ -3741,6 +4086,11 @@ importSpecifier.assign = function(target: AssignableNode<'import_specifier'>): I
 export interface ImportStatementConfig {
   source?: NodeData;
   children?: NodeData[];
+}
+
+export interface ImportStatementFromInput {
+  source?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ImportStatementNode = NodeData<'import_statement'> & {
@@ -3800,6 +4150,14 @@ export interface IndexSignatureConfig {
   index_type?: NodeData;
   type: NodeData;
   children?: NodeData[];
+}
+
+export interface IndexSignatureFromInput {
+  sign?: NodeData | '-' | '+';
+  name?: NodeData | string;
+  index_type?: FromValue;
+  type: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type IndexSignatureNode = NodeData<'index_signature'> & {
@@ -3867,6 +4225,10 @@ export interface IndexTypeQueryConfig {
   children?: NodeData[];
 }
 
+export interface IndexTypeQueryFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type IndexTypeQueryNode = NodeData<'index_type_query'> & {
   children(...value: NodeData[]): IndexTypeQueryNode;
   render(): string;
@@ -3917,6 +4279,10 @@ indexTypeQuery.assign = function(target: AssignableNode<'index_type_query'>): In
 
 export interface InferTypeConfig {
   children?: NodeData[];
+}
+
+export interface InferTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type InferTypeNode = NodeData<'infer_type'> & {
@@ -3971,6 +4337,12 @@ export interface InstantiationExpressionConfig {
   type_arguments: NodeData;
   function?: NodeData;
   children?: NodeData[];
+}
+
+export interface InstantiationExpressionFromInput {
+  type_arguments: FromValue;
+  function?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type InstantiationExpressionNode = NodeData<'instantiation_expression'> & {
@@ -4032,6 +4404,10 @@ export interface InterfaceBodyConfig {
   children?: NodeData[];
 }
 
+export interface InterfaceBodyFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type InterfaceBodyNode = NodeData<'interface_body'> & {
   children(...value: NodeData[]): InterfaceBodyNode;
   render(): string;
@@ -4085,6 +4461,13 @@ export interface InterfaceDeclarationConfig {
   type_parameters?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface InterfaceDeclarationFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type InterfaceDeclarationNode = NodeData<'interface_declaration'> & {
@@ -4150,6 +4533,11 @@ export interface InternalModuleConfig {
   body?: NodeData;
 }
 
+export interface InternalModuleFromInput {
+  name: FromValue;
+  body?: FromValue;
+}
+
 export type InternalModuleNode = NodeData<'internal_module'> & {
   body(value: NodeData): InternalModuleNode;
   render(): string;
@@ -4204,6 +4592,10 @@ export interface IntersectionTypeConfig {
   children?: NodeData[];
 }
 
+export interface IntersectionTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type IntersectionTypeNode = NodeData<'intersection_type'> & {
   children(...value: NodeData[]): IntersectionTypeNode;
   render(): string;
@@ -4254,6 +4646,11 @@ intersectionType.assign = function(target: AssignableNode<'intersection_type'>):
 
 export interface LabeledStatementConfig {
   body: NodeData;
+  label: NodeData | string;
+}
+
+export interface LabeledStatementFromInput {
+  body: FromValue;
   label: NodeData | string;
 }
 
@@ -4312,6 +4709,11 @@ export interface LexicalDeclarationConfig {
   children?: NodeData[];
 }
 
+export interface LexicalDeclarationFromInput {
+  kind: NodeData | 'let' | 'const';
+  children?: FromValue | FromValue[];
+}
+
 export type LexicalDeclarationNode = NodeData<'lexical_declaration'> & {
   children(...value: NodeData[]): LexicalDeclarationNode;
   render(): string;
@@ -4368,6 +4770,10 @@ export interface LiteralTypeConfig {
   children?: NodeData[];
 }
 
+export interface LiteralTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type LiteralTypeNode = NodeData<'literal_type'> & {
   children(...value: NodeData[]): LiteralTypeNode;
   render(): string;
@@ -4418,6 +4824,10 @@ literalType.assign = function(target: AssignableNode<'literal_type'>): LiteralTy
 
 export interface LookupTypeConfig {
   children?: NodeData[];
+}
+
+export interface LookupTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type LookupTypeNode = NodeData<'lookup_type'> & {
@@ -4472,6 +4882,12 @@ export interface MappedTypeClauseConfig {
   name: NodeData | string;
   type: NodeData;
   alias?: NodeData;
+}
+
+export interface MappedTypeClauseFromInput {
+  name: NodeData | string;
+  type: FromValue;
+  alias?: FromValue;
 }
 
 export type MappedTypeClauseNode = NodeData<'mapped_type_clause'> & {
@@ -4529,6 +4945,12 @@ mappedTypeClause.assign = function(target: AssignableNode<'mapped_type_clause'>)
 
 export interface MemberExpressionConfig {
   object: NodeData;
+  optional_chain?: NodeData | string;
+  property: NodeData | string;
+}
+
+export interface MemberExpressionFromInput {
+  object: FromValue;
   optional_chain?: NodeData | string;
   property: NodeData | string;
 }
@@ -4593,6 +5015,15 @@ export interface MethodDefinitionConfig {
   return_type?: NodeData;
   body: NodeData;
   children?: NodeData[];
+}
+
+export interface MethodDefinitionFromInput {
+  name: FromValue;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  body: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type MethodDefinitionNode = NodeData<'method_definition'> & {
@@ -4667,6 +5098,14 @@ export interface MethodSignatureConfig {
   children?: NodeData[];
 }
 
+export interface MethodSignatureFromInput {
+  name: FromValue;
+  type_parameters?: FromValue;
+  parameters: FromValue;
+  return_type?: FromValue;
+  children?: FromValue | FromValue[];
+}
+
 export type MethodSignatureNode = NodeData<'method_signature'> & {
   typeParameters(value: NodeData): MethodSignatureNode;
   parameters(value: NodeData): MethodSignatureNode;
@@ -4733,6 +5172,11 @@ export interface ModuleConfig {
   body?: NodeData;
 }
 
+export interface ModuleFromInput {
+  name: FromValue;
+  body?: FromValue;
+}
+
 export type ModuleNode = NodeData<'module'> & {
   body(value: NodeData): ModuleNode;
   render(): string;
@@ -4787,6 +5231,10 @@ export interface NamedImportsConfig {
   children?: NodeData[];
 }
 
+export interface NamedImportsFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type NamedImportsNode = NodeData<'named_imports'> & {
   children(...value: NodeData[]): NamedImportsNode;
   render(): string;
@@ -4839,6 +5287,10 @@ export interface NamespaceExportConfig {
   children?: NodeData[];
 }
 
+export interface NamespaceExportFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type NamespaceExportNode = NodeData<'namespace_export'> & {
   children(...value: NodeData[]): NamespaceExportNode;
   render(): string;
@@ -4889,6 +5341,10 @@ namespaceExport.assign = function(target: AssignableNode<'namespace_export'>): N
 
 export interface NamespaceImportConfig {
   children?: NodeData[];
+}
+
+export interface NamespaceImportFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type NamespaceImportNode = NodeData<'namespace_import'> & {
@@ -4953,6 +5409,11 @@ export interface NestedIdentifierConfig {
   property: NodeData | string;
 }
 
+export interface NestedIdentifierFromInput {
+  object: FromValue;
+  property: NodeData | string;
+}
+
 export type NestedIdentifierNode = NodeData<'nested_identifier'> & {
   property(value: NodeData | string): NestedIdentifierNode;
   render(): string;
@@ -5005,6 +5466,11 @@ nestedIdentifier.assign = function(target: AssignableNode<'nested_identifier'>):
 
 export interface NestedTypeIdentifierConfig {
   module: NodeData;
+  name: NodeData | string;
+}
+
+export interface NestedTypeIdentifierFromInput {
+  module: FromValue;
   name: NodeData | string;
 }
 
@@ -5064,6 +5530,12 @@ export interface NewExpressionConfig {
   arguments?: NodeData;
 }
 
+export interface NewExpressionFromInput {
+  constructor: FromValue;
+  type_arguments?: FromValue;
+  arguments?: FromValue;
+}
+
 export type NewExpressionNode = NodeData<'new_expression'> & {
   typeArguments(value: NodeData): NewExpressionNode;
   arguments(value: NodeData): NewExpressionNode;
@@ -5121,6 +5593,10 @@ export interface NonNullExpressionConfig {
   children?: NodeData[];
 }
 
+export interface NonNullExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type NonNullExpressionNode = NodeData<'non_null_expression'> & {
   children(...value: NodeData[]): NonNullExpressionNode;
   render(): string;
@@ -5171,6 +5647,10 @@ nonNullExpression.assign = function(target: AssignableNode<'non_null_expression'
 
 export interface ObjectConfig {
   children?: NodeData[];
+}
+
+export interface ObjectFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ObjectNode = NodeData<'object'> & {
@@ -5224,6 +5704,11 @@ object.assign = function(target: AssignableNode<'object'>): ObjectNode {
 export interface ObjectAssignmentPatternConfig {
   left: NodeData;
   right: NodeData;
+}
+
+export interface ObjectAssignmentPatternFromInput {
+  left: FromValue;
+  right: FromValue;
 }
 
 export type ObjectAssignmentPatternNode = NodeData<'object_assignment_pattern'> & {
@@ -5280,6 +5765,10 @@ export interface ObjectPatternConfig {
   children?: NodeData[];
 }
 
+export interface ObjectPatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ObjectPatternNode = NodeData<'object_pattern'> & {
   children(...value: NodeData[]): ObjectPatternNode;
   render(): string;
@@ -5330,6 +5819,10 @@ objectPattern.assign = function(target: AssignableNode<'object_pattern'>): Objec
 
 export interface ObjectTypeConfig {
   children?: NodeData[];
+}
+
+export interface ObjectTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ObjectTypeNode = NodeData<'object_type'> & {
@@ -5384,6 +5877,10 @@ export interface OmittingTypeAnnotationConfig {
   children?: NodeData[];
 }
 
+export interface OmittingTypeAnnotationFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type OmittingTypeAnnotationNode = NodeData<'omitting_type_annotation'> & {
   children(...value: NodeData[]): OmittingTypeAnnotationNode;
   render(): string;
@@ -5434,6 +5931,10 @@ omittingTypeAnnotation.assign = function(target: AssignableNode<'omitting_type_a
 
 export interface OptingTypeAnnotationConfig {
   children?: NodeData[];
+}
+
+export interface OptingTypeAnnotationFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type OptingTypeAnnotationNode = NodeData<'opting_type_annotation'> & {
@@ -5491,6 +5992,15 @@ export interface OptionalParameterConfig {
   value?: NodeData;
   name?: NodeData | string;
   children?: NodeData[];
+}
+
+export interface OptionalParameterFromInput {
+  decorator?: FromValue[];
+  pattern?: FromValue;
+  type?: FromValue;
+  value?: FromValue;
+  name?: NodeData | string;
+  children?: FromValue | FromValue[];
 }
 
 export type OptionalParameterNode = NodeData<'optional_parameter'> & {
@@ -5560,6 +6070,10 @@ export interface OptionalTypeConfig {
   children?: NodeData[];
 }
 
+export interface OptionalTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type OptionalTypeNode = NodeData<'optional_type'> & {
   children(...value: NodeData[]): OptionalTypeNode;
   render(): string;
@@ -5611,6 +6125,11 @@ optionalType.assign = function(target: AssignableNode<'optional_type'>): Optiona
 export interface PairConfig {
   key: NodeData;
   value: NodeData;
+}
+
+export interface PairFromInput {
+  key: FromValue;
+  value: FromValue;
 }
 
 export type PairNode = NodeData<'pair'> & {
@@ -5668,6 +6187,11 @@ export interface PairPatternConfig {
   value: NodeData;
 }
 
+export interface PairPatternFromInput {
+  key: FromValue;
+  value: FromValue;
+}
+
 export type PairPatternNode = NodeData<'pair_pattern'> & {
   value(value: NodeData): PairPatternNode;
   render(): string;
@@ -5721,6 +6245,11 @@ pairPattern.assign = function(target: AssignableNode<'pair_pattern'>): PairPatte
 export interface ParenthesizedExpressionConfig {
   type?: NodeData;
   children?: NodeData[];
+}
+
+export interface ParenthesizedExpressionFromInput {
+  type?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type ParenthesizedExpressionNode = NodeData<'parenthesized_expression'> & {
@@ -5778,6 +6307,10 @@ export interface ParenthesizedTypeConfig {
   children?: NodeData[];
 }
 
+export interface ParenthesizedTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ParenthesizedTypeNode = NodeData<'parenthesized_type'> & {
   children(...value: NodeData[]): ParenthesizedTypeNode;
   render(): string;
@@ -5828,6 +6361,10 @@ parenthesizedType.assign = function(target: AssignableNode<'parenthesized_type'>
 
 export interface ProgramConfig {
   children?: NodeData[];
+}
+
+export interface ProgramFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type ProgramNode = NodeData<'program'> & {
@@ -5882,6 +6419,12 @@ export interface PropertySignatureConfig {
   name: NodeData;
   type?: NodeData;
   children?: NodeData[];
+}
+
+export interface PropertySignatureFromInput {
+  name: FromValue;
+  type?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type PropertySignatureNode = NodeData<'property_signature'> & {
@@ -5945,6 +6488,14 @@ export interface PublicFieldDefinitionConfig {
   type?: NodeData;
   value?: NodeData;
   children?: NodeData[];
+}
+
+export interface PublicFieldDefinitionFromInput {
+  decorator?: FromValue[];
+  name: FromValue;
+  type?: FromValue;
+  value?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type PublicFieldDefinitionNode = NodeData<'public_field_definition'> & {
@@ -6012,6 +6563,10 @@ export interface ReadonlyTypeConfig {
   children?: NodeData[];
 }
 
+export interface ReadonlyTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ReadonlyTypeNode = NodeData<'readonly_type'> & {
   children(...value: NodeData[]): ReadonlyTypeNode;
   render(): string;
@@ -6061,6 +6616,11 @@ readonlyType.assign = function(target: AssignableNode<'readonly_type'>): Readonl
 } as any;
 
 export interface RegexConfig {
+  pattern: NodeData | string;
+  flags?: NodeData | string;
+}
+
+export interface RegexFromInput {
   pattern: NodeData | string;
   flags?: NodeData | string;
 }
@@ -6122,6 +6682,15 @@ export interface RequiredParameterConfig {
   value?: NodeData;
   name?: NodeData;
   children?: NodeData[];
+}
+
+export interface RequiredParameterFromInput {
+  decorator?: FromValue[];
+  pattern?: FromValue;
+  type?: FromValue;
+  value?: FromValue;
+  name?: FromValue;
+  children?: FromValue | FromValue[];
 }
 
 export type RequiredParameterNode = NodeData<'required_parameter'> & {
@@ -6191,6 +6760,10 @@ export interface RestPatternConfig {
   children?: NodeData[];
 }
 
+export interface RestPatternFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type RestPatternNode = NodeData<'rest_pattern'> & {
   children(...value: NodeData[]): RestPatternNode;
   render(): string;
@@ -6241,6 +6814,10 @@ restPattern.assign = function(target: AssignableNode<'rest_pattern'>): RestPatte
 
 export interface RestTypeConfig {
   children?: NodeData[];
+}
+
+export interface RestTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type RestTypeNode = NodeData<'rest_type'> & {
@@ -6295,6 +6872,10 @@ export interface ReturnStatementConfig {
   children?: NodeData[];
 }
 
+export interface ReturnStatementFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ReturnStatementNode = NodeData<'return_statement'> & {
   children(...value: NodeData[]): ReturnStatementNode;
   render(): string;
@@ -6345,6 +6926,10 @@ returnStatement.assign = function(target: AssignableNode<'return_statement'>): R
 
 export interface SatisfiesExpressionConfig {
   children?: NodeData[];
+}
+
+export interface SatisfiesExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type SatisfiesExpressionNode = NodeData<'satisfies_expression'> & {
@@ -6399,6 +6984,10 @@ export interface SequenceExpressionConfig {
   children?: NodeData[];
 }
 
+export interface SequenceExpressionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type SequenceExpressionNode = NodeData<'sequence_expression'> & {
   children(...value: NodeData[]): SequenceExpressionNode;
   render(): string;
@@ -6449,6 +7038,10 @@ sequenceExpression.assign = function(target: AssignableNode<'sequence_expression
 
 export interface SpreadElementConfig {
   children?: NodeData[];
+}
+
+export interface SpreadElementFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type SpreadElementNode = NodeData<'spread_element'> & {
@@ -6503,6 +7096,10 @@ export interface StatementBlockConfig {
   children?: NodeData[];
 }
 
+export interface StatementBlockFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type StatementBlockNode = NodeData<'statement_block'> & {
   children(...value: NodeData[]): StatementBlockNode;
   render(): string;
@@ -6553,6 +7150,10 @@ statementBlock.assign = function(target: AssignableNode<'statement_block'>): Sta
 
 export interface StringConfig {
   children?: NodeData[];
+}
+
+export interface StringFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type StringNode = NodeData<'string'> & {
@@ -6618,6 +7219,12 @@ export interface SubscriptExpressionConfig {
   index: NodeData;
 }
 
+export interface SubscriptExpressionFromInput {
+  object: FromValue;
+  optional_chain?: NodeData | string;
+  index: FromValue;
+}
+
 export type SubscriptExpressionNode = NodeData<'subscript_expression'> & {
   optionalChain(value: NodeData | string): SubscriptExpressionNode;
   index(value: NodeData): SubscriptExpressionNode;
@@ -6675,6 +7282,10 @@ export interface SwitchBodyConfig {
   children?: NodeData[];
 }
 
+export interface SwitchBodyFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type SwitchBodyNode = NodeData<'switch_body'> & {
   children(...value: NodeData[]): SwitchBodyNode;
   render(): string;
@@ -6726,6 +7337,11 @@ switchBody.assign = function(target: AssignableNode<'switch_body'>): SwitchBodyN
 export interface SwitchCaseConfig {
   value: NodeData;
   body?: NodeData[];
+}
+
+export interface SwitchCaseFromInput {
+  value: FromValue;
+  body?: FromValue[];
 }
 
 export type SwitchCaseNode = NodeData<'switch_case'> & {
@@ -6782,6 +7398,10 @@ export interface SwitchDefaultConfig {
   body?: NodeData[];
 }
 
+export interface SwitchDefaultFromInput {
+  body?: FromValue[];
+}
+
 export type SwitchDefaultNode = NodeData<'switch_default'> & {
   body(value: NodeData[]): SwitchDefaultNode;
   render(): string;
@@ -6831,6 +7451,11 @@ switchDefault.assign = function(target: AssignableNode<'switch_default'>): Switc
 export interface SwitchStatementConfig {
   value: NodeData;
   body: NodeData;
+}
+
+export interface SwitchStatementFromInput {
+  value: FromValue;
+  body: FromValue;
 }
 
 export type SwitchStatementNode = NodeData<'switch_statement'> & {
@@ -6887,6 +7512,10 @@ export interface TemplateLiteralTypeConfig {
   children?: NodeData[];
 }
 
+export interface TemplateLiteralTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TemplateLiteralTypeNode = NodeData<'template_literal_type'> & {
   children(...value: NodeData[]): TemplateLiteralTypeNode;
   render(): string;
@@ -6937,6 +7566,10 @@ templateLiteralType.assign = function(target: AssignableNode<'template_literal_t
 
 export interface TemplateStringConfig {
   children?: NodeData[];
+}
+
+export interface TemplateStringFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TemplateStringNode = NodeData<'template_string'> & {
@@ -6991,6 +7624,10 @@ export interface TemplateSubstitutionConfig {
   children?: NodeData[];
 }
 
+export interface TemplateSubstitutionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TemplateSubstitutionNode = NodeData<'template_substitution'> & {
   children(...value: NodeData[]): TemplateSubstitutionNode;
   render(): string;
@@ -7041,6 +7678,10 @@ templateSubstitution.assign = function(target: AssignableNode<'template_substitu
 
 export interface TemplateTypeConfig {
   children?: NodeData[];
+}
+
+export interface TemplateTypeFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TemplateTypeNode = NodeData<'template_type'> & {
@@ -7095,6 +7736,12 @@ export interface TernaryExpressionConfig {
   condition: NodeData;
   consequence: NodeData;
   alternative: NodeData;
+}
+
+export interface TernaryExpressionFromInput {
+  condition: FromValue;
+  consequence: FromValue;
+  alternative: FromValue;
 }
 
 export type TernaryExpressionNode = NodeData<'ternary_expression'> & {
@@ -7154,6 +7801,10 @@ export interface ThrowStatementConfig {
   children?: NodeData[];
 }
 
+export interface ThrowStatementFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type ThrowStatementNode = NodeData<'throw_statement'> & {
   children(...value: NodeData[]): ThrowStatementNode;
   render(): string;
@@ -7206,6 +7857,12 @@ export interface TryStatementConfig {
   body: NodeData;
   handler?: NodeData;
   finalizer?: NodeData;
+}
+
+export interface TryStatementFromInput {
+  body: FromValue;
+  handler?: FromValue;
+  finalizer?: FromValue;
 }
 
 export type TryStatementNode = NodeData<'try_statement'> & {
@@ -7265,6 +7922,10 @@ export interface TupleTypeConfig {
   children?: NodeData[];
 }
 
+export interface TupleTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TupleTypeNode = NodeData<'tuple_type'> & {
   children(...value: NodeData[]): TupleTypeNode;
   render(): string;
@@ -7317,6 +7978,12 @@ export interface TypeAliasDeclarationConfig {
   name: NodeData | string;
   type_parameters?: NodeData;
   value: NodeData;
+}
+
+export interface TypeAliasDeclarationFromInput {
+  name: NodeData | string;
+  type_parameters?: FromValue;
+  value: FromValue;
 }
 
 export type TypeAliasDeclarationNode = NodeData<'type_alias_declaration'> & {
@@ -7376,6 +8043,10 @@ export interface TypeAnnotationConfig {
   children?: NodeData[];
 }
 
+export interface TypeAnnotationFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TypeAnnotationNode = NodeData<'type_annotation'> & {
   children(...value: NodeData[]): TypeAnnotationNode;
   render(): string;
@@ -7426,6 +8097,10 @@ typeAnnotation.assign = function(target: AssignableNode<'type_annotation'>): Typ
 
 export interface TypeArgumentsConfig {
   children?: NodeData[];
+}
+
+export interface TypeArgumentsFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TypeArgumentsNode = NodeData<'type_arguments'> & {
@@ -7480,6 +8155,10 @@ export interface TypeAssertionConfig {
   children?: NodeData[];
 }
 
+export interface TypeAssertionFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TypeAssertionNode = NodeData<'type_assertion'> & {
   children(...value: NodeData[]): TypeAssertionNode;
   render(): string;
@@ -7532,6 +8211,12 @@ export interface TypeParameterConfig {
   name: NodeData | string;
   constraint?: NodeData;
   value?: NodeData;
+}
+
+export interface TypeParameterFromInput {
+  name: NodeData | string;
+  constraint?: FromValue;
+  value?: FromValue;
 }
 
 export type TypeParameterNode = NodeData<'type_parameter'> & {
@@ -7591,6 +8276,10 @@ export interface TypeParametersConfig {
   children?: NodeData[];
 }
 
+export interface TypeParametersFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TypeParametersNode = NodeData<'type_parameters'> & {
   children(...value: NodeData[]): TypeParametersNode;
   render(): string;
@@ -7642,6 +8331,11 @@ typeParameters.assign = function(target: AssignableNode<'type_parameters'>): Typ
 export interface TypePredicateConfig {
   name: NodeData | string;
   type: NodeData;
+}
+
+export interface TypePredicateFromInput {
+  name: NodeData | string;
+  type: FromValue;
 }
 
 export type TypePredicateNode = NodeData<'type_predicate'> & {
@@ -7698,6 +8392,10 @@ export interface TypePredicateAnnotationConfig {
   children?: NodeData[];
 }
 
+export interface TypePredicateAnnotationFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type TypePredicateAnnotationNode = NodeData<'type_predicate_annotation'> & {
   children(...value: NodeData[]): TypePredicateAnnotationNode;
   render(): string;
@@ -7748,6 +8446,10 @@ typePredicateAnnotation.assign = function(target: AssignableNode<'type_predicate
 
 export interface TypeQueryConfig {
   children?: NodeData[];
+}
+
+export interface TypeQueryFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type TypeQueryNode = NodeData<'type_query'> & {
@@ -7801,6 +8503,11 @@ typeQuery.assign = function(target: AssignableNode<'type_query'>): TypeQueryNode
 export interface UnaryExpressionConfig {
   operator: NodeData;
   argument: NodeData;
+}
+
+export interface UnaryExpressionFromInput {
+  operator: NodeData | '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete';
+  argument: FromValue;
 }
 
 export type UnaryExpressionNode = NodeData<'unary_expression'> & {
@@ -7857,6 +8564,10 @@ export interface UnionTypeConfig {
   children?: NodeData[];
 }
 
+export interface UnionTypeFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type UnionTypeNode = NodeData<'union_type'> & {
   children(...value: NodeData[]): UnionTypeNode;
   render(): string;
@@ -7908,6 +8619,11 @@ unionType.assign = function(target: AssignableNode<'union_type'>): UnionTypeNode
 export interface UpdateExpressionConfig {
   argument: NodeData;
   operator: NodeData;
+}
+
+export interface UpdateExpressionFromInput {
+  argument: FromValue;
+  operator: NodeData | '++' | '--';
 }
 
 export type UpdateExpressionNode = NodeData<'update_expression'> & {
@@ -7964,6 +8680,10 @@ export interface VariableDeclarationConfig {
   children?: NodeData[];
 }
 
+export interface VariableDeclarationFromInput {
+  children?: FromValue | FromValue[];
+}
+
 export type VariableDeclarationNode = NodeData<'variable_declaration'> & {
   children(...value: NodeData[]): VariableDeclarationNode;
   render(): string;
@@ -8016,6 +8736,12 @@ export interface VariableDeclaratorConfig {
   name: NodeData;
   type?: NodeData;
   value?: NodeData;
+}
+
+export interface VariableDeclaratorFromInput {
+  name: FromValue;
+  type?: FromValue;
+  value?: FromValue;
 }
 
 export type VariableDeclaratorNode = NodeData<'variable_declarator'> & {
@@ -8076,6 +8802,11 @@ export interface WhileStatementConfig {
   body: NodeData;
 }
 
+export interface WhileStatementFromInput {
+  condition: FromValue;
+  body: FromValue;
+}
+
 export type WhileStatementNode = NodeData<'while_statement'> & {
   body(value: NodeData): WhileStatementNode;
   render(): string;
@@ -8131,6 +8862,11 @@ export interface WithStatementConfig {
   body: NodeData;
 }
 
+export interface WithStatementFromInput {
+  object: FromValue;
+  body: FromValue;
+}
+
 export type WithStatementNode = NodeData<'with_statement'> & {
   body(value: NodeData): WithStatementNode;
   render(): string;
@@ -8183,6 +8919,10 @@ withStatement.assign = function(target: AssignableNode<'with_statement'>): WithS
 
 export interface YieldExpressionConfig {
   children?: NodeData[];
+}
+
+export interface YieldExpressionFromInput {
+  children?: FromValue | FromValue[];
 }
 
 export type YieldExpressionNode = NodeData<'yield_expression'> & {
@@ -9652,582 +10392,872 @@ function getFromContext(): FromContext {
   return _fromCtx;
 }
 
-abstractClassDeclaration.from = function(input: any): AbstractClassDeclarationNode {
-  return resolveFromInput('abstract_class_declaration', input, getFromContext()) as any;
-} as any;
-
-abstractMethodSignature.from = function(input: any): AbstractMethodSignatureNode {
-  return resolveFromInput('abstract_method_signature', input, getFromContext()) as any;
-} as any;
-
-addingTypeAnnotation.from = function(input: any): AddingTypeAnnotationNode {
-  return resolveFromInput('adding_type_annotation', input, getFromContext()) as any;
-} as any;
-
-ambientDeclaration.from = function(input: any): AmbientDeclarationNode {
-  return resolveFromInput('ambient_declaration', input, getFromContext()) as any;
-} as any;
-
-arguments_.from = function(input: any): ArgumentsNode {
-  return resolveFromInput('arguments', input, getFromContext()) as any;
-} as any;
-
-array.from = function(input: any): ArrayNode {
-  return resolveFromInput('array', input, getFromContext()) as any;
-} as any;
-
-arrayPattern.from = function(input: any): ArrayPatternNode {
-  return resolveFromInput('array_pattern', input, getFromContext()) as any;
-} as any;
-
-arrayType.from = function(input: any): ArrayTypeNode {
-  return resolveFromInput('array_type', input, getFromContext()) as any;
-} as any;
-
-arrowFunction.from = function(input: any): ArrowFunctionNode {
-  return resolveFromInput('arrow_function', input, getFromContext()) as any;
-} as any;
-
-asExpression.from = function(input: any): AsExpressionNode {
-  return resolveFromInput('as_expression', input, getFromContext()) as any;
-} as any;
-
-asserts.from = function(input: any): AssertsNode {
-  return resolveFromInput('asserts', input, getFromContext()) as any;
-} as any;
-
-assertsAnnotation.from = function(input: any): AssertsAnnotationNode {
-  return resolveFromInput('asserts_annotation', input, getFromContext()) as any;
-} as any;
-
-assignmentExpression.from = function(input: any): AssignmentExpressionNode {
-  return resolveFromInput('assignment_expression', input, getFromContext()) as any;
-} as any;
-
-assignmentPattern.from = function(input: any): AssignmentPatternNode {
-  return resolveFromInput('assignment_pattern', input, getFromContext()) as any;
-} as any;
-
-augmentedAssignmentExpression.from = function(input: any): AugmentedAssignmentExpressionNode {
-  return resolveFromInput('augmented_assignment_expression', input, getFromContext()) as any;
-} as any;
-
-awaitExpression.from = function(input: any): AwaitExpressionNode {
-  return resolveFromInput('await_expression', input, getFromContext()) as any;
-} as any;
-
-binaryExpression.from = function(input: any): BinaryExpressionNode {
-  return resolveFromInput('binary_expression', input, getFromContext()) as any;
-} as any;
-
-breakStatement.from = function(input: any): BreakStatementNode {
-  return resolveFromInput('break_statement', input, getFromContext()) as any;
-} as any;
-
-callExpression.from = function(input: any): CallExpressionNode {
-  return resolveFromInput('call_expression', input, getFromContext()) as any;
-} as any;
-
-callSignature.from = function(input: any): CallSignatureNode {
-  return resolveFromInput('call_signature', input, getFromContext()) as any;
-} as any;
-
-catchClause.from = function(input: any): CatchClauseNode {
-  return resolveFromInput('catch_clause', input, getFromContext()) as any;
-} as any;
-
-class_.from = function(input: any): ClassNode {
-  return resolveFromInput('class', input, getFromContext()) as any;
-} as any;
-
-classBody.from = function(input: any): ClassBodyNode {
-  return resolveFromInput('class_body', input, getFromContext()) as any;
-} as any;
-
-classDeclaration.from = function(input: any): ClassDeclarationNode {
-  return resolveFromInput('class_declaration', input, getFromContext()) as any;
-} as any;
-
-classHeritage.from = function(input: any): ClassHeritageNode {
-  return resolveFromInput('class_heritage', input, getFromContext()) as any;
-} as any;
-
-classStaticBlock.from = function(input: any): ClassStaticBlockNode {
-  return resolveFromInput('class_static_block', input, getFromContext()) as any;
-} as any;
-
-computedPropertyName.from = function(input: any): ComputedPropertyNameNode {
-  return resolveFromInput('computed_property_name', input, getFromContext()) as any;
-} as any;
-
-conditionalType.from = function(input: any): ConditionalTypeNode {
-  return resolveFromInput('conditional_type', input, getFromContext()) as any;
-} as any;
-
-constraint.from = function(input: any): ConstraintNode {
-  return resolveFromInput('constraint', input, getFromContext()) as any;
-} as any;
-
-constructSignature.from = function(input: any): ConstructSignatureNode {
-  return resolveFromInput('construct_signature', input, getFromContext()) as any;
-} as any;
-
-constructorType.from = function(input: any): ConstructorTypeNode {
-  return resolveFromInput('constructor_type', input, getFromContext()) as any;
-} as any;
-
-continueStatement.from = function(input: any): ContinueStatementNode {
-  return resolveFromInput('continue_statement', input, getFromContext()) as any;
-} as any;
-
-decorator.from = function(input: any): DecoratorNode {
-  return resolveFromInput('decorator', input, getFromContext()) as any;
-} as any;
-
-defaultType.from = function(input: any): DefaultTypeNode {
-  return resolveFromInput('default_type', input, getFromContext()) as any;
-} as any;
-
-doStatement.from = function(input: any): DoStatementNode {
-  return resolveFromInput('do_statement', input, getFromContext()) as any;
-} as any;
-
-elseClause.from = function(input: any): ElseClauseNode {
-  return resolveFromInput('else_clause', input, getFromContext()) as any;
-} as any;
-
-enumAssignment.from = function(input: any): EnumAssignmentNode {
-  return resolveFromInput('enum_assignment', input, getFromContext()) as any;
-} as any;
-
-enumBody.from = function(input: any): EnumBodyNode {
-  return resolveFromInput('enum_body', input, getFromContext()) as any;
-} as any;
-
-enumDeclaration.from = function(input: any): EnumDeclarationNode {
-  return resolveFromInput('enum_declaration', input, getFromContext()) as any;
-} as any;
-
-exportClause.from = function(input: any): ExportClauseNode {
-  return resolveFromInput('export_clause', input, getFromContext()) as any;
-} as any;
-
-exportSpecifier.from = function(input: any): ExportSpecifierNode {
-  return resolveFromInput('export_specifier', input, getFromContext()) as any;
-} as any;
-
-exportStatement.from = function(input: any): ExportStatementNode {
-  return resolveFromInput('export_statement', input, getFromContext()) as any;
-} as any;
-
-expressionStatement.from = function(input: any): ExpressionStatementNode {
-  return resolveFromInput('expression_statement', input, getFromContext()) as any;
-} as any;
-
-extendsClause.from = function(input: any): ExtendsClauseNode {
-  return resolveFromInput('extends_clause', input, getFromContext()) as any;
-} as any;
-
-extendsTypeClause.from = function(input: any): ExtendsTypeClauseNode {
-  return resolveFromInput('extends_type_clause', input, getFromContext()) as any;
-} as any;
-
-finallyClause.from = function(input: any): FinallyClauseNode {
-  return resolveFromInput('finally_clause', input, getFromContext()) as any;
-} as any;
-
-flowMaybeType.from = function(input: any): FlowMaybeTypeNode {
-  return resolveFromInput('flow_maybe_type', input, getFromContext()) as any;
-} as any;
-
-forInStatement.from = function(input: any): ForInStatementNode {
-  return resolveFromInput('for_in_statement', input, getFromContext()) as any;
-} as any;
-
-forStatement.from = function(input: any): ForStatementNode {
-  return resolveFromInput('for_statement', input, getFromContext()) as any;
-} as any;
-
-formalParameters.from = function(input: any): FormalParametersNode {
-  return resolveFromInput('formal_parameters', input, getFromContext()) as any;
-} as any;
-
-functionDeclaration.from = function(input: any): FunctionDeclarationNode {
-  return resolveFromInput('function_declaration', input, getFromContext()) as any;
-} as any;
-
-functionExpression.from = function(input: any): FunctionExpressionNode {
-  return resolveFromInput('function_expression', input, getFromContext()) as any;
-} as any;
-
-functionSignature.from = function(input: any): FunctionSignatureNode {
-  return resolveFromInput('function_signature', input, getFromContext()) as any;
-} as any;
-
-functionType.from = function(input: any): FunctionTypeNode {
-  return resolveFromInput('function_type', input, getFromContext()) as any;
-} as any;
-
-generatorFunction.from = function(input: any): GeneratorFunctionNode {
-  return resolveFromInput('generator_function', input, getFromContext()) as any;
-} as any;
-
-generatorFunctionDeclaration.from = function(input: any): GeneratorFunctionDeclarationNode {
-  return resolveFromInput('generator_function_declaration', input, getFromContext()) as any;
-} as any;
-
-genericType.from = function(input: any): GenericTypeNode {
-  return resolveFromInput('generic_type', input, getFromContext()) as any;
-} as any;
-
-ifStatement.from = function(input: any): IfStatementNode {
-  return resolveFromInput('if_statement', input, getFromContext()) as any;
-} as any;
-
-implementsClause.from = function(input: any): ImplementsClauseNode {
-  return resolveFromInput('implements_clause', input, getFromContext()) as any;
-} as any;
-
-importAlias.from = function(input: any): ImportAliasNode {
-  return resolveFromInput('import_alias', input, getFromContext()) as any;
-} as any;
-
-importAttribute.from = function(input: any): ImportAttributeNode {
-  return resolveFromInput('import_attribute', input, getFromContext()) as any;
-} as any;
-
-importClause.from = function(input: any): ImportClauseNode {
-  return resolveFromInput('import_clause', input, getFromContext()) as any;
-} as any;
-
-importRequireClause.from = function(input: any): ImportRequireClauseNode {
-  return resolveFromInput('import_require_clause', input, getFromContext()) as any;
-} as any;
-
-importSpecifier.from = function(input: any): ImportSpecifierNode {
-  return resolveFromInput('import_specifier', input, getFromContext()) as any;
-} as any;
-
-importStatement.from = function(input: any): ImportStatementNode {
-  return resolveFromInput('import_statement', input, getFromContext()) as any;
-} as any;
-
-indexSignature.from = function(input: any): IndexSignatureNode {
-  return resolveFromInput('index_signature', input, getFromContext()) as any;
-} as any;
-
-indexTypeQuery.from = function(input: any): IndexTypeQueryNode {
-  return resolveFromInput('index_type_query', input, getFromContext()) as any;
-} as any;
-
-inferType.from = function(input: any): InferTypeNode {
-  return resolveFromInput('infer_type', input, getFromContext()) as any;
-} as any;
-
-instantiationExpression.from = function(input: any): InstantiationExpressionNode {
-  return resolveFromInput('instantiation_expression', input, getFromContext()) as any;
-} as any;
-
-interfaceBody.from = function(input: any): InterfaceBodyNode {
-  return resolveFromInput('interface_body', input, getFromContext()) as any;
-} as any;
-
-interfaceDeclaration.from = function(input: any): InterfaceDeclarationNode {
-  return resolveFromInput('interface_declaration', input, getFromContext()) as any;
-} as any;
-
-internalModule.from = function(input: any): InternalModuleNode {
-  return resolveFromInput('internal_module', input, getFromContext()) as any;
-} as any;
-
-intersectionType.from = function(input: any): IntersectionTypeNode {
-  return resolveFromInput('intersection_type', input, getFromContext()) as any;
-} as any;
-
-labeledStatement.from = function(input: any): LabeledStatementNode {
-  return resolveFromInput('labeled_statement', input, getFromContext()) as any;
-} as any;
-
-lexicalDeclaration.from = function(input: any): LexicalDeclarationNode {
-  return resolveFromInput('lexical_declaration', input, getFromContext()) as any;
-} as any;
-
-literalType.from = function(input: any): LiteralTypeNode {
-  return resolveFromInput('literal_type', input, getFromContext()) as any;
-} as any;
-
-lookupType.from = function(input: any): LookupTypeNode {
-  return resolveFromInput('lookup_type', input, getFromContext()) as any;
-} as any;
-
-mappedTypeClause.from = function(input: any): MappedTypeClauseNode {
-  return resolveFromInput('mapped_type_clause', input, getFromContext()) as any;
-} as any;
-
-memberExpression.from = function(input: any): MemberExpressionNode {
-  return resolveFromInput('member_expression', input, getFromContext()) as any;
-} as any;
-
-methodDefinition.from = function(input: any): MethodDefinitionNode {
-  return resolveFromInput('method_definition', input, getFromContext()) as any;
-} as any;
-
-methodSignature.from = function(input: any): MethodSignatureNode {
-  return resolveFromInput('method_signature', input, getFromContext()) as any;
-} as any;
-
-module.from = function(input: any): ModuleNode {
-  return resolveFromInput('module', input, getFromContext()) as any;
-} as any;
-
-namedImports.from = function(input: any): NamedImportsNode {
-  return resolveFromInput('named_imports', input, getFromContext()) as any;
-} as any;
-
-namespaceExport.from = function(input: any): NamespaceExportNode {
-  return resolveFromInput('namespace_export', input, getFromContext()) as any;
-} as any;
-
-namespaceImport.from = function(input: any): NamespaceImportNode {
-  return resolveFromInput('namespace_import', input, getFromContext()) as any;
-} as any;
-
-nestedIdentifier.from = function(input: any): NestedIdentifierNode {
-  return resolveFromInput('nested_identifier', input, getFromContext()) as any;
-} as any;
-
-nestedTypeIdentifier.from = function(input: any): NestedTypeIdentifierNode {
-  return resolveFromInput('nested_type_identifier', input, getFromContext()) as any;
-} as any;
-
-newExpression.from = function(input: any): NewExpressionNode {
-  return resolveFromInput('new_expression', input, getFromContext()) as any;
-} as any;
-
-nonNullExpression.from = function(input: any): NonNullExpressionNode {
-  return resolveFromInput('non_null_expression', input, getFromContext()) as any;
-} as any;
-
-object.from = function(input: any): ObjectNode {
-  return resolveFromInput('object', input, getFromContext()) as any;
-} as any;
-
-objectAssignmentPattern.from = function(input: any): ObjectAssignmentPatternNode {
-  return resolveFromInput('object_assignment_pattern', input, getFromContext()) as any;
-} as any;
-
-objectPattern.from = function(input: any): ObjectPatternNode {
-  return resolveFromInput('object_pattern', input, getFromContext()) as any;
-} as any;
-
-objectType.from = function(input: any): ObjectTypeNode {
-  return resolveFromInput('object_type', input, getFromContext()) as any;
-} as any;
-
-omittingTypeAnnotation.from = function(input: any): OmittingTypeAnnotationNode {
-  return resolveFromInput('omitting_type_annotation', input, getFromContext()) as any;
-} as any;
-
-optingTypeAnnotation.from = function(input: any): OptingTypeAnnotationNode {
-  return resolveFromInput('opting_type_annotation', input, getFromContext()) as any;
-} as any;
-
-optionalParameter.from = function(input: any): OptionalParameterNode {
-  return resolveFromInput('optional_parameter', input, getFromContext()) as any;
-} as any;
-
-optionalType.from = function(input: any): OptionalTypeNode {
-  return resolveFromInput('optional_type', input, getFromContext()) as any;
-} as any;
-
-pair.from = function(input: any): PairNode {
-  return resolveFromInput('pair', input, getFromContext()) as any;
-} as any;
-
-pairPattern.from = function(input: any): PairPatternNode {
-  return resolveFromInput('pair_pattern', input, getFromContext()) as any;
-} as any;
-
-parenthesizedExpression.from = function(input: any): ParenthesizedExpressionNode {
-  return resolveFromInput('parenthesized_expression', input, getFromContext()) as any;
-} as any;
-
-parenthesizedType.from = function(input: any): ParenthesizedTypeNode {
-  return resolveFromInput('parenthesized_type', input, getFromContext()) as any;
-} as any;
-
-program.from = function(input: any): ProgramNode {
-  return resolveFromInput('program', input, getFromContext()) as any;
-} as any;
-
-propertySignature.from = function(input: any): PropertySignatureNode {
-  return resolveFromInput('property_signature', input, getFromContext()) as any;
-} as any;
-
-publicFieldDefinition.from = function(input: any): PublicFieldDefinitionNode {
-  return resolveFromInput('public_field_definition', input, getFromContext()) as any;
-} as any;
-
-readonlyType.from = function(input: any): ReadonlyTypeNode {
-  return resolveFromInput('readonly_type', input, getFromContext()) as any;
-} as any;
-
-regex.from = function(input: any): RegexNode {
-  return resolveFromInput('regex', input, getFromContext()) as any;
-} as any;
-
-requiredParameter.from = function(input: any): RequiredParameterNode {
-  return resolveFromInput('required_parameter', input, getFromContext()) as any;
-} as any;
-
-restPattern.from = function(input: any): RestPatternNode {
-  return resolveFromInput('rest_pattern', input, getFromContext()) as any;
-} as any;
-
-restType.from = function(input: any): RestTypeNode {
-  return resolveFromInput('rest_type', input, getFromContext()) as any;
-} as any;
-
-returnStatement.from = function(input: any): ReturnStatementNode {
-  return resolveFromInput('return_statement', input, getFromContext()) as any;
-} as any;
-
-satisfiesExpression.from = function(input: any): SatisfiesExpressionNode {
-  return resolveFromInput('satisfies_expression', input, getFromContext()) as any;
-} as any;
-
-sequenceExpression.from = function(input: any): SequenceExpressionNode {
-  return resolveFromInput('sequence_expression', input, getFromContext()) as any;
-} as any;
-
-spreadElement.from = function(input: any): SpreadElementNode {
-  return resolveFromInput('spread_element', input, getFromContext()) as any;
-} as any;
-
-statementBlock.from = function(input: any): StatementBlockNode {
-  return resolveFromInput('statement_block', input, getFromContext()) as any;
-} as any;
-
-string.from = function(input: any): StringNode {
-  return resolveFromInput('string', input, getFromContext()) as any;
-} as any;
-
-subscriptExpression.from = function(input: any): SubscriptExpressionNode {
-  return resolveFromInput('subscript_expression', input, getFromContext()) as any;
-} as any;
-
-switchBody.from = function(input: any): SwitchBodyNode {
-  return resolveFromInput('switch_body', input, getFromContext()) as any;
-} as any;
-
-switchCase.from = function(input: any): SwitchCaseNode {
-  return resolveFromInput('switch_case', input, getFromContext()) as any;
-} as any;
-
-switchDefault.from = function(input: any): SwitchDefaultNode {
-  return resolveFromInput('switch_default', input, getFromContext()) as any;
-} as any;
-
-switchStatement.from = function(input: any): SwitchStatementNode {
-  return resolveFromInput('switch_statement', input, getFromContext()) as any;
-} as any;
-
-templateLiteralType.from = function(input: any): TemplateLiteralTypeNode {
-  return resolveFromInput('template_literal_type', input, getFromContext()) as any;
-} as any;
-
-templateString.from = function(input: any): TemplateStringNode {
-  return resolveFromInput('template_string', input, getFromContext()) as any;
-} as any;
-
-templateSubstitution.from = function(input: any): TemplateSubstitutionNode {
-  return resolveFromInput('template_substitution', input, getFromContext()) as any;
-} as any;
-
-templateType.from = function(input: any): TemplateTypeNode {
-  return resolveFromInput('template_type', input, getFromContext()) as any;
-} as any;
-
-ternaryExpression.from = function(input: any): TernaryExpressionNode {
-  return resolveFromInput('ternary_expression', input, getFromContext()) as any;
-} as any;
-
-throwStatement.from = function(input: any): ThrowStatementNode {
-  return resolveFromInput('throw_statement', input, getFromContext()) as any;
-} as any;
-
-tryStatement.from = function(input: any): TryStatementNode {
-  return resolveFromInput('try_statement', input, getFromContext()) as any;
-} as any;
-
-tupleType.from = function(input: any): TupleTypeNode {
-  return resolveFromInput('tuple_type', input, getFromContext()) as any;
-} as any;
-
-typeAliasDeclaration.from = function(input: any): TypeAliasDeclarationNode {
-  return resolveFromInput('type_alias_declaration', input, getFromContext()) as any;
-} as any;
-
-typeAnnotation.from = function(input: any): TypeAnnotationNode {
-  return resolveFromInput('type_annotation', input, getFromContext()) as any;
-} as any;
-
-typeArguments.from = function(input: any): TypeArgumentsNode {
-  return resolveFromInput('type_arguments', input, getFromContext()) as any;
-} as any;
-
-typeAssertion.from = function(input: any): TypeAssertionNode {
-  return resolveFromInput('type_assertion', input, getFromContext()) as any;
-} as any;
-
-typeParameter.from = function(input: any): TypeParameterNode {
-  return resolveFromInput('type_parameter', input, getFromContext()) as any;
-} as any;
-
-typeParameters.from = function(input: any): TypeParametersNode {
-  return resolveFromInput('type_parameters', input, getFromContext()) as any;
-} as any;
-
-typePredicate.from = function(input: any): TypePredicateNode {
-  return resolveFromInput('type_predicate', input, getFromContext()) as any;
-} as any;
-
-typePredicateAnnotation.from = function(input: any): TypePredicateAnnotationNode {
-  return resolveFromInput('type_predicate_annotation', input, getFromContext()) as any;
-} as any;
-
-typeQuery.from = function(input: any): TypeQueryNode {
-  return resolveFromInput('type_query', input, getFromContext()) as any;
-} as any;
-
-unaryExpression.from = function(input: any): UnaryExpressionNode {
-  return resolveFromInput('unary_expression', input, getFromContext()) as any;
-} as any;
-
-unionType.from = function(input: any): UnionTypeNode {
-  return resolveFromInput('union_type', input, getFromContext()) as any;
-} as any;
-
-updateExpression.from = function(input: any): UpdateExpressionNode {
-  return resolveFromInput('update_expression', input, getFromContext()) as any;
-} as any;
-
-variableDeclaration.from = function(input: any): VariableDeclarationNode {
-  return resolveFromInput('variable_declaration', input, getFromContext()) as any;
-} as any;
-
-variableDeclarator.from = function(input: any): VariableDeclaratorNode {
-  return resolveFromInput('variable_declarator', input, getFromContext()) as any;
-} as any;
-
-whileStatement.from = function(input: any): WhileStatementNode {
-  return resolveFromInput('while_statement', input, getFromContext()) as any;
-} as any;
-
-withStatement.from = function(input: any): WithStatementNode {
-  return resolveFromInput('with_statement', input, getFromContext()) as any;
-} as any;
-
-yieldExpression.from = function(input: any): YieldExpressionNode {
-  return resolveFromInput('yield_expression', input, getFromContext()) as any;
-} as any;
+export namespace abstractClassDeclaration {
+  export function from(input: AbstractClassDeclarationFromInput): AbstractClassDeclarationNode {
+    return resolveFromInput('abstract_class_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace abstractMethodSignature {
+  export function from(input: AbstractMethodSignatureFromInput): AbstractMethodSignatureNode {
+    return resolveFromInput('abstract_method_signature', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace addingTypeAnnotation {
+  export function from(input: AddingTypeAnnotationFromInput): AddingTypeAnnotationNode {
+    return resolveFromInput('adding_type_annotation', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace ambientDeclaration {
+  export function from(input: AmbientDeclarationFromInput): AmbientDeclarationNode {
+    return resolveFromInput('ambient_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace arguments_ {
+  export function from(input: ArgumentsFromInput): ArgumentsNode {
+    return resolveFromInput('arguments', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace array {
+  export function from(input: ArrayFromInput): ArrayNode {
+    return resolveFromInput('array', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace arrayPattern {
+  export function from(input: ArrayPatternFromInput): ArrayPatternNode {
+    return resolveFromInput('array_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace arrayType {
+  export function from(input: ArrayTypeFromInput): ArrayTypeNode {
+    return resolveFromInput('array_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace arrowFunction {
+  export function from(input: ArrowFunctionFromInput): ArrowFunctionNode {
+    return resolveFromInput('arrow_function', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace asExpression {
+  export function from(input: AsExpressionFromInput): AsExpressionNode {
+    return resolveFromInput('as_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace asserts {
+  export function from(input: AssertsFromInput): AssertsNode {
+    return resolveFromInput('asserts', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace assertsAnnotation {
+  export function from(input: AssertsAnnotationFromInput): AssertsAnnotationNode {
+    return resolveFromInput('asserts_annotation', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace assignmentExpression {
+  export function from(input: AssignmentExpressionFromInput): AssignmentExpressionNode {
+    return resolveFromInput('assignment_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace assignmentPattern {
+  export function from(input: AssignmentPatternFromInput): AssignmentPatternNode {
+    return resolveFromInput('assignment_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace augmentedAssignmentExpression {
+  export function from(input: AugmentedAssignmentExpressionFromInput): AugmentedAssignmentExpressionNode {
+    return resolveFromInput('augmented_assignment_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace awaitExpression {
+  export function from(input: AwaitExpressionFromInput): AwaitExpressionNode {
+    return resolveFromInput('await_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace binaryExpression {
+  export function from(input: BinaryExpressionFromInput): BinaryExpressionNode {
+    return resolveFromInput('binary_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace breakStatement {
+  export function from(input: BreakStatementFromInput): BreakStatementNode {
+    return resolveFromInput('break_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace callExpression {
+  export function from(input: CallExpressionFromInput): CallExpressionNode {
+    return resolveFromInput('call_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace callSignature {
+  export function from(input: CallSignatureFromInput): CallSignatureNode {
+    return resolveFromInput('call_signature', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace catchClause {
+  export function from(input: CatchClauseFromInput): CatchClauseNode {
+    return resolveFromInput('catch_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace class_ {
+  export function from(input: ClassFromInput): ClassNode {
+    return resolveFromInput('class', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace classBody {
+  export function from(input: ClassBodyFromInput): ClassBodyNode {
+    return resolveFromInput('class_body', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace classDeclaration {
+  export function from(input: ClassDeclarationFromInput): ClassDeclarationNode {
+    return resolveFromInput('class_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace classHeritage {
+  export function from(input: ClassHeritageFromInput): ClassHeritageNode {
+    return resolveFromInput('class_heritage', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace classStaticBlock {
+  export function from(input: ClassStaticBlockFromInput): ClassStaticBlockNode {
+    return resolveFromInput('class_static_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace computedPropertyName {
+  export function from(input: ComputedPropertyNameFromInput): ComputedPropertyNameNode {
+    return resolveFromInput('computed_property_name', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace conditionalType {
+  export function from(input: ConditionalTypeFromInput): ConditionalTypeNode {
+    return resolveFromInput('conditional_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace constraint {
+  export function from(input: ConstraintFromInput): ConstraintNode {
+    return resolveFromInput('constraint', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace constructSignature {
+  export function from(input: ConstructSignatureFromInput): ConstructSignatureNode {
+    return resolveFromInput('construct_signature', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace constructorType {
+  export function from(input: ConstructorTypeFromInput): ConstructorTypeNode {
+    return resolveFromInput('constructor_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace continueStatement {
+  export function from(input: ContinueStatementFromInput): ContinueStatementNode {
+    return resolveFromInput('continue_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace decorator {
+  export function from(input: DecoratorFromInput): DecoratorNode {
+    return resolveFromInput('decorator', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace defaultType {
+  export function from(input: DefaultTypeFromInput): DefaultTypeNode {
+    return resolveFromInput('default_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace doStatement {
+  export function from(input: DoStatementFromInput): DoStatementNode {
+    return resolveFromInput('do_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace elseClause {
+  export function from(input: ElseClauseFromInput): ElseClauseNode {
+    return resolveFromInput('else_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace enumAssignment {
+  export function from(input: EnumAssignmentFromInput): EnumAssignmentNode {
+    return resolveFromInput('enum_assignment', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace enumBody {
+  export function from(input: EnumBodyFromInput): EnumBodyNode {
+    return resolveFromInput('enum_body', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace enumDeclaration {
+  export function from(input: EnumDeclarationFromInput): EnumDeclarationNode {
+    return resolveFromInput('enum_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace exportClause {
+  export function from(input: ExportClauseFromInput): ExportClauseNode {
+    return resolveFromInput('export_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace exportSpecifier {
+  export function from(input: ExportSpecifierFromInput): ExportSpecifierNode {
+    return resolveFromInput('export_specifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace exportStatement {
+  export function from(input: ExportStatementFromInput): ExportStatementNode {
+    return resolveFromInput('export_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace expressionStatement {
+  export function from(input: ExpressionStatementFromInput): ExpressionStatementNode {
+    return resolveFromInput('expression_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace extendsClause {
+  export function from(input: ExtendsClauseFromInput): ExtendsClauseNode {
+    return resolveFromInput('extends_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace extendsTypeClause {
+  export function from(input: ExtendsTypeClauseFromInput): ExtendsTypeClauseNode {
+    return resolveFromInput('extends_type_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace finallyClause {
+  export function from(input: FinallyClauseFromInput): FinallyClauseNode {
+    return resolveFromInput('finally_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace flowMaybeType {
+  export function from(input: FlowMaybeTypeFromInput): FlowMaybeTypeNode {
+    return resolveFromInput('flow_maybe_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace forInStatement {
+  export function from(input: ForInStatementFromInput): ForInStatementNode {
+    return resolveFromInput('for_in_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace forStatement {
+  export function from(input: ForStatementFromInput): ForStatementNode {
+    return resolveFromInput('for_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace formalParameters {
+  export function from(input: FormalParametersFromInput): FormalParametersNode {
+    return resolveFromInput('formal_parameters', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionDeclaration {
+  export function from(input: FunctionDeclarationFromInput): FunctionDeclarationNode {
+    return resolveFromInput('function_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionExpression {
+  export function from(input: FunctionExpressionFromInput): FunctionExpressionNode {
+    return resolveFromInput('function_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionSignature {
+  export function from(input: FunctionSignatureFromInput): FunctionSignatureNode {
+    return resolveFromInput('function_signature', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace functionType {
+  export function from(input: FunctionTypeFromInput): FunctionTypeNode {
+    return resolveFromInput('function_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace generatorFunction {
+  export function from(input: GeneratorFunctionFromInput): GeneratorFunctionNode {
+    return resolveFromInput('generator_function', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace generatorFunctionDeclaration {
+  export function from(input: GeneratorFunctionDeclarationFromInput): GeneratorFunctionDeclarationNode {
+    return resolveFromInput('generator_function_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace genericType {
+  export function from(input: GenericTypeFromInput): GenericTypeNode {
+    return resolveFromInput('generic_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace ifStatement {
+  export function from(input: IfStatementFromInput): IfStatementNode {
+    return resolveFromInput('if_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace implementsClause {
+  export function from(input: ImplementsClauseFromInput): ImplementsClauseNode {
+    return resolveFromInput('implements_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace importAlias {
+  export function from(input: ImportAliasFromInput): ImportAliasNode {
+    return resolveFromInput('import_alias', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace importAttribute {
+  export function from(input: ImportAttributeFromInput): ImportAttributeNode {
+    return resolveFromInput('import_attribute', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace importClause {
+  export function from(input: ImportClauseFromInput): ImportClauseNode {
+    return resolveFromInput('import_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace importRequireClause {
+  export function from(input: ImportRequireClauseFromInput): ImportRequireClauseNode {
+    return resolveFromInput('import_require_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace importSpecifier {
+  export function from(input: ImportSpecifierFromInput): ImportSpecifierNode {
+    return resolveFromInput('import_specifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace importStatement {
+  export function from(input: ImportStatementFromInput): ImportStatementNode {
+    return resolveFromInput('import_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace indexSignature {
+  export function from(input: IndexSignatureFromInput): IndexSignatureNode {
+    return resolveFromInput('index_signature', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace indexTypeQuery {
+  export function from(input: IndexTypeQueryFromInput): IndexTypeQueryNode {
+    return resolveFromInput('index_type_query', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace inferType {
+  export function from(input: InferTypeFromInput): InferTypeNode {
+    return resolveFromInput('infer_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace instantiationExpression {
+  export function from(input: InstantiationExpressionFromInput): InstantiationExpressionNode {
+    return resolveFromInput('instantiation_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace interfaceBody {
+  export function from(input: InterfaceBodyFromInput): InterfaceBodyNode {
+    return resolveFromInput('interface_body', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace interfaceDeclaration {
+  export function from(input: InterfaceDeclarationFromInput): InterfaceDeclarationNode {
+    return resolveFromInput('interface_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace internalModule {
+  export function from(input: InternalModuleFromInput): InternalModuleNode {
+    return resolveFromInput('internal_module', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace intersectionType {
+  export function from(input: IntersectionTypeFromInput): IntersectionTypeNode {
+    return resolveFromInput('intersection_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace labeledStatement {
+  export function from(input: LabeledStatementFromInput): LabeledStatementNode {
+    return resolveFromInput('labeled_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace lexicalDeclaration {
+  export function from(input: LexicalDeclarationFromInput): LexicalDeclarationNode {
+    return resolveFromInput('lexical_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace literalType {
+  export function from(input: LiteralTypeFromInput): LiteralTypeNode {
+    return resolveFromInput('literal_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace lookupType {
+  export function from(input: LookupTypeFromInput): LookupTypeNode {
+    return resolveFromInput('lookup_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace mappedTypeClause {
+  export function from(input: MappedTypeClauseFromInput): MappedTypeClauseNode {
+    return resolveFromInput('mapped_type_clause', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace memberExpression {
+  export function from(input: MemberExpressionFromInput): MemberExpressionNode {
+    return resolveFromInput('member_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace methodDefinition {
+  export function from(input: MethodDefinitionFromInput): MethodDefinitionNode {
+    return resolveFromInput('method_definition', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace methodSignature {
+  export function from(input: MethodSignatureFromInput): MethodSignatureNode {
+    return resolveFromInput('method_signature', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace module {
+  export function from(input: ModuleFromInput): ModuleNode {
+    return resolveFromInput('module', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace namedImports {
+  export function from(input: NamedImportsFromInput): NamedImportsNode {
+    return resolveFromInput('named_imports', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace namespaceExport {
+  export function from(input: NamespaceExportFromInput): NamespaceExportNode {
+    return resolveFromInput('namespace_export', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace namespaceImport {
+  export function from(input: NamespaceImportFromInput): NamespaceImportNode {
+    return resolveFromInput('namespace_import', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace nestedIdentifier {
+  export function from(input: NestedIdentifierFromInput): NestedIdentifierNode {
+    return resolveFromInput('nested_identifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace nestedTypeIdentifier {
+  export function from(input: NestedTypeIdentifierFromInput): NestedTypeIdentifierNode {
+    return resolveFromInput('nested_type_identifier', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace newExpression {
+  export function from(input: NewExpressionFromInput): NewExpressionNode {
+    return resolveFromInput('new_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace nonNullExpression {
+  export function from(input: NonNullExpressionFromInput): NonNullExpressionNode {
+    return resolveFromInput('non_null_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace object {
+  export function from(input: ObjectFromInput): ObjectNode {
+    return resolveFromInput('object', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace objectAssignmentPattern {
+  export function from(input: ObjectAssignmentPatternFromInput): ObjectAssignmentPatternNode {
+    return resolveFromInput('object_assignment_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace objectPattern {
+  export function from(input: ObjectPatternFromInput): ObjectPatternNode {
+    return resolveFromInput('object_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace objectType {
+  export function from(input: ObjectTypeFromInput): ObjectTypeNode {
+    return resolveFromInput('object_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace omittingTypeAnnotation {
+  export function from(input: OmittingTypeAnnotationFromInput): OmittingTypeAnnotationNode {
+    return resolveFromInput('omitting_type_annotation', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace optingTypeAnnotation {
+  export function from(input: OptingTypeAnnotationFromInput): OptingTypeAnnotationNode {
+    return resolveFromInput('opting_type_annotation', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace optionalParameter {
+  export function from(input: OptionalParameterFromInput): OptionalParameterNode {
+    return resolveFromInput('optional_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace optionalType {
+  export function from(input: OptionalTypeFromInput): OptionalTypeNode {
+    return resolveFromInput('optional_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace pair {
+  export function from(input: PairFromInput): PairNode {
+    return resolveFromInput('pair', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace pairPattern {
+  export function from(input: PairPatternFromInput): PairPatternNode {
+    return resolveFromInput('pair_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace parenthesizedExpression {
+  export function from(input: ParenthesizedExpressionFromInput): ParenthesizedExpressionNode {
+    return resolveFromInput('parenthesized_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace parenthesizedType {
+  export function from(input: ParenthesizedTypeFromInput): ParenthesizedTypeNode {
+    return resolveFromInput('parenthesized_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace program {
+  export function from(input: ProgramFromInput): ProgramNode {
+    return resolveFromInput('program', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace propertySignature {
+  export function from(input: PropertySignatureFromInput): PropertySignatureNode {
+    return resolveFromInput('property_signature', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace publicFieldDefinition {
+  export function from(input: PublicFieldDefinitionFromInput): PublicFieldDefinitionNode {
+    return resolveFromInput('public_field_definition', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace readonlyType {
+  export function from(input: ReadonlyTypeFromInput): ReadonlyTypeNode {
+    return resolveFromInput('readonly_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace regex {
+  export function from(input: RegexFromInput): RegexNode {
+    return resolveFromInput('regex', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace requiredParameter {
+  export function from(input: RequiredParameterFromInput): RequiredParameterNode {
+    return resolveFromInput('required_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace restPattern {
+  export function from(input: RestPatternFromInput): RestPatternNode {
+    return resolveFromInput('rest_pattern', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace restType {
+  export function from(input: RestTypeFromInput): RestTypeNode {
+    return resolveFromInput('rest_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace returnStatement {
+  export function from(input: ReturnStatementFromInput): ReturnStatementNode {
+    return resolveFromInput('return_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace satisfiesExpression {
+  export function from(input: SatisfiesExpressionFromInput): SatisfiesExpressionNode {
+    return resolveFromInput('satisfies_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace sequenceExpression {
+  export function from(input: SequenceExpressionFromInput): SequenceExpressionNode {
+    return resolveFromInput('sequence_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace spreadElement {
+  export function from(input: SpreadElementFromInput): SpreadElementNode {
+    return resolveFromInput('spread_element', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace statementBlock {
+  export function from(input: StatementBlockFromInput): StatementBlockNode {
+    return resolveFromInput('statement_block', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace string {
+  export function from(input: StringFromInput): StringNode {
+    return resolveFromInput('string', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace subscriptExpression {
+  export function from(input: SubscriptExpressionFromInput): SubscriptExpressionNode {
+    return resolveFromInput('subscript_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace switchBody {
+  export function from(input: SwitchBodyFromInput): SwitchBodyNode {
+    return resolveFromInput('switch_body', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace switchCase {
+  export function from(input: SwitchCaseFromInput): SwitchCaseNode {
+    return resolveFromInput('switch_case', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace switchDefault {
+  export function from(input: SwitchDefaultFromInput): SwitchDefaultNode {
+    return resolveFromInput('switch_default', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace switchStatement {
+  export function from(input: SwitchStatementFromInput): SwitchStatementNode {
+    return resolveFromInput('switch_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace templateLiteralType {
+  export function from(input: TemplateLiteralTypeFromInput): TemplateLiteralTypeNode {
+    return resolveFromInput('template_literal_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace templateString {
+  export function from(input: TemplateStringFromInput): TemplateStringNode {
+    return resolveFromInput('template_string', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace templateSubstitution {
+  export function from(input: TemplateSubstitutionFromInput): TemplateSubstitutionNode {
+    return resolveFromInput('template_substitution', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace templateType {
+  export function from(input: TemplateTypeFromInput): TemplateTypeNode {
+    return resolveFromInput('template_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace ternaryExpression {
+  export function from(input: TernaryExpressionFromInput): TernaryExpressionNode {
+    return resolveFromInput('ternary_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace throwStatement {
+  export function from(input: ThrowStatementFromInput): ThrowStatementNode {
+    return resolveFromInput('throw_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tryStatement {
+  export function from(input: TryStatementFromInput): TryStatementNode {
+    return resolveFromInput('try_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace tupleType {
+  export function from(input: TupleTypeFromInput): TupleTypeNode {
+    return resolveFromInput('tuple_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeAliasDeclaration {
+  export function from(input: TypeAliasDeclarationFromInput): TypeAliasDeclarationNode {
+    return resolveFromInput('type_alias_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeAnnotation {
+  export function from(input: TypeAnnotationFromInput): TypeAnnotationNode {
+    return resolveFromInput('type_annotation', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeArguments {
+  export function from(input: TypeArgumentsFromInput): TypeArgumentsNode {
+    return resolveFromInput('type_arguments', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeAssertion {
+  export function from(input: TypeAssertionFromInput): TypeAssertionNode {
+    return resolveFromInput('type_assertion', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeParameter {
+  export function from(input: TypeParameterFromInput): TypeParameterNode {
+    return resolveFromInput('type_parameter', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeParameters {
+  export function from(input: TypeParametersFromInput): TypeParametersNode {
+    return resolveFromInput('type_parameters', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typePredicate {
+  export function from(input: TypePredicateFromInput): TypePredicateNode {
+    return resolveFromInput('type_predicate', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typePredicateAnnotation {
+  export function from(input: TypePredicateAnnotationFromInput): TypePredicateAnnotationNode {
+    return resolveFromInput('type_predicate_annotation', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace typeQuery {
+  export function from(input: TypeQueryFromInput): TypeQueryNode {
+    return resolveFromInput('type_query', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace unaryExpression {
+  export function from(input: UnaryExpressionFromInput): UnaryExpressionNode {
+    return resolveFromInput('unary_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace unionType {
+  export function from(input: UnionTypeFromInput): UnionTypeNode {
+    return resolveFromInput('union_type', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace updateExpression {
+  export function from(input: UpdateExpressionFromInput): UpdateExpressionNode {
+    return resolveFromInput('update_expression', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace variableDeclaration {
+  export function from(input: VariableDeclarationFromInput): VariableDeclarationNode {
+    return resolveFromInput('variable_declaration', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace variableDeclarator {
+  export function from(input: VariableDeclaratorFromInput): VariableDeclaratorNode {
+    return resolveFromInput('variable_declarator', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace whileStatement {
+  export function from(input: WhileStatementFromInput): WhileStatementNode {
+    return resolveFromInput('while_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace withStatement {
+  export function from(input: WithStatementFromInput): WithStatementNode {
+    return resolveFromInput('with_statement', input as any, getFromContext()) as any;
+  }
+}
+
+export namespace yieldExpression {
+  export function from(input: YieldExpressionFromInput): YieldExpressionNode {
+    return resolveFromInput('yield_expression', input as any, getFromContext()) as any;
+  }
+}

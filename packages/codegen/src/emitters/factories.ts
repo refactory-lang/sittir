@@ -76,6 +76,19 @@ export function emitFactory(config: {
 	lines.push(`}`);
 	lines.push('');
 
+	// FromInput interface for .from() — typed input resolution
+	lines.push(`export interface ${typeName}FromInput {`);
+	for (const f of node.fields) {
+		const fieldType = fromInputFieldType(f, leafSet);
+		const opt = !f.required ? '?' : '';
+		lines.push(`  ${f.name}${opt}: ${fieldType};`);
+	}
+	if (node.hasChildren) {
+		lines.push(`  children?: FromValue | FromValue[];`);
+	}
+	lines.push(`}`);
+	lines.push('');
+
 	// Return type: NodeData<K> + fluent setters (camelCase methods) + render methods
 	lines.push(`export type ${typeName}Node = NodeData<'${node.kind}'> & {`);
 	for (const f of node.fields) {
@@ -308,6 +321,14 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	lines.push("import { joinBy } from './joinby.js';");
 	lines.push('');
 
+	// Grammar-specific FromValue/FromObject types — constrains kind to valid values
+	const allKinds = [...branchKinds, ...leafKinds];
+	lines.push('// .from() input types — kind constrained to valid grammar kinds');
+	lines.push(`type FromKind = ${allKinds.map(k => `'${k}'`).join(' | ')};`);
+	lines.push('interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }');
+	lines.push('type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;');
+	lines.push('');
+
 	// Helper functions
 	lines.push('function isNodeData(v: any): v is NodeData {');
 	lines.push("  return v !== null && typeof v === 'object' && 'type' in v && 'fields' in v;");
@@ -501,13 +522,15 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	// .from() static method on each branch factory
+	// .from() via namespace merge — properly typed input
 	for (const node of nodes) {
 		const factoryName = toFactoryName(node.kind);
 		const typeName = toTypeName(node.kind);
-		lines.push(`${factoryName}.from = function(input: any): ${typeName}Node {`);
-		lines.push(`  return resolveFromInput('${node.kind}', input, getFromContext()) as any;`);
-		lines.push('} as any;');
+		lines.push(`export namespace ${factoryName} {`);
+		lines.push(`  export function from(input: ${typeName}FromInput): ${typeName}Node {`);
+		lines.push(`    return resolveFromInput('${node.kind}', input as any, getFromContext()) as any;`);
+		lines.push(`  }`);
+		lines.push(`}`);
 		lines.push('');
 	}
 
@@ -517,6 +540,40 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Compute the TypeScript type for a field in a FromInput interface.
+ * Uses field metadata to determine what .from() resolution accepts.
+ */
+function fromInputFieldType(field: FieldMeta, leafSet: Set<string>): string {
+	const leafTypes = field.namedTypes.filter(t => leafSet.has(t));
+	const branchTypes = field.namedTypes.filter(t => !leafSet.has(t));
+	const anonTokens = field.types.filter(t => !field.namedTypes.includes(t) && !t.startsWith('_'));
+
+	// If field accepts branch types, use broad FromValue (handles string, array, nested object)
+	if (branchTypes.length > 0) {
+		if (field.multiple) return 'FromValue[]';
+		return 'FromValue';
+	}
+
+	// Leaf-only (and/or anonymous tokens)
+	const parts: string[] = ['NodeData'];
+
+	if (leafTypes.length > 0) parts.push('string');
+	if (leafTypes.some(t => t === 'integer_literal' || t === 'float_literal')) parts.push('number');
+	if (leafTypes.includes('boolean_literal')) parts.push('boolean');
+
+	if (anonTokens.length > 0 && leafTypes.length === 0) {
+		// Only anonymous tokens (operators) — use literal union
+		for (const t of anonTokens) {
+			parts.push(`'${escapeString(t)}'`);
+		}
+	}
+
+	const union = [...new Set(parts)].join(' | ');
+	if (field.multiple) return `(${union})[]`;
+	return union;
+}
 
 function fieldTypeExpr(field: FieldMeta, leafSet: Set<string>): string {
 	// If all types are leaves, accept string shorthand

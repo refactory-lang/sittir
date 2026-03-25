@@ -4,6 +4,19 @@
 import type { NodeData } from './types.ts';
 
 // ---------------------------------------------------------------------------
+// Public types — .from() input typing
+// ---------------------------------------------------------------------------
+
+/** Base type for any value accepted by .from() resolution. */
+export type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;
+
+/** Plain object with optional kind discriminant for .from() resolution. */
+export interface FromObject {
+	kind?: string;
+	[key: string]: FromValue | undefined;
+}
+
+// ---------------------------------------------------------------------------
 // Public types — implemented by generated packages
 // ---------------------------------------------------------------------------
 
