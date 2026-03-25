@@ -8,48 +8,53 @@ describe('generate() for Rust', () => {
 		outputDir: 'src',
 	});
 
-	it('should generate builder for each node kind', () => {
-		expect(result.builders.size).toBe(4);
-		expect(result.builders.has('struct_item')).toBe(true);
-		expect(result.builders.has('attribute_item')).toBe(true);
+	it('should generate S-expression render templates', () => {
+		expect(result.rules).toContain('(struct_item');
+		expect(result.rules).toContain('(function_item');
+		expect(result.rules).toContain('"fn"');
+		expect(result.rules).toContain('"struct"');
 	});
 
-	it('should generate self-contained builders extending Builder', () => {
-		const structBuilder = result.builders.get('struct_item')!;
-		expect(structBuilder).toContain('extends Builder');
-		expect(structBuilder).toContain('renderImpl(ctx');
-		expect(structBuilder).toContain("parts.push('struct')");
+	it('should generate unified factory functions', () => {
+		expect(result.factories).toContain('export function structItem(');
+		expect(result.factories).toContain('export function functionItem(');
+		expect(result.factories).toContain("type: 'struct_item'");
+		expect(result.factories).toContain('node.render =');
 	});
 
-	it('should generate types with all node kinds', () => {
-		expect(result.types).toContain('StructItem');
-		expect(result.types).toContain('AttributeItem');
+	it('should generate types with const enum SyntaxKind', () => {
+		expect(result.types).toContain('export const enum SyntaxKind');
+		expect(result.types).toContain("StructItem = 'struct_item'");
+		expect(result.types).toContain("FunctionItem = 'function_item'");
 		expect(result.types).toContain('RustIrNode');
 	});
 
-	it('should generate builder namespace with leaf helpers', () => {
-		expect(result.builder).toContain('export const ir');
-		expect(result.builder).toContain('LeafBuilder');
-		expect(result.builder).toContain('identifier');
+	it('should generate navigation types with Node suffix', () => {
+		expect(result.types).toContain('export interface StructItemNode');
+		expect(result.types).toContain('export interface FunctionItemNode');
 	});
 
 	it('should generate grammar type', () => {
 		expect(result.grammar).toContain('RustGrammar');
 	});
 
-	it('should generate index barrel with Builder re-export', () => {
-		expect(result.index).toContain("from './builder.js'");
-		expect(result.index).toContain('Builder');
+	it('should generate index barrel with new exports', () => {
+		expect(result.index).toContain("from './rules.js'");
+		expect(result.index).toContain("from './ir.js'");
+		expect(result.index).toContain("from '@sittir/core'");
 	});
 
-	it('should NOT generate render.ts, validate.ts, etc.', () => {
-		expect(result).not.toHaveProperty('renderer');
-		expect(result).not.toHaveProperty('renderValid');
-		expect(result).not.toHaveProperty('validate');
-		expect(result).not.toHaveProperty('validateFast');
+	it('should generate consts', () => {
+		expect(result.consts).toBeDefined();
 	});
 
-	it('should generate tests for each node kind', () => {
-		expect(result.tests.size).toBe(4);
+	it('should generate joinBy separator map', () => {
+		expect(result.joinBy).toContain('export const joinBy');
+	});
+
+	it('should NOT have old builder properties', () => {
+		expect(result).not.toHaveProperty('builders');
+		expect(result).not.toHaveProperty('builder');
+		expect(result).not.toHaveProperty('leafTests');
 	});
 });

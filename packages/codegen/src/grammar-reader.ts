@@ -19,7 +19,7 @@ export interface ChildrenMeta {
 	namedTypes: string[];
 }
 
-export interface NodeMeta {
+export interface KindMeta {
 	kind: string;
 	fields: FieldMeta[];
 	hasChildren: boolean;
@@ -134,7 +134,7 @@ export function readGrammarRule(grammar: string, nodeKind: string): GrammarRule 
  *   2. ALIAS rule (e.g., Rust's `primitive_type` is defined via ALIAS in other rules)
  * Returns an empty array if the kind isn't an enum-like node.
  */
-export function listEnumValues(grammar: string, nodeKind: string): string[] {
+export function listLeafValues(grammar: string, nodeKind: string): string[] {
 	// Try direct rule first — only use if it's a pure CHOICE of STRINGs
 	const rule = readGrammarRule(grammar, nodeKind);
 	if (rule) {
@@ -617,7 +617,7 @@ function isLeafRule(rule: GrammarRule): boolean {
 /**
  * Extract NodeMeta from a grammar.json rule (no node-types.json dependency).
  */
-function extractNodeMeta(grammar: string, nodeKind: string): NodeMeta | null {
+function extractKindMeta(grammar: string, nodeKind: string): KindMeta | null {
 	const rule = readGrammarRule(grammar, nodeKind);
 	if (!rule) return null;
 
@@ -659,7 +659,7 @@ function extractNodeMeta(grammar: string, nodeKind: string): NodeMeta | null {
 
 	const hasChildren = childAccums.length > 0;
 
-	const result: NodeMeta = { kind: nodeKind, fields, hasChildren };
+	const result: KindMeta = { kind: nodeKind, fields, hasChildren };
 
 	if (hasChildren) {
 		// Merge all child type sets
@@ -745,14 +745,14 @@ function loadGrammar(grammar: string): GrammarMap {
  * Read metadata for a single node kind.
  * Primary source: grammar.json rules. Fallback: node-types.json (for ALIASed/external nodes).
  */
-export function readGrammarNode(grammar: string, nodeKind: string): NodeMeta {
+export function readGrammarKind(grammar: string, nodeKind: string): KindMeta {
 	// node-types.json is the authoritative source for required/multiple flags.
 	// grammar.json provides richer type resolution (supertype expansion).
 	const grammarMap = loadGrammar(grammar);
 	const ntEntry = grammarMap[nodeKind];
 
 	// Try grammar.json for type resolution
-	const grammarMeta = extractNodeMeta(grammar, nodeKind);
+	const grammarMeta = extractKindMeta(grammar, nodeKind);
 
 	if (!grammarMeta && !ntEntry) {
 		throw new Error(
@@ -775,7 +775,7 @@ export function readGrammarNode(grammar: string, nodeKind: string): NodeMeta {
 			}
 		}
 		const hasChildren = ntEntry!.children != null;
-		const result: NodeMeta = { kind: nodeKind, fields, hasChildren };
+		const result: KindMeta = { kind: nodeKind, fields, hasChildren };
 		if (ntEntry!.children) {
 			result.children = {
 				required: ntEntry!.children.required,
@@ -844,10 +844,10 @@ export function readGrammarNode(grammar: string, nodeKind: string): NodeMeta {
 }
 
 /**
- * List all named node kinds that have fields or children.
+ * List all named branch kinds — nodes that have fields or children.
  * Source: node-types.json (the authoritative tree-sitter output for valid AST node kinds).
  */
-export function listNodeKinds(grammar: string): string[] {
+export function listBranchKinds(grammar: string): string[] {
 	const grammarMap = loadGrammar(grammar);
 	const kinds: string[] = [];
 
@@ -868,8 +868,8 @@ export function listNodeKinds(grammar: string): string[] {
 }
 
 /**
- * List all named leaf node kinds — no fields, no children, not abstract.
- * Source: node-types.json. These become LeafBuilder entries in the ir namespace.
+ * List all named leaf kinds — no fields, no children, not abstract.
+ * Source: node-types.json. These become terminal factories in the ir namespace.
  */
 export function listLeafKinds(grammar: string): string[] {
 	const grammarMap = loadGrammar(grammar);
@@ -916,10 +916,10 @@ function extractConstantText(rule: GrammarRule): string | undefined {
 }
 
 /**
- * List named keyword kinds — leaf nodes that always produce the same text.
+ * List keyword kinds — named leaf nodes that always produce the same text.
  * Returns a map from kind → fixed text (e.g., 'self' → 'self', 'mutable_specifier' → 'mut').
  */
-export function listNamedKeywords(grammar: string): Map<string, string> {
+export function listKeywordKinds(grammar: string): Map<string, string> {
 	const leaves = listLeafKinds(grammar);
 	const gj = loadGrammarJson(grammar);
 	const result = new Map<string, string>();
@@ -974,7 +974,7 @@ export function listOperatorContexts(grammar: string): OperatorContext[] {
 /**
  * List all keywords (anonymous tokens that are alphabetic) from the grammar.
  */
-export function listKeywords(grammar: string): string[] {
+export function listKeywordTokens(grammar: string): string[] {
 	const grammarMap = loadGrammar(grammar);
 	const keywords = new Set<string>();
 

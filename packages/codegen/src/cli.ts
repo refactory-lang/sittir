@@ -10,7 +10,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { generate } from './index.ts';
-import { resolveFileNames } from './naming.ts';
 import type { CodegenConfig } from './index.ts';
 
 interface CliArgs {
@@ -19,73 +18,63 @@ interface CliArgs {
 	outputDir?: string;
 	all?: boolean;
 	testsDir?: string;
-	testsImportPath?: string;
+	help?: boolean;
 }
 
-function parseArgs(args: string[]): CliArgs {
-	const config: CliArgs = {};
-
-	for (let i = 0; i < args.length; i++) {
-		const arg = args[i];
-		const next = args[i + 1];
-
+function parseArgs(argv: string[]): CliArgs {
+	const args: CliArgs = {};
+	for (let i = 2; i < argv.length; i++) {
+		const arg = argv[i];
 		switch (arg) {
 			case '--grammar':
-				config.grammar = next;
-				i++;
+			case '-g':
+				args.grammar = argv[++i];
 				break;
 			case '--nodes':
-				config.nodes = next?.split(',') ?? [];
-				i++;
+			case '-n':
+				args.nodes = argv[++i]?.split(',');
 				break;
 			case '--output':
-				config.outputDir = next;
-				i++;
+			case '-o':
+				args.outputDir = argv[++i];
 				break;
 			case '--all':
-				config.all = true;
+			case '-a':
+				args.all = true;
 				break;
 			case '--tests-dir':
-				config.testsDir = next;
-				i++;
-				break;
-			case '--tests-import-path':
-				config.testsImportPath = next;
-				i++;
+				args.testsDir = argv[++i];
 				break;
 			case '--help':
-				console.log(`
-sittir — Generate typed IR builders from tree-sitter grammars
-
-Usage:
-  sittir --grammar <lang> --all --output <dir>
-  sittir --grammar <lang> --nodes <kind1,kind2,...> --output <dir>
-
-Options:
-  --grammar    Grammar language (e.g., rust, typescript, python)
-  --nodes      Comma-separated list of node kinds to generate builders for
-  --all        Auto-discover all node kinds from the grammar
-  --output     Output directory for generated files (e.g., src/)
-  --help       Show this help message
-`);
-				process.exit(0);
+			case '-h':
+				args.help = true;
 				break;
-			default:
-				console.error(`Unknown argument: ${arg}`);
-				process.exit(1);
 		}
 	}
-
-	return config;
+	return args;
 }
 
 function writeFile(path: string, content: string): void {
 	mkdirSync(dirname(path), { recursive: true });
-	writeFileSync(path, content, 'utf-8');
-	console.log(`  wrote ${path}`);
+	writeFileSync(path, content, 'utf8');
 }
 
-const cliArgs = parseArgs(process.argv.slice(2));
+const cliArgs = parseArgs(process.argv);
+
+if (cliArgs.help) {
+	console.log(`
+Usage: sittir --grammar <name> [--all | --nodes <kinds>] --output <dir>
+
+Options:
+  --grammar, -g    Grammar name (rust, typescript, python)
+  --nodes, -n      Comma-separated node kinds to generate
+  --all, -a        Generate for all branch node kinds
+  --output, -o     Output directory for generated files
+  --tests-dir      Output directory for test files (default: ../tests)
+  --help, -h       Show this help
+`);
+	process.exit(0);
+}
 
 if (!cliArgs.grammar || !cliArgs.outputDir) {
 	console.error('Missing required arguments: --grammar and --output. Use --help for usage.');
@@ -101,45 +90,32 @@ const config: CodegenConfig = {
 	grammar: cliArgs.grammar!,
 	nodes: cliArgs.all ? undefined : cliArgs.nodes,
 	outputDir: cliArgs.outputDir!,
-	testSourceImportPath: cliArgs.testsImportPath,
 };
 
 console.log(`Generating ${config.grammar} IR...`);
 const result = generate(config);
 
 const outDir = cliArgs.outputDir;
-const nodesDir = join(outDir, 'nodes');
 
 // Write source files
 writeFile(join(outDir, 'grammar.ts'), result.grammar);
 writeFile(join(outDir, 'types.ts'), result.types);
-writeFile(join(outDir, 'builder.ts'), result.builder);
+writeFile(join(outDir, 'rules.ts'), result.rules);
+writeFile(join(outDir, 'factories.ts'), result.factories);
+writeFile(join(outDir, 'ir.ts'), result.irNamespace);
+writeFile(join(outDir, 'joinby.ts'), result.joinBy);
 writeFile(join(outDir, 'consts.ts'), result.consts);
 writeFile(join(outDir, 'index.ts'), result.index);
 
-// Write node builders
-const nodeKinds = [...result.builders.keys()];
-const fileNames = resolveFileNames(nodeKinds);
-for (const [kind, source] of result.builders) {
-	const fileName = fileNames.get(kind)!;
-	writeFile(join(nodesDir, `${fileName}.ts`), source);
-}
-
-// Write test files
+// Write tests
 const testsDir = cliArgs.testsDir ?? join(dirname(outDir), 'tests');
-for (const [kind, source] of result.tests) {
-	const fileName = fileNames.get(kind)!;
-	writeFile(join(testsDir, `${fileName}.test.ts`), source);
-}
-writeFile(join(testsDir, 'leaf-nodes.test.ts'), result.leafTests);
+writeFile(join(testsDir, 'nodes.test.ts'), result.tests);
 
 // Write vitest config
 writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
 console.log(`
 Done! Generated:
-  ${result.builders.size} node builders (self-contained with render logic)
-  ${result.tests.size} test scaffolds
-  grammar.ts, types.ts, builder.ts, consts.ts, index.ts
+  grammar.ts, types.ts, rules.ts, factories.ts, consts.ts, index.ts
   vitest.config.ts
 `);

@@ -10,8 +10,8 @@
  *   FIELD_MAP      — per-node-kind field metadata
  */
 
-import type { NodeMeta } from '../grammar-reader.ts';
-import { listEnumValues } from '../grammar-reader.ts';
+import type { KindMeta } from '../grammar-reader.ts';
+import { listLeafValues } from '../grammar-reader.ts';
 import { toFieldName } from '../naming.ts';
 
 export interface EnumKind {
@@ -25,7 +25,7 @@ export interface EmitConstsConfig {
   leafKinds: string[];
   keywords: string[];
   operators: string[];
-  nodes: NodeMeta[];
+  nodes: KindMeta[];
   enumKinds?: EnumKind[];
 }
 

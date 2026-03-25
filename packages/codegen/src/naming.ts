@@ -12,7 +12,7 @@ const JS_RESERVED = new Set([
   'void', 'typeof', 'instanceof', 'enum', 'const', 'let', 'var',
   'function', 'extends', 'implements', 'interface', 'package', 'private',
   'protected', 'public', 'static', 'struct', 'use', 'arguments', 'await',
-  'eval', 'abstract',
+  'eval', 'abstract', 'true', 'false', 'null', 'undefined',
 ]);
 
 const SHORT_NAME_ALIASES: Record<string, string> = {};
