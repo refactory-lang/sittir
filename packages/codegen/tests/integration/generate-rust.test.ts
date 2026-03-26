@@ -26,12 +26,12 @@ describe('generate() for Rust', () => {
 		expect(result.types).toContain('export const enum SyntaxKind');
 		expect(result.types).toContain("StructItem = 'struct_item'");
 		expect(result.types).toContain("FunctionItem = 'function_item'");
-		expect(result.types).toContain('RustIrNode');
+		expect(result.types).toContain('RustNode');
 	});
 
-	it('should generate navigation types with Node suffix', () => {
-		expect(result.types).toContain('export interface StructItemNode');
-		expect(result.types).toContain('export interface FunctionItemNode');
+	it('should generate Tree interfaces for navigation', () => {
+		expect(result.types).toContain('export interface StructItemTree');
+		expect(result.types).toContain('export interface FunctionItemTree');
 	});
 
 	it('should generate grammar type', () => {
