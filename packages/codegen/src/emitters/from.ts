@@ -127,7 +127,7 @@ function emitErgonomicSetters(
 			lines.push(`    return ${baseVar};`);
 			lines.push(`  };`);
 		} else {
-			lines.push(`  ${baseVar}.${setterName} = (v: any) => { (${baseVar}.fields as any)['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)}; return ${baseVar}; };`);
+			lines.push(`  ${baseVar}.${setterName} = (v: any) => { (${baseVar}.fields as any)['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)}; return ${baseVar}; };`);
 		}
 	}
 
@@ -233,7 +233,7 @@ function emitFromFunction(
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
 			lines.push(`    resolved['${field.name}'] = arr.map((v: any) => ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
 		} else {
-			lines.push(`    resolved['${field.name}'] = ${emitResolveExpr(`obj['${field.name}']`, field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)};`);
+			lines.push(`    resolved['${field.name}'] = ${emitResolveExpr(`obj['${field.name}']`, field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)};`);
 		}
 		if (field.multiple && field.required) {
 			lines.push(`  } else {`);
