@@ -37,6 +37,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 
 	// Import TreeNode for edit() generic + named *Tree interfaces for assign functions
 	const treeImports = new Set<string>();
+	treeImports.add('NodeData'); // for edit() return type
 	treeImports.add('TreeNode'); // for edit() generic
 	for (const node of nodes) treeImports.add(toTypeName(node.kind) + 'Tree');
 	lines.push(`import type { ${[...treeImports].sort().join(', ')} } from './types.js';`);
@@ -128,8 +129,8 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push(' * Create an in-place editor for a parsed tree node.');
 	lines.push(' * Recursively hydrates via assignByKind, attaches range for .toEdit().');
 	lines.push(' */');
-	lines.push(`export function edit<K extends NodeKind<${grammarAlias}>>(target: TreeNode<K>) {`);
-	lines.push('  return assignByKind(target.type, target);');
+	lines.push(`export function edit<K extends NodeKind<${grammarAlias}>>(target: TreeNode<K>): NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string } {`);
+	lines.push('  return assignByKind(target.type, target) as any;');
 	lines.push('}');
 	lines.push('');
 
