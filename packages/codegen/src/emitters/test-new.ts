@@ -136,11 +136,14 @@ function minimalArgs(node: KindMeta): string {
 
 /** Generate a dummy value for a field based on its types. */
 function dummyValue(field: { name: string; namedTypes: string[]; multiple?: boolean }): string {
-	const hasIdentifier = field.namedTypes.some(t =>
-		t === 'identifier' || t === 'type_identifier' || t === 'field_identifier'
-	);
-
-	if (hasIdentifier) {
+	// Prefer the most specific identifier type that the field accepts
+	if (field.namedTypes.includes('type_identifier')) {
+		return `ir.typeIdentifier('Test${capitalize(field.name)}')`;
+	}
+	if (field.namedTypes.includes('field_identifier')) {
+		return `ir.fieldIdentifier('test_${field.name}')`;
+	}
+	if (field.namedTypes.includes('identifier')) {
 		return `ir.identifier('test_${field.name}')`;
 	}
 
@@ -151,6 +154,10 @@ function dummyValue(field: { name: string; namedTypes: string[]; multiple?: bool
 	// Use first named type as a minimal NodeData
 	const kind = field.namedTypes[0] ?? 'unknown';
 	return `{ kind: '${kind}', fields: {} } as any`;
+}
+
+function capitalize(s: string): string {
+	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 function escapeString(s: string): string {

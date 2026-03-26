@@ -55,7 +55,10 @@ export function emitFactory(config: {
 		lines.push(`  ${f.name}${opt}: ${fieldType};`);
 	}
 	if (node.hasChildren && node.children) {
-		const childTypeUnion = node.children.namedTypes.map(t => toTypeName(t)).join(' | ');
+		const childTypeUnion = node.children.namedTypes
+			.filter(t => t !== '_')
+			.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t))
+			.join(' | ');
 		lines.push(`  children?: (${childTypeUnion})[];`);
 	}
 	lines.push(`}`);
@@ -69,19 +72,23 @@ export function emitFactory(config: {
 		lines.push(`  ${f.name}${opt}: ${fieldType};`);
 	}
 	if (node.hasChildren && node.children) {
-		const childTypes = node.children.namedTypes;
+		const childTypes = node.children.namedTypes.filter(t => t !== '_');
 		const childLeaf = childTypes.filter(t => leafSet.has(t));
 		const childBranch = childTypes.filter(t => !leafSet.has(t));
 		const childParts: string[] = [];
 		if (childTypes.length > 0) {
-			childParts.push(childTypes.map(t => toTypeName(t)).join(' | '));
+			childParts.push(childTypes.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t)).join(' | '));
 		}
 		if (childLeaf.length > 0) childParts.push('string');
-		if (childBranch.length === 1) {
-			childParts.push(`${toTypeName(childBranch[0]!)}FromInput`);
+		const cleanedChildBranch = childBranch.map(t => ({
+			raw: t,
+			typeName: t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t),
+		}));
+		if (cleanedChildBranch.length === 1) {
+			childParts.push(`${cleanedChildBranch[0]!.typeName}FromInput`);
 		} else {
-			for (const bt of childBranch) {
-				childParts.push(`({ kind: '${bt}' } & ${toTypeName(bt)}FromInput)`);
+			for (const bt of cleanedChildBranch) {
+				childParts.push(`({ kind: '${bt.raw}' } & ${bt.typeName}FromInput)`);
 			}
 		}
 		lines.push(`  children?: (${childParts.join(' | ')})[];`);
@@ -297,18 +304,25 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	const allTypeNames = new Set<string>();
 	for (const n of nodes) {
 		allTypeNames.add(toTypeName(n.kind));
-		// Also add types referenced by fields
 		for (const f of n.fields) {
-			for (const t of f.namedTypes) allTypeNames.add(toTypeName(t));
+			for (const t of f.namedTypes) {
+				if (t === '_') continue; // skip bare underscore
+				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
+				allTypeNames.add(name);
+			}
 		}
 		if (n.children) {
-			for (const t of n.children.namedTypes) allTypeNames.add(toTypeName(t));
+			for (const t of n.children.namedTypes) {
+				if (t === '_') continue;
+				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
+				allTypeNames.add(name);
+			}
 		}
 	}
 	for (const k of leafKinds) allTypeNames.add(toTypeName(k));
 	const sortedTypes = [...allTypeNames].sort();
 	lines.push(`import type { ${sortedTypes.join(', ')} } from './types.js';`);
-	lines.push("import type { Edit } from '@sittir/types';");
+	lines.push("import type { Edit, AnyNodeData } from '@sittir/types';");
 	lines.push("import { render, toEdit } from '@sittir/core';");
 	lines.push("import { isNodeData, type FromValue } from './utils.js';");
 	lines.push("import { rules } from './rules.js';");
@@ -340,6 +354,26 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		lines.push('');
 	}
 
+	// Supertype FromInput unions — e.g. ExpressionFromInput = UnaryExpressionFromInput | ...
+	const supertypes = config.supertypes ?? [];
+	const branchKindSet = new Set(branchKinds);
+	if (supertypes.length > 0) {
+		lines.push('// Supertype unions (FromInput)');
+		for (const st of supertypes) {
+			const cleanName = st.name.replace(/^_/, '');
+			const fromInputName = toTypeName(cleanName) + 'FromInput';
+			const branchMembers = st.subtypes
+				.filter(sub => branchKindSet.has(sub))
+				.map(sub => toTypeName(sub) + 'FromInput');
+			if (branchMembers.length > 0) {
+				lines.push(`export type ${fromInputName} =`);
+				for (const m of branchMembers) lines.push(`  | ${m}`);
+				lines.push(';');
+				lines.push('');
+			}
+		}
+	}
+
 	// assignByKind, per-kind assign functions, and edit() are in assign.ts
 	lines.push('');
 
@@ -369,9 +403,13 @@ function fromInputFieldType(field: FieldMeta, leafSet: Set<string>): string {
 
 	// 1. NodeData passthrough — narrowed to accepted kinds
 	if (field.namedTypes.length > 0) {
-		parts.push(field.namedTypes.map(t => toTypeName(t)).join(' | '));
-	} else if (anonTokens.length > 0) {
-		parts.push('NodeData<string>'); // operator-only fields — no named types
+		const validTypes = field.namedTypes
+			.filter(t => t !== '_')
+			.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t));
+		if (validTypes.length > 0) parts.push(validTypes.join(' | '));
+	}
+	if (field.namedTypes.length === 0 && anonTokens.length > 0) {
+		parts.push('AnyNodeData'); // operator-only fields — no named types
 	}
 
 	// 2. Scalars from leaf type resolution
@@ -385,18 +423,23 @@ function fromInputFieldType(field: FieldMeta, leafSet: Set<string>): string {
 	}
 
 	// 4. Branch type FromInput references (recursive)
-	if (branchTypes.length === 1) {
+	const validBranch = branchTypes.filter(t => t !== '_');
+	const cleanedBranch = validBranch.map(t => ({
+		raw: t,
+		typeName: t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t),
+	}));
+	if (cleanedBranch.length === 1) {
 		// Single branch type — no kind discriminant needed
-		parts.push(`${toTypeName(branchTypes[0]!)}FromInput`);
-	} else if (branchTypes.length > 0) {
+		parts.push(`${cleanedBranch[0]!.typeName}FromInput`);
+	} else if (cleanedBranch.length > 0) {
 		// Multiple branch types — discriminated by kind
-		for (const bt of branchTypes) {
-			parts.push(`({ kind: '${bt}' } & ${toTypeName(bt)}FromInput)`);
+		for (const bt of cleanedBranch) {
+			parts.push(`({ kind: '${bt.raw}' } & ${bt.typeName}FromInput)`);
 		}
 	}
 
 	// 5. Array wrapping (from() wraps arrays into container branch types)
-	if (branchTypes.length > 0 && !field.multiple) {
+	if (validBranch.length > 0 && !field.multiple) {
 		parts.push('FromValue[]');
 	}
 
@@ -415,11 +458,14 @@ function fromInputFieldType(field: FieldMeta, leafSet: Set<string>): string {
  */
 function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>): string {
 	if (field.namedTypes.length === 0) {
-		return field.multiple ? 'NodeData<string>[]' : 'NodeData<string>';
+		return field.multiple ? 'AnyNodeData[]' : 'AnyNodeData';
 	}
 
-	// Use named interfaces: 'identifier' → 'Identifier', union of PascalCase names
-	const typeUnion = field.namedTypes.map(t => toTypeName(t)).join(' | ');
+	// Use named interfaces: 'identifier' → 'Identifier', '_expression' → 'Expression'
+	const typeUnion = field.namedTypes
+		.filter(t => t !== '_')
+		.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t))
+		.join(' | ');
 
 	if (field.multiple) {
 		return `(${typeUnion})[]`;

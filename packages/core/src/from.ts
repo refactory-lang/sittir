@@ -11,7 +11,9 @@ export type { FromValue, FromObject, FromFieldInfo, FromContext };
 // ---------------------------------------------------------------------------
 
 function isAnyNodeData(v: unknown): v is AnyNodeData {
-	return v !== null && typeof v === 'object' && typeof (v as any).type === 'string' && typeof (v as any).fields === 'object';
+	if (v === null || typeof v !== 'object' || typeof (v as any).type !== 'string') return false;
+	// Branch nodes have fields object, leaf nodes have text string
+	return typeof (v as any).fields === 'object' || typeof (v as any).text === 'string';
 }
 
 // ---------------------------------------------------------------------------
@@ -31,7 +33,7 @@ export function resolveFromInput(
 	if (!fieldInfos) throw new Error(`Unknown kind for .from(): '${kind}'`);
 
 	// Detect unknown fields (likely typos)
-	const knownFields = new Set(fieldInfos.map(f => f.name));
+	const knownFields = new Set(fieldInfos.map((f: FromFieldInfo) => f.name));
 	knownFields.add('children');
 	knownFields.add('kind');
 	const unknownKeys = Object.keys(input).filter(k => !knownFields.has(k));
@@ -270,7 +272,7 @@ function resolveObject(
 	for (const candidate of branchTypes) {
 		const fieldInfo = ctx.getFields(candidate);
 		if (!fieldInfo) continue;
-		const fieldNames = new Set(fieldInfo.map(f => f.name));
+		const fieldNames = new Set(fieldInfo.map((f: FromFieldInfo) => f.name));
 
 		let matches = 0;
 		let misses = 0;

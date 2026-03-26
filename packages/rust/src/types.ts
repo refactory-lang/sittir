@@ -903,6 +903,111 @@ export type Type =
   | UnitType
 ;
 
+// Supertype unions (fields — branch kinds only)
+export type DeclarationStatementFields =
+  | AssociatedTypeFields
+  | AttributeItemFields
+  | ConstItemFields
+  | EnumItemFields
+  | ExternCrateDeclarationFields
+  | ForeignModItemFields
+  | FunctionItemFields
+  | FunctionSignatureItemFields
+  | ImplItemFields
+  | InnerAttributeItemFields
+  | LetDeclarationFields
+  | MacroDefinitionFields
+  | MacroInvocationFields
+  | ModItemFields
+  | StaticItemFields
+  | StructItemFields
+  | TraitItemFields
+  | TypeItemFields
+  | UnionItemFields
+  | UseDeclarationFields
+;
+
+export type ExpressionFields =
+  | ArrayExpressionFields
+  | AssignmentExpressionFields
+  | AsyncBlockFields
+  | AwaitExpressionFields
+  | BinaryExpressionFields
+  | BlockFields
+  | BreakExpressionFields
+  | CallExpressionFields
+  | ClosureExpressionFields
+  | CompoundAssignmentExprFields
+  | ConstBlockFields
+  | ContinueExpressionFields
+  | FieldExpressionFields
+  | ForExpressionFields
+  | GenBlockFields
+  | GenericFunctionFields
+  | IfExpressionFields
+  | IndexExpressionFields
+  | LoopExpressionFields
+  | MacroInvocationFields
+  | MatchExpressionFields
+  | ParenthesizedExpressionFields
+  | RangeExpressionFields
+  | ReferenceExpressionFields
+  | ReturnExpressionFields
+  | ScopedIdentifierFields
+  | StructExpressionFields
+  | TryBlockFields
+  | TryExpressionFields
+  | TupleExpressionFields
+  | TypeCastExpressionFields
+  | UnaryExpressionFields
+  | UnsafeBlockFields
+  | WhileExpressionFields
+  | YieldExpressionFields
+;
+
+export type LiteralFields =
+  | RawStringLiteralFields
+  | StringLiteralFields
+;
+
+export type LiteralPatternFields =
+  | NegativeLiteralFields
+  | RawStringLiteralFields
+  | StringLiteralFields
+;
+
+export type PatternFields =
+  | CapturedPatternFields
+  | ConstBlockFields
+  | GenericPatternFields
+  | MacroInvocationFields
+  | MutPatternFields
+  | OrPatternFields
+  | RangePatternFields
+  | RefPatternFields
+  | ReferencePatternFields
+  | ScopedIdentifierFields
+  | SlicePatternFields
+  | StructPatternFields
+  | TuplePatternFields
+  | TupleStructPatternFields
+;
+
+export type TypeFields =
+  | AbstractTypeFields
+  | ArrayTypeFields
+  | BoundedTypeFields
+  | DynamicTypeFields
+  | FunctionTypeFields
+  | GenericTypeFields
+  | MacroInvocationFields
+  | PointerTypeFields
+  | ReferenceTypeFields
+  | RemovedTraitBoundFields
+  | ScopedTypeIdentifierFields
+  | TupleTypeFields
+;
+
 // Supertype unions (tree)
 export type DeclarationStatementTree =
   | AssociatedTypeTree

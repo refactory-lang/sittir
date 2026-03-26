@@ -52,6 +52,10 @@ export function emitFrom(config: EmitFromConfig): string {
 		lines.push(`import { ${imports} } from './factories.js';`);
 	}
 
+	// Import assign functions for SgNode dispatch
+	const assignImports = nodes.map(n => `assign${toTypeName(n.kind)}`).sort().join(', ');
+	lines.push(`import { ${assignImports} } from './assign.js';`);
+
 	// Import types from factories.ts (Config, Node, FromInput, FromNode types)
 	const typeImports: string[] = [];
 	for (const node of nodes) {
@@ -170,11 +174,11 @@ function emitFromFunction(
 	// Implementation signature
 	lines.push(`export function ${exportName}(input: any): ${typeName}FromNode {`);
 
-	// SgNode detection — delegate to .assign() with ergonomic setters
-	// .assign() nodes use an overrides mechanism (getters), so we wrap
+	// SgNode detection — delegate to assign function with ergonomic setters
+	// assign nodes use an overrides mechanism (getters), so we wrap
 	// the strict setters: resolve the value, then call the original setter.
 	lines.push(`  if (typeof input.field === 'function') {`);
-	lines.push(`    const base: any = ${factoryName}.assign(input);`);
+	lines.push(`    const base: any = assign${typeName}(input);`);
 	for (const field of node.fields) {
 		const camel = toFieldName(field.name);
 		const setterName = camel === 'type' ? 'typeField' : camel;
@@ -266,7 +270,8 @@ function emitResolveExpr(
 	grammar?: string,
 ): string {
 	const leafTypes = field.namedTypes.filter(t => leafSet.has(t));
-	const branchTypes = field.namedTypes.filter(t => !leafSet.has(t));
+	// Skip bare underscore and underscore-prefixed supertypes (abstract, not directly constructable)
+	const branchTypes = field.namedTypes.filter(t => !leafSet.has(t) && t !== '_' && !t.startsWith('_'));
 	const anonTokens = field.types.filter(t => !field.namedTypes.includes(t) && !t.startsWith('_'));
 
 	// Simple case: single leaf type, no branches, no anon tokens

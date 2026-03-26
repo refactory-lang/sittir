@@ -40,7 +40,7 @@ export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: Join
 				break;
 
 			case 'field': {
-				const value = node.fields[el.name];
+				const value = node.fields?.[el.name] as AnyNodeData | AnyNodeData[] | string | number | undefined;
 
 				if (value === undefined) {
 					if (!el.quantifier) {
@@ -61,7 +61,7 @@ export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: Join
 			}
 
 			case 'children': {
-				const children = node.fields['children'];
+				const children = node.fields?.['children'] as AnyNodeData | AnyNodeData[] | string | number | undefined;
 				if (children === undefined) break;
 
 				if (Array.isArray(children)) {

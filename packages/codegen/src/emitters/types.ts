@@ -151,6 +151,24 @@ export function emitTypes(config: EmitTypesConfig): string {
 			}
 		}
 
+		const branchSet = new Set(nodeKinds);
+
+		lines.push('// Supertype unions (fields — branch kinds only)');
+		for (const st of supertypes) {
+			const cleanName = st.name.replace(/^_/, '');
+			const fieldsName = toTypeName(cleanName) + 'Fields';
+			const branchMembers = st.subtypes
+				.filter(sub => branchSet.has(sub))
+				.map(sub => toTypeName(sub) + 'Fields');
+
+			if (branchMembers.length > 0) {
+				lines.push(`export type ${fieldsName} =`);
+				for (const m of branchMembers) lines.push(`  | ${m}`);
+				lines.push(';');
+				lines.push('');
+			}
+		}
+
 		lines.push('// Supertype unions (tree)');
 		for (const st of supertypes) {
 			const cleanName = st.name.replace(/^_/, '');
