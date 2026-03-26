@@ -235,6 +235,10 @@ function emitFromFunction(
 		} else {
 			lines.push(`    resolved['${field.name}'] = ${emitResolveExpr(`obj['${field.name}']`, field, leafSet, leafValueMap, keywordKinds, allNodes, grammar)};`);
 		}
+		if (field.multiple && field.required) {
+			lines.push(`  } else {`);
+			lines.push(`    resolved['${field.name}'] = [];`);
+		}
 		lines.push(`  }`);
 	}
 
@@ -250,6 +254,10 @@ function emitFromFunction(
 			namedTypes: node.children.namedTypes,
 		};
 		lines.push(`    resolved['children'] = arr.map((v: any) => ${emitResolveExpr('v', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
+		if (node.children.required) {
+			lines.push(`  } else {`);
+			lines.push(`    resolved['children'] = [];`);
+		}
 		lines.push(`  }`);
 	}
 
