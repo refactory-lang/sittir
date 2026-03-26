@@ -78,7 +78,7 @@ against prior versions and ensures CI reproducibility.
 - **Testing**: Vitest
 - **Linting**: oxlint
 - **Formatting**: oxfmt
-- **Type checking**: tsc (strict mode)
+- **Type checking**: tsc / tsgo (strict mode)
 - **Grammar inputs**: `grammar.json` + `node-types.json` from
   tree-sitter grammar packages
 - **Zero runtime dependencies**: generated builder packages MUST NOT

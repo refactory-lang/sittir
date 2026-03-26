@@ -2,61 +2,76 @@
 
 **Feature**: 001-codegen-grammarjs-rewrite
 **Date**: 2026-03-24
+**Last Updated**: 2026-03-25
 
-## @sittir/core — Rust/WASM Runtime
-
-### WASM Exports (TypeScript bindings)
+## @sittir/core — TypeScript Runtime (grammar-agnostic)
 
 ```typescript
-// Render node data to source string using render rules
-export function render(nodeJson: string, rulesJson: string): string;
+// Render node data to source string using S-expression render rules
+export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: JoinByMap): string;
 
-// Render and create an Edit for a byte range
-export function toEdit(nodeJson: string, rulesJson: string, start: number, end: number): Edit;
+// Parse S-expression template into cached parsed form
+export function parseTemplate(template: string): ParsedTemplate;
 
 // Validate source text via tree-sitter (returns error positions or empty)
-export function validate(source: string, grammar: string): ValidationResult;
+export function validateFull(source: string, parser: unknown): Promise<string>;
+
+// Create an Edit for a byte range
+export function toEdit(node: AnyNodeData, rules: RulesRegistry, startOrRange: number | ByteRange, endPos?: number, joinBy?: JoinByMap): Edit;
+
+// Type-safe field replacement using KindOf<T> inference
+export function replaceField<T extends AnyNodeData>(target: ReplaceTarget, selector: (node: T) => unknown, replacement: AnyNodeData, rules: RulesRegistry, joinBy?: JoinByMap): Edit;
+
+// Bind a range to a node for later .replace()
+export function bindRange(node: AnyNodeData, range: ByteRange): AnyNodeData;
+
+// Replace a matched node's full range
+export function replace(node: AnyNodeData, target: ReplaceTarget, rules: RulesRegistry, joinBy?: JoinByMap): Edit;
 
 // Build CST node tree with byte offsets
-export function toCst(nodeJson: string, rulesJson: string, offset: number): CSTNode;
+export function toCst(node: AnyNodeData, registry: RulesRegistry, offset?: number, joinBy?: JoinByMap): CSTNode;
 ```
 
-### Rust Crate Exports (for native consumers)
-
-```rust
-// Render engine
-pub fn render(node: &NodeData, rules: &[RenderRule]) -> String;
-pub fn to_edit(node: &NodeData, rules: &[RenderRule], start: u32, end: u32) -> Edit;
-pub fn validate(source: &str, grammar: &str) -> ValidationResult;
-pub fn to_cst(node: &NodeData, rules: &[RenderRule], offset: u32) -> CSTNode;
-
-// Rust ir module (generated per grammar, e.g. ir::rust)
-pub mod ir {
-    pub mod rust {
-        pub fn function_item(name: NodeData) -> FunctionItemBuilder;
-        pub fn identifier(text: &str) -> NodeData;
-        pub fn block() -> BlockBuilder;
-        // ... all node kinds
-    }
-}
-```
+Note: `@sittir/core` has NO `.from()` resolution — generated packages inline all resolution logic for tree-shaking.
 
 ## @sittir/types — Pure TypeScript Types (zero runtime)
 
 ```typescript
-// Node data — what factories produce, what core consumes
-interface NodeData {
-  kind: string;
-  fields: Record<string, NodeData | NodeData[] | string | undefined>;
-  text?: string;  // for terminal nodes
+// --- Grammar-derived type projections ---
+
+// NodeData<G, K> — the primary node type. Always two params (grammar + kind).
+// Branches have fields, leaves have text. No loose typing.
+type NodeData<G, K extends NodeKind<G>> = ExpandNode<G, K, []>;
+
+// NodeFields<G, K> — factory config type (NodeData<G,K>['fields'])
+type NodeFields<G, K extends NodeKind<G>> = NodeData<G, K>['fields'];
+
+// TreeNode<G, K> — parsed tree node with typed field() navigation
+// Structurally compatible with ast-grep SgNode
+interface TreeNode<G, K> {
+  readonly type: K;
+  field<F extends string>(name: F): TreeNode<G, FieldKinds<G,K,F>> | null;
+  text(): string;
+  range(): { start: { index: number }; end: { index: number } };
+  children(): TreeNode<G, NodeKind<G>>[];
 }
 
-// Render table types
-type RenderStep =
-  | { token: string }
-  | { field: string; required: boolean; multiple?: boolean;
-      sep?: string; prefix?: string; suffix?: string };
-type RenderRule = RenderStep[];
+// --- Runtime types (grammar-agnostic) ---
+
+// AnyNodeData — loose structural supertype for core functions
+interface AnyNodeData {
+  readonly type: string;
+  readonly fields?: Readonly<Record<string, unknown>>;  // optional — leaves have text, not fields
+  readonly text?: string;
+}
+
+// AnyTreeNode — loose tree node for grammar-agnostic operations
+interface AnyTreeNode {
+  readonly type: string;
+  field(name: string): AnyTreeNode | null;
+  text(): string;
+  range(): { start: { index: number }; end: { index: number } };
+}
 
 // Edit (ast-grep compatible)
 interface Edit { startPos: number; endPos: number; insertedText: string }
@@ -64,11 +79,9 @@ interface Edit { startPos: number; endPos: number; insertedText: string }
 // CST types
 interface CSTNode { type, text, children, isNamed, startIndex, endIndex,
                     startPosition, endPosition, fieldName? }
-interface Position { row: number; column: number }
-interface ValidationResult { ok: boolean; errors?: Array<{ offset: number; kind: string }> }
 
-// Type-level grammar projection
-type NodeType<G, K extends keyof G & string> = /* deeply expanded IR node shape */
+// KindOf<T> — extract the kind string from a NodeData type (for replaceField)
+type KindOf<T> = T extends { readonly type: infer K } ? K : never;
 ```
 
 ## @sittir/codegen — Code Generator
@@ -76,39 +89,56 @@ type NodeType<G, K extends keyof G & string> = /* deeply expanded IR node shape 
 ```typescript
 function generate(config: CodegenConfig): GeneratedFiles;
 
-interface CodegenConfig {
-  grammar: string;
-  nodes?: string[];
-  outputDir: string;
-  aliases?: Record<string, Record<string, string>>;
-  testSourceImportPath?: string;
-  emitRust?: boolean;  // also emit Rust ir module source
+interface GeneratedFiles {
+  grammar: string;      // grammar.ts — type literal
+  types: string;        // types.ts — enums, interfaces, unions
+  rules: string;        // rules.ts — S-expression templates
+  joinBy: string;       // joinby.ts — separator map
+  factories: string;    // factories.ts — unified factories
+  from: string;         // from.ts — .from() resolution
+  assign: string;       // assign.ts — tree hydration
+  utils: string;        // utils.ts — shared client utilities
+  irNamespace: string;  // ir.ts — developer namespace
+  consts: string;       // consts.ts — kind/keyword/operator maps
+  index: string;        // index.ts — barrel exports
+  tests: string;        // nodes.test.ts — per-node tests
+  config: string;       // vitest.config.ts
 }
 ```
 
 ## @sittir/{rust,typescript,python} — Generated Packages
 
-### Naming Conventions (retained from old API)
+### Naming Conventions
 
 - **`toShortName`** for ir keys: `ir.function` (not `ir.functionItem`), `ir.struct` (not `ir.structItem`)
 - **Trailing underscores dropped** in ir namespace: `ir.function`, `ir.enum`, `ir.const`
 - **camelCase field names** from snake_case grammar: `returnType` from `return_type`
-- **Supertype union types**: `_expression` → `type Expression = BinaryExpression | CallExpression | ...`
-- **Nested namespaces** by supertype: group related factories
+- **Supertype union types**: `_expression` → `Expression`, `ExpressionFields`, `ExpressionTree`, `ExpressionFromInput`
+- **`interface extends` pattern**: `interface FunctionItem extends NodeData<'function_item'> {}` for compiler caching
 
-### Supertype Unions (key convention)
+### Grammar-Bound Type Aliases
 
 ```typescript
-// Generated from _expression supertype
-type Expression = BinaryExpression | CallExpression | IfExpression | ...;
+// Generated types.ts re-exports with grammar bound:
+import type { NodeData as BaseNodeData } from '@sittir/types';
+type RustGrammar = { /* grammar type literal */ };
+export type NodeData<K extends NodeKind<RustGrammar>> = BaseNodeData<RustGrammar, K>;
+export type NodeFields<K extends NodeKind<RustGrammar>> = BaseNodeFields<RustGrammar, K>;
+export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar, K>;
 
-// Fields typed with supertypes accept any concrete expression
-interface IfExpressionConfig {
-  condition: Expression;      // accepts any expression factory output
-  consequence: Block;
-  alternative?: ElseClause;
-}
+// Named interfaces for IDE performance:
+export interface FunctionItem extends NodeData<'function_item'> {}
+export interface FunctionItemFields extends NodeFields<'function_item'> {}
+export interface FunctionItemTree extends TreeNode<'function_item'> {}
 ```
+
+### Three API Tiers
+
+| API | Performance | Ergonomics | Input types | File |
+|-----|-------------|------------|-------------|------|
+| **Regular** (declarative/fluent/mixed) | Maximum | Strict | `NodeData` interfaces only | `factories.ts` |
+| **`.from()`** (ergonomic) | Good | Maximum | Strings, numbers, booleans, objects, arrays, NodeData, TreeNode | `from.ts` |
+| **`.assign()`** (hydration) | Good | Strict | `TreeNode` (SgNode) | `assign.ts` |
 
 ### Unified Factory API (three modes)
 
@@ -118,126 +148,39 @@ import { ir } from '@sittir/rust';
 // === Mode 1: Declarative (config object) ===
 const fn1 = ir.function({
   name: ir.identifier('main'),
-  returnType: ir.primitiveType('i32'),  // string shorthand for leaf
+  parameters: ir.parameters([]),
   body: ir.block(),
 });
 
 // === Mode 2: Fluent (method chaining) ===
 const fn2 = ir.function(ir.identifier('main'))
-  .returnType(ir.primitiveType('i32'))
+  .parameters(ir.parameters([]))
   .body(ir.block());
 
 // === Mode 3: Mixed (required positional + config) ===
 const fn3 = ir.function(ir.identifier('main'), {
-  returnType: ir.primitiveType('i32'),
+  parameters: ir.parameters([]),
   body: ir.block(),
 });
 
-// All three produce identical NodeData with render/toEdit methods:
+// All three produce identical NodeData with render/toEdit/replace methods:
 const source = fn1.render();
 const edit = fn1.toEdit(42, 67);
 
-// String shorthand + single-field compression:
-ir.stringLiteral('hello')       // single-field: content inferred
-ir.stringLiteral('\\n')         // template literal: escape_sequence inferred
-ir.stringLiteral({ content: { kind: 'escape_sequence', text: '\\n' } })  // explicit
+// .from() — ergonomic entry point (strings, objects, TreeNodes):
+const fn4 = ir.function.from({
+  name: 'main',
+  parameters: { children: [] },
+  body: { children: [] },
+});
+
+// .assign() — hydrate from parsed tree node:
+import { edit } from '@sittir/rust';
+const hydrated = edit(treeNode);  // universal entry via assignByKind
 
 // Keywords (zero-arg)
-ir.self()   // → { kind: 'self', text: 'self' }
-ir.mut()    // → { kind: 'mutable_specifier', text: 'mut' }
-
-// Operators (semantic aliases)
-ir.add()    // → { kind: 'binary_expression_operator', text: '+' }
-ir.eq()     // → { kind: 'binary_expression_operator', text: '==' }
-```
-
-### Three API Tiers
-
-The factory system provides three distinct API tiers with different tradeoffs:
-
-| API | Performance | Ergonomics | Input types | File |
-|-----|-------------|------------|-------------|------|
-| **Regular** (declarative/fluent/mixed) | Maximum | Strict | `NodeData<NarrowKind>` only | `factories.ts` |
-| **`.from()`** (ergonomic) | Good | Maximum | Strings, numbers, booleans, objects, arrays, NodeData, SgNode | `from.ts` |
-| **`.assign()`** (hydration) | Good | Strict | `AssignableNode` (SgNode) | `factories.ts` |
-
-The `.from()` API is the universal entry point — it dispatches to the regular factory for plain-object resolution, and to `.assign()` when it detects an SgNode-like input. Naming follows the `Buffer.from()` / Rust `From` trait convention: a polymorphic constructor that accepts diverse input shapes.
-
-### Generated Factory Implementation Pattern
-
-```typescript
-// === factories.ts — regular API (lightweight, tree-shakeable) ===
-
-import { render, toEdit } from '@sittir/core';
-import { rules } from './rules.js';
-
-// Per-node config type — strict, narrowed NodeData per field (FR-016)
-interface FunctionItemConfig {
-  name: NodeData<'identifier' | 'metavariable'>;          // required
-  type_parameters?: NodeData<'type_parameters'>;           // optional
-  parameters: NodeData<'parameters'>;                      // required
-  return_type?: NodeData<'primitive_type' | 'type_identifier' | ...>; // optional
-  body: NodeData<'block'>;                                 // required
-}
-
-// FromInput type — ergonomic, recursively typed for .from() API (FR-027)
-interface FunctionItemFromInput {
-  name: NodeData<'identifier' | 'metavariable'> | string;
-  type_parameters?: NodeData<'type_parameters'> | TypeParametersFromInput;
-  parameters: NodeData<'parameters'> | ParametersFromInput | FromValue[];
-  return_type?: NodeData<...> | string | number | GenericTypeFromInput | ...;
-  body: NodeData<'block'> | BlockFromInput | FromValue[];
-}
-
-// Return types: Node (strict setters) vs FromNode (ergonomic setters)
-type FunctionItemNode = NodeData<'function_item'> & {
-  typeParameters(v: NodeData<'type_parameters'>): FunctionItemNode;
-  returnType(v: NodeData<...>): FunctionItemNode;
-  body(v: NodeData<'block'>): FunctionItemNode;
-  render(): string;
-  toEdit(start: number, end: number): Edit;
-  replace(target: ...): Edit;
-};
-
-type FunctionItemFromNode = NodeData<'function_item'> & {
-  typeParameters(v: NodeData<...> | TypeParametersFromInput): FunctionItemFromNode;
-  returnType(v: NodeData<...> | string | number | ...): FunctionItemFromNode;
-  body(v: NodeData<...> | BlockFromInput | FromValue[]): FunctionItemFromNode;
-  render(): string;
-  toEdit(start: number, end: number): Edit;
-  replace(target: ...): Edit;
-};
-
-// Factory function — no runtime type inference, only NodeData accepted
-export function functionItem(
-  nameOrConfig: NodeData<'identifier' | 'metavariable'> | FunctionItemConfig,
-  config?: Partial<FunctionItemConfig>,
-): FunctionItemNode { ... }
-
-// .assign() — hydrate from parsed tree node
-functionItem.assign = function(target: AssignableNode<'function_item'>): FunctionItemNode { ... };
-
-// === from.ts — .from() API (separate file for tree-shaking, FR-030) ===
-
-// Inlined per-field resolution — no generic resolver (FR-029)
-export function functionItemFrom(
-  input: AssignableNode<'function_item'> | FunctionItemFromInput | FromValue[],
-): FunctionItemFromNode {
-  // SgNode detection — delegates to .assign() with ergonomic setters (FR-031)
-  if (typeof input.field === 'function') {
-    const base = functionItem.assign(input);
-    // Wrap setters with resolution...
-    return base;
-  }
-  // Plain-object resolution: strings → identifier(), numbers → integerLiteral(), etc.
-  ...
-}
-
-// === ir.ts — combines both via Object.assign ===
-export const ir = {
-  function: Object.assign(functionItem, { from: functionItemFrom }),
-  ...
-};
+ir.self()   // → { type: 'self', text: 'self' }
+ir.mut()    // → { type: 'mutable_specifier', text: 'mut' }
 ```
 
 ### Constants
@@ -246,17 +189,9 @@ export const ir = {
 import { nodeKinds, leafKinds, keywords, operators } from '@sittir/rust/consts';
 ```
 
-### Render Tables
+### Render Templates
 
 ```typescript
 import { rules } from '@sittir/rust/rules';
-// rules.function_item → RenderRule[] (data, not code)
-```
-
-### Type Projections
-
-```typescript
-import type { RustGrammar } from '@sittir/rust';
-import type { NodeType } from '@sittir/types';
-type FnItem = NodeType<RustGrammar, 'function_item'>;
+// rules['function_item'] → S-expression template string
 ```

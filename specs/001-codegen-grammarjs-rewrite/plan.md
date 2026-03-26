@@ -9,9 +9,9 @@ Rewrite `@sittir/codegen` to use `grammar.json` (compiled from `grammar.js`) as 
 
 ### Phase A: TypeScript Core (this feature)
 
-1. **`@sittir/core`** — TypeScript. Grammar-driven render engine, validation, CST construction, Edit creation. A single `render()` function walks pre-compiled render tables (data, not code) to produce source text.
-2. **`@sittir/types`** — Pure TypeScript type projections (zero runtime). `NodeType<G,K>`, grammar-derived field types, `NodeData`/`RenderRule` interfaces.
-3. **`@sittir/codegen`** — TypeScript code generator. Reads grammar.json + node-types.json, emits: render tables (data), TypeScript factory functions with unified API, constants, tests.
+1. **`@sittir/core`** — TypeScript. Grammar-driven render engine (S-expression templates), validation, CST construction, Edit creation. `render(node, rules)` parses templates once and caches. No `.from()` resolution — generated packages inline all resolution logic.
+2. **`@sittir/types`** — Pure TypeScript type projections (zero runtime). `NodeData<G,K>`, `NodeFields<G,K>`, `TreeNode<G,K>` grammar-derived types. `AnyNodeData` (loose runtime type, `fields` optional). No `NodeType` — replaced by `NodeData<G,K>`.
+3. **`@sittir/codegen`** — TypeScript code generator. Reads grammar.json + node-types.json, emits: S-expression render templates, unified factory functions, `.from()` resolution, assign functions, ir namespace, `interface extends` types, supertype unions, constants, tests.
 
 Generated language packages (`@sittir/rust`, etc.) contain **types + render tables + unified factory functions** — near-zero runtime logic. All rendering is delegated to `@sittir/core`.
 
@@ -35,7 +35,7 @@ Eliminate unnecessary abstractions (`LeafBuilder`, `LeafOptions`, `Builder` base
 ## Technical Context
 
 **Language/Version**: TypeScript (ESM, `.ts` extensions in imports)
-**Primary Dependencies**: tree-sitter grammar packages (grammar.json + node-types.json), web-tree-sitter (for validation in Phase A), type-fest (type-level utilities)
+**Primary Dependencies**: tree-sitter grammar packages (grammar.json + node-types.json). No web-tree-sitter runtime dependency — validation at factory creation time.
 **Storage**: N/A (codegen reads JSON files, emits TypeScript source + render tables)
 **Testing**: Vitest
 **Target Platform**: Node.js — library consumed by codemod scripts

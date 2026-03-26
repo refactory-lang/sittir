@@ -178,6 +178,32 @@
 
 ---
 
+## Phase 10: Type System Overhaul — NodeData<G,K> + Interface Pattern
+
+**Purpose**: Replace `NodeType<G,K>` with grammar-derived `NodeData<G,K>`, generate named interfaces, supertype unions, and fix all type errors in generated packages.
+
+- [x] T073 Replace `NodeType<G,K>` with `NodeData<G,K>` in `@sittir/types` — two params always (grammar + kind), leaf kinds produce `{ type: K; text?: string }` (no `fields`)
+- [x] T074 Add `NodeFields<G,K>` and `TreeNode<G,K>` type projections — `NodeFields` = `NodeData<G,K>['fields']`, `TreeNode` has typed `field()` navigation
+- [x] T075 Replace `AssignableNode` with `TreeNode<G,K>` (grammar-aware) and `AnyTreeNode` (loose)
+- [x] T076 Make `AnyNodeData.fields` optional — leaf nodes have `text`, not `fields` (aligns with tree-sitter Node behavior)
+- [x] T077 Types emitter generates `interface extends NodeData<G,K>` — `interface FunctionItem extends NodeData<'function_item'> {}` for compiler caching
+- [x] T078 Types emitter generates grammar-bound aliases — `type NodeData<K> = BaseNodeData<RustGrammar, K>` etc.
+- [x] T079 Types emitter generates supertype unions for all variants — `Expression`, `ExpressionFields`, `ExpressionTree`
+- [x] T080 Factories emitter generates `ExpressionFromInput` supertype unions
+- [x] T081 Factories emitter uses named interfaces instead of `NodeData<'kind'>` — all field types reference named interfaces from types.ts
+- [x] T082 Factories emitter uses `AnyNodeData` for anonymous-only fields (operator tokens) instead of `NodeData<string>`
+- [x] T083 Split `assign.ts` from `factories.ts` — `assignByKind` dispatch + per-kind assign functions + `edit()` entry point
+- [x] T084 From emitter uses `assign*()` functions from assign.ts instead of `.assign()` on factories
+- [x] T085 Filter bare `_` and `_`-prefixed abstract supertypes from all codegen type unions
+- [x] T086 Fix test emitter to use `typeIdentifier()`/`fieldIdentifier()` where grammar requires them
+- [x] T087 Remove dead `from.ts` from `@sittir/core` — generated packages inline all resolution logic
+- [x] T088 Fix `rootDir` in types/core tsconfig for correct dist output structure
+- [x] T089 Type-check passes: 0 errors across types, core, codegen, rust packages
+
+**Checkpoint**: All generated packages type-check clean. Grammar-derived types serve as compile-time contracts. No `any` in generated code (except runtime dispatch in factory bodies).
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
