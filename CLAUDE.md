@@ -35,6 +35,9 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 - **`replaceField()`** — type-safe field replacement using navigation types and `KindOf<T>` inference
 - **Grammar-aligned terminology** — kind, field, named, anonymous, supertype (tree-sitter/ast-grep terms)
 - **Supertype unions** — `_expression` → `Expression`, `ExpressionFields`, `ExpressionTree`, `ExpressionFromInput`
+- **`.from()` coercion** — required array fields default to `[]` when omitted; supertypes expanded to concrete subtypes
+- **Render guards** — branch nodes without `fields` throw; leaf nodes without `text` throw. `isNodeData` rejects `{ fields: null }`
+- **`edit()` return** — `Simplify<NodeData<K> & methods>` — K flows from `TreeNode<K>` input, flattened for IDE tooltips
 
 ## Commands
 

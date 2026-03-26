@@ -204,6 +204,34 @@
 
 ---
 
+## Phase 11: PR Review Fixes + Polish
+
+**Purpose**: Address all findings from 4-agent comprehensive PR review (code, errors, types, tests).
+
+- [x] T090 Fix `kind` → `type` in test dummyValue fallback
+- [x] T091 Fix multiple field hydration — iterate `children()` instead of single `field()` result
+- [x] T092 Add render guard — throw on branch nodes with missing `fields`
+- [x] T093 Fix `isNodeData` guard — reject `{ fields: null }` (typeof null === 'object' gotcha)
+- [x] T094 Required multiple fields throw instead of silent `[]` fallback in assign
+- [x] T095 Expand `_`-prefixed supertypes to concrete subtypes in `.from()` resolution (was filtering them out)
+- [x] T096 Fix whitespace collapse in render — filter empty parts instead of regex replace
+- [x] T097 Add `fields?` to cycle-detection fallback type for AnyNodeData compatibility
+- [x] T098 Add JSDoc to generated `interface extends` declarations
+- [x] T099 Include grammar name in `assignByKind` error message
+- [x] T100 Add render tests: leaf without `fields`, branch without `fields`
+- [x] T101 Update stale emitter tests: types.test.ts (6 fixes), factories.test.ts (1 fix)
+- [x] T102 Add new emitter tests: assign.test.ts (7 tests), from.test.ts (7 tests)
+- [x] T103 Update stale integration test assertions (RustNode, *Tree)
+- [x] T104 Use named `*Tree` interfaces in assign.ts and from.ts instead of generic `TreeNode<'kind'>`
+- [x] T105 Typed `edit()` return: `Simplify<NodeData<K> & methods>` — K flows from input to output
+- [x] T106 Export `Simplify` from `@sittir/types` (inlined from type-fest with attribution)
+- [x] T107 `.from()` coerces omitted required array fields to `[]` (parameters, children, etc.)
+- [x] T108 Pass `supertypeMap` to all `emitResolveExpr` call sites (2 missed non-multiple paths)
+
+**Checkpoint**: All 16 review findings addressed. 0 type errors. All emitter tests pass (39), render tests pass (13), integration tests pass (9).
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies

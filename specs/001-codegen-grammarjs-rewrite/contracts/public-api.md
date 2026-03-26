@@ -82,6 +82,9 @@ interface CSTNode { type, text, children, isNamed, startIndex, endIndex,
 
 // KindOf<T> — extract the kind string from a NodeData type (for replaceField)
 type KindOf<T> = T extends { readonly type: infer K } ? K : never;
+
+// Simplify<T> — flatten intersection into single object (shallow, from type-fest)
+type Simplify<T> = { [K in keyof T]: T[K] } & {};
 ```
 
 ## @sittir/codegen — Code Generator
@@ -170,12 +173,20 @@ const edit = fn1.toEdit(42, 67);
 // .from() — ergonomic entry point (strings, objects, TreeNodes):
 const fn4 = ir.function.from({
   name: 'main',
-  parameters: { children: [] },
-  body: { children: [] },
+  // Required array fields default to [] when omitted:
+  // parameters, body etc. are coerced to empty arrays
+});
+
+// .from() with explicit children:
+const fn5 = ir.function.from({
+  name: 'main',
+  parameters: { children: [{ kind: 'parameter', name: 'x', type: 'i32' }] },
 });
 
 // .assign() — hydrate from parsed tree node:
 import { edit } from '@sittir/rust';
+// edit() returns Simplify<NodeData<K> & { toEdit, replace, render }>
+// K flows from TreeNode<K> input → typed return
 const hydrated = edit(treeNode);  // universal entry via assignByKind
 
 // Keywords (zero-arg)
