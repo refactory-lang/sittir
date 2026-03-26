@@ -27,7 +27,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Shared client-side resolution utilities for .from() and factories');
 	lines.push('');
 
-	lines.push("import type { NodeData } from './types.js';");
+	lines.push("import type { AnyNodeData } from '@sittir/types';");
 	lines.push('');
 
 	// Types
@@ -37,7 +37,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('');
 	lines.push(`export type FromKind = ${allKinds.map(k => `'${k}'`).join(' | ')};`);
 	lines.push('export interface FromObject { kind?: FromKind; [key: string]: FromValue | undefined; }');
-	lines.push('export type FromValue = string | number | boolean | NodeData | FromValue[] | FromObject;');
+	lines.push('export type FromValue = string | number | boolean | AnyNodeData | FromValue[] | FromObject;');
 	lines.push('');
 
 	// isNodeData guard
@@ -45,7 +45,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Guards');
 	lines.push('// ---------------------------------------------------------------------------');
 	lines.push('');
-	lines.push('export function isNodeData(v: any): v is NodeData {');
+	lines.push('export function isNodeData(v: any): v is AnyNodeData {');
 	lines.push("  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';");
 	lines.push('}');
 	lines.push('');

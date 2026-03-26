@@ -2,6 +2,8 @@
 // Tree node hydration and in-place editing
 
 import type { TreeNode } from './types.js';
+import type { RustGrammar } from './grammar.js';
+import type { NodeKind } from '@sittir/types';
 import type { Edit } from '@sittir/types';
 import { render } from '@sittir/core';
 import { rules } from './rules.js';
@@ -10,7 +12,7 @@ import { abstractType, arguments_, arrayExpression, arrayType, assignmentExpress
 import type { AbstractType, Arguments, ArrayExpression, ArrayType, AssignmentExpression, AssociatedType, AsyncBlock, Attribute, AttributeItem, AwaitExpression, BaseFieldInitializer, BinaryExpression, Block, BlockComment, BooleanLiteral, BoundedType, BracketedType, BreakExpression, CallExpression, CapturedPattern, CharLiteral, ClosureExpression, ClosureParameters, CompoundAssignmentExpr, ConstBlock, ConstItem, ConstParameter, ContinueExpression, Crate, DeclarationList, DocComment, DynamicType, ElseClause, EmptyStatement, EnumItem, EnumVariant, EnumVariantList, EscapeSequence, ExpressionStatement, ExternCrateDeclaration, ExternModifier, FieldDeclaration, FieldDeclarationList, FieldExpression, FieldIdentifier, FieldInitializer, FieldInitializerList, FieldPattern, FloatLiteral, ForExpression, ForLifetimes, ForeignModItem, FragmentSpecifier, FunctionItem, FunctionModifiers, FunctionSignatureItem, FunctionType, GenBlock, GenericFunction, GenericPattern, GenericType, GenericTypeWithTurbofish, HigherRankedTraitBound, Identifier, IfExpression, ImplItem, IndexExpression, InnerAttributeItem, InnerDocCommentMarker, IntegerLiteral, Label, LetChain, LetCondition, LetDeclaration, Lifetime, LifetimeParameter, LineComment, LoopExpression, MacroDefinition, MacroInvocation, MacroRule, MatchArm, MatchBlock, MatchExpression, MatchPattern, Metavariable, ModItem, MutPattern, MutableSpecifier, NegativeLiteral, NeverType, OrPattern, OrderedFieldDeclarationList, OuterDocCommentMarker, Parameter, Parameters, ParenthesizedExpression, PointerType, PrimitiveType, QualifiedType, RangeExpression, RangePattern, RawStringLiteral, RefPattern, ReferenceExpression, ReferencePattern, ReferenceType, RemainingFieldPattern, RemovedTraitBound, ReturnExpression, ScopedIdentifier, ScopedTypeIdentifier, ScopedUseList, Self, SelfParameter, Shebang, ShorthandFieldIdentifier, ShorthandFieldInitializer, SlicePattern, SourceFile, StaticItem, StringContent, StringLiteral, StructExpression, StructItem, StructPattern, Super, TokenBindingPattern, TokenRepetition, TokenRepetitionPattern, TokenTree, TokenTreePattern, TraitBounds, TraitItem, TryBlock, TryExpression, TupleExpression, TuplePattern, TupleStructPattern, TupleType, TypeArguments, TypeBinding, TypeCastExpression, TypeIdentifier, TypeItem, TypeParameter, TypeParameters, UnaryExpression, UnionItem, UnitExpression, UnitType, UnsafeBlock, UseAsClause, UseBounds, UseDeclaration, UseList, UseWildcard, VariadicParameter, VisibilityModifier, WhereClause, WherePredicate, WhileExpression, YieldExpression } from './types.js';
 
 /** Kind → assign function. Branches call .assign() recursively, leaves read text(). */
-export const assignByKind: Record<string, (target: any) => any> = {
+const _assignTable: Record<string, (target: any) => any> = {
   'abstract_type': (t) => assignAbstractType(t),
   'arguments': (t) => assignArguments(t),
   'array_expression': (t) => assignArrayExpression(t),
@@ -176,9 +178,16 @@ export const assignByKind: Record<string, (target: any) => any> = {
   'type_identifier': (t) => typeIdentifier(t.text()),
 };
 
+/** Lookup assign function for a kind. Throws if kind is unknown. */
+export function assignByKind(kind: string, target: any): any {
+  const fn = _assignTable[kind];
+  if (!fn) throw new Error(`No assign function for kind '${kind}'`);
+  return fn(target);
+}
+
 export function assignAbstractType(target: TreeNode<'abstract_type'>): AbstractType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = abstractType({
-    trait: assignByKind[target.field('trait')!.type]!(target.field('trait')!),
+    trait: assignByKind(target.field('trait')!.type, target.field('trait')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -205,7 +214,7 @@ export function assignArguments(target: TreeNode<'arguments'>): Arguments & { to
 
 export function assignArrayExpression(target: TreeNode<'array_expression'>): ArrayExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = arrayExpression({
-    length: target.field('length') ? assignByKind[target.field('length')!.type]!(target.field('length')!) : undefined,
+    length: target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -219,8 +228,8 @@ export function assignArrayExpression(target: TreeNode<'array_expression'>): Arr
 
 export function assignArrayType(target: TreeNode<'array_type'>): ArrayType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = arrayType({
-    element: assignByKind[target.field('element')!.type]!(target.field('element')!),
-    length: target.field('length') ? assignByKind[target.field('length')!.type]!(target.field('length')!) : undefined,
+    element: assignByKind(target.field('element')!.type, target.field('element')!),
+    length: target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -234,8 +243,8 @@ export function assignArrayType(target: TreeNode<'array_type'>): ArrayType & { t
 
 export function assignAssignmentExpression(target: TreeNode<'assignment_expression'>): AssignmentExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = assignmentExpression({
-    left: assignByKind[target.field('left')!.type]!(target.field('left')!),
-    right: assignByKind[target.field('right')!.type]!(target.field('right')!),
+    left: assignByKind(target.field('left')!.type, target.field('left')!),
+    right: assignByKind(target.field('right')!.type, target.field('right')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -249,7 +258,7 @@ export function assignAssignmentExpression(target: TreeNode<'assignment_expressi
 
 export function assignAssociatedType(target: TreeNode<'associated_type'>): AssociatedType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = associatedType({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
   } as any);
@@ -278,7 +287,7 @@ export function assignAsyncBlock(target: TreeNode<'async_block'>): AsyncBlock & 
 
 export function assignAttribute(target: TreeNode<'attribute'>): Attribute & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = attribute({
-    value: target.field('value') ? assignByKind[target.field('value')!.type]!(target.field('value')!) : undefined,
+    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
     arguments: target.field('arguments') ? assignTokenTree(target.field('arguments')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -332,8 +341,8 @@ export function assignBaseFieldInitializer(target: TreeNode<'base_field_initiali
 
 export function assignBinaryExpression(target: TreeNode<'binary_expression'>): BinaryExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = binaryExpression({
-    left: assignByKind[target.field('left')!.type]!(target.field('left')!),
-    right: assignByKind[target.field('right')!.type]!(target.field('right')!),
+    left: assignByKind(target.field('left')!.type, target.field('left')!),
+    right: assignByKind(target.field('right')!.type, target.field('right')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -360,9 +369,9 @@ export function assignBlock(target: TreeNode<'block'>): Block & { toEdit(): Edit
 
 export function assignBlockComment(target: TreeNode<'block_comment'>): BlockComment & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = blockComment({
-    outer: target.field('outer') ? outerDocCommentMarker(target.field('outer')!.text()) : undefined,
-    inner: target.field('inner') ? innerDocCommentMarker(target.field('inner')!.text()) : undefined,
-    doc: target.field('doc') ? docComment(target.field('doc')!.text()) : undefined,
+    outer: target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined,
+    inner: target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined,
+    doc: target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -415,7 +424,7 @@ export function assignBreakExpression(target: TreeNode<'break_expression'>): Bre
 
 export function assignCallExpression(target: TreeNode<'call_expression'>): CallExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = callExpression({
-    function: assignByKind[target.field('function')!.type]!(target.field('function')!),
+    function: assignByKind(target.field('function')!.type, target.field('function')!),
     arguments: assignArguments(target.field('arguments')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -444,8 +453,8 @@ export function assignCapturedPattern(target: TreeNode<'captured_pattern'>): Cap
 export function assignClosureExpression(target: TreeNode<'closure_expression'>): ClosureExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = closureExpression({
     parameters: assignClosureParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind[target.field('return_type')!.type]!(target.field('return_type')!) : undefined,
-    body: assignByKind[target.field('body')!.type]!(target.field('body')!),
+    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
+    body: assignByKind(target.field('body')!.type, target.field('body')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -472,8 +481,8 @@ export function assignClosureParameters(target: TreeNode<'closure_parameters'>):
 
 export function assignCompoundAssignmentExpr(target: TreeNode<'compound_assignment_expr'>): CompoundAssignmentExpr & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = compoundAssignmentExpr({
-    left: assignByKind[target.field('left')!.type]!(target.field('left')!),
-    right: assignByKind[target.field('right')!.type]!(target.field('right')!),
+    left: assignByKind(target.field('left')!.type, target.field('left')!),
+    right: assignByKind(target.field('right')!.type, target.field('right')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -501,9 +510,9 @@ export function assignConstBlock(target: TreeNode<'const_block'>): ConstBlock & 
 
 export function assignConstItem(target: TreeNode<'const_item'>): ConstItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = constItem({
-    name: identifier(target.field('name')!.text()),
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
-    value: target.field('value') ? assignByKind[target.field('value')!.type]!(target.field('value')!) : undefined,
+    name: assignByKind('identifier', target.field('name')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
+    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -517,9 +526,9 @@ export function assignConstItem(target: TreeNode<'const_item'>): ConstItem & { t
 
 export function assignConstParameter(target: TreeNode<'const_parameter'>): ConstParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = constParameter({
-    name: identifier(target.field('name')!.text()),
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
-    value: target.field('value') ? assignByKind[target.field('value')!.type]!(target.field('value')!) : undefined,
+    name: assignByKind('identifier', target.field('name')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
+    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -559,7 +568,7 @@ export function assignDeclarationList(target: TreeNode<'declaration_list'>): Dec
 
 export function assignDynamicType(target: TreeNode<'dynamic_type'>): DynamicType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = dynamicType({
-    trait: assignByKind[target.field('trait')!.type]!(target.field('trait')!),
+    trait: assignByKind(target.field('trait')!.type, target.field('trait')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -586,7 +595,7 @@ export function assignElseClause(target: TreeNode<'else_clause'>): ElseClause & 
 
 export function assignEnumItem(target: TreeNode<'enum_item'>): EnumItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = enumItem({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     body: assignEnumVariantList(target.field('body')!),
   } as any);
@@ -602,9 +611,9 @@ export function assignEnumItem(target: TreeNode<'enum_item'>): EnumItem & { toEd
 
 export function assignEnumVariant(target: TreeNode<'enum_variant'>): EnumVariant & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = enumVariant({
-    name: identifier(target.field('name')!.text()),
-    body: target.field('body') ? assignByKind[target.field('body')!.type]!(target.field('body')!) : undefined,
-    value: target.field('value') ? assignByKind[target.field('value')!.type]!(target.field('value')!) : undefined,
+    name: assignByKind('identifier', target.field('name')!),
+    body: target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined,
+    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -644,8 +653,8 @@ export function assignExpressionStatement(target: TreeNode<'expression_statement
 
 export function assignExternCrateDeclaration(target: TreeNode<'extern_crate_declaration'>): ExternCrateDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = externCrateDeclaration({
-    name: identifier(target.field('name')!.text()),
-    alias: target.field('alias') ? identifier(target.field('alias')!.text()) : undefined,
+    name: assignByKind('identifier', target.field('name')!),
+    alias: target.field('alias') ? assignByKind('identifier', target.field('alias')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -672,8 +681,8 @@ export function assignExternModifier(target: TreeNode<'extern_modifier'>): Exter
 
 export function assignFieldDeclaration(target: TreeNode<'field_declaration'>): FieldDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldDeclaration({
-    name: fieldIdentifier(target.field('name')!.text()),
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    name: assignByKind('field_identifier', target.field('name')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -700,8 +709,8 @@ export function assignFieldDeclarationList(target: TreeNode<'field_declaration_l
 
 export function assignFieldExpression(target: TreeNode<'field_expression'>): FieldExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldExpression({
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
-    field: assignByKind[target.field('field')!.type]!(target.field('field')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
+    field: assignByKind(target.field('field')!.type, target.field('field')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -715,8 +724,8 @@ export function assignFieldExpression(target: TreeNode<'field_expression'>): Fie
 
 export function assignFieldInitializer(target: TreeNode<'field_initializer'>): FieldInitializer & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldInitializer({
-    field: assignByKind[target.field('field')!.type]!(target.field('field')!),
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
+    field: assignByKind(target.field('field')!.type, target.field('field')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -743,8 +752,8 @@ export function assignFieldInitializerList(target: TreeNode<'field_initializer_l
 
 export function assignFieldPattern(target: TreeNode<'field_pattern'>): FieldPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldPattern({
-    name: assignByKind[target.field('name')!.type]!(target.field('name')!),
-    pattern: target.field('pattern') ? assignByKind[target.field('pattern')!.type]!(target.field('pattern')!) : undefined,
+    name: assignByKind(target.field('name')!.type, target.field('name')!),
+    pattern: target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -758,8 +767,8 @@ export function assignFieldPattern(target: TreeNode<'field_pattern'>): FieldPatt
 
 export function assignForExpression(target: TreeNode<'for_expression'>): ForExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = forExpression({
-    pattern: assignByKind[target.field('pattern')!.type]!(target.field('pattern')!),
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
+    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
     body: assignBlock(target.field('body')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -801,10 +810,10 @@ export function assignForeignModItem(target: TreeNode<'foreign_mod_item'>): Fore
 
 export function assignFunctionItem(target: TreeNode<'function_item'>): FunctionItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = functionItem({
-    name: assignByKind[target.field('name')!.type]!(target.field('name')!),
+    name: assignByKind(target.field('name')!.type, target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     parameters: assignParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind[target.field('return_type')!.type]!(target.field('return_type')!) : undefined,
+    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
     body: assignBlock(target.field('body')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -832,10 +841,10 @@ export function assignFunctionModifiers(target: TreeNode<'function_modifiers'>):
 
 export function assignFunctionSignatureItem(target: TreeNode<'function_signature_item'>): FunctionSignatureItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = functionSignatureItem({
-    name: assignByKind[target.field('name')!.type]!(target.field('name')!),
+    name: assignByKind(target.field('name')!.type, target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     parameters: assignParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind[target.field('return_type')!.type]!(target.field('return_type')!) : undefined,
+    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -849,9 +858,9 @@ export function assignFunctionSignatureItem(target: TreeNode<'function_signature
 
 export function assignFunctionType(target: TreeNode<'function_type'>): FunctionType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = functionType({
-    trait: target.field('trait') ? assignByKind[target.field('trait')!.type]!(target.field('trait')!) : undefined,
+    trait: target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined,
     parameters: assignParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind[target.field('return_type')!.type]!(target.field('return_type')!) : undefined,
+    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -878,7 +887,7 @@ export function assignGenBlock(target: TreeNode<'gen_block'>): GenBlock & { toEd
 
 export function assignGenericFunction(target: TreeNode<'generic_function'>): GenericFunction & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genericFunction({
-    function: assignByKind[target.field('function')!.type]!(target.field('function')!),
+    function: assignByKind(target.field('function')!.type, target.field('function')!),
     type_arguments: assignTypeArguments(target.field('type_arguments')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -907,7 +916,7 @@ export function assignGenericPattern(target: TreeNode<'generic_pattern'>): Gener
 
 export function assignGenericType(target: TreeNode<'generic_type'>): GenericType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genericType({
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
     type_arguments: assignTypeArguments(target.field('type_arguments')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -922,7 +931,7 @@ export function assignGenericType(target: TreeNode<'generic_type'>): GenericType
 
 export function assignGenericTypeWithTurbofish(target: TreeNode<'generic_type_with_turbofish'>): GenericTypeWithTurbofish & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genericTypeWithTurbofish({
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
     type_arguments: assignTypeArguments(target.field('type_arguments')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -938,7 +947,7 @@ export function assignGenericTypeWithTurbofish(target: TreeNode<'generic_type_wi
 export function assignHigherRankedTraitBound(target: TreeNode<'higher_ranked_trait_bound'>): HigherRankedTraitBound & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = higherRankedTraitBound({
     type_parameters: assignTypeParameters(target.field('type_parameters')!),
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -952,7 +961,7 @@ export function assignHigherRankedTraitBound(target: TreeNode<'higher_ranked_tra
 
 export function assignIfExpression(target: TreeNode<'if_expression'>): IfExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = ifExpression({
-    condition: assignByKind[target.field('condition')!.type]!(target.field('condition')!),
+    condition: assignByKind(target.field('condition')!.type, target.field('condition')!),
     consequence: assignBlock(target.field('consequence')!),
     alternative: target.field('alternative') ? assignElseClause(target.field('alternative')!) : undefined,
   } as any);
@@ -969,8 +978,8 @@ export function assignIfExpression(target: TreeNode<'if_expression'>): IfExpress
 export function assignImplItem(target: TreeNode<'impl_item'>): ImplItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = implItem({
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    trait: target.field('trait') ? assignByKind[target.field('trait')!.type]!(target.field('trait')!) : undefined,
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    trait: target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined,
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
     body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -1037,8 +1046,8 @@ export function assignLetChain(target: TreeNode<'let_chain'>): LetChain & { toEd
 
 export function assignLetCondition(target: TreeNode<'let_condition'>): LetCondition & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = letCondition({
-    pattern: assignByKind[target.field('pattern')!.type]!(target.field('pattern')!),
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
+    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1052,9 +1061,9 @@ export function assignLetCondition(target: TreeNode<'let_condition'>): LetCondit
 
 export function assignLetDeclaration(target: TreeNode<'let_declaration'>): LetDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = letDeclaration({
-    pattern: assignByKind[target.field('pattern')!.type]!(target.field('pattern')!),
-    type: target.field('type') ? assignByKind[target.field('type')!.type]!(target.field('type')!) : undefined,
-    value: target.field('value') ? assignByKind[target.field('value')!.type]!(target.field('value')!) : undefined,
+    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
+    type: target.field('type') ? assignByKind(target.field('type')!.type, target.field('type')!) : undefined,
+    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
     alternative: target.field('alternative') ? assignBlock(target.field('alternative')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -1097,9 +1106,9 @@ export function assignLifetimeParameter(target: TreeNode<'lifetime_parameter'>):
 
 export function assignLineComment(target: TreeNode<'line_comment'>): LineComment & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = lineComment({
-    outer: target.field('outer') ? outerDocCommentMarker(target.field('outer')!.text()) : undefined,
-    inner: target.field('inner') ? innerDocCommentMarker(target.field('inner')!.text()) : undefined,
-    doc: target.field('doc') ? docComment(target.field('doc')!.text()) : undefined,
+    outer: target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined,
+    inner: target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined,
+    doc: target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1127,7 +1136,7 @@ export function assignLoopExpression(target: TreeNode<'loop_expression'>): LoopE
 
 export function assignMacroDefinition(target: TreeNode<'macro_definition'>): MacroDefinition & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = macroDefinition({
-    name: identifier(target.field('name')!.text()),
+    name: assignByKind('identifier', target.field('name')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1141,7 +1150,7 @@ export function assignMacroDefinition(target: TreeNode<'macro_definition'>): Mac
 
 export function assignMacroInvocation(target: TreeNode<'macro_invocation'>): MacroInvocation & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = macroInvocation({
-    macro: assignByKind[target.field('macro')!.type]!(target.field('macro')!),
+    macro: assignByKind(target.field('macro')!.type, target.field('macro')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1171,7 +1180,7 @@ export function assignMacroRule(target: TreeNode<'macro_rule'>): MacroRule & { t
 export function assignMatchArm(target: TreeNode<'match_arm'>): MatchArm & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = matchArm({
     pattern: assignMatchPattern(target.field('pattern')!),
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1198,7 +1207,7 @@ export function assignMatchBlock(target: TreeNode<'match_block'>): MatchBlock & 
 
 export function assignMatchExpression(target: TreeNode<'match_expression'>): MatchExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = matchExpression({
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
     body: assignMatchBlock(target.field('body')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -1213,7 +1222,7 @@ export function assignMatchExpression(target: TreeNode<'match_expression'>): Mat
 
 export function assignMatchPattern(target: TreeNode<'match_pattern'>): MatchPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = matchPattern({
-    condition: target.field('condition') ? assignByKind[target.field('condition')!.type]!(target.field('condition')!) : undefined,
+    condition: target.field('condition') ? assignByKind(target.field('condition')!.type, target.field('condition')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1227,7 +1236,7 @@ export function assignMatchPattern(target: TreeNode<'match_pattern'>): MatchPatt
 
 export function assignModItem(target: TreeNode<'mod_item'>): ModItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = modItem({
-    name: identifier(target.field('name')!.text()),
+    name: assignByKind('identifier', target.field('name')!),
     body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -1281,7 +1290,7 @@ export function assignOrPattern(target: TreeNode<'or_pattern'>): OrPattern & { t
 
 export function assignOrderedFieldDeclarationList(target: TreeNode<'ordered_field_declaration_list'>): OrderedFieldDeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = orderedFieldDeclarationList({
-    type: target.field('type') ? [assignByKind[target.field('type')!.type]!(target.field('type')!)] : undefined,
+    type: target.field('type') ? [assignByKind(target.field('type')!.type, target.field('type')!)] : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1295,8 +1304,8 @@ export function assignOrderedFieldDeclarationList(target: TreeNode<'ordered_fiel
 
 export function assignParameter(target: TreeNode<'parameter'>): Parameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = parameter({
-    pattern: assignByKind[target.field('pattern')!.type]!(target.field('pattern')!),
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1336,7 +1345,7 @@ export function assignParenthesizedExpression(target: TreeNode<'parenthesized_ex
 
 export function assignPointerType(target: TreeNode<'pointer_type'>): PointerType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = pointerType({
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1350,8 +1359,8 @@ export function assignPointerType(target: TreeNode<'pointer_type'>): PointerType
 
 export function assignQualifiedType(target: TreeNode<'qualified_type'>): QualifiedType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = qualifiedType({
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
-    alias: assignByKind[target.field('alias')!.type]!(target.field('alias')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
+    alias: assignByKind(target.field('alias')!.type, target.field('alias')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1378,8 +1387,8 @@ export function assignRangeExpression(target: TreeNode<'range_expression'>): Ran
 
 export function assignRangePattern(target: TreeNode<'range_pattern'>): RangePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = rangePattern({
-    left: target.field('left') ? assignByKind[target.field('left')!.type]!(target.field('left')!) : undefined,
-    right: target.field('right') ? assignByKind[target.field('right')!.type]!(target.field('right')!) : undefined,
+    left: target.field('left') ? assignByKind(target.field('left')!.type, target.field('left')!) : undefined,
+    right: target.field('right') ? assignByKind(target.field('right')!.type, target.field('right')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1419,7 +1428,7 @@ export function assignRefPattern(target: TreeNode<'ref_pattern'>): RefPattern & 
 
 export function assignReferenceExpression(target: TreeNode<'reference_expression'>): ReferenceExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = referenceExpression({
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1446,7 +1455,7 @@ export function assignReferencePattern(target: TreeNode<'reference_pattern'>): R
 
 export function assignReferenceType(target: TreeNode<'reference_type'>): ReferenceType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = referenceType({
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1486,8 +1495,8 @@ export function assignReturnExpression(target: TreeNode<'return_expression'>): R
 
 export function assignScopedIdentifier(target: TreeNode<'scoped_identifier'>): ScopedIdentifier & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = scopedIdentifier({
-    path: target.field('path') ? assignByKind[target.field('path')!.type]!(target.field('path')!) : undefined,
-    name: assignByKind[target.field('name')!.type]!(target.field('name')!),
+    path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
+    name: assignByKind(target.field('name')!.type, target.field('name')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1501,8 +1510,8 @@ export function assignScopedIdentifier(target: TreeNode<'scoped_identifier'>): S
 
 export function assignScopedTypeIdentifier(target: TreeNode<'scoped_type_identifier'>): ScopedTypeIdentifier & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = scopedTypeIdentifier({
-    path: target.field('path') ? assignByKind[target.field('path')!.type]!(target.field('path')!) : undefined,
-    name: typeIdentifier(target.field('name')!.text()),
+    path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
+    name: assignByKind('type_identifier', target.field('name')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1516,7 +1525,7 @@ export function assignScopedTypeIdentifier(target: TreeNode<'scoped_type_identif
 
 export function assignScopedUseList(target: TreeNode<'scoped_use_list'>): ScopedUseList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = scopedUseList({
-    path: target.field('path') ? assignByKind[target.field('path')!.type]!(target.field('path')!) : undefined,
+    path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
     list: assignUseList(target.field('list')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -1583,9 +1592,9 @@ export function assignSourceFile(target: TreeNode<'source_file'>): SourceFile & 
 
 export function assignStaticItem(target: TreeNode<'static_item'>): StaticItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = staticItem({
-    name: identifier(target.field('name')!.text()),
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
-    value: target.field('value') ? assignByKind[target.field('value')!.type]!(target.field('value')!) : undefined,
+    name: assignByKind('identifier', target.field('name')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
+    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1612,7 +1621,7 @@ export function assignStringLiteral(target: TreeNode<'string_literal'>): StringL
 
 export function assignStructExpression(target: TreeNode<'struct_expression'>): StructExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = structExpression({
-    name: assignByKind[target.field('name')!.type]!(target.field('name')!),
+    name: assignByKind(target.field('name')!.type, target.field('name')!),
     body: assignFieldInitializerList(target.field('body')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -1627,9 +1636,9 @@ export function assignStructExpression(target: TreeNode<'struct_expression'>): S
 
 export function assignStructItem(target: TreeNode<'struct_item'>): StructItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = structItem({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    body: target.field('body') ? assignByKind[target.field('body')!.type]!(target.field('body')!) : undefined,
+    body: target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1643,7 +1652,7 @@ export function assignStructItem(target: TreeNode<'struct_item'>): StructItem & 
 
 export function assignStructPattern(target: TreeNode<'struct_pattern'>): StructPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = structPattern({
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1657,8 +1666,8 @@ export function assignStructPattern(target: TreeNode<'struct_pattern'>): StructP
 
 export function assignTokenBindingPattern(target: TreeNode<'token_binding_pattern'>): TokenBindingPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tokenBindingPattern({
-    name: metavariable(target.field('name')!.text()),
-    type: fragmentSpecifier(target.field('type')!.text()),
+    name: assignByKind('metavariable', target.field('name')!),
+    type: assignByKind('fragment_specifier', target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1737,7 +1746,7 @@ export function assignTraitBounds(target: TreeNode<'trait_bounds'>): TraitBounds
 
 export function assignTraitItem(target: TreeNode<'trait_item'>): TraitItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = traitItem({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
     body: assignDeclarationList(target.field('body')!),
@@ -1806,7 +1815,7 @@ export function assignTuplePattern(target: TreeNode<'tuple_pattern'>): TuplePatt
 
 export function assignTupleStructPattern(target: TreeNode<'tuple_struct_pattern'>): TupleStructPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tupleStructPattern({
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1846,9 +1855,9 @@ export function assignTypeArguments(target: TreeNode<'type_arguments'>): TypeArg
 
 export function assignTypeBinding(target: TreeNode<'type_binding'>): TypeBinding & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = typeBinding({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     type_arguments: target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')!) : undefined,
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1862,8 +1871,8 @@ export function assignTypeBinding(target: TreeNode<'type_binding'>): TypeBinding
 
 export function assignTypeCastExpression(target: TreeNode<'type_cast_expression'>): TypeCastExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = typeCastExpression({
-    value: assignByKind[target.field('value')!.type]!(target.field('value')!),
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    value: assignByKind(target.field('value')!.type, target.field('value')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1877,9 +1886,9 @@ export function assignTypeCastExpression(target: TreeNode<'type_cast_expression'
 
 export function assignTypeItem(target: TreeNode<'type_item'>): TypeItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = typeItem({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    type: assignByKind[target.field('type')!.type]!(target.field('type')!),
+    type: assignByKind(target.field('type')!.type, target.field('type')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1893,9 +1902,9 @@ export function assignTypeItem(target: TreeNode<'type_item'>): TypeItem & { toEd
 
 export function assignTypeParameter(target: TreeNode<'type_parameter'>): TypeParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = typeParameter({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
-    default_type: target.field('default_type') ? assignByKind[target.field('default_type')!.type]!(target.field('default_type')!) : undefined,
+    default_type: target.field('default_type') ? assignByKind(target.field('default_type')!.type, target.field('default_type')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1935,7 +1944,7 @@ export function assignUnaryExpression(target: TreeNode<'unary_expression'>): Una
 
 export function assignUnionItem(target: TreeNode<'union_item'>): UnionItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = unionItem({
-    name: typeIdentifier(target.field('name')!.text()),
+    name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     body: assignFieldDeclarationList(target.field('body')!),
   } as any);
@@ -1964,8 +1973,8 @@ export function assignUnsafeBlock(target: TreeNode<'unsafe_block'>): UnsafeBlock
 
 export function assignUseAsClause(target: TreeNode<'use_as_clause'>): UseAsClause & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = useAsClause({
-    path: assignByKind[target.field('path')!.type]!(target.field('path')!),
-    alias: identifier(target.field('alias')!.text()),
+    path: assignByKind(target.field('path')!.type, target.field('path')!),
+    alias: assignByKind('identifier', target.field('alias')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -1992,7 +2001,7 @@ export function assignUseBounds(target: TreeNode<'use_bounds'>): UseBounds & { t
 
 export function assignUseDeclaration(target: TreeNode<'use_declaration'>): UseDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = useDeclaration({
-    argument: assignByKind[target.field('argument')!.type]!(target.field('argument')!),
+    argument: assignByKind(target.field('argument')!.type, target.field('argument')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -2032,7 +2041,7 @@ export function assignUseWildcard(target: TreeNode<'use_wildcard'>): UseWildcard
 
 export function assignVariadicParameter(target: TreeNode<'variadic_parameter'>): VariadicParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = variadicParameter({
-    pattern: target.field('pattern') ? assignByKind[target.field('pattern')!.type]!(target.field('pattern')!) : undefined,
+    pattern: target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined,
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
@@ -2072,7 +2081,7 @@ export function assignWhereClause(target: TreeNode<'where_clause'>): WhereClause
 
 export function assignWherePredicate(target: TreeNode<'where_predicate'>): WherePredicate & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = wherePredicate({
-    left: assignByKind[target.field('left')!.type]!(target.field('left')!),
+    left: assignByKind(target.field('left')!.type, target.field('left')!),
     bounds: assignTraitBounds(target.field('bounds')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -2087,7 +2096,7 @@ export function assignWherePredicate(target: TreeNode<'where_predicate'>): Where
 
 export function assignWhileExpression(target: TreeNode<'while_expression'>): WhileExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = whileExpression({
-    condition: assignByKind[target.field('condition')!.type]!(target.field('condition')!),
+    condition: assignByKind(target.field('condition')!.type, target.field('condition')!),
     body: assignBlock(target.field('body')!),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
@@ -2117,8 +2126,6 @@ export function assignYieldExpression(target: TreeNode<'yield_expression'>): Yie
  * Create an in-place editor for a parsed tree node.
  * Recursively hydrates via assignByKind, attaches range for .toEdit().
  */
-export function edit<K extends string>(target: TreeNode<K>) {
-  const assign = assignByKind[target.type];
-  if (!assign) throw new Error(`No factory for kind '${target.type}'`);
-  return assign(target);
+export function edit<K extends NodeKind<RustGrammar>>(target: TreeNode<K>) {
+  return assignByKind(target.type, target);
 }
