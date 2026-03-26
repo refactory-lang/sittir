@@ -180,7 +180,7 @@ const _assignTable: Record<string, (target: any) => any> = {
 /** Lookup assign function for a kind. Throws if kind is unknown. */
 export function assignByKind(kind: string, target: any): any {
   const fn = _assignTable[kind];
-  if (!fn) throw new Error(`No assign function for kind '${kind}'`);
+  if (!fn) throw new Error(`No assign function for kind '${kind}' in RustGrammar grammar`);
   return fn(target);
 }
 
@@ -1289,7 +1289,11 @@ export function assignOrPattern(target: OrPatternTree): OrPattern & { toEdit(): 
 
 export function assignOrderedFieldDeclarationList(target: OrderedFieldDeclarationListTree): OrderedFieldDeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = orderedFieldDeclarationList({
-    type: target.field('type') ? [assignByKind(target.field('type')!.type, target.field('type')!)] : undefined,
+    type: (() => {
+      const _kinds = new Set(["abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","primitive_type"]);
+      const _items = target.children().filter((c: any) => _kinds.has(c.type));
+      return _items.length > 0 ? _items.map((c: any) => assignByKind(c.type, c)) : undefined;
+    })(),
   } as any);
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {

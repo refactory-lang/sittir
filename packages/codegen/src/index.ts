@@ -119,6 +119,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 			leafKinds,
 			keywordKinds,
 			leafValues: new Map(leafValueKinds.map(lv => [lv.kind, lv.values])),
+			supertypes,
 		}),
 		irNamespace: emitIrNamespace({ grammar: config.grammar, branchKinds, leafKinds, keywordKinds, operatorContexts: listOperatorContexts(config.grammar), supertypes }),
 		joinBy: emitJoinBy({ grammar: config.grammar, nodes }),

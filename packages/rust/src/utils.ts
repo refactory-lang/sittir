@@ -16,7 +16,8 @@ export type FromValue = string | number | boolean | AnyNodeData | FromValue[] | 
 // ---------------------------------------------------------------------------
 
 export function isNodeData(v: any): v is AnyNodeData {
-  return v !== null && typeof v === 'object' && typeof v.type === 'string' && typeof v.fields === 'object';
+  if (v === null || typeof v !== 'object' || typeof v.type !== 'string') return false;
+  return (v.fields !== null && typeof v.fields === 'object') || typeof v.text === 'string';
 }
 
 // ---------------------------------------------------------------------------

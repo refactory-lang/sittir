@@ -26,6 +26,10 @@ function getParsed(template: RenderRule): ParsedTemplate {
 export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: JoinByMap): string {
 	if (node.text !== undefined) return node.text;
 
+	if (!node.fields) {
+		throw new Error(`Branch node '${node.type}' has no 'fields' — did you mean to set 'text' for a leaf node?`);
+	}
+
 	const template = registry[node.type];
 	if (!template) throw new Error(`No render rules for '${node.type}'`);
 
@@ -79,7 +83,8 @@ export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: Join
 		}
 	}
 
-	return parts.join(' ').replace(/\s+/g, ' ').trim();
+	// Filter empty parts and join — avoids collapsing whitespace inside text values
+	return parts.filter(p => p !== '').join(' ');
 }
 
 /** Render a field value — handles AnyNodeData, string, and number. */

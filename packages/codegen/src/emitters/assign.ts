@@ -85,7 +85,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push('/** Lookup assign function for a kind. Throws if kind is unknown. */');
 	lines.push('export function assignByKind(kind: string, target: any): any {');
 	lines.push('  const fn = _assignTable[kind];');
-	lines.push("  if (!fn) throw new Error(`No assign function for kind '${kind}'`);");
+	lines.push(`  if (!fn) throw new Error(\`No assign function for kind '\${kind}' in ${grammarAlias} grammar\`);`);
 	lines.push('  return fn(target);');
 	lines.push('}');
 	lines.push('');
@@ -102,7 +102,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 
 		for (const f of node.fields) {
 			if (f.namedTypes.length === 0) continue;
-			emitAssignField(lines, f, leafSet);
+			emitAssignField(lines, f, leafSet, node.kind);
 		}
 
 		lines.push(`  } as any);`);
@@ -137,12 +137,19 @@ export function emitAssign(config: EmitAssignConfig): string {
 }
 
 /** Emit a single field assignment line inside an assign function. */
-function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>): void {
+function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>, nodeKind: string): void {
 	const fieldAccess = `target.field('${f.name}')`;
+	const kindSet = JSON.stringify(f.namedTypes);
 
 	if (f.required) {
 		if (f.multiple) {
-			lines.push(`    ${f.name}: ${fieldAccess} ? [assignByKind(${fieldAccess}!.type, ${fieldAccess}!)] : [],`);
+			// Multiple required: collect all children matching this field's accepted kinds
+			lines.push(`    ${f.name}: (() => {`);
+			lines.push(`      const _kinds = new Set(${kindSet});`);
+			lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
+			lines.push(`      if (_items.length === 0) throw new Error(\`Required field '${f.name}' has no children on '${nodeKind}' tree node\`);`);
+			lines.push(`      return _items.map((c: any) => assignByKind(c.type, c));`);
+			lines.push(`    })(),`);
 		} else if (f.namedTypes.length === 1) {
 			const childKind = f.namedTypes[0]!;
 			if (leafSet.has(childKind)) {
@@ -155,7 +162,12 @@ function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>): v
 		}
 	} else {
 		if (f.multiple) {
-			lines.push(`    ${f.name}: ${fieldAccess} ? [assignByKind(${fieldAccess}!.type, ${fieldAccess}!)] : undefined,`);
+			// Multiple optional: collect matching children, undefined if none
+			lines.push(`    ${f.name}: (() => {`);
+			lines.push(`      const _kinds = new Set(${kindSet});`);
+			lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
+			lines.push(`      return _items.length > 0 ? _items.map((c: any) => assignByKind(c.type, c)) : undefined;`);
+			lines.push(`    })(),`);
 		} else if (f.namedTypes.length === 1) {
 			const childKind = f.namedTypes[0]!;
 			if (leafSet.has(childKind)) {

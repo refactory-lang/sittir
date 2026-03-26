@@ -37,8 +37,8 @@ describe('emitFactory', () => {
 		const node = readGrammarKind('rust', 'function_item');
 		const source = emitFactory({ node, leafKinds: ['identifier', 'metavariable'] });
 
-		// name field accepts identifier | metavariable — narrowed NodeData in regular API (FR-016)
-		expect(source).toContain("NodeData<'identifier' | 'metavariable'>");
+		// name field accepts named interfaces — narrowed types in regular API (FR-016)
+		expect(source).toContain('Identifier | Metavariable');
 	});
 
 	it('generates children setter for nodes with children', () => {

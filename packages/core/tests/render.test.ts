@@ -146,4 +146,14 @@ describe('render', () => {
 		};
 		expect(render(node, registry)).toBe('{ x y }');
 	});
+
+	it('renders leaf node without fields property', () => {
+		const node = { type: 'identifier', text: 'main' } as NodeData;
+		expect(render(node, registry)).toBe('main');
+	});
+
+	it('throws on branch node without fields', () => {
+		const node = { type: 'function_item' } as NodeData;
+		expect(() => render(node, registry)).toThrow("has no 'fields'");
+	});
 });

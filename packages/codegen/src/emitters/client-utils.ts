@@ -47,7 +47,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('');
 	lines.push('export function isNodeData(v: any): v is AnyNodeData {');
 	lines.push("  if (v === null || typeof v !== 'object' || typeof v.type !== 'string') return false;");
-	lines.push("  return typeof v.fields === 'object' || typeof v.text === 'string';");
+	lines.push("  return (v.fields !== null && typeof v.fields === 'object') || typeof v.text === 'string';");
 	lines.push('}');
 	lines.push('');
 

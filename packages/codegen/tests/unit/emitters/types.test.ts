@@ -9,31 +9,30 @@ describe('emitTypes', () => {
 		expect(source).toContain("FunctionItem = 'function_item'");
 	});
 
-	it('should emit construction types as NodeType projections', () => {
+	it('should emit interface extends NodeData for branch kinds', () => {
 		const source = emitTypes({ grammar: 'rust', nodeKinds: ['struct_item', 'function_item'] });
-		expect(source).toContain("export type StructItem = NodeType<RustGrammar, 'struct_item'>");
-		expect(source).toContain("export type FunctionItem = NodeType<RustGrammar, 'function_item'>");
+		expect(source).toContain("export interface StructItem extends NodeData<'struct_item'> {}");
+		expect(source).toContain("export interface FunctionItem extends NodeData<'function_item'> {}");
 	});
 
-	it('should emit navigation types with Node suffix', () => {
+	it('should emit Fields and Tree interfaces', () => {
 		const source = emitTypes({ grammar: 'rust', nodeKinds: ['function_item'] });
-		expect(source).toContain('export interface FunctionItemNode {');
-		expect(source).toContain('readonly type: SyntaxKind.FunctionItem');
-		expect(source).toContain('readonly text: string');
+		expect(source).toContain("export interface FunctionItemFields extends NodeFields<'function_item'> {}");
+		expect(source).toContain("export interface FunctionItemTree extends TreeNode<'function_item'> {}");
 	});
 
 	it('should emit discriminated union', () => {
 		const source = emitTypes({ grammar: 'rust', nodeKinds: ['struct_item', 'function_item'] });
-		expect(source).toContain('export type RustIrNode =');
+		expect(source).toContain('export type RustNode =');
 		expect(source).toContain('| StructItem');
 		expect(source).toContain('| FunctionItem');
 	});
 
-	it('should emit leaf types in SyntaxKind enum', () => {
+	it('should emit leaf types as interface extends NodeData', () => {
 		const source = emitTypes({ grammar: 'rust', nodeKinds: ['struct_item'], leafKinds: ['identifier'] });
 		expect(source).toContain("Identifier = 'identifier'");
-		expect(source).toContain("export type Identifier = { kind: 'identifier' }");
-		expect(source).toContain('export interface IdentifierNode {');
+		expect(source).toContain("export interface Identifier extends NodeData<'identifier'> {}");
+		expect(source).toContain("export interface IdentifierTree extends TreeNode<'identifier'> {}");
 	});
 
 	it('should emit scoped supertype enums', () => {
@@ -47,7 +46,7 @@ describe('emitTypes', () => {
 		expect(source).toContain("CallExpression = 'call_expression'");
 	});
 
-	it('should emit supertype unions for both construction and navigation', () => {
+	it('should emit supertype unions for node, fields, and tree', () => {
 		const source = emitTypes({
 			grammar: 'rust',
 			nodeKinds: ['binary_expression', 'call_expression'],
@@ -55,8 +54,10 @@ describe('emitTypes', () => {
 		});
 		expect(source).toContain('export type Expression =');
 		expect(source).toContain('| BinaryExpression');
-		expect(source).toContain('export type ExpressionNode =');
-		expect(source).toContain('| BinaryExpressionNode');
+		expect(source).toContain('export type ExpressionFields =');
+		expect(source).toContain('| BinaryExpressionFields');
+		expect(source).toContain('export type ExpressionTree =');
+		expect(source).toContain('| BinaryExpressionTree');
 	});
 
 	it('should emit grammar alias and imports', () => {
@@ -68,6 +69,6 @@ describe('emitTypes', () => {
 	it('should work for go grammar', () => {
 		const source = emitTypes({ grammar: 'go', nodeKinds: ['function_declaration'] });
 		expect(source).toContain("import type { GoGrammar } from './grammar.js'");
-		expect(source).toContain('export type GoIrNode =');
+		expect(source).toContain('export type GoNode =');
 	});
 });

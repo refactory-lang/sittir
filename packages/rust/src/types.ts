@@ -305,142 +305,279 @@ export const enum TypeKind {
 }
 
 // Node types — grammar-derived, interface for compiler caching
+/** @see NodeData<'abstract_type'> — interface extends for compiler caching */
 export interface AbstractType extends NodeData<'abstract_type'> {}
+/** @see NodeData<'arguments'> — interface extends for compiler caching */
 export interface Arguments extends NodeData<'arguments'> {}
+/** @see NodeData<'array_expression'> — interface extends for compiler caching */
 export interface ArrayExpression extends NodeData<'array_expression'> {}
+/** @see NodeData<'array_type'> — interface extends for compiler caching */
 export interface ArrayType extends NodeData<'array_type'> {}
+/** @see NodeData<'assignment_expression'> — interface extends for compiler caching */
 export interface AssignmentExpression extends NodeData<'assignment_expression'> {}
+/** @see NodeData<'associated_type'> — interface extends for compiler caching */
 export interface AssociatedType extends NodeData<'associated_type'> {}
+/** @see NodeData<'async_block'> — interface extends for compiler caching */
 export interface AsyncBlock extends NodeData<'async_block'> {}
+/** @see NodeData<'attribute'> — interface extends for compiler caching */
 export interface Attribute extends NodeData<'attribute'> {}
+/** @see NodeData<'attribute_item'> — interface extends for compiler caching */
 export interface AttributeItem extends NodeData<'attribute_item'> {}
+/** @see NodeData<'await_expression'> — interface extends for compiler caching */
 export interface AwaitExpression extends NodeData<'await_expression'> {}
+/** @see NodeData<'base_field_initializer'> — interface extends for compiler caching */
 export interface BaseFieldInitializer extends NodeData<'base_field_initializer'> {}
+/** @see NodeData<'binary_expression'> — interface extends for compiler caching */
 export interface BinaryExpression extends NodeData<'binary_expression'> {}
+/** @see NodeData<'block'> — interface extends for compiler caching */
 export interface Block extends NodeData<'block'> {}
+/** @see NodeData<'block_comment'> — interface extends for compiler caching */
 export interface BlockComment extends NodeData<'block_comment'> {}
+/** @see NodeData<'bounded_type'> — interface extends for compiler caching */
 export interface BoundedType extends NodeData<'bounded_type'> {}
+/** @see NodeData<'bracketed_type'> — interface extends for compiler caching */
 export interface BracketedType extends NodeData<'bracketed_type'> {}
+/** @see NodeData<'break_expression'> — interface extends for compiler caching */
 export interface BreakExpression extends NodeData<'break_expression'> {}
+/** @see NodeData<'call_expression'> — interface extends for compiler caching */
 export interface CallExpression extends NodeData<'call_expression'> {}
+/** @see NodeData<'captured_pattern'> — interface extends for compiler caching */
 export interface CapturedPattern extends NodeData<'captured_pattern'> {}
+/** @see NodeData<'closure_expression'> — interface extends for compiler caching */
 export interface ClosureExpression extends NodeData<'closure_expression'> {}
+/** @see NodeData<'closure_parameters'> — interface extends for compiler caching */
 export interface ClosureParameters extends NodeData<'closure_parameters'> {}
+/** @see NodeData<'compound_assignment_expr'> — interface extends for compiler caching */
 export interface CompoundAssignmentExpr extends NodeData<'compound_assignment_expr'> {}
+/** @see NodeData<'const_block'> — interface extends for compiler caching */
 export interface ConstBlock extends NodeData<'const_block'> {}
+/** @see NodeData<'const_item'> — interface extends for compiler caching */
 export interface ConstItem extends NodeData<'const_item'> {}
+/** @see NodeData<'const_parameter'> — interface extends for compiler caching */
 export interface ConstParameter extends NodeData<'const_parameter'> {}
+/** @see NodeData<'continue_expression'> — interface extends for compiler caching */
 export interface ContinueExpression extends NodeData<'continue_expression'> {}
+/** @see NodeData<'declaration_list'> — interface extends for compiler caching */
 export interface DeclarationList extends NodeData<'declaration_list'> {}
+/** @see NodeData<'dynamic_type'> — interface extends for compiler caching */
 export interface DynamicType extends NodeData<'dynamic_type'> {}
+/** @see NodeData<'else_clause'> — interface extends for compiler caching */
 export interface ElseClause extends NodeData<'else_clause'> {}
+/** @see NodeData<'enum_item'> — interface extends for compiler caching */
 export interface EnumItem extends NodeData<'enum_item'> {}
+/** @see NodeData<'enum_variant'> — interface extends for compiler caching */
 export interface EnumVariant extends NodeData<'enum_variant'> {}
+/** @see NodeData<'enum_variant_list'> — interface extends for compiler caching */
 export interface EnumVariantList extends NodeData<'enum_variant_list'> {}
+/** @see NodeData<'expression_statement'> — interface extends for compiler caching */
 export interface ExpressionStatement extends NodeData<'expression_statement'> {}
+/** @see NodeData<'extern_crate_declaration'> — interface extends for compiler caching */
 export interface ExternCrateDeclaration extends NodeData<'extern_crate_declaration'> {}
+/** @see NodeData<'extern_modifier'> — interface extends for compiler caching */
 export interface ExternModifier extends NodeData<'extern_modifier'> {}
+/** @see NodeData<'field_declaration'> — interface extends for compiler caching */
 export interface FieldDeclaration extends NodeData<'field_declaration'> {}
+/** @see NodeData<'field_declaration_list'> — interface extends for compiler caching */
 export interface FieldDeclarationList extends NodeData<'field_declaration_list'> {}
+/** @see NodeData<'field_expression'> — interface extends for compiler caching */
 export interface FieldExpression extends NodeData<'field_expression'> {}
+/** @see NodeData<'field_initializer'> — interface extends for compiler caching */
 export interface FieldInitializer extends NodeData<'field_initializer'> {}
+/** @see NodeData<'field_initializer_list'> — interface extends for compiler caching */
 export interface FieldInitializerList extends NodeData<'field_initializer_list'> {}
+/** @see NodeData<'field_pattern'> — interface extends for compiler caching */
 export interface FieldPattern extends NodeData<'field_pattern'> {}
+/** @see NodeData<'for_expression'> — interface extends for compiler caching */
 export interface ForExpression extends NodeData<'for_expression'> {}
+/** @see NodeData<'for_lifetimes'> — interface extends for compiler caching */
 export interface ForLifetimes extends NodeData<'for_lifetimes'> {}
+/** @see NodeData<'foreign_mod_item'> — interface extends for compiler caching */
 export interface ForeignModItem extends NodeData<'foreign_mod_item'> {}
+/** @see NodeData<'function_item'> — interface extends for compiler caching */
 export interface FunctionItem extends NodeData<'function_item'> {}
+/** @see NodeData<'function_modifiers'> — interface extends for compiler caching */
 export interface FunctionModifiers extends NodeData<'function_modifiers'> {}
+/** @see NodeData<'function_signature_item'> — interface extends for compiler caching */
 export interface FunctionSignatureItem extends NodeData<'function_signature_item'> {}
+/** @see NodeData<'function_type'> — interface extends for compiler caching */
 export interface FunctionType extends NodeData<'function_type'> {}
+/** @see NodeData<'gen_block'> — interface extends for compiler caching */
 export interface GenBlock extends NodeData<'gen_block'> {}
+/** @see NodeData<'generic_function'> — interface extends for compiler caching */
 export interface GenericFunction extends NodeData<'generic_function'> {}
+/** @see NodeData<'generic_pattern'> — interface extends for compiler caching */
 export interface GenericPattern extends NodeData<'generic_pattern'> {}
+/** @see NodeData<'generic_type'> — interface extends for compiler caching */
 export interface GenericType extends NodeData<'generic_type'> {}
+/** @see NodeData<'generic_type_with_turbofish'> — interface extends for compiler caching */
 export interface GenericTypeWithTurbofish extends NodeData<'generic_type_with_turbofish'> {}
+/** @see NodeData<'higher_ranked_trait_bound'> — interface extends for compiler caching */
 export interface HigherRankedTraitBound extends NodeData<'higher_ranked_trait_bound'> {}
+/** @see NodeData<'if_expression'> — interface extends for compiler caching */
 export interface IfExpression extends NodeData<'if_expression'> {}
+/** @see NodeData<'impl_item'> — interface extends for compiler caching */
 export interface ImplItem extends NodeData<'impl_item'> {}
+/** @see NodeData<'index_expression'> — interface extends for compiler caching */
 export interface IndexExpression extends NodeData<'index_expression'> {}
+/** @see NodeData<'inner_attribute_item'> — interface extends for compiler caching */
 export interface InnerAttributeItem extends NodeData<'inner_attribute_item'> {}
+/** @see NodeData<'label'> — interface extends for compiler caching */
 export interface Label extends NodeData<'label'> {}
+/** @see NodeData<'let_chain'> — interface extends for compiler caching */
 export interface LetChain extends NodeData<'let_chain'> {}
+/** @see NodeData<'let_condition'> — interface extends for compiler caching */
 export interface LetCondition extends NodeData<'let_condition'> {}
+/** @see NodeData<'let_declaration'> — interface extends for compiler caching */
 export interface LetDeclaration extends NodeData<'let_declaration'> {}
+/** @see NodeData<'lifetime'> — interface extends for compiler caching */
 export interface Lifetime extends NodeData<'lifetime'> {}
+/** @see NodeData<'lifetime_parameter'> — interface extends for compiler caching */
 export interface LifetimeParameter extends NodeData<'lifetime_parameter'> {}
+/** @see NodeData<'line_comment'> — interface extends for compiler caching */
 export interface LineComment extends NodeData<'line_comment'> {}
+/** @see NodeData<'loop_expression'> — interface extends for compiler caching */
 export interface LoopExpression extends NodeData<'loop_expression'> {}
+/** @see NodeData<'macro_definition'> — interface extends for compiler caching */
 export interface MacroDefinition extends NodeData<'macro_definition'> {}
+/** @see NodeData<'macro_invocation'> — interface extends for compiler caching */
 export interface MacroInvocation extends NodeData<'macro_invocation'> {}
+/** @see NodeData<'macro_rule'> — interface extends for compiler caching */
 export interface MacroRule extends NodeData<'macro_rule'> {}
+/** @see NodeData<'match_arm'> — interface extends for compiler caching */
 export interface MatchArm extends NodeData<'match_arm'> {}
+/** @see NodeData<'match_block'> — interface extends for compiler caching */
 export interface MatchBlock extends NodeData<'match_block'> {}
+/** @see NodeData<'match_expression'> — interface extends for compiler caching */
 export interface MatchExpression extends NodeData<'match_expression'> {}
+/** @see NodeData<'match_pattern'> — interface extends for compiler caching */
 export interface MatchPattern extends NodeData<'match_pattern'> {}
+/** @see NodeData<'mod_item'> — interface extends for compiler caching */
 export interface ModItem extends NodeData<'mod_item'> {}
+/** @see NodeData<'mut_pattern'> — interface extends for compiler caching */
 export interface MutPattern extends NodeData<'mut_pattern'> {}
+/** @see NodeData<'negative_literal'> — interface extends for compiler caching */
 export interface NegativeLiteral extends NodeData<'negative_literal'> {}
+/** @see NodeData<'or_pattern'> — interface extends for compiler caching */
 export interface OrPattern extends NodeData<'or_pattern'> {}
+/** @see NodeData<'ordered_field_declaration_list'> — interface extends for compiler caching */
 export interface OrderedFieldDeclarationList extends NodeData<'ordered_field_declaration_list'> {}
+/** @see NodeData<'parameter'> — interface extends for compiler caching */
 export interface Parameter extends NodeData<'parameter'> {}
+/** @see NodeData<'parameters'> — interface extends for compiler caching */
 export interface Parameters extends NodeData<'parameters'> {}
+/** @see NodeData<'parenthesized_expression'> — interface extends for compiler caching */
 export interface ParenthesizedExpression extends NodeData<'parenthesized_expression'> {}
+/** @see NodeData<'pointer_type'> — interface extends for compiler caching */
 export interface PointerType extends NodeData<'pointer_type'> {}
+/** @see NodeData<'qualified_type'> — interface extends for compiler caching */
 export interface QualifiedType extends NodeData<'qualified_type'> {}
+/** @see NodeData<'range_expression'> — interface extends for compiler caching */
 export interface RangeExpression extends NodeData<'range_expression'> {}
+/** @see NodeData<'range_pattern'> — interface extends for compiler caching */
 export interface RangePattern extends NodeData<'range_pattern'> {}
+/** @see NodeData<'raw_string_literal'> — interface extends for compiler caching */
 export interface RawStringLiteral extends NodeData<'raw_string_literal'> {}
+/** @see NodeData<'ref_pattern'> — interface extends for compiler caching */
 export interface RefPattern extends NodeData<'ref_pattern'> {}
+/** @see NodeData<'reference_expression'> — interface extends for compiler caching */
 export interface ReferenceExpression extends NodeData<'reference_expression'> {}
+/** @see NodeData<'reference_pattern'> — interface extends for compiler caching */
 export interface ReferencePattern extends NodeData<'reference_pattern'> {}
+/** @see NodeData<'reference_type'> — interface extends for compiler caching */
 export interface ReferenceType extends NodeData<'reference_type'> {}
+/** @see NodeData<'removed_trait_bound'> — interface extends for compiler caching */
 export interface RemovedTraitBound extends NodeData<'removed_trait_bound'> {}
+/** @see NodeData<'return_expression'> — interface extends for compiler caching */
 export interface ReturnExpression extends NodeData<'return_expression'> {}
+/** @see NodeData<'scoped_identifier'> — interface extends for compiler caching */
 export interface ScopedIdentifier extends NodeData<'scoped_identifier'> {}
+/** @see NodeData<'scoped_type_identifier'> — interface extends for compiler caching */
 export interface ScopedTypeIdentifier extends NodeData<'scoped_type_identifier'> {}
+/** @see NodeData<'scoped_use_list'> — interface extends for compiler caching */
 export interface ScopedUseList extends NodeData<'scoped_use_list'> {}
+/** @see NodeData<'self_parameter'> — interface extends for compiler caching */
 export interface SelfParameter extends NodeData<'self_parameter'> {}
+/** @see NodeData<'shorthand_field_initializer'> — interface extends for compiler caching */
 export interface ShorthandFieldInitializer extends NodeData<'shorthand_field_initializer'> {}
+/** @see NodeData<'slice_pattern'> — interface extends for compiler caching */
 export interface SlicePattern extends NodeData<'slice_pattern'> {}
+/** @see NodeData<'source_file'> — interface extends for compiler caching */
 export interface SourceFile extends NodeData<'source_file'> {}
+/** @see NodeData<'static_item'> — interface extends for compiler caching */
 export interface StaticItem extends NodeData<'static_item'> {}
+/** @see NodeData<'string_literal'> — interface extends for compiler caching */
 export interface StringLiteral extends NodeData<'string_literal'> {}
+/** @see NodeData<'struct_expression'> — interface extends for compiler caching */
 export interface StructExpression extends NodeData<'struct_expression'> {}
+/** @see NodeData<'struct_item'> — interface extends for compiler caching */
 export interface StructItem extends NodeData<'struct_item'> {}
+/** @see NodeData<'struct_pattern'> — interface extends for compiler caching */
 export interface StructPattern extends NodeData<'struct_pattern'> {}
+/** @see NodeData<'token_binding_pattern'> — interface extends for compiler caching */
 export interface TokenBindingPattern extends NodeData<'token_binding_pattern'> {}
+/** @see NodeData<'token_repetition'> — interface extends for compiler caching */
 export interface TokenRepetition extends NodeData<'token_repetition'> {}
+/** @see NodeData<'token_repetition_pattern'> — interface extends for compiler caching */
 export interface TokenRepetitionPattern extends NodeData<'token_repetition_pattern'> {}
+/** @see NodeData<'token_tree'> — interface extends for compiler caching */
 export interface TokenTree extends NodeData<'token_tree'> {}
+/** @see NodeData<'token_tree_pattern'> — interface extends for compiler caching */
 export interface TokenTreePattern extends NodeData<'token_tree_pattern'> {}
+/** @see NodeData<'trait_bounds'> — interface extends for compiler caching */
 export interface TraitBounds extends NodeData<'trait_bounds'> {}
+/** @see NodeData<'trait_item'> — interface extends for compiler caching */
 export interface TraitItem extends NodeData<'trait_item'> {}
+/** @see NodeData<'try_block'> — interface extends for compiler caching */
 export interface TryBlock extends NodeData<'try_block'> {}
+/** @see NodeData<'try_expression'> — interface extends for compiler caching */
 export interface TryExpression extends NodeData<'try_expression'> {}
+/** @see NodeData<'tuple_expression'> — interface extends for compiler caching */
 export interface TupleExpression extends NodeData<'tuple_expression'> {}
+/** @see NodeData<'tuple_pattern'> — interface extends for compiler caching */
 export interface TuplePattern extends NodeData<'tuple_pattern'> {}
+/** @see NodeData<'tuple_struct_pattern'> — interface extends for compiler caching */
 export interface TupleStructPattern extends NodeData<'tuple_struct_pattern'> {}
+/** @see NodeData<'tuple_type'> — interface extends for compiler caching */
 export interface TupleType extends NodeData<'tuple_type'> {}
+/** @see NodeData<'type_arguments'> — interface extends for compiler caching */
 export interface TypeArguments extends NodeData<'type_arguments'> {}
+/** @see NodeData<'type_binding'> — interface extends for compiler caching */
 export interface TypeBinding extends NodeData<'type_binding'> {}
+/** @see NodeData<'type_cast_expression'> — interface extends for compiler caching */
 export interface TypeCastExpression extends NodeData<'type_cast_expression'> {}
+/** @see NodeData<'type_item'> — interface extends for compiler caching */
 export interface TypeItem extends NodeData<'type_item'> {}
+/** @see NodeData<'type_parameter'> — interface extends for compiler caching */
 export interface TypeParameter extends NodeData<'type_parameter'> {}
+/** @see NodeData<'type_parameters'> — interface extends for compiler caching */
 export interface TypeParameters extends NodeData<'type_parameters'> {}
+/** @see NodeData<'unary_expression'> — interface extends for compiler caching */
 export interface UnaryExpression extends NodeData<'unary_expression'> {}
+/** @see NodeData<'union_item'> — interface extends for compiler caching */
 export interface UnionItem extends NodeData<'union_item'> {}
+/** @see NodeData<'unsafe_block'> — interface extends for compiler caching */
 export interface UnsafeBlock extends NodeData<'unsafe_block'> {}
+/** @see NodeData<'use_as_clause'> — interface extends for compiler caching */
 export interface UseAsClause extends NodeData<'use_as_clause'> {}
+/** @see NodeData<'use_bounds'> — interface extends for compiler caching */
 export interface UseBounds extends NodeData<'use_bounds'> {}
+/** @see NodeData<'use_declaration'> — interface extends for compiler caching */
 export interface UseDeclaration extends NodeData<'use_declaration'> {}
+/** @see NodeData<'use_list'> — interface extends for compiler caching */
 export interface UseList extends NodeData<'use_list'> {}
+/** @see NodeData<'use_wildcard'> — interface extends for compiler caching */
 export interface UseWildcard extends NodeData<'use_wildcard'> {}
+/** @see NodeData<'variadic_parameter'> — interface extends for compiler caching */
 export interface VariadicParameter extends NodeData<'variadic_parameter'> {}
+/** @see NodeData<'visibility_modifier'> — interface extends for compiler caching */
 export interface VisibilityModifier extends NodeData<'visibility_modifier'> {}
+/** @see NodeData<'where_clause'> — interface extends for compiler caching */
 export interface WhereClause extends NodeData<'where_clause'> {}
+/** @see NodeData<'where_predicate'> — interface extends for compiler caching */
 export interface WherePredicate extends NodeData<'where_predicate'> {}
+/** @see NodeData<'while_expression'> — interface extends for compiler caching */
 export interface WhileExpression extends NodeData<'while_expression'> {}
+/** @see NodeData<'yield_expression'> — interface extends for compiler caching */
 export interface YieldExpression extends NodeData<'yield_expression'> {}
 
 // Leaf node types

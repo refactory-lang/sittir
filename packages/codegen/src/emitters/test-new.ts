@@ -153,7 +153,7 @@ function dummyValue(field: { name: string; namedTypes: string[]; multiple?: bool
 
 	// Use first named type as a minimal NodeData
 	const kind = field.namedTypes[0] ?? 'unknown';
-	return `{ kind: '${kind}', fields: {} } as any`;
+	return `{ type: '${kind}', fields: {} } as any`;
 }
 
 function capitalize(s: string): string {

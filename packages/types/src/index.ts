@@ -119,7 +119,7 @@ export type Contains<Visited extends string[], T extends string> = Visited exten
 export type ExpandOneKind<G, K extends string, Visited extends string[]> = K extends NodeKind<G>
 	? G[K] extends { fields: object }
 		? Contains<Visited, K> extends true
-			? Readonly<{ type: K }>
+			? Readonly<{ type: K; fields?: Readonly<Record<string, unknown>> }>
 			: ExpandNode<G, K, Visited>
 		: G[K] extends { subtypes: readonly NodeBasicInfo[] }
 			? ExpandOneKind<G, ResolveType<G, K>, Visited>

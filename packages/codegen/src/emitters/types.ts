@@ -85,6 +85,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const kind of nodeKinds) {
 		const typeName = toTypeName(kind);
 		generatedTypes.add(typeName);
+		lines.push(`/** @see NodeData<'${kind}'> — interface extends for compiler caching */`);
 		lines.push(`export interface ${typeName} extends NodeData<'${kind}'> {}`);
 	}
 	lines.push('');
