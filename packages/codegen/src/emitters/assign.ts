@@ -123,13 +123,20 @@ export function emitAssign(config: EmitAssignConfig): string {
 	}
 
 	// ---------------------------------------------------------------------------
+	// Simplify — flattens intersection for clean tooltips (shallow, no recursion)
+	// ---------------------------------------------------------------------------
+	lines.push('/** Flatten an intersection into a single object type (shallow). */');
+	lines.push('type Simplify<T> = { [K in keyof T]: T[K] } & {};');
+	lines.push('');
+
+	// ---------------------------------------------------------------------------
 	// edit() — universal entry point
 	// ---------------------------------------------------------------------------
 	lines.push('/**');
 	lines.push(' * Create an in-place editor for a parsed tree node.');
 	lines.push(' * Recursively hydrates via assignByKind, attaches range for .toEdit().');
 	lines.push(' */');
-	lines.push(`export function edit<K extends NodeKind<${grammarAlias}>>(target: TreeNode<K>): NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string } {`);
+	lines.push(`export function edit<K extends NodeKind<${grammarAlias}>>(target: TreeNode<K>): Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }> {`);
 	lines.push('  return assignByKind(target.type, target) as any;');
 	lines.push('}');
 	lines.push('');

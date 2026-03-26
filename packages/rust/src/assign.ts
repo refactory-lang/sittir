@@ -2122,10 +2122,13 @@ export function assignYieldExpression(target: YieldExpressionTree): YieldExpress
   return result as any;
 }
 
+/** Flatten an intersection into a single object type (shallow). */
+type Simplify<T> = { [K in keyof T]: T[K] } & {};
+
 /**
  * Create an in-place editor for a parsed tree node.
  * Recursively hydrates via assignByKind, attaches range for .toEdit().
  */
-export function edit<K extends NodeKind<RustGrammar>>(target: TreeNode<K>): NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string } {
+export function edit<K extends NodeKind<RustGrammar>>(target: TreeNode<K>): Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }> {
   return assignByKind(target.type, target) as any;
 }
