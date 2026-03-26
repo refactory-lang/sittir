@@ -31,10 +31,15 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push('');
 
 	// Imports
-	lines.push("import type { TreeNode } from './types.js';");
 	lines.push(`import type { ${grammarAlias} } from './grammar.js';`);
 	lines.push("import type { NodeKind } from '@sittir/types';");
 	lines.push("import type { Edit } from '@sittir/types';");
+
+	// Import TreeNode for edit() generic + named *Tree interfaces for assign functions
+	const treeImports = new Set<string>();
+	treeImports.add('TreeNode'); // for edit() generic
+	for (const node of nodes) treeImports.add(toTypeName(node.kind) + 'Tree');
+	lines.push(`import type { ${[...treeImports].sort().join(', ')} } from './types.js';`);
 	lines.push("import { render } from '@sittir/core';");
 	lines.push("import { rules } from './rules.js';");
 	lines.push("import { joinBy } from './joinby.js';");
@@ -92,7 +97,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 		const typeName = toTypeName(node.kind);
 		const factoryName = toFactoryName(node.kind);
 
-		lines.push(`export function assign${typeName}(target: TreeNode<'${node.kind}'>): ${typeName} & { toEdit(): Edit; replace(): Edit; render(): string } {`);
+		lines.push(`export function assign${typeName}(target: ${typeName}Tree): ${typeName} & { toEdit(): Edit; replace(): Edit; render(): string } {`);
 		lines.push(`  const result = ${factoryName}({`);
 
 		for (const f of node.fields) {

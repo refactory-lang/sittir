@@ -40,8 +40,9 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('// .from() API — ergonomic resolution with inlined per-field logic');
 	lines.push('');
 
-	// Type-only import — generated .from() inlines resolution, no core runtime dependency
-	lines.push("import type { NodeData, TreeNode } from './types.js';");
+	// Type-only imports — named *Tree interfaces for overload signatures
+	const treeTypeImports = nodes.map(n => toTypeName(n.kind) + 'Tree').sort();
+	lines.push(`import type { NodeData, ${treeTypeImports.join(', ')} } from './types.js';`);
 	lines.push("import { isNodeData, _inferBranch, type FromValue } from './utils.js';");
 	lines.push('');
 
@@ -164,7 +165,7 @@ function emitFromFunction(
 	// Function overloads for strict typing
 	const exportName = `${factoryName}From`;
 	// Overload 1: TreeNode → FromNode (SgNode dispatch)
-	lines.push(`export function ${exportName}(input: TreeNode<'${node.kind}'>): ${typeName}FromNode;`);
+	lines.push(`export function ${exportName}(input: ${typeName}Tree): ${typeName}FromNode;`);
 	// Overload 2: FromInput → FromNode (plain object resolution)
 	if (node.hasChildren) {
 		lines.push(`export function ${exportName}(input: ${typeName}FromInput | FromValue[]): ${typeName}FromNode;`);
