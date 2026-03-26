@@ -6,4 +6,3 @@ export { render } from './render.ts';
 export { validateFull } from './validate.ts';
 export { toEdit, replace, bindRange, replaceField } from './edit.ts';
 export { toCst } from './cst.ts';
-export { resolveFromInput, resolveFieldValue } from './from.ts';

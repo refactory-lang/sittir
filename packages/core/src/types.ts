@@ -19,8 +19,4 @@ export type {
 	ReplaceTarget,
 	Renderable,
 	KindOf,
-	FromValue,
-	FromObject,
-	FromFieldInfo,
-	FromContext,
 } from '@sittir/types';
