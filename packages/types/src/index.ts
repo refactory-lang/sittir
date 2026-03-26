@@ -50,6 +50,13 @@ export type {
 export type { FromValue, FromObject, FromFieldInfo, FromContext } from './from.ts';
 
 // ---------------------------------------------------------------------------
+// Type utilities
+// ---------------------------------------------------------------------------
+
+/** Flatten an intersection into a single object type (shallow). From type-fest. */
+export type Simplify<T> = { [K in keyof T]: T[K] } & {};
+
+// ---------------------------------------------------------------------------
 // Grammar primitives
 // ---------------------------------------------------------------------------
 

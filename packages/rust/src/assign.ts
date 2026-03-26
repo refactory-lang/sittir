@@ -2,8 +2,7 @@
 // Tree node hydration and in-place editing
 
 import type { RustGrammar } from './grammar.js';
-import type { NodeKind } from '@sittir/types';
-import type { Edit } from '@sittir/types';
+import type { NodeKind, Edit, Simplify } from '@sittir/types';
 import type { AbstractTypeTree, ArgumentsTree, ArrayExpressionTree, ArrayTypeTree, AssignmentExpressionTree, AssociatedTypeTree, AsyncBlockTree, AttributeItemTree, AttributeTree, AwaitExpressionTree, BaseFieldInitializerTree, BinaryExpressionTree, BlockCommentTree, BlockTree, BoundedTypeTree, BracketedTypeTree, BreakExpressionTree, CallExpressionTree, CapturedPatternTree, ClosureExpressionTree, ClosureParametersTree, CompoundAssignmentExprTree, ConstBlockTree, ConstItemTree, ConstParameterTree, ContinueExpressionTree, DeclarationListTree, DynamicTypeTree, ElseClauseTree, EnumItemTree, EnumVariantListTree, EnumVariantTree, ExpressionStatementTree, ExternCrateDeclarationTree, ExternModifierTree, FieldDeclarationListTree, FieldDeclarationTree, FieldExpressionTree, FieldInitializerListTree, FieldInitializerTree, FieldPatternTree, ForExpressionTree, ForLifetimesTree, ForeignModItemTree, FunctionItemTree, FunctionModifiersTree, FunctionSignatureItemTree, FunctionTypeTree, GenBlockTree, GenericFunctionTree, GenericPatternTree, GenericTypeTree, GenericTypeWithTurbofishTree, HigherRankedTraitBoundTree, IfExpressionTree, ImplItemTree, IndexExpressionTree, InnerAttributeItemTree, LabelTree, LetChainTree, LetConditionTree, LetDeclarationTree, LifetimeParameterTree, LifetimeTree, LineCommentTree, LoopExpressionTree, MacroDefinitionTree, MacroInvocationTree, MacroRuleTree, MatchArmTree, MatchBlockTree, MatchExpressionTree, MatchPatternTree, ModItemTree, MutPatternTree, NegativeLiteralTree, NodeData, OrPatternTree, OrderedFieldDeclarationListTree, ParameterTree, ParametersTree, ParenthesizedExpressionTree, PointerTypeTree, QualifiedTypeTree, RangeExpressionTree, RangePatternTree, RawStringLiteralTree, RefPatternTree, ReferenceExpressionTree, ReferencePatternTree, ReferenceTypeTree, RemovedTraitBoundTree, ReturnExpressionTree, ScopedIdentifierTree, ScopedTypeIdentifierTree, ScopedUseListTree, SelfParameterTree, ShorthandFieldInitializerTree, SlicePatternTree, SourceFileTree, StaticItemTree, StringLiteralTree, StructExpressionTree, StructItemTree, StructPatternTree, TokenBindingPatternTree, TokenRepetitionPatternTree, TokenRepetitionTree, TokenTreePatternTree, TokenTreeTree, TraitBoundsTree, TraitItemTree, TreeNode, TryBlockTree, TryExpressionTree, TupleExpressionTree, TuplePatternTree, TupleStructPatternTree, TupleTypeTree, TypeArgumentsTree, TypeBindingTree, TypeCastExpressionTree, TypeItemTree, TypeParameterTree, TypeParametersTree, UnaryExpressionTree, UnionItemTree, UnsafeBlockTree, UseAsClauseTree, UseBoundsTree, UseDeclarationTree, UseListTree, UseWildcardTree, VariadicParameterTree, VisibilityModifierTree, WhereClauseTree, WherePredicateTree, WhileExpressionTree, YieldExpressionTree } from './types.js';
 import { render } from '@sittir/core';
 import { rules } from './rules.js';
@@ -2121,9 +2120,6 @@ export function assignYieldExpression(target: YieldExpressionTree): YieldExpress
   (result as any).replace = boundToEdit;
   return result as any;
 }
-
-/** Flatten an intersection into a single object type (shallow). */
-type Simplify<T> = { [K in keyof T]: T[K] } & {};
 
 /**
  * Create an in-place editor for a parsed tree node.

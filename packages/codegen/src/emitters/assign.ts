@@ -32,8 +32,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 
 	// Imports
 	lines.push(`import type { ${grammarAlias} } from './grammar.js';`);
-	lines.push("import type { NodeKind } from '@sittir/types';");
-	lines.push("import type { Edit } from '@sittir/types';");
+	lines.push("import type { NodeKind, Edit, Simplify } from '@sittir/types';");
 
 	// Import TreeNode for edit() generic + named *Tree interfaces for assign functions
 	const treeImports = new Set<string>();
@@ -121,13 +120,6 @@ export function emitAssign(config: EmitAssignConfig): string {
 		lines.push(`}`);
 		lines.push('');
 	}
-
-	// ---------------------------------------------------------------------------
-	// Simplify — flattens intersection for clean tooltips (shallow, no recursion)
-	// ---------------------------------------------------------------------------
-	lines.push('/** Flatten an intersection into a single object type (shallow). */');
-	lines.push('type Simplify<T> = { [K in keyof T]: T[K] } & {};');
-	lines.push('');
 
 	// ---------------------------------------------------------------------------
 	// edit() — universal entry point
