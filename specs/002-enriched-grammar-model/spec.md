@@ -1,196 +1,206 @@
-# Feature Specification: Enriched Grammar Model
+# Feature Specification: Pre-computed Field Signatures
 
 **Feature Branch**: `002-enriched-grammar-model`
 **Created**: 2026-03-27
 **Status**: Draft
-**Input**: Observation that emitters independently re-derive the same field type analysis (leaf/branch classification, supertype expansion, anonymous token detection, separator extraction) from flat `KindMeta[]`. Deduplication should happen once at the grammar model level.
+**Input**: Emitters independently re-derive the same field type analysis. Push deduplication upstream into the grammar model so every emitter benefits.
 
 ## Problem
 
-Today's codegen pipeline has two representations:
+Each emitter independently classifies field types and produces per-field code:
 
-1. **`GrammarRule`** — raw recursive tree from grammar.json (full structural information)
-2. **`KindMeta`** — flat projection (loses ordering, nesting, optionality context)
+| Emitter | Re-derived analysis | Per-field output |
+|---------|-------------------|-----------------|
+| `factories.ts` | Supertype collapsing, anonymous token unions | Type expression per setter |
+| `from.ts` | Leaf/branch/anon classification, supertype expansion | Resolver IIFE per field |
+| `assign.ts` | Leaf/branch classification, anonymous-only detection | Hydration logic per field |
 
-Each emitter independently re-derives information that was lost in the flattening:
-
-| Emitter | Re-derived information |
-|---------|----------------------|
-| `rules.ts` | Field ordering from SEQ, separator from REPEAT+SEQ, optional tokens from CHOICE+BLANK |
-| `from.ts` | Leaf/branch classification, supertype expansion, anonymous token detection, resolution deduplication |
-| `assign.ts` | Leaf/branch classification, anonymous-only field detection, children structure |
-| `factories.ts` | Supertype collapsing, anonymous token type unions, field type expressions |
-| `types.ts` | Supertype union construction |
-
-This causes:
-- **Duplicated analysis** — the same leaf/branch/anon classification computed 3+ times
-- **Duplicated output** — fields with identical type signatures emit identical resolver/hydration code per-kind instead of sharing
-- **Generated file bloat** — Rust `from.ts` is 885KB / 4211 lines because each field inlines its own resolver
+Fields with identical type shapes across different kinds emit identical code. Rust `from.ts` is 885KB because 380 resolution expressions are emitted when only ~136 unique type patterns exist.
 
 ## Solution
 
-Introduce a three-layer model:
+Compute three per-field signatures during `KindMeta` construction — one per emitter concern. Signatures are interned so fields with the same shape share the same object reference. Emitters emit one shared artifact per unique signature, then reference it per-field.
 
-```
-grammar.json + node-types.json
-         |
-    [1] GrammarRule            (raw, as-is)
-         |
-    [2] EnrichedRule           (same tree shape, annotated)
-         |
-    [3] KindMeta               (derived pre-generation model)
-         |
-    emitters                   (pure template producers)
-```
+No intermediate `EnrichedRule` layer. Signatures are computed from the same base classification (`leafTypes`, `branchTypes`, `anonTokens`) in a single pass and attached directly to each field.
 
-### Layer 2: EnrichedRule
+### Base Classification
 
-Same discriminated union as `GrammarRule`, but with computed metadata attached at the relevant nodes. The tree shape is preserved — no flattening.
+Every field's `namedTypes` are classified against the grammar's leaf/branch sets once:
 
 ```typescript
-type EnrichedRule =
-  | { type: 'SEQ'; members: EnrichedRule[] }
-  | { type: 'CHOICE'; members: EnrichedRule[] }
-  | { type: 'STRING'; value: string }
-  | { type: 'FIELD'; name: string; content: EnrichedRule;
-      required: boolean;       // from node-types.json
-      multiple: boolean;       // from node-types.json
-      signature: FieldSignature; }
-  | { type: 'SYMBOL'; name: string;
-      leaf: boolean;
-      keyword: boolean; }
-  | { type: 'BLANK' }
-  | { type: 'REPEAT'; content: EnrichedRule }
-  | { type: 'REPEAT1'; content: EnrichedRule }
-  | { type: 'PREC'; value: number; content: EnrichedRule }
-  | { type: 'PREC_LEFT'; value: number; content: EnrichedRule }
-  | { type: 'PREC_RIGHT'; value: number; content: EnrichedRule }
-  | { type: 'ALIAS'; content: EnrichedRule; named: boolean; value: string }
-  | { type: 'TOKEN'; content: EnrichedRule }
-  | { type: 'IMMEDIATE_TOKEN'; content: EnrichedRule }
-  | { type: 'PATTERN'; value: string };
-```
-
-Enrichment is minimal — only metadata that requires cross-referencing node-types.json or the leaf/branch/keyword sets gets attached. The tree structure itself is untouched.
-
-### FieldSignature (interned)
-
-```typescript
-interface FieldSignature {
-  id: string;              // canonical key for dedup (e.g., "B:block;L:identifier")
-  leafTypes: string[];     // sorted named types that are leaves
-  branchTypes: string[];   // sorted named types that are branches
-  anonTokens: string[];    // sorted anonymous tokens
+interface FieldTypeClass {
+  leafTypes: string[];     // sorted namedTypes that are terminal nodes
+  branchTypes: string[];   // sorted namedTypes that are non-terminal nodes
+  anonTokens: string[];    // sorted types that aren't in namedTypes (STRING tokens)
 }
 ```
 
-Signatures are **interned** — fields with the same type shape share the same object reference. This is the mechanism for cross-kind deduplication. `required` and `multiple` are excluded from the signature because they're quantifiers (emitters wrap with `?` / `[]`), not type identity.
+This replaces the raw `types` / `namedTypes` arrays on `FieldMeta`. The classification is the source of truth — emitters never need to re-derive leaf/branch/anon splits.
 
-A grammar-wide `Map<string, FieldSignature>` is built once during enrichment. Each FIELD node in the enriched tree holds a reference into this map.
+### Three Signatures
 
-### Layer 3: KindMeta (derived)
-
-`KindMeta` is computed by walking the enriched rule tree. It provides both the tree and a convenience index:
+Each signature captures what determines identical emitter output for a specific concern. All three are computed from `FieldTypeClass` plus field quantifiers (`required`, `multiple`):
 
 ```typescript
-interface KindMeta {
-  kind: string;
-  rule: EnrichedRule;                    // full annotated tree (source of truth)
-  fields: Map<string, FieldView>;        // indexed projection for flat access
-  hasChildren: boolean;
-  children?: ChildrenMeta;
+/** What TypeScript type expression does the factory setter accept? */
+interface FactorySignature {
+  id: string;
+  /** Named types after supertype collapsing (e.g., ['Expression', 'Identifier']) */
+  collapsedTypes: string[];
+  /** Anonymous token literal types (e.g., ['+', '-', '*']) */
+  anonLiterals: string[];
 }
 
-interface FieldView {
+/** What runtime resolver logic does .from() need? */
+interface FromSignature {
+  id: string;
+  /** Leaf kinds — coerce from string */
+  leafTypes: string[];
+  /** Branch kinds — dispatch to .from() factories */
+  branchTypes: string[];
+  /** Anonymous tokens — coerce from string to {type, text} */
+  anonTokens: string[];
+}
+
+/** How does assign extract this field from a TreeNode? */
+interface HydrationSignature {
+  id: string;
+  /** Concrete kinds to filter/dispatch (no supertype expansion) */
+  namedTypes: string[];
+  /** Whether field is anonymous-only (operator tokens etc.) */
+  anonOnly: boolean;
+}
+```
+
+Key design decisions:
+- **`required` and `multiple` are excluded from all signatures.** They're quantifiers that emitters handle with `?` / `[]` / `.map()` wrappers around the shared artifact. Including them would split otherwise-identical signatures.
+- **Factory signature uses collapsed types** (post-supertype folding). Two fields accepting all subtypes of `_expression` share one signature even if they list different subsets that happen to cover the same supertypes.
+- **From signature uses expanded types** (pre-supertype, leaves and branches separated). Resolution logic dispatches on concrete kinds.
+- **Hydration signature uses raw namedTypes** (no expansion, no collapsing). Assign works with concrete kinds only and branches on `required` × `multiple` structurally, not in the signature.
+
+### Attachment to KindMeta
+
+Signatures live on each field — no separate cross-reference map needed:
+
+```typescript
+interface FieldMeta {
   name: string;
   required: boolean;
   multiple: boolean;
-  signature: FieldSignature;             // shared reference
-  separator?: string;                    // detected from REPEAT+SEQ context
+  types: FieldTypeClass;              // replaces raw types/namedTypes
+  factory: FactorySignature;          // interned
+  from: FromSignature;                // interned
+  hydration: HydrationSignature;      // interned
+}
+
+interface KindMeta {
+  kind: string;
+  rule: GrammarRule;                  // raw grammar tree (for structural access)
+  fields: FieldMeta[];
+  hasChildren: boolean;
+  children?: ChildrenMeta;
 }
 ```
 
-`FieldView` replaces today's `FieldMeta`. It no longer carries raw `types` / `namedTypes` arrays — that information lives in `signature.leafTypes`, `signature.branchTypes`, `signature.anonTokens`, which are already classified. Emitters that need the full type list can reconstruct it from the signature (`[...leafTypes, ...branchTypes]`).
-
-The `fields` map is a **read-only projection** derived from walking `rule`. It is not a separate source of truth.
+`KindMeta` also gains a `rule` reference so emitters that need ordering/nesting (rules.ts) can walk the grammar tree directly without re-loading grammar.json.
 
 ### GrammarModel (top-level)
 
 ```typescript
 interface GrammarModel {
-  name: string;                                    // grammar language
-  kinds: Record<string, KindMeta>;                 // mirrors grammar.json's `rules`
-  signatures: Map<string, FieldSignature>;          // all unique signatures
+  name: string;
+  kinds: Record<string, KindMeta>;
+  // Interned signature pools — for emitters to iterate and emit shared code
+  factorySignatures: Map<string, FactorySignature>;
+  fromSignatures: Map<string, FromSignature>;
+  hydrationSignatures: Map<string, HydrationSignature>;
+  // Pre-computed sets (currently passed as separate params)
   leafKinds: Set<string>;
   branchKinds: Set<string>;
   keywordKinds: Set<string>;
-  supertypes: Map<string, string[]>;               // supertype → concrete subtypes
+  supertypes: Map<string, string[]>;
 }
 ```
 
-Mirrors the shape of `grammar.json` (`name` + map of rules), enriched with pre-computed sets that emitters currently receive as separate parameters.
-
 ## Emitter Impact
-
-Emitters receive `GrammarModel` instead of `(nodes: KindMeta[], leafKinds: string[], keywordKinds: string[], supertypes: SupertypeInfo[], ...)`.
 
 ### Per-signature emission pattern
 
-Each emitter that produces per-field code can iterate `model.signatures` to emit one shared artifact per unique type shape, then reference it per-field:
+Each emitter iterates its signature pool once to emit shared artifacts, then references them per-field:
 
-| Emitter | Shared artifact (per signature) | Per-field reference |
-|---------|-------------------------------|-------------------|
-| `from.ts` | `function _r<id>(v: any): any { ... }` | `fields.name = _r<id>(input.name)` |
-| `assign.ts` | `function _h<id>(node: any): any { ... }` | `fields.name = _h<id>(target.field('name'))` |
-| `factories.ts` | `type Sig<id> = A \| B \| C` (optional) | Field type references |
+**from.ts:**
+```typescript
+// Emitted once per unique FromSignature
+function _r7a3f(v: any): any { /* leaf/branch/anon dispatch */ }
 
-This is the generic optimization — it applies uniformly because every emitter queries the same `FieldSignature` objects.
+// Per-field — just a reference
+resolved.name = _r7a3f(input.name);
+resolved.value = _r7a3f(input.value);  // same signature → same function
+```
+
+**assign.ts:**
+```typescript
+// Emitted once per unique HydrationSignature
+function _h4b2e(target: any): any { /* assignByKind dispatch */ }
+
+// Per-field
+fields.name = _h4b2e(target.field('name'));
+fields.value = _h4b2e(target.field('value'));
+```
+
+**factories.ts:**
+```typescript
+// Emitted once per unique FactorySignature (as type alias, optional)
+type _T9c1d = Expression | Identifier;
+
+// Per-field setter type
+set name(value: _T9c1d) { ... }
+```
 
 ### Structural access
 
-Emitters that need ordering/nesting (rules.ts, parts of factories.ts) walk `kind.rule` directly. The enriched tree has everything they need without re-loading grammar.json.
+Emitters that need ordering/nesting walk `kind.rule` directly:
+- `rules.ts` — S-expression template generation (SEQ ordering, REPEAT separators)
+- `factories.ts` — parts that need positional argument ordering
 
 ## Construction Flow
 
 ```
-1. loadGrammarJson(grammar)           → GrammarJson (raw)
-2. loadRawEntries(grammar)            → RawNodeEntry[] (node-types.json)
-3. classifyKinds(entries)             → { leafKinds, branchKinds, keywordKinds }
-4. buildSupertypeMap(entries)         → Map<string, string[]>
-5. For each rule in grammar.json:
-   a. enrichRule(rule, nodeTypesEntry, leafKinds, keywordKinds) → EnrichedRule
-      - Walks the GrammarRule tree recursively
-      - At FIELD nodes: attaches required/multiple from node-types.json, computes signature
-      - At SYMBOL nodes: attaches leaf/keyword flags
-      - Interns signatures into a shared map
-   b. deriveKindMeta(kind, enrichedRule) → KindMeta
-      - Walks enriched tree to build FieldView index
-      - Detects separators from REPEAT+SEQ patterns
-      - Detects children from bare SYMBOL nodes
+1. loadGrammarJson(grammar)                   → GrammarJson
+2. loadRawEntries(grammar)                    → RawNodeEntry[]
+3. classifyKinds(entries)                     → { leafKinds, branchKinds, keywordKinds }
+4. buildSupertypeMap(entries)                 → Map<string, string[]>
+5. For each (kind, rule) in grammar.json:
+     nodeTypesEntry = entries[kind]
+     For each field in nodeTypesEntry:
+       a. classifyFieldTypes(field, leafKinds)         → FieldTypeClass
+       b. internFactorySignature(typeClass, supertypes) → FactorySignature
+       c. internFromSignature(typeClass)                → FromSignature
+       d. internHydrationSignature(field, typeClass)    → HydrationSignature
+       e. Attach all three + typeClass to FieldMeta
+     Assemble KindMeta { kind, rule, fields, ... }
 6. Assemble GrammarModel
 ```
 
-Steps 1-4 use existing grammar-reader.ts functions. Step 5 is new. Step 6 is assembly.
+All signature computation happens in step 5 — a single pass over all kinds and fields. The `intern*` functions maintain `Map<string, Signature>` pools keyed by canonical IDs.
 
 ## File Layout
 
 ```
 packages/codegen/src/
   grammar-reader.ts          (existing — raw loading, kept as-is)
-  grammar-model.ts           (NEW — enrichRule, deriveKindMeta, buildGrammarModel)
+  grammar-model.ts           (NEW — buildGrammarModel, classifyFieldTypes, intern*)
   index.ts                   (updated — calls buildGrammarModel, passes to emitters)
   emitters/
-    *.ts                     (updated — receive GrammarModel, use signatures)
+    *.ts                     (updated — receive GrammarModel, use signature pools)
 ```
 
 ## Migration
 
-1. Add `grammar-model.ts` alongside existing `grammar-reader.ts`
-2. Update `generate()` in `index.ts` to build `GrammarModel` and pass it to emitters
-3. Update emitters one at a time to consume `GrammarModel` instead of flat params
-4. Once all emitters migrated, remove unused `KindMeta`/`FieldMeta` exports from grammar-reader.ts
-
-Emitters can be migrated incrementally — during transition, `KindMeta` can be derived from `GrammarModel` to keep the old interface working.
+1. Add `grammar-model.ts` with `buildGrammarModel()` that produces `GrammarModel`
+2. Update `generate()` to call `buildGrammarModel()` and pass the model to emitters
+3. Migrate emitters one at a time — during transition, emitters can read both old `FieldMeta` shape and new signatures
+4. Once all emitters migrated, remove raw `types`/`namedTypes` from `FieldMeta` (replaced by `FieldTypeClass`)
 
 ## Non-Goals
 
