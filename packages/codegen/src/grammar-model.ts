@@ -50,16 +50,16 @@ interface NodeTypesFieldInfo {
  * FIELD nodes gain required/multiple from node-types.json.
  * SYMBOL nodes gain leaf/keyword/supertype flags from pre-computed kind sets.
  */
-export function enrichRule(
+export function ruleToEnriched(
 	rule: GrammarRule,
 	fieldInfo: Map<string, NodeTypesFieldInfo>,
 	kindSets: KindSets,
 ): EnrichedRule {
 	switch (rule.type) {
 		case 'SEQ':
-			return { type: 'SEQ', members: rule.members.map(m => enrichRule(m, fieldInfo, kindSets)) };
+			return { type: 'SEQ', members: rule.members.map(m => ruleToEnriched(m, fieldInfo, kindSets)) };
 		case 'CHOICE':
-			return { type: 'CHOICE', members: rule.members.map(m => enrichRule(m, fieldInfo, kindSets)) };
+			return { type: 'CHOICE', members: rule.members.map(m => ruleToEnriched(m, fieldInfo, kindSets)) };
 		case 'STRING':
 			return { type: 'STRING', value: rule.value };
 		case 'FIELD': {
@@ -67,7 +67,7 @@ export function enrichRule(
 			return {
 				type: 'FIELD',
 				name: rule.name,
-				content: enrichRule(rule.content, fieldInfo, kindSets),
+				content: ruleToEnriched(rule.content, fieldInfo, kindSets),
 				required: info?.required ?? true,
 				multiple: info?.multiple ?? false,
 			};
@@ -83,21 +83,21 @@ export function enrichRule(
 		case 'BLANK':
 			return { type: 'BLANK' };
 		case 'REPEAT':
-			return { type: 'REPEAT', content: enrichRule(rule.content, fieldInfo, kindSets) };
+			return { type: 'REPEAT', content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'REPEAT1':
-			return { type: 'REPEAT1', content: enrichRule(rule.content, fieldInfo, kindSets) };
+			return { type: 'REPEAT1', content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'PREC':
-			return { type: 'PREC', value: rule.value, content: enrichRule(rule.content, fieldInfo, kindSets) };
+			return { type: 'PREC', value: rule.value, content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'PREC_LEFT':
-			return { type: 'PREC_LEFT', value: rule.value, content: enrichRule(rule.content, fieldInfo, kindSets) };
+			return { type: 'PREC_LEFT', value: rule.value, content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'PREC_RIGHT':
-			return { type: 'PREC_RIGHT', value: rule.value, content: enrichRule(rule.content, fieldInfo, kindSets) };
+			return { type: 'PREC_RIGHT', value: rule.value, content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'ALIAS':
-			return { type: 'ALIAS', content: enrichRule(rule.content, fieldInfo, kindSets), named: rule.named, value: rule.value };
+			return { type: 'ALIAS', content: ruleToEnriched(rule.content, fieldInfo, kindSets), named: rule.named, value: rule.value };
 		case 'TOKEN':
-			return { type: 'TOKEN', content: enrichRule(rule.content, fieldInfo, kindSets) };
+			return { type: 'TOKEN', content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'IMMEDIATE_TOKEN':
-			return { type: 'IMMEDIATE_TOKEN', content: enrichRule(rule.content, fieldInfo, kindSets) };
+			return { type: 'IMMEDIATE_TOKEN', content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'PATTERN':
 			return { type: 'PATTERN', value: rule.value };
 	}
@@ -228,7 +228,7 @@ export interface GrammarModel {
 // Supertype expansion / collapsing helpers
 // ---------------------------------------------------------------------------
 
-function buildExpandedSupertypeMap(supertypes: SupertypeInfo[]): Map<string, Set<string>> {
+function supertypesToExpanded(supertypes: SupertypeInfo[]): Map<string, Set<string>> {
 	const raw = new Map<string, string[]>();
 	for (const st of supertypes) raw.set(st.name, st.subtypes);
 
@@ -258,7 +258,7 @@ function buildExpandedSupertypeMap(supertypes: SupertypeInfo[]): Map<string, Set
 	return expanded;
 }
 
-function collapseToSupertypes(
+function typesToCollapsed(
 	namedTypes: string[],
 	supertypeMap: Map<string, Set<string>>,
 ): string[] {
@@ -306,7 +306,7 @@ function isSubsetOf<T>(a: Set<T>, b: Set<T>): boolean {
 // FieldTypeClass construction
 // ---------------------------------------------------------------------------
 
-function classifyFieldTypes(
+function typesToFieldTypeClass(
 	namedTypes: string[],
 	anonTokens: string[],
 	leafKinds: Set<string>,
@@ -333,7 +333,7 @@ function classifyFieldTypes(
 	}
 
 	// For collapsing, use ALL expanded concrete types (leaf + branch) so supertype matching works
-	const collapsedTypes = collapseToSupertypes([...expandedAll], expandedSupertypes);
+	const collapsedTypes = typesToCollapsed([...expandedAll], expandedSupertypes);
 
 	return {
 		leafTypes,
@@ -359,7 +359,7 @@ interface ProjectionContext {
  * Project an EnrichedRule into an ordered sequence of NodeElements.
  * This is the lossless semantic remapping from grammar constructs to node vocabulary.
  */
-function projectElements(
+function enrichedToElements(
 	rule: EnrichedRule,
 	ctx: ProjectionContext,
 	optional: boolean,
@@ -370,7 +370,7 @@ function projectElements(
 			for (let i = 0; i < rule.members.length; i++) {
 				const m = rule.members[i]!;
 				// Detect separator pattern: FIELD followed by REPEAT(SEQ(STRING, ...))
-				elements.push(...projectElements(m, ctx, optional));
+				elements.push(...enrichedToElements(m, ctx, optional));
 			}
 			return elements;
 		}
@@ -379,7 +379,7 @@ function projectElements(
 			// Extract types from the enriched FIELD's content
 			const types = new Set<string>();
 			const namedTypes = new Set<string>();
-			collectTypesFromEnriched(rule.content, types, namedTypes);
+			contentToTypes(rule.content, types, namedTypes);
 
 			// Also include _-prefixed symbols (supertypes) for expansion
 			const allTypes = new Set<string>();
@@ -405,7 +405,7 @@ function projectElements(
 			const required = ntField?.required ?? rule.required;
 			const multiple = ntField?.multiple ?? rule.multiple;
 
-			const typeClass = classifyFieldTypes(namedArr, anonTokens, ctx.leafKinds, ctx.expandedSupertypes);
+			const typeClass = typesToFieldTypeClass(namedArr, anonTokens, ctx.leafKinds, ctx.expandedSupertypes);
 
 			const field: FieldModel = {
 				name: rule.name,
@@ -421,7 +421,7 @@ function projectElements(
 			if (!rule.supertype && !rule.name.startsWith('_')) {
 				// Concrete unnamed child
 				const namedTypes = [rule.name];
-				const typeClass = classifyFieldTypes(namedTypes, [], ctx.leafKinds, ctx.expandedSupertypes);
+				const typeClass = typesToFieldTypeClass(namedTypes, [], ctx.leafKinds, ctx.expandedSupertypes);
 				return [{ element: 'child', child: { multiple: false, types: typeClass } }];
 			}
 			// Abstract symbol — recurse to find its fields/children
@@ -439,18 +439,18 @@ function projectElements(
 			if (nonBlank.length === 0) return [];
 
 			if (nonBlank.length === 1) {
-				return projectElements(nonBlank[0]!, ctx, optional || hasBlank);
+				return enrichedToElements(nonBlank[0]!, ctx, optional || hasBlank);
 			}
 
 			// Check if all branches produce the same field names — if so, merge
-			const branchElements = nonBlank.map(b => projectElements(b, ctx, false));
+			const branchElements = nonBlank.map(b => enrichedToElements(b, ctx, false));
 			const branchFieldSets = branchElements.map(elems =>
 				new Set(elems.filter((e): e is { element: 'field'; field: FieldModel } => e.element === 'field').map(e => e.field.name)),
 			);
 
 			// If all branches have the same fields, merge them (common case like binary_expression)
 			if (branchFieldSets.length > 0 && branchFieldSets.every(s => setsEqual(s, branchFieldSets[0]!))) {
-				return mergeChoiceBranches(branchElements, ctx, hasBlank);
+				return choiceToMergedFields(branchElements, ctx, hasBlank);
 			}
 
 			// Otherwise preserve as a choice element
@@ -458,22 +458,22 @@ function projectElements(
 		}
 
 		case 'REPEAT':
-			return projectElements(rule.content, ctx, true).map(markMultiple);
+			return enrichedToElements(rule.content, ctx, true).map(elementToMultiple);
 
 		case 'REPEAT1':
-			return projectElements(rule.content, ctx, optional).map(markMultiple);
+			return enrichedToElements(rule.content, ctx, optional).map(elementToMultiple);
 
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
-			return projectElements(rule.content, ctx, optional);
+			return enrichedToElements(rule.content, ctx, optional);
 
 		case 'ALIAS':
 			if (rule.named) {
-				const typeClass = classifyFieldTypes([rule.value], [], ctx.leafKinds, ctx.expandedSupertypes);
+				const typeClass = typesToFieldTypeClass([rule.value], [], ctx.leafKinds, ctx.expandedSupertypes);
 				return [{ element: 'child', child: { multiple: false, types: typeClass } }];
 			}
-			return projectElements(rule.content, ctx, optional);
+			return enrichedToElements(rule.content, ctx, optional);
 
 		case 'TOKEN':
 		case 'IMMEDIATE_TOKEN':
@@ -492,7 +492,7 @@ function projectElements(
 }
 
 /** Collect type names from an enriched rule's FIELD content. */
-function collectTypesFromEnriched(rule: EnrichedRule, types: Set<string>, namedTypes: Set<string>): void {
+function contentToTypes(rule: EnrichedRule, types: Set<string>, namedTypes: Set<string>): void {
 	switch (rule.type) {
 		case 'SYMBOL':
 			types.add(rule.name);
@@ -506,22 +506,22 @@ function collectTypesFromEnriched(rule: EnrichedRule, types: Set<string>, namedT
 				types.add(rule.value);
 				namedTypes.add(rule.value);
 			} else {
-				collectTypesFromEnriched(rule.content, types, namedTypes);
+				contentToTypes(rule.content, types, namedTypes);
 			}
 			break;
 		case 'CHOICE':
 			for (const m of rule.members) {
-				if (m.type !== 'BLANK') collectTypesFromEnriched(m, types, namedTypes);
+				if (m.type !== 'BLANK') contentToTypes(m, types, namedTypes);
 			}
 			break;
 		case 'SEQ':
-			for (const m of rule.members) collectTypesFromEnriched(m, types, namedTypes);
+			for (const m of rule.members) contentToTypes(m, types, namedTypes);
 			break;
 		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
-			collectTypesFromEnriched(rule.content, types, namedTypes);
+			contentToTypes(rule.content, types, namedTypes);
 			break;
 		case 'REPEAT': case 'REPEAT1':
-			collectTypesFromEnriched(rule.content, types, namedTypes);
+			contentToTypes(rule.content, types, namedTypes);
 			break;
 		default:
 			break;
@@ -534,7 +534,7 @@ function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {
 	return true;
 }
 
-function markMultiple(elem: NodeElement): NodeElement {
+function elementToMultiple(elem: NodeElement): NodeElement {
 	if (elem.element === 'field') {
 		return { element: 'field', field: { ...elem.field, multiple: true } };
 	}
@@ -549,7 +549,7 @@ function markMultiple(elem: NodeElement): NodeElement {
  * Fields are merged by combining their type sets.
  * Tokens from the first branch are kept (they share the same structure).
  */
-function mergeChoiceBranches(
+function choiceToMergedFields(
 	branches: NodeElement[][],
 	ctx: ProjectionContext,
 	hasBlank: boolean,
@@ -608,43 +608,45 @@ function mergeChoiceBranches(
 }
 
 /**
- * Detect separators in the enriched rule tree.
+ * Extract field→separator mappings from an enriched rule tree.
  * Looks for FIELD followed by REPEAT(SEQ(STRING, ...)) patterns.
  */
-function detectSeparators(rule: EnrichedRule, fieldModels: Map<string, FieldModel>): void {
+function ruleToSeparators(rule: EnrichedRule): Map<string, string> {
+	const separators = new Map<string, string>();
+	walkForSeparators(rule, separators);
+	return separators;
+}
+
+function walkForSeparators(rule: EnrichedRule, out: Map<string, string>): void {
 	if (rule.type === 'SEQ') {
 		for (let i = 0; i < rule.members.length - 1; i++) {
 			const current = rule.members[i]!;
 			const next = rule.members[i + 1]!;
 			if (current.type === 'FIELD' && (next.type === 'REPEAT' || next.type === 'REPEAT1')) {
-				const sep = extractSepFromEnriched(next.content);
-				const fm = fieldModels.get(current.name);
-				if (sep && fm?.multiple) fm.separator = sep;
+				const sep = seqToSeparator(next.content);
+				if (sep) out.set(current.name, sep);
 			}
 		}
-		for (const m of rule.members) detectSeparators(m, fieldModels);
+		for (const m of rule.members) walkForSeparators(m, out);
 	} else if (rule.type === 'REPEAT' || rule.type === 'REPEAT1') {
 		if (rule.content.type === 'SEQ') {
-			const sep = extractSepFromEnriched(rule.content);
+			const sep = seqToSeparator(rule.content);
 			if (sep) {
 				for (const m of rule.content.members) {
-					if (m.type === 'FIELD') {
-						const fm = fieldModels.get(m.name);
-						if (fm?.multiple) fm.separator = sep;
-					}
+					if (m.type === 'FIELD') out.set(m.name, sep);
 				}
 			}
 		}
-		detectSeparators(rule.content, fieldModels);
+		walkForSeparators(rule.content, out);
 	} else if (rule.type === 'CHOICE') {
-		for (const m of rule.members) detectSeparators(m, fieldModels);
+		for (const m of rule.members) walkForSeparators(m, out);
 	} else if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' ||
 		rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN' || rule.type === 'ALIAS') {
-		detectSeparators(rule.content, fieldModels);
+		walkForSeparators(rule.content, out);
 	}
 }
 
-function extractSepFromEnriched(rule: EnrichedRule): string | undefined {
+function seqToSeparator(rule: EnrichedRule): string | undefined {
 	if (rule.type !== 'SEQ') return undefined;
 	for (const m of rule.members) {
 		if (m.type === 'STRING' && /^[,;|&]$/.test(m.value)) return m.value;
@@ -664,20 +666,22 @@ interface RawNodeEntry {
 	subtypes?: Array<{ type: string; named: boolean }>;
 }
 
-export function projectNodeModel(
+export function enrichedToNodeModel(
 	kind: string,
 	enrichedRule: EnrichedRule,
 	ctx: ProjectionContext,
 	entry: RawNodeEntry | undefined,
 ): BranchModel | LeafWithChildrenModel {
-	const elements = projectElements(enrichedRule, ctx, false);
+	const elements = enrichedToElements(enrichedRule, ctx, false);
 
-	// Detect separators by walking the enriched rule
-	const fieldModels = new Map<string, FieldModel>();
+	// Apply separators from rule to field models
+	const separators = ruleToSeparators(enrichedRule);
 	for (const elem of elements) {
-		if (elem.element === 'field') fieldModels.set(elem.field.name, elem.field);
+		if (elem.element === 'field' && elem.field.multiple) {
+			const sep = separators.get(elem.field.name);
+			if (sep) elem.field.separator = sep;
+		}
 	}
-	detectSeparators(enrichedRule, fieldModels);
 
 	// Deduplicate fields that appear multiple times (from CHOICE branches)
 	const seen = new Set<string>();
@@ -696,7 +700,7 @@ export function projectNodeModel(
 		const childTypes = entry.children.types;
 		const namedArr = childTypes.filter(t => t.named).map(t => t.type);
 		const anonArr = childTypes.filter(t => !t.named).map(t => t.type);
-		const childTypeClass = classifyFieldTypes(namedArr, anonArr, ctx.leafKinds, ctx.expandedSupertypes);
+		const childTypeClass = typesToFieldTypeClass(namedArr, anonArr, ctx.leafKinds, ctx.expandedSupertypes);
 		children = { multiple: entry.children.multiple, types: childTypeClass };
 	}
 
@@ -720,63 +724,65 @@ export function projectNodeModel(
 // Step 4: Signature computation
 // ---------------------------------------------------------------------------
 
-export function computeSignatures(
+function fieldsToFactorySignature(fields: FieldModel[]): FactorySignature {
+	const factoryFields: Record<string, { collapsedTypes: string[]; anonLiterals: string[] }> = {};
+	for (const field of fields) {
+		factoryFields[field.name] = {
+			collapsedTypes: field.types.collapsedTypes,
+			anonLiterals: field.types.anonTokens,
+		};
+	}
+	return { id: stableKey('F', factoryFields), fields: factoryFields };
+}
+
+function fieldsToFromSignature(fields: FieldModel[]): FromSignature {
+	const fromFields: Record<string, { leafTypes: string[]; branchTypes: string[]; anonTokens: string[] }> = {};
+	for (const field of fields) {
+		fromFields[field.name] = {
+			leafTypes: field.types.leafTypes,
+			branchTypes: field.types.expandedBranch,
+			anonTokens: field.types.anonTokens,
+		};
+	}
+	return { id: stableKey('R', fromFields), fields: fromFields };
+}
+
+function fieldsToHydrationSignature(fields: FieldModel[]): HydrationSignature {
+	const hydrationFields: Record<string, { namedTypes: string[]; anonOnly: boolean }> = {};
+	for (const field of fields) {
+		const allNamed = [...field.types.leafTypes, ...field.types.branchTypes].sort();
+		hydrationFields[field.name] = {
+			namedTypes: allNamed,
+			anonOnly: allNamed.length === 0 && field.types.anonTokens.length > 0,
+		};
+	}
+	return { id: stableKey('H', hydrationFields), fields: hydrationFields };
+}
+
+export function nodesToSignatures(
 	nodes: Record<string, NodeModel>,
-	factoryPool: Map<string, FactorySignature>,
-	fromPool: Map<string, FromSignature>,
-	hydrationPool: Map<string, HydrationSignature>,
-): void {
+): { factory: Map<string, FactorySignature>; from: Map<string, FromSignature>; hydration: Map<string, HydrationSignature> } {
+	const factory = new Map<string, FactorySignature>();
+	const from = new Map<string, FromSignature>();
+	const hydration = new Map<string, HydrationSignature>();
+
 	for (const model of Object.values(nodes)) {
 		if (model.modelType !== 'branch') continue;
 
-		const fields = model.elements.filter(
-			(e): e is { element: 'field'; field: FieldModel } => e.element === 'field',
-		);
+		const fSig = fieldsToFactorySignature(model.fields);
+		if (!factory.has(fSig.id)) factory.set(fSig.id, fSig);
+		model.factory = factory.get(fSig.id)!;
 
-		// Factory signature
-		const factoryFields: Record<string, { collapsedTypes: string[]; anonLiterals: string[] }> = {};
-		for (const { field } of fields) {
-			factoryFields[field.name] = {
-				collapsedTypes: field.types.collapsedTypes,
-				anonLiterals: field.types.anonTokens,
-			};
-		}
-		const factoryId = stableKey('F', factoryFields);
-		if (!factoryPool.has(factoryId)) {
-			factoryPool.set(factoryId, { id: factoryId, fields: factoryFields });
-		}
-		model.factory = factoryPool.get(factoryId)!;
+		const rSig = fieldsToFromSignature(model.fields);
+		if (!from.has(rSig.id)) from.set(rSig.id, rSig);
+		model.from = from.get(rSig.id)!;
 
-		// From signature
-		const fromFields: Record<string, { leafTypes: string[]; branchTypes: string[]; anonTokens: string[] }> = {};
-		for (const { field } of fields) {
-			fromFields[field.name] = {
-				leafTypes: field.types.leafTypes,
-				branchTypes: field.types.expandedBranch,
-				anonTokens: field.types.anonTokens,
-			};
-		}
-		const fromId = stableKey('R', fromFields);
-		if (!fromPool.has(fromId)) {
-			fromPool.set(fromId, { id: fromId, fields: fromFields });
-		}
-		model.from = fromPool.get(fromId)!;
-
-		// Hydration signature
-		const hydrationFields: Record<string, { namedTypes: string[]; anonOnly: boolean }> = {};
-		for (const { field } of fields) {
-			const allNamed = [...field.types.leafTypes, ...field.types.branchTypes].sort();
-			hydrationFields[field.name] = {
-				namedTypes: allNamed,
-				anonOnly: allNamed.length === 0 && field.types.anonTokens.length > 0,
-			};
-		}
-		const hydrationId = stableKey('H', hydrationFields);
-		if (!hydrationPool.has(hydrationId)) {
-			hydrationPool.set(hydrationId, { id: hydrationId, fields: hydrationFields });
-		}
-		model.hydration = hydrationPool.get(hydrationId)!;
+		const hSig = fieldsToHydrationSignature(model.fields);
+		if (!hydration.has(hSig.id)) hydration.set(hSig.id, hSig);
+		model.hydration = hydration.get(hSig.id)!;
 	}
+
+	return { factory, from, hydration };
 }
 
 function stableKey(prefix: string, fields: Record<string, unknown>): string {
@@ -852,7 +858,7 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 
 	const leafKinds = new Set(leafKindsList);
 	const supertypeNames = new Set(supertypesList.map(s => s.name));
-	const expandedSupertypes = buildExpandedSupertypeMap(supertypesList);
+	const expandedSupertypes = supertypesToExpanded(supertypesList);
 
 	const kindSets: KindSets = { leafKinds, keywordKinds: keywordKindsMap, supertypeNames };
 
@@ -879,9 +885,9 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 			}
 		}
 
-		const enriched = enrichRule(rawRule, fieldInfo, kindSets);
+		const enriched = ruleToEnriched(rawRule, fieldInfo, kindSets);
 		const ctx: ProjectionContext = { grammar, leafKinds, expandedSupertypes, nodeTypesFields };
-		nodes[kind] = projectNodeModel(kind, enriched, ctx, entry);
+		nodes[kind] = enrichedToNodeModel(kind, enriched, ctx, entry);
 	}
 
 	// --- Leaf kinds (keyword vs variable) ---
@@ -911,10 +917,7 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 	const serialized = serializeToJson5(nodes);
 
 	// Step 4: Compute signatures (branches only)
-	const factoryPool = new Map<string, FactorySignature>();
-	const fromPool = new Map<string, FromSignature>();
-	const hydrationPool = new Map<string, HydrationSignature>();
-	computeSignatures(nodes, factoryPool, fromPool, hydrationPool);
+	nodesToSignatures(nodes);
 
 	return { model: { name: grammar, nodes }, serialized };
 }
