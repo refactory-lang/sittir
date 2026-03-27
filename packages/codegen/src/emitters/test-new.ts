@@ -9,15 +9,17 @@
  * Also generates terminal/keyword tests.
  */
 
-import type { KindMeta } from '../grammar-reader.ts';
-import { collectRequiredTokens, listKeywordKinds, listLeafKinds, listLeafValues } from '../grammar-reader.ts';
+import { collectRequiredTokens } from '../grammar-reader.ts';
+import { namedTypes } from '../grammar-model.ts';
 import { toFactoryName, toIrKey } from '../naming.ts';
+import { type StructuralNode, fieldsOf } from './utils.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
-	nodes: KindMeta[];
+	nodes: StructuralNode[];
 	leafKinds: string[];
 	keywordKinds: Map<string, string>;
+	leafValues?: Map<string, string[]>;
 }
 
 /**
@@ -96,7 +98,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		if (keywordKinds.has(kind)) continue;
 		const irKey = toIrKey(kind);
 		// Use a value that satisfies template literal / enum constraints
-		const enumVals = listLeafValues(grammar, kind);
+		const enumVals = config.leafValues?.get(kind) ?? [];
 		let testValue: string;
 		if (enumVals.length > 0) {
 			testValue = escapeString(enumVals[0]!);
@@ -121,8 +123,8 @@ export function emitTests(config: EmitTestsConfig): string {
  * Generate minimal factory arguments for a node kind.
  * Provides all required fields as a declarative config object.
  */
-function minimalArgs(node: KindMeta): string {
-	const required = node.fields.filter(f => f.required);
+function minimalArgs(node: StructuralNode): string {
+	const required = fieldsOf(node).filter(f => f.required);
 	if (required.length === 0) return '';
 
 	// If only one required field, pass it directly (constructor arg)
@@ -136,15 +138,16 @@ function minimalArgs(node: KindMeta): string {
 }
 
 /** Generate a dummy value for a field based on its types. */
-function dummyValue(field: { name: string; namedTypes: string[]; multiple?: boolean }): string {
+function dummyValue(field: { name: string; types: import('../grammar-model.ts').FieldTypeClass; multiple?: boolean }): string {
+	const named = namedTypes(field.types);
 	// Prefer the most specific identifier type that the field accepts
-	if (field.namedTypes.includes('type_identifier')) {
+	if (named.includes('type_identifier')) {
 		return `ir.typeIdentifier('Test${capitalize(field.name)}')`;
 	}
-	if (field.namedTypes.includes('field_identifier')) {
+	if (named.includes('field_identifier')) {
 		return `ir.fieldIdentifier('test_${field.name}')`;
 	}
-	if (field.namedTypes.includes('identifier')) {
+	if (named.includes('identifier')) {
 		return `ir.identifier('test_${field.name}')`;
 	}
 
@@ -153,7 +156,7 @@ function dummyValue(field: { name: string; namedTypes: string[]; multiple?: bool
 	}
 
 	// Use first named type as a minimal NodeData
-	const kind = field.namedTypes[0] ?? 'unknown';
+	const kind = named[0] ?? 'unknown';
 	return `{ type: '${kind}' as const, fields: {} } as NodeData<'${kind}'>`;
 }
 

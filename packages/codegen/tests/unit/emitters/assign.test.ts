@@ -1,11 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { emitAssign } from '../../../src/emitters/assign.ts';
-import { readGrammarKind, listKeywordKinds, listLeafKinds } from '../../../src/grammar-reader.ts';
+import { listKeywordKinds, listLeafKinds } from '../../../src/grammar-reader.ts';
+import { buildGrammarModel } from '../../../src/grammar-model.ts';
+import type { StructuralNode } from '../../../src/emitters/utils.ts';
 
 const grammar = 'rust';
 const leafKinds = listLeafKinds(grammar);
 const keywordKinds = listKeywordKinds(grammar);
-const nodes = ['function_item', 'struct_item', 'binary_expression'].map(k => readGrammarKind(grammar, k));
+const { model } = buildGrammarModel(grammar);
+const nodes = ['function_item', 'struct_item', 'binary_expression'].map(k => model.nodes[k] as StructuralNode);
 
 describe('emitAssign', () => {
 	const source = emitAssign({ grammar, nodes, leafKinds, keywordKinds });

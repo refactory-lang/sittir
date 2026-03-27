@@ -9,14 +9,14 @@
  * Produces immutable nodes as single object literals — no mutation, no assignment.
  */
 
-import type { KindMeta, FieldMeta, SupertypeInfo } from '../grammar-reader.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
+import { namedTypes, allTypes, type FieldTypeClass, type FieldModel } from '../grammar-model.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { escapeString } from './utils.ts';
+import { type StructuralNode, fieldsOf, escapeString } from './utils.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
-	nodes: KindMeta[];
+	nodes: StructuralNode[];
 	leafKinds: string[];
 	keywordKinds: Map<string, string>;
 	/** leaf kind → list of valid string values (enum-like) */
@@ -26,14 +26,14 @@ export interface EmitFactoriesConfig {
 	/** Operator tokens (non-alphabetic anonymous tokens) */
 	operatorTokens?: string[];
 	/** Supertype groupings — used to collapse inline unions into supertype names */
-	supertypes?: SupertypeInfo[];
+	supertypes?: { name: string; subtypes: string[] }[];
 }
 
 /**
  * Emit a factory function for a single branch node kind.
  */
 export function emitFactory(config: {
-	node: KindMeta;
+	node: StructuralNode;
 	leafKinds: string[];
 	/** Maps supertype name → Set of concrete subtypes */
 	supertypeMap?: Map<string, Set<string>>;
@@ -46,7 +46,7 @@ export function emitFactory(config: {
 	const lines: string[] = [];
 
 	// Factory function — accepts *Config (fields + children), return type inferred
-	const hasRequiredFields = node.fields.some(f => f.required) || (node.hasChildren && node.children?.required);
+	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (node.children != null && node.children?.required);
 	if (hasRequiredFields) {
 		lines.push(`export function ${factoryName}(`);
 		lines.push(`  config: ${typeName}Config,`);
@@ -62,11 +62,11 @@ export function emitFactory(config: {
 	lines.push(`    type: '${node.kind}' as const,`);
 
 	// Fluent setters — immutable: return a new node via factory re-call
-	for (const f of node.fields) {
+	for (const f of fieldsOf(node)) {
 		const camel = toFieldName(f.name);
 		const setterName = camel === 'type' ? 'typeField' : camel;
 		const fieldType = fieldTypeExpr(f, leafSet, supertypeMap);
-		const isAnonymousOnly = f.namedTypes.length === 0 && f.types.length > 0;
+		const isAnonymousOnly = namedTypes(f.types).length === 0 && allTypes(f.types).length > 0;
 		if (f.multiple) {
 			if (isAnonymousOnly) {
 				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, '${f.name}': v.map(t => ({ type: t, text: t }) as const) }),`);
@@ -81,9 +81,9 @@ export function emitFactory(config: {
 			}
 		}
 	}
-	if (node.hasChildren && node.children) {
+	if (node.children != null) {
 		const childTypeUnion = collapseToSupertypes(
-			node.children.namedTypes.filter(t => t !== '_'),
+			namedTypes(node.children.types).filter(t => t !== '_'),
 			supertypeMap,
 		).join(' | ');
 		if (node.children.multiple) {
@@ -215,15 +215,15 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	const allTypeNames = new Set<string>();
 	for (const n of nodes) {
 		allTypeNames.add(toTypeName(n.kind));
-		for (const f of n.fields) {
-			for (const t of f.namedTypes) {
+		for (const f of fieldsOf(n)) {
+			for (const t of namedTypes(f.types)) {
 				if (t === '_') continue; // skip bare underscore
 				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
 				allTypeNames.add(name);
 			}
 		}
 		if (n.children) {
-			for (const t of n.children.namedTypes) {
+			for (const t of namedTypes(n.children.types)) {
 				if (t === '_') continue;
 				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
 				allTypeNames.add(name);
@@ -298,10 +298,11 @@ export function emitFactories(config: EmitFactoriesConfig): string {
  * Uses named interfaces from types.ts — no bare NodeData<'kind'>.
  * Collapses concrete type sets into supertype names where possible.
  */
-function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>, supertypeMap?: Map<string, Set<string>>): string {
-	if (field.namedTypes.length === 0) {
+function fieldTypeExpr(field: FieldModel, _leafSet: Set<string>, supertypeMap?: Map<string, Set<string>>): string {
+	if (namedTypes(field.types).length === 0) {
 		// Anonymous-only field (e.g., operator tokens) — use string literal union
-		const anon = field.types.filter(t => t !== '_');
+		// Use anonTokens directly to preserve node-types.json ordering
+		const anon = field.types.anonTokens.filter(t => t !== '_');
 		if (anon.length > 0) {
 			return anon.map(t => `'${escapeString(t)}'`).join(' | ');
 		}
@@ -309,7 +310,7 @@ function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>, supertypeMap?: M
 	}
 
 	const collapsed = collapseToSupertypes(
-		field.namedTypes.filter(t => t !== '_'),
+		namedTypes(field.types).filter(t => t !== '_'),
 		supertypeMap,
 	);
 	return collapsed.join(' | ');
@@ -402,7 +403,7 @@ function isSubsetOf<T>(a: Set<T>, b: Set<T>): boolean {
  * Supertypes can reference other supertypes (e.g., _expression includes _literal).
  * This recursively expands until all entries are concrete (non-supertype) kinds.
  */
-function buildExpandedSupertypeMap(supertypes: SupertypeInfo[]): Map<string, Set<string>> {
+function buildExpandedSupertypeMap(supertypes: { name: string; subtypes: string[] }[]): Map<string, Set<string>> {
 	const raw = new Map<string, string[]>();
 	for (const st of supertypes) {
 		raw.set(st.name, st.subtypes);

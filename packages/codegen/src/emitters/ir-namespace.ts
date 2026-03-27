@@ -10,7 +10,6 @@
  * Trailing underscores dropped in the ir namespace (function_ → function).
  */
 
-import type { KindMeta, SupertypeInfo, OperatorContext } from '../grammar-reader.ts';
 import { toIrKey, toFactoryName, toShortName, toTypeName } from '../naming.ts';
 import { escapeString } from './utils.ts';
 
@@ -19,8 +18,8 @@ export interface EmitIrNamespaceConfig {
 	branchKinds: string[];
 	leafKinds: string[];
 	keywordKinds: Map<string, string>;
-	operatorContexts: OperatorContext[];
-	supertypes: SupertypeInfo[];
+	operatorContexts: { field: string; tokens: string[] }[];
+	supertypes: { name: string; subtypes: string[] }[];
 }
 
 export function emitIrNamespace(config: EmitIrNamespaceConfig): string {

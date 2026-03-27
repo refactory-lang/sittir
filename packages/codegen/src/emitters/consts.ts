@@ -10,14 +10,8 @@
  *   FIELD_MAP      — per-node-kind field metadata
  */
 
-import type { KindMeta } from '../grammar-reader.ts';
-import { listLeafValues } from '../grammar-reader.ts';
 import { toFieldName } from '../naming.ts';
-
-export interface EnumKind {
-  kind: string;
-  values: string[];
-}
+import { type StructuralNode, fieldsOf } from './utils.ts';
 
 export interface EmitConstsConfig {
   grammar: string;
@@ -25,8 +19,8 @@ export interface EmitConstsConfig {
   leafKinds: string[];
   keywords: string[];
   operators: string[];
-  nodes: KindMeta[];
-  enumKinds?: EnumKind[];
+  nodes: StructuralNode[];
+  enumKinds?: { kind: string; values: string[] }[];
 }
 
 export function emitConsts(config: EmitConstsConfig): string {
@@ -96,7 +90,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 
   for (const node of [...nodes].sort((a, b) => a.kind.localeCompare(b.kind))) {
     lines.push(`  '${node.kind}': [`);
-    for (const field of node.fields) {
+    for (const field of fieldsOf(node)) {
       lines.push(`    { name: '${toFieldName(field.name)}', required: ${field.required}, multiple: ${field.multiple} },`);
     }
     lines.push('  ],');

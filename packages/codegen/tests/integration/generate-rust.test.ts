@@ -19,7 +19,9 @@ describe('generate() for Rust', () => {
 		expect(result.factories).toContain('export function structItem(');
 		expect(result.factories).toContain('export function functionItem(');
 		expect(result.factories).toContain("type: 'struct_item'");
-		expect(result.factories).toContain('node.render =');
+		expect(result.factories).toContain('render() { return render(this)');
+
+
 	});
 
 	it('should generate types with const enum SyntaxKind', () => {

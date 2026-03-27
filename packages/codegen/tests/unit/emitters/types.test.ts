@@ -15,9 +15,9 @@ describe('emitTypes', () => {
 		expect(source).toContain("export interface FunctionItem extends NodeData<'function_item'> {}");
 	});
 
-	it('should emit Fields and Tree interfaces', () => {
+	it('should emit Config and Tree interfaces', () => {
 		const source = emitTypes({ grammar: 'rust', nodeKinds: ['function_item'] });
-		expect(source).toContain("export interface FunctionItemFields extends NodeFields<'function_item'> {}");
+		expect(source).toContain("export interface FunctionItemConfig extends NodeConfig<'function_item'> {}");
 		expect(source).toContain("export interface FunctionItemTree extends TreeNode<'function_item'> {}");
 	});
 
@@ -46,7 +46,7 @@ describe('emitTypes', () => {
 		expect(source).toContain("CallExpression = 'call_expression'");
 	});
 
-	it('should emit supertype unions for node, fields, and tree', () => {
+	it('should emit supertype unions for node, config, and tree', () => {
 		const source = emitTypes({
 			grammar: 'rust',
 			nodeKinds: ['binary_expression', 'call_expression'],
@@ -54,8 +54,8 @@ describe('emitTypes', () => {
 		});
 		expect(source).toContain('export type Expression =');
 		expect(source).toContain('| BinaryExpression');
-		expect(source).toContain('export type ExpressionFields =');
-		expect(source).toContain('| BinaryExpressionFields');
+		expect(source).toContain('export type ExpressionConfig =');
+		expect(source).toContain('| BinaryExpressionConfig');
 		expect(source).toContain('export type ExpressionTree =');
 		expect(source).toContain('| BinaryExpressionTree');
 	});

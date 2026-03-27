@@ -9,20 +9,20 @@
  * regular API never load .from() resolution code.
  */
 
-import type { KindMeta, FieldMeta, SupertypeInfo } from '../grammar-reader.ts';
+import { namedTypes, allTypes, type FieldTypeClass } from '../grammar-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { escapeString } from './utils.ts';
+import { type StructuralNode, fieldsOf, escapeString } from './utils.ts';
 
 export interface EmitFromConfig {
 	grammar: string;
-	nodes: KindMeta[];
+	nodes: StructuralNode[];
 	leafKinds: string[];
 	keywordKinds: Map<string, string>;
 	/** leaf kind → list of valid string values (enum-like) */
 	leafValues?: Map<string, string[]>;
 	/** Supertype info — for expanding _expression etc. to concrete subtypes */
-	supertypes?: SupertypeInfo[];
+	supertypes?: { name: string; subtypes: string[] }[];
 }
 
 // ---------------------------------------------------------------------------
@@ -35,26 +35,15 @@ interface ResolvedFieldTypes {
 	anonTokens: string[];
 }
 
-/** Compute the canonical type components for a field. */
+/** Compute the canonical type components for a field using FieldTypeClass. */
 function resolveFieldTypes(
-	field: FieldMeta,
+	tc: FieldTypeClass,
 	leafSet: Set<string>,
 	branchNodeSet: Set<string>,
-	supertypeMap: Map<string, string[]>,
 ): ResolvedFieldTypes {
-	const leafTypes = field.namedTypes.filter(t => leafSet.has(t));
-	const rawBranch = field.namedTypes.filter(t => !leafSet.has(t) && t !== '_');
-	const branchTypes: string[] = [];
-	for (const t of rawBranch) {
-		if (t.startsWith('_') && supertypeMap.has(t)) {
-			for (const sub of supertypeMap.get(t)!) {
-				if (branchNodeSet.has(sub) && !branchTypes.includes(sub)) branchTypes.push(sub);
-			}
-		} else if (!t.startsWith('_') && branchNodeSet.has(t)) {
-			if (!branchTypes.includes(t)) branchTypes.push(t);
-		}
-	}
-	const anonTokens = field.types.filter(t => !field.namedTypes.includes(t) && !t.startsWith('_'));
+	const leafTypes = tc.expandedAll.filter(t => leafSet.has(t));
+	const branchTypes = tc.expandedAll.filter(t => branchNodeSet.has(t));
+	const anonTokens = tc.anonTokens;
 	return { leafTypes, branchTypes, anonTokens };
 }
 
@@ -92,8 +81,8 @@ export function emitFrom(config: EmitFromConfig): string {
 	// --- Phase 1: Collect all unique resolver signatures ---
 	const resolverRegistry = new Map<string, { name: string; resolved: ResolvedFieldTypes }>();
 
-	function getOrCreateResolver(field: FieldMeta): { name: string; resolved: ResolvedFieldTypes; key: string } {
-		const resolved = resolveFieldTypes(field, leafSet, branchNodeSet, supertypeMap);
+	function getOrCreateResolver(tc: FieldTypeClass): { name: string; resolved: ResolvedFieldTypes; key: string } {
+		const resolved = resolveFieldTypes(tc, leafSet, branchNodeSet);
 		const key = resolverKey(resolved);
 
 		if (!resolverRegistry.has(key)) {
@@ -113,18 +102,11 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// Pre-scan all fields to discover unique resolvers
 	for (const node of nodes) {
-		for (const field of node.fields) {
-			getOrCreateResolver(field);
+		for (const field of fieldsOf(node)) {
+			getOrCreateResolver(field.types);
 		}
-		if (node.hasChildren && node.children) {
-			const childField: FieldMeta = {
-				name: 'children',
-				required: node.children.required,
-				multiple: true,
-				types: node.children.types,
-				namedTypes: node.children.namedTypes,
-			};
-			getOrCreateResolver(childField);
+		if (node.children != null) {
+			getOrCreateResolver(node.children.types);
 		}
 	}
 
@@ -181,7 +163,7 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// --- Per-kind .from() functions ---
 	for (const node of nodes) {
-		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar, supertypeMap, branchNodeSet, resolverRegistry));
+		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar, branchNodeSet, resolverRegistry));
 		lines.push('');
 	}
 
@@ -193,18 +175,18 @@ export function emitFrom(config: EmitFromConfig): string {
 // ---------------------------------------------------------------------------
 
 function emitFromFunction(
-	node: KindMeta,
+	node: StructuralNode,
 	leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
-	allNodes: KindMeta[],
+	allNodes: StructuralNode[],
 	grammar: string | undefined,
-	supertypeMap: Map<string, string[]>,
 	branchNodeSet: Set<string>,
 	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
 ): string {
 	const typeName = toTypeName(node.kind);
 	const factoryName = toFactoryName(node.kind);
+	const fields = fieldsOf(node);
 
 	const lines: string[] = [];
 
@@ -222,15 +204,16 @@ function emitFromFunction(
 	lines.push(`  if (isNodeData(input)) return ${factoryName}(input.fields);`);
 
 	// --- Path 3: FromInput → resolve ---
-	if (node.hasChildren) {
+	const hasChildren = node.children != null;
+	if (hasChildren) {
 		lines.push(`  const obj = Array.isArray(input) ? { children: input } : input;`);
 	} else {
 		lines.push(`  const obj = input;`);
 	}
 	lines.push(`  const resolved: any = {};`);
-	for (const field of node.fields) {
+	for (const field of fields) {
 		lines.push(`  if (obj['${field.name}'] !== undefined) {`);
-		const resolveCall = emitResolveCall(field, `obj['${field.name}']`, leafSet, branchNodeSet, supertypeMap, keywordKinds, resolverRegistry);
+		const resolveCall = emitResolveCall(field.types, `obj['${field.name}']`, leafSet, branchNodeSet, keywordKinds, resolverRegistry);
 		if (field.multiple) {
 			lines.push(`    const raw = obj['${field.name}'];`);
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
@@ -244,17 +227,10 @@ function emitFromFunction(
 		}
 		lines.push(`  }`);
 	}
-	if (node.hasChildren && node.children) {
-		const childField: FieldMeta = {
-			name: 'children',
-			required: node.children.required,
-			multiple: true,
-			types: node.children.types,
-			namedTypes: node.children.namedTypes,
-		};
+	if (hasChildren && node.children) {
 		lines.push(`  if (obj['children'] !== undefined) {`);
 		lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
-		const childResolve = emitResolveCall(childField, 'v', leafSet, branchNodeSet, supertypeMap, keywordKinds, resolverRegistry);
+		const childResolve = emitResolveCall(node.children.types, 'v', leafSet, branchNodeSet, keywordKinds, resolverRegistry);
 		lines.push(`    resolved['children'] = arr.map((v: any) => ${childResolve});`);
 		if (node.children.required) {
 			lines.push(`  } else {`);
@@ -273,15 +249,14 @@ function emitFromFunction(
 // ---------------------------------------------------------------------------
 
 function emitResolveCall(
-	field: FieldMeta,
+	tc: FieldTypeClass,
 	varName: string,
 	leafSet: Set<string>,
 	branchNodeSet: Set<string>,
-	supertypeMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
 	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
 ): string {
-	const resolved = resolveFieldTypes(field, leafSet, branchNodeSet, supertypeMap);
+	const resolved = resolveFieldTypes(tc, leafSet, branchNodeSet);
 	const key = resolverKey(resolved);
 	const entry = resolverRegistry.get(key);
 
@@ -323,7 +298,7 @@ function emitResolveBody(
 	leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
-	allNodes: KindMeta[],
+	allNodes: StructuralNode[],
 	grammar?: string,
 ): string {
 	const parts: string[] = [];
@@ -490,7 +465,7 @@ function emitObjectResolve(
  * Build a supertype map with fully expanded concrete subtypes.
  * Recursively expands nested supertypes (e.g., _expression includes _literal).
  */
-function buildExpandedSupertypeMap(supertypes: SupertypeInfo[]): Map<string, string[]> {
+function buildExpandedSupertypeMap(supertypes: { name: string; subtypes: string[] }[]): Map<string, string[]> {
 	const raw = new Map<string, string[]>();
 	for (const st of supertypes) {
 		raw.set(st.name, st.subtypes);
@@ -530,7 +505,7 @@ function buildExpandedSupertypeMap(supertypes: SupertypeInfo[]): Map<string, str
 }
 
 function collectReferencedFactories(
-	nodes: KindMeta[],
+	nodes: StructuralNode[],
 	leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
@@ -542,8 +517,11 @@ function collectReferencedFactories(
 	}
 
 	for (const node of nodes) {
-		for (const field of [...node.fields, ...(node.children ? [{ name: 'children', required: node.children.required, multiple: true, types: node.children.types, namedTypes: node.children.namedTypes } satisfies FieldMeta] : [])]) {
-			for (const t of field.namedTypes) {
+		const fields = fieldsOf(node);
+		const allFieldTypes = [...fields.map(f => f.types)];
+		if (node.children != null) allFieldTypes.push(node.children.types);
+		for (const tc of allFieldTypes) {
+			for (const t of tc.expandedAll) {
 				if (leafSet.has(t)) {
 					refs.add(toFactoryName(t));
 				}

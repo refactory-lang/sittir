@@ -10,12 +10,11 @@
  * If types diverge, `tsc` / `tsgo` will report errors.
  */
 
-import type { KindMeta } from '../grammar-reader.ts';
 import { toTypeName } from '../naming.ts';
-import { selectConstructorField } from './utils.ts';
+import { type StructuralNode, selectConstructorField } from './utils.ts';
 
 export interface EmitTypeTestsConfig {
-	nodes: KindMeta[];
+	nodes: StructuralNode[];
 }
 
 export function emitTypeTests(config: EmitTypeTestsConfig): string {

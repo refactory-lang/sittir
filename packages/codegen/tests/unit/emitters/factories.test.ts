@@ -1,24 +1,34 @@
 import { describe, it, expect } from 'vitest';
 import { emitFactory, emitTerminalFactory } from '../../../src/emitters/factories.ts';
-import { readGrammarKind } from '../../../src/grammar-reader.ts';
+import { buildGrammarModel } from '../../../src/grammar-model.ts';
+import type { StructuralNode } from '../../../src/emitters/utils.ts';
+
+const { model } = buildGrammarModel('rust');
+
+function getNode(kind: string): StructuralNode {
+	const node = model.nodes[kind];
+	if (!node || (node.modelType !== 'branch' && node.modelType !== 'leafWithChildren')) {
+		throw new Error(`Node "${kind}" is not a structural node`);
+	}
+	return node as StructuralNode;
+}
 
 describe('emitFactory', () => {
 	it('generates factory for function_item with constructor field', () => {
-		const node = readGrammarKind('rust', 'function_item');
+		const node = getNode('function_item');
 		const source = emitFactory({ node, leafKinds: ['identifier', 'metavariable'] });
 
-		expect(source).toContain('export interface FunctionItem');
 		expect(source).toContain('export function functionItem(');
-		expect(source).toContain('nameOrConfig');
-		expect(source).toContain("type: 'function_item'");
-		expect(source).toContain('node.body =');
-		expect(source).toContain('node.returnType =');
-		expect(source).toContain('node.render =');
-		expect(source).toContain('node.toEdit =');
+		expect(source).toContain('config: FunctionItemConfig,');
+		expect(source).toContain("type: 'function_item' as const,");
+		expect(source).toContain("body: (v: Block) => functionItem({");
+		expect(source).toContain('returnType: (v:');
+		expect(source).toContain('render() { return render(this); },');
+		expect(source).toContain('toEdit(startOrRange:');
 	});
 
 	it('generates factory for block (no constructor field)', () => {
-		const node = readGrammarKind('rust', 'block');
+		const node = getNode('block');
 		const source = emitFactory({ node, leafKinds: [] });
 
 		expect(source).toContain('export function block(');
@@ -26,7 +36,7 @@ describe('emitFactory', () => {
 	});
 
 	it('generates factory for binary_expression with required fields', () => {
-		const node = readGrammarKind('rust', 'binary_expression');
+		const node = getNode('binary_expression');
 		const source = emitFactory({ node, leafKinds: [] });
 
 		expect(source).toContain('export function binaryExpression(');
@@ -34,18 +44,19 @@ describe('emitFactory', () => {
 	});
 
 	it('generates narrow NodeData for leaf-only fields in regular API', () => {
-		const node = readGrammarKind('rust', 'function_item');
+		const node = getNode('function_item');
 		const source = emitFactory({ node, leafKinds: ['identifier', 'metavariable'] });
 
 		// name field accepts named interfaces — narrowed types in regular API (FR-016)
 		expect(source).toContain('Identifier | Metavariable');
 	});
 
-	it('generates children setter for nodes with children', () => {
-		const node = readGrammarKind('rust', 'function_item');
+	it('generates children fluent setter for nodes with children', () => {
+		const node = getNode('function_item');
 		const source = emitFactory({ node, leafKinds: [] });
 
-		expect(source).toContain('node.children =');
+		expect(source).toContain('children: (');
+		expect(source).toContain("=> functionItem({ ...config, children:");
 	});
 });
 

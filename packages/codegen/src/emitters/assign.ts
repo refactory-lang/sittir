@@ -8,12 +8,13 @@
  *   - edit(): universal entry point for in-place editing
  */
 
-import type { KindMeta, FieldMeta } from '../grammar-reader.ts';
+import { namedTypes } from '../grammar-model.ts';
 import { toTypeName, toFactoryName, toGrammarTypeName } from '../naming.ts';
+import { type StructuralNode, fieldsOf } from './utils.ts';
 
 export interface EmitAssignConfig {
 	grammar: string;
-	nodes: KindMeta[];
+	nodes: StructuralNode[];
 	leafKinds: string[];
 	keywordKinds: Map<string, string>;
 }
@@ -98,12 +99,14 @@ export function emitAssign(config: EmitAssignConfig): string {
 	for (const node of nodes) {
 		const typeName = toTypeName(node.kind);
 		const factoryName = toFactoryName(node.kind);
+		const fields = fieldsOf(node);
 
 		lines.push(`export function assign${typeName}(target: ${typeName}Tree): ${typeName} & { toEdit(): Edit; replace(): Edit; render(): string } {`);
 		lines.push(`  const result = ${factoryName}({`);
 
-		for (const f of node.fields) {
-			if (f.namedTypes.length === 0) {
+		for (const f of fields) {
+			const named = namedTypes(f.types);
+			if (named.length === 0) {
 				// Anonymous-only field (operator tokens etc.) — read as text node
 				if (f.required) {
 					lines.push(`    '${f.name}': { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() } as any,`);
@@ -112,13 +115,14 @@ export function emitAssign(config: EmitAssignConfig): string {
 				}
 				continue;
 			}
-			emitAssignField(lines, f, leafSet, node.kind);
+			emitAssignField(lines, f, named, leafSet, node.kind);
 		}
 
 		// Hydrate children field if present
-		if (node.hasChildren && node.children) {
+		if (node.children != null) {
 			const ch = node.children;
-			const kindSet = JSON.stringify(ch.namedTypes);
+			const childNamed = namedTypes(ch.types);
+			const kindSet = JSON.stringify(childNamed);
 			if (ch.multiple) {
 				lines.push(`    children: (() => {`);
 				lines.push(`      const _kinds = new Set(${kindSet});`);
@@ -167,9 +171,9 @@ export function emitAssign(config: EmitAssignConfig): string {
 }
 
 /** Emit a single field assignment line inside an assign function. */
-function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>, nodeKind: string): void {
+function emitAssignField(lines: string[], f: { name: string; required: boolean; multiple: boolean }, fieldNamedTypes: string[], leafSet: Set<string>, nodeKind: string): void {
 	const fieldAccess = `target.field('${f.name}')`;
-	const kindSet = JSON.stringify(f.namedTypes);
+	const kindSet = JSON.stringify(fieldNamedTypes);
 
 	if (f.required) {
 		if (f.multiple) {
@@ -180,8 +184,8 @@ function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>, no
 			lines.push(`      if (_items.length === 0) throw new Error(\`Required field '${f.name}' has no children on '${nodeKind}' tree node\`);`);
 			lines.push(`      return _items.map((c: any) => assignByKind(c.type, c));`);
 			lines.push(`    })() as any,`);
-		} else if (f.namedTypes.length === 1) {
-			const childKind = f.namedTypes[0]!;
+		} else if (fieldNamedTypes.length === 1) {
+			const childKind = fieldNamedTypes[0]!;
 			if (leafSet.has(childKind)) {
 				lines.push(`    ${f.name}: assignByKind('${childKind}', ${fieldAccess}!) as any,`);
 			} else {
@@ -198,8 +202,8 @@ function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>, no
 			lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
 			lines.push(`      return _items.length > 0 ? _items.map((c: any) => assignByKind(c.type, c)) : undefined;`);
 			lines.push(`    })() as any,`);
-		} else if (f.namedTypes.length === 1) {
-			const childKind = f.namedTypes[0]!;
+		} else if (fieldNamedTypes.length === 1) {
+			const childKind = fieldNamedTypes[0]!;
 			if (leafSet.has(childKind)) {
 				lines.push(`    ${f.name}: ${fieldAccess} ? assignByKind('${childKind}', ${fieldAccess}!) as any : undefined,`);
 			} else {

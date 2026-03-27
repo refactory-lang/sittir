@@ -1,10 +1,21 @@
 import { describe, it, expect } from 'vitest';
 import { emitRule } from '../../../src/emitters/rules.ts';
-import { readGrammarKind } from '../../../src/grammar-reader.ts';
+import { buildGrammarModel } from '../../../src/grammar-model.ts';
+import type { StructuralNode } from '../../../src/emitters/utils.ts';
+
+const { model } = buildGrammarModel('rust');
+
+function getNode(kind: string): StructuralNode {
+	const node = model.nodes[kind];
+	if (!node || (node.modelType !== 'branch' && node.modelType !== 'leafWithChildren')) {
+		throw new Error(`Node "${kind}" is not a structural node`);
+	}
+	return node as StructuralNode;
+}
 
 describe('emitRule', () => {
 	it('emits S-expression template for function_item', () => {
-		const node = readGrammarKind('rust', 'function_item');
+		const node = getNode('function_item');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.template).toContain('"fn"');
@@ -15,7 +26,7 @@ describe('emitRule', () => {
 	});
 
 	it('emits S-expression template for struct_item', () => {
-		const node = readGrammarKind('rust', 'struct_item');
+		const node = getNode('struct_item');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.template).toContain('"struct"');
@@ -24,7 +35,7 @@ describe('emitRule', () => {
 	});
 
 	it('emits S-expression template for if_expression', () => {
-		const node = readGrammarKind('rust', 'if_expression');
+		const node = getNode('if_expression');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.template).toContain('"if"');
@@ -33,7 +44,7 @@ describe('emitRule', () => {
 	});
 
 	it('emits S-expression template for use_declaration', () => {
-		const node = readGrammarKind('rust', 'use_declaration');
+		const node = getNode('use_declaration');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.template).toContain('"use"');
@@ -41,7 +52,7 @@ describe('emitRule', () => {
 	});
 
 	it('marks optional fields with ? quantifier', () => {
-		const node = readGrammarKind('rust', 'function_item');
+		const node = getNode('function_item');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.fields['name']!.required).toBe(true);
@@ -50,14 +61,14 @@ describe('emitRule', () => {
 	});
 
 	it('marks multiple fields with * quantifier', () => {
-		const node = readGrammarKind('rust', 'function_item');
+		const node = getNode('function_item');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.template).toBeDefined();
 	});
 
 	it('handles block with braces', () => {
-		const node = readGrammarKind('rust', 'block');
+		const node = getNode('block');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.template).toContain('"{"');
@@ -65,7 +76,7 @@ describe('emitRule', () => {
 	});
 
 	it('produces valid S-expression (starts/ends with parens)', () => {
-		const node = readGrammarKind('rust', 'binary_expression');
+		const node = getNode('binary_expression');
 		const rule = emitRule({ grammar: 'rust', node });
 
 		expect(rule.template).toMatch(/^\(.*\)$/);

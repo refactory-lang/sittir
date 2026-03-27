@@ -6,10 +6,10 @@
  * and _inferBranch scoring algorithm.
  */
 
-import type { KindMeta } from '../grammar-reader.ts';
+import { type StructuralNode, fieldsOf } from './utils.ts';
 
 export interface EmitClientUtilsConfig {
-	nodes: KindMeta[];
+	nodes: StructuralNode[];
 	leafKinds: string[];
 }
 
@@ -72,7 +72,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('/** Field names per branch kind — used by _inferBranch for scoring. */');
 	lines.push('export const _BRANCH_FIELDS: Record<string, string[]> = {');
 	for (const node of nodes) {
-		const fieldNames = node.fields.map(f => f.name);
+		const fieldNames = fieldsOf(node).map(f => f.name);
 		if (fieldNames.length > 0) {
 			lines.push(`  '${node.kind}': ${JSON.stringify(fieldNames)},`);
 		}

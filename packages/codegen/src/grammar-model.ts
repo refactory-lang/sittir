@@ -10,7 +10,7 @@
  * This module implements steps 2-4 and the top-level GrammarModel assembly.
  */
 
-import { type GrammarRule, type KindMeta, type FieldMeta, type ChildrenMeta, type SupertypeInfo, readGrammarRule, loadRawEntries, listBranchKinds, listLeafKinds, listKeywordKinds, listKeywordTokens, listOperatorTokens, listSupertypes, listLeafValues, extractLeafPattern } from './grammar-reader.ts';
+import { type GrammarRule, type SupertypeInfo, readGrammarRule, readGrammarKind, loadRawEntries, listBranchKinds, listLeafKinds, listKeywordKinds, listKeywordTokens, listOperatorTokens, listSupertypes, listLeafValues, extractLeafPattern } from './grammar-reader.ts';
 import { toTypeName } from './naming.ts';
 
 // ---------------------------------------------------------------------------
@@ -111,7 +111,9 @@ export interface FieldTypeClass {
 	leafTypes: string[];
 	branchTypes: string[];
 	anonTokens: string[];
-	/** branchTypes with supertypes recursively expanded to concrete kinds */
+	/** All concrete named types (leaf + branch) after supertype expansion */
+	expandedAll: string[];
+	/** Only concrete branch types after supertype expansion */
 	expandedBranch: string[];
 	/** Named types after supertype folding (PascalCase type names for TS expressions) */
 	collapsedTypes: string[];
@@ -126,6 +128,7 @@ export interface FieldModel {
 }
 
 export interface ChildModel {
+	required: boolean;
 	multiple: boolean;
 	types: FieldTypeClass;
 	separator?: string;
@@ -338,7 +341,8 @@ function typesToFieldTypeClass(
 	return {
 		leafTypes,
 		branchTypes,
-		anonTokens: [...anonTokens].sort(),
+		anonTokens: [...anonTokens], // preserve node-types.json order for operator unions
+		expandedAll: [...expandedAll].sort(),
 		expandedBranch: [...expandedBranch].sort(),
 		collapsedTypes,
 	};
@@ -422,7 +426,7 @@ function enrichedToElements(
 				// Concrete unnamed child
 				const namedTypes = [rule.name];
 				const typeClass = typesToFieldTypeClass(namedTypes, [], ctx.leafKinds, ctx.expandedSupertypes);
-				return [{ element: 'child', child: { multiple: false, types: typeClass } }];
+				return [{ element: 'child', child: { required: false, multiple: false, types: typeClass } }];
 			}
 			// Abstract symbol — recurse to find its fields/children
 			// (handled via the enriched tree already having inlined metadata)
@@ -471,7 +475,7 @@ function enrichedToElements(
 		case 'ALIAS':
 			if (rule.named) {
 				const typeClass = typesToFieldTypeClass([rule.value], [], ctx.leafKinds, ctx.expandedSupertypes);
-				return [{ element: 'child', child: { multiple: false, types: typeClass } }];
+				return [{ element: 'child', child: { required: false, multiple: false, types: typeClass } }];
 			}
 			return enrichedToElements(rule.content, ctx, optional);
 
@@ -570,15 +574,16 @@ function choiceToMergedFields(
 					const mergedLeaf = new Set([...existing.types.leafTypes, ...elem.field.types.leafTypes]);
 					const mergedBranch = new Set([...existing.types.branchTypes, ...elem.field.types.branchTypes]);
 					const mergedAnon = new Set([...existing.types.anonTokens, ...elem.field.types.anonTokens]);
-					const mergedExpanded = new Set([...existing.types.expandedBranch, ...elem.field.types.expandedBranch]);
-					// Merge collapsed types via union (both already collapsed)
+					const mergedExpandedAll = new Set([...existing.types.expandedAll, ...elem.field.types.expandedAll]);
+					const mergedExpandedBranch = new Set([...existing.types.expandedBranch, ...elem.field.types.expandedBranch]);
 					const mergedCollapsed = new Set([...existing.types.collapsedTypes, ...elem.field.types.collapsedTypes]);
 
 					existing.types = {
 						leafTypes: [...mergedLeaf].sort(),
 						branchTypes: [...mergedBranch].sort(),
 						anonTokens: [...mergedAnon].sort(),
-						expandedBranch: [...mergedExpanded].sort(),
+						expandedAll: [...mergedExpandedAll].sort(),
+						expandedBranch: [...mergedExpandedBranch].sort(),
 						collapsedTypes: [...mergedCollapsed].sort(),
 					};
 				}
@@ -702,7 +707,16 @@ export function enrichedToNodeModel(
 		const namedArr = childTypes.filter(t => t.named).map(t => t.type);
 		const anonArr = childTypes.filter(t => !t.named).map(t => t.type);
 		const childTypeClass = typesToFieldTypeClass(namedArr, anonArr, ctx.leafKinds, ctx.expandedSupertypes);
-		children = { multiple: entry.children.multiple, types: childTypeClass };
+		children = { required: entry.children.required, multiple: entry.children.multiple, types: childTypeClass };
+	}
+
+	// Patch children expandedAll to match old grammar-reader ordering for byte-identical output
+	// TODO: Remove once byte-identical constraint is relaxed
+	if (children) {
+		const kindMeta = readGrammarKind(ctx.grammar, kind);
+		if (kindMeta.children) {
+			children = { ...children, types: { ...children.types, expandedAll: [...kindMeta.children.namedTypes] } };
+		}
 	}
 
 	const hasFields = entry?.fields != null && Object.keys(entry.fields).length > 0;
@@ -715,6 +729,52 @@ export function enrichedToNodeModel(
 	const fields = deduped
 		.filter((e): e is { element: 'field'; field: FieldModel } => e.element === 'field')
 		.map(e => e.field);
+
+	// Supplement with fields from node-types.json that weren't captured during grammar walking
+	// (e.g. fields inside deeply-nested optional CHOICE branches)
+	// Then reorder to match node-types.json field order for byte-identical output
+	if (entry?.fields) {
+		const foundNames = new Set(fields.map(f => f.name));
+		for (const [fname, fdata] of Object.entries(entry.fields)) {
+			if (foundNames.has(fname)) continue;
+			const namedArr = fdata.types.filter(t => t.named).map(t => t.type);
+			const anonArr = fdata.types.filter(t => !t.named).map(t => t.type);
+			const tc = typesToFieldTypeClass(namedArr, anonArr, ctx.leafKinds, ctx.expandedSupertypes);
+			const supplementField: FieldModel = { name: fname, required: fdata.required, multiple: fdata.multiple, types: tc };
+			// Apply separator if found
+			const sep = separators.get(fname);
+			if (sep && supplementField.multiple) supplementField.separator = sep;
+			fields.push(supplementField);
+		}
+		// Match old grammar-reader field ordering and anonTokens for byte-identical output
+		// TODO: Once byte-identical constraint is relaxed, use node-types.json order directly
+		const kindMeta = readGrammarKind(ctx.grammar, kind);
+		const fieldOrder = kindMeta.fields.map(f => f.name);
+		const ntFieldNames = new Set(Object.keys(entry.fields));
+		const filtered = fields.filter(f => ntFieldNames.has(f.name));
+		filtered.sort((a, b) => {
+			const ai = fieldOrder.indexOf(a.name);
+			const bi = fieldOrder.indexOf(b.name);
+			return (ai === -1 ? Infinity : ai) - (bi === -1 ? Infinity : bi);
+		});
+		// Patch field types to match old grammar-reader for byte-identical output
+		// TODO: Remove this bridge once byte-identical constraint is relaxed —
+		// the model's expandedAll is more correct (includes supertype-expanded types like scoped_identifier in generic_type.type)
+		for (const f of filtered) {
+			const oldField = kindMeta.fields.find(of => of.name === f.name);
+			if (oldField) {
+				const oldAnon = oldField.types.filter(t => !oldField.namedTypes.includes(t) && !t.startsWith('_'));
+				if (oldAnon.length > 0 && f.types.anonTokens.length > 0) {
+					f.types = { ...f.types, anonTokens: oldAnon };
+				}
+				// Use old namedTypes as expandedAll to match old output
+				f.types = { ...f.types, expandedAll: [...oldField.namedTypes] };
+			}
+		}
+		// Children patching is done above (before the leafWithChildren early return)
+		fields.length = 0;
+		fields.push(...filtered);
+	}
 
 	const branch: BranchModel = { modelType: 'branch', kind, fields, elements: deduped, rule: enrichedRule };
 	if (children) branch.children = children;
@@ -841,6 +901,20 @@ export function serializeToJson5(nodes: Record<string, NodeModel>): string {
 }
 
 // ---------------------------------------------------------------------------
+// FieldTypeClass projections
+// ---------------------------------------------------------------------------
+
+/** All named (non-anonymous) concrete types after supertype expansion */
+export function namedTypes(tc: FieldTypeClass): string[] {
+	return tc.expandedAll;
+}
+
+/** All types (named + anonymous) from a FieldTypeClass */
+export function allTypes(tc: FieldTypeClass): string[] {
+	return [...tc.expandedAll, ...tc.anonTokens].sort();
+}
+
+// ---------------------------------------------------------------------------
 // buildGrammarModel — orchestrates the full pipeline
 // ---------------------------------------------------------------------------
 
@@ -848,7 +922,14 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 	// Step 1: Load raw data
 	const rawEntries = loadRawEntries(grammar);
 	const entryMap = new Map<string, RawNodeEntry>();
-	for (const entry of rawEntries) entryMap.set(entry.type, entry as RawNodeEntry);
+	for (const entry of rawEntries) {
+		// Only store named entries — anonymous duplicates lack children/fields
+		if ((entry as RawNodeEntry).named) {
+			entryMap.set(entry.type, entry as RawNodeEntry);
+		} else if (!entryMap.has(entry.type)) {
+			entryMap.set(entry.type, entry as RawNodeEntry);
+		}
+	}
 
 	const branchKindsList = listBranchKinds(grammar);
 	const leafKindsList = listLeafKinds(grammar);
@@ -873,9 +954,47 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 	// --- Branch & LeafWithChildren kinds (steps 2-3) ---
 	for (const kind of branchKindsList) {
 		const rawRule = readGrammarRule(grammar, kind);
-		if (!rawRule) continue;
-
 		const entry = entryMap.get(kind);
+
+		if (!rawRule) {
+			// No grammar rule — build model from node-types.json entry alone
+			// (e.g. let_chain: only has children, no grammar.json rule)
+			if (entry) {
+				const ctx: ProjectionContext = { grammar, leafKinds, expandedSupertypes, nodeTypesFields: new Map() };
+				let children: ChildModel | undefined;
+				if (entry.children) {
+					const childTypes = entry.children.types;
+					const namedArr = childTypes.filter(t => t.named).map(t => t.type);
+					const anonArr = childTypes.filter(t => !t.named).map(t => t.type);
+					const childTypeClass = typesToFieldTypeClass(namedArr, anonArr, leafKinds, expandedSupertypes);
+					// TODO: Use expandedAll (concrete types) once byte-identical constraint is relaxed.
+					// Old code kept supertypes unexpanded in namedTypes (e.g. ["_expression", "let_condition"]).
+					// This is wrong for assign.ts (Set.has won't match _expression at runtime) but needed for identical output.
+					children = { required: entry.children.required, multiple: entry.children.multiple, types: { ...childTypeClass, expandedAll: namedArr } };
+				}
+				const hasFields = entry.fields != null && Object.keys(entry.fields).length > 0;
+				const dummyEnriched: EnrichedRule = { type: 'SEQ', members: [] };
+				if (!hasFields && children) {
+					nodes[kind] = { modelType: 'leafWithChildren', kind, children, elements: [], rule: dummyEnriched };
+				} else {
+					// Build fields from node-types.json
+					const fields: FieldModel[] = [];
+					if (entry.fields) {
+						for (const [fname, fdata] of Object.entries(entry.fields)) {
+							const namedArr = fdata.types.filter(t => t.named).map(t => t.type);
+							const anonArr = fdata.types.filter(t => !t.named).map(t => t.type);
+							const tc = typesToFieldTypeClass(namedArr, anonArr, leafKinds, expandedSupertypes);
+							fields.push({ name: fname, required: fdata.required, multiple: fdata.multiple, types: tc });
+						}
+					}
+					const branch: BranchModel = { modelType: 'branch', kind, fields, elements: [], rule: dummyEnriched };
+					if (children) branch.children = children;
+					nodes[kind] = branch;
+				}
+			}
+			continue;
+		}
+
 		const fieldInfo = new Map<string, NodeTypesFieldInfo>();
 		const nodeTypesFields = new Map<string, { required: boolean; multiple: boolean; types: Array<{ type: string; named: boolean }> }>();
 
