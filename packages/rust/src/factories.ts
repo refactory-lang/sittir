@@ -153,9 +153,9 @@ export function associatedType(
 ) {
   return {
     type: 'associated_type' as const,
+    bounds: (v: TraitBounds) => associatedType({ ...config, 'bounds': v }),
     name: (v: TypeIdentifier) => associatedType({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => associatedType({ ...config, 'type_parameters': v }),
-    bounds: (v: TraitBounds) => associatedType({ ...config, 'bounds': v }),
     children: (v: WhereClause) => associatedType({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -188,8 +188,8 @@ export function attribute(
 ) {
   return {
     type: 'attribute' as const,
-    value: (v: Expression) => attribute({ ...config, 'value': v }),
     arguments: (v: TokenTree) => attribute({ ...config, 'arguments': v }),
+    value: (v: Expression) => attribute({ ...config, 'value': v }),
     children: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => attribute({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -255,7 +255,7 @@ export function binaryExpression(
   return {
     type: 'binary_expression' as const,
     left: (v: Expression) => binaryExpression({ ...config, 'left': v }),
-    operator: (v: '&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%') => binaryExpression({ ...config, 'operator': { type: v, text: v } as const }),
+    operator: (v: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||') => binaryExpression({ ...config, 'operator': { type: v, text: v } as const }),
     right: (v: Expression) => binaryExpression({ ...config, 'right': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -288,9 +288,9 @@ export function blockComment(
 ) {
   return {
     type: 'block_comment' as const,
-    outer: (v: OuterDocCommentMarker) => blockComment({ ...config, 'outer': v }),
-    inner: (v: InnerDocCommentMarker) => blockComment({ ...config, 'inner': v }),
     doc: (v: DocComment) => blockComment({ ...config, 'doc': v }),
+    inner: (v: InnerDocCommentMarker) => blockComment({ ...config, 'inner': v }),
+    outer: (v: OuterDocCommentMarker) => blockComment({ ...config, 'outer': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -354,8 +354,8 @@ export function callExpression(
 ) {
   return {
     type: 'call_expression' as const,
-    function: (v: ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | Block | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | Literal | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression) => callExpression({ ...config, 'function': v }),
     arguments: (v: Arguments) => callExpression({ ...config, 'arguments': v }),
+    function: (v: ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | Block | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | Literal | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression) => callExpression({ ...config, 'function': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -387,9 +387,9 @@ export function closureExpression(
 ) {
   return {
     type: 'closure_expression' as const,
+    body: (v: Expression) => closureExpression({ ...config, 'body': v }),
     parameters: (v: ClosureParameters) => closureExpression({ ...config, 'parameters': v }),
     returnType: (v: Type) => closureExpression({ ...config, 'return_type': v }),
-    body: (v: Expression) => closureExpression({ ...config, 'body': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -556,9 +556,9 @@ export function enumItem(
 ) {
   return {
     type: 'enum_item' as const,
+    body: (v: EnumVariantList) => enumItem({ ...config, 'body': v }),
     name: (v: TypeIdentifier) => enumItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => enumItem({ ...config, 'type_parameters': v }),
-    body: (v: EnumVariantList) => enumItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => enumItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -575,8 +575,8 @@ export function enumVariant(
 ) {
   return {
     type: 'enum_variant' as const,
-    name: (v: Identifier) => enumVariant({ ...config, 'name': v }),
     body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => enumVariant({ ...config, 'body': v }),
+    name: (v: Identifier) => enumVariant({ ...config, 'name': v }),
     value: (v: Expression) => enumVariant({ ...config, 'value': v }),
     children: (v: VisibilityModifier) => enumVariant({ ...config, children: v }),
     render() { return render(this); },
@@ -626,8 +626,8 @@ export function externCrateDeclaration(
 ) {
   return {
     type: 'extern_crate_declaration' as const,
-    name: (v: Identifier) => externCrateDeclaration({ ...config, 'name': v }),
     alias: (v: Identifier) => externCrateDeclaration({ ...config, 'alias': v }),
+    name: (v: Identifier) => externCrateDeclaration({ ...config, 'name': v }),
     children: (...v: (Crate | VisibilityModifier)[]) => externCrateDeclaration({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -694,8 +694,8 @@ export function fieldExpression(
 ) {
   return {
     type: 'field_expression' as const,
-    value: (v: Expression) => fieldExpression({ ...config, 'value': v }),
     field: (v: FieldIdentifier | IntegerLiteral) => fieldExpression({ ...config, 'field': v }),
+    value: (v: Expression) => fieldExpression({ ...config, 'value': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -763,9 +763,9 @@ export function forExpression(
 ) {
   return {
     type: 'for_expression' as const,
+    body: (v: Block) => forExpression({ ...config, 'body': v }),
     pattern: (v: Pattern) => forExpression({ ...config, 'pattern': v }),
     value: (v: Expression) => forExpression({ ...config, 'value': v }),
-    body: (v: Block) => forExpression({ ...config, 'body': v }),
     children: (v: Label) => forExpression({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -815,11 +815,11 @@ export function functionItem(
 ) {
   return {
     type: 'function_item' as const,
+    body: (v: Block) => functionItem({ ...config, 'body': v }),
     name: (v: Identifier | Metavariable) => functionItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => functionItem({ ...config, 'type_parameters': v }),
     parameters: (v: Parameters) => functionItem({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionItem({ ...config, 'return_type': v }),
-    body: (v: Block) => functionItem({ ...config, 'body': v }),
+    typeParameters: (v: TypeParameters) => functionItem({ ...config, 'type_parameters': v }),
     children: (...v: (FunctionModifiers | VisibilityModifier | WhereClause)[]) => functionItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -853,9 +853,9 @@ export function functionSignatureItem(
   return {
     type: 'function_signature_item' as const,
     name: (v: Identifier | Metavariable) => functionSignatureItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => functionSignatureItem({ ...config, 'type_parameters': v }),
     parameters: (v: Parameters) => functionSignatureItem({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionSignatureItem({ ...config, 'return_type': v }),
+    typeParameters: (v: TypeParameters) => functionSignatureItem({ ...config, 'type_parameters': v }),
     children: (...v: (FunctionModifiers | VisibilityModifier | WhereClause)[]) => functionSignatureItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -872,9 +872,9 @@ export function functionType(
 ) {
   return {
     type: 'function_type' as const,
-    trait: (v: ScopedTypeIdentifier | TypeIdentifier) => functionType({ ...config, 'trait': v }),
     parameters: (v: Parameters) => functionType({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionType({ ...config, 'return_type': v }),
+    trait: (v: ScopedTypeIdentifier | TypeIdentifier) => functionType({ ...config, 'trait': v }),
     children: (...v: (ForLifetimes | FunctionModifiers)[]) => functionType({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -941,7 +941,7 @@ export function genericType(
 ) {
   return {
     type: 'generic_type' as const,
-    typeField: (v: Identifier | ScopedTypeIdentifier | TypeIdentifier) => genericType({ ...config, 'type': v }),
+    typeField: (v: Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier) => genericType({ ...config, 'type': v }),
     typeArguments: (v: TypeArguments) => genericType({ ...config, 'type_arguments': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -975,8 +975,8 @@ export function higherRankedTraitBound(
 ) {
   return {
     type: 'higher_ranked_trait_bound' as const,
-    typeParameters: (v: TypeParameters) => higherRankedTraitBound({ ...config, 'type_parameters': v }),
     typeField: (v: Type) => higherRankedTraitBound({ ...config, 'type': v }),
+    typeParameters: (v: TypeParameters) => higherRankedTraitBound({ ...config, 'type_parameters': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -992,9 +992,9 @@ export function ifExpression(
 ) {
   return {
     type: 'if_expression' as const,
+    alternative: (v: ElseClause) => ifExpression({ ...config, 'alternative': v }),
     condition: (v: Expression | LetChain | LetCondition) => ifExpression({ ...config, 'condition': v }),
     consequence: (v: Block) => ifExpression({ ...config, 'consequence': v }),
-    alternative: (v: ElseClause) => ifExpression({ ...config, 'alternative': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1010,10 +1010,10 @@ export function implItem(
 ) {
   return {
     type: 'impl_item' as const,
-    typeParameters: (v: TypeParameters) => implItem({ ...config, 'type_parameters': v }),
+    body: (v: DeclarationList) => implItem({ ...config, 'body': v }),
     trait: (v: GenericType | ScopedTypeIdentifier | TypeIdentifier) => implItem({ ...config, 'trait': v }),
     typeField: (v: Type) => implItem({ ...config, 'type': v }),
-    body: (v: DeclarationList) => implItem({ ...config, 'body': v }),
+    typeParameters: (v: TypeParameters) => implItem({ ...config, 'type_parameters': v }),
     children: (v: WhereClause) => implItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1111,10 +1111,10 @@ export function letDeclaration(
 ) {
   return {
     type: 'let_declaration' as const,
+    alternative: (v: Block) => letDeclaration({ ...config, 'alternative': v }),
     pattern: (v: Pattern) => letDeclaration({ ...config, 'pattern': v }),
     typeField: (v: Type) => letDeclaration({ ...config, 'type': v }),
     value: (v: Expression) => letDeclaration({ ...config, 'value': v }),
-    alternative: (v: Block) => letDeclaration({ ...config, 'alternative': v }),
     children: (v: MutableSpecifier) => letDeclaration({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1147,8 +1147,8 @@ export function lifetimeParameter(
 ) {
   return {
     type: 'lifetime_parameter' as const,
-    name: (v: Lifetime) => lifetimeParameter({ ...config, 'name': v }),
     bounds: (v: TraitBounds) => lifetimeParameter({ ...config, 'bounds': v }),
+    name: (v: Lifetime) => lifetimeParameter({ ...config, 'name': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1164,9 +1164,9 @@ export function lineComment(
 ) {
   return {
     type: 'line_comment' as const,
-    outer: (v: OuterDocCommentMarker) => lineComment({ ...config, 'outer': v }),
-    inner: (v: InnerDocCommentMarker) => lineComment({ ...config, 'inner': v }),
     doc: (v: DocComment) => lineComment({ ...config, 'doc': v }),
+    inner: (v: InnerDocCommentMarker) => lineComment({ ...config, 'inner': v }),
+    outer: (v: OuterDocCommentMarker) => lineComment({ ...config, 'outer': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1284,8 +1284,8 @@ export function matchExpression(
 ) {
   return {
     type: 'match_expression' as const,
-    value: (v: Expression) => matchExpression({ ...config, 'value': v }),
     body: (v: MatchBlock) => matchExpression({ ...config, 'body': v }),
+    value: (v: Expression) => matchExpression({ ...config, 'value': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1318,8 +1318,8 @@ export function modItem(
 ) {
   return {
     type: 'mod_item' as const,
-    name: (v: Identifier) => modItem({ ...config, 'name': v }),
     body: (v: DeclarationList) => modItem({ ...config, 'body': v }),
+    name: (v: Identifier) => modItem({ ...config, 'name': v }),
     children: (v: VisibilityModifier) => modItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1468,8 +1468,8 @@ export function qualifiedType(
 ) {
   return {
     type: 'qualified_type' as const,
-    typeField: (v: Type) => qualifiedType({ ...config, 'type': v }),
     alias: (v: Type) => qualifiedType({ ...config, 'alias': v }),
+    typeField: (v: Type) => qualifiedType({ ...config, 'type': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1632,8 +1632,8 @@ export function scopedIdentifier(
 ) {
   return {
     type: 'scoped_identifier' as const,
-    path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedIdentifier({ ...config, 'path': v }),
     name: (v: Identifier | Super) => scopedIdentifier({ ...config, 'name': v }),
+    path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedIdentifier({ ...config, 'path': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1649,8 +1649,8 @@ export function scopedTypeIdentifier(
 ) {
   return {
     type: 'scoped_type_identifier' as const,
-    path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedTypeIdentifier({ ...config, 'path': v }),
     name: (v: TypeIdentifier) => scopedTypeIdentifier({ ...config, 'name': v }),
+    path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedTypeIdentifier({ ...config, 'path': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1666,8 +1666,8 @@ export function scopedUseList(
 ) {
   return {
     type: 'scoped_use_list' as const,
-    path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedUseList({ ...config, 'path': v }),
     list: (v: UseList) => scopedUseList({ ...config, 'list': v }),
+    path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedUseList({ ...config, 'path': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1782,8 +1782,8 @@ export function structExpression(
 ) {
   return {
     type: 'struct_expression' as const,
-    name: (v: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier) => structExpression({ ...config, 'name': v }),
     body: (v: FieldInitializerList) => structExpression({ ...config, 'body': v }),
+    name: (v: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier) => structExpression({ ...config, 'name': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1799,9 +1799,9 @@ export function structItem(
 ) {
   return {
     type: 'struct_item' as const,
+    body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => structItem({ ...config, 'body': v }),
     name: (v: TypeIdentifier) => structItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => structItem({ ...config, 'type_parameters': v }),
-    body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => structItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => structItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1932,10 +1932,10 @@ export function traitItem(
 ) {
   return {
     type: 'trait_item' as const,
+    body: (v: DeclarationList) => traitItem({ ...config, 'body': v }),
+    bounds: (v: TraitBounds) => traitItem({ ...config, 'bounds': v }),
     name: (v: TypeIdentifier) => traitItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => traitItem({ ...config, 'type_parameters': v }),
-    bounds: (v: TraitBounds) => traitItem({ ...config, 'bounds': v }),
-    body: (v: DeclarationList) => traitItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => traitItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2066,8 +2066,8 @@ export function typeBinding(
   return {
     type: 'type_binding' as const,
     name: (v: TypeIdentifier) => typeBinding({ ...config, 'name': v }),
-    typeArguments: (v: TypeArguments) => typeBinding({ ...config, 'type_arguments': v }),
     typeField: (v: Type) => typeBinding({ ...config, 'type': v }),
+    typeArguments: (v: TypeArguments) => typeBinding({ ...config, 'type_arguments': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2083,8 +2083,8 @@ export function typeCastExpression(
 ) {
   return {
     type: 'type_cast_expression' as const,
-    value: (v: Expression) => typeCastExpression({ ...config, 'value': v }),
     typeField: (v: Type) => typeCastExpression({ ...config, 'type': v }),
+    value: (v: Expression) => typeCastExpression({ ...config, 'value': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2101,8 +2101,8 @@ export function typeItem(
   return {
     type: 'type_item' as const,
     name: (v: TypeIdentifier) => typeItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => typeItem({ ...config, 'type_parameters': v }),
     typeField: (v: Type) => typeItem({ ...config, 'type': v }),
+    typeParameters: (v: TypeParameters) => typeItem({ ...config, 'type_parameters': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => typeItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2119,9 +2119,9 @@ export function typeParameter(
 ) {
   return {
     type: 'type_parameter' as const,
-    name: (v: TypeIdentifier) => typeParameter({ ...config, 'name': v }),
     bounds: (v: TraitBounds) => typeParameter({ ...config, 'bounds': v }),
     defaultType: (v: Type) => typeParameter({ ...config, 'default_type': v }),
+    name: (v: TypeIdentifier) => typeParameter({ ...config, 'name': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2169,9 +2169,9 @@ export function unionItem(
 ) {
   return {
     type: 'union_item' as const,
+    body: (v: FieldDeclarationList) => unionItem({ ...config, 'body': v }),
     name: (v: TypeIdentifier) => unionItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => unionItem({ ...config, 'type_parameters': v }),
-    body: (v: FieldDeclarationList) => unionItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => unionItem({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2204,8 +2204,8 @@ export function useAsClause(
 ) {
   return {
     type: 'use_as_clause' as const,
-    path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => useAsClause({ ...config, 'path': v }),
     alias: (v: Identifier) => useAsClause({ ...config, 'alias': v }),
+    path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => useAsClause({ ...config, 'path': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2335,8 +2335,8 @@ export function wherePredicate(
 ) {
   return {
     type: 'where_predicate' as const,
-    left: (v: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier) => wherePredicate({ ...config, 'left': v }),
     bounds: (v: TraitBounds) => wherePredicate({ ...config, 'bounds': v }),
+    left: (v: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier) => wherePredicate({ ...config, 'left': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2352,8 +2352,8 @@ export function whileExpression(
 ) {
   return {
     type: 'while_expression' as const,
-    condition: (v: Expression | LetChain | LetCondition) => whileExpression({ ...config, 'condition': v }),
     body: (v: Block) => whileExpression({ ...config, 'body': v }),
+    condition: (v: Expression | LetChain | LetCondition) => whileExpression({ ...config, 'condition': v }),
     children: (v: Label) => whileExpression({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

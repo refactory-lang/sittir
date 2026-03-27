@@ -8,19 +8,21 @@
  *   - edit(): universal entry point for in-place editing
  */
 
+import type { NodeModel } from '../grammar-model.ts';
 import { namedTypes } from '../grammar-model.ts';
 import { toTypeName, toFactoryName, toGrammarTypeName } from '../naming.ts';
-import { type StructuralNode, fieldsOf } from './utils.ts';
+import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf } from './utils.ts';
 
 export interface EmitAssignConfig {
 	grammar: string;
-	nodes: StructuralNode[];
-	leafKinds: string[];
-	keywordKinds: Map<string, string>;
+	nodes: NodeModel[];
 }
 
 export function emitAssign(config: EmitAssignConfig): string {
-	const { grammar, nodes, leafKinds, keywordKinds } = config;
+	const { grammar } = config;
+	const nodes = structuralNodes(config.nodes);
+	const leafKinds = leafKindsOf(config.nodes);
+	const keywordKinds = keywordKindsOf(config.nodes);
 	const leafSet = new Set(leafKinds);
 	const grammarTypeName = toGrammarTypeName(grammar);
 	const grammarPrefix = grammarTypeName.slice(0, -5);

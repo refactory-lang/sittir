@@ -28,13 +28,13 @@ export interface KindMeta {
 
 // --- Raw node-types.json shape (from tree-sitter grammars) ---
 
-interface RawFieldEntry {
+export interface RawFieldEntry {
 	required: boolean;
 	multiple: boolean;
 	types: Array<{ type: string; named: boolean }>;
 }
 
-interface RawNodeEntry {
+export interface RawNodeEntry {
 	type: string;
 	named: boolean;
 	fields?: Record<string, RawFieldEntry>;

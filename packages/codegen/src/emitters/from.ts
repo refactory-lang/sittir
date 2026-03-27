@@ -9,20 +9,15 @@
  * regular API never load .from() resolution code.
  */
 
+import type { NodeModel } from '../grammar-model.ts';
 import { namedTypes, allTypes, type FieldTypeClass } from '../grammar-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { type StructuralNode, fieldsOf, escapeString } from './utils.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, supertypeEntriesOf, escapeString } from './utils.ts';
 
 export interface EmitFromConfig {
 	grammar: string;
-	nodes: StructuralNode[];
-	leafKinds: string[];
-	keywordKinds: Map<string, string>;
-	/** leaf kind → list of valid string values (enum-like) */
-	leafValues?: Map<string, string[]>;
-	/** Supertype info — for expanding _expression etc. to concrete subtypes */
-	supertypes?: { name: string; subtypes: string[] }[];
+	nodes: NodeModel[];
 }
 
 // ---------------------------------------------------------------------------
@@ -70,9 +65,12 @@ function resolverName(key: string): string {
  * Emit the from.ts file containing .from() functions for all branch node kinds.
  */
 export function emitFrom(config: EmitFromConfig): string {
-	const { nodes, leafKinds, keywordKinds, leafValues, supertypes = [] } = config;
+	const nodes = structuralNodes(config.nodes);
+	const leafKinds = leafKindsOf(config.nodes);
+	const keywordKinds = keywordKindsOf(config.nodes);
+	const leafValueMap = leafValuesOf(config.nodes);
+	const supertypes = supertypeEntriesOf(config.nodes);
 	const leafSet = new Set(leafKinds);
-	const leafValueMap = leafValues ?? new Map<string, string[]>();
 	const branchNodeSet = new Set(nodes.map(n => n.kind));
 
 	// Build supertype → concrete subtypes map (recursively expanded)

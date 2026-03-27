@@ -14,18 +14,20 @@
  *   7. Discriminated union of all node types
  */
 
-import type { SupertypeInfo } from '../grammar-reader.ts';
+import type { NodeModel } from '../grammar-model.ts';
 import { toTypeName, toGrammarTypeName } from '../naming.ts';
+import { structuralNodes, leafKindsOf, supertypeEntriesOf } from './utils.ts';
 
 export interface EmitTypesConfig {
 	grammar: string;
-	nodeKinds: string[];
-	leafKinds?: string[];
-	supertypes?: SupertypeInfo[];
+	nodes: NodeModel[];
 }
 
 export function emitTypes(config: EmitTypesConfig): string {
-	const { grammar, nodeKinds, leafKinds = [], supertypes = [] } = config;
+	const { grammar } = config;
+	const nodeKinds = structuralNodes(config.nodes).map(n => n.kind);
+	const leafKinds = leafKindsOf(config.nodes);
+	const supertypes = supertypeEntriesOf(config.nodes);
 	const grammarTypeName = toGrammarTypeName(grammar);
 	const grammarPrefix = grammarTypeName.slice(0, -5);
 	const grammarAlias = `${grammarPrefix}Grammar`;

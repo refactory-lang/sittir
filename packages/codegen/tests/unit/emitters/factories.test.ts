@@ -10,7 +10,7 @@ function getNode(kind: string): StructuralNode {
 	if (!node || (node.modelType !== 'branch' && node.modelType !== 'leafWithChildren')) {
 		throw new Error(`Node "${kind}" is not a structural node`);
 	}
-	return node as StructuralNode;
+	return node;
 }
 
 describe('emitFactory', () => {

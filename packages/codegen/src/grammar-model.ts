@@ -10,7 +10,7 @@
  * This module implements steps 2-4 and the top-level GrammarModel assembly.
  */
 
-import { type GrammarRule, type SupertypeInfo, readGrammarRule, readGrammarKind, loadRawEntries, listBranchKinds, listLeafKinds, listKeywordKinds, listKeywordTokens, listOperatorTokens, listSupertypes, listLeafValues, extractLeafPattern } from './grammar-reader.ts';
+import { type GrammarRule, type SupertypeInfo, type RawNodeEntry, type RawFieldEntry, readGrammarRule, loadRawEntries, listBranchKinds, listLeafKinds, listKeywordKinds, listKeywordTokens, listOperatorTokens, listSupertypes, listLeafValues, extractLeafPattern } from './grammar-reader.ts';
 import { toTypeName } from './naming.ts';
 
 // ---------------------------------------------------------------------------
@@ -353,10 +353,9 @@ function typesToFieldTypeClass(
 // ---------------------------------------------------------------------------
 
 interface ProjectionContext {
-	grammar: string;
 	leafKinds: Set<string>;
 	expandedSupertypes: Map<string, Set<string>>;
-	nodeTypesFields: Map<string, { required: boolean; multiple: boolean; types: Array<{ type: string; named: boolean }> }>;
+	nodeTypesFields: Map<string, RawFieldEntry>;
 }
 
 /**
@@ -664,14 +663,6 @@ function ruleToSeparators(rule: EnrichedRule): Map<string, string> {
 // NodeModel construction
 // ---------------------------------------------------------------------------
 
-interface RawNodeEntry {
-	type: string;
-	named: boolean;
-	fields?: Record<string, { required: boolean; multiple: boolean; types: Array<{ type: string; named: boolean }> }>;
-	children?: { required: boolean; multiple: boolean; types: Array<{ type: string; named: boolean }> };
-	subtypes?: Array<{ type: string; named: boolean }>;
-}
-
 export function enrichedToNodeModel(
 	kind: string,
 	enrichedRule: EnrichedRule,
@@ -710,15 +701,6 @@ export function enrichedToNodeModel(
 		children = { required: entry.children.required, multiple: entry.children.multiple, types: childTypeClass };
 	}
 
-	// Patch children expandedAll to match old grammar-reader ordering for byte-identical output
-	// TODO: Remove once byte-identical constraint is relaxed
-	if (children) {
-		const kindMeta = readGrammarKind(ctx.grammar, kind);
-		if (kindMeta.children) {
-			children = { ...children, types: { ...children.types, expandedAll: [...kindMeta.children.namedTypes] } };
-		}
-	}
-
 	const hasFields = entry?.fields != null && Object.keys(entry.fields).length > 0;
 
 	if (!hasFields && children) {
@@ -732,7 +714,6 @@ export function enrichedToNodeModel(
 
 	// Supplement with fields from node-types.json that weren't captured during grammar walking
 	// (e.g. fields inside deeply-nested optional CHOICE branches)
-	// Then reorder to match node-types.json field order for byte-identical output
 	if (entry?.fields) {
 		const foundNames = new Set(fields.map(f => f.name));
 		for (const [fname, fdata] of Object.entries(entry.fields)) {
@@ -741,37 +722,15 @@ export function enrichedToNodeModel(
 			const anonArr = fdata.types.filter(t => !t.named).map(t => t.type);
 			const tc = typesToFieldTypeClass(namedArr, anonArr, ctx.leafKinds, ctx.expandedSupertypes);
 			const supplementField: FieldModel = { name: fname, required: fdata.required, multiple: fdata.multiple, types: tc };
-			// Apply separator if found
 			const sep = separators.get(fname);
 			if (sep && supplementField.multiple) supplementField.separator = sep;
 			fields.push(supplementField);
 		}
-		// Match old grammar-reader field ordering and anonTokens for byte-identical output
-		// TODO: Once byte-identical constraint is relaxed, use node-types.json order directly
-		const kindMeta = readGrammarKind(ctx.grammar, kind);
-		const fieldOrder = kindMeta.fields.map(f => f.name);
-		const ntFieldNames = new Set(Object.keys(entry.fields));
+		// Use node-types.json field order (authoritative)
+		const ntFieldOrder = Object.keys(entry.fields);
+		const ntFieldNames = new Set(ntFieldOrder);
 		const filtered = fields.filter(f => ntFieldNames.has(f.name));
-		filtered.sort((a, b) => {
-			const ai = fieldOrder.indexOf(a.name);
-			const bi = fieldOrder.indexOf(b.name);
-			return (ai === -1 ? Infinity : ai) - (bi === -1 ? Infinity : bi);
-		});
-		// Patch field types to match old grammar-reader for byte-identical output
-		// TODO: Remove this bridge once byte-identical constraint is relaxed —
-		// the model's expandedAll is more correct (includes supertype-expanded types like scoped_identifier in generic_type.type)
-		for (const f of filtered) {
-			const oldField = kindMeta.fields.find(of => of.name === f.name);
-			if (oldField) {
-				const oldAnon = oldField.types.filter(t => !oldField.namedTypes.includes(t) && !t.startsWith('_'));
-				if (oldAnon.length > 0 && f.types.anonTokens.length > 0) {
-					f.types = { ...f.types, anonTokens: oldAnon };
-				}
-				// Use old namedTypes as expandedAll to match old output
-				f.types = { ...f.types, expandedAll: [...oldField.namedTypes] };
-			}
-		}
-		// Children patching is done above (before the leafWithChildren early return)
+		filtered.sort((a, b) => ntFieldOrder.indexOf(a.name) - ntFieldOrder.indexOf(b.name));
 		fields.length = 0;
 		fields.push(...filtered);
 	}
@@ -923,11 +882,10 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 	const rawEntries = loadRawEntries(grammar);
 	const entryMap = new Map<string, RawNodeEntry>();
 	for (const entry of rawEntries) {
-		// Only store named entries — anonymous duplicates lack children/fields
-		if ((entry as RawNodeEntry).named) {
-			entryMap.set(entry.type, entry as RawNodeEntry);
+		if (entry.named) {
+			entryMap.set(entry.type, entry);
 		} else if (!entryMap.has(entry.type)) {
-			entryMap.set(entry.type, entry as RawNodeEntry);
+			entryMap.set(entry.type, entry);
 		}
 	}
 
@@ -960,17 +918,14 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 			// No grammar rule — build model from node-types.json entry alone
 			// (e.g. let_chain: only has children, no grammar.json rule)
 			if (entry) {
-				const ctx: ProjectionContext = { grammar, leafKinds, expandedSupertypes, nodeTypesFields: new Map() };
+				const ctx: ProjectionContext = { leafKinds, expandedSupertypes, nodeTypesFields: new Map() };
 				let children: ChildModel | undefined;
 				if (entry.children) {
 					const childTypes = entry.children.types;
 					const namedArr = childTypes.filter(t => t.named).map(t => t.type);
 					const anonArr = childTypes.filter(t => !t.named).map(t => t.type);
 					const childTypeClass = typesToFieldTypeClass(namedArr, anonArr, leafKinds, expandedSupertypes);
-					// TODO: Use expandedAll (concrete types) once byte-identical constraint is relaxed.
-					// Old code kept supertypes unexpanded in namedTypes (e.g. ["_expression", "let_condition"]).
-					// This is wrong for assign.ts (Set.has won't match _expression at runtime) but needed for identical output.
-					children = { required: entry.children.required, multiple: entry.children.multiple, types: { ...childTypeClass, expandedAll: namedArr } };
+					children = { required: entry.children.required, multiple: entry.children.multiple, types: childTypeClass };
 				}
 				const hasFields = entry.fields != null && Object.keys(entry.fields).length > 0;
 				const dummyEnriched: EnrichedRule = { type: 'SEQ', members: [] };
@@ -1006,7 +961,7 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 		}
 
 		const enriched = ruleToEnriched(rawRule, fieldInfo, kindSets);
-		const ctx: ProjectionContext = { grammar, leafKinds, expandedSupertypes, nodeTypesFields };
+		const ctx: ProjectionContext = { leafKinds, expandedSupertypes, nodeTypesFields };
 		nodes[kind] = enrichedToNodeModel(kind, enriched, ctx, entry);
 	}
 
