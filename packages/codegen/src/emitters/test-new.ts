@@ -33,6 +33,7 @@ export function emitTests(config: EmitTestsConfig): string {
 	lines.push("import { render } from '@sittir/core';");
 	lines.push("import { rules } from '../src/rules.js';");
 	lines.push("import { joinBy } from '../src/joinby.js';");
+	lines.push("import type { NodeData } from '../src/types.js';");
 	lines.push('');
 
 	// Branch node tests
@@ -153,7 +154,7 @@ function dummyValue(field: { name: string; namedTypes: string[]; multiple?: bool
 
 	// Use first named type as a minimal NodeData
 	const kind = field.namedTypes[0] ?? 'unknown';
-	return `{ type: '${kind}', fields: {} } as any`;
+	return `{ type: '${kind}' as const, fields: {} } as NodeData<'${kind}'>`;
 }
 
 function capitalize(s: string): string {

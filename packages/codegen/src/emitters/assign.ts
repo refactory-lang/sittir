@@ -65,7 +65,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 	// assignByKind table
 	// ---------------------------------------------------------------------------
 	lines.push('/** Kind → assign function. Branches call .assign() recursively, leaves read text(). */');
-	lines.push('const _assignTable: Record<string, (target: any) => any> = {');
+	lines.push('const _assignTable: Record<string, (target) => unknown> = {');
 
 	for (const node of nodes) {
 		lines.push(`  '${node.kind}': (t) => assign${toTypeName(node.kind)}(t),`);
@@ -83,7 +83,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push('};');
 	lines.push('');
 	lines.push('/** Lookup assign function for a kind. Throws if kind is unknown. */');
-	lines.push('export function assignByKind(kind: string, target: any): any {');
+	lines.push('export function assignByKind(kind: string, target) {');
 	lines.push('  const fn = _assignTable[kind];');
 	lines.push(`  if (!fn) throw new Error(\`No assign function for kind '\${kind}' in ${grammarAlias} grammar\`);`);
 	lines.push('  return fn(target);');
@@ -105,7 +105,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 			emitAssignField(lines, f, leafSet, node.kind);
 		}
 
-		lines.push(`  } as any);`);
+		lines.push(`  });`);
 
 		// Attach toEdit with target's range
 		// Override toEdit: no-arg uses target's range, with args forwards to original
@@ -114,9 +114,9 @@ export function emitAssign(config: EmitAssignConfig): string {
 		lines.push(`    const r = target.range();`);
 		lines.push(`    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;`);
 		lines.push(`  };`);
-		lines.push(`  (result as any).toEdit = boundToEdit;`);
-		lines.push(`  (result as any).replace = boundToEdit;`);
-		lines.push(`  return result as any;`);
+		lines.push(`  result.toEdit = boundToEdit;`);
+		lines.push(`  result.replace = boundToEdit;`);
+		lines.push(`  return result;`);
 		lines.push(`}`);
 		lines.push('');
 	}
@@ -129,7 +129,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push(' * Recursively hydrates via assignByKind, attaches range for .toEdit().');
 	lines.push(' */');
 	lines.push(`export function edit<K extends NodeKind<${grammarAlias}>>(target: TreeNode<K>): Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }> {`);
-	lines.push('  return assignByKind(target.type, target) as any;');
+	lines.push('  return assignByKind(target.type, target);');
 	lines.push('}');
 	lines.push('');
 
@@ -146,9 +146,9 @@ function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>, no
 			// Multiple required: collect all children matching this field's accepted kinds
 			lines.push(`    ${f.name}: (() => {`);
 			lines.push(`      const _kinds = new Set(${kindSet});`);
-			lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
+			lines.push(`      const _items = target.children().filter((c) => _kinds.has(c.type));`);
 			lines.push(`      if (_items.length === 0) throw new Error(\`Required field '${f.name}' has no children on '${nodeKind}' tree node\`);`);
-			lines.push(`      return _items.map((c: any) => assignByKind(c.type, c));`);
+			lines.push(`      return _items.map((c) => assignByKind(c.type, c));`);
 			lines.push(`    })(),`);
 		} else if (f.namedTypes.length === 1) {
 			const childKind = f.namedTypes[0]!;
@@ -165,8 +165,8 @@ function emitAssignField(lines: string[], f: FieldMeta, leafSet: Set<string>, no
 			// Multiple optional: collect matching children, undefined if none
 			lines.push(`    ${f.name}: (() => {`);
 			lines.push(`      const _kinds = new Set(${kindSet});`);
-			lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
-			lines.push(`      return _items.length > 0 ? _items.map((c: any) => assignByKind(c.type, c)) : undefined;`);
+			lines.push(`      const _items = target.children().filter((c) => _kinds.has(c.type));`);
+			lines.push(`      return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;`);
 			lines.push(`    })(),`);
 		} else if (f.namedTypes.length === 1) {
 			const childKind = f.namedTypes[0]!;

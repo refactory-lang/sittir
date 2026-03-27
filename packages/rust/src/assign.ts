@@ -11,7 +11,7 @@ import { abstractType, arguments_, arrayExpression, arrayType, assignmentExpress
 import type { AbstractType, Arguments, ArrayExpression, ArrayType, AssignmentExpression, AssociatedType, AsyncBlock, Attribute, AttributeItem, AwaitExpression, BaseFieldInitializer, BinaryExpression, Block, BlockComment, BooleanLiteral, BoundedType, BracketedType, BreakExpression, CallExpression, CapturedPattern, CharLiteral, ClosureExpression, ClosureParameters, CompoundAssignmentExpr, ConstBlock, ConstItem, ConstParameter, ContinueExpression, Crate, DeclarationList, DocComment, DynamicType, ElseClause, EmptyStatement, EnumItem, EnumVariant, EnumVariantList, EscapeSequence, ExpressionStatement, ExternCrateDeclaration, ExternModifier, FieldDeclaration, FieldDeclarationList, FieldExpression, FieldIdentifier, FieldInitializer, FieldInitializerList, FieldPattern, FloatLiteral, ForExpression, ForLifetimes, ForeignModItem, FragmentSpecifier, FunctionItem, FunctionModifiers, FunctionSignatureItem, FunctionType, GenBlock, GenericFunction, GenericPattern, GenericType, GenericTypeWithTurbofish, HigherRankedTraitBound, Identifier, IfExpression, ImplItem, IndexExpression, InnerAttributeItem, InnerDocCommentMarker, IntegerLiteral, Label, LetChain, LetCondition, LetDeclaration, Lifetime, LifetimeParameter, LineComment, LoopExpression, MacroDefinition, MacroInvocation, MacroRule, MatchArm, MatchBlock, MatchExpression, MatchPattern, Metavariable, ModItem, MutPattern, MutableSpecifier, NegativeLiteral, NeverType, OrPattern, OrderedFieldDeclarationList, OuterDocCommentMarker, Parameter, Parameters, ParenthesizedExpression, PointerType, PrimitiveType, QualifiedType, RangeExpression, RangePattern, RawStringLiteral, RefPattern, ReferenceExpression, ReferencePattern, ReferenceType, RemainingFieldPattern, RemovedTraitBound, ReturnExpression, ScopedIdentifier, ScopedTypeIdentifier, ScopedUseList, Self, SelfParameter, Shebang, ShorthandFieldIdentifier, ShorthandFieldInitializer, SlicePattern, SourceFile, StaticItem, StringContent, StringLiteral, StructExpression, StructItem, StructPattern, Super, TokenBindingPattern, TokenRepetition, TokenRepetitionPattern, TokenTree, TokenTreePattern, TraitBounds, TraitItem, TryBlock, TryExpression, TupleExpression, TuplePattern, TupleStructPattern, TupleType, TypeArguments, TypeBinding, TypeCastExpression, TypeIdentifier, TypeItem, TypeParameter, TypeParameters, UnaryExpression, UnionItem, UnitExpression, UnitType, UnsafeBlock, UseAsClause, UseBounds, UseDeclaration, UseList, UseWildcard, VariadicParameter, VisibilityModifier, WhereClause, WherePredicate, WhileExpression, YieldExpression } from './types.js';
 
 /** Kind → assign function. Branches call .assign() recursively, leaves read text(). */
-const _assignTable: Record<string, (target: any) => any> = {
+const _assignTable: Record<string, (target) => unknown> = {
   'abstract_type': (t) => assignAbstractType(t),
   'arguments': (t) => assignArguments(t),
   'array_expression': (t) => assignArrayExpression(t),
@@ -178,7 +178,7 @@ const _assignTable: Record<string, (target: any) => any> = {
 };
 
 /** Lookup assign function for a kind. Throws if kind is unknown. */
-export function assignByKind(kind: string, target: any): any {
+export function assignByKind(kind: string, target) {
   const fn = _assignTable[kind];
   if (!fn) throw new Error(`No assign function for kind '${kind}' in RustGrammar grammar`);
   return fn(target);
@@ -187,72 +187,72 @@ export function assignByKind(kind: string, target: any): any {
 export function assignAbstractType(target: AbstractTypeTree): AbstractType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = abstractType({
     trait: assignByKind(target.field('trait')!.type, target.field('trait')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignArguments(target: ArgumentsTree): Arguments & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = arguments_({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignArrayExpression(target: ArrayExpressionTree): ArrayExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = arrayExpression({
     length: target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignArrayType(target: ArrayTypeTree): ArrayType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = arrayType({
     element: assignByKind(target.field('element')!.type, target.field('element')!),
     length: target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignAssignmentExpression(target: AssignmentExpressionTree): AssignmentExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = assignmentExpression({
     left: assignByKind(target.field('left')!.type, target.field('left')!),
     right: assignByKind(target.field('right')!.type, target.field('right')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignAssociatedType(target: AssociatedTypeTree): AssociatedType & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -260,110 +260,110 @@ export function assignAssociatedType(target: AssociatedTypeTree): AssociatedType
     name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignAsyncBlock(target: AsyncBlockTree): AsyncBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = asyncBlock({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignAttribute(target: AttributeTree): Attribute & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = attribute({
     value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
     arguments: target.field('arguments') ? assignTokenTree(target.field('arguments')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignAttributeItem(target: AttributeItemTree): AttributeItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = attributeItem({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignAwaitExpression(target: AwaitExpressionTree): AwaitExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = awaitExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignBaseFieldInitializer(target: BaseFieldInitializerTree): BaseFieldInitializer & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = baseFieldInitializer({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignBinaryExpression(target: BinaryExpressionTree): BinaryExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = binaryExpression({
     left: assignByKind(target.field('left')!.type, target.field('left')!),
     right: assignByKind(target.field('right')!.type, target.field('right')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignBlock(target: BlockTree): Block & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = block({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignBlockComment(target: BlockCommentTree): BlockComment & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -371,82 +371,82 @@ export function assignBlockComment(target: BlockCommentTree): BlockComment & { t
     outer: target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined,
     inner: target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined,
     doc: target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignBoundedType(target: BoundedTypeTree): BoundedType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = boundedType({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignBracketedType(target: BracketedTypeTree): BracketedType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = bracketedType({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignBreakExpression(target: BreakExpressionTree): BreakExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = breakExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignCallExpression(target: CallExpressionTree): CallExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = callExpression({
     function: assignByKind(target.field('function')!.type, target.field('function')!),
     arguments: assignArguments(target.field('arguments')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignCapturedPattern(target: CapturedPatternTree): CapturedPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = capturedPattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignClosureExpression(target: ClosureExpressionTree): ClosureExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -454,57 +454,57 @@ export function assignClosureExpression(target: ClosureExpressionTree): ClosureE
     parameters: assignClosureParameters(target.field('parameters')!),
     return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
     body: assignByKind(target.field('body')!.type, target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignClosureParameters(target: ClosureParametersTree): ClosureParameters & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = closureParameters({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignCompoundAssignmentExpr(target: CompoundAssignmentExprTree): CompoundAssignmentExpr & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = compoundAssignmentExpr({
     left: assignByKind(target.field('left')!.type, target.field('left')!),
     right: assignByKind(target.field('right')!.type, target.field('right')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignConstBlock(target: ConstBlockTree): ConstBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = constBlock({
     body: assignBlock(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignConstItem(target: ConstItemTree): ConstItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -512,15 +512,15 @@ export function assignConstItem(target: ConstItemTree): ConstItem & { toEdit(): 
     name: assignByKind('identifier', target.field('name')!),
     type: assignByKind(target.field('type')!.type, target.field('type')!),
     value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignConstParameter(target: ConstParameterTree): ConstParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -528,68 +528,68 @@ export function assignConstParameter(target: ConstParameterTree): ConstParameter
     name: assignByKind('identifier', target.field('name')!),
     type: assignByKind(target.field('type')!.type, target.field('type')!),
     value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignContinueExpression(target: ContinueExpressionTree): ContinueExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = continueExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignDeclarationList(target: DeclarationListTree): DeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = declarationList({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignDynamicType(target: DynamicTypeTree): DynamicType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = dynamicType({
     trait: assignByKind(target.field('trait')!.type, target.field('trait')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignElseClause(target: ElseClauseTree): ElseClause & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = elseClause({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignEnumItem(target: EnumItemTree): EnumItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -597,15 +597,15 @@ export function assignEnumItem(target: EnumItemTree): EnumItem & { toEdit(): Edi
     name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     body: assignEnumVariantList(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignEnumVariant(target: EnumVariantTree): EnumVariant & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -613,155 +613,155 @@ export function assignEnumVariant(target: EnumVariantTree): EnumVariant & { toEd
     name: assignByKind('identifier', target.field('name')!),
     body: target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined,
     value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignEnumVariantList(target: EnumVariantListTree): EnumVariantList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = enumVariantList({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignExpressionStatement(target: ExpressionStatementTree): ExpressionStatement & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = expressionStatement({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignExternCrateDeclaration(target: ExternCrateDeclarationTree): ExternCrateDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = externCrateDeclaration({
     name: assignByKind('identifier', target.field('name')!),
     alias: target.field('alias') ? assignByKind('identifier', target.field('alias')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignExternModifier(target: ExternModifierTree): ExternModifier & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = externModifier({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFieldDeclaration(target: FieldDeclarationTree): FieldDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldDeclaration({
     name: assignByKind('field_identifier', target.field('name')!),
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFieldDeclarationList(target: FieldDeclarationListTree): FieldDeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldDeclarationList({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFieldExpression(target: FieldExpressionTree): FieldExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldExpression({
     value: assignByKind(target.field('value')!.type, target.field('value')!),
     field: assignByKind(target.field('field')!.type, target.field('field')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFieldInitializer(target: FieldInitializerTree): FieldInitializer & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldInitializer({
     field: assignByKind(target.field('field')!.type, target.field('field')!),
     value: assignByKind(target.field('value')!.type, target.field('value')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFieldInitializerList(target: FieldInitializerListTree): FieldInitializerList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldInitializerList({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFieldPattern(target: FieldPatternTree): FieldPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = fieldPattern({
     name: assignByKind(target.field('name')!.type, target.field('name')!),
     pattern: target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignForExpression(target: ForExpressionTree): ForExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -769,42 +769,42 @@ export function assignForExpression(target: ForExpressionTree): ForExpression & 
     pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
     value: assignByKind(target.field('value')!.type, target.field('value')!),
     body: assignBlock(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignForLifetimes(target: ForLifetimesTree): ForLifetimes & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = forLifetimes({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignForeignModItem(target: ForeignModItemTree): ForeignModItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = foreignModItem({
     body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFunctionItem(target: FunctionItemTree): FunctionItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -814,28 +814,28 @@ export function assignFunctionItem(target: FunctionItemTree): FunctionItem & { t
     parameters: assignParameters(target.field('parameters')!),
     return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
     body: assignBlock(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFunctionModifiers(target: FunctionModifiersTree): FunctionModifiers & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = functionModifiers({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFunctionSignatureItem(target: FunctionSignatureItemTree): FunctionSignatureItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -844,15 +844,15 @@ export function assignFunctionSignatureItem(target: FunctionSignatureItemTree): 
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     parameters: assignParameters(target.field('parameters')!),
     return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignFunctionType(target: FunctionTypeTree): FunctionType & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -860,102 +860,102 @@ export function assignFunctionType(target: FunctionTypeTree): FunctionType & { t
     trait: target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined,
     parameters: assignParameters(target.field('parameters')!),
     return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignGenBlock(target: GenBlockTree): GenBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genBlock({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignGenericFunction(target: GenericFunctionTree): GenericFunction & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genericFunction({
     function: assignByKind(target.field('function')!.type, target.field('function')!),
     type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignGenericPattern(target: GenericPatternTree): GenericPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genericPattern({
     type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignGenericType(target: GenericTypeTree): GenericType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genericType({
     type: assignByKind(target.field('type')!.type, target.field('type')!),
     type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignGenericTypeWithTurbofish(target: GenericTypeWithTurbofishTree): GenericTypeWithTurbofish & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = genericTypeWithTurbofish({
     type: assignByKind(target.field('type')!.type, target.field('type')!),
     type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignHigherRankedTraitBound(target: HigherRankedTraitBoundTree): HigherRankedTraitBound & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = higherRankedTraitBound({
     type_parameters: assignTypeParameters(target.field('type_parameters')!),
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignIfExpression(target: IfExpressionTree): IfExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -963,15 +963,15 @@ export function assignIfExpression(target: IfExpressionTree): IfExpression & { t
     condition: assignByKind(target.field('condition')!.type, target.field('condition')!),
     consequence: assignBlock(target.field('consequence')!),
     alternative: target.field('alternative') ? assignElseClause(target.field('alternative')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignImplItem(target: ImplItemTree): ImplItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -980,82 +980,82 @@ export function assignImplItem(target: ImplItemTree): ImplItem & { toEdit(): Edi
     trait: target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined,
     type: assignByKind(target.field('type')!.type, target.field('type')!),
     body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignIndexExpression(target: IndexExpressionTree): IndexExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = indexExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignInnerAttributeItem(target: InnerAttributeItemTree): InnerAttributeItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = innerAttributeItem({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLabel(target: LabelTree): Label & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = label({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLetChain(target: LetChainTree): LetChain & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = letChain({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLetCondition(target: LetConditionTree): LetCondition & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = letCondition({
     pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
     value: assignByKind(target.field('value')!.type, target.field('value')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLetDeclaration(target: LetDeclarationTree): LetDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1064,43 +1064,43 @@ export function assignLetDeclaration(target: LetDeclarationTree): LetDeclaration
     type: target.field('type') ? assignByKind(target.field('type')!.type, target.field('type')!) : undefined,
     value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
     alternative: target.field('alternative') ? assignBlock(target.field('alternative')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLifetime(target: LifetimeTree): Lifetime & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = lifetime({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLifetimeParameter(target: LifetimeParameterTree): LifetimeParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = lifetimeParameter({
     name: assignLifetime(target.field('name')!),
     bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLineComment(target: LineCommentTree): LineComment & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1108,489 +1108,489 @@ export function assignLineComment(target: LineCommentTree): LineComment & { toEd
     outer: target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined,
     inner: target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined,
     doc: target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignLoopExpression(target: LoopExpressionTree): LoopExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = loopExpression({
     body: assignBlock(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMacroDefinition(target: MacroDefinitionTree): MacroDefinition & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = macroDefinition({
     name: assignByKind('identifier', target.field('name')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMacroInvocation(target: MacroInvocationTree): MacroInvocation & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = macroInvocation({
     macro: assignByKind(target.field('macro')!.type, target.field('macro')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMacroRule(target: MacroRuleTree): MacroRule & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = macroRule({
     left: assignTokenTreePattern(target.field('left')!),
     right: assignTokenTree(target.field('right')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMatchArm(target: MatchArmTree): MatchArm & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = matchArm({
     pattern: assignMatchPattern(target.field('pattern')!),
     value: assignByKind(target.field('value')!.type, target.field('value')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMatchBlock(target: MatchBlockTree): MatchBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = matchBlock({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMatchExpression(target: MatchExpressionTree): MatchExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = matchExpression({
     value: assignByKind(target.field('value')!.type, target.field('value')!),
     body: assignMatchBlock(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMatchPattern(target: MatchPatternTree): MatchPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = matchPattern({
     condition: target.field('condition') ? assignByKind(target.field('condition')!.type, target.field('condition')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignModItem(target: ModItemTree): ModItem & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = modItem({
     name: assignByKind('identifier', target.field('name')!),
     body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignMutPattern(target: MutPatternTree): MutPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = mutPattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignNegativeLiteral(target: NegativeLiteralTree): NegativeLiteral & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = negativeLiteral({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignOrPattern(target: OrPatternTree): OrPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = orPattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignOrderedFieldDeclarationList(target: OrderedFieldDeclarationListTree): OrderedFieldDeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = orderedFieldDeclarationList({
     type: (() => {
       const _kinds = new Set(["abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","primitive_type"]);
-      const _items = target.children().filter((c: any) => _kinds.has(c.type));
-      return _items.length > 0 ? _items.map((c: any) => assignByKind(c.type, c)) : undefined;
+      const _items = target.children().filter((c) => _kinds.has(c.type));
+      return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
     })(),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignParameter(target: ParameterTree): Parameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = parameter({
     pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignParameters(target: ParametersTree): Parameters & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = parameters({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignParenthesizedExpression(target: ParenthesizedExpressionTree): ParenthesizedExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = parenthesizedExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignPointerType(target: PointerTypeTree): PointerType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = pointerType({
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignQualifiedType(target: QualifiedTypeTree): QualifiedType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = qualifiedType({
     type: assignByKind(target.field('type')!.type, target.field('type')!),
     alias: assignByKind(target.field('alias')!.type, target.field('alias')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignRangeExpression(target: RangeExpressionTree): RangeExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = rangeExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignRangePattern(target: RangePatternTree): RangePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = rangePattern({
     left: target.field('left') ? assignByKind(target.field('left')!.type, target.field('left')!) : undefined,
     right: target.field('right') ? assignByKind(target.field('right')!.type, target.field('right')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignRawStringLiteral(target: RawStringLiteralTree): RawStringLiteral & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = rawStringLiteral({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignRefPattern(target: RefPatternTree): RefPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = refPattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignReferenceExpression(target: ReferenceExpressionTree): ReferenceExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = referenceExpression({
     value: assignByKind(target.field('value')!.type, target.field('value')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignReferencePattern(target: ReferencePatternTree): ReferencePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = referencePattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignReferenceType(target: ReferenceTypeTree): ReferenceType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = referenceType({
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignRemovedTraitBound(target: RemovedTraitBoundTree): RemovedTraitBound & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = removedTraitBound({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignReturnExpression(target: ReturnExpressionTree): ReturnExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = returnExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignScopedIdentifier(target: ScopedIdentifierTree): ScopedIdentifier & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = scopedIdentifier({
     path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
     name: assignByKind(target.field('name')!.type, target.field('name')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignScopedTypeIdentifier(target: ScopedTypeIdentifierTree): ScopedTypeIdentifier & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = scopedTypeIdentifier({
     path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
     name: assignByKind('type_identifier', target.field('name')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignScopedUseList(target: ScopedUseListTree): ScopedUseList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = scopedUseList({
     path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
     list: assignUseList(target.field('list')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignSelfParameter(target: SelfParameterTree): SelfParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = selfParameter({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignShorthandFieldInitializer(target: ShorthandFieldInitializerTree): ShorthandFieldInitializer & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = shorthandFieldInitializer({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignSlicePattern(target: SlicePatternTree): SlicePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = slicePattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignSourceFile(target: SourceFileTree): SourceFile & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = sourceFile({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignStaticItem(target: StaticItemTree): StaticItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1598,43 +1598,43 @@ export function assignStaticItem(target: StaticItemTree): StaticItem & { toEdit(
     name: assignByKind('identifier', target.field('name')!),
     type: assignByKind(target.field('type')!.type, target.field('type')!),
     value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignStringLiteral(target: StringLiteralTree): StringLiteral & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = stringLiteral({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignStructExpression(target: StructExpressionTree): StructExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = structExpression({
     name: assignByKind(target.field('name')!.type, target.field('name')!),
     body: assignFieldInitializerList(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignStructItem(target: StructItemTree): StructItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1642,109 +1642,109 @@ export function assignStructItem(target: StructItemTree): StructItem & { toEdit(
     name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     body: target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignStructPattern(target: StructPatternTree): StructPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = structPattern({
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTokenBindingPattern(target: TokenBindingPatternTree): TokenBindingPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tokenBindingPattern({
     name: assignByKind('metavariable', target.field('name')!),
     type: assignByKind('fragment_specifier', target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTokenRepetition(target: TokenRepetitionTree): TokenRepetition & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tokenRepetition({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTokenRepetitionPattern(target: TokenRepetitionPatternTree): TokenRepetitionPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tokenRepetitionPattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTokenTree(target: TokenTreeTree): TokenTree & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tokenTree({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTokenTreePattern(target: TokenTreePatternTree): TokenTreePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tokenTreePattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTraitBounds(target: TraitBoundsTree): TraitBounds & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = traitBounds({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTraitItem(target: TraitItemTree): TraitItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1753,107 +1753,107 @@ export function assignTraitItem(target: TraitItemTree): TraitItem & { toEdit(): 
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
     body: assignDeclarationList(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTryBlock(target: TryBlockTree): TryBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tryBlock({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTryExpression(target: TryExpressionTree): TryExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tryExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTupleExpression(target: TupleExpressionTree): TupleExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tupleExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTuplePattern(target: TuplePatternTree): TuplePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tuplePattern({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTupleStructPattern(target: TupleStructPatternTree): TupleStructPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tupleStructPattern({
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTupleType(target: TupleTypeTree): TupleType & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = tupleType({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTypeArguments(target: TypeArgumentsTree): TypeArguments & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = typeArguments({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTypeBinding(target: TypeBindingTree): TypeBinding & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1861,30 +1861,30 @@ export function assignTypeBinding(target: TypeBindingTree): TypeBinding & { toEd
     name: assignByKind('type_identifier', target.field('name')!),
     type_arguments: target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')!) : undefined,
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTypeCastExpression(target: TypeCastExpressionTree): TypeCastExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = typeCastExpression({
     value: assignByKind(target.field('value')!.type, target.field('value')!),
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTypeItem(target: TypeItemTree): TypeItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1892,15 +1892,15 @@ export function assignTypeItem(target: TypeItemTree): TypeItem & { toEdit(): Edi
     name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     type: assignByKind(target.field('type')!.type, target.field('type')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTypeParameter(target: TypeParameterTree): TypeParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1908,41 +1908,41 @@ export function assignTypeParameter(target: TypeParameterTree): TypeParameter & 
     name: assignByKind('type_identifier', target.field('name')!),
     bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
     default_type: target.field('default_type') ? assignByKind(target.field('default_type')!.type, target.field('default_type')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignTypeParameters(target: TypeParametersTree): TypeParameters & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = typeParameters({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUnaryExpression(target: UnaryExpressionTree): UnaryExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = unaryExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUnionItem(target: UnionItemTree): UnionItem & { toEdit(): Edit; replace(): Edit; render(): string } {
@@ -1950,179 +1950,179 @@ export function assignUnionItem(target: UnionItemTree): UnionItem & { toEdit(): 
     name: assignByKind('type_identifier', target.field('name')!),
     type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
     body: assignFieldDeclarationList(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUnsafeBlock(target: UnsafeBlockTree): UnsafeBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = unsafeBlock({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUseAsClause(target: UseAsClauseTree): UseAsClause & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = useAsClause({
     path: assignByKind(target.field('path')!.type, target.field('path')!),
     alias: assignByKind('identifier', target.field('alias')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUseBounds(target: UseBoundsTree): UseBounds & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = useBounds({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUseDeclaration(target: UseDeclarationTree): UseDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = useDeclaration({
     argument: assignByKind(target.field('argument')!.type, target.field('argument')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUseList(target: UseListTree): UseList & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = useList({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignUseWildcard(target: UseWildcardTree): UseWildcard & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = useWildcard({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignVariadicParameter(target: VariadicParameterTree): VariadicParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = variadicParameter({
     pattern: target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined,
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignVisibilityModifier(target: VisibilityModifierTree): VisibilityModifier & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = visibilityModifier({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignWhereClause(target: WhereClauseTree): WhereClause & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = whereClause({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignWherePredicate(target: WherePredicateTree): WherePredicate & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = wherePredicate({
     left: assignByKind(target.field('left')!.type, target.field('left')!),
     bounds: assignTraitBounds(target.field('bounds')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignWhileExpression(target: WhileExpressionTree): WhileExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = whileExpression({
     condition: assignByKind(target.field('condition')!.type, target.field('condition')!),
     body: assignBlock(target.field('body')!),
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 export function assignYieldExpression(target: YieldExpressionTree): YieldExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
   const result = yieldExpression({
-  } as any);
+  });
   const _origToEdit = result.toEdit.bind(result);
   const boundToEdit = () => {
     const r = target.range();
     return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
   };
-  (result as any).toEdit = boundToEdit;
-  (result as any).replace = boundToEdit;
-  return result as any;
+  result.toEdit = boundToEdit;
+  result.replace = boundToEdit;
+  return result;
 }
 
 /**
@@ -2130,5 +2130,5 @@ export function assignYieldExpression(target: YieldExpressionTree): YieldExpress
  * Recursively hydrates via assignByKind, attaches range for .toEdit().
  */
 export function edit<K extends NodeKind<RustGrammar>>(target: TreeNode<K>): Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }> {
-  return assignByKind(target.type, target) as any;
+  return assignByKind(target.type, target);
 }

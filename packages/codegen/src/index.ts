@@ -30,6 +30,7 @@ import { emitConsts } from './emitters/consts.ts';
 import { emitIrNamespace } from './emitters/ir-namespace.ts';
 import { emitJoinBy } from './emitters/joinby.ts';
 import { emitTests } from './emitters/test-new.ts';
+import { emitTypeTests } from './emitters/type-test.ts';
 import { emitConfig } from './emitters/config.ts';
 import { emitIndex } from './emitters/index-file.ts';
 
@@ -71,6 +72,8 @@ export interface GeneratedFiles {
 	index: string;
 	/** tests — single test file for all node kinds */
 	tests: string;
+	/** type-test — compile-time assertions that *Fields ≡ NodeFields<K> */
+	typeTests: string;
 	/** vitest.config.ts source */
 	config: string;
 }
@@ -126,6 +129,7 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 		consts: emitConsts({ grammar: config.grammar, nodeKinds: branchKinds, leafKinds, keywords: keywordTokens, operators: operatorTokens, nodes, enumKinds: leafValueKinds }),
 		index: emitIndex({ grammar: config.grammar, nodeKinds: branchKinds }),
 		tests: emitTests({ grammar: config.grammar, nodes, leafKinds, keywordKinds }),
+		typeTests: emitTypeTests({ nodes }),
 		config: emitConfig({ grammar: config.grammar }),
 	};
 }

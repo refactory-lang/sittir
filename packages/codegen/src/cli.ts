@@ -114,6 +114,9 @@ writeFile(join(outDir, 'index.ts'), result.index);
 const testsDir = cliArgs.testsDir ?? join(dirname(outDir), 'tests');
 writeFile(join(testsDir, 'nodes.test.ts'), result.tests);
 
+// Write type-level tests
+writeFile(join(outDir, 'type-test.ts'), result.typeTests);
+
 // Write vitest config
 writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 

@@ -1,19 +1,18 @@
 /**
  * Unified factory emitter.
  *
- * Generates factory functions for branch node kinds supporting three modes:
- *   1. Declarative: ir.function({ name: ..., body: ... })
- *   2. Fluent: ir.function(name).body(block)
- *   3. Mixed: ir.function(name, { body: block })
+ * Generates factory functions for branch node kinds:
+ *   - Declarative: ir.function({ name: ..., body: ... })
+ *   - Fluent: ir.function({ name }).body(block)
  *
- * Factories produce NodeData plain objects with fluent setters and
- * render methods attached. No ES classes.
+ * Factories accept *Config (fields + children) only.
+ * Produces immutable nodes as single object literals — no mutation, no assignment.
  */
 
 import type { KindMeta, FieldMeta, SupertypeInfo } from '../grammar-reader.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { selectConstructorField, escapeString } from './utils.ts';
+import { escapeString } from './utils.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
@@ -26,7 +25,7 @@ export interface EmitFactoriesConfig {
 	keywordTokens?: string[];
 	/** Operator tokens (non-alphabetic anonymous tokens) */
 	operatorTokens?: string[];
-	/** Supertype info — for typed replace validation */
+	/** Supertype groupings — used to collapse inline unions into supertype names */
 	supertypes?: SupertypeInfo[];
 }
 
@@ -36,174 +35,75 @@ export interface EmitFactoriesConfig {
 export function emitFactory(config: {
 	node: KindMeta;
 	leafKinds: string[];
+	/** Maps supertype name → Set of concrete subtypes */
+	supertypeMap?: Map<string, Set<string>>;
 }): string {
-	const { node, leafKinds } = config;
+	const { node, leafKinds, supertypeMap } = config;
 	const leafSet = new Set(leafKinds);
 	const typeName = toTypeName(node.kind);
 	const factoryName = toFactoryName(node.kind);
-	const ctorField = selectConstructorField(node);
-	const optionalFields = node.fields.filter(f => !f.required || f === ctorField);
-	const nonCtorRequired = node.fields.filter(f => f.required && f !== ctorField);
 
 	const lines: string[] = [];
 
-	// Config interface — uses snake_case keys matching grammar field names
-	lines.push(`export interface ${typeName}Config {`);
-	for (const f of node.fields) {
-		const fieldType = fieldTypeExpr(f, leafSet);
-		const opt = !f.required ? '?' : '';
-		lines.push(`  ${f.name}${opt}: ${fieldType};`);
-	}
-	if (node.hasChildren && node.children) {
-		const childTypeUnion = node.children.namedTypes
-			.filter(t => t !== '_')
-			.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t))
-			.join(' | ');
-		lines.push(`  children?: (${childTypeUnion})[];`);
-	}
-	lines.push(`}`);
-	lines.push('');
-
-	// FromInput interface for .from() — typed input resolution
-	lines.push(`export interface ${typeName}FromInput {`);
-	for (const f of node.fields) {
-		const fieldType = fromInputFieldType(f, leafSet);
-		const opt = !f.required ? '?' : '';
-		lines.push(`  ${f.name}${opt}: ${fieldType};`);
-	}
-	if (node.hasChildren && node.children) {
-		const childTypes = node.children.namedTypes.filter(t => t !== '_');
-		const childLeaf = childTypes.filter(t => leafSet.has(t));
-		const childBranch = childTypes.filter(t => !leafSet.has(t));
-		const childParts: string[] = [];
-		if (childTypes.length > 0) {
-			childParts.push(childTypes.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t)).join(' | '));
-		}
-		if (childLeaf.length > 0) childParts.push('string');
-		const cleanedChildBranch = childBranch.map(t => ({
-			raw: t,
-			typeName: t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t),
-		}));
-		if (cleanedChildBranch.length === 1) {
-			childParts.push(`${cleanedChildBranch[0]!.typeName}FromInput`);
-		} else {
-			for (const bt of cleanedChildBranch) {
-				childParts.push(`({ kind: '${bt.raw}' } & ${bt.typeName}FromInput)`);
-			}
-		}
-		lines.push(`  children?: (${childParts.join(' | ')})[];`);
-	} else if (node.hasChildren) {
-		lines.push(`  children?: FromValue[];`);
-	}
-	lines.push(`}`);
-	lines.push('');
-
-	// Return type: NodeData<K> + fluent setters (camelCase methods) + render methods
-	lines.push(`export type ${typeName}Node = ${toTypeName(node.kind)} & {`);
-	for (const f of node.fields) {
-		if (f === ctorField) continue;
-		const fieldType = fieldTypeExpr(f, leafSet);
-		const camel = toFieldName(f.name);
-		const setterName = camel === 'type' ? 'typeField' : camel;
-		lines.push(`  ${setterName}(value: ${fieldType}): ${typeName}Node;`);
-	}
-	if (node.hasChildren && node.children) {
-		const childTypeUnion = node.children.namedTypes.map(t => toTypeName(t)).join(' | ');
-		lines.push(`  children(...value: (${childTypeUnion})[]): ${typeName}Node;`);
-	}
-	lines.push(`  render(): string;`);
-	lines.push(`  toEdit(start: number, end: number): Edit;`);
-	lines.push(`  toEdit(range: { start: { index: number }, end: { index: number } }): Edit;`);
-	lines.push(`  replace(target: { type: '${node.kind}'; range(): { start: { index: number }; end: { index: number } } }): Edit;`);
-	lines.push(`};`);
-	lines.push('');
-
-	// FromNode type: ergonomic fluent setters for .from() API — accepts FromInput field types
-	lines.push(`export type ${typeName}FromNode = ${toTypeName(node.kind)} & {`);
-	for (const f of node.fields) {
-		if (f === ctorField) continue;
-		const fieldType = fromInputFieldType(f, leafSet);
-		const camel = toFieldName(f.name);
-		const setterName = camel === 'type' ? 'typeField' : camel;
-		lines.push(`  ${setterName}(value: ${fieldType}): ${typeName}FromNode;`);
-	}
-	if (node.hasChildren) {
-		lines.push(`  children(...value: FromValue[]): ${typeName}FromNode;`);
-	}
-	lines.push(`  render(): string;`);
-	lines.push(`  toEdit(start: number, end: number): Edit;`);
-	lines.push(`  toEdit(range: { start: { index: number }, end: { index: number } }): Edit;`);
-	lines.push(`  replace(target: { type: '${node.kind}'; range(): { start: { index: number }; end: { index: number } } }): Edit;`);
-	lines.push(`};`);
-	lines.push('');
-
-	// Single-field compression: if node has exactly one field (or only children),
-	// accept the value directly as the first argument (FR-022)
-	const isSingleField = node.fields.length === 1 || (node.fields.length === 0 && node.hasChildren);
-	const childrenAreLeaf = node.children?.namedTypes.every(t => leafSet.has(t)) ?? false;
-
-	// Factory function — no runtime type inference (FR-016), only NodeData accepted
-	if (ctorField) {
-		const ctorType = fieldTypeExpr(ctorField, leafSet);
-		const ctorCamel = toFieldName(ctorField.name);
+	// Factory function — accepts *Config (fields + children), return type inferred
+	const hasRequiredFields = node.fields.some(f => f.required) || (node.hasChildren && node.children?.required);
+	if (hasRequiredFields) {
 		lines.push(`export function ${factoryName}(`);
-		lines.push(`  ${ctorCamel}OrConfig: ${ctorType} | ${typeName}Config,`);
-		lines.push(`  config?: Partial<${typeName}Config>,`);
-		lines.push(`): ${typeName}Node {`);
-		lines.push(`  const fields: any = isNodeData(${ctorCamel}OrConfig)`);
-		lines.push(`    ? { '${ctorField.name}': ${ctorCamel}OrConfig, ...config }`);
-		lines.push(`    : ${ctorCamel}OrConfig;`);
-	} else if (isSingleField && node.hasChildren) {
-		// Children-only node — accept array or single NodeData (FR-022)
-		const childTypeUnion = node.children?.namedTypes.map(t => toTypeName(t)).join(' | ') ?? 'never';
-		lines.push(`export function ${factoryName}(`);
-		lines.push(`  childrenOrConfig?: (${childTypeUnion}) | (${childTypeUnion})[] | ${typeName}Config,`);
-		lines.push(`): ${typeName}Node {`);
-		lines.push(`  let fields: any;`);
-		lines.push(`  if (Array.isArray(childrenOrConfig)) {`);
-		lines.push(`    fields = { children: childrenOrConfig };`);
-		lines.push(`  } else if (childrenOrConfig && isNodeData(childrenOrConfig)) {`);
-		lines.push(`    fields = { children: [childrenOrConfig] };`);
-		lines.push(`  } else {`);
-		lines.push(`    fields = childrenOrConfig ?? {};`);
-		lines.push(`  }`);
+		lines.push(`  config: ${typeName}Config,`);
+		lines.push(`) {`);
 	} else {
 		lines.push(`export function ${factoryName}(`);
 		lines.push(`  config?: ${typeName}Config,`);
-		lines.push(`): ${typeName}Node {`);
-		lines.push(`  const fields: any = config ?? {};`);
+		lines.push(`) {`);
 	}
 
-	lines.push(`  const node: any = { type: '${node.kind}', fields };`);
+	// Direct return — setters + methods, no mutation
+	lines.push(`  return {`);
+	lines.push(`    type: '${node.kind}' as const,`);
 
-	// Fluent setters — camelCase method names, snake_case storage keys
-	// Rename 'type' setter to 'typeField' to avoid collision with the 'type' discriminant
+	// Fluent setters — immutable: return a new node via factory re-call
 	for (const f of node.fields) {
-		if (f === ctorField) continue;
 		const camel = toFieldName(f.name);
 		const setterName = camel === 'type' ? 'typeField' : camel;
+		const fieldType = fieldTypeExpr(f, leafSet, supertypeMap);
+		const isAnonymousOnly = f.namedTypes.length === 0 && f.types.length > 0;
 		if (f.multiple) {
-			lines.push(`  node.${setterName} = (...v: any[]) => { fields['${f.name}'] = v; return node; };`);
+			if (isAnonymousOnly) {
+				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, '${f.name}': v.map(t => ({ type: t, text: t }) as const) }),`);
+			} else {
+				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, '${f.name}': v }),`);
+			}
 		} else {
-			lines.push(`  node.${setterName} = (v: any) => { fields['${f.name}'] = v; return node; };`);
+			if (isAnonymousOnly) {
+				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, '${f.name}': { type: v, text: v } as const }),`);
+			} else {
+				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, '${f.name}': v }),`);
+			}
 		}
 	}
-	if (node.hasChildren) {
-		lines.push(`  node.children = (...v: any[]) => { fields.children = v; return node; };`);
+	if (node.hasChildren && node.children) {
+		const childTypeUnion = collapseToSupertypes(
+			node.children.namedTypes.filter(t => t !== '_'),
+			supertypeMap,
+		).join(' | ');
+		if (node.children.multiple) {
+			lines.push(`    children: (...v: (${childTypeUnion})[]) => ${factoryName}({ ...config, children: v }),`);
+		} else {
+			lines.push(`    children: (v: ${childTypeUnion}) => ${factoryName}({ ...config, children: v }),`);
+		}
 	}
 
-	// Render methods
-	lines.push(`  node.render = () => render(node, rules, joinBy);`);
-	lines.push(`  node.toEdit = (startOrRange: any, endPos?: number) => {`);
-	lines.push(`    if (typeof startOrRange === 'number') return toEdit(node, rules, startOrRange, endPos!, joinBy);`);
-	lines.push(`    return toEdit(node, rules, startOrRange, joinBy);`);
+	// Render/edit methods — use `this` via method shorthand for direct return
+	lines.push(`    render() { return render(this, rules, joinBy); },`);
+	lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`);
+	lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);`);
+	lines.push(`      return toEdit(this, rules, startOrRange, joinBy);`);
+	lines.push(`    },`);
+	lines.push(`    replace(target: ${typeName}Tree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },`);
+
 	lines.push(`  };`);
-	lines.push(`  node.replace = (target: any) => { const r = target.range(); return toEdit(node, rules, r, joinBy); };`);
-	lines.push(`  return node;`);
 	lines.push(`}`);
 	lines.push('');
-
-	// .assign() is in assign.ts — factories stay pure
 
 	return lines.join('\n');
 }
@@ -220,21 +120,25 @@ export function emitTerminalFactory(
 ): string {
 	const factoryName = toFactoryName(kind);
 
+	const typeName = toTypeName(kind);
+
 	if (fixedText !== undefined) {
-		// Keyword factory — zero args, fixed text
+		// Keyword factory — zero args, fixed text, return type inferred
 		const lines = [];
-		lines.push(`export function ${factoryName}(): ${toTypeName(kind)} & { render(): string; replace(target: { type: '${kind}'; range(): { start: { index: number }; end: { index: number } } }): Edit } {`);
-		lines.push(`  const node: any = { type: '${kind}', fields: {}, text: '${escapeString(fixedText)}' };`);
-		lines.push(`  node.render = () => '${escapeString(fixedText)}';`);
-		lines.push(`  node.toEdit = (startOrRange: any, endPos?: number) => {`);
-		lines.push(`    if (typeof startOrRange === 'number') {`);
-		lines.push(`      if (endPos === undefined) throw new Error('endPos required when startPos is a number');`);
-		lines.push(`      return { startPos: startOrRange, endPos, insertedText: '${escapeString(fixedText)}' };`);
-		lines.push(`    }`);
-		lines.push(`    return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: '${escapeString(fixedText)}' };`);
+		lines.push(`export function ${factoryName}() {`);
+		lines.push(`  return {`);
+		lines.push(`    type: '${kind}' as const,`);
+		lines.push(`    text: '${escapeString(fixedText)}',`);
+		lines.push(`    render: () => '${escapeString(fixedText)}',`);
+		lines.push(`    toEdit: (startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) => {`);
+		lines.push(`      if (typeof startOrRange === 'number') {`);
+		lines.push(`        if (endPos === undefined) throw new Error('endPos required when startPos is a number');`);
+		lines.push(`        return { startPos: startOrRange, endPos, insertedText: '${escapeString(fixedText)}' };`);
+		lines.push(`      }`);
+		lines.push(`      return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: '${escapeString(fixedText)}' };`);
+		lines.push(`    },`);
+		lines.push(`    replace: (target: ${toTypeName(kind)}Tree) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: '${escapeString(fixedText)}' }; },`);
 		lines.push(`  };`);
-		lines.push(`  node.replace = (target: any) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: '${escapeString(fixedText)}' }; };`);
-		lines.push(`  return node;`);
 		lines.push(`}`);
 		return lines.join('\n');
 	}
@@ -257,7 +161,7 @@ export function emitTerminalFactory(
 	const leafPattern = grammar ? extractLeafPattern(grammar, kind) : undefined;
 
 	const lines: string[] = [];
-	lines.push(`export function ${factoryName}(text: ${textType}): ${toTypeName(kind)} & { render(): string; replace(target: { type: '${kind}'; range(): { start: { index: number }; end: { index: number } } }): Edit } {`);
+	lines.push(`export function ${factoryName}(text: ${textType}) {`);
 	if (needsKeywordValidation) {
 		lines.push(`  if (RESERVED_KEYWORDS.has(text)) throw new Error(\`'\${text}' is a reserved keyword, not a valid ${kind}\`);`);
 	}
@@ -271,17 +175,19 @@ export function emitTerminalFactory(
 			lines.push(`  if (!/^${escaped}$/${flags}.test(text)) throw new Error(\`Invalid ${kind}: '\${text}' does not match grammar pattern\`);`);
 		}
 	}
-	lines.push(`  const node: any = { type: '${kind}', fields: {}, text };`);
-	lines.push(`  node.render = () => text;`);
-	lines.push(`  node.toEdit = (startOrRange: any, endPos?: number) => {`);
-	lines.push(`    if (typeof startOrRange === 'number') {`);
-	lines.push(`      if (endPos === undefined) throw new Error('endPos required when startPos is a number');`);
-	lines.push(`      return { startPos: startOrRange, endPos, insertedText: text };`);
-	lines.push(`    }`);
-	lines.push(`    return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: text };`);
+	lines.push(`  return {`);
+	lines.push(`    type: '${kind}' as const,`);
+	lines.push(`    text,`);
+	lines.push(`    render: () => text,`);
+	lines.push(`    toEdit: (startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) => {`);
+	lines.push(`      if (typeof startOrRange === 'number') {`);
+	lines.push(`        if (endPos === undefined) throw new Error('endPos required when startPos is a number');`);
+	lines.push(`        return { startPos: startOrRange, endPos, insertedText: text };`);
+	lines.push(`      }`);
+	lines.push(`      return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: text };`);
+	lines.push(`    },`);
+	lines.push(`    replace: (target: ${toTypeName(kind)}Tree) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },`);
 	lines.push(`  };`);
-	lines.push(`  node.replace = (target: any) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; };`);
-	lines.push(`  return node;`);
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -290,11 +196,16 @@ export function emitTerminalFactory(
  * Emit the full factories file for all node kinds.
  */
 export function emitFactories(config: EmitFactoriesConfig): string {
-	const { nodes, leafKinds, keywordKinds, leafValues, keywordTokens } = config;
+	const { nodes, leafKinds, keywordKinds, leafValues, keywordTokens, supertypes } = config;
 
 	const branchKinds = nodes.map(n => n.kind);
 	const keywordTokenSet = new Set(keywordTokens ?? []);
 	const leafValueMap = leafValues ?? new Map<string, string[]>();
+
+	// Build supertype reverse lookup: name → Set of fully-expanded concrete subtypes
+	// Supertypes can reference other supertypes (e.g., _expression includes _literal),
+	// so we recursively expand until all entries are concrete kinds.
+	const supertypeMap = buildExpandedSupertypeMap(supertypes ?? []);
 
 	const lines: string[] = [];
 	lines.push('// Auto-generated by @sittir/codegen — do not edit');
@@ -320,11 +231,24 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		}
 	}
 	for (const k of leafKinds) allTypeNames.add(toTypeName(k));
+	// Add *Config and *Tree types (Config for factory param, Tree for replace)
+	for (const n of nodes) {
+		allTypeNames.add(toTypeName(n.kind) + 'Config');
+		allTypeNames.add(toTypeName(n.kind) + 'Tree');
+	}
+	// Add *Tree types for leaf kinds (used in replace)
+	for (const k of leafKinds) {
+		allTypeNames.add(toTypeName(k) + 'Tree');
+	}
+	// Add supertype names (used in collapsed setter unions: Type, Literal, etc.)
+	for (const stName of supertypeMap.keys()) {
+		const cleanName = stName.replace(/^_/, '');
+		allTypeNames.add(toTypeName(cleanName));
+	}
 	const sortedTypes = [...allTypeNames].sort();
 	lines.push(`import type { ${sortedTypes.join(', ')} } from './types.js';`);
 	lines.push("import type { Edit, AnyNodeData } from '@sittir/types';");
 	lines.push("import { render, toEdit } from '@sittir/core';");
-	lines.push("import { isNodeData, type FromValue } from './utils.js';");
 	lines.push("import { rules } from './rules.js';");
 	lines.push("import { joinBy } from './joinby.js';");
 	lines.push('');
@@ -342,7 +266,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 
 	// Branch node factories
 	for (const node of nodes) {
-		lines.push(emitFactory({ node, leafKinds }));
+		lines.push(emitFactory({ node, leafKinds, supertypeMap }));
 		lines.push('');
 	}
 
@@ -355,24 +279,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	}
 
 	// Supertype FromInput unions — e.g. ExpressionFromInput = UnaryExpressionFromInput | ...
-	const supertypes = config.supertypes ?? [];
-	const branchKindSet = new Set(branchKinds);
-	if (supertypes.length > 0) {
-		lines.push('// Supertype unions (FromInput)');
-		for (const st of supertypes) {
-			const cleanName = st.name.replace(/^_/, '');
-			const fromInputName = toTypeName(cleanName) + 'FromInput';
-			const branchMembers = st.subtypes
-				.filter(sub => branchKindSet.has(sub))
-				.map(sub => toTypeName(sub) + 'FromInput');
-			if (branchMembers.length > 0) {
-				lines.push(`export type ${fromInputName} =`);
-				for (const m of branchMembers) lines.push(`  | ${m}`);
-				lines.push(';');
-				lines.push('');
-			}
-		}
-	}
+	// Supertype FromInput unions are now in types.ts (derived from NodeFromInput<G, K>)
 
 	// assignByKind, per-kind assign functions, and edit() are in assign.ts
 	lines.push('');
@@ -385,92 +292,151 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Compute the TypeScript type for a field in a FromInput interface.
- * Recursively typed: branch fields reference other FromInput types.
- *
- * - Leaf-only fields: `string | NodeData<NarrowKinds>`
- * - Operator-only fields: `'+' | '-' | ... | NodeData`
- * - Single branch type: `NodeData<K> | BranchFromInput` (no kind needed)
- * - Multiple branch types: `NodeData<K> | ({ kind: K } & BranchFromInput)` (discriminated)
- * - Array wrapping: `FromValue[]` (elements resolve recursively at runtime)
+ * Compute the TypeScript type for a field in a fluent setter.
+ * Uses named interfaces from types.ts — no bare NodeData<'kind'>.
+ * Collapses concrete type sets into supertype names where possible.
  */
-function fromInputFieldType(field: FieldMeta, leafSet: Set<string>): string {
-	const leafTypes = field.namedTypes.filter(t => leafSet.has(t));
-	const branchTypes = field.namedTypes.filter(t => !leafSet.has(t));
-	const anonTokens = field.types.filter(t => !field.namedTypes.includes(t) && !t.startsWith('_'));
-
-	const parts: string[] = [];
-
-	// 1. NodeData passthrough — narrowed to accepted kinds
-	if (field.namedTypes.length > 0) {
-		const validTypes = field.namedTypes
-			.filter(t => t !== '_')
-			.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t));
-		if (validTypes.length > 0) parts.push(validTypes.join(' | '));
-	}
-	if (field.namedTypes.length === 0 && anonTokens.length > 0) {
-		parts.push('AnyNodeData'); // operator-only fields — no named types
-	}
-
-	// 2. Scalars from leaf type resolution
-	if (leafTypes.length > 0) parts.push('string');
-	if (leafTypes.some(t => t === 'integer_literal' || t === 'float_literal')) parts.push('number');
-	if (leafTypes.includes('boolean_literal')) parts.push('boolean');
-
-	// 3. Operator literals (when field has only anonymous tokens)
-	if (anonTokens.length > 0 && leafTypes.length === 0) {
-		for (const t of anonTokens) parts.push(`'${escapeString(t)}'`);
-	}
-
-	// 4. Branch type FromInput references (recursive)
-	const validBranch = branchTypes.filter(t => t !== '_');
-	const cleanedBranch = validBranch.map(t => ({
-		raw: t,
-		typeName: t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t),
-	}));
-	if (cleanedBranch.length === 1) {
-		// Single branch type — no kind discriminant needed
-		parts.push(`${cleanedBranch[0]!.typeName}FromInput`);
-	} else if (cleanedBranch.length > 0) {
-		// Multiple branch types — discriminated by kind
-		for (const bt of cleanedBranch) {
-			parts.push(`({ kind: '${bt.raw}' } & ${bt.typeName}FromInput)`);
+function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>, supertypeMap?: Map<string, Set<string>>): string {
+	if (field.namedTypes.length === 0) {
+		// Anonymous-only field (e.g., operator tokens) — use string literal union
+		const anon = field.types.filter(t => t !== '_');
+		if (anon.length > 0) {
+			return anon.map(t => `'${escapeString(t)}'`).join(' | ');
 		}
+		return 'string';
 	}
 
-	// 5. Array wrapping (from() wraps arrays into container branch types)
-	if (validBranch.length > 0 && !field.multiple) {
-		parts.push('FromValue[]');
-	}
-
-	const union = [...new Set(parts)].join(' | ');
-	if (field.multiple) {
-		// Array fields accept both array and unwrapped single element
-		return `(${union})[] | ${union}`;
-	}
-	return union;
+	const collapsed = collapseToSupertypes(
+		field.namedTypes.filter(t => t !== '_'),
+		supertypeMap,
+	);
+	return collapsed.join(' | ');
 }
 
 /**
- * Compute the TypeScript type for a field in a Config interface or fluent setter.
- * Uses named interfaces from types.ts — no bare NodeData<'kind'>.
- * Regular API: narrow per field, no raw strings (FR-016).
+ * Collapse a list of concrete type names into supertype references where possible.
+ *
+ * For each supertype, if ALL of its subtypes appear in the input set, replace them
+ * with the supertype name. Any remaining concrete types that aren't covered by a
+ * supertype are kept as-is.
+ *
+ * Returns sorted TypeScript type names (e.g., ['DeclarationStatement', 'Expression', 'Label']).
  */
-function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>): string {
-	if (field.namedTypes.length === 0) {
-		return field.multiple ? 'AnyNodeData[]' : 'AnyNodeData';
+function collapseToSupertypes(
+	namedTypes: string[],
+	supertypeMap?: Map<string, Set<string>>,
+): string[] {
+	if (!supertypeMap || supertypeMap.size === 0) {
+		// No supertypes — just convert to type names
+		return namedTypes
+			.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t))
+			.sort();
 	}
 
-	// Use named interfaces: 'identifier' → 'Identifier', '_expression' → 'Expression'
-	const typeUnion = field.namedTypes
-		.filter(t => t !== '_')
-		.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t))
-		.join(' | ');
+	const inputSet = new Set(namedTypes);
+	const result: string[] = [];
 
-	if (field.multiple) {
-		return `(${typeUnion})[]`;
+	// First pass: find all supertypes whose concrete subtypes are ALL present
+	// in the input. Check against original set (not mutated) so overlapping
+	// supertypes (e.g., _expression and _declaration_statement share macro_invocation)
+	// both match.
+	const matched: { name: string; subtypes: Set<string> }[] = [];
+	for (const [stName, subtypes] of supertypeMap) {
+		if (subtypes.size === 0) continue;
+
+		let allPresent = true;
+		for (const sub of subtypes) {
+			if (!inputSet.has(sub)) {
+				allPresent = false;
+				break;
+			}
+		}
+
+		if (allPresent) {
+			matched.push({ name: stName, subtypes });
+		}
 	}
-	return typeUnion;
+
+	// Remove matched supertypes that are strict subsets of other matched supertypes
+	// (e.g., _literal ⊂ _expression — keep _expression, drop _literal)
+	const pruned = matched.filter(st => {
+		return !matched.some(other =>
+			other !== st &&
+			other.subtypes.size > st.subtypes.size &&
+			isSubsetOf(st.subtypes, other.subtypes),
+		);
+	});
+
+	// Collect all concrete types covered by matched supertypes
+	const covered = new Set<string>();
+	for (const st of pruned) {
+		for (const sub of st.subtypes) {
+			covered.add(sub);
+		}
+		const cleanName = st.name.replace(/^_/, '');
+		result.push(toTypeName(cleanName));
+	}
+
+	// Add any remaining concrete types that weren't covered
+	for (const t of inputSet) {
+		if (!covered.has(t)) {
+			result.push(t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t));
+		}
+	}
+
+	return result.sort();
+}
+
+/** Check if set A is a subset of set B. */
+function isSubsetOf<T>(a: Set<T>, b: Set<T>): boolean {
+	for (const item of a) {
+		if (!b.has(item)) return false;
+	}
+	return true;
+}
+
+/**
+ * Build a supertype map with fully expanded concrete subtypes.
+ * Supertypes can reference other supertypes (e.g., _expression includes _literal).
+ * This recursively expands until all entries are concrete (non-supertype) kinds.
+ */
+function buildExpandedSupertypeMap(supertypes: SupertypeInfo[]): Map<string, Set<string>> {
+	const raw = new Map<string, string[]>();
+	for (const st of supertypes) {
+		raw.set(st.name, st.subtypes);
+	}
+
+	const expanded = new Map<string, Set<string>>();
+
+	function expand(name: string, visited: Set<string>): Set<string> {
+		if (expanded.has(name)) return expanded.get(name)!;
+		if (visited.has(name)) return new Set(); // cycle guard
+		visited.add(name);
+
+		const subtypes = raw.get(name);
+		if (!subtypes) return new Set();
+
+		const result = new Set<string>();
+		for (const sub of subtypes) {
+			if (raw.has(sub)) {
+				// sub is itself a supertype — expand it
+				for (const concrete of expand(sub, visited)) {
+					result.add(concrete);
+				}
+			} else {
+				result.add(sub);
+			}
+		}
+
+		expanded.set(name, result);
+		return result;
+	}
+
+	for (const name of raw.keys()) {
+		expand(name, new Set());
+	}
+
+	return expanded;
 }
 
 /** Check if a pattern can be safely embedded as a JS regex literal. */

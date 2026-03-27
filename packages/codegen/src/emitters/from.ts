@@ -48,10 +48,11 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('// .from() API — ergonomic resolution with inlined per-field logic');
 	lines.push('');
 
-	// Type-only imports — named *Tree interfaces for overload signatures
+	// Type-only imports — named interfaces + *Tree interfaces for overload signatures
+	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
 	const treeTypeImports = nodes.map(n => toTypeName(n.kind) + 'Tree').sort();
-	lines.push(`import type { NodeData, ${treeTypeImports.join(', ')} } from './types.js';`);
-	lines.push("import { isNodeData, _inferBranch, type FromValue } from './utils.js';");
+	lines.push(`import type { NodeData, ${[...baseTypeImports, ...treeTypeImports].join(', ')} } from './types.js';`);
+	lines.push("import { isNodeData, isTreeNode, _inferBranch } from './utils.js';");
 	lines.push('');
 
 	// Import factory functions — only the ones actually referenced by .from() resolution
@@ -65,21 +66,24 @@ export function emitFrom(config: EmitFromConfig): string {
 	const assignImports = nodes.map(n => `assign${toTypeName(n.kind)}`).sort().join(', ');
 	lines.push(`import { ${assignImports} } from './assign.js';`);
 
-	// Import types from factories.ts (Config, Node, FromInput, FromNode types)
-	const typeImports: string[] = [];
+	// Import FromInput types from types.ts
+	const fromInputImports: string[] = [];
 	for (const node of nodes) {
-		const typeName = toTypeName(node.kind);
-		typeImports.push(`${typeName}FromInput`);
-		typeImports.push(`${typeName}FromNode`);
+		fromInputImports.push(`${toTypeName(node.kind)}FromInput`);
 	}
-	if (typeImports.length > 0) {
-		lines.push(`import type { ${typeImports.join(', ')} } from './factories.js';`);
+	lines.push(`import type { ${fromInputImports.join(', ')} } from './types.js';`);
+
+	// Import FromNode types from factories.ts
+	const fromNodeImports: string[] = [];
+	for (const node of nodes) {
+		fromNodeImports.push(`${toTypeName(node.kind)}FromNode`);
 	}
+	lines.push(`import type { ${fromNodeImports.join(', ')} } from './factories.js';`);
 
 	lines.push('');
 
 	// _resolveByKind stays in from.ts — it references all *From functions
-	lines.push('function _resolveByKind(kind: string, rest: any): any {');
+	lines.push('function _resolveByKind(kind: string, rest) {');
 	lines.push('  switch (kind) {');
 	for (const node of nodes) {
 		const fromFn = `${toFactoryName(node.kind)}From`;
@@ -121,13 +125,13 @@ function emitErgonomicSetters(
 		const camel = toFieldName(field.name);
 		const setterName = camel === 'type' ? 'typeField' : camel;
 		if (field.multiple) {
-			lines.push(`  ${baseVar}.${setterName} = (...v: any[]) => {`);
+			lines.push(`  ${baseVar}.${setterName} = (...v) => {`);
 			lines.push(`    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
-			lines.push(`    (${baseVar}.fields as any)['${field.name}'] = arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
+			lines.push(`    ${baseVar}.fields['${field.name}'] = arr.map((e) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
 			lines.push(`    return ${baseVar};`);
 			lines.push(`  };`);
 		} else {
-			lines.push(`  ${baseVar}.${setterName} = (v: any) => { (${baseVar}.fields as any)['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)}; return ${baseVar}; };`);
+			lines.push(`  ${baseVar}.${setterName} = (v) => { ${baseVar}.fields['${field.name}'] = ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)}; return ${baseVar}; };`);
 		}
 	}
 
@@ -139,9 +143,9 @@ function emitErgonomicSetters(
 			types: node.children.types,
 			namedTypes: node.children.namedTypes,
 		};
-		lines.push(`  ${baseVar}.children = (...v: any[]) => {`);
+		lines.push(`  ${baseVar}.children = (...v) => {`);
 		lines.push(`    const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
-		lines.push(`    (${baseVar}.fields as any).children = arr.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
+		lines.push(`    ${baseVar}.fields.children = arr.map((e) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
 		lines.push(`    return ${baseVar};`);
 		lines.push(`  };`);
 	}
@@ -152,10 +156,10 @@ function emitErgonomicSetters(
 /**
  * Emit a single .from() function for a branch node kind.
  *
- * Accepts three input shapes:
- *   1. FromInput object — resolved recursively into NodeData
- *   2. FromValue[] (array compression) — wrapped as children
- *   3. TreeNode (SgNode) — delegates to .assign(), with ergonomic setters
+ * Three input paths, all merging onto shared wiring:
+ *   1. TreeNode (SgNode) → assign*() → wiring
+ *   2. NodeData → pass through → wiring
+ *   3. FromInput object → resolve fields → factory → wiring
  */
 function emitFromFunction(
 	node: KindMeta,
@@ -174,78 +178,47 @@ function emitFromFunction(
 
 	// Function overloads for strict typing
 	const exportName = `${factoryName}From`;
-	// Overload 1: TreeNode → FromNode (SgNode dispatch)
 	lines.push(`export function ${exportName}(input: ${typeName}Tree): ${typeName}FromNode;`);
-	// Overload 2: FromInput → FromNode (plain object resolution)
-	if (node.hasChildren) {
-		lines.push(`export function ${exportName}(input: ${typeName}FromInput | FromValue[]): ${typeName}FromNode;`);
-	} else {
-		lines.push(`export function ${exportName}(input: ${typeName}FromInput): ${typeName}FromNode;`);
-	}
+	lines.push(`export function ${exportName}(input: ${typeName}): ${typeName}FromNode;`);
+	lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): ${typeName}FromNode;`);
 	// Implementation signature
-	lines.push(`export function ${exportName}(input: any): ${typeName}FromNode {`);
+	lines.push(`export function ${exportName}(input: ${typeName}Tree | ${typeName} | (${typeName}FromInput & {readonly kind?: '${node.kind}'})): ${typeName}FromNode {`);
 
-	// SgNode detection — delegate to assign function with ergonomic setters
-	// assign nodes use an overrides mechanism (getters), so we wrap
-	// the strict setters: resolve the value, then call the original setter.
-	lines.push(`  if (typeof input.field === 'function') {`);
-	lines.push(`    const base: any = assign${typeName}(input);`);
-	for (const field of node.fields) {
-		const camel = toFieldName(field.name);
-		const setterName = camel === 'type' ? 'typeField' : camel;
-		lines.push(`    const _orig_${field.name} = base.${setterName};`);
-		if (field.multiple) {
-			lines.push(`    base.${setterName} = (...v: any[]) => {`);
-			lines.push(`      const arr = v.length === 1 && Array.isArray(v[0]) ? v[0] : v;`);
-			lines.push(`      return _orig_${field.name}(...arr.map((e: any) => ${emitResolveExpr('e', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)}));`);
-			lines.push(`    };`);
-		} else {
-			lines.push(`    base.${setterName} = (v: any) => _orig_${field.name}(${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
-		}
-	}
-	if (node.hasChildren && node.children) {
-		const childField: FieldMeta = {
-			name: 'children',
-			required: node.children.required,
-			multiple: true,
-			types: node.children.types,
-			namedTypes: node.children.namedTypes,
-		};
-		lines.push(`    const _orig_children = base.children;`);
-		lines.push(`    base.children = (...v: any[]) => _orig_children(...v.map((e: any) => ${emitResolveExpr('e', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)}));`);
-	}
-	lines.push(`    return base;`);
-	lines.push(`  }`);
+	// --- Path 1: TreeNode → assign ---
+	lines.push(`  let base;`);
+	lines.push(`  if (isTreeNode(input)) {`);
+	lines.push(`    base = assign${typeName}(input);`);
 
-	// Array compression
+	// --- Path 2: NodeData → pass through ---
+	lines.push(`  } else if (isNodeData(input)) {`);
+	lines.push(`    base = ${factoryName}(input.fields);`);
+
+	// --- Path 3: FromInput → resolve ---
+	lines.push(`  } else {`);
 	if (node.hasChildren) {
-		lines.push(`  const obj: any = Array.isArray(input) ? { children: input } : input;`);
+		lines.push(`    const obj = Array.isArray(input) ? { children: input } : input;`);
 	} else {
-		lines.push(`  const obj: any = input;`);
+		lines.push(`    const obj = input;`);
 	}
-
-	// Resolve each field inline
-	lines.push(`  const resolved: any = {};`);
+	lines.push(`    const resolved = {};`);
 	for (const field of node.fields) {
-		lines.push(`  if (obj['${field.name}'] !== undefined) {`);
+		lines.push(`    if (obj['${field.name}'] !== undefined) {`);
 		if (field.multiple) {
-			lines.push(`    const raw = obj['${field.name}'];`);
-			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
-			lines.push(`    resolved['${field.name}'] = arr.map((v: any) => ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
+			lines.push(`      const raw = obj['${field.name}'];`);
+			lines.push(`      const arr = Array.isArray(raw) ? raw : [raw];`);
+			lines.push(`      resolved['${field.name}'] = arr.map((v) => ${emitResolveExpr('v', field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
 		} else {
-			lines.push(`    resolved['${field.name}'] = ${emitResolveExpr(`obj['${field.name}']`, field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)};`);
+			lines.push(`      resolved['${field.name}'] = ${emitResolveExpr(`obj['${field.name}']`, field, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)};`);
 		}
 		if (field.multiple && field.required) {
-			lines.push(`  } else {`);
-			lines.push(`    resolved['${field.name}'] = [];`);
+			lines.push(`    } else {`);
+			lines.push(`      resolved['${field.name}'] = [];`);
 		}
-		lines.push(`  }`);
+		lines.push(`    }`);
 	}
-
-	// Handle children
 	if (node.hasChildren && node.children) {
-		lines.push(`  if (obj['children'] !== undefined) {`);
-		lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
+		lines.push(`    if (obj['children'] !== undefined) {`);
+		lines.push(`      const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
 		const childField: FieldMeta = {
 			name: 'children',
 			required: node.children.required,
@@ -253,18 +226,18 @@ function emitFromFunction(
 			types: node.children.types,
 			namedTypes: node.children.namedTypes,
 		};
-		lines.push(`    resolved['children'] = arr.map((v: any) => ${emitResolveExpr('v', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
+		lines.push(`      resolved['children'] = arr.map((v) => ${emitResolveExpr('v', childField, leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap)});`);
 		if (node.children.required) {
-			lines.push(`  } else {`);
-			lines.push(`    resolved['children'] = [];`);
+			lines.push(`    } else {`);
+			lines.push(`      resolved['children'] = [];`);
 		}
-		lines.push(`  }`);
+		lines.push(`    }`);
 	}
+	lines.push(`    base = ${factoryName}(resolved);`);
+	lines.push(`  }`);
+	lines.push('');
 
-	// Create node via regular factory
-	lines.push(`  const base: any = ${factoryName}(resolved);`);
-
-	// Replace fluent setters with ergonomic ones
+	// --- Shared wiring step: replace fluent setters with ergonomic ones ---
 	lines.push(...emitErgonomicSetters(node, ctorField, 'base', leafSet, leafValueMap, keywordKinds, allNodes, grammar, supertypeMap));
 
 	lines.push(`  return base;`);
@@ -315,14 +288,14 @@ function emitResolveExpr(
 			return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' && ${varName} === '${escapeString(text)}' ? ${toFactoryName(lt)}() : ${varName})`;
 		}
 		const factory = toFactoryName(lt);
-		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(String(${varName}) as any) : ${varName})`;
+		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(String(${varName})) : ${varName})`;
 	}
 
 	// Simple case: single branch type, no leaves
 	if (branchTypes.length === 1 && leafTypes.length === 0 && anonTokens.length === 0) {
 		const factory = toFactoryName(branchTypes[0]!);
 		const fromFn = `${factory}From`;
-		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName} as any) : typeof ${varName} === 'object' ? ${fromFn}(${varName} as any) : ${varName})`;
+		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName}) : typeof ${varName} === 'object' ? ${fromFn}(${varName}) : ${varName})`;
 	}
 
 	// Complex case: use inline IIFE for multi-type resolution
@@ -351,18 +324,18 @@ function emitResolveBody(
 
 	// Boolean → boolean_literal (if accepted, or fallback when field has no leaf types but grammar has the kind)
 	if (leafTypes.includes('boolean_literal') || (leafTypes.length === 0 && leafSet.has('boolean_literal'))) {
-		parts.push(`if(typeof ${v}==='boolean')return booleanLiteral(String(${v}) as any);`);
+		parts.push(`if(typeof ${v}==='boolean')return booleanLiteral(String(${v}));`);
 	}
 
 	// Number → integer_literal or float_literal
 	const hasInt = leafTypes.includes('integer_literal') || (leafTypes.length === 0 && leafSet.has('integer_literal'));
 	const hasFloat = leafTypes.includes('float_literal') || (leafTypes.length === 0 && leafSet.has('float_literal'));
 	if (hasInt && hasFloat) {
-		parts.push(`if(typeof ${v}==='number')return Number.isInteger(${v})?integerLiteral(String(${v}) as any):floatLiteral(String(${v}) as any);`);
+		parts.push(`if(typeof ${v}==='number')return Number.isInteger(${v})?integerLiteral(String(${v})):floatLiteral(String(${v}));`);
 	} else if (hasInt) {
-		parts.push(`if(typeof ${v}==='number')return integerLiteral(String(${v}) as any);`);
+		parts.push(`if(typeof ${v}==='number')return integerLiteral(String(${v}));`);
 	} else if (hasFloat) {
-		parts.push(`if(typeof ${v}==='number')return floatLiteral(String(${v}) as any);`);
+		parts.push(`if(typeof ${v}==='number')return floatLiteral(String(${v}));`);
 	}
 
 	// String resolution
@@ -372,7 +345,7 @@ function emitResolveBody(
 	if (branchTypes.length > 0) {
 		if (branchTypes.length === 1) {
 			const fromFn = `${toFactoryName(branchTypes[0]!)}From`;
-			parts.push(`if(Array.isArray(${v}))return ${fromFn}(${v} as any);`);
+			parts.push(`if(Array.isArray(${v}))return ${fromFn}(${v});`);
 		} else {
 			// Multiple branch types — can't auto-resolve arrays without kind
 			parts.push(`if(Array.isArray(${v}))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');`);
@@ -408,7 +381,7 @@ function emitStringResolve(
 			const expectedText = keywordKinds.get(kind)!;
 			return `(${textVar}==='${escapeString(expectedText)}'?${toFactoryName(kind)}():(()=>{throw new Error(\`Expected '${escapeString(expectedText)}' for ${kind}, got '\${${textVar}}'\`)})())`;
 		}
-		return `${toFactoryName(kind)}(${textVar} as any)`;
+		return `${toFactoryName(kind)}(${textVar})`;
 	};
 
 	// Exactly one leaf type → use directly
@@ -431,7 +404,7 @@ function emitStringResolve(
 	// Anonymous tokens (operators)
 	if (anonTokens.length > 0) {
 		const tokenSet = anonTokens.map(t => `'${escapeString(t)}'`).join(',');
-		parts.push(`if([${tokenSet}].includes(${v}))return{type:${v},fields:{},text:${v}} as any;`);
+		parts.push(`if([${tokenSet}].includes(${v}))return{type:${v},fields:{},text:${v}};`);
 	}
 
 	// Pattern matching: for leaf types with grammar-derived regex patterns,
@@ -511,7 +484,7 @@ function emitObjectResolve(
 	if (branchTypes.length > 0) {
 		parts.push(`switch(k){`);
 		for (const bt of branchTypes) {
-			parts.push(`case '${bt}':return ${toFactoryName(bt)}From(rest as any);`);
+			parts.push(`case '${bt}':return ${toFactoryName(bt)}From(rest);`);
 		}
 		// Also allow any valid kind for flexibility
 		parts.push(`}`);
@@ -522,7 +495,7 @@ function emitObjectResolve(
 
 	// Single branch type → use directly
 	if (branchTypes.length === 1) {
-		parts.push(`return ${toFactoryName(branchTypes[0]!)}From(${v} as any);`);
+		parts.push(`return ${toFactoryName(branchTypes[0]!)}From(${v});`);
 	} else if (branchTypes.length > 1) {
 		// Multiple → score by field matching, then dispatch
 		parts.push(`const _k=_inferBranch(${v},${JSON.stringify(branchTypes)});`);
