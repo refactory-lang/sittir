@@ -207,23 +207,51 @@ interface NodeModel {
 
 Signatures are **interned**: kinds with identical emission shapes share the same object reference. Per-field sub-entries within signatures are also interned for per-field dedup when whole-kind signatures differ.
 
-### GrammarModel (top-level)
+### Serialization: `node-model.json`
+
+The NodeModel (step 3) is fully serializable — every type in the model is a plain object with string, boolean, number, and array fields. No functions, no class instances, no circular references.
+
+After step 3 completes, the codegen emits `node-model.json` as a generated artifact alongside the TypeScript files:
 
 ```typescript
-interface GrammarModel {
+// Serializable shape (JSON-safe — Sets/Maps become arrays/records)
+interface SerializedGrammarModel {
   name: string;
   nodes: Record<string, NodeModel>;     // branch kinds
-  // Interned signature pools
+  leafKinds: string[];
+  branchKinds: string[];
+  keywordKinds: Record<string, string>;
+  supertypes: Record<string, string[]>;
+  leafValues: Record<string, string[]>;
+  leafPatterns: Record<string, string>;
+}
+```
+
+This is emitted **after step 3, before step 4** (signatures). The node model is the grammar's complete semantic description — independent of any particular code generation strategy. Signatures are codegen-specific and live only in memory.
+
+**Use cases for `node-model.json`:**
+- Alternative code generators (other languages, other patterns) can consume the pre-computed model without running sittir's pipeline
+- IDE tooling can read field types, ordering, and optionality directly
+- Diffing between grammar versions — semantic diff rather than raw grammar.json diff
+- Testing — golden-file snapshot of the model for regression detection
+
+### GrammarModel (in-memory, top-level)
+
+The in-memory model extends the serializable shape with interned signatures and `Set`/`Map` types:
+
+```typescript
+interface GrammarModel extends SerializedGrammarModel {
+  // Overrides with efficient runtime types
+  leafKinds: Set<string>;
+  branchKinds: Set<string>;
+  keywordKinds: Map<string, string>;
+  supertypes: Map<string, string[]>;
+  leafValues: Map<string, string[]>;
+  leafPatterns: Map<string, string>;
+  // Interned signature pools (step 4, not serialized)
   factorySignatures: Map<string, FactorySignature>;
   fromSignatures: Map<string, FromSignature>;
   hydrationSignatures: Map<string, HydrationSignature>;
-  // Pre-computed sets
-  leafKinds: Set<string>;
-  branchKinds: Set<string>;
-  keywordKinds: Map<string, string>;    // kind → fixed text
-  supertypes: Map<string, string[]>;    // supertype → concrete subtypes
-  leafValues: Map<string, string[]>;    // enum-like leaf kinds → valid values
-  leafPatterns: Map<string, string>;    // leaf kinds → regex pattern
 }
 ```
 
@@ -242,11 +270,26 @@ All the data currently scattered across `listLeafKinds()`, `listKeywordKinds()`,
         - Classify field types → FieldTypeClass (leaf/branch/anon/expanded/collapsed)
         - Detect separators from REPEAT+SEQ context
         - All shared analysis consolidated here
-5. computeSignatures(allModels)                 → mutates NodeModel, populates pools
+5. Assemble SerializedGrammarModel → emit node-model.json
+6. computeSignatures(allModels)                 → mutates NodeModel, populates pools
      - Compute FactorySignature, FromSignature, HydrationSignature per kind
      - Intern into pools
      - Append to kind
-6. Assemble GrammarModel
+7. Assemble GrammarModel (extends serialized with signatures + runtime types)
+```
+
+Steps 1-4 use existing grammar-reader.ts functions (refactored). Step 5 emits the serializable artifact. Steps 6-7 are codegen-specific.
+
+## Generated Output
+
+`node-model.json` is added to the generated files alongside existing outputs:
+
+```typescript
+interface GeneratedFiles {
+  // ... existing files ...
+  /** node-model.json — serialized pre-computed grammar model */
+  nodeModel: string;
+}
 ```
 
 ## File Layout
@@ -261,6 +304,13 @@ packages/codegen/src/
   index.ts                   (updated — calls buildGrammarModel, passes to emitters)
   emitters/
     *.ts                     (updated — receive GrammarModel, no grammar retraversal)
+
+packages/rust/src/
+  node-model.json            (NEW — generated, serialized NodeModel)
+packages/typescript/src/
+  node-model.json            (NEW — generated)
+packages/python/src/
+  node-model.json            (NEW — generated)
 ```
 
 ## Migration
@@ -272,7 +322,6 @@ packages/codegen/src/
 
 ## Non-Goals
 
-- Changing the generated output API
+- Changing the generated output API (factories, `.from()`, `.assign()` signatures stay the same)
 - Modifying `@sittir/core` or `@sittir/types`
-- Changing input formats
-- Introducing new generated files
+- Changing the grammar.json or node-types.json input format
