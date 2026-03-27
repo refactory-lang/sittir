@@ -22,8 +22,8 @@ describe('emitFrom', () => {
 	});
 
 	it('uses named Tree interfaces in overload signatures', () => {
-		expect(source).toContain('input: FunctionItemTree): FunctionItemFromNode');
-		expect(source).toContain('input: BinaryExpressionTree): BinaryExpressionFromNode');
+		expect(source).toContain('input: FunctionItemTree): any');
+		expect(source).toContain('input: BinaryExpressionTree): any');
 	});
 
 	it('imports assign functions from assign.js', () => {

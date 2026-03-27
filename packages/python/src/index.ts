@@ -9,6 +9,9 @@ export { ir } from './ir.js';
 // Shared resolution utilities
 export * from './utils.js';
 
+// Tree node hydration and in-place editing
+export { assignByKind, edit } from './assign.js';
+
 // .from() resolution (tree-shakeable, separate from factories)
 export * from './from.js';
 
@@ -23,4 +26,5 @@ export * from './consts.js';
 
 // Core re-exports
 export { render, toEdit, toCst } from '@sittir/core';
-export type { NodeData, Edit, CSTNode, RenderContext } from '@sittir/types';
+export type { NodeData, NodeFields, TreeNode } from './types.js';
+export type { Edit, CSTNode, RenderContext } from '@sittir/types';

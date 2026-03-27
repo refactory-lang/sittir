@@ -21,7 +21,12 @@ export function selectConstructorField(node: KindMeta): FieldMeta | null {
 	return required[0] ?? null;
 }
 
-/** Escape backslashes and single quotes for embedding in generated string literals. */
+/** Escape backslashes, quotes, and control characters for embedding in generated string literals. */
 export function escapeString(s: string): string {
-	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+	return s
+		.replace(/\\/g, '\\\\')
+		.replace(/'/g, "\\'")
+		.replace(/\n/g, '\\n')
+		.replace(/\r/g, '\\r')
+		.replace(/\t/g, '\\t');
 }
