@@ -17,12 +17,27 @@ node-types.json ───► NodeTypes ─────┤
                                     │ initialize
                                     ▼
                                  NodeModel[]         (categorized, FieldModel/ChildModel created)
-                                    │ apply members
+                                    │ refine model type
                                     ▼
-                                 NodeModel[]         (members from EnrichedGrammar, type refinements)
+                                 NodeModel[]         (model types corrected)
+                                    │ apply non-grammar heuristics
+                                    ▼
+                                 NodeModel[]         (non-grammar heuristics applied)
+                                    │ apply members + rule
+                                    ▼
+                                 NodeModel[]         (members from EnrichedGrammar, rules attached)
+                                    │ apply grammar-based heuristics
+                                    ▼
+                                 NodeModel[]         (grammar-derived enrichment: separators, patterns, field kinds)
+                                    │ refine model type again
+                                    ▼
+                                 NodeModel[]         (final model type classification)
                                     │ optimize
                                     ▼
-                                 NodeModel[]         (repeated patterns identified, semantic aliases)
+                                 NodeModel[]         (repeated patterns identified, signatures interned)
+                                    │ hydrate
+                                    ▼
+                                 NodeModel[]         (kind strings → NodeModel references)
                                     │
                                     ▼
                                  Emitters            (pure template producers)
@@ -187,8 +202,8 @@ interface BranchModel extends NodeModelBase {
   readonly modelType: 'branch';
   readonly kind: string;
   readonly fields: FieldModel[];
-  readonly children: ChildModel | null;
-  readonly members: NodeMember[];          // was "elements"
+  readonly children?: ChildModel[];
+  readonly members: NodeMember[];
   readonly rule: EnrichedRule;
   // Appended in optimization step
   factory?: FactorySignature;
@@ -201,10 +216,10 @@ interface BranchModel extends NodeModelBase {
 Named node with children but no fields. Has members and rule.
 ```typescript
 interface ContainerModel extends NodeModelBase {
-  readonly modelType: 'container';         // was "leafWithChildren"
+  readonly modelType: 'container';
   readonly kind: string;
-  readonly children: ChildModel;           // always present (not optional)
-  readonly members: NodeMember[];          // was "elements"
+  readonly children: ChildModel[];
+  readonly members: NodeMember[];
   readonly rule: EnrichedRule;
 }
 ```
@@ -215,8 +230,8 @@ Named node with variable text. No fields, no children, no fixed values.
 interface LeafModel extends NodeModelBase {
   readonly modelType: 'leaf';
   readonly kind: string;
-  readonly pattern: string | null;         // regex validation pattern, null if unconstrained
-  readonly rule: EnrichedRule | null;      // retained unless truly absent
+  readonly pattern: string | null;
+  readonly rule: EnrichedRule | null;
 }
 ```
 
@@ -226,7 +241,7 @@ Named node with a fixed set of text values. Like a leaf but with enumerated opti
 interface EnumModel extends NodeModelBase {
   readonly modelType: 'enum';
   readonly kind: string;
-  readonly values: string[];               // non-empty, sorted
+  readonly values: string[];
   readonly rule: EnrichedRule | null;
 }
 ```
@@ -247,7 +262,7 @@ Anonymous token. Has a fixed text value (the token itself).
 ```typescript
 interface TokenModel extends NodeModelBase {
   readonly modelType: 'token';
-  readonly kind: string;                   // the token text, e.g. "+", "fn"
+  readonly kind: string;
   readonly rule: EnrichedRule | null;
 }
 ```
@@ -285,35 +300,46 @@ export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
 ### Sub-Models
 
 #### FieldModel
+
+Discriminated by `multiple`. Separator only exists on list fields.
+
 ```typescript
-interface FieldModel {
+type FieldModel = SingleFieldModel | ListFieldModel;
+
+interface SingleFieldModel {
   readonly name: string;
   readonly required: boolean;
-  readonly multiple: boolean;
-  readonly types: FieldTypeClass;
+  readonly multiple: false;
+  readonly kinds: string[];           // before hydration; NodeModel[] after
+}
+
+interface ListFieldModel {
+  readonly name: string;
+  readonly required: boolean;
+  readonly multiple: true;
+  readonly kinds: string[];           // before hydration; NodeModel[] after
   readonly separator: string | null;
 }
 ```
 
 #### ChildModel
-```typescript
-interface ChildModel {
-  readonly required: boolean;
-  readonly multiple: boolean;
-  readonly types: FieldTypeClass;
-  readonly separator: string | null;
-}
-```
 
-#### FieldTypeClass
+Same as FieldModel but without `name`.
+
 ```typescript
-interface FieldTypeClass {
-  readonly leafTypes: string[];
-  readonly branchTypes: string[];
-  readonly anonTokens: string[];
-  readonly expandedAll: string[];
-  readonly expandedBranch: string[];
-  readonly collapsedTypes: string[];
+type ChildModel = SingleChildModel | ListChildModel;
+
+interface SingleChildModel {
+  readonly required: boolean;
+  readonly multiple: false;
+  readonly kinds: string[];
+}
+
+interface ListChildModel {
+  readonly required: boolean;
+  readonly multiple: true;
+  readonly kinds: string[];
+  readonly separator: string | null;
 }
 ```
 
@@ -326,11 +352,36 @@ type NodeMember =
   | { member: 'choice'; branches: NodeMember[][] };
 ```
 
+### Kind Projections (derived, computed in optimize or on-demand)
+
+Emitters that need to partition a field's kinds into leaf vs branch, or collapse supertypes for TypeScript type expressions, use derived projections. These are not stored on the field — they're computed from the hydrated `kinds` references.
+
+```typescript
+interface KindProjection {
+  leafKinds: string[];         // kinds that are leaves (read .text())
+  branchKinds: string[];       // kinds that are branches (recurse)
+  expandedAll: string[];       // all concrete kinds after supertype expansion
+  expandedBranch: string[];    // only branch kinds after expansion
+  collapsedKinds: string[];    // PascalCase names after supertype folding
+}
+```
+
+After hydration, these are trivially computed from the `NodeModel[]` references using the type guards:
+
+```typescript
+function projectKinds(kinds: NodeModel[]): KindProjection {
+  // kinds are resolved references — use type guards directly
+  const leafKinds = kinds.filter(isLeaf).map(n => n.kind);
+  const branchKinds = kinds.filter(isBranch).map(n => n.kind);
+  // ... expand supertypes, collapse, etc.
+}
+```
+
 ---
 
 ## Pipeline Steps
 
-### Step A: Initialize NodeModels from NodeTypes
+### Step 1: Initialize NodeModels from NodeTypes
 
 NodeTypes is the authoritative source for what kinds exist and their initial categorization.
 
@@ -353,44 +404,77 @@ NodeTypes is the authoritative source for what kinds exist and their initial cat
 6. Has enumerated values (detected from grammar) -> EnumModel
 7. Otherwise -> LeafModel
 
-### Step B: Apply EnrichedGrammar to NodeModels
+### Step 2: Refine Model Type
+
+After initialization, check if the initial categorization needs adjustment based on the data loaded so far.
+
+### Step 3: Apply Non-Grammar Heuristics
+
+Apply heuristics that don't require walking the grammar rule tree. These use only the information already available from node-types.json and the EnrichedGrammar's precomputed attributes.
+
+### Step 4: Apply Members + Rule (from EnrichedGrammar)
 
 For each BranchModel and ContainerModel, walk the EnrichedRule to produce members.
 
 | Method | Classification | What it does |
 |--------|---------------|-------------|
 | `applyMembers(model, enrichedRule, ctx)` | Grammar-derived | Walk enriched rule tree, produce ordered NodeMember[] sequence. Each FIELD -> field member, each STRING -> token member, etc. |
-| `applyFieldTypes(field, enrichedRule, ctx)` | Grammar-derived | Classify field types into FieldTypeClass (leaf/branch/anon, expanded, collapsed) |
-| `applySeparators(model, enrichedRule)` | Grammar-derived | Detect REPEAT+SEQ separator patterns, annotate FieldModel/ChildModel |
-| `applyLeafPattern(model, rule)` | Grammar-derived | Extract regex pattern from leaf grammar rule |
-| `refineModelType(model)` | Refinement | After member application, check if categorization needs adjustment |
-| `supplementFromNodeTypes(model, entry)` | Cross-reference | Add fields found in node-types.json but missed in grammar walk |
-| `reorderFields(model, entry)` | Cross-reference | Reorder fields to match node-types.json authoritative field order |
+| `applyRule(model, enrichedRule)` | Grammar-derived | Attach the enriched rule to the model |
 
-#### Member Application Heuristics (inside applyMembers)
+#### Member Application Sub-heuristics (inside applyMembers)
 
 | Sub-heuristic | What |
 |--------------|------|
 | Abstract symbol inlining | `_`-prefixed symbols recursively expanded, fields/children extracted |
-| CHOICE with same fields | All branches merged, type sets unioned (binary_expression pattern) |
+| CHOICE with same fields | All branches merged, kind sets unioned (binary_expression pattern) |
 | CHOICE with different fields | Preserved as choice member |
 | REPEAT/REPEAT1 | Content marked as multiple |
 | CHOICE+BLANK | Content marked as optional |
 | Named ALIAS | Treated as explicit child |
 | TOKEN wrapping STRING | Emitted as token member |
 
-### Step C: Optimizations
+### Step 5: Apply Grammar-Based Heuristics
+
+Enrich the model using information derived from grammar rule walking.
+
+| Method | What it does |
+|--------|-------------|
+| `applyFieldKinds(field, enrichedRule, ctx)` | Populate field's `kinds` array from grammar rule type analysis |
+| `applySeparators(model, enrichedRule)` | Detect REPEAT+SEQ separator patterns, annotate ListFieldModel/ListChildModel |
+| `applyLeafPattern(model, rule)` | Extract regex pattern from leaf grammar rule |
+| `supplementFromNodeTypes(model, entry)` | Add fields found in node-types.json but missed in grammar walk |
+| `reorderFields(model, entry)` | Reorder fields to match node-types.json authoritative field order |
+
+### Step 6: Refine Model Type Again
+
+After grammar-based enrichment, re-check model type classification. Grammar information may reveal that a model needs reclassification.
+
+### Step 7: Optimize
 
 Pattern detection across all models. These inform emit-time deduplication.
 
 | Method | What it detects |
 |--------|----------------|
 | `computeSignatures(models)` | Intern FactorySignature, FromSignature, HydrationSignature. Multiple kinds sharing identical field shapes get same signature object. |
-| `identifyFieldLists(models)` | Fields across different kinds that have identical FieldTypeClass (reusable type expressions) |
-| `identifyChildLists(models)` | Children across different kinds with identical type sets |
+| `identifyFieldLists(models)` | Fields across different kinds that have identical kind sets (reusable type expressions) |
+| `identifyChildLists(models)` | Children across different kinds with identical kind sets |
 | `identifyEnumPatterns(models)` | Leaf kinds that share the same value set or pattern |
 
-### Step D: Semantic Token Aliases (Enhancement)
+### Step 8: Hydrate
+
+Resolve all `kinds: string[]` arrays to `kinds: NodeModel[]` references. After this step, emitters can navigate the model graph directly.
+
+| Method | What it does |
+|--------|-------------|
+| `hydrate(models)` | Walk all FieldModel/ChildModel across all models, replace kind strings with NodeModel references from the model map. |
+
+### Step 9: Emit
+
+Emitters receive fully hydrated NodeModel[] and produce generated code. They use type guards to discriminate model types and KindProjection helpers to derive type expressions.
+
+---
+
+## Semantic Token Aliases (Enhancement, applied before optimize)
 
 Anonymous tokens without alphabetic names get semantic aliases inferred from usage context.
 
@@ -428,14 +512,17 @@ packages/codegen/src/
   node-types.ts              # Layer 3: NodeTypes (raw node-types.json)
   node-model.ts              # Layer 4: NodeModel types, type guards
   pipeline/
-    initialize.ts            # Step A: NodeTypes + EnrichedGrammar -> initial NodeModels
-    apply-members.ts         # Step B: EnrichedRule -> members, field types, separators
-    optimize.ts              # Step C: Signature dedup, pattern detection
-    semantic-aliases.ts      # Step D: Token alias inference (enhancement)
-  build-model.ts             # Orchestrator: runs steps A-D, returns complete model
+    initialize.ts            # Step 1: NodeTypes + EnrichedGrammar -> initial NodeModels
+    refine.ts                # Steps 2, 6: Model type refinement
+    apply-members.ts         # Step 4: EnrichedRule -> members, rules attached
+    apply-heuristics.ts      # Steps 3, 5: Non-grammar and grammar-based heuristics
+    optimize.ts              # Step 7: Signature dedup, pattern detection
+    hydrate.ts               # Step 8: Kind strings -> NodeModel references
+    semantic-aliases.ts      # Enhancement: Token alias inference
+  build-model.ts             # Orchestrator: runs steps 1-9, returns complete model
   emitters/
-    utils.ts                 # Updated: use type guards instead of filter functions
-    *.ts                     # Updated: receive NodeModel[], use type guards
+    utils.ts                 # Updated: use type guards, KindProjection helpers
+    *.ts                     # Updated: receive hydrated NodeModel[], use type guards
 ```
 
 ---
@@ -445,11 +532,14 @@ packages/codegen/src/
 1. Define new model types + type guards alongside existing ones
 2. Rename elements -> members, LeafWithChildrenModel -> ContainerModel
 3. Split LeafModel: extract EnumModel for kinds with values
-4. Add rule to all model types (retain unless truly absent)
-5. Restructure pipeline into named steps
-6. Move heuristics into individual named methods
-7. Verify generated output unchanged via diff test
-8. Remove old grammar-reader.ts functions superseded by pipeline
+4. Split FieldModel/ChildModel into Single vs List variants
+5. Replace FieldTypeClass with `kinds: string[]` on fields
+6. Add rule to all model types (retain unless truly absent)
+7. Restructure pipeline into numbered steps
+8. Move heuristics into individual named methods
+9. Add hydration step (kinds string[] -> NodeModel[])
+10. Verify generated output unchanged via diff test
+11. Remove old grammar-reader.ts functions superseded by pipeline
 
 ---
 

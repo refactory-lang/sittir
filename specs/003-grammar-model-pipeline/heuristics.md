@@ -32,7 +32,7 @@ Every inference, derivation, and cross-reference in the grammar model pipeline. 
 **Input:** grammar.json supertypes list + rules
 **Logic:**
 - Each supertype's rule is a CHOICE of SYMBOLs
-- Recursively expand: if a subtypes is itself _-prefixed, expand it too
+- Recursively expand: if a subtype is itself _-prefixed, expand it too
 - Cycle detection via visited set
 - Result: Map<supertype -> Set<all concrete descendants>>
 **Example:** `_expression` -> { binary_expression, call_expression, identifier, ... }
@@ -86,10 +86,9 @@ Every inference, derivation, and cross-reference in the grammar model pipeline. 
 
 ---
 
-## Step B: Member Application Heuristics
+## Step 4: Member Application Heuristics
 
 ### M1: Abstract symbol inlining
-**File:** grammar-model.ts (enrichedToElements)
 **When:** Walking enriched rule, encountering a SYMBOL with `supertype: true` or `_`-prefixed name
 **Logic:**
 - Don't emit as a member directly
@@ -99,17 +98,15 @@ Every inference, derivation, and cross-reference in the grammar model pipeline. 
 **Example:** `_call_signature` inlines `type_parameters`, `parameters`, `return_type` into parent
 
 ### M2: CHOICE with same fields (branch merging)
-**File:** grammar-model.ts (choiceToMergedFields)
 **When:** CHOICE where all branches contain the same field names
 **Logic:**
 - Collect FieldModels from every branch
-- Union their type sets (leafTypes, branchTypes, anonTokens, expandedAll, etc.)
-- Emit single merged set of field members with combined types
+- Union their kind sets
+- Emit single merged set of field members with combined kinds
 - If CHOICE had BLANK branch, mark all fields as optional
-**Example:** `binary_expression` with PREC_LEFT branches for each operator precedence level. All branches have left/operator/right. Operators union into anonTokens.
+**Example:** `binary_expression` with PREC_LEFT branches for each operator precedence level. All branches have left/operator/right. Operators union into the operator field's kinds.
 
 ### M3: CHOICE with different fields (preserve as choice member)
-**File:** grammar-model.ts (enrichedToElements)
 **When:** CHOICE where branches have different field names
 **Logic:**
 - Emit as `{ member: 'choice', branches: [...] }`
@@ -118,14 +115,12 @@ Every inference, derivation, and cross-reference in the grammar model pipeline. 
 **Example:** `visibility_modifier` with branches `"pub"` vs `"pub" "(" path ")"` (different field structures)
 
 ### M4: REPEAT/REPEAT1 multiplicity
-**File:** grammar-model.ts (enrichedToElements)
 **Logic:**
-- Content of REPEAT/REPEAT1 marked as `multiple: true`
+- Content of REPEAT/REPEAT1 produces ListFieldModel/ListChildModel (`multiple: true`)
 - REPEAT (0+) also makes content optional
 - REPEAT1 (1+) keeps required status
 
 ### M5: CHOICE+BLANK optionality
-**File:** grammar-model.ts (enrichedToElements, hasBlankChoice)
 **Logic:**
 - CHOICE containing a BLANK branch makes all other branches optional
 - Fields inside become `required: false`
@@ -133,32 +128,48 @@ Every inference, derivation, and cross-reference in the grammar model pipeline. 
 - This is how tree-sitter represents optional constructs
 
 ### M6: Named ALIAS handling
-**File:** grammar-model.ts (enrichedToElements)
 **Logic:**
 - ALIAS with `named: true` -> emit as child member (it's an explicit typed child)
 - ALIAS with `named: false` -> unwrap and recurse into content
 **Example:** `shorthand_field_initializer` has named alias for `identifier`
 
-### M7: Separator detection
-**File:** grammar-model.ts (ruleToSeparators)
+---
+
+## Step 5: Grammar-Based Heuristics
+
+### G1: Field kind population
+**Method:** `applyFieldKinds(field, enrichedRule, ctx)`
+**Logic:**
+- Walk enriched rule to find all SYMBOL/ALIAS nodes within a FIELD's content
+- Each named symbol becomes a kind in the field's `kinds` array
+- Anonymous tokens (STRING values in FIELD content) are also kinds
+  - Before semantic alias step: raw token text (e.g., "+")
+  - After semantic alias step: inferred name (e.g., "AddOperator")
+
+### G2: Separator detection
+**Method:** `applySeparators(model, enrichedRule)`
 **When:** Walking rule for FIELD followed by REPEAT(SEQ(STRING, ...))
 **Logic:**
 - Look for pattern: REPEAT( SEQ( STRING(sep), content ) )
 - Where STRING is a single-char separator matching `/^[,;|&]$/`
-- The preceding FIELD gets `separator: sep`
+- The preceding ListFieldModel/ListChildModel gets `separator: sep`
 **Example:** `parameters` has REPEAT("," parameter) -> separator is ","
 
-### M8: Field supplementation from node-types.json
-**File:** grammar-model.ts (enrichedToNodeModel)
+### G3: Leaf pattern extraction
+**Method:** `applyLeafPattern(model, rule)`
+**Logic:** See H7 above. Applied to LeafModel kinds to populate `pattern`.
+
+### G4: Field supplementation from node-types.json
+**Method:** `supplementFromNodeTypes(model, entry)`
 **When:** After member application, some fields in node-types.json weren't found in grammar walk
 **Logic:**
 - Compare fields extracted from grammar vs fields in node-types.json
-- Add missing fields with types from node-types.json
+- Add missing fields with kinds from node-types.json
 - This handles deeply-nested optional CHOICE branches that the walker missed
 **Authority:** node-types.json is authoritative for field existence
 
-### M9: Field reordering to node-types.json order
-**File:** grammar-model.ts (enrichedToNodeModel)
+### G5: Field reordering to node-types.json order
+**Method:** `reorderFields(model, entry)`
 **When:** After all fields collected
 **Logic:**
 - node-types.json field key order is authoritative
@@ -167,59 +178,39 @@ Every inference, derivation, and cross-reference in the grammar model pipeline. 
 
 ---
 
-## Step B: Field Type Classification
-
-### T1: Leaf/branch partitioning
-**File:** grammar-model.ts (typesToFieldTypeClass)
-**Logic:**
-- Named types in leafKinds -> leafTypes
-- Named types NOT in leafKinds -> branchTypes
-- STRING values in FIELD content -> anonTokens
-
-### T2: Supertype expansion
-**File:** grammar-model.ts (typesToFieldTypeClass)
-**Logic:**
-- For each `_`-prefixed type in the field's named types
-- Look up in supertypeExpansions map
-- Add all concrete descendants to expandedAll (leaf + branch)
-- Add only non-leaf descendants to expandedBranch
-
-### T3: Supertype collapsing (for TypeScript type expressions)
-**File:** grammar-model.ts (typesToCollapsed)
-**Logic:**
-- Given a set of concrete types, find supertypes that cover subsets
-- If supertype S covers ALL of a subset -> fold to S
-- **Subset pruning:** If S1's subtypes strictly subset of S2's, and S2 is present, remove S1
-- Remaining uncovered types listed individually
-- All names converted to PascalCase
-**Example:** {IntLit, FloatLit, StringLit} where all are in `_literal` -> `Literal`
-
----
-
-## Step C: Optimization Heuristics
+## Step 7: Optimization Heuristics
 
 ### O1: Signature interning
-**File:** grammar-model.ts (nodesToSignatures)
+**Method:** `computeSignatures(models)`
 **Logic:**
 - Compute JSON key from field configuration per kind
 - Multiple kinds with identical keys share same signature object
 - Three signature types: Factory, From, Hydration
 
-### O2: Field list deduplication (new)
+### O2: Field list deduplication
+**Method:** `identifyFieldLists(models)`
 **Logic:**
-- Find fields across different kinds that have identical FieldTypeClass
+- Find fields across different kinds that have identical kind sets
 - These can share the same TypeScript type expression in generated code
 
-### O3: Child list deduplication (new)
+### O3: Child list deduplication
+**Method:** `identifyChildLists(models)`
 **Logic:**
-- Find children across different kinds with identical type sets
+- Find children across different kinds with identical kind sets
 - These can share the same children type/handler
+
+### O4: Enum pattern detection
+**Method:** `identifyEnumPatterns(models)`
+**Logic:**
+- Find EnumModel kinds that share the same value set
+- These can share type definitions
 
 ---
 
-## Step D: Semantic Token Aliases (Enhancement)
+## Semantic Token Aliases (Enhancement)
 
 ### S1: Operator context inference
+**Method:** `inferTokenAliases(models, grammar)`
 **Logic:**
 1. For each anonymous operator token (e.g., `&&`, `+`, `-`)
 2. Walk all grammar rules to find FIELD nodes containing this token as a STRING
@@ -239,3 +230,31 @@ Every inference, derivation, and cross-reference in the grammar model pipeline. 
 - `->` in `function_type` -> `ReturnArrow`
 - `,` -> typically not aliased (too generic)
 - Threshold: only alias tokens used in <= N distinct contexts (avoids over-aliasing)
+
+---
+
+## Kind Projections (derived, not stored)
+
+Emitters that need to partition a field's kinds for code generation use projection helpers computed from hydrated `NodeModel[]` references:
+
+| Projection | What | Used by |
+|-----------|------|---------|
+| `leafKinds` | Kinds that are leaves (read `.text()`) | assign.ts, from.ts |
+| `branchKinds` | Kinds that are branches (recurse into) | assign.ts, from.ts |
+| `expandedAll` | All concrete kinds after supertype expansion | assign.ts dispatch tables |
+| `expandedBranch` | Only branch kinds after supertype expansion | from.ts resolution |
+| `collapsedKinds` | PascalCase names after supertype folding | types.ts, factories.ts type expressions |
+
+### Supertype expansion
+- For each supertype kind in a field's `kinds`, look up in `supertypeExpansions`
+- Add all concrete descendants
+- `expandedAll` = leaf + branch concrete kinds
+- `expandedBranch` = only branch concrete kinds
+
+### Supertype collapsing (for TypeScript type expressions)
+- Given a set of concrete kinds, find supertypes that cover subsets
+- If supertype S covers ALL of a subset -> fold to S
+- **Subset pruning:** If S1's subtypes strictly subset of S2's, and S2 is present, remove S1
+- Remaining uncovered kinds listed individually
+- All names converted to PascalCase
+**Example:** {IntLit, FloatLit, StringLit} where all are in `_literal` -> `Literal`
