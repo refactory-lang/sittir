@@ -1,5 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, RenderRule, ParsedTemplate, TemplateElement, RulesRegistry, JoinByMap } from './types.ts';
+import type { AnyNodeData, Edit, ByteRange, RenderRule, ParsedTemplate, TemplateElement, RulesRegistry, JoinByMap } from './types.ts';
 import { parseTemplate } from './sexpr.ts';
 
 export type { RulesRegistry, JoinByMap };
@@ -92,4 +92,47 @@ function renderValue(value: AnyNodeData | string | number, registry: RulesRegist
 	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return String(value);
 	return render(value, registry, joinBy);
+}
+
+// ---------------------------------------------------------------------------
+// createRenderer — close over rules + joinBy once, return bound helpers
+// ---------------------------------------------------------------------------
+
+export interface BoundRenderer {
+	render(node: AnyNodeData): string;
+	toEdit(node: AnyNodeData, start: number, end: number): Edit;
+	toEdit(node: AnyNodeData, range: ByteRange): Edit;
+}
+
+/**
+ * Create a renderer bound to a specific rules registry and joinBy map.
+ * Generated packages call this once at module level — no need to pass
+ * rules/joinBy on every render() or toEdit() call.
+ */
+export function createRenderer(registry: RulesRegistry, joinBy?: JoinByMap): BoundRenderer {
+	function boundRender(node: AnyNodeData): string {
+		return render(node, registry, joinBy);
+	}
+
+	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
+		if (typeof startOrRange === 'number') {
+			if (typeof end !== 'number') {
+				throw new Error('endPos is required when startPos is a number');
+			}
+			if (startOrRange < 0 || end < 0) {
+				throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+			}
+			if (startOrRange > end) {
+				throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
+			}
+			return { startPos: startOrRange, endPos: end, insertedText: boundRender(node) };
+		}
+		return {
+			startPos: startOrRange.start.index,
+			endPos: startOrRange.end.index,
+			insertedText: boundRender(node),
+		};
+	}
+
+	return { render: boundRender, toEdit: boundToEdit as BoundRenderer['toEdit'] };
 }

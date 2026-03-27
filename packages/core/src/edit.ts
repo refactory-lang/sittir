@@ -69,15 +69,17 @@ export function replace(
 export function bindRange<T extends AnyNodeData & Renderable>(
 	target: ReplaceTarget,
 	factoryOutput: T,
-): T & { toEdit(): Edit } {
+): T & { toEdit(): Edit; replace(): Edit } {
 	const range = target.range();
-	// Override toEdit to use the bound range when called with no args
-	(factoryOutput as any).toEdit = () => ({
+	const boundEdit = () => ({
 		startPos: range.start.index,
 		endPos: range.end.index,
 		insertedText: factoryOutput.render(),
 	});
-	return factoryOutput as T & { toEdit(): Edit };
+	// Override toEdit and replace to use the bound range when called with no args
+	(factoryOutput as any).toEdit = boundEdit;
+	(factoryOutput as any).replace = boundEdit;
+	return factoryOutput as T & { toEdit(): Edit; replace(): Edit };
 }
 
 // ---------------------------------------------------------------------------

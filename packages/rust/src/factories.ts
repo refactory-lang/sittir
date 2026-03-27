@@ -3,9 +3,11 @@
 import type { NodeData } from './types.js';
 import type { AbstractType, AbstractTypeConfig, AbstractTypeTree, Arguments, ArgumentsConfig, ArgumentsTree, ArrayExpression, ArrayExpressionConfig, ArrayExpressionTree, ArrayType, ArrayTypeConfig, ArrayTypeTree, AssignmentExpression, AssignmentExpressionConfig, AssignmentExpressionTree, AssociatedType, AssociatedTypeConfig, AssociatedTypeTree, AsyncBlock, AsyncBlockConfig, AsyncBlockTree, Attribute, AttributeConfig, AttributeItem, AttributeItemConfig, AttributeItemTree, AttributeTree, AwaitExpression, AwaitExpressionConfig, AwaitExpressionTree, BaseFieldInitializer, BaseFieldInitializerConfig, BaseFieldInitializerTree, BinaryExpression, BinaryExpressionConfig, BinaryExpressionTree, Block, BlockComment, BlockCommentConfig, BlockCommentTree, BlockConfig, BlockTree, BooleanLiteral, BooleanLiteralTree, BoundedType, BoundedTypeConfig, BoundedTypeTree, BracketedType, BracketedTypeConfig, BracketedTypeTree, BreakExpression, BreakExpressionConfig, BreakExpressionTree, CallExpression, CallExpressionConfig, CallExpressionTree, CapturedPattern, CapturedPatternConfig, CapturedPatternTree, CharLiteral, CharLiteralTree, ClosureExpression, ClosureExpressionConfig, ClosureExpressionTree, ClosureParameters, ClosureParametersConfig, ClosureParametersTree, CompoundAssignmentExpr, CompoundAssignmentExprConfig, CompoundAssignmentExprTree, ConstBlock, ConstBlockConfig, ConstBlockTree, ConstItem, ConstItemConfig, ConstItemTree, ConstParameter, ConstParameterConfig, ConstParameterTree, ContinueExpression, ContinueExpressionConfig, ContinueExpressionTree, Crate, CrateTree, DeclarationList, DeclarationListConfig, DeclarationListTree, DeclarationStatement, DocComment, DocCommentTree, DynamicType, DynamicTypeConfig, DynamicTypeTree, ElseClause, ElseClauseConfig, ElseClauseTree, EmptyStatement, EmptyStatementTree, EnumItem, EnumItemConfig, EnumItemTree, EnumVariant, EnumVariantConfig, EnumVariantList, EnumVariantListConfig, EnumVariantListTree, EnumVariantTree, EscapeSequence, EscapeSequenceTree, Expression, ExpressionStatement, ExpressionStatementConfig, ExpressionStatementTree, ExternCrateDeclaration, ExternCrateDeclarationConfig, ExternCrateDeclarationTree, ExternModifier, ExternModifierConfig, ExternModifierTree, FieldDeclaration, FieldDeclarationConfig, FieldDeclarationList, FieldDeclarationListConfig, FieldDeclarationListTree, FieldDeclarationTree, FieldExpression, FieldExpressionConfig, FieldExpressionTree, FieldIdentifier, FieldIdentifierTree, FieldInitializer, FieldInitializerConfig, FieldInitializerList, FieldInitializerListConfig, FieldInitializerListTree, FieldInitializerTree, FieldPattern, FieldPatternConfig, FieldPatternTree, FloatLiteral, FloatLiteralTree, ForExpression, ForExpressionConfig, ForExpressionTree, ForLifetimes, ForLifetimesConfig, ForLifetimesTree, ForeignModItem, ForeignModItemConfig, ForeignModItemTree, FragmentSpecifier, FragmentSpecifierTree, FunctionItem, FunctionItemConfig, FunctionItemTree, FunctionModifiers, FunctionModifiersConfig, FunctionModifiersTree, FunctionSignatureItem, FunctionSignatureItemConfig, FunctionSignatureItemTree, FunctionType, FunctionTypeConfig, FunctionTypeTree, GenBlock, GenBlockConfig, GenBlockTree, GenericFunction, GenericFunctionConfig, GenericFunctionTree, GenericPattern, GenericPatternConfig, GenericPatternTree, GenericType, GenericTypeConfig, GenericTypeTree, GenericTypeWithTurbofish, GenericTypeWithTurbofishConfig, GenericTypeWithTurbofishTree, HigherRankedTraitBound, HigherRankedTraitBoundConfig, HigherRankedTraitBoundTree, Identifier, IdentifierTree, IfExpression, IfExpressionConfig, IfExpressionTree, ImplItem, ImplItemConfig, ImplItemTree, IndexExpression, IndexExpressionConfig, IndexExpressionTree, InnerAttributeItem, InnerAttributeItemConfig, InnerAttributeItemTree, InnerDocCommentMarker, InnerDocCommentMarkerTree, IntegerLiteral, IntegerLiteralTree, Label, LabelConfig, LabelTree, LetChain, LetChainConfig, LetChainTree, LetCondition, LetConditionConfig, LetConditionTree, LetDeclaration, LetDeclarationConfig, LetDeclarationTree, Lifetime, LifetimeConfig, LifetimeParameter, LifetimeParameterConfig, LifetimeParameterTree, LifetimeTree, LineComment, LineCommentConfig, LineCommentTree, Literal, LiteralPattern, LoopExpression, LoopExpressionConfig, LoopExpressionTree, MacroDefinition, MacroDefinitionConfig, MacroDefinitionTree, MacroInvocation, MacroInvocationConfig, MacroInvocationTree, MacroRule, MacroRuleConfig, MacroRuleTree, MatchArm, MatchArmConfig, MatchArmTree, MatchBlock, MatchBlockConfig, MatchBlockTree, MatchExpression, MatchExpressionConfig, MatchExpressionTree, MatchPattern, MatchPatternConfig, MatchPatternTree, Metavariable, MetavariableTree, ModItem, ModItemConfig, ModItemTree, MutPattern, MutPatternConfig, MutPatternTree, MutableSpecifier, MutableSpecifierTree, NegativeLiteral, NegativeLiteralConfig, NegativeLiteralTree, NeverType, NeverTypeTree, OrPattern, OrPatternConfig, OrPatternTree, OrderedFieldDeclarationList, OrderedFieldDeclarationListConfig, OrderedFieldDeclarationListTree, OuterDocCommentMarker, OuterDocCommentMarkerTree, Parameter, ParameterConfig, ParameterTree, Parameters, ParametersConfig, ParametersTree, ParenthesizedExpression, ParenthesizedExpressionConfig, ParenthesizedExpressionTree, Pattern, PointerType, PointerTypeConfig, PointerTypeTree, PrimitiveType, PrimitiveTypeTree, QualifiedType, QualifiedTypeConfig, QualifiedTypeTree, RangeExpression, RangeExpressionConfig, RangeExpressionTree, RangePattern, RangePatternConfig, RangePatternTree, RawStringLiteral, RawStringLiteralConfig, RawStringLiteralTree, RefPattern, RefPatternConfig, RefPatternTree, ReferenceExpression, ReferenceExpressionConfig, ReferenceExpressionTree, ReferencePattern, ReferencePatternConfig, ReferencePatternTree, ReferenceType, ReferenceTypeConfig, ReferenceTypeTree, RemainingFieldPattern, RemainingFieldPatternTree, RemovedTraitBound, RemovedTraitBoundConfig, RemovedTraitBoundTree, ReturnExpression, ReturnExpressionConfig, ReturnExpressionTree, ScopedIdentifier, ScopedIdentifierConfig, ScopedIdentifierTree, ScopedTypeIdentifier, ScopedTypeIdentifierConfig, ScopedTypeIdentifierTree, ScopedUseList, ScopedUseListConfig, ScopedUseListTree, Self, SelfParameter, SelfParameterConfig, SelfParameterTree, SelfTree, Shebang, ShebangTree, ShorthandFieldIdentifier, ShorthandFieldIdentifierTree, ShorthandFieldInitializer, ShorthandFieldInitializerConfig, ShorthandFieldInitializerTree, SlicePattern, SlicePatternConfig, SlicePatternTree, SourceFile, SourceFileConfig, SourceFileTree, StaticItem, StaticItemConfig, StaticItemTree, StringContent, StringContentTree, StringLiteral, StringLiteralConfig, StringLiteralTree, StructExpression, StructExpressionConfig, StructExpressionTree, StructItem, StructItemConfig, StructItemTree, StructPattern, StructPatternConfig, StructPatternTree, Super, SuperTree, TokenBindingPattern, TokenBindingPatternConfig, TokenBindingPatternTree, TokenRepetition, TokenRepetitionConfig, TokenRepetitionPattern, TokenRepetitionPatternConfig, TokenRepetitionPatternTree, TokenRepetitionTree, TokenTree, TokenTreeConfig, TokenTreePattern, TokenTreePatternConfig, TokenTreePatternTree, TokenTreeTree, TraitBounds, TraitBoundsConfig, TraitBoundsTree, TraitItem, TraitItemConfig, TraitItemTree, TryBlock, TryBlockConfig, TryBlockTree, TryExpression, TryExpressionConfig, TryExpressionTree, TupleExpression, TupleExpressionConfig, TupleExpressionTree, TuplePattern, TuplePatternConfig, TuplePatternTree, TupleStructPattern, TupleStructPatternConfig, TupleStructPatternTree, TupleType, TupleTypeConfig, TupleTypeTree, Type, TypeArguments, TypeArgumentsConfig, TypeArgumentsTree, TypeBinding, TypeBindingConfig, TypeBindingTree, TypeCastExpression, TypeCastExpressionConfig, TypeCastExpressionTree, TypeIdentifier, TypeIdentifierTree, TypeItem, TypeItemConfig, TypeItemTree, TypeParameter, TypeParameterConfig, TypeParameterTree, TypeParameters, TypeParametersConfig, TypeParametersTree, UnaryExpression, UnaryExpressionConfig, UnaryExpressionTree, UnionItem, UnionItemConfig, UnionItemTree, UnitExpression, UnitExpressionTree, UnitType, UnitTypeTree, UnsafeBlock, UnsafeBlockConfig, UnsafeBlockTree, UseAsClause, UseAsClauseConfig, UseAsClauseTree, UseBounds, UseBoundsConfig, UseBoundsTree, UseDeclaration, UseDeclarationConfig, UseDeclarationTree, UseList, UseListConfig, UseListTree, UseWildcard, UseWildcardConfig, UseWildcardTree, VariadicParameter, VariadicParameterConfig, VariadicParameterTree, VisibilityModifier, VisibilityModifierConfig, VisibilityModifierTree, WhereClause, WhereClauseConfig, WhereClauseTree, WherePredicate, WherePredicateConfig, WherePredicateTree, WhileExpression, WhileExpressionConfig, WhileExpressionTree, YieldExpression, YieldExpressionConfig, YieldExpressionTree } from './types.js';
 import type { Edit, AnyNodeData } from '@sittir/types';
-import { render, toEdit } from '@sittir/core';
+import { createRenderer } from '@sittir/core';
 import { rules } from './rules.js';
 import { joinBy } from './joinby.js';
+
+const { render, toEdit } = createRenderer(rules, joinBy);
 
 const RESERVED_KEYWORDS = new Set([
   '_',
@@ -69,12 +71,12 @@ export function abstractType(
     type: 'abstract_type' as const,
     trait: (v: BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier) => abstractType({ ...config, 'trait': v }),
     children: (v: TypeParameters) => abstractType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AbstractTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AbstractTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -85,12 +87,12 @@ export function arguments_(
   return {
     type: 'arguments' as const,
     children: (...v: (AttributeItem | Expression)[]) => arguments_({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ArgumentsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ArgumentsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -102,12 +104,12 @@ export function arrayExpression(
     type: 'array_expression' as const,
     length: (v: Expression) => arrayExpression({ ...config, 'length': v }),
     children: (...v: (AttributeItem | Expression)[]) => arrayExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ArrayExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ArrayExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -119,12 +121,12 @@ export function arrayType(
     type: 'array_type' as const,
     element: (v: Type) => arrayType({ ...config, 'element': v }),
     length: (v: Expression) => arrayType({ ...config, 'length': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ArrayTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ArrayTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -136,12 +138,12 @@ export function assignmentExpression(
     type: 'assignment_expression' as const,
     left: (v: Expression) => assignmentExpression({ ...config, 'left': v }),
     right: (v: Expression) => assignmentExpression({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AssignmentExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AssignmentExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -155,12 +157,12 @@ export function associatedType(
     typeParameters: (v: TypeParameters) => associatedType({ ...config, 'type_parameters': v }),
     bounds: (v: TraitBounds) => associatedType({ ...config, 'bounds': v }),
     children: (v: WhereClause) => associatedType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AssociatedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AssociatedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -171,12 +173,12 @@ export function asyncBlock(
   return {
     type: 'async_block' as const,
     children: (v: Block) => asyncBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AsyncBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AsyncBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -189,12 +191,12 @@ export function attribute(
     value: (v: Expression) => attribute({ ...config, 'value': v }),
     arguments: (v: TokenTree) => attribute({ ...config, 'arguments': v }),
     children: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => attribute({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AttributeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AttributeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -205,12 +207,12 @@ export function attributeItem(
   return {
     type: 'attribute_item' as const,
     children: (v: Attribute) => attributeItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AttributeItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AttributeItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -221,12 +223,12 @@ export function awaitExpression(
   return {
     type: 'await_expression' as const,
     children: (v: Expression) => awaitExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AwaitExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AwaitExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -237,12 +239,12 @@ export function baseFieldInitializer(
   return {
     type: 'base_field_initializer' as const,
     children: (v: Expression) => baseFieldInitializer({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BaseFieldInitializerTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BaseFieldInitializerTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -255,12 +257,12 @@ export function binaryExpression(
     left: (v: Expression) => binaryExpression({ ...config, 'left': v }),
     operator: (v: '&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%') => binaryExpression({ ...config, 'operator': { type: v, text: v } as const }),
     right: (v: Expression) => binaryExpression({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BinaryExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BinaryExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -271,12 +273,12 @@ export function block(
   return {
     type: 'block' as const,
     children: (...v: (DeclarationStatement | Expression | ExpressionStatement | Label)[]) => block({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -289,12 +291,12 @@ export function blockComment(
     outer: (v: OuterDocCommentMarker) => blockComment({ ...config, 'outer': v }),
     inner: (v: InnerDocCommentMarker) => blockComment({ ...config, 'inner': v }),
     doc: (v: DocComment) => blockComment({ ...config, 'doc': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BlockCommentTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BlockCommentTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -305,12 +307,12 @@ export function boundedType(
   return {
     type: 'bounded_type' as const,
     children: (...v: (Lifetime | Type | UseBounds)[]) => boundedType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BoundedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BoundedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -321,12 +323,12 @@ export function bracketedType(
   return {
     type: 'bracketed_type' as const,
     children: (v: QualifiedType | Type) => bracketedType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BracketedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BracketedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -337,12 +339,12 @@ export function breakExpression(
   return {
     type: 'break_expression' as const,
     children: (...v: (Expression | Label)[]) => breakExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BreakExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BreakExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -354,12 +356,12 @@ export function callExpression(
     type: 'call_expression' as const,
     function: (v: ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | Block | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | Literal | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression) => callExpression({ ...config, 'function': v }),
     arguments: (v: Arguments) => callExpression({ ...config, 'arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: CallExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: CallExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -370,12 +372,12 @@ export function capturedPattern(
   return {
     type: 'captured_pattern' as const,
     children: (...v: (Pattern)[]) => capturedPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: CapturedPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: CapturedPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -388,12 +390,12 @@ export function closureExpression(
     parameters: (v: ClosureParameters) => closureExpression({ ...config, 'parameters': v }),
     returnType: (v: Type) => closureExpression({ ...config, 'return_type': v }),
     body: (v: Expression) => closureExpression({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ClosureExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ClosureExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -404,12 +406,12 @@ export function closureParameters(
   return {
     type: 'closure_parameters' as const,
     children: (...v: (Parameter | Pattern)[]) => closureParameters({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ClosureParametersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ClosureParametersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -422,12 +424,12 @@ export function compoundAssignmentExpr(
     left: (v: Expression) => compoundAssignmentExpr({ ...config, 'left': v }),
     operator: (v: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=') => compoundAssignmentExpr({ ...config, 'operator': { type: v, text: v } as const }),
     right: (v: Expression) => compoundAssignmentExpr({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: CompoundAssignmentExprTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: CompoundAssignmentExprTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -438,12 +440,12 @@ export function constBlock(
   return {
     type: 'const_block' as const,
     body: (v: Block) => constBlock({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ConstBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ConstBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -457,12 +459,12 @@ export function constItem(
     typeField: (v: Type) => constItem({ ...config, 'type': v }),
     value: (v: Expression) => constItem({ ...config, 'value': v }),
     children: (v: VisibilityModifier) => constItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ConstItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ConstItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -475,12 +477,12 @@ export function constParameter(
     name: (v: Identifier) => constParameter({ ...config, 'name': v }),
     typeField: (v: Type) => constParameter({ ...config, 'type': v }),
     value: (v: Block | Identifier | LiteralPattern) => constParameter({ ...config, 'value': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ConstParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ConstParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -491,12 +493,12 @@ export function continueExpression(
   return {
     type: 'continue_expression' as const,
     children: (v: Label) => continueExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ContinueExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ContinueExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -507,12 +509,12 @@ export function declarationList(
   return {
     type: 'declaration_list' as const,
     children: (...v: (DeclarationStatement)[]) => declarationList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: DeclarationListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: DeclarationListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -523,12 +525,12 @@ export function dynamicType(
   return {
     type: 'dynamic_type' as const,
     trait: (v: FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier) => dynamicType({ ...config, 'trait': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: DynamicTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: DynamicTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -539,12 +541,12 @@ export function elseClause(
   return {
     type: 'else_clause' as const,
     children: (v: Block | IfExpression) => elseClause({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ElseClauseTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ElseClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -558,12 +560,12 @@ export function enumItem(
     typeParameters: (v: TypeParameters) => enumItem({ ...config, 'type_parameters': v }),
     body: (v: EnumVariantList) => enumItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => enumItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: EnumItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: EnumItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -577,12 +579,12 @@ export function enumVariant(
     body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => enumVariant({ ...config, 'body': v }),
     value: (v: Expression) => enumVariant({ ...config, 'value': v }),
     children: (v: VisibilityModifier) => enumVariant({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: EnumVariantTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: EnumVariantTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -593,12 +595,12 @@ export function enumVariantList(
   return {
     type: 'enum_variant_list' as const,
     children: (...v: (AttributeItem | EnumVariant)[]) => enumVariantList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: EnumVariantListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: EnumVariantListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -609,12 +611,12 @@ export function expressionStatement(
   return {
     type: 'expression_statement' as const,
     children: (v: Expression) => expressionStatement({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ExpressionStatementTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ExpressionStatementTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -627,12 +629,12 @@ export function externCrateDeclaration(
     name: (v: Identifier) => externCrateDeclaration({ ...config, 'name': v }),
     alias: (v: Identifier) => externCrateDeclaration({ ...config, 'alias': v }),
     children: (...v: (Crate | VisibilityModifier)[]) => externCrateDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ExternCrateDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ExternCrateDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -643,12 +645,12 @@ export function externModifier(
   return {
     type: 'extern_modifier' as const,
     children: (v: StringLiteral) => externModifier({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ExternModifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ExternModifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -661,12 +663,12 @@ export function fieldDeclaration(
     name: (v: FieldIdentifier) => fieldDeclaration({ ...config, 'name': v }),
     typeField: (v: Type) => fieldDeclaration({ ...config, 'type': v }),
     children: (v: VisibilityModifier) => fieldDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -677,12 +679,12 @@ export function fieldDeclarationList(
   return {
     type: 'field_declaration_list' as const,
     children: (...v: (AttributeItem | FieldDeclaration)[]) => fieldDeclarationList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldDeclarationListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldDeclarationListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -694,12 +696,12 @@ export function fieldExpression(
     type: 'field_expression' as const,
     value: (v: Expression) => fieldExpression({ ...config, 'value': v }),
     field: (v: FieldIdentifier | IntegerLiteral) => fieldExpression({ ...config, 'field': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -712,12 +714,12 @@ export function fieldInitializer(
     field: (v: FieldIdentifier | IntegerLiteral) => fieldInitializer({ ...config, 'field': v }),
     value: (v: Expression) => fieldInitializer({ ...config, 'value': v }),
     children: (...v: (AttributeItem)[]) => fieldInitializer({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldInitializerTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldInitializerTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -728,12 +730,12 @@ export function fieldInitializerList(
   return {
     type: 'field_initializer_list' as const,
     children: (...v: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]) => fieldInitializerList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldInitializerListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldInitializerListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -746,12 +748,12 @@ export function fieldPattern(
     name: (v: FieldIdentifier | ShorthandFieldIdentifier) => fieldPattern({ ...config, 'name': v }),
     pattern: (v: Pattern) => fieldPattern({ ...config, 'pattern': v }),
     children: (v: MutableSpecifier) => fieldPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -765,12 +767,12 @@ export function forExpression(
     value: (v: Expression) => forExpression({ ...config, 'value': v }),
     body: (v: Block) => forExpression({ ...config, 'body': v }),
     children: (v: Label) => forExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ForExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ForExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -781,12 +783,12 @@ export function forLifetimes(
   return {
     type: 'for_lifetimes' as const,
     children: (...v: (Lifetime)[]) => forLifetimes({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ForLifetimesTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ForLifetimesTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -798,12 +800,12 @@ export function foreignModItem(
     type: 'foreign_mod_item' as const,
     body: (v: DeclarationList) => foreignModItem({ ...config, 'body': v }),
     children: (...v: (ExternModifier | VisibilityModifier)[]) => foreignModItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ForeignModItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ForeignModItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -819,12 +821,12 @@ export function functionItem(
     returnType: (v: Type) => functionItem({ ...config, 'return_type': v }),
     body: (v: Block) => functionItem({ ...config, 'body': v }),
     children: (...v: (FunctionModifiers | VisibilityModifier | WhereClause)[]) => functionItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -835,12 +837,12 @@ export function functionModifiers(
   return {
     type: 'function_modifiers' as const,
     children: (...v: (ExternModifier)[]) => functionModifiers({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionModifiersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionModifiersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -855,12 +857,12 @@ export function functionSignatureItem(
     parameters: (v: Parameters) => functionSignatureItem({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionSignatureItem({ ...config, 'return_type': v }),
     children: (...v: (FunctionModifiers | VisibilityModifier | WhereClause)[]) => functionSignatureItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionSignatureItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionSignatureItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -874,12 +876,12 @@ export function functionType(
     parameters: (v: Parameters) => functionType({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionType({ ...config, 'return_type': v }),
     children: (...v: (ForLifetimes | FunctionModifiers)[]) => functionType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -890,12 +892,12 @@ export function genBlock(
   return {
     type: 'gen_block' as const,
     children: (v: Block) => genBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -907,12 +909,12 @@ export function genericFunction(
     type: 'generic_function' as const,
     function: (v: FieldExpression | Identifier | ScopedIdentifier) => genericFunction({ ...config, 'function': v }),
     typeArguments: (v: TypeArguments) => genericFunction({ ...config, 'type_arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericFunctionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericFunctionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -924,12 +926,12 @@ export function genericPattern(
     type: 'generic_pattern' as const,
     typeArguments: (v: TypeArguments) => genericPattern({ ...config, 'type_arguments': v }),
     children: (v: Identifier | ScopedIdentifier) => genericPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -941,12 +943,12 @@ export function genericType(
     type: 'generic_type' as const,
     typeField: (v: Identifier | ScopedTypeIdentifier | TypeIdentifier) => genericType({ ...config, 'type': v }),
     typeArguments: (v: TypeArguments) => genericType({ ...config, 'type_arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -958,12 +960,12 @@ export function genericTypeWithTurbofish(
     type: 'generic_type_with_turbofish' as const,
     typeField: (v: ScopedIdentifier | TypeIdentifier) => genericTypeWithTurbofish({ ...config, 'type': v }),
     typeArguments: (v: TypeArguments) => genericTypeWithTurbofish({ ...config, 'type_arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericTypeWithTurbofishTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericTypeWithTurbofishTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -975,12 +977,12 @@ export function higherRankedTraitBound(
     type: 'higher_ranked_trait_bound' as const,
     typeParameters: (v: TypeParameters) => higherRankedTraitBound({ ...config, 'type_parameters': v }),
     typeField: (v: Type) => higherRankedTraitBound({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: HigherRankedTraitBoundTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: HigherRankedTraitBoundTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -993,12 +995,12 @@ export function ifExpression(
     condition: (v: Expression | LetChain | LetCondition) => ifExpression({ ...config, 'condition': v }),
     consequence: (v: Block) => ifExpression({ ...config, 'consequence': v }),
     alternative: (v: ElseClause) => ifExpression({ ...config, 'alternative': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: IfExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: IfExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1013,12 +1015,12 @@ export function implItem(
     typeField: (v: Type) => implItem({ ...config, 'type': v }),
     body: (v: DeclarationList) => implItem({ ...config, 'body': v }),
     children: (v: WhereClause) => implItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ImplItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ImplItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1029,12 +1031,12 @@ export function indexExpression(
   return {
     type: 'index_expression' as const,
     children: (...v: (Expression)[]) => indexExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: IndexExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: IndexExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1045,12 +1047,12 @@ export function innerAttributeItem(
   return {
     type: 'inner_attribute_item' as const,
     children: (v: Attribute) => innerAttributeItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: InnerAttributeItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: InnerAttributeItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1061,12 +1063,12 @@ export function label(
   return {
     type: 'label' as const,
     children: (v: Identifier) => label({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LabelTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LabelTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1077,12 +1079,12 @@ export function letChain(
   return {
     type: 'let_chain' as const,
     children: (...v: (Expression | LetCondition)[]) => letChain({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LetChainTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LetChainTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1094,12 +1096,12 @@ export function letCondition(
     type: 'let_condition' as const,
     pattern: (v: Pattern) => letCondition({ ...config, 'pattern': v }),
     value: (v: Expression) => letCondition({ ...config, 'value': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LetConditionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LetConditionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1114,12 +1116,12 @@ export function letDeclaration(
     value: (v: Expression) => letDeclaration({ ...config, 'value': v }),
     alternative: (v: Block) => letDeclaration({ ...config, 'alternative': v }),
     children: (v: MutableSpecifier) => letDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LetDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LetDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1130,12 +1132,12 @@ export function lifetime(
   return {
     type: 'lifetime' as const,
     children: (v: Identifier) => lifetime({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LifetimeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LifetimeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1147,12 +1149,12 @@ export function lifetimeParameter(
     type: 'lifetime_parameter' as const,
     name: (v: Lifetime) => lifetimeParameter({ ...config, 'name': v }),
     bounds: (v: TraitBounds) => lifetimeParameter({ ...config, 'bounds': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LifetimeParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LifetimeParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1165,12 +1167,12 @@ export function lineComment(
     outer: (v: OuterDocCommentMarker) => lineComment({ ...config, 'outer': v }),
     inner: (v: InnerDocCommentMarker) => lineComment({ ...config, 'inner': v }),
     doc: (v: DocComment) => lineComment({ ...config, 'doc': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LineCommentTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LineCommentTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1182,12 +1184,12 @@ export function loopExpression(
     type: 'loop_expression' as const,
     body: (v: Block) => loopExpression({ ...config, 'body': v }),
     children: (v: Label) => loopExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LoopExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LoopExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1199,12 +1201,12 @@ export function macroDefinition(
     type: 'macro_definition' as const,
     name: (v: Identifier) => macroDefinition({ ...config, 'name': v }),
     children: (...v: (MacroRule)[]) => macroDefinition({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MacroDefinitionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MacroDefinitionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1216,12 +1218,12 @@ export function macroInvocation(
     type: 'macro_invocation' as const,
     macro: (v: Identifier | ScopedIdentifier) => macroInvocation({ ...config, 'macro': v }),
     children: (v: TokenTree) => macroInvocation({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MacroInvocationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MacroInvocationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1233,12 +1235,12 @@ export function macroRule(
     type: 'macro_rule' as const,
     left: (v: TokenTreePattern) => macroRule({ ...config, 'left': v }),
     right: (v: TokenTree) => macroRule({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MacroRuleTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MacroRuleTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1251,12 +1253,12 @@ export function matchArm(
     pattern: (v: MatchPattern) => matchArm({ ...config, 'pattern': v }),
     value: (v: Expression) => matchArm({ ...config, 'value': v }),
     children: (...v: (AttributeItem | InnerAttributeItem)[]) => matchArm({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchArmTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchArmTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1267,12 +1269,12 @@ export function matchBlock(
   return {
     type: 'match_block' as const,
     children: (...v: (MatchArm)[]) => matchBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1284,12 +1286,12 @@ export function matchExpression(
     type: 'match_expression' as const,
     value: (v: Expression) => matchExpression({ ...config, 'value': v }),
     body: (v: MatchBlock) => matchExpression({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1301,12 +1303,12 @@ export function matchPattern(
     type: 'match_pattern' as const,
     condition: (v: Expression | LetChain | LetCondition) => matchPattern({ ...config, 'condition': v }),
     children: (v: Pattern) => matchPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1319,12 +1321,12 @@ export function modItem(
     name: (v: Identifier) => modItem({ ...config, 'name': v }),
     body: (v: DeclarationList) => modItem({ ...config, 'body': v }),
     children: (v: VisibilityModifier) => modItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ModItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ModItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1335,12 +1337,12 @@ export function mutPattern(
   return {
     type: 'mut_pattern' as const,
     children: (...v: (MutableSpecifier | Pattern)[]) => mutPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MutPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MutPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1351,12 +1353,12 @@ export function negativeLiteral(
   return {
     type: 'negative_literal' as const,
     children: (v: FloatLiteral | IntegerLiteral) => negativeLiteral({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: NegativeLiteralTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: NegativeLiteralTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1367,12 +1369,12 @@ export function orPattern(
   return {
     type: 'or_pattern' as const,
     children: (...v: (Pattern)[]) => orPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: OrPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: OrPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1384,12 +1386,12 @@ export function orderedFieldDeclarationList(
     type: 'ordered_field_declaration_list' as const,
     typeField: (...v: (Type)[]) => orderedFieldDeclarationList({ ...config, 'type': v }),
     children: (...v: (AttributeItem | VisibilityModifier)[]) => orderedFieldDeclarationList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: OrderedFieldDeclarationListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: OrderedFieldDeclarationListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1402,12 +1404,12 @@ export function parameter(
     pattern: (v: Pattern | Self) => parameter({ ...config, 'pattern': v }),
     typeField: (v: Type) => parameter({ ...config, 'type': v }),
     children: (v: MutableSpecifier) => parameter({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1418,12 +1420,12 @@ export function parameters(
   return {
     type: 'parameters' as const,
     children: (...v: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]) => parameters({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ParametersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ParametersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1434,12 +1436,12 @@ export function parenthesizedExpression(
   return {
     type: 'parenthesized_expression' as const,
     children: (v: Expression) => parenthesizedExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ParenthesizedExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ParenthesizedExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1451,12 +1453,12 @@ export function pointerType(
     type: 'pointer_type' as const,
     typeField: (v: Type) => pointerType({ ...config, 'type': v }),
     children: (v: MutableSpecifier) => pointerType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: PointerTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: PointerTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1468,12 +1470,12 @@ export function qualifiedType(
     type: 'qualified_type' as const,
     typeField: (v: Type) => qualifiedType({ ...config, 'type': v }),
     alias: (v: Type) => qualifiedType({ ...config, 'alias': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: QualifiedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: QualifiedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1484,12 +1486,12 @@ export function rangeExpression(
   return {
     type: 'range_expression' as const,
     children: (...v: (Expression)[]) => rangeExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RangeExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RangeExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1501,12 +1503,12 @@ export function rangePattern(
     type: 'range_pattern' as const,
     left: (v: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super) => rangePattern({ ...config, 'left': v }),
     right: (v: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super) => rangePattern({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RangePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RangePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1517,12 +1519,12 @@ export function rawStringLiteral(
   return {
     type: 'raw_string_literal' as const,
     children: (v: StringContent) => rawStringLiteral({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RawStringLiteralTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RawStringLiteralTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1533,12 +1535,12 @@ export function refPattern(
   return {
     type: 'ref_pattern' as const,
     children: (v: Pattern) => refPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RefPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RefPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1550,12 +1552,12 @@ export function referenceExpression(
     type: 'reference_expression' as const,
     value: (v: Expression) => referenceExpression({ ...config, 'value': v }),
     children: (v: MutableSpecifier) => referenceExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReferenceExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReferenceExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1566,12 +1568,12 @@ export function referencePattern(
   return {
     type: 'reference_pattern' as const,
     children: (...v: (MutableSpecifier | Pattern)[]) => referencePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReferencePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReferencePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1583,12 +1585,12 @@ export function referenceType(
     type: 'reference_type' as const,
     typeField: (v: Type) => referenceType({ ...config, 'type': v }),
     children: (...v: (Lifetime | MutableSpecifier)[]) => referenceType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReferenceTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReferenceTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1599,12 +1601,12 @@ export function removedTraitBound(
   return {
     type: 'removed_trait_bound' as const,
     children: (v: Type) => removedTraitBound({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RemovedTraitBoundTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RemovedTraitBoundTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1615,12 +1617,12 @@ export function returnExpression(
   return {
     type: 'return_expression' as const,
     children: (v: Expression) => returnExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReturnExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReturnExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1632,12 +1634,12 @@ export function scopedIdentifier(
     type: 'scoped_identifier' as const,
     path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedIdentifier({ ...config, 'path': v }),
     name: (v: Identifier | Super) => scopedIdentifier({ ...config, 'name': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ScopedIdentifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ScopedIdentifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1649,12 +1651,12 @@ export function scopedTypeIdentifier(
     type: 'scoped_type_identifier' as const,
     path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedTypeIdentifier({ ...config, 'path': v }),
     name: (v: TypeIdentifier) => scopedTypeIdentifier({ ...config, 'name': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ScopedTypeIdentifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ScopedTypeIdentifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1666,12 +1668,12 @@ export function scopedUseList(
     type: 'scoped_use_list' as const,
     path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedUseList({ ...config, 'path': v }),
     list: (v: UseList) => scopedUseList({ ...config, 'list': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ScopedUseListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ScopedUseListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1682,12 +1684,12 @@ export function selfParameter(
   return {
     type: 'self_parameter' as const,
     children: (...v: (Lifetime | MutableSpecifier | Self)[]) => selfParameter({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: SelfParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: SelfParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1698,12 +1700,12 @@ export function shorthandFieldInitializer(
   return {
     type: 'shorthand_field_initializer' as const,
     children: (...v: (AttributeItem | Identifier)[]) => shorthandFieldInitializer({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ShorthandFieldInitializerTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ShorthandFieldInitializerTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1714,12 +1716,12 @@ export function slicePattern(
   return {
     type: 'slice_pattern' as const,
     children: (...v: (Pattern)[]) => slicePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: SlicePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: SlicePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1730,12 +1732,12 @@ export function sourceFile(
   return {
     type: 'source_file' as const,
     children: (...v: (DeclarationStatement | ExpressionStatement | Shebang)[]) => sourceFile({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: SourceFileTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: SourceFileTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1749,12 +1751,12 @@ export function staticItem(
     typeField: (v: Type) => staticItem({ ...config, 'type': v }),
     value: (v: Expression) => staticItem({ ...config, 'value': v }),
     children: (...v: (MutableSpecifier | VisibilityModifier)[]) => staticItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StaticItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StaticItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1765,12 +1767,12 @@ export function stringLiteral(
   return {
     type: 'string_literal' as const,
     children: (...v: (EscapeSequence | StringContent)[]) => stringLiteral({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StringLiteralTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StringLiteralTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1782,12 +1784,12 @@ export function structExpression(
     type: 'struct_expression' as const,
     name: (v: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier) => structExpression({ ...config, 'name': v }),
     body: (v: FieldInitializerList) => structExpression({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StructExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StructExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1801,12 +1803,12 @@ export function structItem(
     typeParameters: (v: TypeParameters) => structItem({ ...config, 'type_parameters': v }),
     body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => structItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => structItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StructItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StructItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1818,12 +1820,12 @@ export function structPattern(
     type: 'struct_pattern' as const,
     typeField: (v: ScopedTypeIdentifier | TypeIdentifier) => structPattern({ ...config, 'type': v }),
     children: (...v: (FieldPattern | RemainingFieldPattern)[]) => structPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StructPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StructPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1835,12 +1837,12 @@ export function tokenBindingPattern(
     type: 'token_binding_pattern' as const,
     name: (v: Metavariable) => tokenBindingPattern({ ...config, 'name': v }),
     typeField: (v: FragmentSpecifier) => tokenBindingPattern({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenBindingPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenBindingPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1851,12 +1853,12 @@ export function tokenRepetition(
   return {
     type: 'token_repetition' as const,
     children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) => tokenRepetition({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenRepetitionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenRepetitionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1867,12 +1869,12 @@ export function tokenRepetitionPattern(
   return {
     type: 'token_repetition_pattern' as const,
     children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) => tokenRepetitionPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenRepetitionPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenRepetitionPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1883,12 +1885,12 @@ export function tokenTree(
   return {
     type: 'token_tree' as const,
     children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) => tokenTree({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenTreeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenTreeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1899,12 +1901,12 @@ export function tokenTreePattern(
   return {
     type: 'token_tree_pattern' as const,
     children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) => tokenTreePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenTreePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenTreePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1915,12 +1917,12 @@ export function traitBounds(
   return {
     type: 'trait_bounds' as const,
     children: (...v: (HigherRankedTraitBound | Lifetime | Type)[]) => traitBounds({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TraitBoundsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TraitBoundsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1935,12 +1937,12 @@ export function traitItem(
     bounds: (v: TraitBounds) => traitItem({ ...config, 'bounds': v }),
     body: (v: DeclarationList) => traitItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => traitItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TraitItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TraitItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1951,12 +1953,12 @@ export function tryBlock(
   return {
     type: 'try_block' as const,
     children: (v: Block) => tryBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TryBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TryBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1967,12 +1969,12 @@ export function tryExpression(
   return {
     type: 'try_expression' as const,
     children: (v: Expression) => tryExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TryExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TryExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1983,12 +1985,12 @@ export function tupleExpression(
   return {
     type: 'tuple_expression' as const,
     children: (...v: (AttributeItem | Expression)[]) => tupleExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TupleExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TupleExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1999,12 +2001,12 @@ export function tuplePattern(
   return {
     type: 'tuple_pattern' as const,
     children: (...v: (ClosureExpression | Pattern)[]) => tuplePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TuplePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TuplePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2016,12 +2018,12 @@ export function tupleStructPattern(
     type: 'tuple_struct_pattern' as const,
     typeField: (v: GenericType | Identifier | ScopedIdentifier) => tupleStructPattern({ ...config, 'type': v }),
     children: (...v: (Pattern)[]) => tupleStructPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TupleStructPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TupleStructPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2032,12 +2034,12 @@ export function tupleType(
   return {
     type: 'tuple_type' as const,
     children: (...v: (Type)[]) => tupleType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TupleTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TupleTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2048,12 +2050,12 @@ export function typeArguments(
   return {
     type: 'type_arguments' as const,
     children: (...v: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]) => typeArguments({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeArgumentsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeArgumentsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2066,12 +2068,12 @@ export function typeBinding(
     name: (v: TypeIdentifier) => typeBinding({ ...config, 'name': v }),
     typeArguments: (v: TypeArguments) => typeBinding({ ...config, 'type_arguments': v }),
     typeField: (v: Type) => typeBinding({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeBindingTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeBindingTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2083,12 +2085,12 @@ export function typeCastExpression(
     type: 'type_cast_expression' as const,
     value: (v: Expression) => typeCastExpression({ ...config, 'value': v }),
     typeField: (v: Type) => typeCastExpression({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeCastExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeCastExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2102,12 +2104,12 @@ export function typeItem(
     typeParameters: (v: TypeParameters) => typeItem({ ...config, 'type_parameters': v }),
     typeField: (v: Type) => typeItem({ ...config, 'type': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => typeItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2120,12 +2122,12 @@ export function typeParameter(
     name: (v: TypeIdentifier) => typeParameter({ ...config, 'name': v }),
     bounds: (v: TraitBounds) => typeParameter({ ...config, 'bounds': v }),
     defaultType: (v: Type) => typeParameter({ ...config, 'default_type': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2136,12 +2138,12 @@ export function typeParameters(
   return {
     type: 'type_parameters' as const,
     children: (...v: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) => typeParameters({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeParametersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeParametersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2152,12 +2154,12 @@ export function unaryExpression(
   return {
     type: 'unary_expression' as const,
     children: (v: Expression) => unaryExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UnaryExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UnaryExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2171,12 +2173,12 @@ export function unionItem(
     typeParameters: (v: TypeParameters) => unionItem({ ...config, 'type_parameters': v }),
     body: (v: FieldDeclarationList) => unionItem({ ...config, 'body': v }),
     children: (...v: (VisibilityModifier | WhereClause)[]) => unionItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UnionItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UnionItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2187,12 +2189,12 @@ export function unsafeBlock(
   return {
     type: 'unsafe_block' as const,
     children: (v: Block) => unsafeBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UnsafeBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UnsafeBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2204,12 +2206,12 @@ export function useAsClause(
     type: 'use_as_clause' as const,
     path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => useAsClause({ ...config, 'path': v }),
     alias: (v: Identifier) => useAsClause({ ...config, 'alias': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseAsClauseTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseAsClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2220,12 +2222,12 @@ export function useBounds(
   return {
     type: 'use_bounds' as const,
     children: (...v: (Lifetime | TypeIdentifier)[]) => useBounds({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseBoundsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseBoundsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2237,12 +2239,12 @@ export function useDeclaration(
     type: 'use_declaration' as const,
     argument: (v: Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard) => useDeclaration({ ...config, 'argument': v }),
     children: (v: VisibilityModifier) => useDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2253,12 +2255,12 @@ export function useList(
   return {
     type: 'use_list' as const,
     children: (...v: (Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard)[]) => useList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2269,12 +2271,12 @@ export function useWildcard(
   return {
     type: 'use_wildcard' as const,
     children: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => useWildcard({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseWildcardTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseWildcardTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2286,12 +2288,12 @@ export function variadicParameter(
     type: 'variadic_parameter' as const,
     pattern: (v: Pattern) => variadicParameter({ ...config, 'pattern': v }),
     children: (v: MutableSpecifier) => variadicParameter({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: VariadicParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: VariadicParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2302,12 +2304,12 @@ export function visibilityModifier(
   return {
     type: 'visibility_modifier' as const,
     children: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => visibilityModifier({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: VisibilityModifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: VisibilityModifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2318,12 +2320,12 @@ export function whereClause(
   return {
     type: 'where_clause' as const,
     children: (...v: (WherePredicate)[]) => whereClause({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: WhereClauseTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: WhereClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2335,12 +2337,12 @@ export function wherePredicate(
     type: 'where_predicate' as const,
     left: (v: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier) => wherePredicate({ ...config, 'left': v }),
     bounds: (v: TraitBounds) => wherePredicate({ ...config, 'bounds': v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: WherePredicateTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: WherePredicateTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2353,12 +2355,12 @@ export function whileExpression(
     condition: (v: Expression | LetChain | LetCondition) => whileExpression({ ...config, 'condition': v }),
     body: (v: Block) => whileExpression({ ...config, 'body': v }),
     children: (v: Label) => whileExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: WhileExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: WhileExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2369,12 +2371,12 @@ export function yieldExpression(
   return {
     type: 'yield_expression' as const,
     children: (v: Expression) => yieldExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: YieldExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: YieldExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2703,9 +2705,7 @@ export function primitiveType(text: 'bool' | 'char' | 'f32' | 'f64' | 'i128' | '
       return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: text };
     },
     replace: (target: PrimitiveTypeTree) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-
   };
-  let t : PrimitiveType = 'a';
 }
 
 export function self() {
@@ -2805,3 +2805,4 @@ export function typeIdentifier(text: string) {
     replace: (target: TypeIdentifierTree) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
+

@@ -93,13 +93,13 @@ export function emitFactory(config: {
 		}
 	}
 
-	// Render/edit methods — use `this` via method shorthand for direct return
-	lines.push(`    render() { return render(this, rules, joinBy); },`);
+	// Render/edit methods — use bound renderer (rules/joinBy closed over at module level)
+	lines.push(`    render() { return render(this); },`);
 	lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`);
-	lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);`);
-	lines.push(`      return toEdit(this, rules, startOrRange, joinBy);`);
+	lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`);
+	lines.push(`      return toEdit(this, startOrRange);`);
 	lines.push(`    },`);
-	lines.push(`    replace(target: ${typeName}Tree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },`);
+	lines.push(`    replace(target: ${typeName}Tree) { const r = target.range(); return toEdit(this, r); },`);
 
 	lines.push(`  };`);
 	lines.push(`}`);
@@ -248,9 +248,11 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	const sortedTypes = [...allTypeNames].sort();
 	lines.push(`import type { ${sortedTypes.join(', ')} } from './types.js';`);
 	lines.push("import type { Edit, AnyNodeData } from '@sittir/types';");
-	lines.push("import { render, toEdit } from '@sittir/core';");
+	lines.push("import { createRenderer } from '@sittir/core';");
 	lines.push("import { rules } from './rules.js';");
 	lines.push("import { joinBy } from './joinby.js';");
+	lines.push('');
+	lines.push('const { render, toEdit } = createRenderer(rules, joinBy);');
 	lines.push('');
 
 	// Reserved keywords set for input validation (FR-023)
