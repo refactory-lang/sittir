@@ -8,39 +8,36 @@
 ## Mental Model
 
 ```
-grammar.json ──────────────────► Grammar            (raw, complete)
-                                    │ enrich
+grammar.json ──────────────────► Grammar              (raw, complete)
+                                    │ classifyRules
                                     ▼
-                                 EnrichedGrammar     (heuristic-derived attributes)
-                                    │
-node-types.json ───► NodeTypes ─────┤
-                                    │ initialize
+                                 EnrichedRule[]         (grammar-introspected, classified)
+
+node-types.json ───► NodeTypes ──► NodeModel[]          (initial shells from NT)
+                                    │ reconcile (merge EnrichedRule[])
                                     ▼
-                                 NodeModel[]         (categorized, FieldModel/ChildModel created)
+                                 NodeModel[]            (grammar + NT merged, rules attached)
+                                    │ apply members
+                                    ▼
+                                 NodeModel[]            (ordered members from rule walking)
                                     │ refine model type
                                     ▼
-                                 NodeModel[]         (model types corrected)
-                                    │ apply non-grammar heuristics
+                                 NodeModel[]            (final model type classification)
+                                    │ semantic aliases
                                     ▼
-                                 NodeModel[]         (non-grammar heuristics applied)
-                                    │ apply members + rule
+                                 NodeModel[]            (anonymous tokens given meaningful names)
+                                    │ naming
                                     ▼
-                                 NodeModel[]         (members from EnrichedGrammar, rules attached)
-                                    │ apply grammar-based heuristics
-                                    ▼
-                                 NodeModel[]         (grammar-derived enrichment: separators, patterns, field kinds)
-                                    │ refine model type again
-                                    ▼
-                                 NodeModel[]         (final model type classification)
+                                 NodeModel[]            (typeName, factoryName, propertyName)
                                     │ optimize
                                     ▼
-                                 NodeModel[]         (repeated patterns identified, signatures interned)
+                                 NodeModel[]            (repeated patterns identified, signatures interned)
                                     │ hydrate
                                     ▼
-                                 NodeModel[]         (kind strings → NodeModel references)
+                                 NodeModel[]            (kind strings → NodeModel references)
                                     │
                                     ▼
-                                 Emitters            (pure template producers)
+                                 Emitters               (pure template producers)
 ```
 
 Each arrow is a distinct, testable step. Each step has well-defined inputs and outputs.
@@ -69,80 +66,60 @@ interface Grammar {
 
 ### Methods
 
-| Method | Classification | What it does |
-|--------|---------------|--------------|
-| `loadGrammar(path)` | Raw read | Parse grammar.json, return Grammar |
-| `getRule(grammar, kind)` | Raw read | Lookup rule by kind name |
+| Method | What it does |
+|--------|-------------|
+| `loadGrammar(grammarName)` | Parse grammar.json, return Grammar |
+| `getRule(grammar, kind)` | Lookup rule by kind name |
 
 No heuristics. No cross-referencing. Just structured access to grammar.json.
 
 ---
 
-## Layer 2: EnrichedGrammar
+## Layer 2: EnrichedRule (grammar introspection only)
 
-Grammar + heuristic-derived attributes. Each heuristic is a named, documented method.
+Grammar rules classified and enriched by introspection of grammar.json alone. Does **not** touch node-types.json. Classification and extraction happen together — the extraction result determines the modelType.
 
 ### Data
 
 ```typescript
-interface EnrichedGrammar extends Grammar {
-  /** Named kinds that are terminal (no fields, no children) */
-  leafKinds: Set<string>;
-  /** Named kinds that have fields and/or children */
-  branchKinds: Set<string>;
-  /** Named kinds with constant text: kind -> text */
-  keywordKinds: Map<string, string>;
-  /** Abstract supertypes: name -> concrete subtypes (recursive) */
-  supertypeExpansions: Map<string, Set<string>>;
-  /** Anonymous tokens classified as keywords (alphabetic) */
-  keywordTokens: string[];
-  /** Anonymous tokens classified as operators (non-alphabetic) */
-  operatorTokens: string[];
-  /** Per-rule enriched form (same tree shape, metadata-annotated) */
-  enrichedRules: Map<string, EnrichedRule>;
-}
+type EnrichedRule =
+  | SupertypeRule    // { modelType: 'supertype', subtypes, rule }
+  | BranchRule       // { modelType: 'branch', fields, children?, separators, rule }
+  | ContainerRule    // { modelType: 'container', children, separators, rule }
+  | KeywordRule      // { modelType: 'keyword', text, rule }
+  | EnumRule         // { modelType: 'enum', values, rule }
+  | LeafRule;        // { modelType: 'leaf', pattern: string | null, rule }
+
+// All variants carry the original GrammarRule for downstream use.
+// Anonymous tokens have no grammar rules — handled in node-model.ts initialization.
 ```
 
-### Heuristics (each is its own method)
+### Method
 
-| Method | Heuristic | Inputs | Output |
-|--------|-----------|--------|--------|
-| `classifyKinds(grammar, nodeTypes)` | Partition named kinds into leaf vs branch | grammar.json supertypes + node-types.json fields/children | leafKinds, branchKinds |
-| `detectKeywords(grammar, leafKinds)` | Identify leaves with constant text | Grammar rules for leaf kinds | keywordKinds: Map<kind, text> |
-| `expandSupertypes(grammar)` | Recursively resolve abstract types to concrete | grammar.json supertypes + rules | supertypeExpansions |
-| `classifyTokens(nodeTypes)` | Split anonymous tokens into keyword vs operator | node-types.json unnamed entries | keywordTokens, operatorTokens |
-| `enrichRule(rule, nodeTypes, kindSets)` | Annotate rule tree with cross-referenced metadata | Raw rule + node-types.json field info + kind classification | EnrichedRule |
+| Method | What it does |
+|--------|-------------|
+| `classifyRules(grammar)` | Classify every grammar rule and extract attributes. Returns `Map<string, EnrichedRule>`. |
 
-#### Heuristic Details
+#### Classification Logic
 
-**H1: classifyKinds** (cross-reference)
-- Source: node-types.json `fields` and `children` presence
-- A kind with fields OR children -> branch
-- A kind without fields AND without children AND not a supertype -> leaf
-- Supertypes (have `subtypes` array) are their own category
+For each rule in grammar.rules:
+1. kind in grammar.supertypes → `extractSubtypes` → SupertypeRule
+2. hasFields(rule) → `extractFields` → BranchRule
+3. hasChildren(rule) → `extractChildren` → ContainerRule
+4. `extractKeywordText` succeeds → KeywordRule
+5. `extractEnumValues` succeeds → EnumRule
+6. Otherwise → `extractPattern` → LeafRule (with or without pattern)
 
-**H2: detectKeywords** (grammar analysis)
-- For each leaf kind, read its grammar rule
-- If rule resolves to a single constant STRING (possibly through PREC/TOKEN wrappers) -> keyword
-- Example: `self` rule is `STRING("self")` -> keyword with text "self"
-- Example: `mutable_specifier` rule is `STRING("mut")` -> keyword with text "mut"
+#### Private Helpers (all rule in, enriched rule out)
 
-**H3: expandSupertypes** (recursive resolution)
-- Walk grammar.json rule for each supertype (CHOICE of SYMBOLs)
-- Recursively expand nested supertypes until all are concrete
-- Cycle detection via visited set
-- Example: `_expression` -> { binary_expression, call_expression, ... }
-
-**H4: classifyTokens** (pattern matching)
-- Anonymous (unnamed) entries in node-types.json
-- If `/^[a-z_]+$/i` -> keyword token (e.g., "fn", "let", "pub")
-- If non-alphabetic and not quotes -> operator token (e.g., "+", "->", "::")
-
-**H5: enrichRule** (metadata annotation)
-- Same tree shape as GrammarRule, with added metadata at nodes:
-  - FIELD nodes gain `required` and `multiple` from node-types.json
-  - SYMBOL nodes gain `leaf`, `keyword`, `supertype` flags from kind classification
-- Purely additive. No structural change.
+| Helper | What it does |
+|--------|-------------|
+| `extractSubtypes(rule)` | CHOICE of SYMBOLs → subtypes list |
+| `extractFields(rule)` | Walk rule for FIELD nodes → field metadata, separators, children |
+| `extractChildren(rule)` | Walk rule for non-FIELD SYMBOLs → child metadata, separators |
+| `extractKeywordText(rule)` | Resolve through PREC/TOKEN to single STRING, or null |
+| `extractEnumValues(rule, grammar)` | CHOICE of STRINGs → sorted values, or empty (ALIAS fallback) |
+| `extractPattern(rule)` | Build regex from rule tree, or null |
 
 ---
 
@@ -181,9 +158,9 @@ Each model type corresponds to a unique set of fields. 1:1 mapping. No optional 
 ```typescript
 type NodeModel =
   | BranchModel          // named node with fields, optional children, members, rule
-  | ContainerModel       // named node with children only, members, rule (was LeafWithChildrenModel)
+  | ContainerModel       // named node with children only, members, rule
   | LeafModel            // named node with variable text, optional pattern
-  | EnumModel            // named node with fixed set of values (was LeafModel+values)
+  | EnumModel            // named node with fixed set of values
   | KeywordModel         // named node with constant text
   | TokenModel           // anonymous token
   | SupertypeModel;      // abstract grouping of concrete subtypes
@@ -192,6 +169,9 @@ type NodeModel =
 interface NodeModelBase {
   readonly modelType: string;
   readonly kind: string;
+  // Added by naming step:
+  readonly typeName?: string;
+  readonly factoryName?: string;
 }
 ```
 
@@ -311,6 +291,8 @@ interface SingleFieldModel {
   readonly required: boolean;
   readonly multiple: false;
   readonly kinds: string[];           // before hydration; NodeModel[] after
+  // Added by naming step:
+  readonly propertyName?: string;
 }
 
 interface ListFieldModel {
@@ -319,6 +301,8 @@ interface ListFieldModel {
   readonly multiple: true;
   readonly kinds: string[];           // before hydration; NodeModel[] after
   readonly separator: string | null;
+  // Added by naming step:
+  readonly propertyName?: string;
 }
 ```
 
@@ -343,7 +327,7 @@ interface ListChildModel {
 }
 ```
 
-#### NodeMember (was NodeElement)
+#### NodeMember
 ```typescript
 type NodeMember =
   | { member: 'field'; field: FieldModel }
@@ -352,7 +336,7 @@ type NodeMember =
   | { member: 'choice'; branches: NodeMember[][] };
 ```
 
-### Kind Projections (derived, computed in optimize or on-demand)
+### Kind Projections (derived, computed on-demand)
 
 Emitters that need to partition a field's kinds into leaf vs branch, or collapse supertypes for TypeScript type expressions, use derived projections. These are not stored on the field — they're computed from the hydrated `kinds` references.
 
@@ -381,125 +365,115 @@ function projectKinds(kinds: NodeModel[]): KindProjection {
 
 ## Pipeline Steps
 
-### Step 1: Initialize NodeModels from NodeTypes
+The 13-step pipeline as orchestrated by `build-model.ts`:
 
-NodeTypes is the authoritative source for what kinds exist and their initial categorization.
+### Step 1–2: Load Sources
 
-| Method | What it does |
-|--------|-------------|
-| `initializeBranch(kind, entry)` | Create BranchModel shell from node-types.json fields/children. Initial FieldModel/ChildModel from NT field metadata. Members empty. |
-| `initializeContainer(kind, entry)` | Create ContainerModel shell from node-types.json children. Members empty. |
-| `initializeLeaf(kind)` | Create LeafModel with null pattern, null rule. |
-| `initializeEnum(kind, values)` | Create EnumModel with values from grammar analysis. |
-| `initializeKeyword(kind, text)` | Create KeywordModel with constant text. |
-| `initializeToken(kind)` | Create TokenModel. |
-| `initializeSupertype(kind, subtypes)` | Create SupertypeModel with subtypes. |
+| Step | Method | What it does |
+|------|--------|-------------|
+| 1 | `loadGrammar(grammarName)` | Parse grammar.json → Grammar |
+| 2 | `loadNodeTypes(grammarName)` | Parse node-types.json → NodeTypes |
+
+### Step 3: Classify Grammar Rules
+
+| Step | Method | What it does |
+|------|--------|-------------|
+| 3 | `classifyRules(grammar)` | Grammar introspection only → `Map<string, EnrichedRule>` |
+
+Each rule classified as SupertypeRule, BranchRule, ContainerRule, KeywordRule, EnumRule, or LeafRule. Classification and extraction happen together — the extraction result determines the modelType.
+
+### Step 4: Initialize from NodeTypes
+
+| Step | Method | What it does |
+|------|--------|-------------|
+| 4 | `initializeModels(nodeTypes)` | Create initial NodeModel shells from NT structure |
 
 **Categorization logic** (determines which initializer):
-1. Has `subtypes` in node-types.json -> SupertypeModel
-2. Not named -> TokenModel
-3. Has fields -> BranchModel
-4. Has children but no fields -> ContainerModel
-5. Is keyword (detected by H2) -> KeywordModel
-6. Has enumerated values (detected from grammar) -> EnumModel
-7. Otherwise -> LeafModel
+1. Has `subtypes` in node-types.json → SupertypeModel
+2. Not named → TokenModel
+3. Has fields → BranchModel
+4. Has children but no fields → ContainerModel
+5. Otherwise → LeafModel (refined during reconcile)
 
-### Step 2: Refine Model Type
+### Step 5: Reconcile
 
-After initialization, check if the initial categorization needs adjustment based on the data loaded so far.
+| Step | Method | What it does |
+|------|--------|-------------|
+| 5 | `reconcile(models, enrichedRules)` | Merge grammar-derived data into NT-derived models |
 
-### Step 3: Apply Non-Grammar Heuristics
+For each model, lookup matching EnrichedRule:
+- Same modelType → enrich with grammar data
+- Grammar narrows (leaf→keyword, leaf→enum) → promote, then enrich
+- Mismatch → throw error (needs manual review)
 
-Apply heuristics that don't require walking the grammar rule tree. These use only the information already available from node-types.json and the EnrichedGrammar's precomputed attributes.
+### Step 6: Apply Members
 
-### Step 4: Apply Members + Rule (from EnrichedGrammar)
+| Step | Method | What it does |
+|------|--------|-------------|
+| 6 | `applyAllMembers(models)` | Walk rules to produce ordered NodeMember[] for structural models |
 
-For each BranchModel and ContainerModel, walk the EnrichedRule to produce members.
+For each BranchModel and ContainerModel, walks the enriched rule to produce members. Sub-heuristics: abstract symbol inlining, CHOICE merging, multiplicity, optionality, ALIAS handling, TOKEN wrapping.
 
-| Method | Classification | What it does |
-|--------|---------------|-------------|
-| `applyMembers(model, enrichedRule, ctx)` | Grammar-derived | Walk enriched rule tree, produce ordered NodeMember[] sequence. Each FIELD -> field member, each STRING -> token member, etc. |
-| `applyRule(model, enrichedRule)` | Grammar-derived | Attach the enriched rule to the model |
+### Step 7: Refine Model Type
 
-#### Member Application Sub-heuristics (inside applyMembers)
+| Step | Method | What it does |
+|------|--------|-------------|
+| 7 | `refineAllModelTypes(models)` | Final classification check after all data available |
 
-| Sub-heuristic | What |
-|--------------|------|
-| Abstract symbol inlining | `_`-prefixed symbols recursively expanded, fields/children extracted |
-| CHOICE with same fields | All branches merged, kind sets unioned (binary_expression pattern) |
-| CHOICE with different fields | Preserved as choice member |
-| REPEAT/REPEAT1 | Content marked as multiple |
-| CHOICE+BLANK | Content marked as optional |
-| Named ALIAS | Treated as explicit child |
-| TOKEN wrapping STRING | Emitted as token member |
+Grammar-based enrichment may reveal that a model needs reclassification (e.g., BranchModel with no fields and only children → ContainerModel).
 
-### Step 5: Apply Grammar-Based Heuristics
+### Step 8–9: Semantic Aliases
 
-Enrich the model using information derived from grammar rule walking.
+| Step | Method | What it does |
+|------|--------|-------------|
+| 8 | `inferTokenAliases(models, grammar)` | Infer meaningful names for anonymous tokens from usage context |
+| 9 | `applyTokenAliases(models, aliases)` | Replace raw token kinds with semantic alias names |
 
-| Method | What it does |
-|--------|-------------|
-| `applyFieldKinds(field, enrichedRule, ctx)` | Populate field's `kinds` array from grammar rule type analysis |
-| `applySeparators(model, enrichedRule)` | Detect REPEAT+SEQ separator patterns, annotate ListFieldModel/ListChildModel |
-| `applyLeafPattern(model, rule)` | Extract regex pattern from leaf grammar rule |
-| `supplementFromNodeTypes(model, entry)` | Add fields found in node-types.json but missed in grammar walk |
-| `reorderFields(model, entry)` | Reorder fields to match node-types.json authoritative field order |
+### Step 10: Naming
 
-### Step 6: Refine Model Type Again
+| Step | Method | What it does |
+|------|--------|-------------|
+| 10 | `applyNaming(models)` | Compute typeName (PascalCase), factoryName (camelCase) on models; propertyName (camelCase) on fields |
 
-After grammar-based enrichment, re-check model type classification. Grammar information may reveal that a model needs reclassification.
+### Step 11: Optimize
 
-### Step 7: Optimize
+| Step | Method | What it does |
+|------|--------|-------------|
+| 11 | `optimize(models)` | Signature interning, field/child/enum dedup, pattern detection |
 
-Pattern detection across all models. These inform emit-time deduplication.
+### Step 12: Hydrate
 
-| Method | What it detects |
-|--------|----------------|
-| `computeSignatures(models)` | Intern FactorySignature, FromSignature, HydrationSignature. Multiple kinds sharing identical field shapes get same signature object. |
-| `identifyFieldLists(models)` | Fields across different kinds that have identical kind sets (reusable type expressions) |
-| `identifyChildLists(models)` | Children across different kinds with identical kind sets |
-| `identifyEnumPatterns(models)` | Leaf kinds that share the same value set or pattern |
+| Step | Method | What it does |
+|------|--------|-------------|
+| 12 | `hydrate(models)` | Resolve all `kinds: string[]` to `kinds: NodeModel[]` references |
 
-### Step 8: Hydrate
+### Step 13: Return
 
-Resolve all `kinds: string[]` arrays to `kinds: NodeModel[]` references. After this step, emitters can navigate the model graph directly.
-
-| Method | What it does |
-|--------|-------------|
-| `hydrate(models)` | Walk all FieldModel/ChildModel across all models, replace kind strings with NodeModel references from the model map. |
-
-### Step 9: Emit
-
-Emitters receive fully hydrated NodeModel[] and produce generated code. They use type guards to discriminate model types and KindProjection helpers to derive type expressions.
+Return `{ name, models, signatures }` — fully built, hydrated, optimized GrammarModel ready for emitters.
 
 ---
 
-## Semantic Token Aliases (Enhancement, applied before optimize)
+## Semantic Token Aliases (Steps 8–9)
 
 Anonymous tokens without alphabetic names get semantic aliases inferred from usage context.
 
-| Method | What it does |
-|--------|-------------|
-| `inferTokenAliases(models, grammar)` | For each anonymous operator token, find its usage contexts in grammar rules. Infer semantic name from the parent kind + field. |
-
 **Algorithm:**
-1. For each operator token (e.g., `&&`), find all grammar rules that reference it
+1. For each anonymous operator token (e.g., `&&`), find its usage contexts in grammar rules
 2. Determine the parent kind and field where it appears (e.g., `binary_expression.operator`)
-3. Derive semantic name: `&&` in `binary_expression` -> `LogicalAndOperator`
+3. Derive semantic name: `&&` in `binary_expression` → `LogicalAndOperator`
 4. If a token has multiple distinct semantic usages, each becomes a distinct node in the model
-   - Example: `-` as `SubtractOperator` (in binary_expression) vs `NegateOperator` (in unary_expression)
+   - Example: `-` gets two entries: `SubtractOperator` (binary) and `NegateOperator` (unary)
 5. The inferred alias becomes the token's `kind` value in the model
 
 **Naming convention:**
 - `{semantic_name}Operator` for operators
 - Derived from parent kind + field + position
 - Example mappings:
-  - `&&` -> `LogicalAndOperator`
-  - `||` -> `LogicalOrOperator`
-  - `+` in binary_expression -> `AddOperator`
-  - `+` in unary_expression -> `UnaryPlusOperator` (if it existed)
-  - `->` -> `ArrowOperator`
-  - `::` -> `PathSeparator`
+  - `&&` → `LogicalAndOperator`
+  - `||` → `LogicalOrOperator`
+  - `+` in binary_expression → `AddOperator`
+  - `->` → `ReturnArrow`
+  - `::` → `PathSeparator`
 
 ---
 
@@ -508,18 +482,14 @@ Anonymous tokens without alphabetic names get semantic aliases inferred from usa
 ```
 packages/codegen/src/
   grammar.ts                 # Layer 1: Grammar (raw grammar.json)
-  enriched-grammar.ts        # Layer 2: EnrichedGrammar (heuristics applied)
+  enriched-grammar.ts        # Layer 2: classifyRules (grammar introspection only)
   node-types.ts              # Layer 3: NodeTypes (raw node-types.json)
-  node-model.ts              # Layer 4: NodeModel types, type guards
-  pipeline/
-    initialize.ts            # Step 1: NodeTypes + EnrichedGrammar -> initial NodeModels
-    refine.ts                # Steps 2, 6: Model type refinement
-    apply-members.ts         # Step 4: EnrichedRule -> members, rules attached
-    apply-heuristics.ts      # Steps 3, 5: Non-grammar and grammar-based heuristics
-    optimize.ts              # Step 7: Signature dedup, pattern detection
-    hydrate.ts               # Step 8: Kind strings -> NodeModel references
-    semantic-aliases.ts      # Enhancement: Token alias inference
-  build-model.ts             # Orchestrator: runs steps 1-9, returns complete model
+  node-model.ts              # Layer 4: NodeModel types, type guards, initialize, reconcile, members, refine
+  naming.ts                  # Naming: typeName, factoryName, propertyName
+  hydration.ts               # Hydrate: kind strings → NodeModel references
+  optimization.ts            # Optimize: signatures, dedup, kind utilities
+  semantic-aliases.ts        # Semantic aliases: infer + apply token aliases
+  build-model.ts             # Orchestrator: 13-step pipeline
   emitters/
     utils.ts                 # Updated: use type guards, KindProjection helpers
     *.ts                     # Updated: receive hydrated NodeModel[], use type guards
@@ -530,16 +500,17 @@ packages/codegen/src/
 ## Migration Strategy
 
 1. Define new model types + type guards alongside existing ones
-2. Rename elements -> members, LeafWithChildrenModel -> ContainerModel
+2. Rename elements → members, LeafWithChildrenModel → ContainerModel
 3. Split LeafModel: extract EnumModel for kinds with values
 4. Split FieldModel/ChildModel into Single vs List variants
 5. Replace FieldTypeClass with `kinds: string[]` on fields
 6. Add rule to all model types (retain unless truly absent)
-7. Restructure pipeline into numbered steps
+7. Restructure pipeline into 13 numbered steps
 8. Move heuristics into individual named methods
-9. Add hydration step (kinds string[] -> NodeModel[])
-10. Verify generated output unchanged via diff test
-11. Remove old grammar-reader.ts functions superseded by pipeline
+9. Add naming step (typeName, factoryName, propertyName)
+10. Add hydration step (kinds string[] → NodeModel[])
+11. Verify generated output unchanged via diff test
+12. Remove old grammar-reader.ts functions superseded by pipeline
 
 ---
 
