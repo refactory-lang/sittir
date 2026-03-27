@@ -134,8 +134,7 @@ export interface ChildModel {
 export type NodeElement =
 	| { element: 'field'; field: FieldModel }
 	| { element: 'token'; value: string; optional: boolean }
-	| { element: 'child'; child: ChildModel }
-	| { element: 'choice'; branches: NodeElement[][] };
+	| { element: 'child'; child: ChildModel };
 
 /** Named node with fields (and optionally children). e.g. function_item, struct_item */
 export interface BranchModel {
@@ -453,8 +452,8 @@ function projectElements(
 				return mergeChoiceBranches(branchElements, ctx, hasBlank);
 			}
 
-			// Otherwise preserve as a choice element
-			return [{ element: 'choice', branches: branchElements }];
+			// Flatten all branches — every element becomes optional since it only appears in some branches
+			return flattenChoiceBranches(branchElements);
 		}
 
 		case 'REPEAT':
@@ -605,6 +604,55 @@ function mergeChoiceBranches(
 		}
 		return elem;
 	});
+}
+
+/**
+ * Flatten divergent CHOICE branches into a single sequence of optional elements.
+ * Fields are deduped by name (types merged), tokens and children marked optional.
+ */
+function flattenChoiceBranches(branches: NodeElement[][]): NodeElement[] {
+	const fieldMap = new Map<string, FieldModel>();
+	const tokens: NodeElement[] = [];
+	const children: NodeElement[] = [];
+
+	for (const branch of branches) {
+		for (const elem of branch) {
+			if (elem.element === 'field') {
+				const existing = fieldMap.get(elem.field.name);
+				if (!existing) {
+					fieldMap.set(elem.field.name, { ...elem.field, required: false });
+				} else {
+					// Merge types
+					const mergedLeaf = new Set([...existing.types.leafTypes, ...elem.field.types.leafTypes]);
+					const mergedBranch = new Set([...existing.types.branchTypes, ...elem.field.types.branchTypes]);
+					const mergedAnon = new Set([...existing.types.anonTokens, ...elem.field.types.anonTokens]);
+					const mergedExpanded = new Set([...existing.types.expandedBranch, ...elem.field.types.expandedBranch]);
+					const mergedCollapsed = new Set([...existing.types.collapsedTypes, ...elem.field.types.collapsedTypes]);
+					existing.types = {
+						leafTypes: [...mergedLeaf].sort(),
+						branchTypes: [...mergedBranch].sort(),
+						anonTokens: [...mergedAnon].sort(),
+						expandedBranch: [...mergedExpanded].sort(),
+						collapsedTypes: [...mergedCollapsed].sort(),
+					};
+				}
+			} else if (elem.element === 'token') {
+				if (!tokens.some(t => t.element === 'token' && t.value === elem.value)) {
+					tokens.push({ element: 'token', value: elem.value, optional: true });
+				}
+			} else if (elem.element === 'child') {
+				children.push(elem);
+			}
+		}
+	}
+
+	const result: NodeElement[] = [];
+	for (const field of fieldMap.values()) {
+		result.push({ element: 'field', field });
+	}
+	result.push(...tokens);
+	result.push(...children);
+	return result;
 }
 
 /**
