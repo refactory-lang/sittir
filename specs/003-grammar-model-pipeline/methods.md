@@ -196,8 +196,9 @@ reconcile(models: Map<string, NodeModel>, enrichedRules: Map<string, EnrichedRul
   //     narrowing: leaf -> keyword, leaf -> enum
   //                branch -> container
   //
-  //   if rule.modelType is wider or conflicts:
-  //     NT wins — warn, keep NT modelType, attach rule only
+  //   otherwise:
+  //     throw Error("modelType mismatch for '{kind}': NT='{ntType}', grammar='{grammarType}'")
+  //     this is a data inconsistency that needs manual review
 
 // Per-modelType enrich methods (private):
 
