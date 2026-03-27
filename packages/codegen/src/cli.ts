@@ -110,6 +110,9 @@ writeFile(join(outDir, 'joinby.ts'), result.joinBy);
 writeFile(join(outDir, 'consts.ts'), result.consts);
 writeFile(join(outDir, 'index.ts'), result.index);
 
+// Write node model
+writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+
 // Write tests
 const testsDir = cliArgs.testsDir ?? join(dirname(outDir), 'tests');
 writeFile(join(testsDir, 'nodes.test.ts'), result.tests);

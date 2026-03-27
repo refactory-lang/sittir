@@ -33,6 +33,7 @@ import { emitTests } from './emitters/test-new.ts';
 import { emitTypeTests } from './emitters/type-test.ts';
 import { emitConfig } from './emitters/config.ts';
 import { emitIndex } from './emitters/index-file.ts';
+import { buildGrammarModel } from './grammar-model.ts';
 
 export { readGrammarKind, listBranchKinds, listLeafKinds, listOperatorContexts, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
 
@@ -76,6 +77,8 @@ export interface GeneratedFiles {
 	typeTests: string;
 	/** vitest.config.ts source */
 	config: string;
+	/** node-model.json5 — serialized pre-computed grammar model */
+	nodeModel: string;
 }
 
 /**
@@ -99,6 +102,9 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 	const nodes = branchKinds.map((kind) =>
 		readGrammarKind(config.grammar, kind),
 	);
+
+	// Build enriched grammar model (steps 2-4)
+	const { serialized: nodeModel } = buildGrammarModel(config.grammar);
 
 	return {
 		grammar: emitGrammar({ grammar: config.grammar }),
@@ -131,5 +137,6 @@ export function generate(config: CodegenConfig): GeneratedFiles {
 		tests: emitTests({ grammar: config.grammar, nodes, leafKinds, keywordKinds }),
 		typeTests: emitTypeTests({ nodes }),
 		config: emitConfig({ grammar: config.grammar }),
+		nodeModel,
 	};
 }
