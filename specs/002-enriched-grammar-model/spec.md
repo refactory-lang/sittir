@@ -207,11 +207,11 @@ interface NodeModel {
 
 Signatures are **interned**: kinds with identical emission shapes share the same object reference. Per-field sub-entries within signatures are also interned for per-field dedup when whole-kind signatures differ.
 
-### Serialization: `node-model.json`
+### Serialization: `node-model.json5`
 
 The NodeModel (step 3) is fully serializable — every type in the model is a plain object with string, boolean, number, and array fields. No functions, no class instances, no circular references.
 
-After step 3 completes, the codegen emits `node-model.json` as a generated artifact alongside the TypeScript files:
+After step 3 completes, the codegen emits `node-model.json5` as a generated artifact alongside the TypeScript files:
 
 ```typescript
 // Serializable shape (JSON-safe — Sets/Maps become arrays/records)
@@ -229,7 +229,7 @@ interface SerializedGrammarModel {
 
 This is emitted **after step 3, before step 4** (signatures). The node model is the grammar's complete semantic description — independent of any particular code generation strategy. Signatures are codegen-specific and live only in memory.
 
-**Use cases for `node-model.json`:**
+**Use cases for `node-model.json5`:**
 - Alternative code generators (other languages, other patterns) can consume the pre-computed model without running sittir's pipeline
 - IDE tooling can read field types, ordering, and optionality directly
 - Diffing between grammar versions — semantic diff rather than raw grammar.json diff
@@ -270,7 +270,7 @@ All the data currently scattered across `listLeafKinds()`, `listKeywordKinds()`,
         - Classify field types → FieldTypeClass (leaf/branch/anon/expanded/collapsed)
         - Detect separators from REPEAT+SEQ context
         - All shared analysis consolidated here
-5. Assemble SerializedGrammarModel → emit node-model.json
+5. Assemble SerializedGrammarModel → emit node-model.json5
 6. computeSignatures(allModels)                 → mutates NodeModel, populates pools
      - Compute FactorySignature, FromSignature, HydrationSignature per kind
      - Intern into pools
@@ -282,12 +282,12 @@ Steps 1-4 use existing grammar-reader.ts functions (refactored). Step 5 emits th
 
 ## Generated Output
 
-`node-model.json` is added to the generated files alongside existing outputs:
+`node-model.json5` is added to the generated files alongside existing outputs:
 
 ```typescript
 interface GeneratedFiles {
   // ... existing files ...
-  /** node-model.json — serialized pre-computed grammar model */
+  /** node-model.json5 — serialized pre-computed grammar model */
   nodeModel: string;
 }
 ```
@@ -306,11 +306,11 @@ packages/codegen/src/
     *.ts                     (updated — receive GrammarModel, no grammar retraversal)
 
 packages/rust/src/
-  node-model.json            (NEW — generated, serialized NodeModel)
+  node-model.json5            (NEW — generated, serialized NodeModel)
 packages/typescript/src/
-  node-model.json            (NEW — generated)
+  node-model.json5            (NEW — generated)
 packages/python/src/
-  node-model.json            (NEW — generated)
+  node-model.json5            (NEW — generated)
 ```
 
 ## Migration
