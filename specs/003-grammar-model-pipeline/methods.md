@@ -259,6 +259,36 @@ refineModelType(model: NodeModel): NodeModel
 
 ---
 
+## `naming.ts` — Naming
+
+Domain: compute canonical names for models and fields. One name per model, one name per field.
+
+```typescript
+applyNaming(models: Map<string, NodeModel>): Map<string, NodeModel>
+  // in:  models
+  // out: models with typeName and factoryName on each model,
+  //      propertyName on each field
+
+nameModel(model: NodeModel): NodeModel
+  // in:  model
+  // out: model with:
+  //      typeName:    PascalCase   "function_item" -> "FunctionItem"
+  //                                "_expression"   -> "Expression"
+  //      factoryName: camelCase    "function_item" -> "functionItem"
+  //                                "_expression"   -> "expression"
+
+nameField(field: FieldModel): FieldModel
+  // in:  field
+  // out: field with propertyName: string (camelCase)
+  //      "return_type" -> "returnType"
+
+// Emitters derive suffixed names from typeName:
+//   configType:  typeName + "Config"              ("FunctionItemConfig")
+//   treeType:    typeName + "Tree"                ("FunctionItemTree")
+```
+
+---
+
 ## `hydration.ts` — Hydrate Kind References
 
 Domain: resolve string kind names to NodeModel references.
@@ -281,7 +311,7 @@ hydrateChild(child: ChildModel, modelMap: Map<string, NodeModel>): ChildModel
 
 ## `optimization.ts` — Optimize & Analyze Patterns
 
-Domain: cross-model pattern detection, signature interning, derived projections.
+Domain: cross-model pattern detection, signature interning, kind utilities.
 
 ```typescript
 optimize(models: Map<string, NodeModel>): Map<string, NodeModel>
@@ -304,15 +334,15 @@ identifyEnumPatterns(models: Map<string, NodeModel>): Map<string, string[]>
   // in:  all models
   // out: value set hash -> enum kinds sharing same values
 
-// Kind projection (derived on-demand, not stored)
+// Kind utilities (used by emitters)
 
-projectKinds(kinds: NodeModel[], supertypeExpansions: Map<string, Set<string>>): KindProjection
-  // in:  resolved kind references, supertype expansion map
-  // out: leaf/branch partition, expanded, collapsed
-
-collapseKinds(concreteKinds: string[], supertypeExpansions: Map<string, Set<string>>): string[]
-  // in:  concrete kind names, supertype map
+collapseKinds(concreteKinds: string[], supertypeModels: SupertypeModel[]): string[]
+  // in:  concrete kind names, all supertype models
   // out: PascalCase names after supertype folding with subset pruning
+
+expandSupertypeKinds(kinds: NodeModel[]): NodeModel[]
+  // in:  kind references (may include SupertypeModels)
+  // out: flat list with supertypes replaced by their concrete descendants
 ```
 
 ---
@@ -353,7 +383,8 @@ buildModel(grammarName: string): GrammarModel
   //   7. models        = refineAllModelTypes(models)                  -- final classification
   //   8. aliases       = inferTokenAliases(models, grammar)           -- semantic aliases
   //   9. models        = applyTokenAliases(models, aliases)
-  //  10. models        = optimize(models)                             -- signatures, patterns
-  //  11. models        = hydrate(models)                              -- resolve references
-  //  12. return { name, models, signatures }
+  //  10. models        = applyNaming(models)                          -- compute names
+  //  11. models        = optimize(models)                             -- signatures, patterns
+  //  12. models        = hydrate(models)                              -- resolve references
+  //  13. return { name, models, signatures }
 ```
