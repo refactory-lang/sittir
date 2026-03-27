@@ -55,13 +55,10 @@ export function emitAssign(config: EmitAssignConfig): string {
 	for (const kind of leafKinds) factoryImports.push(toFactoryName(kind));
 	lines.push(`import { ${factoryImports.join(', ')} } from './factories.js';`);
 
-	// Import type names for return types
+	// Import config types for the cast in assign functions
 	const typeImports = new Set<string>();
 	for (const node of nodes) {
-		typeImports.add(toTypeName(node.kind));
-	}
-	for (const kind of leafKinds) {
-		typeImports.add(toTypeName(kind));
+		typeImports.add(toTypeName(node.kind) + 'Config');
 	}
 	lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`);
 	lines.push('');
@@ -88,7 +85,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push('};');
 	lines.push('');
 	lines.push('/** Lookup assign function for a kind. Throws if kind is unknown. */');
-	lines.push('export function assignByKind(kind: string, target: any) {');
+	lines.push('export function assignByKind(kind: string, target: any): unknown {');
 	lines.push('  const fn = _assignTable[kind];');
 	lines.push(`  if (!fn) throw new Error(\`No assign function for kind '\${kind}' in ${grammarAlias} grammar\`);`);
 	lines.push('  return fn(target);');
@@ -101,19 +98,20 @@ export function emitAssign(config: EmitAssignConfig): string {
 	for (const node of nodes) {
 		const typeName = toTypeName(node.kind);
 		const factoryName = toFactoryName(node.kind);
+		const configTypeName = typeName + 'Config';
 		const fields = fieldsOf(node);
 
-		lines.push(`export function assign${typeName}(target: ${typeName}Tree): ${typeName} & { toEdit(): Edit; replace(): Edit; render(): string } {`);
-		lines.push(`  const result = ${factoryName}({`);
+		lines.push(`export function assign${typeName}(target: ${typeName}Tree) {`);
+		lines.push(`  const config: Record<string, unknown> = {};`);
 
 		for (const f of fields) {
 			const named = namedTypes(f.types);
 			if (named.length === 0) {
 				// Anonymous-only field (operator tokens etc.) — read as text node
 				if (f.required) {
-					lines.push(`    '${f.name}': { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() } as any,`);
+					lines.push(`  config['${f.name}'] = { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() };`);
 				} else {
-					lines.push(`    '${f.name}': target.field('${f.name}') ? { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() } as any : undefined,`);
+					lines.push(`  config['${f.name}'] = target.field('${f.name}') ? { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() } : undefined;`);
 				}
 				continue;
 			}
@@ -122,37 +120,13 @@ export function emitAssign(config: EmitAssignConfig): string {
 
 		// Hydrate children field if present
 		if (node.children != null) {
-			const ch = node.children;
-			const childNamed = namedTypes(ch.types);
-			const kindSet = JSON.stringify(childNamed);
-			if (ch.multiple) {
-				lines.push(`    children: (() => {`);
-				lines.push(`      const _kinds = new Set(${kindSet});`);
-				lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
-				if (ch.required) {
-					lines.push(`      if (_items.length === 0) throw new Error(\`Required children missing on '${node.kind}' tree node\`);`);
-				}
-				lines.push(`      return _items.map((c: any) => assignByKind(c.type, c));`);
-				lines.push(`    })() as any,`);
-			} else {
-				// Single child
-				lines.push(`    children: (() => {`);
-				lines.push(`      const _kinds = new Set(${kindSet});`);
-				lines.push(`      const _child = target.children().find((c: any) => _kinds.has(c.type));`);
-				if (ch.required) {
-					lines.push(`      if (!_child) throw new Error(\`Required child missing on '${node.kind}' tree node\`);`);
-				} else {
-					lines.push(`      if (!_child) return undefined;`);
-				}
-				lines.push(`      return assignByKind(_child.type, _child);`);
-				lines.push(`    })() as any,`);
-			}
+			emitAssignChildren(lines, node.children, namedTypes(node.children.types), node.kind);
 		}
 
-		lines.push(`  });`);
+		lines.push(`  const result = ${factoryName}(config as ${configTypeName});`);
 
 		// Bind target's range for no-arg toEdit()/replace()
-		lines.push(`  return bindRange(target, result) as any;`);
+		lines.push(`  return bindRange(target, result);`);
 		lines.push(`}`);
 		lines.push('');
 	}
@@ -165,7 +139,9 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push(' * Recursively hydrates via assignByKind, attaches range for .toEdit().');
 	lines.push(' */');
 	lines.push(`export function edit<K extends NodeKind<${grammarAlias}>>(target: TreeNode<K>): Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }> {`);
-	lines.push('  return assignByKind(target.type, target) as any;');
+	lines.push(`  const fn = _assignTable[target.type];`);
+	lines.push(`  if (!fn) throw new Error(\`No assign function for kind '\${target.type}' in ${grammarAlias} grammar\`);`);
+	lines.push('  return fn(target) as Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }>;');
 	lines.push('}');
 	lines.push('');
 
@@ -180,39 +156,70 @@ function emitAssignField(lines: string[], f: { name: string; required: boolean; 
 	if (f.required) {
 		if (f.multiple) {
 			// Multiple required: collect all children matching this field's accepted kinds
-			lines.push(`    ${f.name}: (() => {`);
-			lines.push(`      const _kinds = new Set(${kindSet});`);
-			lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
-			lines.push(`      if (_items.length === 0) throw new Error(\`Required field '${f.name}' has no children on '${nodeKind}' tree node\`);`);
-			lines.push(`      return _items.map((c: any) => assignByKind(c.type, c));`);
-			lines.push(`    })() as any,`);
+			lines.push(`  config['${f.name}'] = (() => {`);
+			lines.push(`    const _kinds = new Set(${kindSet});`);
+			lines.push(`    const _items = target.children().filter((c) => _kinds.has(c.type));`);
+			lines.push(`    if (_items.length === 0) throw new Error(\`Required field '${f.name}' has no children on '${nodeKind}' tree node\`);`);
+			lines.push(`    return _items.map((c) => assignByKind(c.type, c));`);
+			lines.push(`  })();`);
 		} else if (fieldNamedTypes.length === 1) {
 			const childKind = fieldNamedTypes[0]!;
 			if (leafSet.has(childKind)) {
-				lines.push(`    ${f.name}: assignByKind('${childKind}', ${fieldAccess}!) as any,`);
+				lines.push(`  config['${f.name}'] = assignByKind('${childKind}', ${fieldAccess}!);`);
 			} else {
-				lines.push(`    ${f.name}: assign${toTypeName(childKind)}(${fieldAccess}! as any) as any,`);
+				lines.push(`  config['${f.name}'] = assign${toTypeName(childKind)}(${fieldAccess}! as ${toTypeName(childKind)}Tree);`);
 			}
 		} else {
-			lines.push(`    ${f.name}: assignByKind(${fieldAccess}!.type, ${fieldAccess}!) as any,`);
+			lines.push(`  config['${f.name}'] = assignByKind(${fieldAccess}!.type, ${fieldAccess}!);`);
 		}
 	} else {
 		if (f.multiple) {
 			// Multiple optional: collect matching children, undefined if none
-			lines.push(`    ${f.name}: (() => {`);
-			lines.push(`      const _kinds = new Set(${kindSet});`);
-			lines.push(`      const _items = target.children().filter((c: any) => _kinds.has(c.type));`);
-			lines.push(`      return _items.length > 0 ? _items.map((c: any) => assignByKind(c.type, c)) : undefined;`);
-			lines.push(`    })() as any,`);
+			lines.push(`  config['${f.name}'] = (() => {`);
+			lines.push(`    const _kinds = new Set(${kindSet});`);
+			lines.push(`    const _items = target.children().filter((c) => _kinds.has(c.type));`);
+			lines.push(`    return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;`);
+			lines.push(`  })();`);
 		} else if (fieldNamedTypes.length === 1) {
 			const childKind = fieldNamedTypes[0]!;
 			if (leafSet.has(childKind)) {
-				lines.push(`    ${f.name}: ${fieldAccess} ? assignByKind('${childKind}', ${fieldAccess}!) as any : undefined,`);
+				lines.push(`  config['${f.name}'] = ${fieldAccess} ? assignByKind('${childKind}', ${fieldAccess}!) : undefined;`);
 			} else {
-				lines.push(`    ${f.name}: ${fieldAccess} ? assign${toTypeName(childKind)}(${fieldAccess}! as any) as any : undefined,`);
+				lines.push(`  config['${f.name}'] = ${fieldAccess} ? assign${toTypeName(childKind)}(${fieldAccess}! as ${toTypeName(childKind)}Tree) : undefined;`);
 			}
 		} else {
-			lines.push(`    ${f.name}: ${fieldAccess} ? assignByKind(${fieldAccess}!.type, ${fieldAccess}!) as any : undefined,`);
+			lines.push(`  config['${f.name}'] = ${fieldAccess} ? assignByKind(${fieldAccess}!.type, ${fieldAccess}!) : undefined;`);
 		}
+	}
+}
+
+/** Emit children hydration inside an assign function. */
+function emitAssignChildren(
+	lines: string[],
+	ch: { required: boolean; multiple: boolean },
+	childNamed: string[],
+	nodeKind: string,
+): void {
+	const kindSet = JSON.stringify(childNamed);
+	if (ch.multiple) {
+		lines.push(`  config['children'] = (() => {`);
+		lines.push(`    const _kinds = new Set(${kindSet});`);
+		lines.push(`    const _items = target.children().filter((c) => _kinds.has(c.type));`);
+		if (ch.required) {
+			lines.push(`    if (_items.length === 0) throw new Error(\`Required children missing on '${nodeKind}' tree node\`);`);
+		}
+		lines.push(`    return _items.map((c) => assignByKind(c.type, c));`);
+		lines.push(`  })();`);
+	} else {
+		lines.push(`  config['children'] = (() => {`);
+		lines.push(`    const _kinds = new Set(${kindSet});`);
+		lines.push(`    const _child = target.children().find((c) => _kinds.has(c.type));`);
+		if (ch.required) {
+			lines.push(`    if (!_child) throw new Error(\`Required child missing on '${nodeKind}' tree node\`);`);
+		} else {
+			lines.push(`    if (!_child) return undefined;`);
+		}
+		lines.push(`    return assignByKind(_child.type, _child);`);
+		lines.push(`  })();`);
 	}
 }
