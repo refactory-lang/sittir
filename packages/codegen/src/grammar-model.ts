@@ -141,6 +141,8 @@ export type NodeElement =
 export interface BranchModel {
 	modelType: 'branch';
 	kind: string;
+	fields: FieldModel[];
+	children?: ChildModel;
 	elements: NodeElement[];
 	rule: EnrichedRule;
 	// Appended in step 4
@@ -688,22 +690,30 @@ export function projectNodeModel(
 		deduped.push(elem);
 	}
 
-	const hasFields = entry?.fields != null && Object.keys(entry.fields).length > 0;
-
-	if (!hasFields && entry?.children) {
-		// LeafWithChildrenModel — no named fields, has children
+	// Build children model from node-types.json if present
+	let children: ChildModel | undefined;
+	if (entry?.children) {
 		const childTypes = entry.children.types;
 		const namedArr = childTypes.filter(t => t.named).map(t => t.type);
 		const anonArr = childTypes.filter(t => !t.named).map(t => t.type);
 		const childTypeClass = classifyFieldTypes(namedArr, anonArr, ctx.leafKinds, ctx.expandedSupertypes);
-		const children: ChildModel = {
-			multiple: entry.children.multiple,
-			types: childTypeClass,
-		};
+		children = { multiple: entry.children.multiple, types: childTypeClass };
+	}
+
+	const hasFields = entry?.fields != null && Object.keys(entry.fields).length > 0;
+
+	if (!hasFields && children) {
 		return { modelType: 'leafWithChildren', kind, children, elements: deduped, rule: enrichedRule };
 	}
 
-	return { modelType: 'branch', kind, elements: deduped, rule: enrichedRule };
+	// Extract fields list from deduped elements
+	const fields = deduped
+		.filter((e): e is { element: 'field'; field: FieldModel } => e.element === 'field')
+		.map(e => e.field);
+
+	const branch: BranchModel = { modelType: 'branch', kind, fields, elements: deduped, rule: enrichedRule };
+	if (children) branch.children = children;
+	return branch;
 }
 
 // ---------------------------------------------------------------------------
