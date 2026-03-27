@@ -612,46 +612,47 @@ function choiceToMergedFields(
  * Looks for FIELD followed by REPEAT(SEQ(STRING, ...)) patterns.
  */
 function ruleToSeparators(rule: EnrichedRule): Map<string, string> {
-	const separators = new Map<string, string>();
-	walkForSeparators(rule, separators);
-	return separators;
-}
+	const out = new Map<string, string>();
 
-function walkForSeparators(rule: EnrichedRule, out: Map<string, string>): void {
-	if (rule.type === 'SEQ') {
-		for (let i = 0; i < rule.members.length - 1; i++) {
-			const current = rule.members[i]!;
-			const next = rule.members[i + 1]!;
-			if (current.type === 'FIELD' && (next.type === 'REPEAT' || next.type === 'REPEAT1')) {
-				const sep = seqToSeparator(next.content);
-				if (sep) out.set(current.name, sep);
-			}
+	function seqToSeparator(r: EnrichedRule): string | undefined {
+		if (r.type !== 'SEQ') return undefined;
+		for (const m of r.members) {
+			if (m.type === 'STRING' && /^[,;|&]$/.test(m.value)) return m.value;
 		}
-		for (const m of rule.members) walkForSeparators(m, out);
-	} else if (rule.type === 'REPEAT' || rule.type === 'REPEAT1') {
-		if (rule.content.type === 'SEQ') {
-			const sep = seqToSeparator(rule.content);
-			if (sep) {
-				for (const m of rule.content.members) {
-					if (m.type === 'FIELD') out.set(m.name, sep);
+		return undefined;
+	}
+
+	function walk(r: EnrichedRule): void {
+		if (r.type === 'SEQ') {
+			for (let i = 0; i < r.members.length - 1; i++) {
+				const current = r.members[i]!;
+				const next = r.members[i + 1]!;
+				if (current.type === 'FIELD' && (next.type === 'REPEAT' || next.type === 'REPEAT1')) {
+					const sep = seqToSeparator(next.content);
+					if (sep) out.set(current.name, sep);
 				}
 			}
+			for (const m of r.members) walk(m);
+		} else if (r.type === 'REPEAT' || r.type === 'REPEAT1') {
+			if (r.content.type === 'SEQ') {
+				const sep = seqToSeparator(r.content);
+				if (sep) {
+					for (const m of r.content.members) {
+						if (m.type === 'FIELD') out.set(m.name, sep);
+					}
+				}
+			}
+			walk(r.content);
+		} else if (r.type === 'CHOICE') {
+			for (const m of r.members) walk(m);
+		} else if (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' ||
+			r.type === 'TOKEN' || r.type === 'IMMEDIATE_TOKEN' || r.type === 'ALIAS') {
+			walk(r.content);
 		}
-		walkForSeparators(rule.content, out);
-	} else if (rule.type === 'CHOICE') {
-		for (const m of rule.members) walkForSeparators(m, out);
-	} else if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' ||
-		rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN' || rule.type === 'ALIAS') {
-		walkForSeparators(rule.content, out);
 	}
-}
 
-function seqToSeparator(rule: EnrichedRule): string | undefined {
-	if (rule.type !== 'SEQ') return undefined;
-	for (const m of rule.members) {
-		if (m.type === 'STRING' && /^[,;|&]$/.test(m.value)) return m.value;
-	}
-	return undefined;
+	walk(rule);
+	return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -724,44 +725,44 @@ export function enrichedToNodeModel(
 // Step 4: Signature computation
 // ---------------------------------------------------------------------------
 
-function fieldsToFactorySignature(fields: FieldModel[]): FactorySignature {
-	const factoryFields: Record<string, { collapsedTypes: string[]; anonLiterals: string[] }> = {};
-	for (const field of fields) {
-		factoryFields[field.name] = {
-			collapsedTypes: field.types.collapsedTypes,
-			anonLiterals: field.types.anonTokens,
-		};
-	}
-	return { id: stableKey('F', factoryFields), fields: factoryFields };
-}
-
-function fieldsToFromSignature(fields: FieldModel[]): FromSignature {
-	const fromFields: Record<string, { leafTypes: string[]; branchTypes: string[]; anonTokens: string[] }> = {};
-	for (const field of fields) {
-		fromFields[field.name] = {
-			leafTypes: field.types.leafTypes,
-			branchTypes: field.types.expandedBranch,
-			anonTokens: field.types.anonTokens,
-		};
-	}
-	return { id: stableKey('R', fromFields), fields: fromFields };
-}
-
-function fieldsToHydrationSignature(fields: FieldModel[]): HydrationSignature {
-	const hydrationFields: Record<string, { namedTypes: string[]; anonOnly: boolean }> = {};
-	for (const field of fields) {
-		const allNamed = [...field.types.leafTypes, ...field.types.branchTypes].sort();
-		hydrationFields[field.name] = {
-			namedTypes: allNamed,
-			anonOnly: allNamed.length === 0 && field.types.anonTokens.length > 0,
-		};
-	}
-	return { id: stableKey('H', hydrationFields), fields: hydrationFields };
-}
-
 export function nodesToSignatures(
 	nodes: Record<string, NodeModel>,
 ): { factory: Map<string, FactorySignature>; from: Map<string, FromSignature>; hydration: Map<string, HydrationSignature> } {
+	function fieldsToFactorySignature(fields: FieldModel[]): FactorySignature {
+		const factoryFields: Record<string, { collapsedTypes: string[]; anonLiterals: string[] }> = {};
+		for (const field of fields) {
+			factoryFields[field.name] = {
+				collapsedTypes: field.types.collapsedTypes,
+				anonLiterals: field.types.anonTokens,
+			};
+		}
+		return { id: stableKey('F', factoryFields), fields: factoryFields };
+	}
+
+	function fieldsToFromSignature(fields: FieldModel[]): FromSignature {
+		const fromFields: Record<string, { leafTypes: string[]; branchTypes: string[]; anonTokens: string[] }> = {};
+		for (const field of fields) {
+			fromFields[field.name] = {
+				leafTypes: field.types.leafTypes,
+				branchTypes: field.types.expandedBranch,
+				anonTokens: field.types.anonTokens,
+			};
+		}
+		return { id: stableKey('R', fromFields), fields: fromFields };
+	}
+
+	function fieldsToHydrationSignature(fields: FieldModel[]): HydrationSignature {
+		const hydrationFields: Record<string, { namedTypes: string[]; anonOnly: boolean }> = {};
+		for (const field of fields) {
+			const allNamed = [...field.types.leafTypes, ...field.types.branchTypes].sort();
+			hydrationFields[field.name] = {
+				namedTypes: allNamed,
+				anonOnly: allNamed.length === 0 && field.types.anonTokens.length > 0,
+			};
+		}
+		return { id: stableKey('H', hydrationFields), fields: hydrationFields };
+	}
+
 	const factory = new Map<string, FactorySignature>();
 	const from = new Map<string, FromSignature>();
 	const hydration = new Map<string, HydrationSignature>();
