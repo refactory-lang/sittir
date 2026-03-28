@@ -534,18 +534,16 @@ packages/codegen/src/
 
 ## Migration Strategy
 
-1. Define new model types + type guards alongside existing ones
-2. Rename elements → members, LeafWithChildrenModel → ContainerModel
-3. Split LeafModel: extract EnumModel for kinds with values
-4. Split FieldModel/ChildModel into Single vs List variants
-5. Replace FieldTypeClass with `kinds: string[]` on fields
-6. Add rule to all model types (retain unless truly absent)
-7. Restructure pipeline into 13 numbered steps
-8. Move heuristics into individual named methods
-9. Add naming step (typeName, factoryName, propertyName)
-10. Add hydration step (kinds string[] → NodeModel[])
-11. Verify generated output unchanged via diff test
-12. Remove old grammar-reader.ts functions superseded by pipeline
+**Approach:** Single cutover. Replace the entire pipeline at once, validate via generated output diff test against all three grammars (Rust, TypeScript, Python). No incremental coexistence of old and new code.
+
+**Validation:** Run codegen for all three grammars before and after. Diff generated output. Zero diff = done. Remove old code only after diff test passes.
+
+**Steps:**
+1. Implement new model types + type guards
+2. Implement 13-step pipeline (`build-model.ts` + domain files)
+3. Update emitters to consume hydrated `NodeModel[]` with type guards
+4. Run codegen for all three grammars, diff against current output
+5. Remove old grammar-reader.ts / grammar-model.ts functions
 
 ---
 
@@ -564,3 +562,4 @@ packages/codegen/src/
 - Q: Pipeline steps mutate models through 13 stages, but model interfaces use `readonly`. How should steps transform models? → A: Mutable in-place — pipeline owns the objects, `readonly` protects consumers (emitters) only.
 - Q: How should the `kinds: string[]` → `kinds: NodeModel[]` hydration boundary be represented in TypeScript? → A: Two separate types — `FieldModel`/`ChildModel` (pre-hydration, `kinds: string[]`) and `HydratedFieldModel`/`HydratedChildModel` (post-hydration, `kinds: NodeModel[]`). Emitters receive hydrated types only.
 - Q: What's the minimum scope for semantic aliases in v1? → A: Naming-only — character-to-name table (`Plus`, `2xColon`). Convention: `Nx[Name]` where `1x` omitted. Context-aware inference (e.g., `AddOperator`) deferred to follow-up.
+- Q: Incremental migration or single cutover? → A: Single cutover — replace pipeline, validate via generated output diff test against all three grammars. No parallel coexistence.
