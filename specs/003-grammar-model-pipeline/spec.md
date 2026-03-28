@@ -155,6 +155,8 @@ interface NodeTypeField {
 
 Each model type corresponds to a unique set of fields. 1:1 mapping. No optional field overloading.
 
+**Mutation strategy:** Pipeline steps mutate models in-place. The `readonly` modifiers protect downstream consumers (emitters) from accidental writes, but the pipeline itself owns the objects and casts away `readonly` at the build boundary. No immutable copies between steps.
+
 ```typescript
 type NodeModel =
   | BranchModel          // named node with fields, optional children, members, rule
@@ -519,3 +521,11 @@ packages/codegen/src/
 - Changing generated output API (factories, .from(), .assign() stay the same)
 - Modifying @sittir/core or @sittir/types
 - Changing grammar.json or node-types.json input format
+
+---
+
+## Clarifications
+
+### Session 2026-03-28
+
+- Q: Pipeline steps mutate models through 13 stages, but model interfaces use `readonly`. How should steps transform models? → A: Mutable in-place — pipeline owns the objects, `readonly` protects consumers (emitters) only.
