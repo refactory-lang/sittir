@@ -318,17 +318,12 @@ optimize(models: Map<string, NodeModel>): Map<string, NodeModel>
   // in:  hydrated models
   // out: models with signatures attached, patterns identified
 
-computeSignatures(models: Map<string, NodeModel>): { factory, from, hydration }
+computeSignatures(models: Map<string, NodeModel>): SignaturePool
   // in:  all models
-  // out: interned signature pools
-
-identifyFieldLists(models: Map<string, NodeModel>): Map<string, string[]>
-  // in:  all models
-  // out: kind set hash -> fields sharing identical kind sets
-
-identifyChildLists(models: Map<string, NodeModel>): Map<string, string[]>
-  // in:  all models
-  // out: kind set hash -> children sharing identical kind sets
+  // out: interned signature pools (factory, from, hydration, field, child)
+  //      FieldSignature attached to each FieldModel
+  //      ChildSignature attached to each ChildModel
+  //      FactorySignature/FromSignature/HydrationSignature attached to BranchModel
 
 identifyEnumPatterns(models: Map<string, NodeModel>): Map<string, string[]>
   // in:  all models

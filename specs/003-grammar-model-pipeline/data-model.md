@@ -127,7 +127,7 @@ interface NodeModelBase {
 | SingleFieldModel | `false` | — |
 | ListFieldModel | `true` | `separator: string \| null` |
 
-Common: `name`, `required`, `kinds: string[]`, `propertyName?`
+Common: `name`, `required`, `kinds: string[]`, `propertyName?`, `fieldSignature?` (added by optimization)
 
 #### ChildModel (discriminated by `multiple`)
 
@@ -136,7 +136,7 @@ Common: `name`, `required`, `kinds: string[]`, `propertyName?`
 | SingleChildModel | `false` | — |
 | ListChildModel | `true` | `separator: string \| null` |
 
-Common: `required`, `kinds: string[]`
+Common: `required`, `kinds: string[]`, `childSignature?` (added by optimization)
 
 #### NodeMember
 
@@ -186,10 +186,19 @@ interface GrammarModel {
   readonly models: ReadonlyMap<string, HydratedNodeModel>;
   readonly signatures: SignaturePool;
 }
+
+interface SignaturePool {
+  readonly factory: Map<string, FactorySignature>;
+  readonly from: Map<string, FromSignature>;
+  readonly hydration: Map<string, HydrationSignature>;
+  readonly field: Map<string, FieldSignature>;
+  readonly child: Map<string, ChildSignature>;
+}
 ```
 
 **Identity**: `name` (grammar name)
 **Consumers**: All emitters via `generate()`
+**Signature pools**: Fields/children with identical kind sets share the same signature → same TypeScript type expression in generated code
 
 ## State Transitions
 

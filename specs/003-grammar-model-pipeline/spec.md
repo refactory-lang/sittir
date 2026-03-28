@@ -294,6 +294,7 @@ interface SingleFieldModel {
   multiple: false;
   kinds: string[];
   propertyName?: string;
+  fieldSignature?: FieldSignature;   // added by optimization
 }
 
 interface ListFieldModel {
@@ -303,6 +304,7 @@ interface ListFieldModel {
   kinds: string[];
   separator: string | null;
   propertyName?: string;
+  fieldSignature?: FieldSignature;   // added by optimization
 }
 ```
 
@@ -317,6 +319,7 @@ interface SingleChildModel {
   required: boolean;
   multiple: false;
   kinds: string[];
+  childSignature?: ChildSignature;   // added by optimization
 }
 
 interface ListChildModel {
@@ -324,6 +327,7 @@ interface ListChildModel {
   multiple: true;
   kinds: string[];
   separator: string | null;
+  childSignature?: ChildSignature;   // added by optimization
 }
 ```
 
@@ -411,6 +415,14 @@ interface GrammarModel {
   readonly models: ReadonlyMap<string, HydratedNodeModel>;
   readonly signatures: SignaturePool;
 }
+
+interface SignaturePool {
+  readonly factory: Map<string, FactorySignature>;
+  readonly from: Map<string, FromSignature>;
+  readonly hydration: Map<string, HydrationSignature>;
+  readonly field: Map<string, FieldSignature>;
+  readonly child: Map<string, ChildSignature>;
+}
 ```
 
 ---
@@ -496,7 +508,7 @@ Grammar-based enrichment may reveal that a model needs reclassification (e.g., B
 
 | Step | Method | What it does |
 |------|--------|-------------|
-| 11 | `optimize(models)` | Signature interning, field/child/enum dedup, pattern detection |
+| 11 | `optimize(models)` | Signature interning (factory, from, hydration, field, child), enum pattern detection |
 
 ### Step 12: Hydrate
 
