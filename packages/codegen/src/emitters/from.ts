@@ -198,7 +198,7 @@ function emitFromFunction(
 	lines.push(`  if (isTreeNode(input)) return assign${typeName}(input);`);
 
 	// --- Path 2: NodeData → pass through ---
-	lines.push(`  if (isNodeData(input)) return ${factoryName}(input.fields);`);
+	lines.push(`  if (isNodeData(input)) return ${factoryName}((input as any).fields);`);
 
 	// --- Path 3: FromInput → resolve ---
 	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
@@ -272,13 +272,13 @@ function emitResolveCall(
 			return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' && ${varName} === '${escapeString(text)}' ? ${toFactoryName(lt)}() : ${varName})`;
 		}
 		const factory = toFactoryName(lt);
-		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(String(${varName})) : ${varName})`;
+		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(''+${varName} as any) : ${varName})`;
 	}
 
 	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.anonTokens.length === 0) {
 		const factory = toFactoryName(resolved.branchTypes[0]!);
 		const fromFn = `${factory}From`;
-		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName}) : typeof ${varName} === 'object' ? ${fromFn}(${varName}) : ${varName})`;
+		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName} as any) : typeof ${varName} === 'object' ? ${fromFn}(${varName}) : ${varName})`;
 	}
 
 	// Shouldn't happen — complex cases always get a named resolver
@@ -305,17 +305,17 @@ function emitResolveBody(
 	parts.push(`if(isNodeData(${v}))return ${v}`);
 
 	if (leafTypes.includes('boolean_literal') || (leafTypes.length === 0 && leafSet.has('boolean_literal'))) {
-		parts.push(`if(typeof ${v}==='boolean')return booleanLiteral(String(${v}))`);
+		parts.push(`if(typeof ${v}==='boolean')return booleanLiteral(${v}?'true':'false')`);
 	}
 
 	const hasInt = leafTypes.includes('integer_literal') || (leafTypes.length === 0 && leafSet.has('integer_literal'));
 	const hasFloat = leafTypes.includes('float_literal') || (leafTypes.length === 0 && leafSet.has('float_literal'));
 	if (hasInt && hasFloat) {
-		parts.push(`if(typeof ${v}==='number')return Number.isInteger(${v})?integerLiteral(String(${v})):floatLiteral(String(${v}))`);
+		parts.push(`if(typeof ${v}==='number')return Number.isInteger(${v})?integerLiteral(''+${v}):floatLiteral(''+${v})`);
 	} else if (hasInt) {
-		parts.push(`if(typeof ${v}==='number')return integerLiteral(String(${v}))`);
+		parts.push(`if(typeof ${v}==='number')return integerLiteral(''+${v})`);
 	} else if (hasFloat) {
-		parts.push(`if(typeof ${v}==='number')return floatLiteral(String(${v}))`);
+		parts.push(`if(typeof ${v}==='number')return floatLiteral(''+${v})`);
 	}
 
 	parts.push(`if(typeof ${v}==='string'){${emitStringResolve(v, leafTypes, anonTokens, leafSet, leafValueMap, keywordKinds, grammar)}}`);
@@ -323,7 +323,7 @@ function emitResolveBody(
 	if (branchTypes.length > 0) {
 		if (branchTypes.length === 1) {
 			const fromFn = `${toFactoryName(branchTypes[0]!)}From`;
-			parts.push(`if(Array.isArray(${v}))return ${fromFn}(${v})`);
+			parts.push(`if(Array.isArray(${v}))return ${fromFn}(${v} as any)`);
 		} else {
 			parts.push(`if(Array.isArray(${v}))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate')`);
 		}
@@ -351,7 +351,7 @@ function emitStringResolve(
 			const expectedText = keywordKinds.get(kind)!;
 			return `(${textVar}==='${escapeString(expectedText)}'?${toFactoryName(kind)}():(()=>{throw new Error(\`Expected '${escapeString(expectedText)}' for ${kind}, got '\${${textVar}}'\`)})())`;
 		}
-		return `${toFactoryName(kind)}(${textVar})`;
+		return `${toFactoryName(kind)}(${textVar} as any)`;
 	};
 
 	if (leafTypes.length === 1) {
@@ -386,7 +386,7 @@ function emitStringResolve(
 				try {
 					const flags = pattern.includes('\\p{') ? 'u' : '';
 					new RegExp(`^${pattern}$`, flags);
-					parts.push(`if(/^${pattern.replace(/`/g, '\\`')}$/${flags}.test(${v}))return ${callLeaf(lt, v)};`);
+					parts.push(`if(/^${pattern.replace(/\//g, '\\/').replace(/`/g, '\\`')}$/${flags}.test(${v}))return ${callLeaf(lt, v)};`);
 				} catch {
 					// Pattern not safe for JS — skip
 				}

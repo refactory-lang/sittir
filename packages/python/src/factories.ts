@@ -69,7 +69,7 @@ export function argumentList(
 ) {
   return {
     type: 'argument_list' as const,
-    children: (...v: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]) => argumentList({ ...config, children: v }),
+    children: (...v: (DictionarySplat | Expression | KeywordArgument)[]) => argumentList({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -86,7 +86,7 @@ export function asPattern(
   return {
     type: 'as_pattern' as const,
     alias: (v: string) => asPattern({ ...config, 'alias': v }),
-    children: (...v: (CasePattern | Expression | Identifier)[]) => asPattern({ ...config, children: v }),
+    children: (...v: (CasePattern | Expression)[]) => asPattern({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1009,7 +1009,7 @@ export function list(
 ) {
   return {
     type: 'list' as const,
-    children: (...v: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) => list({ ...config, children: v }),
+    children: (...v: (Expression | ParenthesizedListSplat | Yield)[]) => list({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1058,7 +1058,7 @@ export function listSplat(
 ) {
   return {
     type: 'list_splat' as const,
-    children: (v: Attribute | Expression | Identifier | Subscript) => listSplat({ ...config, children: v }),
+    children: (v: Expression) => listSplat({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1221,7 +1221,7 @@ export function parenthesizedExpression(
 ) {
   return {
     type: 'parenthesized_expression' as const,
-    children: (v: Expression | ListSplat | ParenthesizedExpression | Yield) => parenthesizedExpression({ ...config, children: v }),
+    children: (v: Expression | Yield) => parenthesizedExpression({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1335,7 +1335,7 @@ export function set(
 ) {
   return {
     type: 'set' as const,
-    children: (...v: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) => set({ ...config, children: v }),
+    children: (...v: (Expression | ParenthesizedListSplat | Yield)[]) => set({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1482,7 +1482,7 @@ export function tuple(
 ) {
   return {
     type: 'tuple' as const,
-    children: (...v: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) => tuple({ ...config, children: v }),
+    children: (...v: (Expression | ParenthesizedListSplat | Yield)[]) => tuple({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1973,8 +1973,7 @@ export function integer(text: string) {
 }
 
 export function lineContinuation(text: string) {
-  if (!/^\\(?:?
-| )$/.test(text)) throw new Error(`Invalid line_continuation: '${text}' does not match grammar pattern`);
+  if (!/^\\(?:\r?\n|\0)$/.test(text)) throw new Error(`Invalid line_continuation: '${text}' does not match grammar pattern`);
   return {
     type: 'line_continuation' as const,
     text,

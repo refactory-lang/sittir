@@ -63,6 +63,7 @@ export function buildProjectionContext(models: ReadonlyMap<string, HydratedNodeM
 export interface KindProjection {
 	leafTypes: string[];
 	branchTypes: string[];
+	supertypeKinds: string[];
 	anonTokens: string[];
 	expandedAll: string[];
 	expandedBranch: string[];
@@ -85,22 +86,26 @@ export function projectKinds(
 		}
 	}
 
-	const leafTypes = namedKinds.filter(t => ctx.leafKinds.has(t)).sort();
-	const branchTypes = namedKinds.filter(t => !ctx.leafKinds.has(t) && !t.startsWith('_')).sort();
+	// Detect supertypes from model metadata, not naming convention
+	const supertypeKinds = new Set<string>();
+	for (const k of kinds) {
+		if (k.modelType === 'supertype') supertypeKinds.add(k.kind);
+	}
 
-	// Expand supertypes to concrete kinds
+	const leafTypes = namedKinds.filter(t => ctx.leafKinds.has(t)).sort();
+	// Supertypes are named union types — include them as branch types, not expanded
+	const branchTypes = namedKinds.filter(t => !ctx.leafKinds.has(t) && !supertypeKinds.has(t)).sort();
+
 	const expandedAll = new Set<string>();
 	const expandedBranch = new Set<string>();
 	for (const t of branchTypes) { expandedBranch.add(t); expandedAll.add(t); }
 	for (const t of leafTypes) expandedAll.add(t);
-	for (const t of namedKinds) {
-		if (t.startsWith('_')) {
-			const subs = ctx.expandedSupertypes.get(t);
-			if (subs) {
-				for (const c of subs) {
-					expandedAll.add(c);
-					if (!ctx.leafKinds.has(c)) expandedBranch.add(c);
-				}
+	for (const t of supertypeKinds) {
+		const subs = ctx.expandedSupertypes.get(t);
+		if (subs) {
+			for (const c of subs) {
+				expandedAll.add(c);
+				if (!ctx.leafKinds.has(c)) expandedBranch.add(c);
 			}
 		}
 	}
@@ -110,6 +115,7 @@ export function projectKinds(
 	return {
 		leafTypes,
 		branchTypes,
+		supertypeKinds: [...supertypeKinds].sort(),
 		anonTokens: [...anonTokens],
 		expandedAll: [...expandedAll].sort(),
 		expandedBranch: [...expandedBranch].sort(),

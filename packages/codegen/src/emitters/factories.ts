@@ -160,7 +160,7 @@ export function emitTerminalFactory(
 		// (e.g., comment patterns containing // or /* which conflict with JS syntax)
 		const hasSyntaxConflict = leafPattern.includes('//') || leafPattern.includes('/*');
 		if (!hasSyntaxConflict && isSafeJsRegex(leafPattern)) {
-			const escaped = leafPattern.replace(/`/g, '\\`');
+			const escaped = leafPattern.replace(/`/g, '\\`').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\0/g, '\\0');
 			const flags = leafPattern.includes('\\p{') ? 'u' : '';
 			lines.push(`  if (!/^${escaped}$/${flags}.test(text)) throw new Error(\`Invalid ${kind}: '\${text}' does not match grammar pattern\`);`);
 		}
