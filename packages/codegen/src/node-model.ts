@@ -416,6 +416,8 @@ export function reconcile(
 	enrichedRules: Map<string, EnrichedRule>,
 	grammarName?: string,
 ): void {
+	const inconsistencies: string[] = [];
+
 	for (const [kind, model] of models) {
 		const rule = enrichedRules.get(kind);
 		if (!rule) {
@@ -486,31 +488,13 @@ export function reconcile(
 			continue;
 		}
 
-		// Leaf can be anything from grammar's perspective (branch, container)
-		// when NT sees it as leaf but grammar has structure
-		if (model.modelType === 'leaf' && rule.modelType === 'branch') {
-			// Grammar found fields in what NT thought was a leaf — should be rare
-			// Just keep as leaf with grammar data
-			enrichLeaf(model, { modelType: 'leaf', pattern: null, rule: rule.rule } as LeafRule);
-			continue;
-		}
+		inconsistencies.push(`'${kind}': node-types says '${model.modelType}', grammar says '${rule.modelType}'`);
+	}
 
-		if (model.modelType === 'leaf' && rule.modelType === 'container') {
-			enrichLeaf(model, { modelType: 'leaf', pattern: null, rule: rule.rule } as LeafRule);
-			continue;
-		}
-
-		if (model.modelType === 'leaf' && rule.modelType === 'supertype') {
-			// Rare: NT has leaf, grammar has supertype — keep as leaf
-			enrichLeaf(model, { modelType: 'leaf', pattern: null, rule: rule.rule } as LeafRule);
-			continue;
-		}
-
-		// For other mismatches, just attach the grammar rule as-is
-		// Don't throw — some grammars have edge cases
-		if ('rule' in model && model.rule === null) {
-			(model as any).rule = rule;
-		}
+	if (inconsistencies.length > 0) {
+		throw new Error(
+			`Reconcile found ${inconsistencies.length} inconsistencies between grammar.json and node-types.json:\n  ${inconsistencies.join('\n  ')}`,
+		);
 	}
 }
 
