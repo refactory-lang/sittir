@@ -10,6 +10,7 @@
  */
 
 import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
+import { firstChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString } from './utils.ts';
@@ -36,8 +37,8 @@ export function emitFactory(config: {
 	const lines: string[] = [];
 
 	// Factory function — accepts *Config (fields + children), return type inferred
-	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
-	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && node.children![0]!.required);
+	const hasChildren = node.children != null;
+	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && firstChildSlot(node.children!).required);
 	if (hasRequiredFields) {
 		lines.push(`export function ${factoryName}(`);
 		lines.push(`  config: ${typeName}Config,`);
@@ -74,9 +75,9 @@ export function emitFactory(config: {
 		}
 	}
 	if (hasChildren) {
-		const childProj = projectKinds(node.children![0]!.kinds, ctx);
+		const childProj = projectKinds(firstChildSlot(node.children!).kinds, ctx);
 		const childTypeUnion = childProj.collapsedTypes.join(' | ');
-		if (node.children![0]!.multiple) {
+		if (firstChildSlot(node.children!).multiple) {
 			lines.push(`    children: (...v: (${childTypeUnion})[]) => ${factoryName}({ ...config, children: v }),`);
 		} else {
 			lines.push(`    children: (v: ${childTypeUnion}) => ${factoryName}({ ...config, children: v }),`);
@@ -213,7 +214,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		}
 		const hasChildren = n.children != null && (Array.isArray(n.children) ? n.children.length > 0 : true);
 		if (hasChildren) {
-			const childProj = projectKinds(n.children![0]!.kinds, ctx);
+			const childProj = projectKinds(firstChildSlot(n.children!).kinds, ctx);
 			for (const t of childProj.expandedAll) {
 				if (t === '_') continue;
 				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);

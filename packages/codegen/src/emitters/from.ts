@@ -10,6 +10,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
+import { firstChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString } from './utils.ts';
@@ -119,9 +120,9 @@ export function emitFrom(config: EmitFromConfig): string {
 		for (const field of fieldsOf(node)) {
 			getOrCreateResolver(projectKinds(field.kinds, ctx));
 		}
-		const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
+		const hasChildren = node.children != null;
 		if (hasChildren) {
-			getOrCreateResolver(projectKinds(node.children![0]!.kinds, ctx));
+			getOrCreateResolver(projectKinds(firstChildSlot(node.children!).kinds, ctx));
 		}
 	}
 
@@ -222,7 +223,7 @@ function emitFromFunction(
 	lines.push(`  if (isNodeData(input)) return ${factoryName}((input as any).fields);`);
 
 	// --- Path 3: FromInput → resolve ---
-	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
+	const hasChildren = node.children != null;
 	if (hasChildren) {
 		lines.push(`  const obj = Array.isArray(input) ? { children: input } : input;`);
 	} else {
@@ -247,12 +248,12 @@ function emitFromFunction(
 		lines.push(`  }`);
 	}
 	if (hasChildren) {
-		const childProj = projectKinds(node.children![0]!.kinds, ctx);
+		const childProj = projectKinds(firstChildSlot(node.children!).kinds, ctx);
 		lines.push(`  if (obj['children'] !== undefined) {`);
 		lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
 		const childResolve = emitResolveCall(childProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 		lines.push(`    resolved['children'] = arr.map((v: any) => ${childResolve});`);
-		if (node.children![0]!.required) {
+		if (firstChildSlot(node.children!).required) {
 			lines.push(`  } else {`);
 			lines.push(`    resolved['children'] = [];`);
 		}
@@ -535,9 +536,9 @@ function collectReferencedFactories(
 				}
 			}
 		}
-		const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
+		const hasChildren = node.children != null;
 		if (hasChildren) {
-			const childProj = projectKinds(node.children![0]!.kinds, ctx);
+			const childProj = projectKinds(firstChildSlot(node.children!).kinds, ctx);
 			for (const t of childProj.expandedAll) {
 				if (leafSet.has(t)) {
 					refs.add(toFactoryName(t));

@@ -20,6 +20,17 @@ import { applyNaming } from './naming.ts';
 import { optimize } from './optimization.ts';
 import { hydrate } from './hydration.ts';
 
+function stripChildSignatures(children: any): any {
+	if (Array.isArray(children)) {
+		return children.map((c: any) => {
+			const { childSignature, ...rest } = c;
+			return rest;
+		});
+	}
+	const { childSignature, ...rest } = children;
+	return rest;
+}
+
 // ---------------------------------------------------------------------------
 // JSON5 serialization (preserved from grammar-model.ts)
 // ---------------------------------------------------------------------------
@@ -73,19 +84,13 @@ function serializeToJson5(nodes: Map<string, NodeModel>): string {
 				});
 			}
 			if (branchRest.children) {
-				branchRest.children = branchRest.children.map((c: any) => {
-					const { childSignature, ...childRest } = c;
-					return childRest;
-				});
+				branchRest.children = stripChildSignatures(branchRest.children);
 			}
 			serializable[k] = branchRest;
 		} else if (rest.modelType === 'container') {
 			const { members, rule, ...containerRest } = rest;
 			if (containerRest.children) {
-				containerRest.children = containerRest.children.map((c: any) => {
-					const { childSignature, ...childRest } = c;
-					return childRest;
-				});
+				containerRest.children = stripChildSignatures(containerRest.children);
 			}
 			serializable[k] = containerRest;
 		} else {

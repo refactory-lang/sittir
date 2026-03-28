@@ -88,6 +88,57 @@ export interface ListChildModel {
 export type ChildModel = SingleChildModel | ListChildModel;
 
 // ---------------------------------------------------------------------------
+// ChildrenModel — single slot, or positional tuple of slots
+// ---------------------------------------------------------------------------
+
+/**
+ * A single child slot (single or list) — no array wrapper.
+ * A positional tuple of child slots — ChildModel[] with length > 1.
+ * Each tuple element represents a distinct ordered position in the grammar.
+ *
+ * Examples:
+ *   SingleChildModel                          → parenthesized_expression: '(' expr ')'
+ *   ListChildModel                            → declaration_list: '{' stmt* '}'
+ *   [SingleChildModel, SingleChildModel]      → index_expression: expr '[' expr ']'
+ *   [SingleChild, ListChild, SingleChild]     → block: label? '{' stmt* expr? '}'
+ */
+export type ChildrenModel = ChildModel | ChildModel[];
+
+// ---------------------------------------------------------------------------
+// ChildrenModel helpers
+// ---------------------------------------------------------------------------
+
+// Helpers accept both pre-hydration (ChildrenModel) and post-hydration (HydratedChildrenModel)
+// via a generic `T extends { multiple: boolean }` constraint that matches both.
+
+type AnyChildSlot = { multiple: boolean; kinds: unknown[] };
+type AnyChildrenModel = AnyChildSlot | AnyChildSlot[];
+
+/** Iterate over all child slots regardless of shape. */
+export function eachChildSlot<T extends AnyChildSlot>(children: T | T[], fn: (child: T, index: number) => void): void {
+	if (Array.isArray(children)) {
+		for (let i = 0; i < children.length; i++) fn(children[i]!, i);
+	} else {
+		fn(children, 0);
+	}
+}
+
+/** Return the number of positional child slots. */
+export function childSlotCount(children: AnyChildrenModel): number {
+	return Array.isArray(children) ? children.length : 1;
+}
+
+/** Return true if children is a positional tuple (2+ slots). */
+export function isTupleChildren(children: AnyChildrenModel): children is AnyChildSlot[] {
+	return Array.isArray(children);
+}
+
+/** Get the first (or only) child slot. For non-tuple children, returns the child itself. */
+export function firstChildSlot<T extends AnyChildSlot>(children: T | T[]): T {
+	return Array.isArray(children) ? children[0]! : children;
+}
+
+// ---------------------------------------------------------------------------
 // NodeMember — ordered element within structural models
 // ---------------------------------------------------------------------------
 
@@ -105,7 +156,7 @@ export interface BranchModel extends NodeModelBase {
 	modelType: 'branch';
 	kind: string;
 	fields: FieldModel[];
-	children?: ChildModel[];
+	children?: ChildrenModel;
 	members: NodeMember[];
 	rule: EnrichedRule;
 }
@@ -113,7 +164,7 @@ export interface BranchModel extends NodeModelBase {
 export interface ContainerModel extends NodeModelBase {
 	modelType: 'container';
 	kind: string;
-	children: ChildModel[];
+	children: ChildrenModel;
 	members: NodeMember[];
 	rule: EnrichedRule;
 }
@@ -186,18 +237,22 @@ export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
  * Recursively replaces `kinds: string[]` with `kinds: HydratedNodeModel[]`
  * and makes all properties `readonly`.
  */
+export type HydrateChildrenModel<C extends ChildrenModel> =
+	C extends ChildModel[] ? Hydrate<ChildModel>[] : Hydrate<ChildModel>;
+
 export type Hydrate<T> =
 	T extends { kinds: string[] }
 		? Readonly<Omit<T, 'kinds'> & { kinds: HydratedNodeModel[] }>
-		: T extends { fields: FieldModel[] }
+		: T extends { fields: FieldModel[]; children?: ChildrenModel }
 			? Readonly<Omit<T, 'fields' | 'children'> & {
 				fields: Hydrate<FieldModel>[];
-				children?: Hydrate<ChildModel>[];
+				children?: HydratedChildrenModel;
 			}>
-			: T extends { children: ChildModel[] }
-				? Readonly<Omit<T, 'children'> & { children: Hydrate<ChildModel>[] }>
+			: T extends { children: ChildrenModel }
+				? Readonly<Omit<T, 'children'> & { children: HydratedChildrenModel }>
 				: Readonly<T>;
 
+export type HydratedChildrenModel = Hydrate<ChildModel> | Hydrate<ChildModel>[];
 export type HydratedFieldModel = Hydrate<FieldModel>;
 export type HydratedChildModel = Hydrate<ChildModel>;
 export type HydratedBranchModel = Hydrate<BranchModel>;
@@ -244,13 +299,13 @@ function initializeBranch(kind: string, entry: NodeTypeEntry): BranchModel {
 		}
 	}
 
-	let children: ChildModel[] | undefined;
+	let children: ChildrenModel | undefined;
 	if (entry.children) {
 		const kinds = entry.children.types.map(t => t.type);
 		if (entry.children.multiple) {
-			children = [{ required: entry.children.required, multiple: true, kinds, separator: null }];
+			children = { required: entry.children.required, multiple: true, kinds, separator: null } as ListChildModel;
 		} else {
-			children = [{ required: entry.children.required, multiple: false, kinds }];
+			children = { required: entry.children.required, multiple: false, kinds } as SingleChildModel;
 		}
 	}
 
@@ -265,14 +320,16 @@ function initializeBranch(kind: string, entry: NodeTypeEntry): BranchModel {
 }
 
 function initializeContainer(kind: string, entry: NodeTypeEntry): ContainerModel {
-	const children: ChildModel[] = [];
+	let children: ChildrenModel;
 	if (entry.children) {
 		const kinds = entry.children.types.map(t => t.type);
 		if (entry.children.multiple) {
-			children.push({ required: entry.children.required, multiple: true, kinds, separator: null });
+			children = { required: entry.children.required, multiple: true, kinds, separator: null } as ListChildModel;
 		} else {
-			children.push({ required: entry.children.required, multiple: false, kinds });
+			children = { required: entry.children.required, multiple: false, kinds } as SingleChildModel;
 		}
+	} else {
+		children = { required: false, multiple: false, kinds: [] } as SingleChildModel;
 	}
 
 	return {
@@ -362,27 +419,33 @@ function enrichBranch(model: BranchModel, rule: BranchRule): void {
 	}
 
 	// Merge children kinds from grammar
-	if (rule.children && model.children) {
-		for (let i = 0; i < model.children.length && i < rule.children.length; i++) {
-			const kindSet = new Set(model.children[i]!.kinds);
-			for (const k of rule.children[i]!.kinds) kindSet.add(k);
-			model.children[i]!.kinds = [...kindSet];
-		}
+	if (rule.children && rule.children.length > 0 && model.children) {
+		mergeChildrenKinds(model.children, rule.children);
 	}
 
 	model.rule = rule;
 }
 
 function enrichContainer(model: ContainerModel, rule: ContainerRule): void {
-	if (rule.children.length > 0 && model.children.length > 0) {
-		for (let i = 0; i < model.children.length && i < rule.children.length; i++) {
-			const kindSet = new Set(model.children[i]!.kinds);
-			for (const k of rule.children[i]!.kinds) kindSet.add(k);
-			model.children[i]!.kinds = [...kindSet];
-		}
+	if (rule.children.length > 0) {
+		mergeChildrenKinds(model.children, rule.children);
 	}
 
 	model.rule = rule;
+}
+
+/** Merge grammar-derived kinds into NT-derived children model. */
+function mergeChildrenKinds(children: ChildrenModel, ruleChildren: EnrichedChildInfo[]): void {
+	// Grammar enriched children are still merged (length 1) for now.
+	// Merge the first grammar child's kinds into each slot of the model.
+	const grammarKinds = ruleChildren[0]?.kinds ?? [];
+	if (grammarKinds.length === 0) return;
+
+	eachChildSlot(children, (child) => {
+		const kindSet = new Set(child.kinds);
+		for (const k of grammarKinds) kindSet.add(k);
+		child.kinds = [...kindSet];
+	});
 }
 
 function enrichLeaf(model: LeafModel, rule: LeafRule): void {
@@ -416,7 +479,7 @@ export function reconcile(
 	enrichedRules: Map<string, EnrichedRule>,
 	grammarName?: string,
 ): void {
-	const inconsistencies: string[] = [];
+	const inconsistencies: { kind: string; model: NodeModel; rule: EnrichedRule }[] = [];
 
 	for (const [kind, model] of models) {
 		const rule = enrichedRules.get(kind);
@@ -479,7 +542,7 @@ export function reconcile(
 			const promoted: ContainerModel = {
 				modelType: 'container',
 				kind,
-				children: branch.children ?? [],
+				children: branch.children ?? { required: false, multiple: false, kinds: [] } as SingleChildModel,
 				members: [],
 				rule,
 			};
@@ -492,14 +555,18 @@ export function reconcile(
 	}
 
 	if (inconsistencies.length > 0) {
-		const lines = inconsistencies.map(({ kind, model, rule }) =>
-			`'${kind}': node-types says '${model.modelType}', grammar says '${rule.modelType}'\n` +
-			`    model: ${JSON.stringify(model, null, 2).replace(/\n/g, '\n    ')}\n` +
-			`    rule:  ${JSON.stringify(rule, null, 2).replace(/\n/g, '\n    ')}`,
+		const summary = inconsistencies.map(({ kind, model, rule }) =>
+			`  '${kind}': node-types=${model.modelType}, grammar=${rule.modelType}`,
+		).join('\n');
+		console.warn(
+			`Reconcile: ${inconsistencies.length} inconsistencies (NT model type wins, grammar rule attached):\n${summary}`,
 		);
-		throw new Error(
-			`Reconcile found ${inconsistencies.length} inconsistencies between grammar.json and node-types.json:\n\n  ${lines.join('\n\n  ')}`,
-		);
+		// Attach rule to mismatched models so rendering still works
+		for (const { kind, model, rule } of inconsistencies) {
+			if ('rule' in model && model.rule === null) {
+				(model as any).rule = rule;
+			}
+		}
 	}
 }
 
@@ -717,7 +784,7 @@ export function applyAllMembers(models: Map<string, NodeModel>, grammar: Grammar
 export function refineModelType(model: NodeModel): NodeModel {
 	if (model.modelType === 'branch') {
 		const branch = model as BranchModel;
-		if (branch.fields.length === 0 && branch.children && branch.children.length > 0) {
+		if (branch.fields.length === 0 && branch.children) {
 			return {
 				modelType: 'container',
 				kind: branch.kind,

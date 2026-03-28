@@ -9,6 +9,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
+import { firstChildSlot } from '../node-model.ts';
 import { toTypeName, toFactoryName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
@@ -121,10 +122,10 @@ export function emitAssign(config: EmitAssignConfig): string {
 		}
 
 		// Hydrate children field if present
-		const children = node.children;
-		if (children && children.length > 0) {
-			const childProj = projectKinds(children[0]!.kinds, ctx);
-			emitAssignChildren(lines, children[0]!, expandForRuntime(childProj.expandedAll, ctx), node.kind);
+		if (node.children != null) {
+			const child = firstChildSlot(node.children);
+			const childProj = projectKinds(child.kinds, ctx);
+			emitAssignChildren(lines, child, expandForRuntime(childProj.expandedAll, ctx), node.kind);
 		}
 
 		lines.push(`  const result = ${factoryName}(config as ${configTypeName});`);

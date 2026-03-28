@@ -11,7 +11,7 @@ import type {
 	SignaturePool,
 	SupertypeModel,
 } from './node-model.ts';
-import { isBranch, isContainer, isSupertype, isEnum } from './node-model.ts';
+import { isBranch, isContainer, isSupertype, isEnum, eachChildSlot } from './node-model.ts';
 import { toTypeName } from './naming.ts';
 
 // ---------------------------------------------------------------------------
@@ -40,23 +40,23 @@ export function computeSignatures(models: Map<string, NodeModel>): SignaturePool
 				field.fieldSignature = fieldPool.get(key)!;
 			}
 			if (model.children) {
-				for (const child of model.children) {
+				eachChildSlot(model.children, (child) => {
 					const key = stableKey('C', child.kinds);
 					if (!childPool.has(key)) {
 						childPool.set(key, { id: key, kinds: child.kinds.slice().sort() });
 					}
 					child.childSignature = childPool.get(key)!;
-				}
+				});
 			}
 		}
 		if (isContainer(model)) {
-			for (const child of model.children) {
+			eachChildSlot(model.children, (child) => {
 				const key = stableKey('C', child.kinds);
 				if (!childPool.has(key)) {
 					childPool.set(key, { id: key, kinds: child.kinds.slice().sort() });
 				}
 				child.childSignature = childPool.get(key)!;
-			}
+			});
 		}
 	}
 
