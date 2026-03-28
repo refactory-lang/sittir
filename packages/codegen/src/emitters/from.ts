@@ -27,6 +27,7 @@ export interface EmitFromConfig {
 interface ResolvedFieldTypes {
 	leafTypes: string[];
 	branchTypes: string[];
+	supertypes: string[];
 	anonTokens: string[];
 }
 
@@ -35,16 +36,18 @@ function resolveFieldTypes(
 	proj: KindProjection,
 	leafSet: Set<string>,
 	branchNodeSet: Set<string>,
+	supertypeSet: Set<string>,
 ): ResolvedFieldTypes {
 	const leafTypes = proj.expandedAll.filter(t => leafSet.has(t));
 	const branchTypes = proj.expandedAll.filter(t => branchNodeSet.has(t));
+	const supertypes = proj.expandedAll.filter(t => supertypeSet.has(t));
 	const anonTokens = proj.anonTokens;
-	return { leafTypes, branchTypes, anonTokens };
+	return { leafTypes, branchTypes, supertypes, anonTokens };
 }
 
 /** Create a canonical key for deduplication. */
 function resolverKey(r: ResolvedFieldTypes): string {
-	return `L:${[...r.leafTypes].sort().join(',')};B:${[...r.branchTypes].sort().join(',')};A:${[...r.anonTokens].sort().join(',')}`;
+	return `L:${[...r.leafTypes].sort().join(',')};B:${[...r.branchTypes].sort().join(',')};S:${[...r.supertypes].sort().join(',')};A:${[...r.anonTokens].sort().join(',')}`;
 }
 
 /** Create a short deterministic name from a key for the generated function. */
@@ -73,19 +76,35 @@ export function emitFrom(config: EmitFromConfig): string {
 	const branchNodeSet = new Set(nodes.map(n => n.kind));
 	const ctx = buildProjectionContext(new Map(config.nodes.map(n => [n.kind, n])));
 
-	// --- Phase 1: Collect all unique resolver signatures ---
-	const resolverRegistry = new Map<string, { name: string; resolved: ResolvedFieldTypes }>();
+	const supertypeSet = new Set(ctx.expandedSupertypes.keys());
 
+	// --- Phase 1: Register supertype resolvers with readable names ---
+	const resolverRegistry = new Map<string, { name: string; resolved: ResolvedFieldTypes }>();
+	// Map supertype kind → resolver name for delegation
+	const supertypeResolverNames = new Map<string, string>();
+
+	for (const [supertypeKind, concreteKinds] of ctx.expandedSupertypes) {
+		const leafTypes = [...concreteKinds].filter(t => leafSet.has(t)).sort();
+		const branchTypes = [...concreteKinds].filter(t => branchNodeSet.has(t)).sort();
+		if (leafTypes.length === 0 && branchTypes.length === 0) continue;
+		const resolved: ResolvedFieldTypes = { leafTypes, branchTypes, supertypes: [], anonTokens: [] };
+		const key = resolverKey(resolved);
+		const name = `_resolve${toTypeName(supertypeKind)}`;
+		supertypeResolverNames.set(supertypeKind, name);
+		if (!resolverRegistry.has(key)) {
+			resolverRegistry.set(key, { name, resolved });
+		}
+	}
+
+	// --- Phase 2: Collect remaining unique resolver signatures from fields ---
 	function getOrCreateResolver(proj: KindProjection): { name: string; resolved: ResolvedFieldTypes; key: string } {
-		const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet);
+		const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet, supertypeSet);
 		const key = resolverKey(resolved);
 
 		if (!resolverRegistry.has(key)) {
-			// Check if this is a "simple" case that doesn't need a named function
-			const isSimple = (
-				(resolved.leafTypes.length === 1 && resolved.branchTypes.length === 0 && resolved.anonTokens.length === 0) ||
-				(resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.anonTokens.length === 0)
-			);
+			const totalNonAnon = resolved.leafTypes.length + resolved.branchTypes.length + resolved.supertypes.length;
+			// Simple cases: single leaf, single branch, or single supertype — inlined at call site
+			const isSimple = totalNonAnon === 1 && resolved.anonTokens.length === 0;
 			if (!isSimple) {
 				resolverRegistry.set(key, { name: resolverName(key), resolved });
 			}
@@ -151,7 +170,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	// --- Emit shared resolver functions ---
 	for (const [, { name, resolved }] of resolverRegistry) {
 		lines.push(`function ${name}(v: any): any {`);
-		const body = emitResolveBody('v', resolved.leafTypes, resolved.branchTypes, resolved.anonTokens, leafSet, leafValueMap, keywordKinds, nodes, config.grammar);
+		const body = emitResolveBody('v', resolved, leafSet, leafValueMap, keywordKinds, nodes, supertypeResolverNames, ctx.expandedSupertypes, branchNodeSet, config.grammar);
 		lines.push(`  ${body}`);
 		lines.push('}');
 		lines.push('');
@@ -159,7 +178,7 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// --- Per-kind .from() functions ---
 	for (const node of nodes) {
-		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar, branchNodeSet, resolverRegistry, ctx));
+		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar, branchNodeSet, supertypeSet, resolverRegistry, supertypeResolverNames, ctx));
 		lines.push('');
 	}
 
@@ -178,7 +197,9 @@ function emitFromFunction(
 	allNodes: StructuralNode[],
 	grammar: string | undefined,
 	branchNodeSet: Set<string>,
+	supertypeSet: Set<string>,
 	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
+	supertypeResolverNames: Map<string, string>,
 	ctx: ProjectionContext,
 ): string {
 	const typeName = toTypeName(node.kind);
@@ -211,7 +232,7 @@ function emitFromFunction(
 	for (const field of fields) {
 		lines.push(`  if (obj['${field.name}'] !== undefined) {`);
 		const fieldProj = projectKinds(field.kinds, ctx);
-		const resolveCall = emitResolveCall(fieldProj, `obj['${field.name}']`, leafSet, branchNodeSet, keywordKinds, resolverRegistry);
+		const resolveCall = emitResolveCall(fieldProj, `obj['${field.name}']`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 		if (field.multiple) {
 			lines.push(`    const raw = obj['${field.name}'];`);
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
@@ -229,7 +250,7 @@ function emitFromFunction(
 		const childProj = projectKinds(node.children![0]!.kinds, ctx);
 		lines.push(`  if (obj['children'] !== undefined) {`);
 		lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
-		const childResolve = emitResolveCall(childProj, 'v', leafSet, branchNodeSet, keywordKinds, resolverRegistry);
+		const childResolve = emitResolveCall(childProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 		lines.push(`    resolved['children'] = arr.map((v: any) => ${childResolve});`);
 		if (node.children![0]!.required) {
 			lines.push(`  } else {`);
@@ -252,10 +273,12 @@ function emitResolveCall(
 	varName: string,
 	leafSet: Set<string>,
 	branchNodeSet: Set<string>,
+	supertypeSet: Set<string>,
 	keywordKinds: Map<string, string>,
 	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
+	supertypeResolverNames: Map<string, string>,
 ): string {
-	const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet);
+	const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet, supertypeSet);
 	const key = resolverKey(resolved);
 	const entry = resolverRegistry.get(key);
 
@@ -265,7 +288,7 @@ function emitResolveCall(
 	}
 
 	// Simple cases — inline
-	if (resolved.leafTypes.length === 1 && resolved.branchTypes.length === 0 && resolved.anonTokens.length === 0) {
+	if (resolved.leafTypes.length === 1 && resolved.branchTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
 		const lt = resolved.leafTypes[0]!;
 		if (keywordKinds.has(lt)) {
 			const text = keywordKinds.get(lt)!;
@@ -275,10 +298,16 @@ function emitResolveCall(
 		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(''+${varName} as any) : ${varName})`;
 	}
 
-	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.anonTokens.length === 0) {
+	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
 		const factory = toFactoryName(resolved.branchTypes[0]!);
 		const fromFn = `${factory}From`;
 		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName} as any) : typeof ${varName} === 'object' ? ${fromFn}(${varName}) : ${varName})`;
+	}
+
+	// Single supertype — delegate to its resolver
+	if (resolved.supertypes.length === 1 && resolved.leafTypes.length === 0 && resolved.branchTypes.length === 0 && resolved.anonTokens.length === 0) {
+		const resolverFn = supertypeResolverNames.get(resolved.supertypes[0]!);
+		if (resolverFn) return `${resolverFn}(${varName})`;
 	}
 
 	// Shouldn't happen — complex cases always get a named resolver
@@ -291,15 +320,17 @@ function emitResolveCall(
 
 function emitResolveBody(
 	v: string,
-	leafTypes: string[],
-	branchTypes: string[],
-	anonTokens: string[],
+	resolved: ResolvedFieldTypes,
 	leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
 	allNodes: StructuralNode[],
+	supertypeResolverNames: Map<string, string>,
+	expandedSupertypes: ReadonlyMap<string, Set<string>>,
+	branchNodeSet: Set<string>,
 	grammar?: string,
 ): string {
+	const { leafTypes, branchTypes, supertypes, anonTokens } = resolved;
 	const parts: string[] = [];
 
 	parts.push(`if(isNodeData(${v}))return ${v}`);
@@ -320,16 +351,21 @@ function emitResolveBody(
 
 	parts.push(`if(typeof ${v}==='string'){${emitStringResolve(v, leafTypes, anonTokens, leafSet, leafValueMap, keywordKinds, grammar)}}`);
 
-	if (branchTypes.length > 0) {
-		if (branchTypes.length === 1) {
+	const allBranch = branchTypes.length + supertypes.length;
+	if (allBranch > 0) {
+		if (allBranch === 1 && branchTypes.length === 1) {
 			const fromFn = `${toFactoryName(branchTypes[0]!)}From`;
 			parts.push(`if(Array.isArray(${v}))return ${fromFn}(${v} as any)`);
+		} else if (allBranch === 1 && supertypes.length === 1) {
+			const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
+			parts.push(`if(Array.isArray(${v}))return ${resolverFn}(${v})`);
 		} else {
 			parts.push(`if(Array.isArray(${v}))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate')`);
 		}
 	}
 
-	parts.push(`if(typeof ${v}==='object'&&${v}!==null){${emitObjectResolve(v, branchTypes)}}`);
+	// Object resolution: direct branch dispatch + supertype fallback
+	parts.push(`if(typeof ${v}==='object'&&${v}!==null){${emitObjectResolve(v, branchTypes, supertypes, supertypeResolverNames, expandedSupertypes, branchNodeSet)}}`);
 	parts.push(`throw new Error(\`Cannot resolve .from() value: got \${typeof ${v}}\`)`);
 
 	return parts.join(';');
@@ -428,9 +464,14 @@ function emitStringResolve(
 function emitObjectResolve(
 	v: string,
 	branchTypes: string[],
+	supertypes: string[],
+	supertypeResolverNames: Map<string, string>,
+	expandedSupertypes: ReadonlyMap<string, Set<string>>,
+	branchNodeSet: Set<string>,
 ): string {
 	const parts: string[] = [];
 
+	// Kind-based dispatch (explicit { kind: '...' } input)
 	parts.push(`if('kind' in ${v}&&typeof ${v}.kind==='string'){`);
 	parts.push(`const{kind:k,...rest}=${v};`);
 	if (branchTypes.length > 0) {
@@ -443,12 +484,23 @@ function emitObjectResolve(
 	parts.push(`return _resolveByKind(k,rest);`);
 	parts.push(`}`);
 
-	if (branchTypes.length === 1) {
+	// Object inference (no explicit kind)
+	const allBranch = branchTypes.length + supertypes.length;
+	if (allBranch === 1 && branchTypes.length === 1) {
 		parts.push(`return ${toFactoryName(branchTypes[0]!)}From(${v});`);
-	} else if (branchTypes.length > 1) {
-		parts.push(`const _k=_inferBranch(${v},${JSON.stringify(branchTypes)});`);
+	} else if (allBranch === 1 && supertypes.length === 1) {
+		const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
+		parts.push(`return ${resolverFn}(${v});`);
+	} else if (allBranch > 1) {
+		// Expand supertypes to concrete branch types for inference
+		const allConcreteBranches = [...branchTypes];
+		for (const st of supertypes) {
+			const subs = expandedSupertypes.get(st);
+			if (subs) for (const s of subs) { if (branchNodeSet.has(s) && !allConcreteBranches.includes(s)) allConcreteBranches.push(s); }
+		}
+		parts.push(`const _k=_inferBranch(${v},${JSON.stringify(allConcreteBranches)});`);
 		parts.push(`if(_k)return _resolveByKind(_k,${v});`);
-		parts.push(`throw new Error(\`Cannot infer kind for object with keys: \${Object.keys(${v}).join(', ')}. Candidates: ${branchTypes.join(', ')}. Use { kind: '...' } to disambiguate.\`);`);
+		parts.push(`throw new Error(\`Cannot infer kind for object with keys: \${Object.keys(${v}).join(', ')}. Candidates: ${allConcreteBranches.join(', ')}. Use { kind: '...' } to disambiguate.\`);`);
 	} else {
 		parts.push(`throw new Error('No branch types accepted for object value');`);
 	}
@@ -495,6 +547,13 @@ function collectReferencedFactories(
 		if (leafSet.has('boolean_literal')) refs.add(toFactoryName('boolean_literal'));
 		if (leafSet.has('integer_literal')) refs.add(toFactoryName('integer_literal'));
 		if (leafSet.has('float_literal')) refs.add(toFactoryName('float_literal'));
+	}
+
+	// Collect factories referenced by supertype resolvers
+	for (const [, concreteKinds] of ctx.expandedSupertypes) {
+		for (const k of concreteKinds) {
+			if (leafSet.has(k)) refs.add(toFactoryName(k));
+		}
 	}
 
 	return refs;

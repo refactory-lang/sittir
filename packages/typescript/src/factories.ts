@@ -389,7 +389,7 @@ export function callExpression(
   return {
     type: 'call_expression' as const,
     arguments: (v: Arguments | TemplateString) => callExpression({ ...config, 'arguments': v }),
-    function: (v: Expression | Import) => callExpression({ ...config, 'function': v }),
+    function: (v: Expression | Import | NewExpression | PrimaryExpression) => callExpression({ ...config, 'function': v }),
     typeArguments: (v: TypeArguments) => callExpression({ ...config, 'type_arguments': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -787,7 +787,7 @@ export function exportStatement(
     decorator: (...v: (Decorator)[]) => exportStatement({ ...config, 'decorator': v }),
     source: (v: String) => exportStatement({ ...config, 'source': v }),
     value: (v: Expression) => exportStatement({ ...config, 'value': v }),
-    children: (v: ExportClause | Expression | NamespaceExport) => exportStatement({ ...config, children: v }),
+    children: (v: ExportClause | Expression | Identifier | NamespaceExport) => exportStatement({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1243,7 +1243,7 @@ export function inferType(
 ) {
   return {
     type: 'infer_type' as const,
-    children: (...v: (Type)[]) => inferType({ ...config, children: v }),
+    children: (...v: (Type | TypeIdentifier)[]) => inferType({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1395,7 +1395,7 @@ export function lookupType(
 ) {
   return {
     type: 'lookup_type' as const,
-    children: (...v: (Type)[]) => lookupType({ ...config, children: v }),
+    children: (...v: (PrimaryType | Type)[]) => lookupType({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1429,7 +1429,7 @@ export function memberExpression(
 ) {
   return {
     type: 'member_expression' as const,
-    object: (v: Expression | Import) => memberExpression({ ...config, 'object': v }),
+    object: (v: Expression | Import | PrimaryExpression) => memberExpression({ ...config, 'object': v }),
     optionalChain: (v: OptionalChain) => memberExpression({ ...config, 'optional_chain': v }),
     property: (v: PrivatePropertyIdentifier | PropertyIdentifier) => memberExpression({ ...config, 'property': v }),
     render() { return render(this); },
@@ -1790,7 +1790,7 @@ export function parenthesizedExpression(
   return {
     type: 'parenthesized_expression' as const,
     typeField: (v: TypeAnnotation) => parenthesizedExpression({ ...config, 'type': v }),
-    children: (v: Expression | SequenceExpression) => parenthesizedExpression({ ...config, children: v }),
+    children: (v: CallExpression | Expression | Identifier | MemberExpression | SequenceExpression) => parenthesizedExpression({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2058,8 +2058,8 @@ export function subscriptExpression(
 ) {
   return {
     type: 'subscript_expression' as const,
-    index: (v: Expression | PredefinedType | SequenceExpression) => subscriptExpression({ ...config, 'index': v }),
-    object: (v: Expression) => subscriptExpression({ ...config, 'object': v }),
+    index: (v: Expression | Number | PredefinedType | SequenceExpression | String) => subscriptExpression({ ...config, 'index': v }),
+    object: (v: Expression | PrimaryExpression) => subscriptExpression({ ...config, 'object': v }),
     optionalChain: (v: OptionalChain) => subscriptExpression({ ...config, 'optional_chain': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2423,7 +2423,7 @@ export function unaryExpression(
 ) {
   return {
     type: 'unary_expression' as const,
-    argument: (v: Expression) => unaryExpression({ ...config, 'argument': v }),
+    argument: (v: Expression | Number) => unaryExpression({ ...config, 'argument': v }),
     operator: (v: '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete') => unaryExpression({ ...config, 'operator': { type: v, text: v } as const }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

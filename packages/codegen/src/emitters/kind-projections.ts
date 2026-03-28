@@ -96,19 +96,12 @@ export function projectKinds(
 	// Supertypes are named union types — include them as branch types, not expanded
 	const branchTypes = namedKinds.filter(t => !ctx.leafKinds.has(t) && !supertypeKinds.has(t)).sort();
 
+	// Supertypes kept as named types — no expansion into concrete subtypes
 	const expandedAll = new Set<string>();
 	const expandedBranch = new Set<string>();
 	for (const t of branchTypes) { expandedBranch.add(t); expandedAll.add(t); }
 	for (const t of leafTypes) expandedAll.add(t);
-	for (const t of supertypeKinds) {
-		const subs = ctx.expandedSupertypes.get(t);
-		if (subs) {
-			for (const c of subs) {
-				expandedAll.add(c);
-				if (!ctx.leafKinds.has(c)) expandedBranch.add(c);
-			}
-		}
-	}
+	for (const t of supertypeKinds) { expandedBranch.add(t); expandedAll.add(t); }
 
 	const collapsedTypes = typesToCollapsed([...expandedAll], ctx.expandedSupertypes);
 

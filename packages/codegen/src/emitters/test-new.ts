@@ -142,14 +142,16 @@ function minimalArgs(node: StructuralNode, ctx: ProjectionContext): string {
 /** Generate a dummy value for a field based on its types. */
 function dummyValue(field: { name: string; kinds: readonly HydratedNodeModel[]; multiple?: boolean }, ctx: ProjectionContext): string {
 	const named = projectKinds(field.kinds, ctx).expandedAll;
+	// Expand supertypes to concrete subtypes for test value generation
+	const concrete = expandForTests(named, ctx);
 	// Prefer the most specific identifier type that the field accepts
-	if (named.includes('type_identifier')) {
+	if (concrete.includes('type_identifier')) {
 		return `ir.typeIdentifier('Test${capitalize(field.name)}')`;
 	}
-	if (named.includes('field_identifier')) {
+	if (concrete.includes('field_identifier')) {
 		return `ir.fieldIdentifier('test_${field.name}')`;
 	}
-	if (named.includes('identifier')) {
+	if (concrete.includes('identifier')) {
 		return `ir.identifier('test_${field.name}')`;
 	}
 
@@ -157,9 +159,23 @@ function dummyValue(field: { name: string; kinds: readonly HydratedNodeModel[]; 
 		return '[]';
 	}
 
-	// Use first named type as a minimal NodeData
-	const kind = named[0] ?? 'unknown';
+	// Use first concrete type as a minimal NodeData
+	const kind = concrete[0] ?? 'unknown';
 	return `{ type: '${kind}' as const, fields: {} } as NodeData<'${kind}'>`;
+}
+
+/** Expand supertype names to concrete subtypes for test value generation. */
+function expandForTests(kinds: string[], ctx: ProjectionContext): string[] {
+	const result = new Set<string>();
+	for (const k of kinds) {
+		const subs = ctx.expandedSupertypes.get(k);
+		if (subs) {
+			for (const s of subs) result.add(s);
+		} else {
+			result.add(k);
+		}
+	}
+	return [...result].sort();
 }
 
 function capitalize(s: string): string {

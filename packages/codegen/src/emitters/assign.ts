@@ -11,7 +11,7 @@
 import type { HydratedNodeModel } from '../node-model.ts';
 import { toTypeName, toFactoryName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf } from './utils.ts';
-import { buildProjectionContext, projectKinds } from './kind-projections.ts';
+import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export interface EmitAssignConfig {
 	grammar: string;
@@ -107,7 +107,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 
 		for (const f of fields) {
 			const proj = projectKinds(f.kinds, ctx);
-			const named = proj.expandedAll;
+			const named = expandForRuntime(proj.expandedAll, ctx);
 			if (named.length === 0) {
 				// Anonymous-only field (operator tokens etc.) — read as text node
 				if (f.required) {
@@ -124,7 +124,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 		const children = node.children;
 		if (children && children.length > 0) {
 			const childProj = projectKinds(children[0]!.kinds, ctx);
-			emitAssignChildren(lines, children[0]!, childProj.expandedAll, node.kind);
+			emitAssignChildren(lines, children[0]!, expandForRuntime(childProj.expandedAll, ctx), node.kind);
 		}
 
 		lines.push(`  const result = ${factoryName}(config as ${configTypeName});`);
@@ -226,4 +226,18 @@ function emitAssignChildren(
 		lines.push(`    return assignByKind(_child.type, _child);`);
 		lines.push(`  })();`);
 	}
+}
+
+/** Expand supertype names to concrete subtypes for runtime dispatch. */
+function expandForRuntime(kinds: string[], ctx: ProjectionContext): string[] {
+	const result = new Set<string>();
+	for (const k of kinds) {
+		const subs = ctx.expandedSupertypes.get(k);
+		if (subs) {
+			for (const s of subs) result.add(s);
+		} else {
+			result.add(k);
+		}
+	}
+	return [...result].sort();
 }
