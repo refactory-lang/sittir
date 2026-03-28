@@ -285,15 +285,17 @@ export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
 
 Discriminated by `multiple`. Separator only exists on list fields.
 
+**Hydration type boundary:** Pre-hydration models use `FieldModel` / `ChildModel` with `kinds: string[]`. Post-hydration models use `HydratedFieldModel` / `HydratedChildModel` with `kinds: NodeModel[]`. These are separate types — emitters receive hydrated types only.
+
 ```typescript
+// Pre-hydration (pipeline steps 1–11)
 type FieldModel = SingleFieldModel | ListFieldModel;
 
 interface SingleFieldModel {
   readonly name: string;
   readonly required: boolean;
   readonly multiple: false;
-  readonly kinds: string[];           // before hydration; NodeModel[] after
-  // Added by naming step:
+  readonly kinds: string[];
   readonly propertyName?: string;
 }
 
@@ -301,10 +303,20 @@ interface ListFieldModel {
   readonly name: string;
   readonly required: boolean;
   readonly multiple: true;
-  readonly kinds: string[];           // before hydration; NodeModel[] after
+  readonly kinds: string[];
   readonly separator: string | null;
-  // Added by naming step:
   readonly propertyName?: string;
+}
+
+// Post-hydration (step 12+, emitters)
+type HydratedFieldModel = HydratedSingleFieldModel | HydratedListFieldModel;
+
+interface HydratedSingleFieldModel extends Omit<SingleFieldModel, 'kinds'> {
+  readonly kinds: NodeModel[];
+}
+
+interface HydratedListFieldModel extends Omit<ListFieldModel, 'kinds'> {
+  readonly kinds: NodeModel[];
 }
 ```
 
@@ -313,6 +325,7 @@ interface ListFieldModel {
 Same as FieldModel but without `name`.
 
 ```typescript
+// Pre-hydration
 type ChildModel = SingleChildModel | ListChildModel;
 
 interface SingleChildModel {
@@ -326,6 +339,17 @@ interface ListChildModel {
   readonly multiple: true;
   readonly kinds: string[];
   readonly separator: string | null;
+}
+
+// Post-hydration
+type HydratedChildModel = HydratedSingleChildModel | HydratedListChildModel;
+
+interface HydratedSingleChildModel extends Omit<SingleChildModel, 'kinds'> {
+  readonly kinds: NodeModel[];
+}
+
+interface HydratedListChildModel extends Omit<ListChildModel, 'kinds'> {
+  readonly kinds: NodeModel[];
 }
 ```
 
@@ -529,3 +553,4 @@ packages/codegen/src/
 ### Session 2026-03-28
 
 - Q: Pipeline steps mutate models through 13 stages, but model interfaces use `readonly`. How should steps transform models? → A: Mutable in-place — pipeline owns the objects, `readonly` protects consumers (emitters) only.
+- Q: How should the `kinds: string[]` → `kinds: NodeModel[]` hydration boundary be represented in TypeScript? → A: Two separate types — `FieldModel`/`ChildModel` (pre-hydration, `kinds: string[]`) and `HydratedFieldModel`/`HydratedChildModel` (post-hydration, `kinds: NodeModel[]`). Emitters receive hydrated types only.
