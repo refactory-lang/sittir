@@ -448,12 +448,12 @@ For each BranchModel and ContainerModel, walks the enriched rule to produce memb
 
 Grammar-based enrichment may reveal that a model needs reclassification (e.g., BranchModel with no fields and only children → ContainerModel).
 
-### Step 8–9: Semantic Aliases
+### Step 8–9: Semantic Aliases (deferred — stub as no-ops in v1)
 
 | Step | Method | What it does |
 |------|--------|-------------|
-| 8 | `inferTokenAliases(models, grammar)` | Infer meaningful names for anonymous tokens from usage context |
-| 9 | `applyTokenAliases(models, aliases)` | Replace raw token kinds with semantic alias names |
+| 8 | `inferTokenAliases(models, grammar)` | **Deferred.** Stub returns empty map. Will infer meaningful names for anonymous tokens from usage context. |
+| 9 | `applyTokenAliases(models, aliases)` | **Deferred.** Stub returns models unchanged. Will replace raw token kinds with semantic alias names. |
 
 ### Step 10: Naming
 
@@ -479,7 +479,9 @@ Return `{ name, models, signatures }` — fully built, hydrated, optimized Gramm
 
 ---
 
-## Semantic Token Aliases (Steps 8–9)
+## Semantic Token Aliases (Steps 8–9) — Deferred to follow-up
+
+**Status:** Stubbed as no-ops in v1. Steps 8–9 exist in the pipeline but return input unchanged. Implementation in a follow-up once the core pipeline is validated.
 
 Anonymous tokens without alphabetic names get semantic aliases inferred from usage context.
 
@@ -554,3 +556,4 @@ packages/codegen/src/
 
 - Q: Pipeline steps mutate models through 13 stages, but model interfaces use `readonly`. How should steps transform models? → A: Mutable in-place — pipeline owns the objects, `readonly` protects consumers (emitters) only.
 - Q: How should the `kinds: string[]` → `kinds: NodeModel[]` hydration boundary be represented in TypeScript? → A: Two separate types — `FieldModel`/`ChildModel` (pre-hydration, `kinds: string[]`) and `HydratedFieldModel`/`HydratedChildModel` (post-hydration, `kinds: NodeModel[]`). Emitters receive hydrated types only.
+- Q: Are Semantic Token Aliases (steps 8–9) in scope for v1? → A: Deferred — stub as no-ops, implement in follow-up after core pipeline is validated.
