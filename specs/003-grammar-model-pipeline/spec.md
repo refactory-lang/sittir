@@ -389,6 +389,42 @@ function projectKinds(kinds: NodeModel[]): KindProjection {
 
 ---
 
+### Hydrated Model Types (post-hydration, emitter-facing)
+
+After step 12 (hydrate), all models are promoted to their hydrated variants. Fields and children carry `NodeModel[]` instead of `string[]`. All properties are `readonly` — emitters receive frozen, fully-resolved models.
+
+```typescript
+type HydratedNodeModel =
+  | HydratedBranchModel
+  | HydratedContainerModel
+  | LeafModel              // no fields/children to hydrate
+  | EnumModel
+  | KeywordModel
+  | TokenModel
+  | SupertypeModel;
+
+interface HydratedBranchModel extends Omit<BranchModel, 'fields' | 'children'> {
+  readonly fields: HydratedFieldModel[];
+  readonly children?: HydratedChildModel[];
+}
+
+interface HydratedContainerModel extends Omit<ContainerModel, 'children'> {
+  readonly children: HydratedChildModel[];
+}
+```
+
+The `GrammarModel` returned by `buildModel()` uses `HydratedNodeModel`:
+
+```typescript
+interface GrammarModel {
+  readonly name: string;
+  readonly models: ReadonlyMap<string, HydratedNodeModel>;
+  readonly signatures: SignaturePool;
+}
+```
+
+---
+
 ## Pipeline Steps
 
 The 13-step pipeline as orchestrated by `build-model.ts`:
@@ -563,3 +599,4 @@ packages/codegen/src/
 - Q: How should the `kinds: string[]` → `kinds: NodeModel[]` hydration boundary be represented in TypeScript? → A: Two separate types — `FieldModel`/`ChildModel` (pre-hydration, `kinds: string[]`) and `HydratedFieldModel`/`HydratedChildModel` (post-hydration, `kinds: NodeModel[]`). Emitters receive hydrated types only.
 - Q: What's the minimum scope for semantic aliases in v1? → A: Naming-only — character-to-name table (`Plus`, `2xColon`). Convention: `Nx[Name]` where `1x` omitted. Context-aware inference (e.g., `AddOperator`) deferred to follow-up.
 - Q: Incremental migration or single cutover? → A: Single cutover — replace pipeline, validate via generated output diff test against all three grammars. No parallel coexistence.
+- Q: Do emitters receive hydrated model types or resolve kinds via map? → A: Hydrated model variants — `HydratedBranchModel`, `HydratedNodeModel` union. All fields `readonly`. `GrammarModel` uses `ReadonlyMap<string, HydratedNodeModel>`.
