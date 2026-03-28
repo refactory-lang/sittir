@@ -342,7 +342,7 @@ export function initializeModels(nodeTypes: NodeTypes): Map<string, NodeModel> {
 // Step 5: Reconcile — merge grammar-derived data into NT-derived models
 // ---------------------------------------------------------------------------
 
-function enrichBranch(model: BranchModel, rule: BranchRule, entry: NodeTypeEntry | undefined): void {
+function enrichBranch(model: BranchModel, rule: BranchRule): void {
 	// Merge field kinds: grammar order first, then NT supplements
 	const grammarFieldMap = new Map(rule.fields.map(f => [f.name, f]));
 	for (const field of model.fields) {
@@ -359,30 +359,6 @@ function enrichBranch(model: BranchModel, rule: BranchRule, entry: NodeTypeEntry
 		if (sep && field.multiple) {
 			(field as ListFieldModel).separator = sep;
 		}
-	}
-
-	// Add fields from grammar that NT didn't have
-	if (entry?.fields) {
-		const existingNames = new Set(model.fields.map(f => f.name));
-		for (const gField of rule.fields) {
-			if (!existingNames.has(gField.name) && entry.fields[gField.name]) {
-				const ntField = entry.fields[gField.name]!;
-				const kinds = ntField.types.map(t => t.type);
-				if (ntField.multiple) {
-					model.fields.push({ name: gField.name, required: ntField.required, multiple: true, kinds, separator: rule.separators.get(gField.name) ?? null });
-				} else {
-					model.fields.push({ name: gField.name, required: ntField.required, multiple: false, kinds });
-				}
-			}
-		}
-
-		// Use NT field ordering (authoritative)
-		const ntFieldOrder = Object.keys(entry.fields);
-		const ntFieldNames = new Set(ntFieldOrder);
-		const filtered = model.fields.filter(f => ntFieldNames.has(f.name));
-		filtered.sort((a, b) => ntFieldOrder.indexOf(a.name) - ntFieldOrder.indexOf(b.name));
-		model.fields.length = 0;
-		model.fields.push(...filtered);
 	}
 
 	// Merge children kinds from grammar
@@ -438,7 +414,6 @@ function enrichSupertype(model: SupertypeModel, rule: SupertypeRule): void {
 export function reconcile(
 	models: Map<string, NodeModel>,
 	enrichedRules: Map<string, EnrichedRule>,
-	nodeTypes: NodeTypes,
 	grammarName?: string,
 ): void {
 	for (const [kind, model] of models) {
@@ -460,12 +435,10 @@ export function reconcile(
 			continue;
 		}
 
-		const entry = nodeTypes.entries.get(kind);
-
 		if (model.modelType === rule.modelType) {
 			// Same classification — enrich
 			switch (model.modelType) {
-				case 'branch': enrichBranch(model, rule as BranchRule, entry); break;
+				case 'branch': enrichBranch(model, rule as BranchRule); break;
 				case 'container': enrichContainer(model as ContainerModel, rule as ContainerRule); break;
 				case 'leaf': enrichLeaf(model, rule as LeafRule); break;
 				case 'keyword': enrichKeyword(model as KeywordModel, rule as KeywordRule); break;
