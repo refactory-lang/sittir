@@ -2,11 +2,11 @@
  * Emits an index.ts barrel file that re-exports all generated modules.
  */
 
-import type { NodeModel } from '../grammar-model.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 
 export interface EmitIndexConfig {
 	grammar: string;
-	nodes: NodeModel[];
+	nodes: HydratedNodeModel[];
 }
 
 export function emitIndex(config: EmitIndexConfig): string {

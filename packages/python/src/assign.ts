@@ -166,7 +166,7 @@ export function assignArgumentList(target: ArgumentListTree) {
 
 export function assignAsPattern(target: AsPatternTree) {
   const config: Record<string, unknown> = {};
-  config['alias'] = target.field('alias') ? assignAsPatternTarget(target.field('alias')! as AsPatternTargetTree) : undefined;
+  config['alias'] = target.field('alias') ? { type: target.field('alias')!.type, text: target.field('alias')!.text() } : undefined;
   config['children'] = (() => {
     const _kinds = new Set(["case_pattern","expression","identifier"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -437,16 +437,6 @@ export function assignDeleteStatement(target: DeleteStatementTree) {
 
 export function assignDictPattern(target: DictPatternTree) {
   const config: Record<string, unknown> = {};
-  config['key'] = (() => {
-    const _kinds = new Set(["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
-  })();
-  config['value'] = (() => {
-    const _kinds = new Set(["case_pattern"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
-  })();
   config['children'] = (() => {
     const _kinds = new Set(["splat_pattern"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -766,7 +756,7 @@ export function assignInterpolation(target: InterpolationTree) {
 
 export function assignKeywordArgument(target: KeywordArgumentTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config['name'] = assignByKind('identifier', target.field('name')!);
   config['value'] = assignExpression(target.field('value')! as ExpressionTree);
   const result = keywordArgument(config as KeywordArgumentConfig);
   return bindRange(target, result);

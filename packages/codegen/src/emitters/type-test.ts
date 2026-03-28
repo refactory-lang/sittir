@@ -10,12 +10,12 @@
  * If types diverge, `tsc` / `tsgo` will report errors.
  */
 
-import type { NodeModel } from '../grammar-model.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 import { toTypeName } from '../naming.ts';
 import { structuralNodes, selectConstructorField } from './utils.ts';
 
 export interface EmitTypeTestsConfig {
-	nodes: NodeModel[];
+	nodes: HydratedNodeModel[];
 }
 
 export function emitTypeTests(config: EmitTypeTestsConfig): string {

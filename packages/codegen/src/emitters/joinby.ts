@@ -3,12 +3,12 @@
  * Maps node kind → separator string used when joining array fields.
  */
 
-import type { NodeModel } from '../grammar-model.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 import { structuralNodes, fieldsOf } from './utils.ts';
 
 export interface EmitJoinByConfig {
 	grammar: string;
-	nodes: NodeModel[];
+	nodes: HydratedNodeModel[];
 }
 
 /**
@@ -26,7 +26,7 @@ export function emitJoinBy(config: EmitJoinByConfig): string {
 
 	for (const node of nodes) {
 		for (const field of fieldsOf(node)) {
-			if (field.separator) {
+			if (field.multiple && field.separator) {
 				lines.push(`  '${node.kind}': '${field.separator}',`);
 				break; // one separator per kind
 			}

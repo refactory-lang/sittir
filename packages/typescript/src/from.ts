@@ -203,6 +203,10 @@ function _r1q8wr64(v: any): any {
   if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'arguments':return arguments_From(rest);case 'template_string':return templateStringFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["arguments","template_string"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: arguments, template_string. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
+function _r1nylht8(v: any): any {
+  if(isNodeData(v))return v;if(typeof v==='string'){return (v==='import'?import_():(()=>{throw new Error(`Expected 'import' for import, got '${v}'`)})());};if(Array.isArray(v))return newExpressionFrom(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'new_expression':return newExpressionFrom(rest);}return _resolveByKind(k,rest);}return newExpressionFrom(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
 function _rqmy5sn(v: any): any {
   if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'array_pattern':return arrayPatternFrom(rest);case 'object_pattern':return objectPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["array_pattern","object_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_pattern, object_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -232,7 +236,7 @@ function _roh4kek(v: any): any {
 }
 
 function _r1a7yvk5(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['const','let','var'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['var','let','const'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1kyhtyo(v: any): any {
@@ -717,7 +721,7 @@ export function callExpressionFrom(input: any): any {
     resolved['arguments'] = _r1q8wr64(obj['arguments']);
   }
   if (obj['function'] !== undefined) {
-    resolved['function'] = (isNodeData(obj['function']) ? obj['function'] : typeof obj['function'] === 'string' && obj['function'] === 'import' ? import_() : obj['function']);
+    resolved['function'] = _r1nylht8(obj['function']);
   }
   if (obj['type_arguments'] !== undefined) {
     resolved['type_arguments'] = (isNodeData(obj['type_arguments']) ? obj['type_arguments'] : Array.isArray(obj['type_arguments']) ? typeArgumentsFrom(obj['type_arguments']) : typeof obj['type_arguments'] === 'object' ? typeArgumentsFrom(obj['type_arguments']) : obj['type_arguments']);

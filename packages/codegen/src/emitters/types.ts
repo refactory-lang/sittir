@@ -14,13 +14,13 @@
  *   7. Discriminated union of all node types
  */
 
-import type { NodeModel } from '../grammar-model.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 import { toTypeName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, leafKindsOf, supertypeEntriesOf } from './utils.ts';
 
 export interface EmitTypesConfig {
 	grammar: string;
-	nodes: NodeModel[];
+	nodes: HydratedNodeModel[];
 }
 
 export function emitTypes(config: EmitTypesConfig): string {

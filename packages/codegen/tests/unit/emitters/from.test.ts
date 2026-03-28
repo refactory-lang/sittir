@@ -3,8 +3,8 @@ import { emitFrom } from '../../../src/emitters/from.ts';
 import { buildGrammarModel } from '../../../src/grammar-model.ts';
 
 const grammar = 'rust';
-const { model } = buildGrammarModel(grammar);
-const allNodes = Object.values(model.nodes);
+const { newModel } = buildGrammarModel(grammar);
+const allNodes = [...newModel.models.values()];
 
 describe('emitFrom', () => {
 	const source = emitFrom({ grammar, nodes: allNodes });

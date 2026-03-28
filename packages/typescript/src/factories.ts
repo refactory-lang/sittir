@@ -389,7 +389,7 @@ export function callExpression(
   return {
     type: 'call_expression' as const,
     arguments: (v: Arguments | TemplateString) => callExpression({ ...config, 'arguments': v }),
-    function: (v: Expression | Import) => callExpression({ ...config, 'function': v }),
+    function: (v: Expression | Import | NewExpression | PrimaryExpression) => callExpression({ ...config, 'function': v }),
     typeArguments: (v: TypeArguments) => callExpression({ ...config, 'type_arguments': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -885,7 +885,7 @@ export function forInStatement(
   return {
     type: 'for_in_statement' as const,
     body: (v: Statement) => forInStatement({ ...config, 'body': v }),
-    kind: (v: 'const' | 'let' | 'var') => forInStatement({ ...config, 'kind': { type: v, text: v } as const }),
+    kind: (v: 'var' | 'let' | 'const') => forInStatement({ ...config, 'kind': { type: v, text: v } as const }),
     left: (v: ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | ParenthesizedExpression | SubscriptExpression | Undefined) => forInStatement({ ...config, 'left': v }),
     operator: (v: 'in' | 'of') => forInStatement({ ...config, 'operator': { type: v, text: v } as const }),
     right: (v: Expression | SequenceExpression) => forInStatement({ ...config, 'right': v }),
@@ -1395,7 +1395,7 @@ export function lookupType(
 ) {
   return {
     type: 'lookup_type' as const,
-    children: (...v: (Type)[]) => lookupType({ ...config, children: v }),
+    children: (...v: (PrimaryType | Type)[]) => lookupType({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

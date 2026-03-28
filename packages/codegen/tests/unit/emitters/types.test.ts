@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { emitTypes } from '../../../src/emitters/types.ts';
-import type { NodeModel, BranchModel, LeafModel, SupertypeModel } from '../../../src/grammar-model.ts';
+import type { HydratedNodeModel } from '../../../src/node-model.ts';
 
-function branchNode(kind: string): BranchModel {
-	return { modelType: 'branch', kind, fields: [], elements: [], rule: { type: 'SEQ', members: [] } };
+function branchNode(kind: string): HydratedNodeModel {
+	return { modelType: 'branch', kind, fields: [], members: [], children: [] } as unknown as HydratedNodeModel;
 }
-function leafNode(kind: string): LeafModel {
-	return { modelType: 'leaf', kind };
+function leafNode(kind: string): HydratedNodeModel {
+	return { modelType: 'leaf', kind, pattern: null, rule: null } as unknown as HydratedNodeModel;
 }
-function supertypeNode(name: string, subtypes: string[]): SupertypeModel {
-	return { modelType: 'supertype', kind: name, subtypes };
+function supertypeNode(name: string, subtypes: string[]): HydratedNodeModel {
+	return { modelType: 'supertype', kind: name, subtypes, rule: null } as unknown as HydratedNodeModel;
 }
 
 describe('emitTypes', () => {

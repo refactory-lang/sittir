@@ -9,15 +9,15 @@
  * regular API never load .from() resolution code.
  */
 
-import type { NodeModel } from '../grammar-model.ts';
-import { namedTypes, allTypes, type FieldTypeClass } from '../grammar-model.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, supertypeEntriesOf, escapeString } from './utils.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString } from './utils.ts';
+import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
 
 export interface EmitFromConfig {
 	grammar: string;
-	nodes: NodeModel[];
+	nodes: HydratedNodeModel[];
 }
 
 // ---------------------------------------------------------------------------
@@ -30,15 +30,15 @@ interface ResolvedFieldTypes {
 	anonTokens: string[];
 }
 
-/** Compute the canonical type components for a field using FieldTypeClass. */
+/** Compute the canonical type components for a field using KindProjection. */
 function resolveFieldTypes(
-	tc: FieldTypeClass,
+	proj: KindProjection,
 	leafSet: Set<string>,
 	branchNodeSet: Set<string>,
 ): ResolvedFieldTypes {
-	const leafTypes = tc.expandedAll.filter(t => leafSet.has(t));
-	const branchTypes = tc.expandedAll.filter(t => branchNodeSet.has(t));
-	const anonTokens = tc.anonTokens;
+	const leafTypes = proj.expandedAll.filter(t => leafSet.has(t));
+	const branchTypes = proj.expandedAll.filter(t => branchNodeSet.has(t));
+	const anonTokens = proj.anonTokens;
 	return { leafTypes, branchTypes, anonTokens };
 }
 
@@ -69,18 +69,15 @@ export function emitFrom(config: EmitFromConfig): string {
 	const leafKinds = leafKindsOf(config.nodes);
 	const keywordKinds = keywordKindsOf(config.nodes);
 	const leafValueMap = leafValuesOf(config.nodes);
-	const supertypes = supertypeEntriesOf(config.nodes);
 	const leafSet = new Set(leafKinds);
 	const branchNodeSet = new Set(nodes.map(n => n.kind));
-
-	// Build supertype → concrete subtypes map (recursively expanded)
-	const supertypeMap = buildExpandedSupertypeMap(supertypes);
+	const ctx = buildProjectionContext(new Map(config.nodes.map(n => [n.kind, n])));
 
 	// --- Phase 1: Collect all unique resolver signatures ---
 	const resolverRegistry = new Map<string, { name: string; resolved: ResolvedFieldTypes }>();
 
-	function getOrCreateResolver(tc: FieldTypeClass): { name: string; resolved: ResolvedFieldTypes; key: string } {
-		const resolved = resolveFieldTypes(tc, leafSet, branchNodeSet);
+	function getOrCreateResolver(proj: KindProjection): { name: string; resolved: ResolvedFieldTypes; key: string } {
+		const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet);
 		const key = resolverKey(resolved);
 
 		if (!resolverRegistry.has(key)) {
@@ -101,10 +98,11 @@ export function emitFrom(config: EmitFromConfig): string {
 	// Pre-scan all fields to discover unique resolvers
 	for (const node of nodes) {
 		for (const field of fieldsOf(node)) {
-			getOrCreateResolver(field.types);
+			getOrCreateResolver(projectKinds(field.kinds, ctx));
 		}
-		if (node.children != null) {
-			getOrCreateResolver(node.children.types);
+		const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
+		if (hasChildren) {
+			getOrCreateResolver(projectKinds(node.children![0]!.kinds, ctx));
 		}
 	}
 
@@ -122,7 +120,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('');
 
 	// Import factory functions
-	const referencedFactories = collectReferencedFactories(nodes, leafSet, leafValueMap, keywordKinds);
+	const referencedFactories = collectReferencedFactories(nodes, leafSet, leafValueMap, keywordKinds, ctx);
 	if (referencedFactories.size > 0) {
 		const imports = [...referencedFactories].sort().join(', ');
 		lines.push(`import { ${imports} } from './factories.js';`);
@@ -161,7 +159,7 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// --- Per-kind .from() functions ---
 	for (const node of nodes) {
-		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar, branchNodeSet, resolverRegistry));
+		lines.push(emitFromFunction(node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar, branchNodeSet, resolverRegistry, ctx));
 		lines.push('');
 	}
 
@@ -181,6 +179,7 @@ function emitFromFunction(
 	grammar: string | undefined,
 	branchNodeSet: Set<string>,
 	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
+	ctx: ProjectionContext,
 ): string {
 	const typeName = toTypeName(node.kind);
 	const factoryName = toFactoryName(node.kind);
@@ -202,7 +201,7 @@ function emitFromFunction(
 	lines.push(`  if (isNodeData(input)) return ${factoryName}(input.fields);`);
 
 	// --- Path 3: FromInput → resolve ---
-	const hasChildren = node.children != null;
+	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
 	if (hasChildren) {
 		lines.push(`  const obj = Array.isArray(input) ? { children: input } : input;`);
 	} else {
@@ -211,7 +210,8 @@ function emitFromFunction(
 	lines.push(`  const resolved: any = {};`);
 	for (const field of fields) {
 		lines.push(`  if (obj['${field.name}'] !== undefined) {`);
-		const resolveCall = emitResolveCall(field.types, `obj['${field.name}']`, leafSet, branchNodeSet, keywordKinds, resolverRegistry);
+		const fieldProj = projectKinds(field.kinds, ctx);
+		const resolveCall = emitResolveCall(fieldProj, `obj['${field.name}']`, leafSet, branchNodeSet, keywordKinds, resolverRegistry);
 		if (field.multiple) {
 			lines.push(`    const raw = obj['${field.name}'];`);
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
@@ -225,12 +225,13 @@ function emitFromFunction(
 		}
 		lines.push(`  }`);
 	}
-	if (hasChildren && node.children) {
+	if (hasChildren) {
+		const childProj = projectKinds(node.children![0]!.kinds, ctx);
 		lines.push(`  if (obj['children'] !== undefined) {`);
 		lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
-		const childResolve = emitResolveCall(node.children.types, 'v', leafSet, branchNodeSet, keywordKinds, resolverRegistry);
+		const childResolve = emitResolveCall(childProj, 'v', leafSet, branchNodeSet, keywordKinds, resolverRegistry);
 		lines.push(`    resolved['children'] = arr.map((v: any) => ${childResolve});`);
-		if (node.children.required) {
+		if (node.children![0]!.required) {
 			lines.push(`  } else {`);
 			lines.push(`    resolved['children'] = [];`);
 		}
@@ -247,14 +248,14 @@ function emitFromFunction(
 // ---------------------------------------------------------------------------
 
 function emitResolveCall(
-	tc: FieldTypeClass,
+	proj: KindProjection,
 	varName: string,
 	leafSet: Set<string>,
 	branchNodeSet: Set<string>,
 	keywordKinds: Map<string, string>,
 	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
 ): string {
-	const resolved = resolveFieldTypes(tc, leafSet, branchNodeSet);
+	const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet);
 	const key = resolverKey(resolved);
 	const entry = resolverRegistry.get(key);
 
@@ -459,54 +460,12 @@ function emitObjectResolve(
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Build a supertype map with fully expanded concrete subtypes.
- * Recursively expands nested supertypes (e.g., _expression includes _literal).
- */
-function buildExpandedSupertypeMap(supertypes: { name: string; subtypes: string[] }[]): Map<string, string[]> {
-	const raw = new Map<string, string[]>();
-	for (const st of supertypes) {
-		raw.set(st.name, st.subtypes);
-	}
-
-	const expanded = new Map<string, string[]>();
-
-	function expand(name: string, visited: Set<string>): string[] {
-		const cached = expanded.get(name);
-		if (cached) return cached;
-		if (visited.has(name)) return [];
-		visited.add(name);
-
-		const subtypes = raw.get(name);
-		if (!subtypes) return [];
-
-		const result: string[] = [];
-		for (const sub of subtypes) {
-			if (raw.has(sub)) {
-				for (const concrete of expand(sub, visited)) {
-					if (!result.includes(concrete)) result.push(concrete);
-				}
-			} else {
-				if (!result.includes(sub)) result.push(sub);
-			}
-		}
-
-		expanded.set(name, result);
-		return result;
-	}
-
-	for (const name of raw.keys()) {
-		expand(name, new Set());
-	}
-
-	return expanded;
-}
-
 function collectReferencedFactories(
 	nodes: StructuralNode[],
 	leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
+	ctx: ProjectionContext,
 ): Set<string> {
 	const refs = new Set<string>();
 
@@ -516,10 +475,18 @@ function collectReferencedFactories(
 
 	for (const node of nodes) {
 		const fields = fieldsOf(node);
-		const allFieldTypes = [...fields.map(f => f.types)];
-		if (node.children != null) allFieldTypes.push(node.children.types);
-		for (const tc of allFieldTypes) {
-			for (const t of tc.expandedAll) {
+		for (const f of fields) {
+			const proj = projectKinds(f.kinds, ctx);
+			for (const t of proj.expandedAll) {
+				if (leafSet.has(t)) {
+					refs.add(toFactoryName(t));
+				}
+			}
+		}
+		const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
+		if (hasChildren) {
+			const childProj = projectKinds(node.children![0]!.kinds, ctx);
+			for (const t of childProj.expandedAll) {
 				if (leafSet.has(t)) {
 					refs.add(toFactoryName(t));
 				}

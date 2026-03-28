@@ -175,10 +175,6 @@ function _rg8ddlu(v: any): any {
   if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v);};if(Array.isArray(v))return tuplePatternFrom(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'tuple_pattern':return tuplePatternFrom(rest);}return _resolveByKind(k,rest);}return tuplePatternFrom(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
-function _rkx881h(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['-','_'].includes(v))return{type:v,text:v};if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float(v);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer(v);if(/^None$/.test(v))return (v==='None'?none():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest);case 'complex_pattern':return complexPatternFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dict_pattern':return dictPatternFrom(rest);case 'dotted_name':return dottedNameFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'splat_pattern':return splatPatternFrom(rest);case 'string':return stringFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'union_pattern':return unionPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
-}
-
 function _rd8hell(v: any): any {
   if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dictionary_splat':return dictionarySplatFrom(rest);case 'pair':return pairFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["dictionary_splat","pair"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: dictionary_splat, pair. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -761,16 +757,6 @@ export function dictPatternFrom(input: any): any {
   if (isNodeData(input)) return dictPattern(input.fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj['key'] !== undefined) {
-    const raw = obj['key'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['key'] = arr.map((v: any) => _rkx881h(v));
-  }
-  if (obj['value'] !== undefined) {
-    const raw = obj['value'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['value'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
-  }
   if (obj['children'] !== undefined) {
     const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];
     resolved['children'] = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? splatPatternFrom(v) : typeof v === 'object' ? splatPatternFrom(v) : v));

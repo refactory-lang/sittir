@@ -9,6 +9,7 @@
 import type { EnrichedRule, BranchRule, ContainerRule, LeafRule, KeywordRule, EnumRule as EnumEnrichedRule, SupertypeRule, EnrichedFieldInfo, EnrichedChildInfo } from './enriched-grammar.ts';
 import type { NodeTypes, NodeTypeEntry } from './node-types.ts';
 import type { GrammarRule, Grammar } from './grammar.ts';
+import { listLeafValues } from './grammar-reader.ts';
 
 // ---------------------------------------------------------------------------
 // Signature types (added by optimization step)
@@ -310,8 +311,9 @@ export function initializeModels(nodeTypes: NodeTypes): Map<string, NodeModel> {
 			continue;
 		}
 
-		// Not named → TokenModel
+		// Not named → TokenModel (skip bare quote chars — not real tokens)
 		if (!entry.named) {
+			if (kind === '"' || kind === "'") continue;
 			models.set(kind, initializeToken(kind));
 			continue;
 		}
@@ -437,10 +439,26 @@ export function reconcile(
 	models: Map<string, NodeModel>,
 	enrichedRules: Map<string, EnrichedRule>,
 	nodeTypes: NodeTypes,
+	grammarName?: string,
 ): void {
 	for (const [kind, model] of models) {
 		const rule = enrichedRules.get(kind);
-		if (!rule) continue; // No grammar rule exists, keep as-is
+		if (!rule) {
+			// No direct grammar rule — check for ALIAS-derived enum values (e.g., primitive_type in Rust)
+			if (model.modelType === 'leaf' && grammarName) {
+				const values = listLeafValues(grammarName, kind);
+				if (values.length > 0) {
+					const promoted: EnumModel = {
+						modelType: 'enum',
+						kind,
+						values,
+						rule: null,
+					};
+					models.set(kind, promoted);
+				}
+			}
+			continue;
+		}
 
 		const entry = nodeTypes.entries.get(kind);
 

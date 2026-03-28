@@ -1074,7 +1074,7 @@ export function assignLiteralType(target: LiteralTypeTree) {
 export function assignLookupType(target: LookupTypeTree) {
   const config: Record<string, unknown> = {};
   config['children'] = (() => {
-    const _kinds = new Set(["type"]);
+    const _kinds = new Set(["primary_type","type"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     if (_items.length === 0) throw new Error(`Required children missing on 'lookup_type' tree node`);
     return _items.map((c) => assignByKind(c.type, c));

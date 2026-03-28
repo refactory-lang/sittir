@@ -6,11 +6,11 @@
  * and _inferBranch scoring algorithm.
  */
 
-import type { NodeModel } from '../grammar-model.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 import { structuralNodes, fieldsOf } from './utils.ts';
 
 export interface EmitClientUtilsConfig {
-	nodes: NodeModel[];
+	nodes: HydratedNodeModel[];
 }
 
 export function emitClientUtils(config: EmitClientUtilsConfig): string {

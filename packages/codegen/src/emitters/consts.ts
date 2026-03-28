@@ -10,13 +10,13 @@
  *   FIELD_MAP      — per-node-kind field metadata
  */
 
-import type { NodeModel } from '../grammar-model.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 import { toFieldName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, keywordTokensOf, operatorTokensOf, enumKindsOf } from './utils.ts';
 
 export interface EmitConstsConfig {
   grammar: string;
-  nodes: NodeModel[];
+  nodes: HydratedNodeModel[];
 }
 
 export function emitConsts(config: EmitConstsConfig): string {

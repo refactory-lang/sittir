@@ -3,11 +3,11 @@ import { emitRule } from '../../../src/emitters/rules.ts';
 import { buildGrammarModel } from '../../../src/grammar-model.ts';
 import type { StructuralNode } from '../../../src/emitters/utils.ts';
 
-const { model } = buildGrammarModel('rust');
+const { newModel } = buildGrammarModel('rust');
 
 function getNode(kind: string): StructuralNode {
-	const node = model.nodes[kind];
-	if (!node || (node.modelType !== 'branch' && node.modelType !== 'leafWithChildren')) {
+	const node = newModel.models.get(kind);
+	if (!node || (node.modelType !== 'branch' && node.modelType !== 'container')) {
 		throw new Error(`Node "${kind}" is not a structural node`);
 	}
 	return node;

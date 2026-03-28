@@ -112,7 +112,7 @@ export function buildModel(grammarName: string): { grammarModel: GrammarModel; s
 	const models = initializeModels(nodeTypes);
 
 	// Step 5: Reconcile
-	reconcile(models, enrichedRules, nodeTypes);
+	reconcile(models, enrichedRules, nodeTypes, grammarName);
 
 	// Step 6: Apply members
 	applyAllMembers(models, grammar);

@@ -3,9 +3,8 @@ import { emitAssign } from '../../../src/emitters/assign.ts';
 import { buildGrammarModel } from '../../../src/grammar-model.ts';
 
 const grammar = 'rust';
-const { model } = buildGrammarModel(grammar);
-const allNodes = Object.values(model.nodes);
-const selectedNodes = allNodes.filter(n => ['function_item', 'struct_item', 'binary_expression'].includes(n.kind));
+const { newModel } = buildGrammarModel(grammar);
+const allNodes = [...newModel.models.values()];
 
 describe('emitAssign', () => {
 	const source = emitAssign({ grammar, nodes: allNodes });

@@ -174,6 +174,8 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
+  'is not',
+  'not in',
   '!=',
   '%',
   '%=',
@@ -217,8 +219,6 @@ export const OPERATORS = [
   ']',
   '^',
   '^=',
-  'is not',
-  'not in',
   '{',
   '|',
   '|=',
@@ -321,8 +321,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'delete_statement': [
   ],
   'dict_pattern': [
-    { name: 'key', required: false, multiple: true },
-    { name: 'value', required: false, multiple: true },
   ],
   'dictionary': [
   ],

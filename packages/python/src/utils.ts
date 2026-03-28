@@ -54,7 +54,6 @@ export const _BRANCH_FIELDS: Record<string, string[]> = {
   'comparison_operator': ["operators"],
   'decorated_definition': ["definition"],
   'default_parameter': ["name","value"],
-  'dict_pattern': ["key","value"],
   'dictionary_comprehension': ["body"],
   'elif_clause': ["condition","consequence"],
   'else_clause': ["body"],

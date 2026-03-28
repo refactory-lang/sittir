@@ -32,7 +32,8 @@ import { emitTests } from './emitters/test-new.ts';
 import { emitTypeTests } from './emitters/type-test.ts';
 import { emitConfig } from './emitters/config.ts';
 import { emitIndex } from './emitters/index-file.ts';
-import { buildGrammarModel, type GrammarModel, type NodeModel } from './grammar-model.ts';
+import { buildGrammarModel } from './grammar-model.ts';
+import type { HydratedNodeModel } from './node-model.ts';
 
 export { listBranchKinds, listLeafKinds, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
 
@@ -84,13 +85,13 @@ export interface GeneratedFiles {
  * Generate typed factory code from a tree-sitter grammar definition.
  */
 export function generate(cfg: CodegenConfig): GeneratedFiles {
-	const { model, serialized: nodeModel } = buildGrammarModel(cfg.grammar);
-	const allNodes = Object.values(model.nodes);
+	const { model, serialized: nodeModel, newModel } = buildGrammarModel(cfg.grammar);
 
-	// Filter by requested kinds if specified, otherwise use all
-	const nodes: NodeModel[] = cfg.nodes && cfg.nodes.length > 0
-		? allNodes.filter(n => cfg.nodes!.includes(n.kind))
-		: allNodes;
+	// Use new pipeline's HydratedNodeModel[] for emitters
+	const allNewNodes = [...newModel.models.values()];
+	const nodes: HydratedNodeModel[] = cfg.nodes && cfg.nodes.length > 0
+		? allNewNodes.filter(n => cfg.nodes!.includes(n.kind))
+		: allNewNodes;
 
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
