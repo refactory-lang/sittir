@@ -10,7 +10,7 @@
  */
 
 import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
-import { firstChildSlot } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString } from './utils.ts';
@@ -38,7 +38,7 @@ export function emitFactory(config: {
 
 	// Factory function — accepts *Config (fields + children), return type inferred
 	const hasChildren = node.children != null;
-	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && firstChildSlot(node.children!).required);
+	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && childHasRequired(node.children!));
 	if (hasRequiredFields) {
 		lines.push(`export function ${factoryName}(`);
 		lines.push(`  config: ${typeName}Config,`);
@@ -75,12 +75,26 @@ export function emitFactory(config: {
 		}
 	}
 	if (hasChildren) {
-		const childProj = projectKinds(firstChildSlot(node.children!).kinds, ctx);
-		const childTypeUnion = childProj.collapsedTypes.join(' | ');
-		if (firstChildSlot(node.children!).multiple) {
-			lines.push(`    children: (...v: (${childTypeUnion})[]) => ${factoryName}({ ...config, children: v }),`);
+		if (isTupleChildren(node.children!)) {
+			// Tuple children — each slot gets its own setter (children0, children1, ...)
+			eachChildSlot(node.children!, (slot, i) => {
+				const slotProj = projectKinds(slot.kinds, ctx);
+				const slotType = slotProj.collapsedTypes.join(' | ');
+				if (slot.multiple) {
+					lines.push(`    children${i}: (...v: (${slotType})[]) => ${factoryName}({ ...config, children${i}: v }),`);
+				} else {
+					lines.push(`    children${i}: (v: ${slotType}) => ${factoryName}({ ...config, children${i}: v }),`);
+				}
+			});
 		} else {
-			lines.push(`    children: (v: ${childTypeUnion}) => ${factoryName}({ ...config, children: v }),`);
+			const children = node.children!;
+			const childProj = projectKinds(children.kinds, ctx);
+			const childTypeUnion = childProj.collapsedTypes.join(' | ');
+			if (children.multiple) {
+				lines.push(`    children: (...v: (${childTypeUnion})[]) => ${factoryName}({ ...config, children: v }),`);
+			} else {
+				lines.push(`    children: (v: ${childTypeUnion}) => ${factoryName}({ ...config, children: v }),`);
+			}
 		}
 	}
 
@@ -212,14 +226,15 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 				allTypeNames.add(name);
 			}
 		}
-		const hasChildren = n.children != null && (Array.isArray(n.children) ? n.children.length > 0 : true);
-		if (hasChildren) {
-			const childProj = projectKinds(firstChildSlot(n.children!).kinds, ctx);
-			for (const t of childProj.expandedAll) {
-				if (t === '_') continue;
-				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
-				allTypeNames.add(name);
-			}
+		if (n.children != null) {
+			eachChildSlot(n.children, (slot) => {
+				const childProj = projectKinds(slot.kinds, ctx);
+				for (const t of childProj.expandedAll) {
+					if (t === '_') continue;
+					const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
+					allTypeNames.add(name);
+				}
+			});
 		}
 	}
 	for (const k of leafKinds) allTypeNames.add(toTypeName(k));
@@ -302,6 +317,14 @@ function fieldTypeExprFromProj(proj: import('./kind-projections.ts').KindProject
 	}
 
 	return proj.collapsedTypes.join(' | ');
+}
+
+/** Check if any child slot has `required: true`. */
+function childHasRequired(children: { required: boolean } | { required: boolean }[]): boolean {
+	if (Array.isArray(children)) {
+		return children.some(slot => slot.required);
+	}
+	return children.required;
 }
 
 /** Check if a pattern can be safely embedded as a JS regex literal. */

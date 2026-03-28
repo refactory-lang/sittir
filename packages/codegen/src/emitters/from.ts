@@ -10,7 +10,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
-import { firstChildSlot } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString } from './utils.ts';
@@ -120,9 +120,10 @@ export function emitFrom(config: EmitFromConfig): string {
 		for (const field of fieldsOf(node)) {
 			getOrCreateResolver(projectKinds(field.kinds, ctx));
 		}
-		const hasChildren = node.children != null;
-		if (hasChildren) {
-			getOrCreateResolver(projectKinds(firstChildSlot(node.children!).kinds, ctx));
+		if (node.children != null) {
+			eachChildSlot(node.children, (slot) => {
+				getOrCreateResolver(projectKinds(slot.kinds, ctx));
+			});
 		}
 	}
 
@@ -248,16 +249,39 @@ function emitFromFunction(
 		lines.push(`  }`);
 	}
 	if (hasChildren) {
-		const childProj = projectKinds(firstChildSlot(node.children!).kinds, ctx);
-		lines.push(`  if (obj['children'] !== undefined) {`);
-		lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
-		const childResolve = emitResolveCall(childProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-		lines.push(`    resolved['children'] = arr.map((v: any) => ${childResolve});`);
-		if (firstChildSlot(node.children!).required) {
-			lines.push(`  } else {`);
-			lines.push(`    resolved['children'] = [];`);
+		if (isTupleChildren(node.children!)) {
+			// Tuple children — resolve each positional slot
+			eachChildSlot(node.children!, (slot, i) => {
+				const slotProj = projectKinds(slot.kinds, ctx);
+				const propName = `children${i}`;
+				lines.push(`  if (obj['${propName}'] !== undefined) {`);
+				if (slot.multiple) {
+					lines.push(`    const arr = Array.isArray(obj['${propName}']) ? obj['${propName}'] : [obj['${propName}']];`);
+					const slotResolve = emitResolveCall(slotProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+					lines.push(`    resolved['${propName}'] = arr.map((v: any) => ${slotResolve});`);
+				} else {
+					const slotResolve = emitResolveCall(slotProj, `obj['${propName}']`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+					lines.push(`    resolved['${propName}'] = ${slotResolve};`);
+				}
+				if (slot.required && slot.multiple) {
+					lines.push(`  } else {`);
+					lines.push(`    resolved['${propName}'] = [];`);
+				}
+				lines.push(`  }`);
+			});
+		} else {
+			const children = node.children!;
+			const childProj = projectKinds(children.kinds, ctx);
+			lines.push(`  if (obj['children'] !== undefined) {`);
+			lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
+			const childResolve = emitResolveCall(childProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+			lines.push(`    resolved['children'] = arr.map((v: any) => ${childResolve});`);
+			if (children.required) {
+				lines.push(`  } else {`);
+				lines.push(`    resolved['children'] = [];`);
+			}
+			lines.push(`  }`);
 		}
-		lines.push(`  }`);
 	}
 	lines.push(`  return ${factoryName}(resolved);`);
 	lines.push(`}`);
@@ -536,14 +560,15 @@ function collectReferencedFactories(
 				}
 			}
 		}
-		const hasChildren = node.children != null;
-		if (hasChildren) {
-			const childProj = projectKinds(firstChildSlot(node.children!).kinds, ctx);
-			for (const t of childProj.expandedAll) {
-				if (leafSet.has(t)) {
-					refs.add(toFactoryName(t));
+		if (node.children != null) {
+			eachChildSlot(node.children, (slot) => {
+				const childProj = projectKinds(slot.kinds, ctx);
+				for (const t of childProj.expandedAll) {
+					if (leafSet.has(t)) {
+						refs.add(toFactoryName(t));
+					}
 				}
-			}
+			});
 		}
 		if (leafSet.has('boolean_literal')) refs.add(toFactoryName('boolean_literal'));
 		if (leafSet.has('integer_literal')) refs.add(toFactoryName('integer_literal'));

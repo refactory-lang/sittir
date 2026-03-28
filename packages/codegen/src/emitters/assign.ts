@@ -9,7 +9,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
-import { firstChildSlot } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { toTypeName, toFactoryName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
@@ -123,9 +123,16 @@ export function emitAssign(config: EmitAssignConfig): string {
 
 		// Hydrate children field if present
 		if (node.children != null) {
-			const child = firstChildSlot(node.children);
-			const childProj = projectKinds(child.kinds, ctx);
-			emitAssignChildren(lines, child, expandForRuntime(childProj.expandedAll, ctx), node.kind);
+			if (isTupleChildren(node.children)) {
+				// Tuple children — hydrate each positional slot
+				eachChildSlot(node.children, (slot, i) => {
+					const slotProj = projectKinds(slot.kinds, ctx);
+					emitAssignChildren(lines, slot, expandForRuntime(slotProj.expandedAll, ctx), node.kind, `children${i}`);
+				});
+			} else {
+				const childProj = projectKinds(node.children.kinds, ctx);
+				emitAssignChildren(lines, node.children, expandForRuntime(childProj.expandedAll, ctx), node.kind, 'children');
+			}
 		}
 
 		lines.push(`  const result = ${factoryName}(config as ${configTypeName});`);
@@ -204,10 +211,11 @@ function emitAssignChildren(
 	ch: { required: boolean; multiple: boolean },
 	childNamed: string[],
 	nodeKind: string,
+	propName: string,
 ): void {
 	const kindSet = JSON.stringify(childNamed);
 	if (ch.multiple) {
-		lines.push(`  config['children'] = (() => {`);
+		lines.push(`  config['${propName}'] = (() => {`);
 		lines.push(`    const _kinds = new Set(${kindSet});`);
 		lines.push(`    const _items = target.children().filter((c) => _kinds.has(c.type));`);
 		if (ch.required) {
@@ -216,7 +224,7 @@ function emitAssignChildren(
 		lines.push(`    return _items.map((c) => assignByKind(c.type, c));`);
 		lines.push(`  })();`);
 	} else {
-		lines.push(`  config['children'] = (() => {`);
+		lines.push(`  config['${propName}'] = (() => {`);
 		lines.push(`    const _kinds = new Set(${kindSet});`);
 		lines.push(`    const _child = target.children().find((c) => _kinds.has(c.type));`);
 		if (ch.required) {
