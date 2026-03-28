@@ -23,14 +23,14 @@ All paths relative to `packages/codegen/src/`.
 
 **Purpose**: Define all new types that the pipeline operates on. Everything depends on these.
 
-- [ ] T001 Define NodeModelBase, all 7 NodeModel variants (BranchModel, ContainerModel, LeafModel, EnumModel, KeywordModel, TokenModel, SupertypeModel) in `packages/codegen/src/node-model.ts`
-- [ ] T002 Define FieldModel (SingleFieldModel | ListFieldModel), ChildModel (SingleChildModel | ListChildModel), NodeMember in `packages/codegen/src/node-model.ts`
-- [ ] T003 Define type guards (isBranch, isContainer, isLeaf, isEnum, isKeyword, isToken, isSupertype, isStructural) in `packages/codegen/src/node-model.ts`
-- [ ] T004 Define Hydrate<T> mapped type, all Hydrated* type aliases, HydratedNodeModel union in `packages/codegen/src/node-model.ts`
-- [ ] T005 Define GrammarModel interface (name, models: ReadonlyMap, signatures: SignaturePool) in `packages/codegen/src/node-model.ts`
-- [ ] T006 [P] Define EnrichedRule discriminated union (SupertypeRule, BranchRule, ContainerRule, KeywordRule, EnumRule, LeafRule) in `packages/codegen/src/enriched-grammar.ts`
-- [ ] T007 [P] Define Grammar interface and GrammarRule type in `packages/codegen/src/grammar.ts` (extract from existing grammar-reader.ts)
-- [ ] T008 [P] Define NodeTypes, NodeTypeEntry, NodeTypeField interfaces in `packages/codegen/src/node-types.ts`
+- [x] T001 Define NodeModelBase, all 7 NodeModel variants (BranchModel, ContainerModel, LeafModel, EnumModel, KeywordModel, TokenModel, SupertypeModel) in `packages/codegen/src/node-model.ts`
+- [x] T002 Define FieldModel (SingleFieldModel | ListFieldModel), ChildModel (SingleChildModel | ListChildModel), NodeMember in `packages/codegen/src/node-model.ts`
+- [x] T003 Define type guards (isBranch, isContainer, isLeaf, isEnum, isKeyword, isToken, isSupertype, isStructural) in `packages/codegen/src/node-model.ts`
+- [x] T004 Define Hydrate<T> mapped type, all Hydrated* type aliases, HydratedNodeModel union in `packages/codegen/src/node-model.ts`
+- [x] T005 Define GrammarModel interface (name, models: ReadonlyMap, signatures: SignaturePool) in `packages/codegen/src/node-model.ts`
+- [x] T006 [P] Define EnrichedRule discriminated union (SupertypeRule, BranchRule, ContainerRule, KeywordRule, EnumRule, LeafRule) in `packages/codegen/src/enriched-grammar.ts`
+- [x] T007 [P] Define Grammar interface and GrammarRule type in `packages/codegen/src/grammar.ts` (extract from existing grammar-reader.ts)
+- [x] T008 [P] Define NodeTypes, NodeTypeEntry, NodeTypeField interfaces in `packages/codegen/src/node-types.ts`
 
 **Checkpoint**: All types compile. No runtime code yet.
 
@@ -42,8 +42,8 @@ All paths relative to `packages/codegen/src/`.
 
 **⚠️ CRITICAL**: Pipeline steps cannot begin until loaders exist.
 
-- [ ] T009 [US1] Implement loadGrammar(grammarName) and getRule(grammar, kind) in `packages/codegen/src/grammar.ts` — extract from existing grammar-reader.ts, preserve caching
-- [ ] T010 [P] [US1] Implement loadNodeTypes(grammarName) in `packages/codegen/src/node-types.ts` — extract from existing grammar-reader.ts loadRawEntries, wrap as NodeTypes
+- [x] T009 [US1] Implement loadGrammar(grammarName) and getRule(grammar, kind) in `packages/codegen/src/grammar.ts` — extract from existing grammar-reader.ts, preserve caching
+- [x] T010 [P] [US1] Implement loadNodeTypes(grammarName) in `packages/codegen/src/node-types.ts` — extract from existing grammar-reader.ts loadRawEntries, wrap as NodeTypes
 
 **Checkpoint**: Both loaders return typed data from JSON files.
 

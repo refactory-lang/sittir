@@ -501,7 +501,7 @@ Grammar-based enrichment may reveal that a model needs reclassification (e.g., B
 
 | Step | Method | What it does |
 |------|--------|-------------|
-| 11 | `optimize(models)` | Signature interning (factory, from, hydration, field, child), enum pattern detection |
+| 11 | `optimize(models)` | Signature interning (field, child), enum pattern detection |
 
 ### Step 12: Hydrate
 

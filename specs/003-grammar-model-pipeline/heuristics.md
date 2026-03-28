@@ -257,9 +257,9 @@ Emitters derive suffixed names from `typeName`:
 ### O1: Signature Interning (`computeSignatures`)
 
 **Logic:**
-- Compute JSON key from field configuration per kind
-- Multiple kinds with identical keys share same signature object
-- Three signature types: Factory, From, Hydration
+- Compute JSON key from kind sets per field/child
+- Multiple fields/children with identical kind sets share same signature object
+- Two signature types: FieldSignature, ChildSignature
 
 ### O2: Field List Deduplication (`identifyFieldLists`)
 
