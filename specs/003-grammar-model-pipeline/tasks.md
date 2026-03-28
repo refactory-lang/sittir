@@ -3,7 +3,7 @@
 **Input**: Design documents from `/specs/003-grammar-model-pipeline/`
 **Prerequisites**: plan.md, spec.md, methods.md, heuristics.md, data-model.md
 
-**Tests**: Existing generated test suites are the quality gate. No new test tasks — validation is via generated output diff test (T039).
+**Tests**: Existing generated test suites are the quality gate. No new test tasks — validation is via generated output diff test (T048–T050).
 
 **Organization**: Tasks organized by work stream (US1–US4) mapping to pipeline layers. Each work stream is independently implementable after foundational types are in place.
 
@@ -78,7 +78,7 @@ All paths relative to `packages/codegen/src/`.
 
 ### Step 4: Initialize from NodeTypes
 
-- [ ] T019 [US2] Implement initializeModels(nodeTypes) and all per-variant initializers (initializeBranch, initializeContainer, initializeLeaf, initializeToken, initializeSupertype) in `packages/codegen/src/node-model.ts`
+- [ ] T019 [US2] Implement initializeModels(nodeTypes) and all per-variant initializers (initializeBranch, initializeContainer, initializeLeaf, initializeToken, initializeSupertype) in `packages/codegen/src/node-model.ts` — note: initializeKeyword and initializeEnum are not needed here; NT classifies all named non-structural kinds as LeafModel, then reconcile (T020) narrows leaf→keyword and leaf→enum based on EnrichedRule modelType
 
 ### Step 5: Reconcile
 
@@ -135,11 +135,11 @@ All paths relative to `packages/codegen/src/`.
 
 ### Orchestrator
 
-- [ ] T032 [US4] Implement buildModel(grammarName) 13-step orchestrator in `packages/codegen/src/build-model.ts`
+- [ ] T032 [US4] Implement buildModel(grammarName) 13-step orchestrator in `packages/codegen/src/build-model.ts` — must also produce serialized JSON5 string (currently `nodeModel` in GeneratedFiles, written as `node-model.json5`)
 
 ### Emitter Migration (all parallelizable — different files)
 
-- [ ] T033 [P] [US4] Migrate `packages/codegen/src/emitters/utils.ts` — replace filter functions with type guard based, accept HydratedNodeModel[]
+- [ ] T033 [P] [US4] Migrate `packages/codegen/src/emitters/utils.ts` — replace filter functions with type guard based, accept HydratedNodeModel[], add projectKinds(kinds: HydratedNodeModel[]) → KindProjection helper
 - [ ] T034 [P] [US4] Migrate `packages/codegen/src/emitters/types.ts` — use HydratedNodeModel, type guards, replace FieldTypeClass access with kinds[]
 - [ ] T035 [P] [US4] Migrate `packages/codegen/src/emitters/factories.ts` — use HydratedNodeModel, type guards
 - [ ] T036 [P] [US4] Migrate `packages/codegen/src/emitters/from.ts` — use HydratedNodeModel, type guards, replace FieldTypeClass
