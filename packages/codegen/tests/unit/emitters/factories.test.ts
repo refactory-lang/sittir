@@ -53,12 +53,21 @@ describe('emitFactory', () => {
 		expect(source).toContain('Identifier | Metavariable');
 	});
 
-	it('generates children fluent setter for nodes with children', () => {
+	it('generates positional children setters for nodes with tuple children', () => {
 		const node = getNode('function_item');
 		const source = emitFactory({ node, leafKinds: [], ctx });
 
+		// function_item has 3 positional child slots (visibility_modifier, function_modifiers, where_clause)
+		expect(source).toContain('children0: (v: VisibilityModifier)');
+		expect(source).toContain('children1: (v: FunctionModifiers)');
+		expect(source).toContain('children2: (v: WhereClause)');
+	});
+
+	it('generates single children setter for nodes with one child slot', () => {
+		const node = getNode('expression_statement');
+		const source = emitFactory({ node, leafKinds: [], ctx });
+
 		expect(source).toContain('children: (');
-		expect(source).toContain("=> functionItem({ ...config, children:");
 	});
 });
 

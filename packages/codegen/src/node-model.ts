@@ -418,9 +418,9 @@ function enrichBranch(model: BranchModel, rule: BranchRule): void {
 		}
 	}
 
-	// Merge children kinds from grammar
+	// Build children from grammar positions, supplemented by NT kinds
 	if (rule.children && rule.children.length > 0 && model.children) {
-		mergeChildrenKinds(model.children, rule.children);
+		model.children = buildChildrenFromGrammar(model.children, rule.children);
 	}
 
 	model.rule = rule;
@@ -428,24 +428,51 @@ function enrichBranch(model: BranchModel, rule: BranchRule): void {
 
 function enrichContainer(model: ContainerModel, rule: ContainerRule): void {
 	if (rule.children.length > 0) {
-		mergeChildrenKinds(model.children, rule.children);
+		model.children = buildChildrenFromGrammar(model.children, rule.children);
 	}
 
 	model.rule = rule;
 }
 
-/** Merge grammar-derived kinds into NT-derived children model. */
-function mergeChildrenKinds(children: ChildrenModel, ruleChildren: EnrichedChildInfo[]): void {
-	// Grammar enriched children are still merged (length 1) for now.
-	// Merge the first grammar child's kinds into each slot of the model.
-	const grammarKinds = ruleChildren[0]?.kinds ?? [];
-	if (grammarKinds.length === 0) return;
+/**
+ * Build ChildrenModel from grammar-derived positional children,
+ * supplementing with NT kinds not already covered by grammar positions.
+ *
+ * Grammar is authoritative for structure (positions, cardinality).
+ * NT is authoritative for which kinds exist.
+ */
+function buildChildrenFromGrammar(
+	existing: ChildrenModel,
+	ruleChildren: EnrichedChildInfo[],
+): ChildrenModel {
+	if (ruleChildren.length === 0) return existing;
 
-	eachChildSlot(children, (child) => {
-		const kindSet = new Set(child.kinds);
-		for (const k of grammarKinds) kindSet.add(k);
-		child.kinds = [...kindSet];
+	// Collect all NT kinds as a supplement pool
+	const ntKinds = new Set<string>();
+	eachChildSlot(existing, (slot) => {
+		for (const k of slot.kinds) ntKinds.add(k);
 	});
+
+	// Find NT kinds not in any grammar position
+	const allGrammarKinds = new Set<string>();
+	for (const rc of ruleChildren) {
+		for (const k of rc.kinds) allGrammarKinds.add(k);
+	}
+	const ntOnlyKinds = [...ntKinds].filter(k => !allGrammarKinds.has(k));
+
+	function buildSlot(rc: EnrichedChildInfo): ChildModel {
+		// Grammar kinds first, then NT-only supplements
+		const kinds = [...rc.kinds, ...ntOnlyKinds];
+		if (rc.multiple) {
+			return { required: rc.required, multiple: true, kinds, separator: null } as ListChildModel;
+		}
+		return { required: rc.required, multiple: false, kinds } as SingleChildModel;
+	}
+
+	if (ruleChildren.length === 1) {
+		return buildSlot(ruleChildren[0]!);
+	}
+	return ruleChildren.map(buildSlot);
 }
 
 function enrichLeaf(model: LeafModel, rule: LeafRule): void {

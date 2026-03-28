@@ -172,11 +172,9 @@ function extractFields(rule: GrammarRule, grammar: Grammar): BranchRule {
 		});
 	}
 
-	const childAccums: ChildAccum[] = [];
-	walkForChildren(rule, false, false, childAccums, false, grammar);
-
-	const children: EnrichedChildInfo[] | undefined = childAccums.length > 0
-		? mergeChildAccums(childAccums)
+	const childSlots = collectChildSlots(rule, false, false, false, grammar);
+	const children: EnrichedChildInfo[] | undefined = childSlots.length > 0
+		? slotsToChildren(childSlots)
 		: undefined;
 
 	const separators = extractSeparators(rule);
@@ -324,106 +322,154 @@ function hasBlankChoice(rule: GrammarRule): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// extractChildren
+// collectChildSlots — position-aware child collection
 // ---------------------------------------------------------------------------
 
-interface ChildAccum {
+interface ChildSlot {
 	kinds: Set<string>;
 	optional: boolean;
 	repeated: boolean;
 }
 
-function extractChildren(rule: GrammarRule, grammar: Grammar): ContainerRule {
-	const childAccums: ChildAccum[] = [];
-	walkForChildren(rule, false, false, childAccums, false, grammar);
-
-	const children = mergeChildAccums(childAccums);
-	const separators = extractSeparators(rule);
-
-	return { modelType: 'container', children, separators, rule };
-}
-
-function mergeChildAccums(accums: ChildAccum[]): EnrichedChildInfo[] {
-	if (accums.length === 0) return [];
-
-	const allKinds = new Set<string>();
-	let anyRequired = false;
-	let anyMultiple = false;
-
-	for (const child of accums) {
-		for (const k of child.kinds) allKinds.add(k);
-		if (!child.optional) anyRequired = true;
-		if (child.repeated || accums.length > 1) anyMultiple = true;
-	}
-
-	return [{
-		kinds: [...allKinds],
-		required: anyRequired,
-		multiple: anyMultiple,
-	}];
-}
-
-function walkForChildren(
+/**
+ * Position-aware child slot collection.
+ *
+ * Returns one ChildSlot per positional child in the grammar rule.
+ * SEQ concatenates positions. CHOICE merges per-position (padding shorter
+ * branches with optional empty slots). REPEAT collapses its content to a
+ * single repeated slot. Hidden _symbols expand to a single slot of all
+ * concrete kinds (they represent one logical position, not N alternatives).
+ */
+function collectChildSlots(
 	rule: GrammarRule,
 	optional: boolean,
 	repeated: boolean,
-	children: ChildAccum[],
 	insideField: boolean,
 	grammar: Grammar,
 	visited?: Set<string>,
-): void {
+): ChildSlot[] {
 	switch (rule.type) {
-		case 'SEQ':
-			for (const m of rule.members) walkForChildren(m, optional, repeated, children, insideField, grammar, visited);
-			break;
+		case 'SEQ': {
+			const slots: ChildSlot[] = [];
+			for (const m of rule.members) {
+				slots.push(...collectChildSlots(m, optional, repeated, insideField, grammar, visited));
+			}
+			return slots;
+		}
+
 		case 'FIELD':
-			walkForChildren(rule.content, optional, repeated, children, true, grammar, visited);
-			break;
-		case 'SYMBOL':
-			if (!insideField) {
-				if (rule.name.startsWith('_')) {
-					if (grammar) {
-						const v = visited ?? new Set<string>();
-						if (!v.has(rule.name)) {
-							v.add(rule.name);
-							const subRule = grammar.rules[rule.name];
-							if (subRule) walkForChildren(subRule, optional, repeated, children, false, grammar, v);
-						}
+			// Fields are consumed by the field walk — children inside are not positional
+			return collectChildSlots(rule.content, optional, repeated, true, grammar, visited);
+
+		case 'SYMBOL': {
+			if (insideField) return [];
+			if (rule.name.startsWith('_')) {
+				// Hidden symbol → one logical slot with all concrete kinds
+				const kinds = new Set<string>();
+				const v = visited ? new Set(visited) : new Set<string>();
+				if (!v.has(rule.name)) {
+					v.add(rule.name);
+					const subRule = grammar.rules[rule.name];
+					if (subRule) {
+						const concreteTypes: string[] = [];
+						collectConcreteTypes(subRule, grammar, concreteTypes, v);
+						for (const t of concreteTypes) kinds.add(t);
 					}
-				} else {
-					children.push({ kinds: new Set([rule.name]), optional, repeated });
 				}
+				if (kinds.size === 0) return [];
+				return [{ kinds, optional, repeated }];
 			}
-			break;
-		case 'ALIAS':
-			if (!insideField && rule.named) {
-				children.push({ kinds: new Set([rule.value]), optional, repeated });
-			} else if (!insideField) {
-				walkForChildren(rule.content, optional, repeated, children, false, grammar, visited);
+			return [{ kinds: new Set([rule.name]), optional, repeated }];
+		}
+
+		case 'ALIAS': {
+			if (insideField) return [];
+			if (rule.named) {
+				return [{ kinds: new Set([rule.value]), optional, repeated }];
 			}
-			break;
+			return collectChildSlots(rule.content, optional, repeated, false, grammar, visited);
+		}
+
 		case 'CHOICE': {
 			const hasBlank = rule.members.some(m => m.type === 'BLANK');
-			for (const m of rule.members) {
-				if (m.type !== 'BLANK') walkForChildren(m, optional || hasBlank, repeated, children, insideField, grammar, visited);
+			const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
+			if (nonBlank.length === 0) return [];
+
+			const branchSlots = nonBlank.map(m =>
+				collectChildSlots(m, false, repeated, insideField, grammar, visited),
+			);
+
+			// Find max slot count across branches
+			const maxLen = Math.max(...branchSlots.map(b => b.length));
+			if (maxLen === 0) return [];
+
+			// Merge per-position, padding shorter branches with optional gaps
+			const merged: ChildSlot[] = [];
+			for (let i = 0; i < maxLen; i++) {
+				const kinds = new Set<string>();
+				let slotOptional = optional || hasBlank;
+				let slotRepeated = repeated;
+
+				for (const branch of branchSlots) {
+					if (i < branch.length) {
+						const slot = branch[i]!;
+						for (const k of slot.kinds) kinds.add(k);
+						if (slot.optional) slotOptional = true;
+						if (slot.repeated) slotRepeated = true;
+					} else {
+						// Branch is shorter — this position is absent, so optional
+						slotOptional = true;
+					}
+				}
+
+				if (kinds.size > 0) {
+					merged.push({ kinds, optional: slotOptional, repeated: slotRepeated });
+				}
 			}
-			break;
+			return merged;
 		}
-		case 'REPEAT':
-			walkForChildren(rule.content, true, true, children, insideField, grammar, visited);
-			break;
-		case 'REPEAT1':
-			walkForChildren(rule.content, optional, true, children, insideField, grammar, visited);
-			break;
+
+		case 'REPEAT': {
+			// Collapse content to single slot, mark as multiple + optional
+			const inner = collectChildSlots(rule.content, true, true, insideField, grammar, visited);
+			return collapseSlots(inner, true, true);
+		}
+
+		case 'REPEAT1': {
+			const inner = collectChildSlots(rule.content, optional, true, insideField, grammar, visited);
+			return collapseSlots(inner, optional, true);
+		}
+
 		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
-			walkForChildren(rule.content, optional, repeated, children, insideField, grammar, visited);
-			break;
+			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, visited);
+
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
-			walkForChildren(rule.content, optional, repeated, children, insideField, grammar, visited);
-			break;
+			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, visited);
+
 		default:
-			break;
+			return [];
 	}
+}
+
+/** Collapse multiple slots into one merged slot. */
+function collapseSlots(slots: ChildSlot[], optional: boolean, repeated: boolean): ChildSlot[] {
+	if (slots.length === 0) return [];
+	if (slots.length === 1) {
+		return [{ kinds: slots[0]!.kinds, optional: optional || slots[0]!.optional, repeated: repeated || slots[0]!.repeated }];
+	}
+	const allKinds = new Set<string>();
+	for (const s of slots) for (const k of s.kinds) allKinds.add(k);
+	return [{ kinds: allKinds, optional, repeated }];
+}
+
+function slotsToChildren(slots: ChildSlot[]): EnrichedChildInfo[] {
+	return slots.map(s => ({ kinds: [...s.kinds], required: !s.optional, multiple: s.repeated }));
+}
+
+function extractChildren(rule: GrammarRule, grammar: Grammar): ContainerRule {
+	const children = slotsToChildren(collectChildSlots(rule, false, false, false, grammar));
+	const separators = extractSeparators(rule);
+	return { modelType: 'container', children, separators, rule };
 }
 
 // ---------------------------------------------------------------------------
