@@ -12,6 +12,8 @@
 
 import { type GrammarRule, type SupertypeInfo, type RawNodeEntry, type RawFieldEntry, readGrammarRule, loadRawEntries, listBranchKinds, listLeafKinds, listKeywordKinds, listKeywordTokens, listOperatorTokens, listSupertypes, listLeafValues, extractLeafPattern } from './grammar-reader.ts';
 import { toTypeName } from './naming.ts';
+import { buildModel } from './build-model.ts';
+import type { GrammarModel as NewGrammarModel } from './node-model.ts';
 
 // ---------------------------------------------------------------------------
 // Step 2: EnrichedRule — same tree shape as GrammarRule, annotated
@@ -92,6 +94,8 @@ export function ruleToEnriched(
 			return { type: 'PREC_LEFT', value: rule.value, content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'PREC_RIGHT':
 			return { type: 'PREC_RIGHT', value: rule.value, content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
+		case 'PREC_DYNAMIC':
+			return { type: 'PREC', value: rule.value, content: ruleToEnriched(rule.content, fieldInfo, kindSets) };
 		case 'ALIAS':
 			return { type: 'ALIAS', content: ruleToEnriched(rule.content, fieldInfo, kindSets), named: rule.named, value: rule.value };
 		case 'TOKEN':
@@ -877,7 +881,7 @@ export function allTypes(tc: FieldTypeClass): string[] {
 // buildGrammarModel — orchestrates the full pipeline
 // ---------------------------------------------------------------------------
 
-export function buildGrammarModel(grammar: string): { model: GrammarModel; serialized: string } {
+export function buildGrammarModel(grammar: string): { model: GrammarModel; serialized: string; newModel: NewGrammarModel } {
 	// Step 1: Load raw data
 	const rawEntries = loadRawEntries(grammar);
 	const entryMap = new Map<string, RawNodeEntry>();
@@ -994,5 +998,8 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 	// Step 4: Compute signatures (branches only)
 	nodesToSignatures(nodes);
 
-	return { model: { name: grammar, nodes }, serialized };
+	// Also run the new 13-step pipeline (for future emitter migration)
+	const { grammarModel: newModel } = buildModel(grammar);
+
+	return { model: { name: grammar, nodes }, serialized, newModel };
 }

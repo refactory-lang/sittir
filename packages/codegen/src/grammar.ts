@@ -22,6 +22,7 @@ export type GrammarRule =
 	| { type: 'PREC'; value: number; content: GrammarRule }
 	| { type: 'PREC_LEFT'; value: number; content: GrammarRule }
 	| { type: 'PREC_RIGHT'; value: number; content: GrammarRule }
+	| { type: 'PREC_DYNAMIC'; value: number; content: GrammarRule }
 	| { type: 'ALIAS'; content: GrammarRule; named: boolean; value: string }
 	| { type: 'TOKEN'; content: GrammarRule }
 	| { type: 'IMMEDIATE_TOKEN'; content: GrammarRule }

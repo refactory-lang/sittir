@@ -341,15 +341,16 @@ export function initializeModels(nodeTypes: NodeTypes): Map<string, NodeModel> {
 // ---------------------------------------------------------------------------
 
 function enrichBranch(model: BranchModel, rule: BranchRule, entry: NodeTypeEntry | undefined): void {
-	// Merge field kinds from grammar
+	// Merge field kinds: grammar order first, then NT supplements
 	const grammarFieldMap = new Map(rule.fields.map(f => [f.name, f]));
 	for (const field of model.fields) {
 		const gField = grammarFieldMap.get(field.name);
 		if (gField) {
-			// Union kind sets from grammar into NT kinds
-			const kindSet = new Set(field.kinds);
-			for (const k of gField.kinds) kindSet.add(k);
-			field.kinds = [...kindSet];
+			// Grammar kinds first (preserves grammar rule ordering for operators etc.)
+			// then NT kinds that weren't in grammar
+			const grammarSet = new Set(gField.kinds);
+			const ntOnly = field.kinds.filter(k => !grammarSet.has(k));
+			field.kinds = [...gField.kinds, ...ntOnly];
 		}
 		// Apply separators
 		const sep = rule.separators.get(field.name);
@@ -422,10 +423,10 @@ function enrichEnum(model: EnumModel, rule: EnumEnrichedRule): void {
 }
 
 function enrichSupertype(model: SupertypeModel, rule: SupertypeRule): void {
-	// Merge subtypes (NT + grammar)
-	const subtypeSet = new Set(model.subtypes);
-	for (const s of rule.subtypes) subtypeSet.add(s);
-	model.subtypes = [...subtypeSet];
+	// Keep NT subtypes as authoritative — don't merge grammar subtypes
+	// (grammar may list expanded concrete descendants that NT only references
+	// via sub-supertype, e.g. grammar has string_literal under _expression
+	// but NT only has _literal)
 	model.rule = rule;
 }
 
@@ -548,9 +549,7 @@ function ruleToMembers(rule: GrammarRule, ctx: MemberContext, optional: boolean)
 
 		case 'SYMBOL': {
 			if (rule.name.startsWith('_')) {
-				// Abstract symbol — inline its rule
-				const subRule = ctx.grammar.rules[rule.name];
-				if (subRule) return ruleToMembers(subRule, ctx, optional);
+				// Abstract symbol — skip (supertypes are handled via field/child kinds)
 				return [];
 			}
 			// Concrete unnamed child — represented as child member
@@ -590,7 +589,7 @@ function ruleToMembers(rule: GrammarRule, ctx: MemberContext, optional: boolean)
 		case 'REPEAT1':
 			return ruleToMembers(rule.content, ctx, optional).map(m => memberToMultiple(m));
 
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			return ruleToMembers(rule.content, ctx, optional);
 
 		case 'ALIAS':
@@ -629,6 +628,7 @@ function memberToMultiple(m: NodeMember): NodeMember {
 function mergeChoiceMembers(branches: NodeMember[][], hasBlank: boolean): NodeMember[] {
 	const template = branches[0]!;
 	const fieldMap = new Map<string, { member: 'field'; field: FieldModel }>();
+	const mergedNames = new Set<string>();
 
 	for (const branch of branches) {
 		for (const m of branch) {
@@ -639,7 +639,8 @@ function mergeChoiceMembers(branches: NodeMember[][], hasBlank: boolean): NodeMe
 				} else {
 					// Merge kinds
 					const kindSet = new Set([...existing.field.kinds, ...m.field.kinds]);
-					existing.field.kinds = [...kindSet];
+					existing.field.kinds = [...kindSet].sort();
+					mergedNames.add(m.field.name);
 				}
 			}
 		}
@@ -650,6 +651,11 @@ function mergeChoiceMembers(branches: NodeMember[][], hasBlank: boolean): NodeMe
 			const merged = fieldMap.get(m.field.name);
 			if (merged) {
 				if (hasBlank) merged.field = { ...merged.field, required: false };
+				// Mark fields that were merged from multiple CHOICE branches
+				// so resolver can sort their kinds to match old pipeline behavior
+				if (mergedNames.has(m.field.name)) {
+					(merged.field as any)._choiceMerged = true;
+				}
 				return merged;
 			}
 		}
@@ -688,6 +694,12 @@ function resolveMembers(members: NodeMember[], fieldMap: Map<string, FieldModel>
 			seenFields.add(m.field.name);
 			const actual = fieldMap.get(m.field.name);
 			if (actual) {
+				// For fields merged from CHOICE branches, sort kinds in-place
+				// to match old pipeline's choiceToMergedFields behavior.
+				// Must mutate actual so model.fields also reflects the sort.
+				if ((m.field as any)._choiceMerged) {
+					actual.kinds = [...actual.kinds].sort();
+				}
 				resolved.push({ member: 'field', field: actual });
 			}
 		} else if (m.member === 'choice') {

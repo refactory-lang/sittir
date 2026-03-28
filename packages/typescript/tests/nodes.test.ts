@@ -8,22 +8,22 @@ import type { NodeData } from '../src/types.js';
 
 describe('abstract_class_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.abstractClassDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.abstractClassDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     expect(node.type).toBe('abstract_class_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.abstractClassDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.abstractClassDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.abstractClassDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.abstractClassDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     const source = render(node, rules, joinBy);
     expect(source).toContain('abstract');
     expect(source).toContain('class');
   });
   it('node.render() works', () => {
-    const node = ir.abstractClassDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.abstractClassDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -31,21 +31,21 @@ describe('abstract_class_declaration', () => {
 
 describe('abstract_method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.abstractMethodSignature({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
+    const node = ir.abstractMethodSignature({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(node.type).toBe('abstract_method_signature');
   });
   it('renders to non-empty string', () => {
-    const node = ir.abstractMethodSignature({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
+    const node = ir.abstractMethodSignature({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.abstractMethodSignature({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
+    const node = ir.abstractMethodSignature({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('abstract');
   });
   it('node.render() works', () => {
-    const node = ir.abstractMethodSignature({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
+    const node = ir.abstractMethodSignature({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -399,16 +399,16 @@ describe('break_statement', () => {
 
 describe('call_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.callExpression({ function: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, arguments: { type: 'arguments' as const, fields: {} } as NodeData<'arguments'> });
+    const node = ir.callExpression({ arguments: { type: 'arguments' as const, fields: {} } as NodeData<'arguments'>, function: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(node.type).toBe('call_expression');
   });
   it('renders to non-empty string', () => {
-    const node = ir.callExpression({ function: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, arguments: { type: 'arguments' as const, fields: {} } as NodeData<'arguments'> });
+    const node = ir.callExpression({ arguments: { type: 'arguments' as const, fields: {} } as NodeData<'arguments'>, function: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.callExpression({ function: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, arguments: { type: 'arguments' as const, fields: {} } as NodeData<'arguments'> });
+    const node = ir.callExpression({ arguments: { type: 'arguments' as const, fields: {} } as NodeData<'arguments'>, function: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -500,21 +500,21 @@ describe('class_body', () => {
 
 describe('class_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.classDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.classDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     expect(node.type).toBe('class_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.classDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.classDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.classDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.classDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     const source = render(node, rules, joinBy);
     expect(source).toContain('class');
   });
   it('node.render() works', () => {
-    const node = ir.classDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'> });
+    const node = ir.classDeclaration({ body: { type: 'class_body' as const, fields: {} } as NodeData<'class_body'>, name: ir.typeIdentifier('TestName') });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -584,23 +584,23 @@ describe('computed_property_name', () => {
 
 describe('conditional_type', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.conditionalType({ left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, alternative: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.conditionalType({ alternative: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'> });
     expect(node.type).toBe('conditional_type');
   });
   it('renders to non-empty string', () => {
-    const node = ir.conditionalType({ left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, alternative: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.conditionalType({ alternative: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.conditionalType({ left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, alternative: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.conditionalType({ alternative: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('extends');
     expect(source).toContain('?');
     expect(source).toContain(':');
   });
   it('node.render() works', () => {
-    const node = ir.conditionalType({ left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, alternative: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.conditionalType({ alternative: { type: 'type' as const, fields: {} } as NodeData<'type'>, consequence: { type: 'type' as const, fields: {} } as NodeData<'type'>, left: { type: 'type' as const, fields: {} } as NodeData<'type'>, right: { type: 'type' as const, fields: {} } as NodeData<'type'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -781,16 +781,16 @@ describe('else_clause', () => {
 
 describe('enum_assignment', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.enumAssignment({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.enumAssignment({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(node.type).toBe('enum_assignment');
   });
   it('renders to non-empty string', () => {
-    const node = ir.enumAssignment({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.enumAssignment({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.enumAssignment({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.enumAssignment({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -821,21 +821,21 @@ describe('enum_body', () => {
 
 describe('enum_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.enumDeclaration({ name: ir.identifier('test_name'), body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'> });
+    const node = ir.enumDeclaration({ body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'>, name: ir.identifier('test_name') });
     expect(node.type).toBe('enum_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.enumDeclaration({ name: ir.identifier('test_name'), body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'> });
+    const node = ir.enumDeclaration({ body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'>, name: ir.identifier('test_name') });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.enumDeclaration({ name: ir.identifier('test_name'), body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'> });
+    const node = ir.enumDeclaration({ body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'>, name: ir.identifier('test_name') });
     const source = render(node, rules, joinBy);
     expect(source).toContain('enum');
   });
   it('node.render() works', () => {
-    const node = ir.enumDeclaration({ name: ir.identifier('test_name'), body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'> });
+    const node = ir.enumDeclaration({ body: { type: 'enum_body' as const, fields: {} } as NodeData<'enum_body'>, name: ir.identifier('test_name') });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1010,21 +1010,21 @@ describe('flow_maybe_type', () => {
 
 describe('for_in_statement', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.forInStatement({ left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forInStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(node.type).toBe('for_in_statement');
   });
   it('renders to non-empty string', () => {
-    const node = ir.forInStatement({ left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forInStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.forInStatement({ left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forInStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('for');
   });
   it('node.render() works', () => {
-    const node = ir.forInStatement({ left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forInStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, left: ir.identifier('test_left'), operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1032,23 +1032,23 @@ describe('for_in_statement', () => {
 
 describe('for_statement', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.forStatement({ initializer: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: [], body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: [], initializer: { type: 'empty_statement' as const, fields: {} } as NodeData<'empty_statement'> });
     expect(node.type).toBe('for_statement');
   });
   it('renders to non-empty string', () => {
-    const node = ir.forStatement({ initializer: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: [], body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: [], initializer: { type: 'empty_statement' as const, fields: {} } as NodeData<'empty_statement'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.forStatement({ initializer: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: [], body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: [], initializer: { type: 'empty_statement' as const, fields: {} } as NodeData<'empty_statement'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('for');
     expect(source).toContain('(');
     expect(source).toContain(')');
   });
   it('node.render() works', () => {
-    const node = ir.forStatement({ initializer: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: [], body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.forStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: [], initializer: { type: 'empty_statement' as const, fields: {} } as NodeData<'empty_statement'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1079,21 +1079,21 @@ describe('formal_parameters', () => {
 
 describe('function_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.functionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(node.type).toBe('function_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.functionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.functionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('function');
   });
   it('node.render() works', () => {
-    const node = ir.functionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1101,21 +1101,21 @@ describe('function_declaration', () => {
 
 describe('function_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.functionExpression({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionExpression({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(node.type).toBe('function_expression');
   });
   it('renders to non-empty string', () => {
-    const node = ir.functionExpression({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionExpression({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.functionExpression({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionExpression({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('function');
   });
   it('node.render() works', () => {
-    const node = ir.functionExpression({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.functionExpression({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1145,21 +1145,21 @@ describe('function_signature', () => {
 
 describe('function_type', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'asserts' as const, fields: {} } as NodeData<'asserts'> });
     expect(node.type).toBe('function_type');
   });
   it('renders to non-empty string', () => {
-    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'asserts' as const, fields: {} } as NodeData<'asserts'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'asserts' as const, fields: {} } as NodeData<'asserts'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('=>');
   });
   it('node.render() works', () => {
-    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'type' as const, fields: {} } as NodeData<'type'> });
+    const node = ir.functionType({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, return_type: { type: 'asserts' as const, fields: {} } as NodeData<'asserts'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1167,22 +1167,22 @@ describe('function_type', () => {
 
 describe('generator_function', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.generatorFunction({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunction({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(node.type).toBe('generator_function');
   });
   it('renders to non-empty string', () => {
-    const node = ir.generatorFunction({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunction({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.generatorFunction({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunction({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('function');
     expect(source).toContain('*');
   });
   it('node.render() works', () => {
-    const node = ir.generatorFunction({ parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunction({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1190,22 +1190,22 @@ describe('generator_function', () => {
 
 describe('generator_function_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.generatorFunctionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunctionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(node.type).toBe('generator_function_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.generatorFunctionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunctionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.generatorFunctionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunctionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('function');
     expect(source).toContain('*');
   });
   it('node.render() works', () => {
-    const node = ir.generatorFunctionDeclaration({ name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.generatorFunctionDeclaration({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: ir.identifier('test_name'), parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1395,22 +1395,22 @@ describe('import_statement', () => {
 
 describe('index_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.indexSignature({ type: 'type_annotation' as const, fields: {} } as NodeData<'type_annotation'>);
+    const node = ir.indexSignature({ type: 'adding_type_annotation' as const, fields: {} } as NodeData<'adding_type_annotation'>);
     expect(node.type).toBe('index_signature');
   });
   it('renders to non-empty string', () => {
-    const node = ir.indexSignature({ type: 'type_annotation' as const, fields: {} } as NodeData<'type_annotation'>);
+    const node = ir.indexSignature({ type: 'adding_type_annotation' as const, fields: {} } as NodeData<'adding_type_annotation'>);
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.indexSignature({ type: 'type_annotation' as const, fields: {} } as NodeData<'type_annotation'>);
+    const node = ir.indexSignature({ type: 'adding_type_annotation' as const, fields: {} } as NodeData<'adding_type_annotation'>);
     const source = render(node, rules, joinBy);
     expect(source).toContain('[');
     expect(source).toContain(']');
   });
   it('node.render() works', () => {
-    const node = ir.indexSignature({ type: 'type_annotation' as const, fields: {} } as NodeData<'type_annotation'>);
+    const node = ir.indexSignature({ type: 'adding_type_annotation' as const, fields: {} } as NodeData<'adding_type_annotation'>);
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1496,21 +1496,21 @@ describe('interface_body', () => {
 
 describe('interface_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.interfaceDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'> });
+    const node = ir.interfaceDeclaration({ body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'>, name: ir.typeIdentifier('TestName') });
     expect(node.type).toBe('interface_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.interfaceDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'> });
+    const node = ir.interfaceDeclaration({ body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'>, name: ir.typeIdentifier('TestName') });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.interfaceDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'> });
+    const node = ir.interfaceDeclaration({ body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'>, name: ir.typeIdentifier('TestName') });
     const source = render(node, rules, joinBy);
     expect(source).toContain('interface');
   });
   it('node.render() works', () => {
-    const node = ir.interfaceDeclaration({ name: ir.typeIdentifier('TestName'), body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'> });
+    const node = ir.interfaceDeclaration({ body: { type: 'interface_body' as const, fields: {} } as NodeData<'interface_body'>, name: ir.typeIdentifier('TestName') });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1569,6 +1569,11 @@ describe('labeled_statement', () => {
     const node = ir.labeledStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, label: { type: 'statement_identifier' as const, fields: {} } as NodeData<'statement_identifier'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.labeledStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, label: { type: 'statement_identifier' as const, fields: {} } as NodeData<'statement_identifier'> });
+    const source = render(node, rules, joinBy);
+    expect(source).toContain(':');
   });
   it('node.render() works', () => {
     const node = ir.labeledStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, label: { type: 'statement_identifier' as const, fields: {} } as NodeData<'statement_identifier'> });
@@ -1675,16 +1680,16 @@ describe('member_expression', () => {
 
 describe('method_definition', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodDefinition({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.methodDefinition({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(node.type).toBe('method_definition');
   });
   it('renders to non-empty string', () => {
-    const node = ir.methodDefinition({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.methodDefinition({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.methodDefinition({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'>, body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'> });
+    const node = ir.methodDefinition({ body: { type: 'statement_block' as const, fields: {} } as NodeData<'statement_block'>, name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1692,16 +1697,16 @@ describe('method_definition', () => {
 
 describe('method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodSignature({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
+    const node = ir.methodSignature({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(node.type).toBe('method_signature');
   });
   it('renders to non-empty string', () => {
-    const node = ir.methodSignature({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
+    const node = ir.methodSignature({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.methodSignature({ name: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
+    const node = ir.methodSignature({ name: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, parameters: { type: 'formal_parameters' as const, fields: {} } as NodeData<'formal_parameters'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -1911,21 +1916,21 @@ describe('object', () => {
 
 describe('object_assignment_pattern', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.objectAssignmentPattern({ left: { type: 'object_pattern' as const, fields: {} } as NodeData<'object_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.objectAssignmentPattern({ left: { type: 'array_pattern' as const, fields: {} } as NodeData<'array_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(node.type).toBe('object_assignment_pattern');
   });
   it('renders to non-empty string', () => {
-    const node = ir.objectAssignmentPattern({ left: { type: 'object_pattern' as const, fields: {} } as NodeData<'object_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.objectAssignmentPattern({ left: { type: 'array_pattern' as const, fields: {} } as NodeData<'array_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.objectAssignmentPattern({ left: { type: 'object_pattern' as const, fields: {} } as NodeData<'object_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.objectAssignmentPattern({ left: { type: 'array_pattern' as const, fields: {} } as NodeData<'array_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('=');
   });
   it('node.render() works', () => {
-    const node = ir.objectAssignmentPattern({ left: { type: 'object_pattern' as const, fields: {} } as NodeData<'object_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.objectAssignmentPattern({ left: { type: 'array_pattern' as const, fields: {} } as NodeData<'array_pattern'>, right: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2061,21 +2066,21 @@ describe('optional_type', () => {
 
 describe('pair', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.pair({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.pair({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(node.type).toBe('pair');
   });
   it('renders to non-empty string', () => {
-    const node = ir.pair({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.pair({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.pair({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.pair({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain(':');
   });
   it('node.render() works', () => {
-    const node = ir.pair({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.pair({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2083,21 +2088,21 @@ describe('pair', () => {
 
 describe('pair_pattern', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.pairPattern({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'pattern' as const, fields: {} } as NodeData<'pattern'> });
+    const node = ir.pairPattern({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'assignment_pattern' as const, fields: {} } as NodeData<'assignment_pattern'> });
     expect(node.type).toBe('pair_pattern');
   });
   it('renders to non-empty string', () => {
-    const node = ir.pairPattern({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'pattern' as const, fields: {} } as NodeData<'pattern'> });
+    const node = ir.pairPattern({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'assignment_pattern' as const, fields: {} } as NodeData<'assignment_pattern'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.pairPattern({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'pattern' as const, fields: {} } as NodeData<'pattern'> });
+    const node = ir.pairPattern({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'assignment_pattern' as const, fields: {} } as NodeData<'assignment_pattern'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain(':');
   });
   it('node.render() works', () => {
-    const node = ir.pairPattern({ key: { type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>, value: { type: 'pattern' as const, fields: {} } as NodeData<'pattern'> });
+    const node = ir.pairPattern({ key: { type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>, value: { type: 'assignment_pattern' as const, fields: {} } as NodeData<'assignment_pattern'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2168,16 +2173,16 @@ describe('program', () => {
 
 describe('property_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.propertySignature({ type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>);
+    const node = ir.propertySignature({ type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>);
     expect(node.type).toBe('property_signature');
   });
   it('renders to non-empty string', () => {
-    const node = ir.propertySignature({ type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>);
+    const node = ir.propertySignature({ type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>);
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.propertySignature({ type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>);
+    const node = ir.propertySignature({ type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>);
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2185,16 +2190,16 @@ describe('property_signature', () => {
 
 describe('public_field_definition', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.publicFieldDefinition({ type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>);
+    const node = ir.publicFieldDefinition({ type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>);
     expect(node.type).toBe('public_field_definition');
   });
   it('renders to non-empty string', () => {
-    const node = ir.publicFieldDefinition({ type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>);
+    const node = ir.publicFieldDefinition({ type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>);
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.publicFieldDefinition({ type: 'property_identifier' as const, fields: {} } as NodeData<'property_identifier'>);
+    const node = ir.publicFieldDefinition({ type: 'computed_property_name' as const, fields: {} } as NodeData<'computed_property_name'>);
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2431,22 +2436,22 @@ describe('string', () => {
 
 describe('subscript_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.subscriptExpression({ object: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, index: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.subscriptExpression({ index: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, object: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(node.type).toBe('subscript_expression');
   });
   it('renders to non-empty string', () => {
-    const node = ir.subscriptExpression({ object: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, index: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.subscriptExpression({ index: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, object: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.subscriptExpression({ object: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, index: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.subscriptExpression({ index: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, object: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('[');
     expect(source).toContain(']');
   });
   it('node.render() works', () => {
-    const node = ir.subscriptExpression({ object: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, index: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.subscriptExpression({ index: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, object: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2523,21 +2528,21 @@ describe('switch_default', () => {
 
 describe('switch_statement', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.switchStatement({ value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'> });
+    const node = ir.switchStatement({ body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'>, value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     expect(node.type).toBe('switch_statement');
   });
   it('renders to non-empty string', () => {
-    const node = ir.switchStatement({ value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'> });
+    const node = ir.switchStatement({ body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'>, value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.switchStatement({ value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'> });
+    const node = ir.switchStatement({ body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'>, value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('switch');
   });
   it('node.render() works', () => {
-    const node = ir.switchStatement({ value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'> });
+    const node = ir.switchStatement({ body: { type: 'switch_body' as const, fields: {} } as NodeData<'switch_body'>, value: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2637,21 +2642,21 @@ describe('template_type', () => {
 
 describe('ternary_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.ternaryExpression({ condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.ternaryExpression({ alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(node.type).toBe('ternary_expression');
   });
   it('renders to non-empty string', () => {
-    const node = ir.ternaryExpression({ condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.ternaryExpression({ alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.ternaryExpression({ condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.ternaryExpression({ alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain(':');
   });
   it('node.render() works', () => {
-    const node = ir.ternaryExpression({ condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.ternaryExpression({ alternative: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, condition: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, consequence: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -2917,16 +2922,16 @@ describe('type_query', () => {
 
 describe('unary_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.unaryExpression({ operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, argument: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.unaryExpression({ argument: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'> });
     expect(node.type).toBe('unary_expression');
   });
   it('renders to non-empty string', () => {
-    const node = ir.unaryExpression({ operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, argument: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.unaryExpression({ argument: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.unaryExpression({ operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'>, argument: { type: 'expression' as const, fields: {} } as NodeData<'expression'> });
+    const node = ir.unaryExpression({ argument: { type: 'expression' as const, fields: {} } as NodeData<'expression'>, operator: { type: 'unknown' as const, fields: {} } as NodeData<'unknown'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -3012,21 +3017,21 @@ describe('variable_declarator', () => {
 
 describe('while_statement', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.whileStatement({ condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.whileStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     expect(node.type).toBe('while_statement');
   });
   it('renders to non-empty string', () => {
-    const node = ir.whileStatement({ condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.whileStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.whileStatement({ condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.whileStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('while');
   });
   it('node.render() works', () => {
-    const node = ir.whileStatement({ condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.whileStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, condition: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -3034,21 +3039,21 @@ describe('while_statement', () => {
 
 describe('with_statement', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.withStatement({ object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.withStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     expect(node.type).toBe('with_statement');
   });
   it('renders to non-empty string', () => {
-    const node = ir.withStatement({ object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.withStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.withStatement({ object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.withStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     const source = render(node, rules, joinBy);
     expect(source).toContain('with');
   });
   it('node.render() works', () => {
-    const node = ir.withStatement({ object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'>, body: { type: 'statement' as const, fields: {} } as NodeData<'statement'> });
+    const node = ir.withStatement({ body: { type: 'statement' as const, fields: {} } as NodeData<'statement'>, object: { type: 'parenthesized_expression' as const, fields: {} } as NodeData<'parenthesized_expression'> });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -3137,14 +3142,29 @@ describe('terminal factories', () => {
     expect(node.type).toBe('accessibility_modifier');
     expect(node.text).toBe('private');
   });
-  it('comment accepts text', () => {
-    const node = ir.comment('test_value');
-    expect(node.type).toBe('comment');
-    expect(node.text).toBe('test_value');
-  });
   it('debugger_statement accepts text', () => {
     const node = ir.debuggerStatement('test_value');
     expect(node.type).toBe('debugger_statement');
+    expect(node.text).toBe('test_value');
+  });
+  it('identifier accepts text', () => {
+    const node = ir.identifier('test_value');
+    expect(node.type).toBe('identifier');
+    expect(node.text).toBe('test_value');
+  });
+  it('meta_property accepts text', () => {
+    const node = ir.metaProperty('test_value');
+    expect(node.type).toBe('meta_property');
+    expect(node.text).toBe('test_value');
+  });
+  it('predefined_type accepts text', () => {
+    const node = ir.predefinedType('any');
+    expect(node.type).toBe('predefined_type');
+    expect(node.text).toBe('any');
+  });
+  it('comment accepts text', () => {
+    const node = ir.comment('test_value');
+    expect(node.type).toBe('comment');
     expect(node.text).toBe('test_value');
   });
   it('escape_sequence accepts text', () => {
@@ -3162,25 +3182,10 @@ describe('terminal factories', () => {
     expect(node.type).toBe('html_comment');
     expect(node.text).toBe('test_value');
   });
-  it('identifier accepts text', () => {
-    const node = ir.identifier('test_value');
-    expect(node.type).toBe('identifier');
-    expect(node.text).toBe('test_value');
-  });
-  it('meta_property accepts text', () => {
-    const node = ir.metaProperty('test_value');
-    expect(node.type).toBe('meta_property');
-    expect(node.text).toBe('test_value');
-  });
   it('number accepts text', () => {
     const node = ir.number('test_value');
     expect(node.type).toBe('number');
     expect(node.text).toBe('test_value');
-  });
-  it('predefined_type accepts text', () => {
-    const node = ir.predefinedType('any');
-    expect(node.type).toBe('predefined_type');
-    expect(node.text).toBe('any');
   });
   it('private_property_identifier accepts text', () => {
     const node = ir.privatePropertyIdentifier('test_value');

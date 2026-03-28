@@ -52,8 +52,8 @@ export function aliasedImport(
 ) {
   return {
     type: 'aliased_import' as const,
-    name: (v: DottedName) => aliasedImport({ ...config, 'name': v }),
     alias: (v: Identifier) => aliasedImport({ ...config, 'alias': v }),
+    name: (v: DottedName) => aliasedImport({ ...config, 'name': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -86,7 +86,7 @@ export function asPattern(
   return {
     type: 'as_pattern' as const,
     alias: (v: AsPatternTarget) => asPattern({ ...config, 'alias': v }),
-    children: (...v: (Expression)[]) => asPattern({ ...config, children: v }),
+    children: (...v: (CasePattern | Expression | Identifier)[]) => asPattern({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -136,8 +136,8 @@ export function attribute(
 ) {
   return {
     type: 'attribute' as const,
-    object: (v: PrimaryExpression) => attribute({ ...config, 'object': v }),
     attribute: (v: Identifier) => attribute({ ...config, 'attribute': v }),
+    object: (v: PrimaryExpression) => attribute({ ...config, 'object': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -188,7 +188,7 @@ export function binaryOperator(
   return {
     type: 'binary_operator' as const,
     left: (v: PrimaryExpression) => binaryOperator({ ...config, 'left': v }),
-    operator: (v: '+' | '-' | '*' | '@' | '/' | '%' | '//' | '**' | '|' | '&' | '^' | '<<' | '>>') => binaryOperator({ ...config, 'operator': { type: v, text: v } as const }),
+    operator: (v: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|') => binaryOperator({ ...config, 'operator': { type: v, text: v } as const }),
     right: (v: PrimaryExpression) => binaryOperator({ ...config, 'right': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -240,8 +240,8 @@ export function call(
 ) {
   return {
     type: 'call' as const,
-    function: (v: PrimaryExpression) => call({ ...config, 'function': v }),
     arguments: (v: ArgumentList | GeneratorExpression) => call({ ...config, 'arguments': v }),
+    function: (v: PrimaryExpression) => call({ ...config, 'function': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -257,8 +257,8 @@ export function caseClause(
 ) {
   return {
     type: 'case_clause' as const,
-    guard: (v: IfClause) => caseClause({ ...config, 'guard': v }),
     consequence: (v: Block) => caseClause({ ...config, 'consequence': v }),
+    guard: (v: IfClause) => caseClause({ ...config, 'guard': v }),
     children: (...v: (CasePattern)[]) => caseClause({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -307,10 +307,10 @@ export function classDefinition(
 ) {
   return {
     type: 'class_definition' as const,
-    name: (v: Identifier) => classDefinition({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameter) => classDefinition({ ...config, 'type_parameters': v }),
-    superclasses: (v: ArgumentList) => classDefinition({ ...config, 'superclasses': v }),
     body: (v: Block) => classDefinition({ ...config, 'body': v }),
+    name: (v: Identifier) => classDefinition({ ...config, 'name': v }),
+    superclasses: (v: ArgumentList) => classDefinition({ ...config, 'superclasses': v }),
+    typeParameters: (v: TypeParameter) => classDefinition({ ...config, 'type_parameters': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -342,7 +342,7 @@ export function comparisonOperator(
 ) {
   return {
     type: 'comparison_operator' as const,
-    operators: (...v: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is')[]) => comparisonOperator({ ...config, 'operators': v.map(t => ({ type: t, text: t }) as const) }),
+    operators: (...v: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[]) => comparisonOperator({ ...config, 'operators': v.map(t => ({ type: t, text: t }) as const) }),
     children: (...v: (PrimaryExpression)[]) => comparisonOperator({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -556,7 +556,7 @@ export function dictionarySplatPattern(
 ) {
   return {
     type: 'dictionary_splat_pattern' as const,
-    children: (v: Attribute | Identifier | KeywordIdentifier | Subscript) => dictionarySplatPattern({ ...config, children: v }),
+    children: (v: Attribute | Identifier | Subscript) => dictionarySplatPattern({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -621,8 +621,8 @@ export function exceptClause(
 ) {
   return {
     type: 'except_clause' as const,
-    value: (...v: (Expression)[]) => exceptClause({ ...config, 'value': v }),
     alias: (v: Expression) => exceptClause({ ...config, 'alias': v }),
+    value: (...v: (Expression)[]) => exceptClause({ ...config, 'value': v }),
     children: (v: Block) => exceptClause({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -705,7 +705,7 @@ export function forInClause(
   return {
     type: 'for_in_clause' as const,
     left: (v: Pattern | PatternList) => forInClause({ ...config, 'left': v }),
-    right: (...v: (Expression | Lambda)[]) => forInClause({ ...config, 'right': v }),
+    right: (...v: (Expression)[]) => forInClause({ ...config, 'right': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -721,10 +721,10 @@ export function forStatement(
 ) {
   return {
     type: 'for_statement' as const,
+    alternative: (v: ElseClause) => forStatement({ ...config, 'alternative': v }),
+    body: (v: Block) => forStatement({ ...config, 'body': v }),
     left: (v: Pattern | PatternList) => forStatement({ ...config, 'left': v }),
     right: (v: Expression | ExpressionList) => forStatement({ ...config, 'right': v }),
-    body: (v: Block) => forStatement({ ...config, 'body': v }),
-    alternative: (v: ElseClause) => forStatement({ ...config, 'alternative': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -774,11 +774,11 @@ export function functionDefinition(
 ) {
   return {
     type: 'function_definition' as const,
+    body: (v: Block) => functionDefinition({ ...config, 'body': v }),
     name: (v: Identifier) => functionDefinition({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameter) => functionDefinition({ ...config, 'type_parameters': v }),
     parameters: (v: Parameters) => functionDefinition({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionDefinition({ ...config, 'return_type': v }),
-    body: (v: Block) => functionDefinition({ ...config, 'body': v }),
+    typeParameters: (v: TypeParameter) => functionDefinition({ ...config, 'type_parameters': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -875,9 +875,9 @@ export function ifStatement(
 ) {
   return {
     type: 'if_statement' as const,
+    alternative: (...v: (ElifClause | ElseClause)[]) => ifStatement({ ...config, 'alternative': v }),
     condition: (v: Expression) => ifStatement({ ...config, 'condition': v }),
     consequence: (v: Block) => ifStatement({ ...config, 'consequence': v }),
-    alternative: (...v: (ElifClause | ElseClause)[]) => ifStatement({ ...config, 'alternative': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -928,8 +928,8 @@ export function interpolation(
   return {
     type: 'interpolation' as const,
     expression: (v: Expression | ExpressionList | PatternList | Yield) => interpolation({ ...config, 'expression': v }),
-    typeConversion: (v: TypeConversion) => interpolation({ ...config, 'type_conversion': v }),
     formatSpecifier: (v: FormatSpecifier) => interpolation({ ...config, 'format_specifier': v }),
+    typeConversion: (v: TypeConversion) => interpolation({ ...config, 'type_conversion': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -978,8 +978,8 @@ export function lambda(
 ) {
   return {
     type: 'lambda' as const,
-    parameters: (v: LambdaParameters) => lambda({ ...config, 'parameters': v }),
     body: (v: Expression) => lambda({ ...config, 'body': v }),
+    parameters: (v: LambdaParameters) => lambda({ ...config, 'parameters': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1044,7 +1044,7 @@ export function listPattern(
 ) {
   return {
     type: 'list_pattern' as const,
-    children: (...v: (Pattern)[]) => listPattern({ ...config, children: v }),
+    children: (...v: (CasePattern | Pattern)[]) => listPattern({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1060,7 +1060,7 @@ export function listSplat(
 ) {
   return {
     type: 'list_splat' as const,
-    children: (v: Expression) => listSplat({ ...config, children: v }),
+    children: (v: Attribute | Expression | Identifier | Subscript) => listSplat({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1076,7 +1076,7 @@ export function listSplatPattern(
 ) {
   return {
     type: 'list_splat_pattern' as const,
-    children: (v: Attribute | Identifier | KeywordIdentifier | Subscript) => listSplatPattern({ ...config, children: v }),
+    children: (v: Attribute | Identifier | Subscript) => listSplatPattern({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1092,8 +1092,8 @@ export function matchStatement(
 ) {
   return {
     type: 'match_statement' as const,
-    subject: (...v: (Expression)[]) => matchStatement({ ...config, 'subject': v }),
     body: (v: Block) => matchStatement({ ...config, 'body': v }),
+    subject: (...v: (Expression)[]) => matchStatement({ ...config, 'subject': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1141,7 +1141,7 @@ export function namedExpression(
 ) {
   return {
     type: 'named_expression' as const,
-    name: (v: Identifier | KeywordIdentifier) => namedExpression({ ...config, 'name': v }),
+    name: (v: Identifier) => namedExpression({ ...config, 'name': v }),
     value: (v: Expression) => namedExpression({ ...config, 'value': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1223,7 +1223,7 @@ export function parenthesizedExpression(
 ) {
   return {
     type: 'parenthesized_expression' as const,
-    children: (v: Expression | Yield) => parenthesizedExpression({ ...config, children: v }),
+    children: (v: Expression | ListSplat | ParenthesizedExpression | Yield) => parenthesizedExpression({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1450,8 +1450,8 @@ export function subscript(
 ) {
   return {
     type: 'subscript' as const,
-    value: (v: PrimaryExpression) => subscript({ ...config, 'value': v }),
     subscript: (...v: (Expression | Slice)[]) => subscript({ ...config, 'subscript': v }),
+    value: (v: PrimaryExpression) => subscript({ ...config, 'value': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1500,7 +1500,7 @@ export function tuplePattern(
 ) {
   return {
     type: 'tuple_pattern' as const,
-    children: (...v: (Pattern)[]) => tuplePattern({ ...config, children: v }),
+    children: (...v: (CasePattern | Pattern)[]) => tuplePattern({ ...config, children: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1600,8 +1600,8 @@ export function unaryOperator(
 ) {
   return {
     type: 'unary_operator' as const,
-    operator: (v: '+' | '-' | '~') => unaryOperator({ ...config, 'operator': { type: v, text: v } as const }),
     argument: (v: PrimaryExpression) => unaryOperator({ ...config, 'argument': v }),
+    operator: (v: '+' | '-' | '~') => unaryOperator({ ...config, 'operator': { type: v, text: v } as const }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1649,9 +1649,9 @@ export function whileStatement(
 ) {
   return {
     type: 'while_statement' as const,
-    condition: (v: Expression) => whileStatement({ ...config, 'condition': v }),
-    body: (v: Block) => whileStatement({ ...config, 'body': v }),
     alternative: (v: ElseClause) => whileStatement({ ...config, 'alternative': v }),
+    body: (v: Block) => whileStatement({ ...config, 'body': v }),
+    condition: (v: Expression) => whileStatement({ ...config, 'condition': v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

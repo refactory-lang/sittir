@@ -81,7 +81,7 @@ export function hasFields(rule: GrammarRule): boolean {
 	switch (rule.type) {
 		case 'FIELD': return true;
 		case 'SEQ': case 'CHOICE': return rule.members.some(hasFields);
-		case 'REPEAT': case 'REPEAT1': case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'REPEAT': case 'REPEAT1': case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 		case 'TOKEN': case 'IMMEDIATE_TOKEN': case 'ALIAS':
 			return hasFields(rule.content);
 		default: return false;
@@ -98,7 +98,7 @@ function walkHasChildren(rule: GrammarRule, insideField: boolean): boolean {
 		case 'SYMBOL': return !insideField && !rule.name.startsWith('_');
 		case 'FIELD': return walkHasChildren(rule.content, true);
 		case 'SEQ': case 'CHOICE': return rule.members.some(m => walkHasChildren(m, insideField));
-		case 'REPEAT': case 'REPEAT1': case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'REPEAT': case 'REPEAT1': case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
 			return walkHasChildren(rule.content, insideField);
 		case 'ALIAS': return !insideField && rule.named;
@@ -137,7 +137,7 @@ function collectConcreteTypes(rule: GrammarRule, grammar: Grammar, types: string
 				if (m.type !== 'BLANK') collectConcreteTypes(m, grammar, types, visited);
 			}
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			collectConcreteTypes(rule.content, grammar, types, visited);
 			break;
 		case 'SEQ':
@@ -166,7 +166,7 @@ function extractFields(rule: GrammarRule, grammar: Grammar): BranchRule {
 	for (const [name, accum] of fieldAccums) {
 		fields.push({
 			name,
-			kinds: [...accum.kinds].sort(),
+			kinds: [...accum.kinds],
 			required: !accum.optional,
 			multiple: accum.repeated,
 		});
@@ -267,7 +267,7 @@ function walkForFields(
 		case 'REPEAT1':
 			walkForFields(rule.content, optional, true, fields, grammar, visited);
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			walkForFields(rule.content, optional, repeated, fields, grammar, visited);
 			break;
 		case 'ALIAS':
@@ -304,7 +304,7 @@ function extractFieldKinds(rule: GrammarRule, kinds: Set<string>): void {
 		case 'SEQ':
 			for (const m of rule.members) extractFieldKinds(m, kinds);
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			extractFieldKinds(rule.content, kinds);
 			break;
 		case 'REPEAT': case 'REPEAT1':
@@ -317,7 +317,7 @@ function extractFieldKinds(rule: GrammarRule, kinds: Set<string>): void {
 
 function hasBlankChoice(rule: GrammarRule): boolean {
 	if (rule.type === 'CHOICE') return rule.members.some(m => m.type === 'BLANK');
-	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT') {
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
 		return hasBlankChoice(rule.content);
 	}
 	return false;
@@ -357,7 +357,7 @@ function mergeChildAccums(accums: ChildAccum[]): EnrichedChildInfo[] {
 	}
 
 	return [{
-		kinds: [...allKinds].sort(),
+		kinds: [...allKinds],
 		required: anyRequired,
 		multiple: anyMultiple,
 	}];
@@ -415,7 +415,7 @@ function walkForChildren(
 		case 'REPEAT1':
 			walkForChildren(rule.content, optional, true, children, insideField, grammar, visited);
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			walkForChildren(rule.content, optional, repeated, children, insideField, grammar, visited);
 			break;
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
@@ -439,7 +439,7 @@ function extractKeywordText(rule: GrammarRule): string | null {
 			if (parts.every((p): p is string => p !== null)) return parts.join('');
 			return null;
 		}
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
 			return extractKeywordText(rule.content);
 		default:
@@ -462,7 +462,7 @@ function extractEnumValues(rule: GrammarRule, grammar: Grammar): string[] {
 }
 
 function extractChoiceStrings(rule: GrammarRule): string[] {
-	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT'
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC'
 		|| rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN') {
 		return extractChoiceStrings(rule.content);
 	}
@@ -520,7 +520,7 @@ function extractPattern(rule: GrammarRule): string | null {
 			return rule.value;
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
 			return extractPattern(rule.content);
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			return extractPattern(rule.content);
 		case 'SEQ': {
 			const parts = rule.members.map(m => extractPattern(m));
@@ -590,7 +590,7 @@ function extractSeparators(rule: GrammarRule): Map<string, string> {
 			walk(r.content);
 		} else if (r.type === 'CHOICE') {
 			for (const m of r.members) walk(m);
-		} else if (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' ||
+		} else if (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC' ||
 			r.type === 'TOKEN' || r.type === 'IMMEDIATE_TOKEN' || r.type === 'ALIAS') {
 			walk(r.content);
 		}
