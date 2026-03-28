@@ -488,12 +488,17 @@ export function reconcile(
 			continue;
 		}
 
-		inconsistencies.push(`'${kind}': node-types says '${model.modelType}', grammar says '${rule.modelType}'`);
+		inconsistencies.push({ kind, model, rule });
 	}
 
 	if (inconsistencies.length > 0) {
+		const lines = inconsistencies.map(({ kind, model, rule }) =>
+			`'${kind}': node-types says '${model.modelType}', grammar says '${rule.modelType}'\n` +
+			`    model: ${JSON.stringify(model, null, 2).replace(/\n/g, '\n    ')}\n` +
+			`    rule:  ${JSON.stringify(rule, null, 2).replace(/\n/g, '\n    ')}`,
+		);
 		throw new Error(
-			`Reconcile found ${inconsistencies.length} inconsistencies between grammar.json and node-types.json:\n  ${inconsistencies.join('\n  ')}`,
+			`Reconcile found ${inconsistencies.length} inconsistencies between grammar.json and node-types.json:\n\n  ${lines.join('\n\n  ')}`,
 		);
 	}
 }
