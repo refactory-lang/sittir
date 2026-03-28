@@ -169,11 +169,11 @@ type NodeModel =
 
 // Common base (discriminant)
 interface NodeModelBase {
-  readonly modelType: string;
-  readonly kind: string;
+  modelType: string;
+  kind: string;
   // Added by naming step:
-  readonly typeName?: string;
-  readonly factoryName?: string;
+  typeName?: string;
+  factoryName?: string;
 }
 ```
 
@@ -181,12 +181,12 @@ interface NodeModelBase {
 Named node with fields and optionally children. Has members and rule.
 ```typescript
 interface BranchModel extends NodeModelBase {
-  readonly modelType: 'branch';
-  readonly kind: string;
-  readonly fields: FieldModel[];
-  readonly children?: ChildModel[];
-  readonly members: NodeMember[];
-  readonly rule: EnrichedRule;
+  modelType: 'branch';
+  kind: string;
+  fields: FieldModel[];
+  children?: ChildModel[];
+  members: NodeMember[];
+  rule: EnrichedRule;
   // Appended in optimization step
   factory?: FactorySignature;
   from?: FromSignature;
@@ -198,11 +198,11 @@ interface BranchModel extends NodeModelBase {
 Named node with children but no fields. Has members and rule.
 ```typescript
 interface ContainerModel extends NodeModelBase {
-  readonly modelType: 'container';
-  readonly kind: string;
-  readonly children: ChildModel[];
-  readonly members: NodeMember[];
-  readonly rule: EnrichedRule;
+  modelType: 'container';
+  kind: string;
+  children: ChildModel[];
+  members: NodeMember[];
+  rule: EnrichedRule;
 }
 ```
 
@@ -210,10 +210,10 @@ interface ContainerModel extends NodeModelBase {
 Named node with variable text. No fields, no children, no fixed values.
 ```typescript
 interface LeafModel extends NodeModelBase {
-  readonly modelType: 'leaf';
-  readonly kind: string;
-  readonly pattern: string | null;
-  readonly rule: EnrichedRule | null;
+  modelType: 'leaf';
+  kind: string;
+  pattern: string | null;
+  rule: EnrichedRule | null;
 }
 ```
 
@@ -221,10 +221,10 @@ interface LeafModel extends NodeModelBase {
 Named node with a fixed set of text values. Like a leaf but with enumerated options.
 ```typescript
 interface EnumModel extends NodeModelBase {
-  readonly modelType: 'enum';
-  readonly kind: string;
-  readonly values: string[];
-  readonly rule: EnrichedRule | null;
+  modelType: 'enum';
+  kind: string;
+  values: string[];
+  rule: EnrichedRule | null;
 }
 ```
 
@@ -232,10 +232,10 @@ interface EnumModel extends NodeModelBase {
 Named node with constant text. Zero-arg factory.
 ```typescript
 interface KeywordModel extends NodeModelBase {
-  readonly modelType: 'keyword';
-  readonly kind: string;
-  readonly text: string;
-  readonly rule: EnrichedRule | null;
+  modelType: 'keyword';
+  kind: string;
+  text: string;
+  rule: EnrichedRule | null;
 }
 ```
 
@@ -243,9 +243,9 @@ interface KeywordModel extends NodeModelBase {
 Anonymous token. Has a fixed text value (the token itself).
 ```typescript
 interface TokenModel extends NodeModelBase {
-  readonly modelType: 'token';
-  readonly kind: string;
-  readonly rule: EnrichedRule | null;
+  modelType: 'token';
+  kind: string;
+  rule: EnrichedRule | null;
 }
 ```
 
@@ -253,10 +253,10 @@ interface TokenModel extends NodeModelBase {
 Abstract grouping node. Not emitted directly, used for type unions.
 ```typescript
 interface SupertypeModel extends NodeModelBase {
-  readonly modelType: 'supertype';
-  readonly kind: string;
-  readonly subtypes: string[];
-  readonly rule: EnrichedRule | null;
+  modelType: 'supertype';
+  kind: string;
+  subtypes: string[];
+  rule: EnrichedRule | null;
 }
 ```
 
@@ -285,38 +285,24 @@ export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
 
 Discriminated by `multiple`. Separator only exists on list fields.
 
-**Hydration type boundary:** Pre-hydration models use `FieldModel` / `ChildModel` with `kinds: string[]`. Post-hydration models use `HydratedFieldModel` / `HydratedChildModel` with `kinds: NodeModel[]`. These are separate types — emitters receive hydrated types only.
-
 ```typescript
-// Pre-hydration (pipeline steps 1–11)
 type FieldModel = SingleFieldModel | ListFieldModel;
 
 interface SingleFieldModel {
-  readonly name: string;
-  readonly required: boolean;
-  readonly multiple: false;
-  readonly kinds: string[];
-  readonly propertyName?: string;
+  name: string;
+  required: boolean;
+  multiple: false;
+  kinds: string[];
+  propertyName?: string;
 }
 
 interface ListFieldModel {
-  readonly name: string;
-  readonly required: boolean;
-  readonly multiple: true;
-  readonly kinds: string[];
-  readonly separator: string | null;
-  readonly propertyName?: string;
-}
-
-// Post-hydration (step 12+, emitters)
-type HydratedFieldModel = HydratedSingleFieldModel | HydratedListFieldModel;
-
-interface HydratedSingleFieldModel extends Omit<SingleFieldModel, 'kinds'> {
-  readonly kinds: NodeModel[];
-}
-
-interface HydratedListFieldModel extends Omit<ListFieldModel, 'kinds'> {
-  readonly kinds: NodeModel[];
+  name: string;
+  required: boolean;
+  multiple: true;
+  kinds: string[];
+  separator: string | null;
+  propertyName?: string;
 }
 ```
 
@@ -325,31 +311,19 @@ interface HydratedListFieldModel extends Omit<ListFieldModel, 'kinds'> {
 Same as FieldModel but without `name`.
 
 ```typescript
-// Pre-hydration
 type ChildModel = SingleChildModel | ListChildModel;
 
 interface SingleChildModel {
-  readonly required: boolean;
-  readonly multiple: false;
-  readonly kinds: string[];
+  required: boolean;
+  multiple: false;
+  kinds: string[];
 }
 
 interface ListChildModel {
-  readonly required: boolean;
-  readonly multiple: true;
-  readonly kinds: string[];
-  readonly separator: string | null;
-}
-
-// Post-hydration
-type HydratedChildModel = HydratedSingleChildModel | HydratedListChildModel;
-
-interface HydratedSingleChildModel extends Omit<SingleChildModel, 'kinds'> {
-  readonly kinds: NodeModel[];
-}
-
-interface HydratedListChildModel extends Omit<ListChildModel, 'kinds'> {
-  readonly kinds: NodeModel[];
+  required: boolean;
+  multiple: true;
+  kinds: string[];
+  separator: string | null;
 }
 ```
 
@@ -389,28 +363,43 @@ function projectKinds(kinds: NodeModel[]): KindProjection {
 
 ---
 
-### Hydrated Model Types (post-hydration, emitter-facing)
+### Hydrated Types (post-hydration, emitter-facing)
 
-After step 12 (hydrate), all models are promoted to their hydrated variants. Fields and children carry `NodeModel[]` instead of `string[]`. All properties are `readonly` — emitters receive frozen, fully-resolved models.
+After step 12 (hydrate), all models are promoted to hydrated variants via a type transformation. `Hydrate<T>` recursively replaces `kinds: string[]` with `kinds: NodeModel[]` and makes all properties `readonly`. Every NodeModel subtype has a hydrated counterpart.
 
 ```typescript
+// Core transformation: replace kinds + freeze
+type Hydrate<T> =
+  T extends { kinds: string[] }
+    ? Readonly<Omit<T, 'kinds'> & { kinds: NodeModel[] }>
+    : T extends { fields: FieldModel[] }
+      ? Readonly<Omit<T, 'fields' | 'children'> & {
+          fields: Hydrate<FieldModel>[];
+          children?: Hydrate<ChildModel>[];
+        }>
+      : T extends { children: ChildModel[] }
+        ? Readonly<Omit<T, 'children'> & { children: Hydrate<ChildModel>[] }>
+        : Readonly<T>;
+
+// Every model subtype has a hydrated variant
+type HydratedFieldModel = Hydrate<FieldModel>;
+type HydratedChildModel = Hydrate<ChildModel>;
+type HydratedBranchModel = Hydrate<BranchModel>;
+type HydratedContainerModel = Hydrate<ContainerModel>;
+type HydratedLeafModel = Hydrate<LeafModel>;
+type HydratedEnumModel = Hydrate<EnumModel>;
+type HydratedKeywordModel = Hydrate<KeywordModel>;
+type HydratedTokenModel = Hydrate<TokenModel>;
+type HydratedSupertypeModel = Hydrate<SupertypeModel>;
+
 type HydratedNodeModel =
   | HydratedBranchModel
   | HydratedContainerModel
-  | LeafModel              // no fields/children to hydrate
-  | EnumModel
-  | KeywordModel
-  | TokenModel
-  | SupertypeModel;
-
-interface HydratedBranchModel extends Omit<BranchModel, 'fields' | 'children'> {
-  readonly fields: HydratedFieldModel[];
-  readonly children?: HydratedChildModel[];
-}
-
-interface HydratedContainerModel extends Omit<ContainerModel, 'children'> {
-  readonly children: HydratedChildModel[];
-}
+  | HydratedLeafModel
+  | HydratedEnumModel
+  | HydratedKeywordModel
+  | HydratedTokenModel
+  | HydratedSupertypeModel;
 ```
 
 The `GrammarModel` returned by `buildModel()` uses `HydratedNodeModel`:
