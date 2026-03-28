@@ -57,14 +57,14 @@ All paths relative to `packages/codegen/src/`.
 
 ### Implementation
 
-- [ ] T011 [US1] Implement hasFields(rule) and hasChildren(rule) helpers in `packages/codegen/src/enriched-grammar.ts`
-- [ ] T012 [US1] Implement extractSubtypes(rule) → SupertypeRule in `packages/codegen/src/enriched-grammar.ts`
-- [ ] T013 [P] [US1] Implement extractFields(rule) → BranchRule in `packages/codegen/src/enriched-grammar.ts` — walk FIELD nodes, detect multiplicity/optionality/separators
-- [ ] T014 [P] [US1] Implement extractChildren(rule) → ContainerRule in `packages/codegen/src/enriched-grammar.ts`
-- [ ] T015 [P] [US1] Implement extractKeywordText(rule) → string | null in `packages/codegen/src/enriched-grammar.ts` — unwrap PREC/TOKEN to STRING
-- [ ] T016 [P] [US1] Implement extractEnumValues(rule, grammar) → string[] in `packages/codegen/src/enriched-grammar.ts` — CHOICE of STRINGs + ALIAS fallback
-- [ ] T017 [P] [US1] Implement extractPattern(rule) → string | null in `packages/codegen/src/enriched-grammar.ts` — regex builder from rule tree
-- [ ] T018 [US1] Implement classifyRules(grammar) orchestrator in `packages/codegen/src/enriched-grammar.ts` — iterate rules, dispatch to extractors
+- [x] T011 [US1] Implement hasFields(rule) and hasChildren(rule) helpers in `packages/codegen/src/enriched-grammar.ts`
+- [x] T012 [US1] Implement extractSubtypes(rule) → SupertypeRule in `packages/codegen/src/enriched-grammar.ts`
+- [x] T013 [P] [US1] Implement extractFields(rule) → BranchRule in `packages/codegen/src/enriched-grammar.ts` — walk FIELD nodes, detect multiplicity/optionality/separators
+- [x] T014 [P] [US1] Implement extractChildren(rule) → ContainerRule in `packages/codegen/src/enriched-grammar.ts`
+- [x] T015 [P] [US1] Implement extractKeywordText(rule) → string | null in `packages/codegen/src/enriched-grammar.ts` — unwrap PREC/TOKEN to STRING
+- [x] T016 [P] [US1] Implement extractEnumValues(rule, grammar) → string[] in `packages/codegen/src/enriched-grammar.ts` — CHOICE of STRINGs + ALIAS fallback
+- [x] T017 [P] [US1] Implement extractPattern(rule) → string | null in `packages/codegen/src/enriched-grammar.ts` — regex builder from rule tree
+- [x] T018 [US1] Implement classifyRules(grammar) orchestrator in `packages/codegen/src/enriched-grammar.ts` — iterate rules, dispatch to extractors
 
 **Checkpoint**: classifyRules returns correct EnrichedRule map for all three grammars.
 
