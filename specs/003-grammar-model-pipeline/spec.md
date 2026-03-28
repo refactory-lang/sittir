@@ -369,9 +369,10 @@ After step 12 (hydrate), all models are promoted to hydrated variants via a type
 
 ```typescript
 // Core transformation: replace kinds + freeze
+// kinds: string[] → kinds: HydratedNodeModel[] (references are hydrated too)
 type Hydrate<T> =
   T extends { kinds: string[] }
-    ? Readonly<Omit<T, 'kinds'> & { kinds: NodeModel[] }>
+    ? Readonly<Omit<T, 'kinds'> & { kinds: HydratedNodeModel[] }>
     : T extends { fields: FieldModel[] }
       ? Readonly<Omit<T, 'fields' | 'children'> & {
           fields: Hydrate<FieldModel>[];
