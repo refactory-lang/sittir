@@ -133,11 +133,6 @@ export function isTupleChildren(children: AnyChildrenModel): children is AnyChil
 	return Array.isArray(children);
 }
 
-/** Get the first (or only) child slot. For non-tuple children, returns the child itself. */
-export function firstChildSlot<T extends AnyChildSlot>(children: T | T[]): T {
-	return Array.isArray(children) ? children[0]! : children;
-}
-
 // ---------------------------------------------------------------------------
 // NodeMember — ordered element within structural models
 // ---------------------------------------------------------------------------
