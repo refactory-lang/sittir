@@ -105,23 +105,23 @@ All paths relative to `packages/codegen/src/`.
 
 ### Steps 8–9: Semantic Aliases (v1)
 
-- [ ] T024 [US3] Implement character-to-name table and inferTokenAliases(models, grammar) in `packages/codegen/src/semantic-aliases.ts` — Nx[Name] convention
-- [ ] T025 [US3] Implement applyTokenAliases(models, aliases) in `packages/codegen/src/semantic-aliases.ts` — replace raw token kinds with alias names
+- [x] T024 [US3] Implement character-to-name table and inferTokenAliases(models, grammar) in `packages/codegen/src/semantic-aliases.ts` — Nx[Name] convention
+- [x] T025 [US3] Implement applyTokenAliases(models, aliases) in `packages/codegen/src/semantic-aliases.ts` — replace raw token kinds with alias names
 
 ### Step 10: Naming
 
-- [ ] T026 [US3] Implement applyNaming(models), nameModel(model), nameField(field) in `packages/codegen/src/naming.ts` — typeName (PascalCase), factoryName (camelCase), propertyName (camelCase). Replace existing naming.ts utility functions.
+- [x] T026 [US3] Implement applyNaming(models), nameModel(model), nameField(field) in `packages/codegen/src/naming.ts` — typeName (PascalCase), factoryName (camelCase), propertyName (camelCase). Replace existing naming.ts utility functions.
 
 ### Step 11: Optimization
 
-- [ ] T027 [P] [US3] Implement computeSignatures(models) in `packages/codegen/src/optimization.ts` — intern FieldSignature, ChildSignature into SignaturePool
-- [ ] T028 [P] [US3] Implement identifyEnumPatterns in `packages/codegen/src/optimization.ts` — find EnumModel kinds sharing same value set
-- [ ] T029 [P] [US3] Implement collapseKinds and expandSupertypeKinds kind utilities in `packages/codegen/src/optimization.ts`
-- [ ] T030 [US3] Implement optimize(models) orchestrator in `packages/codegen/src/optimization.ts`
+- [x] T027 [P] [US3] Implement computeSignatures(models) in `packages/codegen/src/optimization.ts` — intern FieldSignature, ChildSignature into SignaturePool
+- [x] T028 [P] [US3] Implement identifyEnumPatterns in `packages/codegen/src/optimization.ts` — find EnumModel kinds sharing same value set
+- [x] T029 [P] [US3] Implement collapseKinds and expandSupertypeKinds kind utilities in `packages/codegen/src/optimization.ts`
+- [x] T030 [US3] Implement optimize(models) orchestrator in `packages/codegen/src/optimization.ts`
 
 ### Step 12: Hydration
 
-- [ ] T031 [US3] Implement hydrate(models), hydrateField, hydrateChild in `packages/codegen/src/hydration.ts` — resolve kinds: string[] → kinds: HydratedNodeModel[]
+- [x] T031 [US3] Implement hydrate(models), hydrateField, hydrateChild in `packages/codegen/src/hydration.ts` — resolve kinds: string[] → kinds: HydratedNodeModel[]
 
 **Checkpoint**: Full 12-step pipeline produces GrammarModel with hydrated, frozen models.
 
