@@ -78,20 +78,20 @@ All paths relative to `packages/codegen/src/`.
 
 ### Step 4: Initialize from NodeTypes
 
-- [ ] T019 [US2] Implement initializeModels(nodeTypes) and all per-variant initializers (initializeBranch, initializeContainer, initializeLeaf, initializeToken, initializeSupertype) in `packages/codegen/src/node-model.ts` — note: initializeKeyword and initializeEnum are not needed here; NT classifies all named non-structural kinds as LeafModel, then reconcile (T020) narrows leaf→keyword and leaf→enum based on EnrichedRule modelType
+- [x] T019 [US2] Implement initializeModels(nodeTypes) and all per-variant initializers (initializeBranch, initializeContainer, initializeLeaf, initializeToken, initializeSupertype) in `packages/codegen/src/node-model.ts` — note: initializeKeyword and initializeEnum are not needed here; NT classifies all named non-structural kinds as LeafModel, then reconcile (T020) narrows leaf→keyword and leaf→enum based on EnrichedRule modelType
 
 ### Step 5: Reconcile
 
-- [ ] T020 [US2] Implement reconcile(models, enrichedRules) in `packages/codegen/src/node-model.ts` — modelType matching, narrowing (leaf→keyword, leaf→enum), throw on mismatch
-- [ ] T021 [US2] Implement per-modelType enrich methods (enrichBranch, enrichContainer, enrichLeaf, enrichKeyword, enrichEnum, enrichSupertype) in `packages/codegen/src/node-model.ts`
+- [x] T020 [US2] Implement reconcile(models, enrichedRules) in `packages/codegen/src/node-model.ts` — modelType matching, narrowing (leaf→keyword, leaf→enum), throw on mismatch
+- [x] T021 [US2] Implement per-modelType enrich methods (enrichBranch, enrichContainer, enrichLeaf, enrichKeyword, enrichEnum, enrichSupertype) in `packages/codegen/src/node-model.ts`
 
 ### Step 6: Apply Members
 
-- [ ] T022 [US2] Implement applyMembers(model) for structural models in `packages/codegen/src/node-model.ts` — walk enriched rule to produce ordered NodeMember[] (abstract inlining, CHOICE merging, REPEAT multiplicity, ALIAS handling)
+- [x] T022 [US2] Implement applyMembers(model) for structural models in `packages/codegen/src/node-model.ts` — walk enriched rule to produce ordered NodeMember[] (abstract inlining, CHOICE merging, REPEAT multiplicity, ALIAS handling)
 
 ### Step 7: Refine Model Type
 
-- [ ] T023 [US2] Implement refineModelType(model) in `packages/codegen/src/node-model.ts` — reclassify BranchModel→ContainerModel when no fields
+- [x] T023 [US2] Implement refineModelType(model) in `packages/codegen/src/node-model.ts` — reclassify BranchModel→ContainerModel when no fields
 
 **Checkpoint**: Full initialize → reconcile → members → refine pipeline works for all three grammars.
 
