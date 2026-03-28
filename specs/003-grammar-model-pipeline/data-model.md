@@ -188,9 +188,6 @@ interface GrammarModel {
 }
 
 interface SignaturePool {
-  readonly factory: Map<string, FactorySignature>;
-  readonly from: Map<string, FromSignature>;
-  readonly hydration: Map<string, HydrationSignature>;
   readonly field: Map<string, FieldSignature>;
   readonly child: Map<string, ChildSignature>;
 }
@@ -198,7 +195,7 @@ interface SignaturePool {
 
 **Identity**: `name` (grammar name)
 **Consumers**: All emitters via `generate()`
-**Signature pools**: Fields/children with identical kind sets share the same signature → same TypeScript type expression in generated code
+**Signature pools**: Fields/children with identical kind sets share the same FieldSignature/ChildSignature → same TypeScript type expression in generated code
 
 ## State Transitions
 

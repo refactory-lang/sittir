@@ -320,10 +320,9 @@ optimize(models: Map<string, NodeModel>): Map<string, NodeModel>
 
 computeSignatures(models: Map<string, NodeModel>): SignaturePool
   // in:  all models
-  // out: interned signature pools (factory, from, hydration, field, child)
+  // out: interned signature pools (field, child)
   //      FieldSignature attached to each FieldModel
   //      ChildSignature attached to each ChildModel
-  //      FactorySignature/FromSignature/HydrationSignature attached to BranchModel
 
 identifyEnumPatterns(models: Map<string, NodeModel>): Map<string, string[]>
   // in:  all models

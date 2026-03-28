@@ -114,7 +114,7 @@ All paths relative to `packages/codegen/src/`.
 
 ### Step 11: Optimization
 
-- [ ] T027 [P] [US3] Implement computeSignatures(models) in `packages/codegen/src/optimization.ts` — intern FactorySignature, FromSignature, HydrationSignature, FieldSignature, ChildSignature into SignaturePool
+- [ ] T027 [P] [US3] Implement computeSignatures(models) in `packages/codegen/src/optimization.ts` — intern FieldSignature, ChildSignature into SignaturePool
 - [ ] T028 [P] [US3] Implement identifyEnumPatterns in `packages/codegen/src/optimization.ts` — find EnumModel kinds sharing same value set
 - [ ] T029 [P] [US3] Implement collapseKinds and expandSupertypeKinds kind utilities in `packages/codegen/src/optimization.ts`
 - [ ] T030 [US3] Implement optimize(models) orchestrator in `packages/codegen/src/optimization.ts`

@@ -187,10 +187,6 @@ interface BranchModel extends NodeModelBase {
   children?: ChildModel[];
   members: NodeMember[];
   rule: EnrichedRule;
-  // Appended in optimization step
-  factory?: FactorySignature;
-  from?: FromSignature;
-  hydration?: HydrationSignature;
 }
 ```
 
@@ -417,9 +413,6 @@ interface GrammarModel {
 }
 
 interface SignaturePool {
-  readonly factory: Map<string, FactorySignature>;
-  readonly from: Map<string, FromSignature>;
-  readonly hydration: Map<string, HydrationSignature>;
   readonly field: Map<string, FieldSignature>;
   readonly child: Map<string, ChildSignature>;
 }
