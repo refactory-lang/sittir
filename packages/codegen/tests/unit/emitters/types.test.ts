@@ -8,6 +8,9 @@ function branchNode(kind: string): HydratedNodeModel {
 function leafNode(kind: string): HydratedNodeModel {
 	return { modelType: 'leaf', kind, pattern: null, rule: null } as unknown as HydratedNodeModel;
 }
+function keywordNode(kind: string, text: string): HydratedNodeModel {
+	return { modelType: 'keyword', kind, text, rule: null } as unknown as HydratedNodeModel;
+}
 function supertypeNode(name: string, subtypes: string[]): HydratedNodeModel {
 	return { modelType: 'supertype', kind: name, subtypes, rule: null } as unknown as HydratedNodeModel;
 }
@@ -20,16 +23,19 @@ describe('emitTypes', () => {
 		expect(source).toContain("FunctionItem = 'function_item'");
 	});
 
-	it('should emit interface extends NodeData for branch kinds', () => {
+	it('should emit concrete interface for branch kinds', () => {
 		const source = emitTypes({ grammar: 'rust', nodes: [branchNode('struct_item'), branchNode('function_item')] });
-		expect(source).toContain("export interface StructItem extends NodeData<'struct_item'> {}");
-		expect(source).toContain("export interface FunctionItem extends NodeData<'function_item'> {}");
+		expect(source).toContain("export interface StructItem {");
+		expect(source).toContain("readonly type: 'struct_item'");
+		expect(source).toContain("export interface FunctionItem {");
+		expect(source).toContain("readonly type: 'function_item'");
 	});
 
-	it('should emit Config and Tree interfaces', () => {
+	it('should emit Config as ConfigOf and Tree/FromInput as grammar projections', () => {
 		const source = emitTypes({ grammar: 'rust', nodes: [branchNode('function_item')] });
-		expect(source).toContain("export interface FunctionItemConfig extends NodeConfig<'function_item'> {}");
+		expect(source).toContain("export type FunctionItemConfig = ConfigOf<FunctionItem>;");
 		expect(source).toContain("export interface FunctionItemTree extends TreeNode<'function_item'> {}");
+		expect(source).toContain("export interface FunctionItemFromInput extends NodeFromInput<'function_item'> {}");
 	});
 
 	it('should emit discriminated union', () => {
@@ -39,11 +45,19 @@ describe('emitTypes', () => {
 		expect(source).toContain('| FunctionItem');
 	});
 
-	it('should emit leaf types as interface extends NodeData', () => {
+	it('should emit concrete interface for leaf types', () => {
 		const source = emitTypes({ grammar: 'rust', nodes: [branchNode('struct_item'), leafNode('identifier')] });
 		expect(source).toContain("Identifier = 'identifier'");
-		expect(source).toContain("export interface Identifier extends NodeData<'identifier'> {}");
+		expect(source).toContain("export interface Identifier {");
+		expect(source).toContain("readonly type: 'identifier'");
+		expect(source).toContain("readonly text: string");
 		expect(source).toContain("export interface IdentifierTree extends TreeNode<'identifier'> {}");
+	});
+
+	it('should emit keyword types with literal text', () => {
+		const source = emitTypes({ grammar: 'rust', nodes: [keywordNode('mutable_specifier', 'mut')] });
+		expect(source).toContain("export interface MutableSpecifier {");
+		expect(source).toContain("readonly text: 'mut'");
 	});
 
 	it('should emit scoped supertype enums', () => {
