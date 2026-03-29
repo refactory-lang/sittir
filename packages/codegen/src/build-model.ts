@@ -1,5 +1,5 @@
 /**
- * Orchestrator: 13-step pipeline → GrammarModel
+ * Orchestrator: 12-step pipeline → GrammarModel
  *
  * Runs the full pipeline from grammar name to hydrated, optimized GrammarModel.
  */
@@ -10,7 +10,6 @@ import { classifyRules } from './enriched-grammar.ts';
 import {
 	initializeModels,
 	reconcile,
-	applyAllMembers,
 	refineAllModelTypes,
 	type GrammarModel,
 	type NodeModel,
@@ -75,7 +74,7 @@ function serializeToJson5(nodes: Map<string, NodeModel>): string {
 		// Strip runtime-only properties
 		const { typeName, factoryName, ...rest } = v as any;
 		if (rest.modelType === 'branch') {
-			const { members, rule, ...branchRest } = rest;
+			const { rule, ...branchRest } = rest;
 			// Convert fields to match old format for compatibility
 			if (branchRest.fields) {
 				branchRest.fields = branchRest.fields.map((f: any) => {
@@ -88,7 +87,7 @@ function serializeToJson5(nodes: Map<string, NodeModel>): string {
 			}
 			serializable[k] = branchRest;
 		} else if (rest.modelType === 'container') {
-			const { members, rule, ...containerRest } = rest;
+			const { rule, ...containerRest } = rest;
 			if (containerRest.children) {
 				containerRest.children = stripChildSignatures(containerRest.children);
 			}
@@ -119,29 +118,26 @@ export function buildModel(grammarName: string): { grammarModel: GrammarModel; s
 	// Step 5: Reconcile
 	reconcile(models, enrichedRules, grammarName);
 
-	// Step 6: Apply members
-	applyAllMembers(models, grammar);
-
-	// Step 7: Refine model types
+	// Step 6: Refine model types
 	refineAllModelTypes(models);
 
-	// Steps 8-9: Semantic aliases
+	// Step 7-8: Semantic aliases
 	const aliases = inferTokenAliases(models, grammar);
 	applyTokenAliases(models, aliases);
 
-	// Step 10: Naming
+	// Step 9: Naming
 	applyNaming(models);
 
 	// Serialize before optimization (matches current behavior)
 	const serialized = serializeToJson5(models);
 
-	// Step 11: Optimize
+	// Step 10: Optimize
 	const signatures = optimize(models);
 
-	// Step 12: Hydrate
+	// Step 11: Hydrate
 	const hydratedModels = hydrate(models);
 
-	// Step 13: Return
+	// Step 12: Return
 	return {
 		grammarModel: {
 			name: grammarName,
