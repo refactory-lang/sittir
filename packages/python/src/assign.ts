@@ -437,13 +437,13 @@ export function assignConditionalExpression(target: ConditionalExpressionTree) {
 
 export function assignConstrainedType(target: ConstrainedTypeTree) {
   const config: Record<string, unknown> = {};
-  config.type1 = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'constrained_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config.type2 = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'constrained_type' tree node`);
@@ -996,7 +996,7 @@ export function assignMatchStatement(target: MatchStatementTree) {
 
 export function assignMemberType(target: MemberTypeTree) {
   const config: Record<string, unknown> = {};
-  config.type = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'member_type' tree node`);
@@ -1368,13 +1368,13 @@ export function assignTypeAliasStatement(target: TypeAliasStatementTree) {
 
 export function assignTypeParameter(target: TypeParameterTree) {
   const config: Record<string, unknown> = {};
-  config.type1 = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_parameter' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config.type2 = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["type"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1426,13 +1426,13 @@ export function assignUnionPattern(target: UnionPatternTree) {
 
 export function assignUnionType(target: UnionTypeTree) {
   const config: Record<string, unknown> = {};
-  config.type1 = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'union_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config.type2 = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'union_type' tree node`);

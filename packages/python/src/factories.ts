@@ -417,8 +417,8 @@ export function constrainedType(
 ) {
   return {
     type: 'constrained_type' as const,
-    type1: (v: Type) => constrainedType({ ...config, type1: v }),
-    type2: (v: Type) => constrainedType({ ...config, type2: v }),
+    children0: (v: Type) => constrainedType({ ...config, children0: v }),
+    children1: (v: Type) => constrainedType({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1130,7 +1130,7 @@ export function memberType(
 ) {
   return {
     type: 'member_type' as const,
-    type: (v: Type) => memberType({ ...config, type: v }),
+    children0: (v: Type) => memberType({ ...config, children0: v }),
     identifier: (v: Identifier) => memberType({ ...config, identifier: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1581,8 +1581,8 @@ export function typeParameter(
 ) {
   return {
     type: 'type_parameter' as const,
-    type1: (v: Type) => typeParameter({ ...config, type1: v }),
-    type2: (...v: (Type)[]) => typeParameter({ ...config, type2: v }),
+    children0: (v: Type) => typeParameter({ ...config, children0: v }),
+    children1: (...v: (Type)[]) => typeParameter({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1666,8 +1666,8 @@ export function unionType(
 ) {
   return {
     type: 'union_type' as const,
-    type1: (v: Type) => unionType({ ...config, type1: v }),
-    type2: (v: Type) => unionType({ ...config, type2: v }),
+    children0: (v: Type) => unionType({ ...config, children0: v }),
+    children1: (v: Type) => unionType({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

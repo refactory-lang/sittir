@@ -10,9 +10,10 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
+import { eachChildSlot } from '../node-model.ts';
 import { collectRequiredTokens } from '../grammar-reader.ts';
-import { toFactoryName, toIrKey } from '../naming.ts';
-import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf } from './utils.ts';
+import { toFieldName, toIrKey } from '../naming.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export interface EmitTestsConfig {
@@ -28,6 +29,9 @@ export function emitTests(config: EmitTestsConfig): string {
 	const nodes = structuralNodes(config.nodes);
 	const leafKinds = leafKindsOf(config.nodes);
 	const keywordKinds = keywordKindsOf(config.nodes);
+	const leafSet = new Set(leafKinds);
+	const keywordKindMap = keywordKinds;
+	const leafValueMap = leafValuesOf(config.nodes);
 	const ctx = buildProjectionContext(new Map(config.nodes.map(n => [n.kind, n])));
 
 	const lines: string[] = [];
@@ -37,7 +41,6 @@ export function emitTests(config: EmitTestsConfig): string {
 	lines.push("import { render } from '@sittir/core';");
 	lines.push("import { rules } from '../src/rules.js';");
 	lines.push("import { joinBy } from '../src/joinby.js';");
-	lines.push("import type { NodeData } from '../src/types.js';");
 	lines.push('');
 
 	// Branch node tests
@@ -49,13 +52,13 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		// Test 1: factory produces correct kind
 		lines.push(`  it('factory produces NodeData with kind', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx)});`);
+		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx, leafSet, keywordKindMap, leafValueMap)});`);
 		lines.push(`    expect(node.type).toBe('${node.kind}');`);
 		lines.push(`  });`);
 
 		// Test 2: render produces non-empty string
 		lines.push(`  it('renders to non-empty string', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx)});`);
+		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx, leafSet, keywordKindMap, leafValueMap)});`);
 		lines.push(`    const source = render(node, rules, joinBy);`);
 		lines.push(`    expect(source.length).toBeGreaterThan(0);`);
 		lines.push(`  });`);
@@ -63,7 +66,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		// Test 3: rendered output contains required tokens
 		if (requiredTokens.length > 0) {
 			lines.push(`  it('contains required tokens', () => {`);
-			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx)});`);
+			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx, leafSet, keywordKindMap, leafValueMap)});`);
 			lines.push(`    const source = render(node, rules, joinBy);`);
 			for (const token of requiredTokens) {
 				lines.push(`    expect(source).toContain('${escapeString(token)}');`);
@@ -73,7 +76,7 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		// Test 4: node.render() method works
 		lines.push(`  it('node.render() works', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx)});`);
+		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx, leafSet, keywordKindMap, leafValueMap)});`);
 		lines.push(`    expect(typeof node.render).toBe('function');`);
 		lines.push(`    expect(node.render()).toBe(render(node, rules, joinBy));`);
 		lines.push(`  });`);
@@ -123,45 +126,85 @@ export function emitTests(config: EmitTestsConfig): string {
 
 /**
  * Generate minimal factory arguments for a node kind.
- * Provides all required fields as a declarative config object.
+ * Provides all required fields and children as a declarative config object.
  */
-function minimalArgs(node: StructuralNode, ctx: ProjectionContext): string {
-	const required = fieldsOf(node).filter(f => f.required);
-	if (required.length === 0) return '';
+function minimalArgs(node: StructuralNode, ctx: ProjectionContext, leafSet: Set<string>, keywordKinds: Map<string, string>, leafValueMap: Map<string, string[]>): string {
+	const requiredFields = fieldsOf(node).filter(f => f.required);
+	const requiredChildren: { name: string; kinds: readonly HydratedNodeModel[]; multiple: boolean }[] = [];
 
-	// If only one required field, pass it directly (constructor arg)
-	if (required.length === 1) {
-		return dummyValue(required[0]!, ctx);
+	if (node.children != null) {
+		const slotNames = childSlotNames(node.children, ctx);
+		eachChildSlot(node.children, (slot, i) => {
+			if (slot.required) {
+				requiredChildren.push({ name: slotNames[i]!, kinds: slot.kinds, multiple: slot.multiple });
+			}
+		});
 	}
 
-	// Multiple required fields — use config object
-	const entries = required.map(f => `${f.name}: ${dummyValue(f, ctx)}`);
+	const allRequired = [
+		...requiredFields.map(f => ({ key: f.propertyName ?? toFieldName(f.name), field: f })),
+		...requiredChildren.map(c => ({ key: c.name, field: c })),
+	];
+
+	if (allRequired.length === 0) return '';
+
+	// Always use config object with camelCase keys
+	const entries = allRequired.map(({ key, field }) => `${key}: ${dummyValue(field, ctx, leafSet, keywordKinds, leafValueMap)}`);
 	return `{ ${entries.join(', ')} }`;
 }
 
 /** Generate a dummy value for a field based on its types. */
-function dummyValue(field: { name: string; kinds: readonly HydratedNodeModel[]; multiple?: boolean }, ctx: ProjectionContext): string {
+function dummyValue(
+	field: { name: string; kinds: readonly HydratedNodeModel[]; multiple?: boolean },
+	ctx: ProjectionContext,
+	leafSet: Set<string>,
+	keywordKinds: Map<string, string>,
+	leafValueMap: Map<string, string[]>,
+): string {
 	const named = projectKinds(field.kinds, ctx).expandedAll;
 	// Expand supertypes to concrete subtypes for test value generation
 	const concrete = expandForTests(named, ctx);
+
 	// Prefer the most specific identifier type that the field accepts
+	// Cast with `as any` — factory return types have extra methods that prevent
+	// structural assignability to the concrete interface unions
 	if (concrete.includes('type_identifier')) {
-		return `ir.typeIdentifier('Test${capitalize(field.name)}')`;
+		return wrapMultiple(field.multiple, `ir.typeIdentifier('Test${capitalize(field.name)}') as any`);
 	}
 	if (concrete.includes('field_identifier')) {
-		return `ir.fieldIdentifier('test_${field.name}')`;
+		return wrapMultiple(field.multiple, `ir.fieldIdentifier('test_${field.name}') as any`);
 	}
 	if (concrete.includes('identifier')) {
-		return `ir.identifier('test_${field.name}')`;
+		return wrapMultiple(field.multiple, `ir.identifier('test_${field.name}') as any`);
 	}
 
 	if (field.multiple) {
 		return '[]';
 	}
 
-	// Use first concrete type as a minimal NodeData
-	const kind = concrete[0] ?? 'unknown';
-	return `{ type: '${kind}' as const, fields: {} } as NodeData<'${kind}'>`;
+	// Try to find a leaf kind we can construct via ir.*()
+	for (const kind of concrete) {
+		if (leafSet.has(kind)) {
+			const fixedText = keywordKinds.get(kind);
+			const irKey = toIrKey(kind);
+			if (fixedText !== undefined) {
+				// Keyword factory text type is widened; cast to satisfy literal types
+				return `ir.${irKey}() as any`;
+			}
+			const enumVals = leafValueMap.get(kind);
+			if (enumVals && enumVals.length > 0) {
+				return `ir.${irKey}('${escapeString(enumVals[0]!)}') as any`;
+			}
+			return `ir.${irKey}('test') as any`;
+		}
+	}
+
+	// Fallback: use `as any` to avoid type errors on complex/recursive types
+	const kind = concrete[0];
+	if (kind) {
+		return `{ type: '${kind}' } as any`;
+	}
+	return `{ type: 'unknown' } as any`;
 }
 
 /** Expand supertype names to concrete subtypes for test value generation. */
@@ -176,6 +219,10 @@ function expandForTests(kinds: string[], ctx: ProjectionContext): string[] {
 		}
 	}
 	return [...result].sort();
+}
+
+function wrapMultiple(multiple: boolean | undefined, value: string): string {
+	return multiple ? `[${value}]` : value;
 }
 
 function capitalize(s: string): string {

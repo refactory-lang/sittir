@@ -352,7 +352,7 @@ export interface AddingTypeAnnotation {
 export interface AmbientDeclaration {
   readonly type: 'ambient_declaration';
   readonly children0: Declaration | PropertyIdentifier | StatementBlock;
-  readonly type?: Type;
+  readonly children1?: Type;
 }
 export interface Arguments {
   readonly type: 'arguments';
@@ -386,7 +386,7 @@ export interface ArrowFunction {
 export interface AsExpression {
   readonly type: 'as_expression';
   readonly expression: Expression;
-  readonly type?: Type;
+  readonly children1?: Type;
 }
 export interface Asserts {
   readonly type: 'asserts';
@@ -725,8 +725,8 @@ export interface IfStatement {
 }
 export interface ImplementsClause {
   readonly type: 'implements_clause';
-  readonly type1: Type;
-  readonly type2?: readonly (Type)[];
+  readonly children0: Type;
+  readonly children1?: readonly (Type)[];
 }
 export interface ImportAlias {
   readonly type: 'import_alias';
@@ -781,7 +781,7 @@ export interface IndexTypeQuery {
 export interface InferType {
   readonly type: 'infer_type';
   readonly typeIdentifier: TypeIdentifier;
-  readonly type?: Type;
+  readonly children1?: Type;
 }
 export interface InstantiationExpression {
   readonly type: 'instantiation_expression';
@@ -813,8 +813,8 @@ export interface InternalModule {
 }
 export interface IntersectionType {
   readonly type: 'intersection_type';
-  readonly type1?: Type;
-  readonly type2: Type;
+  readonly children0?: Type;
+  readonly children1: Type;
 }
 export interface LabeledStatement {
   readonly type: 'labeled_statement';
@@ -838,7 +838,7 @@ export interface LiteralType {
 export interface LookupType {
   readonly type: 'lookup_type';
   readonly primaryType: PrimaryType;
-  readonly type: Type;
+  readonly children1: Type;
 }
 export interface MappedTypeClause {
   readonly type: 'mapped_type_clause';
@@ -1059,7 +1059,7 @@ export interface ReturnStatement {
 export interface SatisfiesExpression {
   readonly type: 'satisfies_expression';
   readonly expression: Expression;
-  readonly type: Type;
+  readonly children1: Type;
 }
 export interface SequenceExpression {
   readonly type: 'sequence_expression';
@@ -1164,8 +1164,8 @@ export interface TypeAnnotation {
 }
 export interface TypeArguments {
   readonly type: 'type_arguments';
-  readonly type1: Type;
-  readonly type2?: readonly (Type)[];
+  readonly children0: Type;
+  readonly children1?: readonly (Type)[];
 }
 export interface TypeAssertion {
   readonly type: 'type_assertion';
@@ -1209,8 +1209,8 @@ export interface UnaryExpression {
 }
 export interface UnionType {
   readonly type: 'union_type';
-  readonly type1?: Type;
-  readonly type2: Type;
+  readonly children0?: Type;
+  readonly children1: Type;
 }
 export interface UpdateExpression {
   readonly type: 'update_expression';

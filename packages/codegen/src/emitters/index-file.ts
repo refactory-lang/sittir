@@ -39,7 +39,7 @@ export function emitIndex(config: EmitIndexConfig): string {
 		'',
 		'// Core re-exports',
 		"export { render, toEdit, toCst } from '@sittir/core';",
-		"export type { NodeData, NodeFields, TreeNode } from './types.js';",
+		"export type { NodeData, TreeNode } from './types.js';",
 		"export type { Edit, CSTNode, RenderContext } from '@sittir/types';",
 		'',
 	];

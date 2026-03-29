@@ -521,8 +521,8 @@ export function ambientDeclarationFrom(input: any): any {
   if (obj.children0 !== undefined) {
     resolved.children0 = _r1bydq0c(obj.children0);
   }
-  if (obj.type !== undefined) {
-    resolved.type = _resolveType(obj.type);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _resolveType(obj.children1);
   }
   return ambientDeclaration(resolved);
 }
@@ -632,8 +632,8 @@ export function asExpressionFrom(input: any): any {
   if (obj.expression !== undefined) {
     resolved.expression = _resolveExpression(obj.expression);
   }
-  if (obj.type !== undefined) {
-    resolved.type = _resolveType(obj.type);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _resolveType(obj.children1);
   }
   return asExpression(resolved);
 }
@@ -1565,12 +1565,12 @@ export function implementsClauseFrom(input: any): any {
   if (isNodeData(input)) return implementsClause((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type1 !== undefined) {
-    resolved.type1 = _resolveType(obj.type1);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = _resolveType(obj.children0);
   }
-  if (obj.type2 !== undefined) {
-    const arr = Array.isArray(obj.type2) ? obj.type2 : [obj.type2];
-    resolved.type2 = arr.map((v: any) => _resolveType(v));
+  if (obj.children1 !== undefined) {
+    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
+    resolved.children1 = arr.map((v: any) => _resolveType(v));
   }
   return implementsClause(resolved);
 }
@@ -1728,8 +1728,8 @@ export function inferTypeFrom(input: any): any {
   if (obj.typeIdentifier !== undefined) {
     resolved.typeIdentifier = (isNodeData(obj.typeIdentifier) ? obj.typeIdentifier : typeof obj.typeIdentifier === 'string' || typeof obj.typeIdentifier === 'number' || typeof obj.typeIdentifier === 'boolean' ? typeIdentifier(''+obj.typeIdentifier as any) : obj.typeIdentifier);
   }
-  if (obj.type !== undefined) {
-    resolved.type = _resolveType(obj.type);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _resolveType(obj.children1);
   }
   return inferType(resolved);
 }
@@ -1817,11 +1817,11 @@ export function intersectionTypeFrom(input: any): any {
   if (isNodeData(input)) return intersectionType((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type1 !== undefined) {
-    resolved.type1 = _resolveType(obj.type1);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = _resolveType(obj.children0);
   }
-  if (obj.type2 !== undefined) {
-    resolved.type2 = _resolveType(obj.type2);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _resolveType(obj.children1);
   }
   return intersectionType(resolved);
 }
@@ -1889,8 +1889,8 @@ export function lookupTypeFrom(input: any): any {
   if (obj.primaryType !== undefined) {
     resolved.primaryType = _resolvePrimaryType(obj.primaryType);
   }
-  if (obj.type !== undefined) {
-    resolved.type = _resolveType(obj.type);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _resolveType(obj.children1);
   }
   return lookupType(resolved);
 }
@@ -2529,8 +2529,8 @@ export function satisfiesExpressionFrom(input: any): any {
   if (obj.expression !== undefined) {
     resolved.expression = _resolveExpression(obj.expression);
   }
-  if (obj.type !== undefined) {
-    resolved.type = _resolveType(obj.type);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _resolveType(obj.children1);
   }
   return satisfiesExpression(resolved);
 }
@@ -2853,12 +2853,12 @@ export function typeArgumentsFrom(input: any): any {
   if (isNodeData(input)) return typeArguments((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type1 !== undefined) {
-    resolved.type1 = _resolveType(obj.type1);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = _resolveType(obj.children0);
   }
-  if (obj.type2 !== undefined) {
-    const arr = Array.isArray(obj.type2) ? obj.type2 : [obj.type2];
-    resolved.type2 = arr.map((v: any) => _resolveType(v));
+  if (obj.children1 !== undefined) {
+    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
+    resolved.children1 = arr.map((v: any) => _resolveType(v));
   }
   return typeArguments(resolved);
 }
@@ -2988,11 +2988,11 @@ export function unionTypeFrom(input: any): any {
   if (isNodeData(input)) return unionType((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type1 !== undefined) {
-    resolved.type1 = _resolveType(obj.type1);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = _resolveType(obj.children0);
   }
-  if (obj.type2 !== undefined) {
-    resolved.type2 = _resolveType(obj.type2);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _resolveType(obj.children1);
   }
   return unionType(resolved);
 }

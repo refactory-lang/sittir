@@ -140,7 +140,7 @@ export function ambientDeclaration(
   return {
     type: 'ambient_declaration' as const,
     children0: (v: Declaration | PropertyIdentifier | StatementBlock) => ambientDeclaration({ ...config, children0: v }),
-    type: (v: Type) => ambientDeclaration({ ...config, type: v }),
+    children1: (v: Type) => ambientDeclaration({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -244,7 +244,7 @@ export function asExpression(
   return {
     type: 'as_expression' as const,
     expression: (v: Expression) => asExpression({ ...config, expression: v }),
-    type: (v: Type) => asExpression({ ...config, type: v }),
+    children1: (v: Type) => asExpression({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1101,8 +1101,8 @@ export function implementsClause(
 ) {
   return {
     type: 'implements_clause' as const,
-    type1: (v: Type) => implementsClause({ ...config, type1: v }),
-    type2: (...v: (Type)[]) => implementsClause({ ...config, type2: v }),
+    children0: (v: Type) => implementsClause({ ...config, children0: v }),
+    children1: (...v: (Type)[]) => implementsClause({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1257,7 +1257,7 @@ export function inferType(
   return {
     type: 'infer_type' as const,
     typeIdentifier: (v: TypeIdentifier) => inferType({ ...config, typeIdentifier: v }),
-    type: (v: Type) => inferType({ ...config, type: v }),
+    children1: (v: Type) => inferType({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1343,8 +1343,8 @@ export function intersectionType(
 ) {
   return {
     type: 'intersection_type' as const,
-    type1: (v: Type) => intersectionType({ ...config, type1: v }),
-    type2: (v: Type) => intersectionType({ ...config, type2: v }),
+    children0: (v: Type) => intersectionType({ ...config, children0: v }),
+    children1: (v: Type) => intersectionType({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1412,7 +1412,7 @@ export function lookupType(
   return {
     type: 'lookup_type' as const,
     primaryType: (v: PrimaryType) => lookupType({ ...config, primaryType: v }),
-    type: (v: Type) => lookupType({ ...config, type: v }),
+    children1: (v: Type) => lookupType({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2007,7 +2007,7 @@ export function satisfiesExpression(
   return {
     type: 'satisfies_expression' as const,
     expression: (v: Expression) => satisfiesExpression({ ...config, expression: v }),
-    type: (v: Type) => satisfiesExpression({ ...config, type: v }),
+    children1: (v: Type) => satisfiesExpression({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2338,8 +2338,8 @@ export function typeArguments(
 ) {
   return {
     type: 'type_arguments' as const,
-    type1: (v: Type) => typeArguments({ ...config, type1: v }),
-    type2: (...v: (Type)[]) => typeArguments({ ...config, type2: v }),
+    children0: (v: Type) => typeArguments({ ...config, children0: v }),
+    children1: (...v: (Type)[]) => typeArguments({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2473,8 +2473,8 @@ export function unionType(
 ) {
   return {
     type: 'union_type' as const,
-    type1: (v: Type) => unionType({ ...config, type1: v }),
-    type2: (v: Type) => unionType({ ...config, type2: v }),
+    children0: (v: Type) => unionType({ ...config, children0: v }),
+    children1: (v: Type) => unionType({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

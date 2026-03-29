@@ -697,11 +697,11 @@ export function constrainedTypeFrom(input: any): any {
   if (isNodeData(input)) return constrainedType((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type1 !== undefined) {
-    resolved.type1 = (isNodeData(obj.type1) ? obj.type1 : Array.isArray(obj.type1) ? type_From(obj.type1 as any) : typeof obj.type1 === 'object' ? type_From(obj.type1) : obj.type1);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0 as any) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
   }
-  if (obj.type2 !== undefined) {
-    resolved.type2 = (isNodeData(obj.type2) ? obj.type2 : Array.isArray(obj.type2) ? type_From(obj.type2 as any) : typeof obj.type2 === 'object' ? type_From(obj.type2) : obj.type2);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = (isNodeData(obj.children1) ? obj.children1 : Array.isArray(obj.children1) ? type_From(obj.children1 as any) : typeof obj.children1 === 'object' ? type_From(obj.children1) : obj.children1);
   }
   return constrainedType(resolved);
 }
@@ -1449,8 +1449,8 @@ export function memberTypeFrom(input: any): any {
   if (isNodeData(input)) return memberType((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type !== undefined) {
-    resolved.type = (isNodeData(obj.type) ? obj.type : Array.isArray(obj.type) ? type_From(obj.type as any) : typeof obj.type === 'object' ? type_From(obj.type) : obj.type);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0 as any) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
   }
   if (obj.identifier !== undefined) {
     resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier(''+obj.identifier as any) : obj.identifier);
@@ -1903,12 +1903,12 @@ export function typeParameterFrom(input: any): any {
   if (isNodeData(input)) return typeParameter((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type1 !== undefined) {
-    resolved.type1 = (isNodeData(obj.type1) ? obj.type1 : Array.isArray(obj.type1) ? type_From(obj.type1 as any) : typeof obj.type1 === 'object' ? type_From(obj.type1) : obj.type1);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0 as any) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
   }
-  if (obj.type2 !== undefined) {
-    const arr = Array.isArray(obj.type2) ? obj.type2 : [obj.type2];
-    resolved.type2 = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v) : v));
+  if (obj.children1 !== undefined) {
+    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
+    resolved.children1 = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v) : v));
   }
   return typeParameter(resolved);
 }
@@ -1990,11 +1990,11 @@ export function unionTypeFrom(input: any): any {
   if (isNodeData(input)) return unionType((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
-  if (obj.type1 !== undefined) {
-    resolved.type1 = (isNodeData(obj.type1) ? obj.type1 : Array.isArray(obj.type1) ? type_From(obj.type1 as any) : typeof obj.type1 === 'object' ? type_From(obj.type1) : obj.type1);
+  if (obj.children0 !== undefined) {
+    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0 as any) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
   }
-  if (obj.type2 !== undefined) {
-    resolved.type2 = (isNodeData(obj.type2) ? obj.type2 : Array.isArray(obj.type2) ? type_From(obj.type2 as any) : typeof obj.type2 === 'object' ? type_From(obj.type2) : obj.type2);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = (isNodeData(obj.children1) ? obj.children1 : Array.isArray(obj.children1) ? type_From(obj.children1 as any) : typeof obj.children1 === 'object' ? type_From(obj.children1) : obj.children1);
   }
   return unionType(resolved);
 }

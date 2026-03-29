@@ -102,4 +102,55 @@ describe('emitTypes', () => {
 		expect(source).toContain("import type { GoGrammar } from './grammar.js'");
 		expect(source).toContain('export type GoNode =');
 	});
+
+	it('should emit TreeNode types for branch and leaf kinds', () => {
+		const source = emitTypes({
+			grammar: 'rust',
+			nodes: [
+				branchNode('function_item'),
+				leafNode('identifier'),
+				keywordNode('mutable_specifier', 'mut'),
+			],
+		});
+		// Branch TreeNode
+		expect(source).toContain("export interface FunctionItemTree extends TreeNode<'function_item'> {}");
+		// Leaf TreeNode
+		expect(source).toContain("export interface IdentifierTree extends TreeNode<'identifier'> {}");
+		// Keyword TreeNode
+		expect(source).toContain("export interface MutableSpecifierTree extends TreeNode<'mutable_specifier'> {}");
+	});
+
+	it('should use camelCase field names in concrete interfaces', () => {
+		const nodes: HydratedNodeModel[] = [
+			{
+				modelType: 'branch',
+				kind: 'function_item',
+				fields: [
+					{ name: 'return_type', required: false, multiple: false, kinds: [], propertyName: 'returnType' },
+					{ name: 'type_parameters', required: false, multiple: false, kinds: [], propertyName: 'typeParameters' },
+				],
+				members: [],
+				children: [],
+			} as unknown as HydratedNodeModel,
+		];
+		const source = emitTypes({ grammar: 'rust', nodes });
+		expect(source).toContain('returnType?:');
+		expect(source).toContain('typeParameters?:');
+		expect(source).not.toContain('return_type');
+		expect(source).not.toContain('type_parameters');
+	});
+
+	it('should emit supertype TreeNode unions', () => {
+		const source = emitTypes({
+			grammar: 'rust',
+			nodes: [
+				branchNode('binary_expression'),
+				branchNode('call_expression'),
+				supertypeNode('_expression', ['binary_expression', 'call_expression']),
+			],
+		});
+		expect(source).toContain('export type ExpressionTree =');
+		expect(source).toContain('| BinaryExpressionTree');
+		expect(source).toContain('| CallExpressionTree');
+	});
 });

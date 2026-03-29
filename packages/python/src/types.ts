@@ -373,8 +373,8 @@ export interface ConditionalExpression {
 }
 export interface ConstrainedType {
   readonly type: 'constrained_type';
-  readonly type1: Type;
-  readonly type2: Type;
+  readonly children0: Type;
+  readonly children1: Type;
 }
 export interface DecoratedDefinition {
   readonly type: 'decorated_definition';
@@ -624,7 +624,7 @@ export interface MatchStatement {
 }
 export interface MemberType {
   readonly type: 'member_type';
-  readonly type: Type;
+  readonly children0: Type;
   readonly identifier: Identifier;
 }
 export interface Module {
@@ -769,8 +769,8 @@ export interface TypeAliasStatement {
 }
 export interface TypeParameter {
   readonly type: 'type_parameter';
-  readonly type1: Type;
-  readonly type2?: readonly (Type)[];
+  readonly children0: Type;
+  readonly children1?: readonly (Type)[];
 }
 export interface TypedDefaultParameter {
   readonly type: 'typed_default_parameter';
@@ -800,8 +800,8 @@ export interface UnionPattern {
 }
 export interface UnionType {
   readonly type: 'union_type';
-  readonly type1: Type;
-  readonly type2: Type;
+  readonly children0: Type;
+  readonly children1: Type;
 }
 export interface WhileStatement {
   readonly type: 'while_statement';

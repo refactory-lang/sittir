@@ -147,6 +147,9 @@ export function selectConstructorField(node: StructuralNode): HydratedFieldModel
  *   - Duplicate names across slots → append 1-based index (expression1, expression2)
  *   - No single collapsed type → children{index} fallback
  */
+// Reserved property names that cannot be used as child slot names
+const RESERVED_SLOT_NAMES = new Set(['type', 'text', 'fields', 'render', 'toEdit', 'replace']);
+
 export function childSlotNames(children: HydratedChildrenModel, ctx: ProjectionContext): string[] {
 	if (!isTupleChildren(children)) return ['children'];
 
@@ -155,7 +158,9 @@ export function childSlotNames(children: HydratedChildrenModel, ctx: ProjectionC
 		const proj = projectKinds(slot.kinds, ctx);
 		if (proj.collapsedTypes.length === 1) {
 			const name = proj.collapsedTypes[0]!;
-			return name.charAt(0).toLowerCase() + name.slice(1);
+			const camel = name.charAt(0).toLowerCase() + name.slice(1);
+			if (RESERVED_SLOT_NAMES.has(camel)) return null;
+			return camel;
 		}
 		return null;
 	});
