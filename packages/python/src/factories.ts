@@ -239,7 +239,7 @@ export function binary_operator_(
     type: 'binary_operator' as const,
     fields,
     left(left?: PrimaryExpression): any { return left !== undefined ? binary_operator_({ ...config, left: left }) : fields.left; },
-    operator(operator?: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|'): any { return operator !== undefined ? binary_operator_({ ...config, operator: operator }) : fields.operator; },
+    operator(operator?: '+' | '-' | '*' | '@' | '/' | '%' | '//' | '**' | '|' | '&' | '^' | '<<' | '>>'): any { return operator !== undefined ? binary_operator_({ ...config, operator: operator }) : fields.operator; },
     right(right?: PrimaryExpression): any { return right !== undefined ? binary_operator_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

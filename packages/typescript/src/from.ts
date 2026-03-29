@@ -232,7 +232,7 @@ function _r1jfh169(v: any): any {
 }
 
 function _rhkly9f(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['!=','!==','%','&','&&','*','**','+','-','/','<','<<','<=','==','===','>','>=','>>','>>>','??','^','in','instanceof','|','||'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['&&','||','>>','>>>','<<','&','^','|','+','-','*','/','%','**','<','<=','==','===','!=','!==','>=','>','??','instanceof','in'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rc9x5f8(v: any): any {

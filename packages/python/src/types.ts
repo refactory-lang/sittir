@@ -289,7 +289,7 @@ export interface BinaryOperator {
   readonly type: 'binary_operator';
   readonly fields: {
     readonly left: PrimaryExpression;
-    readonly operator: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|';
+    readonly operator: '+' | '-' | '*' | '@' | '/' | '%' | '//' | '**' | '|' | '&' | '^' | '<<' | '>>';
     readonly right: PrimaryExpression;
   };
 }

@@ -459,7 +459,7 @@ export function binary_expression_(
     type: 'binary_expression' as const,
     fields,
     left(left?: Expression | PrivatePropertyIdentifier): any { return left !== undefined ? binary_expression_({ ...config, left: left }) : fields.left; },
-    operator(operator?: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||'): any { return operator !== undefined ? binary_expression_({ ...config, operator: operator }) : fields.operator; },
+    operator(operator?: '&&' | '||' | '>>' | '>>>' | '<<' | '&' | '^' | '|' | '+' | '-' | '*' | '/' | '%' | '**' | '<' | '<=' | '==' | '===' | '!=' | '!==' | '>=' | '>' | '??' | 'instanceof' | 'in'): any { return operator !== undefined ? binary_expression_({ ...config, operator: operator }) : fields.operator; },
     right(right?: Expression): any { return right !== undefined ? binary_expression_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

@@ -426,7 +426,7 @@ export interface BinaryExpression {
   readonly type: 'binary_expression';
   readonly fields: {
     readonly left: Expression | PrivatePropertyIdentifier;
-    readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
+    readonly operator: '&&' | '||' | '>>' | '>>>' | '<<' | '&' | '^' | '|' | '+' | '-' | '*' | '/' | '%' | '**' | '<' | '<=' | '==' | '===' | '!=' | '!==' | '>=' | '>' | '??' | 'instanceof' | 'in';
     readonly right: Expression;
   };
 }
