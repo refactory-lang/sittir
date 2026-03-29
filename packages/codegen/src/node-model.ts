@@ -448,12 +448,14 @@ function buildChildrenFromGrammar(
 		for (const k of slot.kinds) ntKinds.add(k);
 	});
 
-	// Find NT kinds not in any grammar position
+	// Find NT kinds not in any grammar position.
+	// Exclude hidden symbols (_pattern, _expression, etc.) — the grammar walk
+	// already expanded these to their concrete subtypes.
 	const allGrammarKinds = new Set<string>();
 	for (const rc of ruleChildren) {
 		for (const k of rc.kinds) allGrammarKinds.add(k);
 	}
-	const ntOnlyKinds = [...ntKinds].filter(k => !allGrammarKinds.has(k));
+	const ntOnlyKinds = [...ntKinds].filter(k => !allGrammarKinds.has(k) && !k.startsWith('_'));
 
 	function buildSlot(rc: EnrichedChildInfo): ChildModel {
 		// Grammar kinds first, then NT-only supplements
