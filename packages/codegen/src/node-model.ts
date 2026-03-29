@@ -379,9 +379,11 @@ export function initializeModels(nodeTypes: NodeTypes): Map<string, NodeModel> {
 // Step 5: Reconcile — merge grammar-derived data into NT-derived models
 // ---------------------------------------------------------------------------
 
-function enrichBranch(model: BranchModel, rule: BranchRule): void {
+function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]): void {
 	// Merge field kinds: grammar order first, then NT supplements
 	const grammarFieldMap = new Map(rule.fields.map(f => [f.name, f]));
+	const modelFieldSet = new Set(model.fields.map(f => f.name));
+
 	for (const field of model.fields) {
 		const gField = grammarFieldMap.get(field.name);
 		if (gField) {
@@ -390,6 +392,8 @@ function enrichBranch(model: BranchModel, rule: BranchRule): void {
 			const grammarSet = new Set(gField.kinds);
 			const ntOnly = field.kinds.filter(k => !grammarSet.has(k));
 			field.kinds = [...gField.kinds, ...ntOnly];
+		} else {
+			warnings.push(`  '${model.kind}': model field '${field.name}' not in grammar`);
 		}
 		// Apply separators
 		const sep = rule.separators.get(field.name);
@@ -398,16 +402,33 @@ function enrichBranch(model: BranchModel, rule: BranchRule): void {
 		}
 	}
 
+	for (const gField of rule.fields) {
+		if (!modelFieldSet.has(gField.name)) {
+			warnings.push(`  '${model.kind}': grammar field '${gField.name}' not in node-types`);
+		}
+	}
+
+	// Children consistency
+	const modelHasChildren = model.children != null;
+	const grammarHasChildren = rule.children != null && rule.children.length > 0;
+	if (modelHasChildren && !grammarHasChildren) {
+		warnings.push(`  '${model.kind}': node-types has children but grammar rule does not`);
+	} else if (!modelHasChildren && grammarHasChildren) {
+		warnings.push(`  '${model.kind}': grammar rule has children but node-types does not`);
+	}
+
 	// Build children from grammar positions, supplemented by NT kinds
-	if (rule.children && rule.children.length > 0 && model.children) {
-		model.children = buildChildrenFromGrammar(model.children, rule.children);
+	if (grammarHasChildren && modelHasChildren) {
+		model.children = buildChildrenFromGrammar(model.children!, rule.children!);
 	}
 
 	model.rule = rule;
 }
 
-function enrichContainer(model: ContainerModel, rule: ContainerRule): void {
-	if (rule.children.length > 0) {
+function enrichContainer(model: ContainerModel, rule: ContainerRule, warnings: string[]): void {
+	if (rule.children.length === 0) {
+		warnings.push(`  '${model.kind}': container has no grammar children`);
+	} else {
 		model.children = buildChildrenFromGrammar(model.children, rule.children);
 	}
 
@@ -487,6 +508,7 @@ export function reconcile(
 	grammarName?: string,
 ): void {
 	const inconsistencies: { kind: string; model: NodeModel; rule: EnrichedRule }[] = [];
+	const warnings: string[] = [];
 
 	for (const [kind, model] of models) {
 		const rule = enrichedRules.get(kind);
@@ -510,8 +532,8 @@ export function reconcile(
 		if (model.modelType === rule.modelType) {
 			// Same classification — enrich
 			switch (model.modelType) {
-				case 'branch': enrichBranch(model, rule as BranchRule); break;
-				case 'container': enrichContainer(model as ContainerModel, rule as ContainerRule); break;
+				case 'branch': enrichBranch(model, rule as BranchRule, warnings); break;
+				case 'container': enrichContainer(model as ContainerModel, rule as ContainerRule, warnings); break;
 				case 'leaf': enrichLeaf(model, rule as LeafRule); break;
 				case 'keyword': enrichKeyword(model as KeywordModel, rule as KeywordRule); break;
 				case 'enum': enrichEnum(model as EnumModel, rule as EnumEnrichedRule); break;
@@ -552,7 +574,7 @@ export function reconcile(
 				children: branch.children ?? { required: false, multiple: false, kinds: [] } as SingleChildModel,
 				rule,
 			};
-			enrichContainer(promoted, rule as ContainerRule);
+			enrichContainer(promoted, rule as ContainerRule, warnings);
 			models.set(kind, promoted);
 			continue;
 		}
@@ -565,7 +587,7 @@ export function reconcile(
 			`  '${kind}': node-types=${model.modelType}, grammar=${rule.modelType}`,
 		).join('\n');
 		console.warn(
-			`Reconcile: ${inconsistencies.length} inconsistencies (NT model type wins, grammar rule attached):\n${summary}`,
+			`Reconcile: ${inconsistencies.length} model type inconsistencies (NT wins, grammar rule attached):\n${summary}`,
 		);
 		// Attach rule to mismatched models so rendering still works
 		for (const { kind, model, rule } of inconsistencies) {
@@ -573,6 +595,12 @@ export function reconcile(
 				(model as any).rule = rule;
 			}
 		}
+	}
+
+	if (warnings.length > 0) {
+		console.warn(
+			`Reconcile: ${warnings.length} field/children mismatches:\n${warnings.join('\n')}`,
+		);
 	}
 }
 

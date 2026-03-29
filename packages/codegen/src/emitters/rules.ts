@@ -56,13 +56,6 @@ export function emitRule(config: EmitRulesConfig): EmittedRule {
 		}
 	}
 
-	// Validate: every model field should appear in the template
-	for (const [fieldName] of fieldQuantifiers) {
-		if (!seen.has(fieldName)) {
-			console.warn(`Template for '${node.kind}' is missing model field '${fieldName}'`);
-		}
-	}
-
 	// If node has children but template doesn't have (_)*, append it
 	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
 	if (hasChildren && !parts.includes('(_)*')) {
