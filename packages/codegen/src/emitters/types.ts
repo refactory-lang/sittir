@@ -234,6 +234,20 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push(';');
 	lines.push('');
 
+	// -----------------------------------------------------------------------
+	// 7. KindMap — kind string → concrete interface
+	// -----------------------------------------------------------------------
+	lines.push('/** Maps every kind string to its concrete interface. */');
+	lines.push('export interface KindMap {');
+	for (const kind of allKinds) {
+		const typeName = toTypeName(kind);
+		if (generatedTypes.has(typeName)) {
+			lines.push(`  '${kind}': ${typeName};`);
+		}
+	}
+	lines.push('}');
+	lines.push('');
+
 	return lines.join('\n');
 }
 
