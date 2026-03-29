@@ -1737,7 +1737,7 @@ export function optingTypeAnnotation(
 
 
 export function optionalParameter(
-  config: OptionalParameterConfig,
+  config?: OptionalParameterConfig,
 ) {
   return {
     type: 'optional_parameter' as const,
@@ -1746,7 +1746,8 @@ export function optionalParameter(
     pattern: (v: Pattern | This) => optionalParameter({ ...config, 'pattern': v }),
     typeField: (v: TypeAnnotation) => optionalParameter({ ...config, 'type': v }),
     value: (v: Expression) => optionalParameter({ ...config, 'value': v }),
-    children: (v: AccessibilityModifier | OverrideModifier) => optionalParameter({ ...config, children: v }),
+    accessibilityModifier: (v: AccessibilityModifier) => optionalParameter({ ...config, accessibilityModifier: v }),
+    overrideModifier: (v: OverrideModifier) => optionalParameter({ ...config, overrideModifier: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1931,7 +1932,7 @@ export function regex(
 
 
 export function requiredParameter(
-  config: RequiredParameterConfig,
+  config?: RequiredParameterConfig,
 ) {
   return {
     type: 'required_parameter' as const,
@@ -1940,7 +1941,8 @@ export function requiredParameter(
     pattern: (v: Pattern | This) => requiredParameter({ ...config, 'pattern': v }),
     typeField: (v: TypeAnnotation) => requiredParameter({ ...config, 'type': v }),
     value: (v: Expression) => requiredParameter({ ...config, 'value': v }),
-    children: (v: AccessibilityModifier | OverrideModifier) => requiredParameter({ ...config, children: v }),
+    accessibilityModifier: (v: AccessibilityModifier) => requiredParameter({ ...config, accessibilityModifier: v }),
+    overrideModifier: (v: OverrideModifier) => requiredParameter({ ...config, overrideModifier: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

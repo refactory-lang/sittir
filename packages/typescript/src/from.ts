@@ -375,10 +375,6 @@ function _rdqiv86(v: any): any {
   if(isNodeData(v))return v;if(typeof v==='string'){return (v==='this'?this_():(()=>{throw new Error(`Expected 'this' for this, got '${v}'`)})());};if(Array.isArray(v))return _resolvePattern(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}return _resolvePattern(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
-function _r1fwk5u8(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['private','protected','public'].includes(v))return accessibilityModifier(v as any);if(/^override$/.test(v))return (v==='override'?overrideModifier():(()=>{throw new Error(`Expected 'override' for override_modifier, got '${v}'`)})());return accessibilityModifier(v as any);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
-}
-
 function _rs8a4rp(v: any): any {
   if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'call_expression':return callExpressionFrom(rest);case 'member_expression':return memberExpressionFrom(rest);case 'sequence_expression':return sequenceExpressionFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["call_expression","member_expression","sequence_expression","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","instantiation_expression","internal_module","new_expression","array","arrow_function","class","function_expression","generator_function","non_null_expression","object","parenthesized_expression","regex","string","subscript_expression","template_string","satisfies_expression","ternary_expression","type_assertion","unary_expression","update_expression","yield_expression"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: call_expression, member_expression, sequence_expression, as_expression, assignment_expression, augmented_assignment_expression, await_expression, binary_expression, instantiation_expression, internal_module, new_expression, array, arrow_function, class, function_expression, generator_function, non_null_expression, object, parenthesized_expression, regex, string, subscript_expression, template_string, satisfies_expression, ternary_expression, type_assertion, unary_expression, update_expression, yield_expression. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -2255,8 +2251,11 @@ export function optionalParameterFrom(input: any): any {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj['children'] !== undefined) {
-    resolved['children'] = _r1fwk5u8(obj['children']);
+  if (obj['accessibilityModifier'] !== undefined) {
+    resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibilityModifier(''+obj['accessibilityModifier'] as any) : obj['accessibilityModifier']);
+  }
+  if (obj['overrideModifier'] !== undefined) {
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? overrideModifier() : obj['overrideModifier']);
   }
   return optionalParameter(resolved);
 }
@@ -2468,8 +2467,11 @@ export function requiredParameterFrom(input: any): any {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj['children'] !== undefined) {
-    resolved['children'] = _r1fwk5u8(obj['children']);
+  if (obj['accessibilityModifier'] !== undefined) {
+    resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibilityModifier(''+obj['accessibilityModifier'] as any) : obj['accessibilityModifier']);
+  }
+  if (obj['overrideModifier'] !== undefined) {
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? overrideModifier() : obj['overrideModifier']);
   }
   return requiredParameter(resolved);
 }

@@ -158,7 +158,7 @@ interface FieldAccum {
 	repeated: boolean;
 }
 
-function extractFields(rule: GrammarRule, grammar: Grammar): BranchRule {
+function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: ReadonlySet<string>): BranchRule {
 	const fieldAccums = new Map<string, FieldAccum>();
 	walkForFields(rule, false, false, fieldAccums, grammar);
 
@@ -172,7 +172,7 @@ function extractFields(rule: GrammarRule, grammar: Grammar): BranchRule {
 		});
 	}
 
-	const childSlots = collectChildSlots(rule, false, false, false, grammar);
+	const childSlots = collectChildSlots(rule, false, false, false, grammar, supertypeSet);
 	const children: EnrichedChildInfo[] | undefined = childSlots.length > 0
 		? slotsToChildren(childSlots)
 		: undefined;
@@ -192,7 +192,7 @@ function walkForFields(
 ): void {
 	switch (rule.type) {
 		case 'SEQ':
-			for (const m of rule.members) walkForFields(m, optional, repeated, fields, grammar, visited);
+			for (const m of rule.members) walkForFields(m, optional, repeated, fields, grammar);
 			break;
 		case 'FIELD': {
 			let accum = fields.get(rule.name);
@@ -222,7 +222,7 @@ function walkForFields(
 
 			if (nonBlank.length <= 1) {
 				if (nonBlank.length === 1) {
-					walkForFields(nonBlank[0]!, optional || hasBlank, repeated, fields, grammar, visited);
+					walkForFields(nonBlank[0]!, optional || hasBlank, repeated, fields, grammar);
 				}
 			} else {
 				const branchFieldMaps: Map<string, FieldAccum>[] = [];
@@ -260,19 +260,19 @@ function walkForFields(
 			break;
 		}
 		case 'REPEAT':
-			walkForFields(rule.content, true, true, fields, grammar, visited);
+			walkForFields(rule.content, true, true, fields, grammar);
 			break;
 		case 'REPEAT1':
-			walkForFields(rule.content, optional, true, fields, grammar, visited);
+			walkForFields(rule.content, optional, true, fields, grammar);
 			break;
 		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
-			walkForFields(rule.content, optional, repeated, fields, grammar, visited);
+			walkForFields(rule.content, optional, repeated, fields, grammar);
 			break;
 		case 'ALIAS':
-			walkForFields(rule.content, optional, repeated, fields, grammar, visited);
+			walkForFields(rule.content, optional, repeated, fields, grammar);
 			break;
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
-			walkForFields(rule.content, optional, repeated, fields, grammar, visited);
+			walkForFields(rule.content, optional, repeated, fields, grammar);
 			break;
 		default:
 			break;
@@ -337,8 +337,9 @@ interface ChildSlot {
  * Returns one ChildSlot per positional child in the grammar rule.
  * SEQ concatenates positions. CHOICE merges per-position (padding shorter
  * branches with optional empty slots). REPEAT collapses its content to a
- * single repeated slot. Hidden _symbols expand to a single slot of all
- * concrete kinds (they represent one logical position, not N alternatives).
+ * single repeated slot. Supertypes and named symbols are kept as kind
+ * references. Hidden non-supertype symbols (e.g. _call_signature) are
+ * recursed into — tree-sitter inlines them into the parent node.
  */
 function collectChildSlots(
 	rule: GrammarRule,
@@ -346,40 +347,35 @@ function collectChildSlots(
 	repeated: boolean,
 	insideField: boolean,
 	grammar: Grammar,
+	supertypeSet: ReadonlySet<string>,
 	visited?: Set<string>,
 ): ChildSlot[] {
 	switch (rule.type) {
 		case 'SEQ': {
 			const slots: ChildSlot[] = [];
 			for (const m of rule.members) {
-				slots.push(...collectChildSlots(m, optional, repeated, insideField, grammar, visited));
+				slots.push(...collectChildSlots(m, optional, repeated, insideField, grammar, supertypeSet, visited));
 			}
 			return slots;
 		}
 
 		case 'FIELD':
 			// Fields are consumed by the field walk — children inside are not positional
-			return collectChildSlots(rule.content, optional, repeated, true, grammar, visited);
+			return collectChildSlots(rule.content, optional, repeated, true, grammar, supertypeSet, visited);
 
 		case 'SYMBOL': {
 			if (insideField) return [];
-			if (rule.name.startsWith('_')) {
-				// Hidden symbol → one logical slot with all concrete kinds
-				const kinds = new Set<string>();
-				const v = visited ? new Set(visited) : new Set<string>();
-				if (!v.has(rule.name)) {
-					v.add(rule.name);
-					const subRule = grammar.rules[rule.name];
-					if (subRule) {
-						const concreteTypes: string[] = [];
-						collectConcreteTypes(subRule, grammar, concreteTypes, v);
-						for (const t of concreteTypes) kinds.add(t);
-					}
-				}
-				if (kinds.size === 0) return [];
-				return [{ kinds, optional, repeated }];
+			// Named symbols and supertypes are real node kinds — keep as-is
+			if (!rule.name.startsWith('_') || supertypeSet.has(rule.name)) {
+				return [{ kinds: new Set([rule.name]), optional, repeated }];
 			}
-			return [{ kinds: new Set([rule.name]), optional, repeated }];
+			// Hidden non-supertype symbols are inlined by tree-sitter — recurse
+			const inner = grammar.rules[rule.name];
+			if (!inner) return [];
+			const v = visited ?? new Set<string>();
+			if (v.has(rule.name)) return [];
+			v.add(rule.name);
+			return collectChildSlots(inner, optional, repeated, insideField, grammar, supertypeSet, v);
 		}
 
 		case 'ALIAS': {
@@ -387,7 +383,7 @@ function collectChildSlots(
 			if (rule.named) {
 				return [{ kinds: new Set([rule.value]), optional, repeated }];
 			}
-			return collectChildSlots(rule.content, optional, repeated, false, grammar, visited);
+			return collectChildSlots(rule.content, optional, repeated, false, grammar, supertypeSet, visited);
 		}
 
 		case 'CHOICE': {
@@ -396,7 +392,7 @@ function collectChildSlots(
 			if (nonBlank.length === 0) return [];
 
 			const branchSlots = nonBlank.map(m =>
-				collectChildSlots(m, false, repeated, insideField, grammar, visited),
+				collectChildSlots(m, false, repeated, insideField, grammar, supertypeSet, visited),
 			);
 
 			// Find max slot count across branches
@@ -431,20 +427,20 @@ function collectChildSlots(
 
 		case 'REPEAT': {
 			// Collapse content to single slot, mark as multiple + optional
-			const inner = collectChildSlots(rule.content, true, true, insideField, grammar, visited);
+			const inner = collectChildSlots(rule.content, true, true, insideField, grammar, supertypeSet, visited);
 			return collapseSlots(inner, true, true);
 		}
 
 		case 'REPEAT1': {
-			const inner = collectChildSlots(rule.content, optional, true, insideField, grammar, visited);
+			const inner = collectChildSlots(rule.content, optional, true, insideField, grammar, supertypeSet, visited);
 			return collapseSlots(inner, optional, true);
 		}
 
 		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
-			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, visited);
+			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, supertypeSet, visited);
 
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
-			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, visited);
+			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, supertypeSet, visited);
 
 		default:
 			return [];
@@ -466,8 +462,8 @@ function slotsToChildren(slots: ChildSlot[]): EnrichedChildInfo[] {
 	return slots.map(s => ({ kinds: [...s.kinds], required: !s.optional, multiple: s.repeated }));
 }
 
-function extractChildren(rule: GrammarRule, grammar: Grammar): ContainerRule {
-	const children = slotsToChildren(collectChildSlots(rule, false, false, false, grammar));
+function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: ReadonlySet<string>): ContainerRule {
+	const children = slotsToChildren(collectChildSlots(rule, false, false, false, grammar, supertypeSet));
 	const separators = extractSeparators(rule);
 	return { modelType: 'container', children, separators, rule };
 }
@@ -667,13 +663,13 @@ export function classifyRules(grammar: Grammar): Map<string, EnrichedRule> {
 
 		// 2. Has fields?
 		if (hasFields(rule)) {
-			result.set(kind, extractFields(rule, grammar));
+			result.set(kind, extractFields(rule, grammar, supertypeSet));
 			continue;
 		}
 
 		// 3. Has children?
 		if (hasChildren(rule)) {
-			result.set(kind, extractChildren(rule, grammar));
+			result.set(kind, extractChildren(rule, grammar, supertypeSet));
 			continue;
 		}
 

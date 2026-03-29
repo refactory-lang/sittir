@@ -1428,10 +1428,16 @@ export function assignOptionalParameter(target: OptionalParameterTree) {
   config['pattern'] = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
   config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
   config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
-  config['children'] = (() => {
-    const _kinds = new Set(["accessibility_modifier","override_modifier"]);
+  config['accessibilityModifier'] = (() => {
+    const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'optional_parameter' tree node`);
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['overrideModifier'] = (() => {
+    const _kinds = new Set(["override_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
   const result = optionalParameter(config as OptionalParameterConfig);
@@ -1585,10 +1591,16 @@ export function assignRequiredParameter(target: RequiredParameterTree) {
   config['pattern'] = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
   config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
   config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
-  config['children'] = (() => {
-    const _kinds = new Set(["accessibility_modifier","override_modifier"]);
+  config['accessibilityModifier'] = (() => {
+    const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'required_parameter' tree node`);
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['overrideModifier'] = (() => {
+    const _kinds = new Set(["override_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
   const result = requiredParameter(config as RequiredParameterConfig);

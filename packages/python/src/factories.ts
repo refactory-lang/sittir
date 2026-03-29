@@ -274,7 +274,7 @@ export function caseClause(
 
 
 export function casePattern(
-  config: CasePatternConfig,
+  config?: CasePatternConfig,
 ) {
   return {
     type: 'case_pattern' as const,
@@ -535,7 +535,8 @@ export function dictionaryComprehension(
   return {
     type: 'dictionary_comprehension' as const,
     body: (v: Pair) => dictionaryComprehension({ ...config, 'body': v }),
-    children: (v: ForInClause | IfClause) => dictionaryComprehension({ ...config, children: v }),
+    forInClause: (v: ForInClause) => dictionaryComprehension({ ...config, forInClause: v }),
+    children1: (...v: (ForInClause | IfClause)[]) => dictionaryComprehension({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -826,7 +827,8 @@ export function generatorExpression(
   return {
     type: 'generator_expression' as const,
     body: (v: Expression) => generatorExpression({ ...config, 'body': v }),
-    children: (v: ForInClause | IfClause) => generatorExpression({ ...config, children: v }),
+    forInClause: (v: ForInClause) => generatorExpression({ ...config, forInClause: v }),
+    children1: (...v: (ForInClause | IfClause)[]) => generatorExpression({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1046,7 +1048,8 @@ export function listComprehension(
   return {
     type: 'list_comprehension' as const,
     body: (v: Expression) => listComprehension({ ...config, 'body': v }),
-    children: (v: ForInClause | IfClause) => listComprehension({ ...config, children: v }),
+    forInClause: (v: ForInClause) => listComprehension({ ...config, forInClause: v }),
+    children1: (...v: (ForInClause | IfClause)[]) => listComprehension({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1376,7 +1379,8 @@ export function setComprehension(
   return {
     type: 'set_comprehension' as const,
     body: (v: Expression) => setComprehension({ ...config, 'body': v }),
-    children: (v: ForInClause | IfClause) => setComprehension({ ...config, children: v }),
+    forInClause: (v: ForInClause) => setComprehension({ ...config, forInClause: v }),
+    children1: (...v: (ForInClause | IfClause)[]) => setComprehension({ ...config, children1: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

@@ -304,7 +304,7 @@ export function assignCasePattern(target: CasePatternTree) {
   config['children'] = (() => {
     const _kinds = new Set(["as_pattern","class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","integer","keyword_pattern","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'case_pattern' tree node`);
+    if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
   const result = casePattern(config as CasePatternConfig);
@@ -535,11 +535,16 @@ export function assignDictionary(target: DictionaryTree) {
 export function assignDictionaryComprehension(target: DictionaryComprehensionTree) {
   const config: Record<string, unknown> = {};
   config['body'] = assignPair(target.field('body')! as PairTree);
-  config['children'] = (() => {
-    const _kinds = new Set(["for_in_clause","if_clause"]);
+  config['forInClause'] = (() => {
+    const _kinds = new Set(["for_in_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'dictionary_comprehension' tree node`);
     return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["for_in_clause","if_clause"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
   })();
   const result = dictionaryComprehension(config as DictionaryComprehensionConfig);
   return bindRange(target, result);
@@ -752,11 +757,16 @@ export function assignFutureImportStatement(target: FutureImportStatementTree) {
 export function assignGeneratorExpression(target: GeneratorExpressionTree) {
   const config: Record<string, unknown> = {};
   config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['children'] = (() => {
-    const _kinds = new Set(["for_in_clause","if_clause"]);
+  config['forInClause'] = (() => {
+    const _kinds = new Set(["for_in_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'generator_expression' tree node`);
     return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["for_in_clause","if_clause"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
   })();
   const result = generatorExpression(config as GeneratorExpressionConfig);
   return bindRange(target, result);
@@ -880,7 +890,7 @@ export function assignKeywordPattern(target: KeywordPatternTree) {
   config['children1'] = (() => {
     const _kinds = new Set(["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'keyword_pattern' tree node`);
+    if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
   const result = keywordPattern(config as KeywordPatternConfig);
@@ -921,11 +931,16 @@ export function assignList(target: ListTree) {
 export function assignListComprehension(target: ListComprehensionTree) {
   const config: Record<string, unknown> = {};
   config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['children'] = (() => {
-    const _kinds = new Set(["for_in_clause","if_clause"]);
+  config['forInClause'] = (() => {
+    const _kinds = new Set(["for_in_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'list_comprehension' tree node`);
     return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["for_in_clause","if_clause"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
   })();
   const result = listComprehension(config as ListComprehensionConfig);
   return bindRange(target, result);
@@ -1175,11 +1190,16 @@ export function assignSet(target: SetTree) {
 export function assignSetComprehension(target: SetComprehensionTree) {
   const config: Record<string, unknown> = {};
   config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['children'] = (() => {
-    const _kinds = new Set(["for_in_clause","if_clause"]);
+  config['forInClause'] = (() => {
+    const _kinds = new Set(["for_in_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'set_comprehension' tree node`);
     return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["for_in_clause","if_clause"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
   })();
   const result = setComprehension(config as SetComprehensionConfig);
   return bindRange(target, result);

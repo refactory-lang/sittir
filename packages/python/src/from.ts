@@ -818,8 +818,12 @@ export function dictionaryComprehensionFrom(input: any): any {
   if (obj['body'] !== undefined) {
     resolved['body'] = (isNodeData(obj['body']) ? obj['body'] : Array.isArray(obj['body']) ? pairFrom(obj['body'] as any) : typeof obj['body'] === 'object' ? pairFrom(obj['body']) : obj['body']);
   }
-  if (obj['children'] !== undefined) {
-    resolved['children'] = _r4vgrkg(obj['children']);
+  if (obj['forInClause'] !== undefined) {
+    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause'] as any) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  }
+  if (obj['children1'] !== undefined) {
+    const arr = Array.isArray(obj['children1']) ? obj['children1'] : [obj['children1']];
+    resolved['children1'] = arr.map((v: any) => _r4vgrkg(v));
   }
   return dictionaryComprehension(resolved);
 }
@@ -1128,8 +1132,12 @@ export function generatorExpressionFrom(input: any): any {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['children'] !== undefined) {
-    resolved['children'] = _r4vgrkg(obj['children']);
+  if (obj['forInClause'] !== undefined) {
+    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause'] as any) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  }
+  if (obj['children1'] !== undefined) {
+    const arr = Array.isArray(obj['children1']) ? obj['children1'] : [obj['children1']];
+    resolved['children1'] = arr.map((v: any) => _r4vgrkg(v));
   }
   return generatorExpression(resolved);
 }
@@ -1359,8 +1367,12 @@ export function listComprehensionFrom(input: any): any {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['children'] !== undefined) {
-    resolved['children'] = _r4vgrkg(obj['children']);
+  if (obj['forInClause'] !== undefined) {
+    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause'] as any) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  }
+  if (obj['children1'] !== undefined) {
+    const arr = Array.isArray(obj['children1']) ? obj['children1'] : [obj['children1']];
+    resolved['children1'] = arr.map((v: any) => _r4vgrkg(v));
   }
   return listComprehension(resolved);
 }
@@ -1683,8 +1695,12 @@ export function setComprehensionFrom(input: any): any {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['children'] !== undefined) {
-    resolved['children'] = _r4vgrkg(obj['children']);
+  if (obj['forInClause'] !== undefined) {
+    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause'] as any) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  }
+  if (obj['children1'] !== undefined) {
+    const arr = Array.isArray(obj['children1']) ? obj['children1'] : [obj['children1']];
+    resolved['children1'] = arr.map((v: any) => _r4vgrkg(v));
   }
   return setComprehension(resolved);
 }
