@@ -80,7 +80,7 @@ export const rules: RulesRegistry = {
   'mut_pattern': '(mut_pattern (_)*)',
   'negative_literal': '(negative_literal "-" (_)*)',
   'or_pattern': '(or_pattern (_)* "|" (_)*)',
-  'ordered_field_declaration_list': '(ordered_field_declaration_list "(" (_)* type: (_)? (_)* ")")',
+  'ordered_field_declaration_list': '(ordered_field_declaration_list "(" (_)* type: (_)* (_)* ")")',
   'parameter': '(parameter (_)* pattern: (_) ":" type: (_))',
   'parameters': '(parameters "(" (_)* ")")',
   'parenthesized_expression': '(parenthesized_expression "(" (_)* ")")',

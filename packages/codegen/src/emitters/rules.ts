@@ -42,7 +42,7 @@ export function emitRule(config: EmitRulesConfig): EmittedRule {
 	// Build field quantifier map from the enriched model (source of truth)
 	const fieldQuantifiers = new Map<string, string>();
 	for (const f of nodeFields) {
-		fieldQuantifiers.set(f.name, !f.required ? '?' : f.multiple ? '*' : '');
+		fieldQuantifiers.set(f.name, f.multiple ? '*' : !f.required ? '?' : '');
 	}
 
 	const rawRule = node.rule?.rule;
