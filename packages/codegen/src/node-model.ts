@@ -665,13 +665,23 @@ function ruleToMembers(rule: GrammarRule, ctx: MemberContext, optional: boolean)
 			if (rule.named) {
 				return [{ member: 'child', child: { required: !optional, multiple: false, kinds: [rule.value] } }];
 			}
+			// Unnamed alias with a string value — emit as token (e.g. ALIAS(PATTERN(...), "\""))
+			if (rule.value) {
+				return [{ member: 'token', value: rule.value, optional }];
+			}
 			return ruleToMembers(rule.content, ctx, optional);
 
-		case 'TOKEN': case 'IMMEDIATE_TOKEN':
-			if (rule.content.type === 'STRING') {
-				return [{ member: 'token', value: rule.content.value, optional }];
+		case 'TOKEN': case 'IMMEDIATE_TOKEN': {
+			// Unwrap precedence wrappers to find the inner string
+			let inner = rule.content;
+			while (inner.type === 'PREC' || inner.type === 'PREC_LEFT' || inner.type === 'PREC_RIGHT' || inner.type === 'PREC_DYNAMIC') {
+				inner = inner.content;
+			}
+			if (inner.type === 'STRING') {
+				return [{ member: 'token', value: inner.value, optional }];
 			}
 			return [];
+		}
 
 		case 'BLANK': case 'PATTERN':
 			return [];

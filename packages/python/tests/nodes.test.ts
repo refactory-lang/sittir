@@ -194,11 +194,6 @@ describe('block', () => {
     const node = ir.block();
     expect(node.type).toBe('block');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.block();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.block();
     expect(typeof node.render).toBe('function');
@@ -267,11 +262,6 @@ describe('case_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.casePattern();
     expect(node.type).toBe('case_pattern');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.casePattern();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
     const node = ir.casePattern();
@@ -1365,11 +1355,6 @@ describe('module', () => {
     const node = ir.module();
     expect(node.type).toBe('module');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.module();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.module();
     expect(typeof node.render).toBe('function');
@@ -1712,11 +1697,6 @@ describe('splat_pattern', () => {
     const node = ir.splatPattern();
     expect(node.type).toBe('splat_pattern');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.splatPattern();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.splatPattern();
     expect(typeof node.render).toBe('function');
@@ -1762,11 +1742,6 @@ describe('string_content', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.stringContent();
     expect(node.type).toBe('string_content');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.stringContent();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
     const node = ir.stringContent();

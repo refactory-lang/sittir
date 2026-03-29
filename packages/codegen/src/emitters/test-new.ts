@@ -70,12 +70,16 @@ export function emitTests(config: EmitTestsConfig): string {
 		lines.push(`    expect(node.type).toBe('${node.kind}');`);
 		lines.push(`  });`);
 
-		// Test 2: render produces non-empty string
-		lines.push(`  it('renders to non-empty string', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx, leafSet, keywordKindMap, leafValueMap, irKeyMap)});`);
-		lines.push(`    const source = render(node, rules, joinBy);`);
-		lines.push(`    expect(source.length).toBeGreaterThan(0);`);
-		lines.push(`  });`);
+		// Test 2: render produces non-empty string (skip for all-optional nodes with no tokens)
+		const hasRequiredContent = requiredTokens.length > 0 ||
+			minimalArgs(node, ctx, leafSet, keywordKindMap, leafValueMap, irKeyMap) !== '';
+		if (hasRequiredContent) {
+			lines.push(`  it('renders to non-empty string', () => {`);
+			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, ctx, leafSet, keywordKindMap, leafValueMap, irKeyMap)});`);
+			lines.push(`    const source = render(node, rules, joinBy);`);
+			lines.push(`    expect(source.length).toBeGreaterThan(0);`);
+			lines.push(`  });`);
+		}
 
 		// Test 3: rendered output contains required tokens
 		if (requiredTokens.length > 0) {

@@ -107,15 +107,14 @@ describe('render', () => {
 		const node: NodeData = {
 			type: 'function_item',
 			fields: {
-				name: { type: 'identifier', fields: {}, text: 'main' },
-				return_type: { type: 'primitive_type', fields: {}, text: 'i32' },
+				name: { type: 'identifier', text: 'main' },
+				return_type: { type: 'primitive_type', text: 'i32' },
 				body: {
 					type: 'block',
-					fields: {
-						children: [
-							{ type: 'integer_literal', fields: {}, text: '42' },
-						],
-					},
+					fields: {},
+					children: [
+						{ type: 'integer_literal', text: '42' },
+					],
 				},
 			},
 		};
@@ -137,12 +136,11 @@ describe('render', () => {
 	it('renders block with children', () => {
 		const node: NodeData = {
 			type: 'block',
-			fields: {
-				children: [
-					{ type: 'identifier', fields: {}, text: 'x' },
-					{ type: 'identifier', fields: {}, text: 'y' },
-				],
-			},
+			fields: {},
+			children: [
+				{ type: 'identifier', text: 'x' },
+				{ type: 'identifier', text: 'y' },
+			],
 		};
 		expect(render(node, registry)).toBe('{ x y }');
 	});

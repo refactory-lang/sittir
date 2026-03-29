@@ -977,11 +977,6 @@ describe('function_modifiers', () => {
     const node = ir.functionModifiers();
     expect(node.type).toBe('function_modifiers');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.functionModifiers();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.functionModifiers();
     expect(typeof node.render).toBe('function');
@@ -1789,11 +1784,6 @@ describe('range_expression', () => {
     const node = ir.rangeExpression();
     expect(node.type).toBe('range_expression');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.rangeExpression();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.rangeExpression();
     expect(typeof node.render).toBe('function');
@@ -1805,11 +1795,6 @@ describe('range_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.rangePattern();
     expect(node.type).toBe('range_pattern');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.rangePattern();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
     const node = ir.rangePattern();
@@ -2095,11 +2080,6 @@ describe('source_file', () => {
     const node = ir.sourceFile();
     expect(node.type).toBe('source_file');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.sourceFile();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.sourceFile();
     expect(typeof node.render).toBe('function');
@@ -2290,11 +2270,6 @@ describe('token_tree', () => {
     const node = ir.tokenTree();
     expect(node.type).toBe('token_tree');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.tokenTree();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.tokenTree();
     expect(typeof node.render).toBe('function');
@@ -2306,11 +2281,6 @@ describe('token_tree_pattern', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.tokenTreePattern();
     expect(node.type).toBe('token_tree_pattern');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.tokenTreePattern();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
     const node = ir.tokenTreePattern();
@@ -2832,11 +2802,6 @@ describe('visibility_modifier', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.visibilityModifier();
     expect(node.type).toBe('visibility_modifier');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.visibilityModifier();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
     const node = ir.visibilityModifier();

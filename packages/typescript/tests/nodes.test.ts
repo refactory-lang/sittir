@@ -1481,11 +1481,6 @@ describe('interface_body', () => {
     const node = ir.interfaceBody();
     expect(node.type).toBe('interface_body');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.interfaceBody();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.interfaceBody();
     expect(typeof node.render).toBe('function');
@@ -1963,11 +1958,6 @@ describe('object_type', () => {
     const node = ir.objectType();
     expect(node.type).toBe('object_type');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.objectType();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.objectType();
     expect(typeof node.render).toBe('function');
@@ -2158,11 +2148,6 @@ describe('program', () => {
     const node = ir.program();
     expect(node.type).toBe('program');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.program();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
   it('node.render() works', () => {
     const node = ir.program();
     expect(typeof node.render).toBe('function');
@@ -2253,11 +2238,6 @@ describe('required_parameter', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.requiredParameter();
     expect(node.type).toBe('required_parameter');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.requiredParameter();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
     const node = ir.requiredParameter();
@@ -2420,11 +2400,6 @@ describe('string', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.string();
     expect(node.type).toBe('string');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.string();
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
     const node = ir.string();

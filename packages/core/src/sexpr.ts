@@ -47,10 +47,16 @@ function parseElements(input: string): TemplateElement[] {
 		const ch = input[i]!;
 
 		if (ch === '"') {
-			const end = input.indexOf('"', i + 1);
-			if (end === -1) throw new Error(`Unterminated string at position ${i}`);
-			elements.push({ type: 'token', value: input.slice(i + 1, end) });
-			i = end + 1;
+			// Scan for closing quote, handling \" escapes
+			let j = i + 1;
+			while (j < input.length && input[j] !== '"') {
+				if (input[j] === '\\' && j + 1 < input.length) j++; // skip escaped char
+				j++;
+			}
+			if (j >= input.length) throw new Error(`Unterminated string at position ${i}`);
+			const raw = input.slice(i + 1, j);
+			elements.push({ type: 'token', value: raw.replace(/\\"/g, '"') });
+			i = j + 1;
 		} else if (ch === '(') {
 			const close = input.indexOf(')', i);
 			if (close === -1) throw new Error(`Unterminated ( at position ${i}`);
