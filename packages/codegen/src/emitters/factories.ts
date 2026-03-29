@@ -94,11 +94,17 @@ export function emitFactory(config: {
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
-			// Skip getter/setter for 'children' — the children array IS the data
-			if (name === 'children') return;
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
-			if (slot.multiple) {
+			if (name === 'children') {
+				// Single children slot — use child/getChildren/setChildren to avoid name collision
+				if (slot.multiple) {
+					lines.push(`    getChildren(): any { return children; },`);
+					lines.push(`    setChildren(...v: (${slotType})[]): any { return ${internalName}({ ...config, children: v }); },`);
+				} else {
+					lines.push(`    child(v?: ${slotType}): any { return v !== undefined ? ${internalName}({ ...config, children: v }) : config?.children; },`);
+				}
+			} else if (slot.multiple) {
 				lines.push(`    ${name}(...v: (${slotType})[]): any { return v.length ? ${internalName}({ ...config, ${name}: v }) : config?.${name}; },`);
 			} else {
 				lines.push(`    ${name}(v?: ${slotType}): any { return v !== undefined ? ${internalName}({ ...config, ${name}: v }) : config?.${name}; },`);

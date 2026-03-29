@@ -64,13 +64,13 @@ describe('emitFactory', () => {
 		expect(source).toContain('whereClause(v?: WhereClause)');
 	});
 
-	it('stores children in top-level children array for single-slot nodes', () => {
+	it('generates child/getChildren/setChildren for single children slot', () => {
 		const node = getNode('expression_statement');
 		const source = emitFactory({ node, leafKinds: [], ctx });
 
-		// Single children slot — no getter method, children array is the API
+		// Single children slot — uses child() or getChildren/setChildren to avoid name collision
 		expect(source).toContain('children,');
-		expect(source).not.toMatch(/children\([^)]*\).*return/);
+		expect(source).toMatch(/child\(v\?:|getChildren\(\)|setChildren\(/);
 	});
 });
 
