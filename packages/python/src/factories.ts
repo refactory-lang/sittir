@@ -57,8 +57,8 @@ export function aliased_import_(
   return {
     type: 'aliased_import' as const,
     fields,
-    alias(v?: Identifier): any { return v !== undefined ? aliased_import_({ ...config, alias: v }) : fields.alias; },
-    name(v?: DottedName): any { return v !== undefined ? aliased_import_({ ...config, name: v }) : fields.name; },
+    alias(alias?: Identifier): any { return alias !== undefined ? aliased_import_({ ...config, alias: alias }) : fields.alias; },
+    name(name?: DottedName): any { return name !== undefined ? aliased_import_({ ...config, name: name }) : fields.name; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -79,8 +79,8 @@ export function argument_list_(
     type: 'argument_list' as const,
     fields,
     children,
-    children0(v?: DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression): any { return v !== undefined ? argument_list_({ ...config, children0: v }) : config?.children0; },
-    children1(...v: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]): any { return v.length ? argument_list_({ ...config, children1: v }) : config?.children1; },
+    children0(children0?: DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression): any { return children0 !== undefined ? argument_list_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]): any { return children1.length ? argument_list_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -102,8 +102,8 @@ export function as_pattern_(
     type: 'as_pattern' as const,
     fields,
     children,
-    alias(v?: string): any { return v !== undefined ? as_pattern_({ ...config, alias: v }) : fields.alias; },
-    child(v?: CasePattern | Expression | Identifier): any { return v !== undefined ? as_pattern_({ ...config, children: v }) : config?.children; },
+    alias(alias?: string): any { return alias !== undefined ? as_pattern_({ ...config, alias: alias }) : fields.alias; },
+    child(child?: CasePattern | Expression | Identifier): any { return child !== undefined ? as_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -124,8 +124,8 @@ export function assert_statement_(
     type: 'assert_statement' as const,
     fields,
     children,
-    expression1(v?: Expression): any { return v !== undefined ? assert_statement_({ ...config, expression1: v }) : config?.expression1; },
-    expression2(...v: (Expression)[]): any { return v.length ? assert_statement_({ ...config, expression2: v }) : config?.expression2; },
+    expression1(expression1?: Expression): any { return expression1 !== undefined ? assert_statement_({ ...config, expression1 }) : config?.expression1; },
+    expression2(...expression2: (Expression)[]): any { return expression2.length ? assert_statement_({ ...config, expression2 }) : config?.expression2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -147,9 +147,9 @@ export function assignment_(
   return {
     type: 'assignment' as const,
     fields,
-    left(v?: Pattern | PatternList): any { return v !== undefined ? assignment_({ ...config, left: v }) : fields.left; },
-    right(v?: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | Yield): any { return v !== undefined ? assignment_({ ...config, right: v }) : fields.right; },
-    typeField(v?: Type): any { return v !== undefined ? assignment_({ ...config, type: v }) : fields.type; },
+    left(left?: Pattern | PatternList): any { return left !== undefined ? assignment_({ ...config, left: left }) : fields.left; },
+    right(right?: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | Yield): any { return right !== undefined ? assignment_({ ...config, right: right }) : fields.right; },
+    typeField(type_?: Type): any { return type_ !== undefined ? assignment_({ ...config, type: type_ }) : fields.type; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -170,8 +170,8 @@ export function attribute_(
   return {
     type: 'attribute' as const,
     fields,
-    attribute(v?: Identifier): any { return v !== undefined ? attribute_({ ...config, attribute: v }) : fields.attribute; },
-    object(v?: PrimaryExpression): any { return v !== undefined ? attribute_({ ...config, object: v }) : fields.object; },
+    attribute(attribute?: Identifier): any { return attribute !== undefined ? attribute_({ ...config, attribute: attribute }) : fields.attribute; },
+    object(object?: PrimaryExpression): any { return object !== undefined ? attribute_({ ...config, object: object }) : fields.object; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -193,9 +193,9 @@ export function augmented_assignment_(
   return {
     type: 'augmented_assignment' as const,
     fields,
-    left(v?: Pattern | PatternList): any { return v !== undefined ? augmented_assignment_({ ...config, left: v }) : fields.left; },
-    operator(v?: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='): any { return v !== undefined ? augmented_assignment_({ ...config, operator: v }) : fields.operator; },
-    right(v?: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | Yield): any { return v !== undefined ? augmented_assignment_({ ...config, right: v }) : fields.right; },
+    left(left?: Pattern | PatternList): any { return left !== undefined ? augmented_assignment_({ ...config, left: left }) : fields.left; },
+    operator(operator?: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='): any { return operator !== undefined ? augmented_assignment_({ ...config, operator: operator }) : fields.operator; },
+    right(right?: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | Yield): any { return right !== undefined ? augmented_assignment_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -216,7 +216,7 @@ export function await_(
     type: 'await' as const,
     fields,
     children,
-    child(v?: PrimaryExpression): any { return v !== undefined ? await_({ ...config, children: v }) : config?.children; },
+    child(child?: PrimaryExpression): any { return child !== undefined ? await_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -238,9 +238,9 @@ export function binary_operator_(
   return {
     type: 'binary_operator' as const,
     fields,
-    left(v?: PrimaryExpression): any { return v !== undefined ? binary_operator_({ ...config, left: v }) : fields.left; },
-    operator(v?: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|'): any { return v !== undefined ? binary_operator_({ ...config, operator: v }) : fields.operator; },
-    right(v?: PrimaryExpression): any { return v !== undefined ? binary_operator_({ ...config, right: v }) : fields.right; },
+    left(left?: PrimaryExpression): any { return left !== undefined ? binary_operator_({ ...config, left: left }) : fields.left; },
+    operator(operator?: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|'): any { return operator !== undefined ? binary_operator_({ ...config, operator: operator }) : fields.operator; },
+    right(right?: PrimaryExpression): any { return right !== undefined ? binary_operator_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -262,9 +262,9 @@ export function block_(
     type: 'block' as const,
     fields,
     children,
-    alternative(...v: (CaseClause)[]): any { return v.length ? block_({ ...config, alternative: v }) : fields.alternative; },
+    alternative(...alternative: (CaseClause)[]): any { return alternative.length ? block_({ ...config, alternative: alternative }) : fields.alternative; },
     getChildren(): any { return children; },
-    setChildren(...v: (CompoundStatement | SimpleStatement)[]): any { return block_({ ...config, children: v }); },
+    setChildren(...children: (CompoundStatement | SimpleStatement)[]): any { return block_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -286,9 +286,9 @@ export function boolean_operator_(
   return {
     type: 'boolean_operator' as const,
     fields,
-    left(v?: Expression): any { return v !== undefined ? boolean_operator_({ ...config, left: v }) : fields.left; },
-    operator(v?: 'and' | 'or'): any { return v !== undefined ? boolean_operator_({ ...config, operator: v }) : fields.operator; },
-    right(v?: Expression): any { return v !== undefined ? boolean_operator_({ ...config, right: v }) : fields.right; },
+    left(left?: Expression): any { return left !== undefined ? boolean_operator_({ ...config, left: left }) : fields.left; },
+    operator(operator?: 'and' | 'or'): any { return operator !== undefined ? boolean_operator_({ ...config, operator: operator }) : fields.operator; },
+    right(right?: Expression): any { return right !== undefined ? boolean_operator_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -309,8 +309,8 @@ export function call_(
   return {
     type: 'call' as const,
     fields,
-    arguments(v?: ArgumentList | GeneratorExpression): any { return v !== undefined ? call_({ ...config, arguments: v }) : fields.arguments; },
-    function(v?: PrimaryExpression): any { return v !== undefined ? call_({ ...config, function: v }) : fields.function; },
+    arguments(arguments_?: ArgumentList | GeneratorExpression): any { return arguments_ !== undefined ? call_({ ...config, arguments: arguments_ }) : fields.arguments; },
+    function(function_?: PrimaryExpression): any { return function_ !== undefined ? call_({ ...config, function: function_ }) : fields.function; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -333,10 +333,10 @@ export function case_clause_(
     type: 'case_clause' as const,
     fields,
     children,
-    consequence(v?: Block): any { return v !== undefined ? case_clause_({ ...config, consequence: v }) : fields.consequence; },
-    guard(v?: IfClause): any { return v !== undefined ? case_clause_({ ...config, guard: v }) : fields.guard; },
-    casePattern1(v?: CasePattern): any { return v !== undefined ? case_clause_({ ...config, casePattern1: v }) : config?.casePattern1; },
-    casePattern2(...v: (CasePattern)[]): any { return v.length ? case_clause_({ ...config, casePattern2: v }) : config?.casePattern2; },
+    consequence(consequence?: Block): any { return consequence !== undefined ? case_clause_({ ...config, consequence: consequence }) : fields.consequence; },
+    guard(guard?: IfClause): any { return guard !== undefined ? case_clause_({ ...config, guard: guard }) : fields.guard; },
+    casePattern1(casePattern1?: CasePattern): any { return casePattern1 !== undefined ? case_clause_({ ...config, casePattern1 }) : config?.casePattern1; },
+    casePattern2(...casePattern2: (CasePattern)[]): any { return casePattern2.length ? case_clause_({ ...config, casePattern2 }) : config?.casePattern2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -357,7 +357,7 @@ export function case_pattern_(
     type: 'case_pattern' as const,
     fields,
     children,
-    child(v?: AsPattern | ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | KeywordPattern | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern): any { return v !== undefined ? case_pattern_({ ...config, children: v }) : config?.children; },
+    child(child?: AsPattern | ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | KeywordPattern | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern): any { return child !== undefined ? case_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -378,7 +378,7 @@ export function chevron_(
     type: 'chevron' as const,
     fields,
     children,
-    child(v?: Expression): any { return v !== undefined ? chevron_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression): any { return child !== undefined ? chevron_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -401,10 +401,10 @@ export function class_definition_(
   return {
     type: 'class_definition' as const,
     fields,
-    body(v?: Block): any { return v !== undefined ? class_definition_({ ...config, body: v }) : fields.body; },
-    name(v?: Identifier): any { return v !== undefined ? class_definition_({ ...config, name: v }) : fields.name; },
-    superclasses(v?: ArgumentList): any { return v !== undefined ? class_definition_({ ...config, superclasses: v }) : fields.superclasses; },
-    typeParameters(v?: TypeParameter): any { return v !== undefined ? class_definition_({ ...config, typeParameters: v }) : fields.type_parameters; },
+    body(body?: Block): any { return body !== undefined ? class_definition_({ ...config, body: body }) : fields.body; },
+    name(name?: Identifier): any { return name !== undefined ? class_definition_({ ...config, name: name }) : fields.name; },
+    superclasses(superclasses?: ArgumentList): any { return superclasses !== undefined ? class_definition_({ ...config, superclasses: superclasses }) : fields.superclasses; },
+    typeParameters(typeParameters?: TypeParameter): any { return typeParameters !== undefined ? class_definition_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -425,9 +425,9 @@ export function class_pattern_(
     type: 'class_pattern' as const,
     fields,
     children,
-    dottedName(v?: DottedName): any { return v !== undefined ? class_pattern_({ ...config, dottedName: v }) : config?.dottedName; },
-    casePattern1(v?: CasePattern): any { return v !== undefined ? class_pattern_({ ...config, casePattern1: v }) : config?.casePattern1; },
-    casePattern2(...v: (CasePattern)[]): any { return v.length ? class_pattern_({ ...config, casePattern2: v }) : config?.casePattern2; },
+    dottedName(dottedName?: DottedName): any { return dottedName !== undefined ? class_pattern_({ ...config, dottedName }) : config?.dottedName; },
+    casePattern1(casePattern1?: CasePattern): any { return casePattern1 !== undefined ? class_pattern_({ ...config, casePattern1 }) : config?.casePattern1; },
+    casePattern2(...casePattern2: (CasePattern)[]): any { return casePattern2.length ? class_pattern_({ ...config, casePattern2 }) : config?.casePattern2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -449,9 +449,9 @@ export function comparison_operator_(
     type: 'comparison_operator' as const,
     fields,
     children,
-    operators(...v: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[]): any { return v.length ? comparison_operator_({ ...config, operators: v }) : fields.operators; },
-    primaryExpression1(v?: PrimaryExpression): any { return v !== undefined ? comparison_operator_({ ...config, primaryExpression1: v }) : config?.primaryExpression1; },
-    primaryExpression2(...v: (PrimaryExpression)[]): any { return v.length ? comparison_operator_({ ...config, primaryExpression2: v }) : config?.primaryExpression2; },
+    operators(...operators: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[]): any { return operators.length ? comparison_operator_({ ...config, operators: operators }) : fields.operators; },
+    primaryExpression1(primaryExpression1?: PrimaryExpression): any { return primaryExpression1 !== undefined ? comparison_operator_({ ...config, primaryExpression1 }) : config?.primaryExpression1; },
+    primaryExpression2(...primaryExpression2: (PrimaryExpression)[]): any { return primaryExpression2.length ? comparison_operator_({ ...config, primaryExpression2 }) : config?.primaryExpression2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -472,8 +472,8 @@ export function complex_pattern_(
     type: 'complex_pattern' as const,
     fields,
     children,
-    children0(v?: Float | Integer): any { return v !== undefined ? complex_pattern_({ ...config, children0: v }) : config?.children0; },
-    children1(v?: Float | Integer): any { return v !== undefined ? complex_pattern_({ ...config, children1: v }) : config?.children1; },
+    children0(children0?: Float | Integer): any { return children0 !== undefined ? complex_pattern_({ ...config, children0 }) : config?.children0; },
+    children1(children1?: Float | Integer): any { return children1 !== undefined ? complex_pattern_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -494,8 +494,8 @@ export function concatenated_string_(
     type: 'concatenated_string' as const,
     fields,
     children,
-    string1(v?: String): any { return v !== undefined ? concatenated_string_({ ...config, string1: v }) : config?.string1; },
-    string2(...v: (String)[]): any { return v.length ? concatenated_string_({ ...config, string2: v }) : config?.string2; },
+    string1(string1?: String): any { return string1 !== undefined ? concatenated_string_({ ...config, string1 }) : config?.string1; },
+    string2(...string2: (String)[]): any { return string2.length ? concatenated_string_({ ...config, string2 }) : config?.string2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -516,9 +516,9 @@ export function conditional_expression_(
     type: 'conditional_expression' as const,
     fields,
     children,
-    expression1(v?: Expression): any { return v !== undefined ? conditional_expression_({ ...config, expression1: v }) : config?.expression1; },
-    expression2(v?: Expression): any { return v !== undefined ? conditional_expression_({ ...config, expression2: v }) : config?.expression2; },
-    expression3(v?: Expression): any { return v !== undefined ? conditional_expression_({ ...config, expression3: v }) : config?.expression3; },
+    expression1(expression1?: Expression): any { return expression1 !== undefined ? conditional_expression_({ ...config, expression1 }) : config?.expression1; },
+    expression2(expression2?: Expression): any { return expression2 !== undefined ? conditional_expression_({ ...config, expression2 }) : config?.expression2; },
+    expression3(expression3?: Expression): any { return expression3 !== undefined ? conditional_expression_({ ...config, expression3 }) : config?.expression3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -539,8 +539,8 @@ export function constrained_type_(
     type: 'constrained_type' as const,
     fields,
     children,
-    children0(v?: Type): any { return v !== undefined ? constrained_type_({ ...config, children0: v }) : config?.children0; },
-    children1(v?: Type): any { return v !== undefined ? constrained_type_({ ...config, children1: v }) : config?.children1; },
+    children0(children0?: Type): any { return children0 !== undefined ? constrained_type_({ ...config, children0 }) : config?.children0; },
+    children1(children1?: Type): any { return children1 !== undefined ? constrained_type_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -562,9 +562,9 @@ export function decorated_definition_(
     type: 'decorated_definition' as const,
     fields,
     children,
-    definition(v?: ClassDefinition | FunctionDefinition): any { return v !== undefined ? decorated_definition_({ ...config, definition: v }) : fields.definition; },
+    definition(definition?: ClassDefinition | FunctionDefinition): any { return definition !== undefined ? decorated_definition_({ ...config, definition: definition }) : fields.definition; },
     getChildren(): any { return children; },
-    setChildren(...v: (Decorator)[]): any { return decorated_definition_({ ...config, children: v }); },
+    setChildren(...children: (Decorator)[]): any { return decorated_definition_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -585,7 +585,7 @@ export function decorator_(
     type: 'decorator' as const,
     fields,
     children,
-    child(v?: Expression): any { return v !== undefined ? decorator_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression): any { return child !== undefined ? decorator_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -606,8 +606,8 @@ export function default_parameter_(
   return {
     type: 'default_parameter' as const,
     fields,
-    name(v?: Identifier | TuplePattern): any { return v !== undefined ? default_parameter_({ ...config, name: v }) : fields.name; },
-    value(v?: Expression): any { return v !== undefined ? default_parameter_({ ...config, value: v }) : fields.value; },
+    name(name?: Identifier | TuplePattern): any { return name !== undefined ? default_parameter_({ ...config, name: name }) : fields.name; },
+    value(value?: Expression): any { return value !== undefined ? default_parameter_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -628,7 +628,7 @@ export function delete_statement_(
     type: 'delete_statement' as const,
     fields,
     children,
-    child(v?: Expression | ExpressionList): any { return v !== undefined ? delete_statement_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression | ExpressionList): any { return child !== undefined ? delete_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -649,8 +649,8 @@ export function dict_pattern_(
     type: 'dict_pattern' as const,
     fields,
     children,
-    splatPattern1(v?: SplatPattern): any { return v !== undefined ? dict_pattern_({ ...config, splatPattern1: v }) : config?.splatPattern1; },
-    splatPattern2(...v: (SplatPattern)[]): any { return v.length ? dict_pattern_({ ...config, splatPattern2: v }) : config?.splatPattern2; },
+    splatPattern1(splatPattern1?: SplatPattern): any { return splatPattern1 !== undefined ? dict_pattern_({ ...config, splatPattern1 }) : config?.splatPattern1; },
+    splatPattern2(...splatPattern2: (SplatPattern)[]): any { return splatPattern2.length ? dict_pattern_({ ...config, splatPattern2 }) : config?.splatPattern2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -671,8 +671,8 @@ export function dictionary_(
     type: 'dictionary' as const,
     fields,
     children,
-    children0(v?: DictionarySplat | Pair): any { return v !== undefined ? dictionary_({ ...config, children0: v }) : config?.children0; },
-    children1(...v: (DictionarySplat | Pair)[]): any { return v.length ? dictionary_({ ...config, children1: v }) : config?.children1; },
+    children0(children0?: DictionarySplat | Pair): any { return children0 !== undefined ? dictionary_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (DictionarySplat | Pair)[]): any { return children1.length ? dictionary_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -694,9 +694,9 @@ export function dictionary_comprehension_(
     type: 'dictionary_comprehension' as const,
     fields,
     children,
-    body(v?: Pair): any { return v !== undefined ? dictionary_comprehension_({ ...config, body: v }) : fields.body; },
-    forInClause(v?: ForInClause): any { return v !== undefined ? dictionary_comprehension_({ ...config, forInClause: v }) : config?.forInClause; },
-    children1(...v: (ForInClause | IfClause)[]): any { return v.length ? dictionary_comprehension_({ ...config, children1: v }) : config?.children1; },
+    body(body?: Pair): any { return body !== undefined ? dictionary_comprehension_({ ...config, body: body }) : fields.body; },
+    forInClause(forInClause?: ForInClause): any { return forInClause !== undefined ? dictionary_comprehension_({ ...config, forInClause }) : config?.forInClause; },
+    children1(...children1: (ForInClause | IfClause)[]): any { return children1.length ? dictionary_comprehension_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -717,7 +717,7 @@ export function dictionary_splat_(
     type: 'dictionary_splat' as const,
     fields,
     children,
-    child(v?: Expression): any { return v !== undefined ? dictionary_splat_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression): any { return child !== undefined ? dictionary_splat_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -738,7 +738,7 @@ export function dictionary_splat_pattern_(
     type: 'dictionary_splat_pattern' as const,
     fields,
     children,
-    child(v?: Attribute | Identifier | Subscript): any { return v !== undefined ? dictionary_splat_pattern_({ ...config, children: v }) : config?.children; },
+    child(child?: Attribute | Identifier | Subscript): any { return child !== undefined ? dictionary_splat_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -759,8 +759,8 @@ export function dotted_name_(
     type: 'dotted_name' as const,
     fields,
     children,
-    identifier1(v?: Identifier): any { return v !== undefined ? dotted_name_({ ...config, identifier1: v }) : config?.identifier1; },
-    identifier2(...v: (Identifier)[]): any { return v.length ? dotted_name_({ ...config, identifier2: v }) : config?.identifier2; },
+    identifier1(identifier1?: Identifier): any { return identifier1 !== undefined ? dotted_name_({ ...config, identifier1 }) : config?.identifier1; },
+    identifier2(...identifier2: (Identifier)[]): any { return identifier2.length ? dotted_name_({ ...config, identifier2 }) : config?.identifier2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -781,8 +781,8 @@ export function elif_clause_(
   return {
     type: 'elif_clause' as const,
     fields,
-    condition(v?: Expression): any { return v !== undefined ? elif_clause_({ ...config, condition: v }) : fields.condition; },
-    consequence(v?: Block): any { return v !== undefined ? elif_clause_({ ...config, consequence: v }) : fields.consequence; },
+    condition(condition?: Expression): any { return condition !== undefined ? elif_clause_({ ...config, condition: condition }) : fields.condition; },
+    consequence(consequence?: Block): any { return consequence !== undefined ? elif_clause_({ ...config, consequence: consequence }) : fields.consequence; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -802,7 +802,7 @@ export function else_clause_(
   return {
     type: 'else_clause' as const,
     fields,
-    body(v?: Block): any { return v !== undefined ? else_clause_({ ...config, body: v }) : fields.body; },
+    body(body?: Block): any { return body !== undefined ? else_clause_({ ...config, body: body }) : fields.body; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -825,9 +825,9 @@ export function except_clause_(
     type: 'except_clause' as const,
     fields,
     children,
-    alias(v?: Expression): any { return v !== undefined ? except_clause_({ ...config, alias: v }) : fields.alias; },
-    value(...v: (Expression)[]): any { return v.length ? except_clause_({ ...config, value: v }) : fields.value; },
-    child(v?: Block): any { return v !== undefined ? except_clause_({ ...config, children: v }) : config?.children; },
+    alias(alias?: Expression): any { return alias !== undefined ? except_clause_({ ...config, alias: alias }) : fields.alias; },
+    value(...value: (Expression)[]): any { return value.length ? except_clause_({ ...config, value: value }) : fields.value; },
+    child(child?: Block): any { return child !== undefined ? except_clause_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -849,9 +849,9 @@ export function exec_statement_(
     type: 'exec_statement' as const,
     fields,
     children,
-    code(v?: Identifier | String): any { return v !== undefined ? exec_statement_({ ...config, code: v }) : fields.code; },
-    expression1(v?: Expression): any { return v !== undefined ? exec_statement_({ ...config, expression1: v }) : config?.expression1; },
-    expression2(...v: (Expression)[]): any { return v.length ? exec_statement_({ ...config, expression2: v }) : config?.expression2; },
+    code(code?: Identifier | String): any { return code !== undefined ? exec_statement_({ ...config, code: code }) : fields.code; },
+    expression1(expression1?: Expression): any { return expression1 !== undefined ? exec_statement_({ ...config, expression1 }) : config?.expression1; },
+    expression2(...expression2: (Expression)[]): any { return expression2.length ? exec_statement_({ ...config, expression2 }) : config?.expression2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -872,8 +872,8 @@ export function expression_list_(
     type: 'expression_list' as const,
     fields,
     children,
-    expression1(v?: Expression): any { return v !== undefined ? expression_list_({ ...config, expression1: v }) : config?.expression1; },
-    expression2(...v: (Expression)[]): any { return v.length ? expression_list_({ ...config, expression2: v }) : config?.expression2; },
+    expression1(expression1?: Expression): any { return expression1 !== undefined ? expression_list_({ ...config, expression1 }) : config?.expression1; },
+    expression2(...expression2: (Expression)[]): any { return expression2.length ? expression_list_({ ...config, expression2 }) : config?.expression2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -894,8 +894,8 @@ export function expression_statement_(
     type: 'expression_statement' as const,
     fields,
     children,
-    children0(v?: Assignment | AugmentedAssignment | Expression | Yield): any { return v !== undefined ? expression_statement_({ ...config, children0: v }) : config?.children0; },
-    expression(...v: (Expression)[]): any { return v.length ? expression_statement_({ ...config, expression: v }) : config?.expression; },
+    children0(children0?: Assignment | AugmentedAssignment | Expression | Yield): any { return children0 !== undefined ? expression_statement_({ ...config, children0 }) : config?.children0; },
+    expression(...expression: (Expression)[]): any { return expression.length ? expression_statement_({ ...config, expression }) : config?.expression; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -916,7 +916,7 @@ export function finally_clause_(
     type: 'finally_clause' as const,
     fields,
     children,
-    child(v?: Block): any { return v !== undefined ? finally_clause_({ ...config, children: v }) : config?.children; },
+    child(child?: Block): any { return child !== undefined ? finally_clause_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -937,8 +937,8 @@ export function for_in_clause_(
   return {
     type: 'for_in_clause' as const,
     fields,
-    left(v?: Pattern | PatternList): any { return v !== undefined ? for_in_clause_({ ...config, left: v }) : fields.left; },
-    right(...v: (Expression)[]): any { return v.length ? for_in_clause_({ ...config, right: v }) : fields.right; },
+    left(left?: Pattern | PatternList): any { return left !== undefined ? for_in_clause_({ ...config, left: left }) : fields.left; },
+    right(...right: (Expression)[]): any { return right.length ? for_in_clause_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -961,10 +961,10 @@ export function for_statement_(
   return {
     type: 'for_statement' as const,
     fields,
-    alternative(v?: ElseClause): any { return v !== undefined ? for_statement_({ ...config, alternative: v }) : fields.alternative; },
-    body(v?: Block): any { return v !== undefined ? for_statement_({ ...config, body: v }) : fields.body; },
-    left(v?: Pattern | PatternList): any { return v !== undefined ? for_statement_({ ...config, left: v }) : fields.left; },
-    right(v?: Expression | ExpressionList): any { return v !== undefined ? for_statement_({ ...config, right: v }) : fields.right; },
+    alternative(alternative?: ElseClause): any { return alternative !== undefined ? for_statement_({ ...config, alternative: alternative }) : fields.alternative; },
+    body(body?: Block): any { return body !== undefined ? for_statement_({ ...config, body: body }) : fields.body; },
+    left(left?: Pattern | PatternList): any { return left !== undefined ? for_statement_({ ...config, left: left }) : fields.left; },
+    right(right?: Expression | ExpressionList): any { return right !== undefined ? for_statement_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -986,9 +986,9 @@ export function format_expression_(
   return {
     type: 'format_expression' as const,
     fields,
-    expression(v?: Expression | ExpressionList | PatternList | Yield): any { return v !== undefined ? format_expression_({ ...config, expression: v }) : fields.expression; },
-    formatSpecifier(v?: FormatSpecifier): any { return v !== undefined ? format_expression_({ ...config, formatSpecifier: v }) : fields.format_specifier; },
-    typeConversion(v?: TypeConversion): any { return v !== undefined ? format_expression_({ ...config, typeConversion: v }) : fields.type_conversion; },
+    expression(expression?: Expression | ExpressionList | PatternList | Yield): any { return expression !== undefined ? format_expression_({ ...config, expression: expression }) : fields.expression; },
+    formatSpecifier(formatSpecifier?: FormatSpecifier): any { return formatSpecifier !== undefined ? format_expression_({ ...config, formatSpecifier: formatSpecifier }) : fields.format_specifier; },
+    typeConversion(typeConversion?: TypeConversion): any { return typeConversion !== undefined ? format_expression_({ ...config, typeConversion: typeConversion }) : fields.type_conversion; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1010,7 +1010,7 @@ export function format_specifier_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (FormatExpression)[]): any { return format_specifier_({ ...config, children: v }); },
+    setChildren(...children: (FormatExpression)[]): any { return format_specifier_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1034,11 +1034,11 @@ export function function_definition_(
   return {
     type: 'function_definition' as const,
     fields,
-    body(v?: Block): any { return v !== undefined ? function_definition_({ ...config, body: v }) : fields.body; },
-    name(v?: Identifier): any { return v !== undefined ? function_definition_({ ...config, name: v }) : fields.name; },
-    parameters(v?: Parameters): any { return v !== undefined ? function_definition_({ ...config, parameters: v }) : fields.parameters; },
-    returnType(v?: Type): any { return v !== undefined ? function_definition_({ ...config, returnType: v }) : fields.return_type; },
-    typeParameters(v?: TypeParameter): any { return v !== undefined ? function_definition_({ ...config, typeParameters: v }) : fields.type_parameters; },
+    body(body?: Block): any { return body !== undefined ? function_definition_({ ...config, body: body }) : fields.body; },
+    name(name?: Identifier): any { return name !== undefined ? function_definition_({ ...config, name: name }) : fields.name; },
+    parameters(parameters?: Parameters): any { return parameters !== undefined ? function_definition_({ ...config, parameters: parameters }) : fields.parameters; },
+    returnType(returnType?: Type): any { return returnType !== undefined ? function_definition_({ ...config, returnType: returnType }) : fields.return_type; },
+    typeParameters(typeParameters?: TypeParameter): any { return typeParameters !== undefined ? function_definition_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1058,7 +1058,7 @@ export function future_import_statement_(
   return {
     type: 'future_import_statement' as const,
     fields,
-    name(...v: (AliasedImport | DottedName)[]): any { return v.length ? future_import_statement_({ ...config, name: v }) : fields.name; },
+    name(...name: (AliasedImport | DottedName)[]): any { return name.length ? future_import_statement_({ ...config, name: name }) : fields.name; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1080,9 +1080,9 @@ export function generator_expression_(
     type: 'generator_expression' as const,
     fields,
     children,
-    body(v?: Expression): any { return v !== undefined ? generator_expression_({ ...config, body: v }) : fields.body; },
-    forInClause(v?: ForInClause): any { return v !== undefined ? generator_expression_({ ...config, forInClause: v }) : config?.forInClause; },
-    children1(...v: (ForInClause | IfClause)[]): any { return v.length ? generator_expression_({ ...config, children1: v }) : config?.children1; },
+    body(body?: Expression): any { return body !== undefined ? generator_expression_({ ...config, body: body }) : fields.body; },
+    forInClause(forInClause?: ForInClause): any { return forInClause !== undefined ? generator_expression_({ ...config, forInClause }) : config?.forInClause; },
+    children1(...children1: (ForInClause | IfClause)[]): any { return children1.length ? generator_expression_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1103,8 +1103,8 @@ export function generic_type_(
     type: 'generic_type' as const,
     fields,
     children,
-    identifier(v?: Identifier): any { return v !== undefined ? generic_type_({ ...config, identifier: v }) : config?.identifier; },
-    typeParameter(v?: TypeParameter): any { return v !== undefined ? generic_type_({ ...config, typeParameter: v }) : config?.typeParameter; },
+    identifier(identifier?: Identifier): any { return identifier !== undefined ? generic_type_({ ...config, identifier }) : config?.identifier; },
+    typeParameter(typeParameter?: TypeParameter): any { return typeParameter !== undefined ? generic_type_({ ...config, typeParameter }) : config?.typeParameter; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1125,8 +1125,8 @@ export function global_statement_(
     type: 'global_statement' as const,
     fields,
     children,
-    identifier1(v?: Identifier): any { return v !== undefined ? global_statement_({ ...config, identifier1: v }) : config?.identifier1; },
-    identifier2(...v: (Identifier)[]): any { return v.length ? global_statement_({ ...config, identifier2: v }) : config?.identifier2; },
+    identifier1(identifier1?: Identifier): any { return identifier1 !== undefined ? global_statement_({ ...config, identifier1 }) : config?.identifier1; },
+    identifier2(...identifier2: (Identifier)[]): any { return identifier2.length ? global_statement_({ ...config, identifier2 }) : config?.identifier2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1147,7 +1147,7 @@ export function if_clause_(
     type: 'if_clause' as const,
     fields,
     children,
-    child(v?: Expression): any { return v !== undefined ? if_clause_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression): any { return child !== undefined ? if_clause_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1169,9 +1169,9 @@ export function if_statement_(
   return {
     type: 'if_statement' as const,
     fields,
-    alternative(...v: (ElifClause | ElseClause)[]): any { return v.length ? if_statement_({ ...config, alternative: v }) : fields.alternative; },
-    condition(v?: Expression): any { return v !== undefined ? if_statement_({ ...config, condition: v }) : fields.condition; },
-    consequence(v?: Block): any { return v !== undefined ? if_statement_({ ...config, consequence: v }) : fields.consequence; },
+    alternative(...alternative: (ElifClause | ElseClause)[]): any { return alternative.length ? if_statement_({ ...config, alternative: alternative }) : fields.alternative; },
+    condition(condition?: Expression): any { return condition !== undefined ? if_statement_({ ...config, condition: condition }) : fields.condition; },
+    consequence(consequence?: Block): any { return consequence !== undefined ? if_statement_({ ...config, consequence: consequence }) : fields.consequence; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1194,9 +1194,9 @@ export function import_from_statement_(
     type: 'import_from_statement' as const,
     fields,
     children,
-    moduleName(v?: DottedName | RelativeImport): any { return v !== undefined ? import_from_statement_({ ...config, moduleName: v }) : fields.module_name; },
-    name(...v: (AliasedImport | DottedName)[]): any { return v.length ? import_from_statement_({ ...config, name: v }) : fields.name; },
-    child(v?: WildcardImport): any { return v !== undefined ? import_from_statement_({ ...config, children: v }) : config?.children; },
+    moduleName(moduleName?: DottedName | RelativeImport): any { return moduleName !== undefined ? import_from_statement_({ ...config, moduleName: moduleName }) : fields.module_name; },
+    name(...name: (AliasedImport | DottedName)[]): any { return name.length ? import_from_statement_({ ...config, name: name }) : fields.name; },
+    child(child?: WildcardImport): any { return child !== undefined ? import_from_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1216,7 +1216,7 @@ export function import_statement_(
   return {
     type: 'import_statement' as const,
     fields,
-    name(...v: (AliasedImport | DottedName)[]): any { return v.length ? import_statement_({ ...config, name: v }) : fields.name; },
+    name(...name: (AliasedImport | DottedName)[]): any { return name.length ? import_statement_({ ...config, name: name }) : fields.name; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1238,9 +1238,9 @@ export function interpolation_(
   return {
     type: 'interpolation' as const,
     fields,
-    expression(v?: Expression | ExpressionList | PatternList | Yield): any { return v !== undefined ? interpolation_({ ...config, expression: v }) : fields.expression; },
-    formatSpecifier(v?: FormatSpecifier): any { return v !== undefined ? interpolation_({ ...config, formatSpecifier: v }) : fields.format_specifier; },
-    typeConversion(v?: TypeConversion): any { return v !== undefined ? interpolation_({ ...config, typeConversion: v }) : fields.type_conversion; },
+    expression(expression?: Expression | ExpressionList | PatternList | Yield): any { return expression !== undefined ? interpolation_({ ...config, expression: expression }) : fields.expression; },
+    formatSpecifier(formatSpecifier?: FormatSpecifier): any { return formatSpecifier !== undefined ? interpolation_({ ...config, formatSpecifier: formatSpecifier }) : fields.format_specifier; },
+    typeConversion(typeConversion?: TypeConversion): any { return typeConversion !== undefined ? interpolation_({ ...config, typeConversion: typeConversion }) : fields.type_conversion; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1261,8 +1261,8 @@ export function keyword_argument_(
   return {
     type: 'keyword_argument' as const,
     fields,
-    name(v?: Identifier): any { return v !== undefined ? keyword_argument_({ ...config, name: v }) : fields.name; },
-    value(v?: Expression): any { return v !== undefined ? keyword_argument_({ ...config, value: v }) : fields.value; },
+    name(name?: Identifier): any { return name !== undefined ? keyword_argument_({ ...config, name: name }) : fields.name; },
+    value(value?: Expression): any { return value !== undefined ? keyword_argument_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1283,8 +1283,8 @@ export function keyword_pattern_(
     type: 'keyword_pattern' as const,
     fields,
     children,
-    identifier(v?: Identifier): any { return v !== undefined ? keyword_pattern_({ ...config, identifier: v }) : config?.identifier; },
-    children1(v?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern): any { return v !== undefined ? keyword_pattern_({ ...config, children1: v }) : config?.children1; },
+    identifier(identifier?: Identifier): any { return identifier !== undefined ? keyword_pattern_({ ...config, identifier }) : config?.identifier; },
+    children1(children1?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern): any { return children1 !== undefined ? keyword_pattern_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1305,8 +1305,8 @@ export function lambda_(
   return {
     type: 'lambda' as const,
     fields,
-    body(v?: Expression): any { return v !== undefined ? lambda_({ ...config, body: v }) : fields.body; },
-    parameters(v?: LambdaParameters): any { return v !== undefined ? lambda_({ ...config, parameters: v }) : fields.parameters; },
+    body(body?: Expression): any { return body !== undefined ? lambda_({ ...config, body: body }) : fields.body; },
+    parameters(parameters?: LambdaParameters): any { return parameters !== undefined ? lambda_({ ...config, parameters: parameters }) : fields.parameters; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1328,7 +1328,7 @@ export function lambda_parameters_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (Parameter)[]): any { return lambda_parameters_({ ...config, children: v }); },
+    setChildren(...children: (Parameter)[]): any { return lambda_parameters_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1350,7 +1350,7 @@ export function list_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]): any { return list_({ ...config, children: v }); },
+    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]): any { return list_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1372,9 +1372,9 @@ export function list_comprehension_(
     type: 'list_comprehension' as const,
     fields,
     children,
-    body(v?: Expression): any { return v !== undefined ? list_comprehension_({ ...config, body: v }) : fields.body; },
-    forInClause(v?: ForInClause): any { return v !== undefined ? list_comprehension_({ ...config, forInClause: v }) : config?.forInClause; },
-    children1(...v: (ForInClause | IfClause)[]): any { return v.length ? list_comprehension_({ ...config, children1: v }) : config?.children1; },
+    body(body?: Expression): any { return body !== undefined ? list_comprehension_({ ...config, body: body }) : fields.body; },
+    forInClause(forInClause?: ForInClause): any { return forInClause !== undefined ? list_comprehension_({ ...config, forInClause }) : config?.forInClause; },
+    children1(...children1: (ForInClause | IfClause)[]): any { return children1.length ? list_comprehension_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1396,7 +1396,7 @@ export function list_pattern_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (CasePattern | Pattern)[]): any { return list_pattern_({ ...config, children: v }); },
+    setChildren(...children: (CasePattern | Pattern)[]): any { return list_pattern_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1417,7 +1417,7 @@ export function list_splat_(
     type: 'list_splat' as const,
     fields,
     children,
-    child(v?: Attribute | Expression | Identifier | Subscript): any { return v !== undefined ? list_splat_({ ...config, children: v }) : config?.children; },
+    child(child?: Attribute | Expression | Identifier | Subscript): any { return child !== undefined ? list_splat_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1438,7 +1438,7 @@ export function list_splat_pattern_(
     type: 'list_splat_pattern' as const,
     fields,
     children,
-    child(v?: Attribute | Identifier | Subscript): any { return v !== undefined ? list_splat_pattern_({ ...config, children: v }) : config?.children; },
+    child(child?: Attribute | Identifier | Subscript): any { return child !== undefined ? list_splat_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1459,8 +1459,8 @@ export function match_statement_(
   return {
     type: 'match_statement' as const,
     fields,
-    body(v?: Block): any { return v !== undefined ? match_statement_({ ...config, body: v }) : fields.body; },
-    subject(...v: (Expression)[]): any { return v.length ? match_statement_({ ...config, subject: v }) : fields.subject; },
+    body(body?: Block): any { return body !== undefined ? match_statement_({ ...config, body: body }) : fields.body; },
+    subject(...subject: (Expression)[]): any { return subject.length ? match_statement_({ ...config, subject: subject }) : fields.subject; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1481,8 +1481,8 @@ export function member_type_(
     type: 'member_type' as const,
     fields,
     children,
-    children0(v?: Type): any { return v !== undefined ? member_type_({ ...config, children0: v }) : config?.children0; },
-    identifier(v?: Identifier): any { return v !== undefined ? member_type_({ ...config, identifier: v }) : config?.identifier; },
+    children0(children0?: Type): any { return children0 !== undefined ? member_type_({ ...config, children0 }) : config?.children0; },
+    identifier(identifier?: Identifier): any { return identifier !== undefined ? member_type_({ ...config, identifier }) : config?.identifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1504,7 +1504,7 @@ export function module_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (CompoundStatement | SimpleStatement)[]): any { return module_({ ...config, children: v }); },
+    setChildren(...children: (CompoundStatement | SimpleStatement)[]): any { return module_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1525,8 +1525,8 @@ export function named_expression_(
   return {
     type: 'named_expression' as const,
     fields,
-    name(v?: Identifier): any { return v !== undefined ? named_expression_({ ...config, name: v }) : fields.name; },
-    value(v?: Expression): any { return v !== undefined ? named_expression_({ ...config, value: v }) : fields.value; },
+    name(name?: Identifier): any { return name !== undefined ? named_expression_({ ...config, name: name }) : fields.name; },
+    value(value?: Expression): any { return value !== undefined ? named_expression_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1547,8 +1547,8 @@ export function nonlocal_statement_(
     type: 'nonlocal_statement' as const,
     fields,
     children,
-    identifier1(v?: Identifier): any { return v !== undefined ? nonlocal_statement_({ ...config, identifier1: v }) : config?.identifier1; },
-    identifier2(...v: (Identifier)[]): any { return v.length ? nonlocal_statement_({ ...config, identifier2: v }) : config?.identifier2; },
+    identifier1(identifier1?: Identifier): any { return identifier1 !== undefined ? nonlocal_statement_({ ...config, identifier1 }) : config?.identifier1; },
+    identifier2(...identifier2: (Identifier)[]): any { return identifier2.length ? nonlocal_statement_({ ...config, identifier2 }) : config?.identifier2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1568,7 +1568,7 @@ export function not_operator_(
   return {
     type: 'not_operator' as const,
     fields,
-    argument(v?: Expression): any { return v !== undefined ? not_operator_({ ...config, argument: v }) : fields.argument; },
+    argument(argument?: Expression): any { return argument !== undefined ? not_operator_({ ...config, argument: argument }) : fields.argument; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1589,8 +1589,8 @@ export function pair_(
   return {
     type: 'pair' as const,
     fields,
-    key(v?: Expression): any { return v !== undefined ? pair_({ ...config, key: v }) : fields.key; },
-    value(v?: Expression): any { return v !== undefined ? pair_({ ...config, value: v }) : fields.value; },
+    key(key?: Expression): any { return key !== undefined ? pair_({ ...config, key: key }) : fields.key; },
+    value(value?: Expression): any { return value !== undefined ? pair_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1612,7 +1612,7 @@ export function parameters_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (Parameter)[]): any { return parameters_({ ...config, children: v }); },
+    setChildren(...children: (Parameter)[]): any { return parameters_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1633,7 +1633,7 @@ export function parenthesized_expression_(
     type: 'parenthesized_expression' as const,
     fields,
     children,
-    child(v?: Expression | ListSplat | ParenthesizedExpression | Yield): any { return v !== undefined ? parenthesized_expression_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression | ListSplat | ParenthesizedExpression | Yield): any { return child !== undefined ? parenthesized_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1654,7 +1654,7 @@ export function parenthesized_list_splat_(
     type: 'parenthesized_list_splat' as const,
     fields,
     children,
-    child(v?: ListSplat | ParenthesizedExpression): any { return v !== undefined ? parenthesized_list_splat_({ ...config, children: v }) : config?.children; },
+    child(child?: ListSplat | ParenthesizedExpression): any { return child !== undefined ? parenthesized_list_splat_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1675,8 +1675,8 @@ export function pattern_list_(
     type: 'pattern_list' as const,
     fields,
     children,
-    pattern1(v?: Pattern): any { return v !== undefined ? pattern_list_({ ...config, pattern1: v }) : config?.pattern1; },
-    pattern2(...v: (Pattern)[]): any { return v.length ? pattern_list_({ ...config, pattern2: v }) : config?.pattern2; },
+    pattern1(pattern1?: Pattern): any { return pattern1 !== undefined ? pattern_list_({ ...config, pattern1 }) : config?.pattern1; },
+    pattern2(...pattern2: (Pattern)[]): any { return pattern2.length ? pattern_list_({ ...config, pattern2 }) : config?.pattern2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1698,8 +1698,8 @@ export function print_statement_(
     type: 'print_statement' as const,
     fields,
     children,
-    argument(...v: (Expression)[]): any { return v.length ? print_statement_({ ...config, argument: v }) : fields.argument; },
-    child(v?: Chevron): any { return v !== undefined ? print_statement_({ ...config, children: v }) : config?.children; },
+    argument(...argument: (Expression)[]): any { return argument.length ? print_statement_({ ...config, argument: argument }) : fields.argument; },
+    child(child?: Chevron): any { return child !== undefined ? print_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1721,8 +1721,8 @@ export function raise_statement_(
     type: 'raise_statement' as const,
     fields,
     children,
-    cause(v?: Expression): any { return v !== undefined ? raise_statement_({ ...config, cause: v }) : fields.cause; },
-    child(v?: Expression | ExpressionList): any { return v !== undefined ? raise_statement_({ ...config, children: v }) : config?.children; },
+    cause(cause?: Expression): any { return cause !== undefined ? raise_statement_({ ...config, cause: cause }) : fields.cause; },
+    child(child?: Expression | ExpressionList): any { return child !== undefined ? raise_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1743,8 +1743,8 @@ export function relative_import_(
     type: 'relative_import' as const,
     fields,
     children,
-    importPrefix(v?: ImportPrefix): any { return v !== undefined ? relative_import_({ ...config, importPrefix: v }) : config?.importPrefix; },
-    dottedName(v?: DottedName): any { return v !== undefined ? relative_import_({ ...config, dottedName: v }) : config?.dottedName; },
+    importPrefix(importPrefix?: ImportPrefix): any { return importPrefix !== undefined ? relative_import_({ ...config, importPrefix }) : config?.importPrefix; },
+    dottedName(dottedName?: DottedName): any { return dottedName !== undefined ? relative_import_({ ...config, dottedName }) : config?.dottedName; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1765,7 +1765,7 @@ export function return_statement_(
     type: 'return_statement' as const,
     fields,
     children,
-    child(v?: Expression | ExpressionList): any { return v !== undefined ? return_statement_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression | ExpressionList): any { return child !== undefined ? return_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1787,7 +1787,7 @@ export function set_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]): any { return set_({ ...config, children: v }); },
+    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]): any { return set_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1809,9 +1809,9 @@ export function set_comprehension_(
     type: 'set_comprehension' as const,
     fields,
     children,
-    body(v?: Expression): any { return v !== undefined ? set_comprehension_({ ...config, body: v }) : fields.body; },
-    forInClause(v?: ForInClause): any { return v !== undefined ? set_comprehension_({ ...config, forInClause: v }) : config?.forInClause; },
-    children1(...v: (ForInClause | IfClause)[]): any { return v.length ? set_comprehension_({ ...config, children1: v }) : config?.children1; },
+    body(body?: Expression): any { return body !== undefined ? set_comprehension_({ ...config, body: body }) : fields.body; },
+    forInClause(forInClause?: ForInClause): any { return forInClause !== undefined ? set_comprehension_({ ...config, forInClause }) : config?.forInClause; },
+    children1(...children1: (ForInClause | IfClause)[]): any { return children1.length ? set_comprehension_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1832,9 +1832,9 @@ export function slice_(
     type: 'slice' as const,
     fields,
     children,
-    expression1(v?: Expression): any { return v !== undefined ? slice_({ ...config, expression1: v }) : config?.expression1; },
-    expression2(v?: Expression): any { return v !== undefined ? slice_({ ...config, expression2: v }) : config?.expression2; },
-    expression3(v?: Expression): any { return v !== undefined ? slice_({ ...config, expression3: v }) : config?.expression3; },
+    expression1(expression1?: Expression): any { return expression1 !== undefined ? slice_({ ...config, expression1 }) : config?.expression1; },
+    expression2(expression2?: Expression): any { return expression2 !== undefined ? slice_({ ...config, expression2 }) : config?.expression2; },
+    expression3(expression3?: Expression): any { return expression3 !== undefined ? slice_({ ...config, expression3 }) : config?.expression3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1855,7 +1855,7 @@ export function splat_pattern_(
     type: 'splat_pattern' as const,
     fields,
     children,
-    child(v?: Identifier): any { return v !== undefined ? splat_pattern_({ ...config, children: v }) : config?.children; },
+    child(child?: Identifier): any { return child !== undefined ? splat_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1876,7 +1876,7 @@ export function splat_type_(
     type: 'splat_type' as const,
     fields,
     children,
-    child(v?: Identifier): any { return v !== undefined ? splat_type_({ ...config, children: v }) : config?.children; },
+    child(child?: Identifier): any { return child !== undefined ? splat_type_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1897,9 +1897,9 @@ export function string_(
     type: 'string' as const,
     fields,
     children,
-    stringStart(v?: StringStart): any { return v !== undefined ? string_({ ...config, stringStart: v }) : config?.stringStart; },
-    children1(...v: (Interpolation | StringContent)[]): any { return v.length ? string_({ ...config, children1: v }) : config?.children1; },
-    stringEnd(v?: StringEnd): any { return v !== undefined ? string_({ ...config, stringEnd: v }) : config?.stringEnd; },
+    stringStart(stringStart?: StringStart): any { return stringStart !== undefined ? string_({ ...config, stringStart }) : config?.stringStart; },
+    children1(...children1: (Interpolation | StringContent)[]): any { return children1.length ? string_({ ...config, children1 }) : config?.children1; },
+    stringEnd(stringEnd?: StringEnd): any { return stringEnd !== undefined ? string_({ ...config, stringEnd }) : config?.stringEnd; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1921,7 +1921,7 @@ export function string_content_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (EscapeInterpolation | EscapeSequence)[]): any { return string_content_({ ...config, children: v }); },
+    setChildren(...children: (EscapeInterpolation | EscapeSequence)[]): any { return string_content_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1942,8 +1942,8 @@ export function subscript_(
   return {
     type: 'subscript' as const,
     fields,
-    subscript(...v: (Expression | Slice)[]): any { return v.length ? subscript_({ ...config, subscript: v }) : fields.subscript; },
-    value(v?: PrimaryExpression): any { return v !== undefined ? subscript_({ ...config, value: v }) : fields.value; },
+    subscript(...subscript: (Expression | Slice)[]): any { return subscript.length ? subscript_({ ...config, subscript: subscript }) : fields.subscript; },
+    value(value?: PrimaryExpression): any { return value !== undefined ? subscript_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1965,10 +1965,10 @@ export function try_statement_(
     type: 'try_statement' as const,
     fields,
     children,
-    body(v?: Block): any { return v !== undefined ? try_statement_({ ...config, body: v }) : fields.body; },
-    exceptClause(...v: (ExceptClause)[]): any { return v.length ? try_statement_({ ...config, exceptClause: v }) : config?.exceptClause; },
-    elseClause(v?: ElseClause): any { return v !== undefined ? try_statement_({ ...config, elseClause: v }) : config?.elseClause; },
-    finallyClause(v?: FinallyClause): any { return v !== undefined ? try_statement_({ ...config, finallyClause: v }) : config?.finallyClause; },
+    body(body?: Block): any { return body !== undefined ? try_statement_({ ...config, body: body }) : fields.body; },
+    exceptClause(...exceptClause: (ExceptClause)[]): any { return exceptClause.length ? try_statement_({ ...config, exceptClause }) : config?.exceptClause; },
+    elseClause(elseClause?: ElseClause): any { return elseClause !== undefined ? try_statement_({ ...config, elseClause }) : config?.elseClause; },
+    finallyClause(finallyClause?: FinallyClause): any { return finallyClause !== undefined ? try_statement_({ ...config, finallyClause }) : config?.finallyClause; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1990,7 +1990,7 @@ export function tuple_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]): any { return tuple_({ ...config, children: v }); },
+    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]): any { return tuple_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2012,7 +2012,7 @@ export function tuple_pattern_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (CasePattern | Pattern)[]): any { return tuple_pattern_({ ...config, children: v }); },
+    setChildren(...children: (CasePattern | Pattern)[]): any { return tuple_pattern_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2033,7 +2033,7 @@ export function type_(
     type: 'type' as const,
     fields,
     children,
-    child(v?: ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType): any { return v !== undefined ? type_({ ...config, children: v }) : config?.children; },
+    child(child?: ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType): any { return child !== undefined ? type_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2054,8 +2054,8 @@ export function type_alias_statement_(
   return {
     type: 'type_alias_statement' as const,
     fields,
-    left(v?: Type): any { return v !== undefined ? type_alias_statement_({ ...config, left: v }) : fields.left; },
-    right(v?: Type): any { return v !== undefined ? type_alias_statement_({ ...config, right: v }) : fields.right; },
+    left(left?: Type): any { return left !== undefined ? type_alias_statement_({ ...config, left: left }) : fields.left; },
+    right(right?: Type): any { return right !== undefined ? type_alias_statement_({ ...config, right: right }) : fields.right; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2076,8 +2076,8 @@ export function type_parameter_(
     type: 'type_parameter' as const,
     fields,
     children,
-    children0(v?: Type): any { return v !== undefined ? type_parameter_({ ...config, children0: v }) : config?.children0; },
-    children1(...v: (Type)[]): any { return v.length ? type_parameter_({ ...config, children1: v }) : config?.children1; },
+    children0(children0?: Type): any { return children0 !== undefined ? type_parameter_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (Type)[]): any { return children1.length ? type_parameter_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2099,9 +2099,9 @@ export function typed_default_parameter_(
   return {
     type: 'typed_default_parameter' as const,
     fields,
-    name(v?: Identifier): any { return v !== undefined ? typed_default_parameter_({ ...config, name: v }) : fields.name; },
-    typeField(v?: Type): any { return v !== undefined ? typed_default_parameter_({ ...config, type: v }) : fields.type; },
-    value(v?: Expression): any { return v !== undefined ? typed_default_parameter_({ ...config, value: v }) : fields.value; },
+    name(name?: Identifier): any { return name !== undefined ? typed_default_parameter_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: Type): any { return type_ !== undefined ? typed_default_parameter_({ ...config, type: type_ }) : fields.type; },
+    value(value?: Expression): any { return value !== undefined ? typed_default_parameter_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2123,8 +2123,8 @@ export function typed_parameter_(
     type: 'typed_parameter' as const,
     fields,
     children,
-    typeField(v?: Type): any { return v !== undefined ? typed_parameter_({ ...config, type: v }) : fields.type; },
-    child(v?: DictionarySplatPattern | Identifier | ListSplatPattern): any { return v !== undefined ? typed_parameter_({ ...config, children: v }) : config?.children; },
+    typeField(type_?: Type): any { return type_ !== undefined ? typed_parameter_({ ...config, type: type_ }) : fields.type; },
+    child(child?: DictionarySplatPattern | Identifier | ListSplatPattern): any { return child !== undefined ? typed_parameter_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2145,8 +2145,8 @@ export function unary_operator_(
   return {
     type: 'unary_operator' as const,
     fields,
-    argument(v?: PrimaryExpression): any { return v !== undefined ? unary_operator_({ ...config, argument: v }) : fields.argument; },
-    operator(v?: '+' | '-' | '~'): any { return v !== undefined ? unary_operator_({ ...config, operator: v }) : fields.operator; },
+    argument(argument?: PrimaryExpression): any { return argument !== undefined ? unary_operator_({ ...config, argument: argument }) : fields.argument; },
+    operator(operator?: '+' | '-' | '~'): any { return operator !== undefined ? unary_operator_({ ...config, operator: operator }) : fields.operator; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2168,7 +2168,7 @@ export function union_pattern_(
     fields,
     children,
     getChildren(): any { return children; },
-    setChildren(...v: (ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern)[]): any { return union_pattern_({ ...config, children: v }); },
+    setChildren(...children: (ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern)[]): any { return union_pattern_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2189,8 +2189,8 @@ export function union_type_(
     type: 'union_type' as const,
     fields,
     children,
-    children0(v?: Type): any { return v !== undefined ? union_type_({ ...config, children0: v }) : config?.children0; },
-    children1(v?: Type): any { return v !== undefined ? union_type_({ ...config, children1: v }) : config?.children1; },
+    children0(children0?: Type): any { return children0 !== undefined ? union_type_({ ...config, children0 }) : config?.children0; },
+    children1(children1?: Type): any { return children1 !== undefined ? union_type_({ ...config, children1 }) : config?.children1; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2212,9 +2212,9 @@ export function while_statement_(
   return {
     type: 'while_statement' as const,
     fields,
-    alternative(v?: ElseClause): any { return v !== undefined ? while_statement_({ ...config, alternative: v }) : fields.alternative; },
-    body(v?: Block): any { return v !== undefined ? while_statement_({ ...config, body: v }) : fields.body; },
-    condition(v?: Expression): any { return v !== undefined ? while_statement_({ ...config, condition: v }) : fields.condition; },
+    alternative(alternative?: ElseClause): any { return alternative !== undefined ? while_statement_({ ...config, alternative: alternative }) : fields.alternative; },
+    body(body?: Block): any { return body !== undefined ? while_statement_({ ...config, body: body }) : fields.body; },
+    condition(condition?: Expression): any { return condition !== undefined ? while_statement_({ ...config, condition: condition }) : fields.condition; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2235,8 +2235,8 @@ export function with_clause_(
     type: 'with_clause' as const,
     fields,
     children,
-    withItem1(v?: WithItem): any { return v !== undefined ? with_clause_({ ...config, withItem1: v }) : config?.withItem1; },
-    withItem2(...v: (WithItem)[]): any { return v.length ? with_clause_({ ...config, withItem2: v }) : config?.withItem2; },
+    withItem1(withItem1?: WithItem): any { return withItem1 !== undefined ? with_clause_({ ...config, withItem1 }) : config?.withItem1; },
+    withItem2(...withItem2: (WithItem)[]): any { return withItem2.length ? with_clause_({ ...config, withItem2 }) : config?.withItem2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2256,7 +2256,7 @@ export function with_item_(
   return {
     type: 'with_item' as const,
     fields,
-    value(v?: Expression): any { return v !== undefined ? with_item_({ ...config, value: v }) : fields.value; },
+    value(value?: Expression): any { return value !== undefined ? with_item_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2278,8 +2278,8 @@ export function with_statement_(
     type: 'with_statement' as const,
     fields,
     children,
-    body(v?: Block): any { return v !== undefined ? with_statement_({ ...config, body: v }) : fields.body; },
-    child(v?: WithClause): any { return v !== undefined ? with_statement_({ ...config, children: v }) : config?.children; },
+    body(body?: Block): any { return body !== undefined ? with_statement_({ ...config, body: body }) : fields.body; },
+    child(child?: WithClause): any { return child !== undefined ? with_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2300,7 +2300,7 @@ export function yield_(
     type: 'yield' as const,
     fields,
     children,
-    child(v?: Expression | ExpressionList): any { return v !== undefined ? yield_({ ...config, children: v }) : config?.children; },
+    child(child?: Expression | ExpressionList): any { return child !== undefined ? yield_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

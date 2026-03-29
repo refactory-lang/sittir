@@ -24,8 +24,8 @@ describe('emitFactory', () => {
 		expect(source).toContain('config: FunctionItemConfig,');
 		expect(source).toContain("type: 'function_item' as const,");
 		expect(source).toContain('fields,');
-		expect(source).toContain('body(v?:');
-		expect(source).toContain('returnType(v?:');
+		expect(source).toContain('body(body?:');
+		expect(source).toContain('returnType(returnType?:');
 		expect(source).toContain('render() { return render(this); },');
 		expect(source).toContain('toEdit(startOrRange:');
 	});
@@ -59,9 +59,9 @@ describe('emitFactory', () => {
 		const source = emitFactory({ node, leafKinds: [], ctx });
 
 		// function_item has 3 positional child slots — getter/setter methods
-		expect(source).toContain('visibilityModifier(v?: VisibilityModifier)');
-		expect(source).toContain('functionModifiers(v?: FunctionModifiers)');
-		expect(source).toContain('whereClause(v?: WhereClause)');
+		expect(source).toContain('visibilityModifier(visibilityModifier?: VisibilityModifier)');
+		expect(source).toContain('functionModifiers(functionModifiers?: FunctionModifiers)');
+		expect(source).toContain('whereClause(whereClause?: WhereClause)');
 	});
 
 	it('generates child/getChildren/setChildren for single children slot', () => {
@@ -70,7 +70,7 @@ describe('emitFactory', () => {
 
 		// Single children slot — uses child() or getChildren/setChildren to avoid name collision
 		expect(source).toContain('children,');
-		expect(source).toMatch(/child\(v\?:|getChildren\(\)|setChildren\(/);
+		expect(source).toMatch(/child\(child\?:|getChildren\(\)|setChildren\(/);
 	});
 });
 

@@ -11,7 +11,7 @@
 import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
-import { toTypeName, toFactoryName, toFieldName, toRawFactoryName } from '../naming.ts';
+import { toTypeName, toFactoryName, toFieldName, toParamName, toRawFactoryName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
@@ -80,14 +80,15 @@ export function emitFactory(config: {
 	// Fluent getters/setters — no-arg = getter (reads fields), with-arg = setter (re-calls factory)
 	for (const f of fields) {
 		const camel = f.propertyName ?? toFieldName(f.name);
+		const paramName = toParamName(f.name);
 		const methodName = camel === 'type' ? 'typeField' : camel;
 		const proj = projectKinds(f.kinds, ctx);
 		const fieldType = fieldTypeExprFromProj(proj, leafSet);
 
 		if (f.multiple) {
-			lines.push(`    ${methodName}(...v: (${fieldType})[]): any { return v.length ? ${internalName}({ ...config, ${camel}: v }) : fields.${f.name}; },`);
+			lines.push(`    ${methodName}(...${paramName}: (${fieldType})[]): any { return ${paramName}.length ? ${internalName}({ ...config, ${camel}: ${paramName} }) : fields.${f.name}; },`);
 		} else {
-			lines.push(`    ${methodName}(v?: ${fieldType}): any { return v !== undefined ? ${internalName}({ ...config, ${camel}: v }) : fields.${f.name}; },`);
+			lines.push(`    ${methodName}(${paramName}?: ${fieldType}): any { return ${paramName} !== undefined ? ${internalName}({ ...config, ${camel}: ${paramName} }) : fields.${f.name}; },`);
 		}
 	}
 	if (hasChildren) {
@@ -100,14 +101,14 @@ export function emitFactory(config: {
 				// Single children slot — use child/getChildren/setChildren to avoid name collision
 				if (slot.multiple) {
 					lines.push(`    getChildren(): any { return children; },`);
-					lines.push(`    setChildren(...v: (${slotType})[]): any { return ${internalName}({ ...config, children: v }); },`);
+					lines.push(`    setChildren(...children: (${slotType})[]): any { return ${internalName}({ ...config, children }); },`);
 				} else {
-					lines.push(`    child(v?: ${slotType}): any { return v !== undefined ? ${internalName}({ ...config, children: v }) : config?.children; },`);
+					lines.push(`    child(child?: ${slotType}): any { return child !== undefined ? ${internalName}({ ...config, children: child }) : config?.children; },`);
 				}
 			} else if (slot.multiple) {
-				lines.push(`    ${name}(...v: (${slotType})[]): any { return v.length ? ${internalName}({ ...config, ${name}: v }) : config?.${name}; },`);
+				lines.push(`    ${name}(...${name}: (${slotType})[]): any { return ${name}.length ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
 			} else {
-				lines.push(`    ${name}(v?: ${slotType}): any { return v !== undefined ? ${internalName}({ ...config, ${name}: v }) : config?.${name}; },`);
+				lines.push(`    ${name}(${name}?: ${slotType}): any { return ${name} !== undefined ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
 			}
 		});
 	}
