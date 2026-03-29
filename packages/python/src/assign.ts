@@ -9,7 +9,7 @@ import { rules } from './rules.js';
 import { joinBy } from './joinby.js';
 
 const { render } = createRenderer(rules, joinBy);
-import { aliasedImport, argumentList, asPattern, assertStatement, assignment, attribute, augmentedAssignment, await_, binaryOperator, block, booleanOperator, call, caseClause, casePattern, chevron, classDefinition, classPattern, comparisonOperator, complexPattern, concatenatedString, conditionalExpression, constrainedType, decoratedDefinition, decorator, defaultParameter, deleteStatement, dictPattern, dictionary, dictionaryComprehension, dictionarySplat, dictionarySplatPattern, dottedName, elifClause, elseClause, exceptClause, execStatement, expressionList, expressionStatement, finallyClause, forInClause, forStatement, formatExpression, formatSpecifier, functionDefinition, futureImportStatement, generatorExpression, genericType, globalStatement, ifClause, ifStatement, importFromStatement, importStatement, interpolation, keywordArgument, keywordPattern, lambda, lambdaParameters, list, listComprehension, listPattern, listSplat, listSplatPattern, matchStatement, memberType, module, namedExpression, nonlocalStatement, notOperator, pair, parameters, parenthesizedExpression, parenthesizedListSplat, patternList, printStatement, raiseStatement, relativeImport, returnStatement, set, setComprehension, slice, splatPattern, splatType, string, stringContent, subscript, tryStatement, tuple, tuplePattern, type_, typeAliasStatement, typeParameter, typedDefaultParameter, typedParameter, unaryOperator, unionPattern, unionType, whileStatement, withClause, withItem, withStatement, yield_, breakStatement, continueStatement, importPrefix, keywordSeparator, passStatement, positionalSeparator, wildcardImport, comment, ellipsis, escapeInterpolation, escapeSequence, false_, float, identifier, integer, lineContinuation, none, stringEnd, stringStart, true_, typeConversion } from './factories.js';
+import { aliased_import_, argument_list_, as_pattern_, assert_statement_, assignment_, attribute_, augmented_assignment_, await_, binary_operator_, block_, boolean_operator_, call_, case_clause_, case_pattern_, chevron_, class_definition_, class_pattern_, comparison_operator_, complex_pattern_, concatenated_string_, conditional_expression_, constrained_type_, decorated_definition_, decorator_, default_parameter_, delete_statement_, dict_pattern_, dictionary_, dictionary_comprehension_, dictionary_splat_, dictionary_splat_pattern_, dotted_name_, elif_clause_, else_clause_, except_clause_, exec_statement_, expression_list_, expression_statement_, finally_clause_, for_in_clause_, for_statement_, format_expression_, format_specifier_, function_definition_, future_import_statement_, generator_expression_, generic_type_, global_statement_, if_clause_, if_statement_, import_from_statement_, import_statement_, interpolation_, keyword_argument_, keyword_pattern_, lambda_, lambda_parameters_, list_, list_comprehension_, list_pattern_, list_splat_, list_splat_pattern_, match_statement_, member_type_, module_, named_expression_, nonlocal_statement_, not_operator_, pair_, parameters_, parenthesized_expression_, parenthesized_list_splat_, pattern_list_, print_statement_, raise_statement_, relative_import_, return_statement_, set_, set_comprehension_, slice_, splat_pattern_, splat_type_, string_, string_content_, subscript_, try_statement_, tuple_, tuple_pattern_, type_, type_alias_statement_, type_parameter_, typed_default_parameter_, typed_parameter_, unary_operator_, union_pattern_, union_type_, while_statement_, with_clause_, with_item_, with_statement_, yield_, break_statement_, continue_statement_, import_prefix_, keyword_separator_, pass_statement_, positional_separator_, wildcard_import_, comment_, ellipsis_, escape_interpolation_, escape_sequence_, false_, float_, identifier_, integer_, line_continuation_, none_, string_end_, string_start_, true_, type_conversion_ } from './factories.js';
 import type { AliasedImportConfig, ArgumentListConfig, AsPatternConfig, AssertStatementConfig, AssignmentConfig, AttributeConfig, AugmentedAssignmentConfig, AwaitConfig, BinaryOperatorConfig, BlockConfig, BooleanOperatorConfig, CallConfig, CaseClauseConfig, CasePatternConfig, ChevronConfig, ClassDefinitionConfig, ClassPatternConfig, ComparisonOperatorConfig, ComplexPatternConfig, ConcatenatedStringConfig, ConditionalExpressionConfig, ConstrainedTypeConfig, DecoratedDefinitionConfig, DecoratorConfig, DefaultParameterConfig, DeleteStatementConfig, DictPatternConfig, DictionaryComprehensionConfig, DictionaryConfig, DictionarySplatConfig, DictionarySplatPatternConfig, DottedNameConfig, ElifClauseConfig, ElseClauseConfig, ExceptClauseConfig, ExecStatementConfig, ExpressionListConfig, ExpressionStatementConfig, FinallyClauseConfig, ForInClauseConfig, ForStatementConfig, FormatExpressionConfig, FormatSpecifierConfig, FunctionDefinitionConfig, FutureImportStatementConfig, GeneratorExpressionConfig, GenericTypeConfig, GlobalStatementConfig, IfClauseConfig, IfStatementConfig, ImportFromStatementConfig, ImportStatementConfig, InterpolationConfig, KeywordArgumentConfig, KeywordPatternConfig, LambdaConfig, LambdaParametersConfig, ListComprehensionConfig, ListConfig, ListPatternConfig, ListSplatConfig, ListSplatPatternConfig, MatchStatementConfig, MemberTypeConfig, ModuleConfig, NamedExpressionConfig, NonlocalStatementConfig, NotOperatorConfig, PairConfig, ParametersConfig, ParenthesizedExpressionConfig, ParenthesizedListSplatConfig, PatternListConfig, PrintStatementConfig, RaiseStatementConfig, RelativeImportConfig, ReturnStatementConfig, SetComprehensionConfig, SetConfig, SliceConfig, SplatPatternConfig, SplatTypeConfig, StringConfig, StringContentConfig, SubscriptConfig, TryStatementConfig, TupleConfig, TuplePatternConfig, TypeAliasStatementConfig, TypeConfig, TypeParameterConfig, TypedDefaultParameterConfig, TypedParameterConfig, UnaryOperatorConfig, UnionPatternConfig, UnionTypeConfig, WhileStatementConfig, WithClauseConfig, WithItemConfig, WithStatementConfig, YieldConfig } from './types.js';
 
 /** Kind → assign function. Branches call .assign() recursively, leaves read text(). */
@@ -115,27 +115,27 @@ const _assignTable: Record<string, (target: any) => unknown> = {
   'with_item': (t) => assignWithItem(t),
   'with_statement': (t) => assignWithStatement(t),
   'yield': (t) => assignYield(t),
-  'break_statement': () => breakStatement(),
-  'continue_statement': () => continueStatement(),
-  'import_prefix': (t) => importPrefix(t.text()),
-  'keyword_separator': () => keywordSeparator(),
-  'pass_statement': () => passStatement(),
-  'positional_separator': () => positionalSeparator(),
-  'wildcard_import': () => wildcardImport(),
-  'comment': (t) => comment(t.text()),
-  'ellipsis': () => ellipsis(),
-  'escape_interpolation': (t) => escapeInterpolation(t.text()),
-  'escape_sequence': (t) => escapeSequence(t.text()),
+  'break_statement': () => break_statement_(),
+  'continue_statement': () => continue_statement_(),
+  'import_prefix': (t) => import_prefix_(t.text()),
+  'keyword_separator': () => keyword_separator_(),
+  'pass_statement': () => pass_statement_(),
+  'positional_separator': () => positional_separator_(),
+  'wildcard_import': () => wildcard_import_(),
+  'comment': (t) => comment_(t.text()),
+  'ellipsis': () => ellipsis_(),
+  'escape_interpolation': (t) => escape_interpolation_(t.text()),
+  'escape_sequence': (t) => escape_sequence_(t.text()),
   'false': () => false_(),
-  'float': (t) => float(t.text()),
-  'identifier': (t) => identifier(t.text()),
-  'integer': (t) => integer(t.text()),
-  'line_continuation': (t) => lineContinuation(t.text()),
-  'none': () => none(),
-  'string_end': (t) => stringEnd(t.text()),
-  'string_start': (t) => stringStart(t.text()),
+  'float': (t) => float_(t.text()),
+  'identifier': (t) => identifier_(t.text()),
+  'integer': (t) => integer_(t.text()),
+  'line_continuation': (t) => line_continuation_(t.text()),
+  'none': () => none_(),
+  'string_end': (t) => string_end_(t.text()),
+  'string_start': (t) => string_start_(t.text()),
   'true': () => true_(),
-  'type_conversion': (t) => typeConversion(t.text()),
+  'type_conversion': (t) => type_conversion_(t.text()),
 };
 
 /** Lookup assign function for a kind. Throws if kind is unknown. */
@@ -149,7 +149,7 @@ export function assignAliasedImport(target: AliasedImportTree) {
   const config: Record<string, unknown> = {};
   config['alias'] = assignByKind('identifier', target.field('alias')!);
   config['name'] = assignDottedName(target.field('name')! as DottedNameTree);
-  const result = aliasedImport(config as AliasedImportConfig);
+  const result = aliased_import_(config as AliasedImportConfig);
   return bindRange(target, result);
 }
 
@@ -166,7 +166,7 @@ export function assignArgumentList(target: ArgumentListTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = argumentList(config as ArgumentListConfig);
+  const result = argument_list_(config as ArgumentListConfig);
   return bindRange(target, result);
 }
 
@@ -179,7 +179,7 @@ export function assignAsPattern(target: AsPatternTree) {
     if (!_child) throw new Error(`Required child missing on 'as_pattern' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = asPattern(config as AsPatternConfig);
+  const result = as_pattern_(config as AsPatternConfig);
   return bindRange(target, result);
 }
 
@@ -196,7 +196,7 @@ export function assignAssertStatement(target: AssertStatementTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = assertStatement(config as AssertStatementConfig);
+  const result = assert_statement_(config as AssertStatementConfig);
   return bindRange(target, result);
 }
 
@@ -205,7 +205,7 @@ export function assignAssignment(target: AssignmentTree) {
   config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
   config['right'] = target.field('right') ? assignByKind(target.field('right')!.type, target.field('right')!) : undefined;
   config['type'] = target.field('type') ? assignType(target.field('type')! as TypeTree) : undefined;
-  const result = assignment(config as AssignmentConfig);
+  const result = assignment_(config as AssignmentConfig);
   return bindRange(target, result);
 }
 
@@ -213,7 +213,7 @@ export function assignAttribute(target: AttributeTree) {
   const config: Record<string, unknown> = {};
   config['attribute'] = assignByKind('identifier', target.field('attribute')!);
   config['object'] = assignByKind(target.field('object')!.type, target.field('object')!);
-  const result = attribute(config as AttributeConfig);
+  const result = attribute_(config as AttributeConfig);
   return bindRange(target, result);
 }
 
@@ -222,7 +222,7 @@ export function assignAugmentedAssignment(target: AugmentedAssignmentTree) {
   config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
   config['operator'] = target.field('operator')!.text();
   config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
-  const result = augmentedAssignment(config as AugmentedAssignmentConfig);
+  const result = augmented_assignment_(config as AugmentedAssignmentConfig);
   return bindRange(target, result);
 }
 
@@ -243,7 +243,7 @@ export function assignBinaryOperator(target: BinaryOperatorTree) {
   config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
   config['operator'] = target.field('operator')!.text();
   config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
-  const result = binaryOperator(config as BinaryOperatorConfig);
+  const result = binary_operator_(config as BinaryOperatorConfig);
   return bindRange(target, result);
 }
 
@@ -259,7 +259,7 @@ export function assignBlock(target: BlockTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = block(config as BlockConfig);
+  const result = block_(config as BlockConfig);
   return bindRange(target, result);
 }
 
@@ -268,7 +268,7 @@ export function assignBooleanOperator(target: BooleanOperatorTree) {
   config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
   config['operator'] = target.field('operator')!.text();
   config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
-  const result = booleanOperator(config as BooleanOperatorConfig);
+  const result = boolean_operator_(config as BooleanOperatorConfig);
   return bindRange(target, result);
 }
 
@@ -276,7 +276,7 @@ export function assignCall(target: CallTree) {
   const config: Record<string, unknown> = {};
   config['arguments'] = assignByKind(target.field('arguments')!.type, target.field('arguments')!);
   config['function'] = assignByKind(target.field('function')!.type, target.field('function')!);
-  const result = call(config as CallConfig);
+  const result = call_(config as CallConfig);
   return bindRange(target, result);
 }
 
@@ -295,7 +295,7 @@ export function assignCaseClause(target: CaseClauseTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = caseClause(config as CaseClauseConfig);
+  const result = case_clause_(config as CaseClauseConfig);
   return bindRange(target, result);
 }
 
@@ -307,7 +307,7 @@ export function assignCasePattern(target: CasePatternTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = casePattern(config as CasePatternConfig);
+  const result = case_pattern_(config as CasePatternConfig);
   return bindRange(target, result);
 }
 
@@ -319,7 +319,7 @@ export function assignChevron(target: ChevronTree) {
     if (!_child) throw new Error(`Required child missing on 'chevron' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = chevron(config as ChevronConfig);
+  const result = chevron_(config as ChevronConfig);
   return bindRange(target, result);
 }
 
@@ -329,7 +329,7 @@ export function assignClassDefinition(target: ClassDefinitionTree) {
   config['name'] = assignByKind('identifier', target.field('name')!);
   config['superclasses'] = target.field('superclasses') ? assignArgumentList(target.field('superclasses')! as ArgumentListTree) : undefined;
   config['typeParameters'] = target.field('type_parameters') ? assignTypeParameter(target.field('type_parameters')! as TypeParameterTree) : undefined;
-  const result = classDefinition(config as ClassDefinitionConfig);
+  const result = class_definition_(config as ClassDefinitionConfig);
   return bindRange(target, result);
 }
 
@@ -352,7 +352,7 @@ export function assignClassPattern(target: ClassPatternTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = classPattern(config as ClassPatternConfig);
+  const result = class_pattern_(config as ClassPatternConfig);
   return bindRange(target, result);
 }
 
@@ -371,7 +371,7 @@ export function assignComparisonOperator(target: ComparisonOperatorTree) {
     if (_items.length === 0) throw new Error(`Required children missing on 'comparison_operator' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = comparisonOperator(config as ComparisonOperatorConfig);
+  const result = comparison_operator_(config as ComparisonOperatorConfig);
   return bindRange(target, result);
 }
 
@@ -389,7 +389,7 @@ export function assignComplexPattern(target: ComplexPatternTree) {
     if (!_child) throw new Error(`Required child missing on 'complex_pattern' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = complexPattern(config as ComplexPatternConfig);
+  const result = complex_pattern_(config as ComplexPatternConfig);
   return bindRange(target, result);
 }
 
@@ -407,7 +407,7 @@ export function assignConcatenatedString(target: ConcatenatedStringTree) {
     if (_items.length === 0) throw new Error(`Required children missing on 'concatenated_string' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = concatenatedString(config as ConcatenatedStringConfig);
+  const result = concatenated_string_(config as ConcatenatedStringConfig);
   return bindRange(target, result);
 }
 
@@ -431,7 +431,7 @@ export function assignConditionalExpression(target: ConditionalExpressionTree) {
     if (!_child) throw new Error(`Required child missing on 'conditional_expression' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = conditionalExpression(config as ConditionalExpressionConfig);
+  const result = conditional_expression_(config as ConditionalExpressionConfig);
   return bindRange(target, result);
 }
 
@@ -449,7 +449,7 @@ export function assignConstrainedType(target: ConstrainedTypeTree) {
     if (!_child) throw new Error(`Required child missing on 'constrained_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = constrainedType(config as ConstrainedTypeConfig);
+  const result = constrained_type_(config as ConstrainedTypeConfig);
   return bindRange(target, result);
 }
 
@@ -462,7 +462,7 @@ export function assignDecoratedDefinition(target: DecoratedDefinitionTree) {
     if (_items.length === 0) throw new Error(`Required children missing on 'decorated_definition' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = decoratedDefinition(config as DecoratedDefinitionConfig);
+  const result = decorated_definition_(config as DecoratedDefinitionConfig);
   return bindRange(target, result);
 }
 
@@ -474,7 +474,7 @@ export function assignDecorator(target: DecoratorTree) {
     if (!_child) throw new Error(`Required child missing on 'decorator' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = decorator(config as DecoratorConfig);
+  const result = decorator_(config as DecoratorConfig);
   return bindRange(target, result);
 }
 
@@ -482,7 +482,7 @@ export function assignDefaultParameter(target: DefaultParameterTree) {
   const config: Record<string, unknown> = {};
   config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
-  const result = defaultParameter(config as DefaultParameterConfig);
+  const result = default_parameter_(config as DefaultParameterConfig);
   return bindRange(target, result);
 }
 
@@ -494,7 +494,7 @@ export function assignDeleteStatement(target: DeleteStatementTree) {
     if (!_child) throw new Error(`Required child missing on 'delete_statement' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = deleteStatement(config as DeleteStatementConfig);
+  const result = delete_statement_(config as DeleteStatementConfig);
   return bindRange(target, result);
 }
 
@@ -511,7 +511,7 @@ export function assignDictPattern(target: DictPatternTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = dictPattern(config as DictPatternConfig);
+  const result = dict_pattern_(config as DictPatternConfig);
   return bindRange(target, result);
 }
 
@@ -528,7 +528,7 @@ export function assignDictionary(target: DictionaryTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = dictionary(config as DictionaryConfig);
+  const result = dictionary_(config as DictionaryConfig);
   return bindRange(target, result);
 }
 
@@ -546,7 +546,7 @@ export function assignDictionaryComprehension(target: DictionaryComprehensionTre
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = dictionaryComprehension(config as DictionaryComprehensionConfig);
+  const result = dictionary_comprehension_(config as DictionaryComprehensionConfig);
   return bindRange(target, result);
 }
 
@@ -558,7 +558,7 @@ export function assignDictionarySplat(target: DictionarySplatTree) {
     if (!_child) throw new Error(`Required child missing on 'dictionary_splat' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = dictionarySplat(config as DictionarySplatConfig);
+  const result = dictionary_splat_(config as DictionarySplatConfig);
   return bindRange(target, result);
 }
 
@@ -570,7 +570,7 @@ export function assignDictionarySplatPattern(target: DictionarySplatPatternTree)
     if (!_child) throw new Error(`Required child missing on 'dictionary_splat_pattern' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = dictionarySplatPattern(config as DictionarySplatPatternConfig);
+  const result = dictionary_splat_pattern_(config as DictionarySplatPatternConfig);
   return bindRange(target, result);
 }
 
@@ -587,7 +587,7 @@ export function assignDottedName(target: DottedNameTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = dottedName(config as DottedNameConfig);
+  const result = dotted_name_(config as DottedNameConfig);
   return bindRange(target, result);
 }
 
@@ -595,14 +595,14 @@ export function assignElifClause(target: ElifClauseTree) {
   const config: Record<string, unknown> = {};
   config['condition'] = assignByKind(target.field('condition')!.type, target.field('condition')!);
   config['consequence'] = assignBlock(target.field('consequence')! as BlockTree);
-  const result = elifClause(config as ElifClauseConfig);
+  const result = elif_clause_(config as ElifClauseConfig);
   return bindRange(target, result);
 }
 
 export function assignElseClause(target: ElseClauseTree) {
   const config: Record<string, unknown> = {};
   config['body'] = assignBlock(target.field('body')! as BlockTree);
-  const result = elseClause(config as ElseClauseConfig);
+  const result = else_clause_(config as ElseClauseConfig);
   return bindRange(target, result);
 }
 
@@ -620,7 +620,7 @@ export function assignExceptClause(target: ExceptClauseTree) {
     if (!_child) throw new Error(`Required child missing on 'except_clause' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = exceptClause(config as ExceptClauseConfig);
+  const result = except_clause_(config as ExceptClauseConfig);
   return bindRange(target, result);
 }
 
@@ -638,7 +638,7 @@ export function assignExecStatement(target: ExecStatementTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = execStatement(config as ExecStatementConfig);
+  const result = exec_statement_(config as ExecStatementConfig);
   return bindRange(target, result);
 }
 
@@ -655,7 +655,7 @@ export function assignExpressionList(target: ExpressionListTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = expressionList(config as ExpressionListConfig);
+  const result = expression_list_(config as ExpressionListConfig);
   return bindRange(target, result);
 }
 
@@ -672,7 +672,7 @@ export function assignExpressionStatement(target: ExpressionStatementTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = expressionStatement(config as ExpressionStatementConfig);
+  const result = expression_statement_(config as ExpressionStatementConfig);
   return bindRange(target, result);
 }
 
@@ -684,7 +684,7 @@ export function assignFinallyClause(target: FinallyClauseTree) {
     if (!_child) throw new Error(`Required child missing on 'finally_clause' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = finallyClause(config as FinallyClauseConfig);
+  const result = finally_clause_(config as FinallyClauseConfig);
   return bindRange(target, result);
 }
 
@@ -697,7 +697,7 @@ export function assignForInClause(target: ForInClauseTree) {
     if (_items.length === 0) throw new Error(`Required field 'right' has no children on 'for_in_clause' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = forInClause(config as ForInClauseConfig);
+  const result = for_in_clause_(config as ForInClauseConfig);
   return bindRange(target, result);
 }
 
@@ -707,7 +707,7 @@ export function assignForStatement(target: ForStatementTree) {
   config['body'] = assignBlock(target.field('body')! as BlockTree);
   config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
   config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
-  const result = forStatement(config as ForStatementConfig);
+  const result = for_statement_(config as ForStatementConfig);
   return bindRange(target, result);
 }
 
@@ -716,7 +716,7 @@ export function assignFormatExpression(target: FormatExpressionTree) {
   config['expression'] = assignByKind(target.field('expression')!.type, target.field('expression')!);
   config['formatSpecifier'] = target.field('format_specifier') ? assignFormatSpecifier(target.field('format_specifier')! as FormatSpecifierTree) : undefined;
   config['typeConversion'] = target.field('type_conversion') ? assignByKind('type_conversion', target.field('type_conversion')!) : undefined;
-  const result = formatExpression(config as FormatExpressionConfig);
+  const result = format_expression_(config as FormatExpressionConfig);
   return bindRange(target, result);
 }
 
@@ -727,7 +727,7 @@ export function assignFormatSpecifier(target: FormatSpecifierTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = formatSpecifier(config as FormatSpecifierConfig);
+  const result = format_specifier_(config as FormatSpecifierConfig);
   return bindRange(target, result);
 }
 
@@ -738,7 +738,7 @@ export function assignFunctionDefinition(target: FunctionDefinitionTree) {
   config['parameters'] = assignParameters(target.field('parameters')! as ParametersTree);
   config['returnType'] = target.field('return_type') ? assignType(target.field('return_type')! as TypeTree) : undefined;
   config['typeParameters'] = target.field('type_parameters') ? assignTypeParameter(target.field('type_parameters')! as TypeParameterTree) : undefined;
-  const result = functionDefinition(config as FunctionDefinitionConfig);
+  const result = function_definition_(config as FunctionDefinitionConfig);
   return bindRange(target, result);
 }
 
@@ -750,7 +750,7 @@ export function assignFutureImportStatement(target: FutureImportStatementTree) {
     if (_items.length === 0) throw new Error(`Required field 'name' has no children on 'future_import_statement' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = futureImportStatement(config as FutureImportStatementConfig);
+  const result = future_import_statement_(config as FutureImportStatementConfig);
   return bindRange(target, result);
 }
 
@@ -768,7 +768,7 @@ export function assignGeneratorExpression(target: GeneratorExpressionTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = generatorExpression(config as GeneratorExpressionConfig);
+  const result = generator_expression_(config as GeneratorExpressionConfig);
   return bindRange(target, result);
 }
 
@@ -786,7 +786,7 @@ export function assignGenericType(target: GenericTypeTree) {
     if (!_child) throw new Error(`Required child missing on 'generic_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = genericType(config as GenericTypeConfig);
+  const result = generic_type_(config as GenericTypeConfig);
   return bindRange(target, result);
 }
 
@@ -803,7 +803,7 @@ export function assignGlobalStatement(target: GlobalStatementTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = globalStatement(config as GlobalStatementConfig);
+  const result = global_statement_(config as GlobalStatementConfig);
   return bindRange(target, result);
 }
 
@@ -815,7 +815,7 @@ export function assignIfClause(target: IfClauseTree) {
     if (!_child) throw new Error(`Required child missing on 'if_clause' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = ifClause(config as IfClauseConfig);
+  const result = if_clause_(config as IfClauseConfig);
   return bindRange(target, result);
 }
 
@@ -828,7 +828,7 @@ export function assignIfStatement(target: IfStatementTree) {
   })();
   config['condition'] = assignByKind(target.field('condition')!.type, target.field('condition')!);
   config['consequence'] = assignBlock(target.field('consequence')! as BlockTree);
-  const result = ifStatement(config as IfStatementConfig);
+  const result = if_statement_(config as IfStatementConfig);
   return bindRange(target, result);
 }
 
@@ -846,7 +846,7 @@ export function assignImportFromStatement(target: ImportFromStatementTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = importFromStatement(config as ImportFromStatementConfig);
+  const result = import_from_statement_(config as ImportFromStatementConfig);
   return bindRange(target, result);
 }
 
@@ -858,7 +858,7 @@ export function assignImportStatement(target: ImportStatementTree) {
     if (_items.length === 0) throw new Error(`Required field 'name' has no children on 'import_statement' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = importStatement(config as ImportStatementConfig);
+  const result = import_statement_(config as ImportStatementConfig);
   return bindRange(target, result);
 }
 
@@ -867,7 +867,7 @@ export function assignInterpolation(target: InterpolationTree) {
   config['expression'] = assignByKind(target.field('expression')!.type, target.field('expression')!);
   config['formatSpecifier'] = target.field('format_specifier') ? assignFormatSpecifier(target.field('format_specifier')! as FormatSpecifierTree) : undefined;
   config['typeConversion'] = target.field('type_conversion') ? assignByKind('type_conversion', target.field('type_conversion')!) : undefined;
-  const result = interpolation(config as InterpolationConfig);
+  const result = interpolation_(config as InterpolationConfig);
   return bindRange(target, result);
 }
 
@@ -875,7 +875,7 @@ export function assignKeywordArgument(target: KeywordArgumentTree) {
   const config: Record<string, unknown> = {};
   config['name'] = assignByKind('identifier', target.field('name')!);
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
-  const result = keywordArgument(config as KeywordArgumentConfig);
+  const result = keyword_argument_(config as KeywordArgumentConfig);
   return bindRange(target, result);
 }
 
@@ -893,7 +893,7 @@ export function assignKeywordPattern(target: KeywordPatternTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = keywordPattern(config as KeywordPatternConfig);
+  const result = keyword_pattern_(config as KeywordPatternConfig);
   return bindRange(target, result);
 }
 
@@ -901,7 +901,7 @@ export function assignLambda(target: LambdaTree) {
   const config: Record<string, unknown> = {};
   config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
   config['parameters'] = target.field('parameters') ? assignLambdaParameters(target.field('parameters')! as LambdaParametersTree) : undefined;
-  const result = lambda(config as LambdaConfig);
+  const result = lambda_(config as LambdaConfig);
   return bindRange(target, result);
 }
 
@@ -913,7 +913,7 @@ export function assignLambdaParameters(target: LambdaParametersTree) {
     if (_items.length === 0) throw new Error(`Required children missing on 'lambda_parameters' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = lambdaParameters(config as LambdaParametersConfig);
+  const result = lambda_parameters_(config as LambdaParametersConfig);
   return bindRange(target, result);
 }
 
@@ -924,7 +924,7 @@ export function assignList(target: ListTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = list(config as ListConfig);
+  const result = list_(config as ListConfig);
   return bindRange(target, result);
 }
 
@@ -942,7 +942,7 @@ export function assignListComprehension(target: ListComprehensionTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = listComprehension(config as ListComprehensionConfig);
+  const result = list_comprehension_(config as ListComprehensionConfig);
   return bindRange(target, result);
 }
 
@@ -953,7 +953,7 @@ export function assignListPattern(target: ListPatternTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = listPattern(config as ListPatternConfig);
+  const result = list_pattern_(config as ListPatternConfig);
   return bindRange(target, result);
 }
 
@@ -965,7 +965,7 @@ export function assignListSplat(target: ListSplatTree) {
     if (!_child) throw new Error(`Required child missing on 'list_splat' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = listSplat(config as ListSplatConfig);
+  const result = list_splat_(config as ListSplatConfig);
   return bindRange(target, result);
 }
 
@@ -977,7 +977,7 @@ export function assignListSplatPattern(target: ListSplatPatternTree) {
     if (!_child) throw new Error(`Required child missing on 'list_splat_pattern' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = listSplatPattern(config as ListSplatPatternConfig);
+  const result = list_splat_pattern_(config as ListSplatPatternConfig);
   return bindRange(target, result);
 }
 
@@ -990,7 +990,7 @@ export function assignMatchStatement(target: MatchStatementTree) {
     if (_items.length === 0) throw new Error(`Required field 'subject' has no children on 'match_statement' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = matchStatement(config as MatchStatementConfig);
+  const result = match_statement_(config as MatchStatementConfig);
   return bindRange(target, result);
 }
 
@@ -1008,7 +1008,7 @@ export function assignMemberType(target: MemberTypeTree) {
     if (!_child) throw new Error(`Required child missing on 'member_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = memberType(config as MemberTypeConfig);
+  const result = member_type_(config as MemberTypeConfig);
   return bindRange(target, result);
 }
 
@@ -1019,7 +1019,7 @@ export function assignModule(target: ModuleTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = module(config as ModuleConfig);
+  const result = module_(config as ModuleConfig);
   return bindRange(target, result);
 }
 
@@ -1027,7 +1027,7 @@ export function assignNamedExpression(target: NamedExpressionTree) {
   const config: Record<string, unknown> = {};
   config['name'] = assignByKind('identifier', target.field('name')!);
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
-  const result = namedExpression(config as NamedExpressionConfig);
+  const result = named_expression_(config as NamedExpressionConfig);
   return bindRange(target, result);
 }
 
@@ -1044,14 +1044,14 @@ export function assignNonlocalStatement(target: NonlocalStatementTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = nonlocalStatement(config as NonlocalStatementConfig);
+  const result = nonlocal_statement_(config as NonlocalStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignNotOperator(target: NotOperatorTree) {
   const config: Record<string, unknown> = {};
   config['argument'] = assignByKind(target.field('argument')!.type, target.field('argument')!);
-  const result = notOperator(config as NotOperatorConfig);
+  const result = not_operator_(config as NotOperatorConfig);
   return bindRange(target, result);
 }
 
@@ -1059,7 +1059,7 @@ export function assignPair(target: PairTree) {
   const config: Record<string, unknown> = {};
   config['key'] = assignByKind(target.field('key')!.type, target.field('key')!);
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
-  const result = pair(config as PairConfig);
+  const result = pair_(config as PairConfig);
   return bindRange(target, result);
 }
 
@@ -1070,7 +1070,7 @@ export function assignParameters(target: ParametersTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = parameters(config as ParametersConfig);
+  const result = parameters_(config as ParametersConfig);
   return bindRange(target, result);
 }
 
@@ -1082,7 +1082,7 @@ export function assignParenthesizedExpression(target: ParenthesizedExpressionTre
     if (!_child) throw new Error(`Required child missing on 'parenthesized_expression' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = parenthesizedExpression(config as ParenthesizedExpressionConfig);
+  const result = parenthesized_expression_(config as ParenthesizedExpressionConfig);
   return bindRange(target, result);
 }
 
@@ -1094,7 +1094,7 @@ export function assignParenthesizedListSplat(target: ParenthesizedListSplatTree)
     if (!_child) throw new Error(`Required child missing on 'parenthesized_list_splat' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = parenthesizedListSplat(config as ParenthesizedListSplatConfig);
+  const result = parenthesized_list_splat_(config as ParenthesizedListSplatConfig);
   return bindRange(target, result);
 }
 
@@ -1111,7 +1111,7 @@ export function assignPatternList(target: PatternListTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = patternList(config as PatternListConfig);
+  const result = pattern_list_(config as PatternListConfig);
   return bindRange(target, result);
 }
 
@@ -1128,7 +1128,7 @@ export function assignPrintStatement(target: PrintStatementTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = printStatement(config as PrintStatementConfig);
+  const result = print_statement_(config as PrintStatementConfig);
   return bindRange(target, result);
 }
 
@@ -1141,7 +1141,7 @@ export function assignRaiseStatement(target: RaiseStatementTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = raiseStatement(config as RaiseStatementConfig);
+  const result = raise_statement_(config as RaiseStatementConfig);
   return bindRange(target, result);
 }
 
@@ -1159,7 +1159,7 @@ export function assignRelativeImport(target: RelativeImportTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = relativeImport(config as RelativeImportConfig);
+  const result = relative_import_(config as RelativeImportConfig);
   return bindRange(target, result);
 }
 
@@ -1171,7 +1171,7 @@ export function assignReturnStatement(target: ReturnStatementTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = returnStatement(config as ReturnStatementConfig);
+  const result = return_statement_(config as ReturnStatementConfig);
   return bindRange(target, result);
 }
 
@@ -1183,7 +1183,7 @@ export function assignSet(target: SetTree) {
     if (_items.length === 0) throw new Error(`Required children missing on 'set' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = set(config as SetConfig);
+  const result = set_(config as SetConfig);
   return bindRange(target, result);
 }
 
@@ -1201,7 +1201,7 @@ export function assignSetComprehension(target: SetComprehensionTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = setComprehension(config as SetComprehensionConfig);
+  const result = set_comprehension_(config as SetComprehensionConfig);
   return bindRange(target, result);
 }
 
@@ -1225,7 +1225,7 @@ export function assignSlice(target: SliceTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = slice(config as SliceConfig);
+  const result = slice_(config as SliceConfig);
   return bindRange(target, result);
 }
 
@@ -1237,7 +1237,7 @@ export function assignSplatPattern(target: SplatPatternTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = splatPattern(config as SplatPatternConfig);
+  const result = splat_pattern_(config as SplatPatternConfig);
   return bindRange(target, result);
 }
 
@@ -1249,7 +1249,7 @@ export function assignSplatType(target: SplatTypeTree) {
     if (!_child) throw new Error(`Required child missing on 'splat_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = splatType(config as SplatTypeConfig);
+  const result = splat_type_(config as SplatTypeConfig);
   return bindRange(target, result);
 }
 
@@ -1272,7 +1272,7 @@ export function assignString(target: StringTree) {
     if (!_child) throw new Error(`Required child missing on 'string' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = string(config as StringConfig);
+  const result = string_(config as StringConfig);
   return bindRange(target, result);
 }
 
@@ -1283,7 +1283,7 @@ export function assignStringContent(target: StringContentTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = stringContent(config as StringContentConfig);
+  const result = string_content_(config as StringContentConfig);
   return bindRange(target, result);
 }
 
@@ -1296,7 +1296,7 @@ export function assignSubscript(target: SubscriptTree) {
     return _items.map((c) => assignByKind(c.type, c));
   })();
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
-  const result = subscript(config as SubscriptConfig);
+  const result = subscript_(config as SubscriptConfig);
   return bindRange(target, result);
 }
 
@@ -1320,7 +1320,7 @@ export function assignTryStatement(target: TryStatementTree) {
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  const result = tryStatement(config as TryStatementConfig);
+  const result = try_statement_(config as TryStatementConfig);
   return bindRange(target, result);
 }
 
@@ -1331,7 +1331,7 @@ export function assignTuple(target: TupleTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = tuple(config as TupleConfig);
+  const result = tuple_(config as TupleConfig);
   return bindRange(target, result);
 }
 
@@ -1342,7 +1342,7 @@ export function assignTuplePattern(target: TuplePatternTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = tuplePattern(config as TuplePatternConfig);
+  const result = tuple_pattern_(config as TuplePatternConfig);
   return bindRange(target, result);
 }
 
@@ -1362,7 +1362,7 @@ export function assignTypeAliasStatement(target: TypeAliasStatementTree) {
   const config: Record<string, unknown> = {};
   config['left'] = assignType(target.field('left')! as TypeTree);
   config['right'] = assignType(target.field('right')! as TypeTree);
-  const result = typeAliasStatement(config as TypeAliasStatementConfig);
+  const result = type_alias_statement_(config as TypeAliasStatementConfig);
   return bindRange(target, result);
 }
 
@@ -1379,7 +1379,7 @@ export function assignTypeParameter(target: TypeParameterTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = typeParameter(config as TypeParameterConfig);
+  const result = type_parameter_(config as TypeParameterConfig);
   return bindRange(target, result);
 }
 
@@ -1388,7 +1388,7 @@ export function assignTypedDefaultParameter(target: TypedDefaultParameterTree) {
   config['name'] = assignByKind('identifier', target.field('name')!);
   config['type'] = assignType(target.field('type')! as TypeTree);
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
-  const result = typedDefaultParameter(config as TypedDefaultParameterConfig);
+  const result = typed_default_parameter_(config as TypedDefaultParameterConfig);
   return bindRange(target, result);
 }
 
@@ -1401,7 +1401,7 @@ export function assignTypedParameter(target: TypedParameterTree) {
     if (!_child) throw new Error(`Required child missing on 'typed_parameter' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = typedParameter(config as TypedParameterConfig);
+  const result = typed_parameter_(config as TypedParameterConfig);
   return bindRange(target, result);
 }
 
@@ -1409,7 +1409,7 @@ export function assignUnaryOperator(target: UnaryOperatorTree) {
   const config: Record<string, unknown> = {};
   config['argument'] = assignByKind(target.field('argument')!.type, target.field('argument')!);
   config['operator'] = target.field('operator')!.text();
-  const result = unaryOperator(config as UnaryOperatorConfig);
+  const result = unary_operator_(config as UnaryOperatorConfig);
   return bindRange(target, result);
 }
 
@@ -1420,7 +1420,7 @@ export function assignUnionPattern(target: UnionPatternTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = unionPattern(config as UnionPatternConfig);
+  const result = union_pattern_(config as UnionPatternConfig);
   return bindRange(target, result);
 }
 
@@ -1438,7 +1438,7 @@ export function assignUnionType(target: UnionTypeTree) {
     if (!_child) throw new Error(`Required child missing on 'union_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = unionType(config as UnionTypeConfig);
+  const result = union_type_(config as UnionTypeConfig);
   return bindRange(target, result);
 }
 
@@ -1447,7 +1447,7 @@ export function assignWhileStatement(target: WhileStatementTree) {
   config['alternative'] = target.field('alternative') ? assignElseClause(target.field('alternative')! as ElseClauseTree) : undefined;
   config['body'] = assignBlock(target.field('body')! as BlockTree);
   config['condition'] = assignByKind(target.field('condition')!.type, target.field('condition')!);
-  const result = whileStatement(config as WhileStatementConfig);
+  const result = while_statement_(config as WhileStatementConfig);
   return bindRange(target, result);
 }
 
@@ -1464,14 +1464,14 @@ export function assignWithClause(target: WithClauseTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  const result = withClause(config as WithClauseConfig);
+  const result = with_clause_(config as WithClauseConfig);
   return bindRange(target, result);
 }
 
 export function assignWithItem(target: WithItemTree) {
   const config: Record<string, unknown> = {};
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
-  const result = withItem(config as WithItemConfig);
+  const result = with_item_(config as WithItemConfig);
   return bindRange(target, result);
 }
 
@@ -1484,7 +1484,7 @@ export function assignWithStatement(target: WithStatementTree) {
     if (!_child) throw new Error(`Required child missing on 'with_statement' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  const result = withStatement(config as WithStatementConfig);
+  const result = with_statement_(config as WithStatementConfig);
   return bindRange(target, result);
 }
 

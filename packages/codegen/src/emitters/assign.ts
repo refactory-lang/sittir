@@ -10,7 +10,7 @@
 
 import type { HydratedNodeModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
-import { toTypeName, toFactoryName, toFieldName, toGrammarTypeName } from '../naming.ts';
+import { toTypeName, toFactoryName, toRawFactoryName, toFieldName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
@@ -51,10 +51,10 @@ export function emitAssign(config: EmitAssignConfig): string {
 	lines.push('');
 	lines.push('const { render } = createRenderer(rules, joinBy);');
 
-	// Import all factory functions
+	// Import all factory functions (raw kind names, _prefix for reserved words)
 	const factoryImports: string[] = [];
-	for (const node of nodes) factoryImports.push(toFactoryName(node.kind));
-	for (const kind of leafKinds) factoryImports.push(toFactoryName(kind));
+	for (const node of nodes) factoryImports.push(toRawFactoryName(node.kind));
+	for (const kind of leafKinds) factoryImports.push(toRawFactoryName(kind));
 	lines.push(`import { ${factoryImports.join(', ')} } from './factories.js';`);
 
 	// Import config types for the cast in assign functions
@@ -75,12 +75,12 @@ export function emitAssign(config: EmitAssignConfig): string {
 		lines.push(`  '${node.kind}': (t) => assign${toTypeName(node.kind)}(t),`);
 	}
 	for (const kind of leafKinds) {
-		const factoryName = toFactoryName(kind);
+		const rawFn = toRawFactoryName(kind);
 		const fixedText = keywordKinds.get(kind);
 		if (fixedText !== undefined) {
-			lines.push(`  '${kind}': () => ${factoryName}(),`);
+			lines.push(`  '${kind}': () => ${rawFn}(),`);
 		} else {
-			lines.push(`  '${kind}': (t) => ${factoryName}(t.text()),`);
+			lines.push(`  '${kind}': (t) => ${rawFn}(t.text()),`);
 		}
 	}
 
@@ -99,7 +99,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 	// ---------------------------------------------------------------------------
 	for (const node of nodes) {
 		const typeName = toTypeName(node.kind);
-		const factoryName = toFactoryName(node.kind);
+		const rawFn = toRawFactoryName(node.kind);
 		const configTypeName = typeName + 'Config';
 		const fields = fieldsOf(node);
 
@@ -131,7 +131,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 			});
 		}
 
-		lines.push(`  const result = ${factoryName}(config as ${configTypeName});`);
+		lines.push(`  const result = ${rawFn}(config as ${configTypeName});`);
 
 		// Bind target's range for no-arg toEdit()/replace()
 		lines.push(`  return bindRange(target, result);`);

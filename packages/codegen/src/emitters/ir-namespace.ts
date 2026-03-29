@@ -11,7 +11,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
-import { toIrKey, toFactoryName, toShortName, toTypeName } from '../naming.ts';
+import { toIrKey, toFactoryName, toRawFactoryName, toShortName, toTypeName } from '../naming.ts';
 import { structuralNodes, leafKindsOf, keywordKindsOf, fieldsOf, escapeString } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
@@ -33,18 +33,19 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 	lines.push('');
 
 	// Collect all factory imports from factories.ts
+	// Reserved words use _prefix internal name from factories.ts
 	const factoryImports: string[] = [];
+	const importName = toRawFactoryName;
 	for (const kind of branchKinds) {
-		factoryImports.push(toFactoryName(kind));
+		factoryImports.push(importName(kind));
 	}
 	for (const kind of leafKinds) {
 		if (!keywordKinds.has(kind)) {
-			factoryImports.push(toFactoryName(kind));
+			factoryImports.push(importName(kind));
 		}
 	}
-	// Keywords also get factory names
 	for (const kind of keywordKinds.keys()) {
-		factoryImports.push(toFactoryName(kind));
+		factoryImports.push(importName(kind));
 	}
 
 	lines.push(`import { ${factoryImports.join(', ')} } from './factories.js';`);
@@ -67,9 +68,8 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 	lines.push('  // Branch node factories');
 	for (const kind of branchKinds) {
 		const irKey = resolveIrKey(kind, usedKeys);
-		const factory = toFactoryName(kind);
-		const fromFn = `${factory}From`;
-		lines.push(`  ${irKey}: Object.assign(${factory}, { from: ${fromFn} }),`);
+		const fromFn = `${toFactoryName(kind)}From`;
+		lines.push(`  ${irKey}: Object.assign(${importName(kind)}, { from: ${fromFn} }),`);
 	}
 
 	lines.push('');
@@ -78,12 +78,7 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 	lines.push('  // Keyword factories');
 	for (const [kind] of keywordKinds) {
 		const irKey = resolveIrKey(kind, usedKeys);
-		const factory = toFactoryName(kind);
-		if (irKey === factory) {
-			lines.push(`  ${irKey},`);
-		} else {
-			lines.push(`  ${irKey}: ${factory},`);
-		}
+		lines.push(`  ${irKey}: ${importName(kind)},`);
 	}
 
 	lines.push('');
@@ -93,12 +88,7 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 	for (const kind of leafKinds) {
 		if (keywordKinds.has(kind)) continue; // already in keywords
 		const irKey = resolveIrKey(kind, usedKeys);
-		const factory = toFactoryName(kind);
-		if (irKey === factory) {
-			lines.push(`  ${irKey},`);
-		} else {
-			lines.push(`  ${irKey}: ${factory},`);
-		}
+		lines.push(`  ${irKey}: ${importName(kind)},`);
 	}
 
 	// Semantic operator aliases

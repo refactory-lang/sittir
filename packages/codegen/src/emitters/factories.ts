@@ -1,18 +1,17 @@
 /**
  * Unified factory emitter.
  *
- * Generates factory functions for branch node kinds:
- *   - Declarative: ir.function({ name: ..., body: ... })
- *   - Fluent: ir.function({ name }).body(block)
+ * Factory functions are named by raw kind (function_item, not functionItem).
+ * The ir namespace maps to camelCase for the developer API.
  *
- * Factories accept *Config (fields + children) only.
- * Produces immutable nodes as single object literals — no mutation, no assignment.
+ * Factories accept camelCase Config, store under raw field names in `fields`.
+ * Fluent API: no-arg = getter (reads from fields), with-arg = setter (returns new node).
  */
 
 import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
-import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
+import { toTypeName, toFactoryName, toFieldName, toRawFactoryName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
@@ -23,6 +22,8 @@ export interface EmitFactoriesConfig {
 
 /**
  * Emit a factory function for a single branch node kind.
+ * Function name = raw kind (e.g. function_item).
+ * Output has: type, fields (raw names), fluent getters/setters (camelCase), render/edit methods.
  */
 export function emitFactory(config: {
 	node: StructuralNode;
@@ -32,39 +33,51 @@ export function emitFactory(config: {
 	const { node, leafKinds, ctx } = config;
 	const leafSet = new Set(leafKinds);
 	const typeName = toTypeName(node.kind);
-	const factoryName = toFactoryName(node.kind);
+	const internalName = toRawFactoryName(node.kind);
 
 	const lines: string[] = [];
 
-	// Factory function — accepts *Config (fields + children), return type inferred
+	// Factory function — accepts *Config (camelCase), return type inferred
 	const hasChildren = node.children != null;
 	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && childHasRequired(node.children!));
-	if (hasRequiredFields) {
-		lines.push(`export function ${factoryName}(`);
-		lines.push(`  config: ${typeName}Config,`);
-		lines.push(`) {`);
-	} else {
-		lines.push(`export function ${factoryName}(`);
-		lines.push(`  config?: ${typeName}Config,`);
-		lines.push(`) {`);
-	}
 
-	// Direct return — setters + methods, no mutation
+	const opt = hasRequiredFields ? '' : '?';
+	lines.push(`export function ${internalName}(`);
+	lines.push(`  config${opt}: ${typeName}Config,`);
+	lines.push(`) {`);
+
+	// Build fields object — raw names, values from camelCase config
+	const fields = fieldsOf(node);
+	lines.push(`  const fields = {`);
+	for (const f of fields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		lines.push(`    ${f.name}: config${opt}.${camel},`);
+	}
+	// Children slots → fields.children
+	if (hasChildren) {
+		const slotNames = childSlotNames(node.children!, ctx);
+		eachChildSlot(node.children!, (_slot, i) => {
+			const name = slotNames[i]!;
+			lines.push(`    ${name}: config${opt}.${name},`);
+		});
+	}
+	lines.push(`  };`);
+
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
+	lines.push(`    fields,`);
 
-	// Fluent setters — immutable: return a new node via factory re-call
-	for (const f of fieldsOf(node)) {
+	// Fluent getters/setters — no-arg = getter (reads fields), with-arg = setter (re-calls factory)
+	for (const f of fields) {
 		const camel = f.propertyName ?? toFieldName(f.name);
-		const setterName = camel === 'type' ? 'typeField' : camel;
-		const configKey = camel;
+		const methodName = camel === 'type' ? 'typeField' : camel;
 		const proj = projectKinds(f.kinds, ctx);
 		const fieldType = fieldTypeExprFromProj(proj, leafSet);
 
 		if (f.multiple) {
-			lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, ${configKey}: v }),`);
+			lines.push(`    ${methodName}(...v: (${fieldType})[]): any { return v.length ? ${internalName}({ ...config, ${camel}: v }) : fields.${f.name}; },`);
 		} else {
-			lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, ${configKey}: v }),`);
+			lines.push(`    ${methodName}(v?: ${fieldType}): any { return v !== undefined ? ${internalName}({ ...config, ${camel}: v }) : fields.${f.name}; },`);
 		}
 	}
 	if (hasChildren) {
@@ -74,9 +87,9 @@ export function emitFactory(config: {
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (slot.multiple) {
-				lines.push(`    ${name}: (...v: (${slotType})[]) => ${factoryName}({ ...config, ${name}: v }),`);
+				lines.push(`    ${name}(...v: (${slotType})[]): any { return v.length ? ${internalName}({ ...config, ${name}: v }) : fields.${name}; },`);
 			} else {
-				lines.push(`    ${name}: (v: ${slotType}) => ${factoryName}({ ...config, ${name}: v }),`);
+				lines.push(`    ${name}(v?: ${slotType}): any { return v !== undefined ? ${internalName}({ ...config, ${name}: v }) : fields.${name}; },`);
 			}
 		});
 	}
@@ -106,14 +119,12 @@ export function emitTerminalFactory(
 	keywordTokens?: Set<string>,
 	grammar?: string,
 ): string {
-	const factoryName = toFactoryName(kind);
-
-	const typeName = toTypeName(kind);
+	const internalName = toRawFactoryName(kind);
 
 	if (fixedText !== undefined) {
 		// Keyword factory — zero args, fixed text, return type inferred
 		const lines = [];
-		lines.push(`export function ${factoryName}() {`);
+		lines.push(`export function ${internalName}() {`);
 		lines.push(`  return {`);
 		lines.push(`    type: '${kind}' as const,`);
 		lines.push(`    text: '${escapeString(fixedText)}',`);
@@ -149,13 +160,11 @@ export function emitTerminalFactory(
 	const leafPattern = grammar ? extractLeafPattern(grammar, kind) : undefined;
 
 	const lines: string[] = [];
-	lines.push(`export function ${factoryName}(text: ${textType}) {`);
+	lines.push(`export function ${internalName}(text: ${textType}) {`);
 	if (needsKeywordValidation) {
 		lines.push(`  if (RESERVED_KEYWORDS.has(text)) throw new Error(\`'\${text}' is a reserved keyword, not a valid ${kind}\`);`);
 	}
 	if (leafPattern && !enumValues?.length) {
-		// Skip patterns that can't be safely embedded in JS regex literals
-		// (e.g., comment patterns containing // or /* which conflict with JS syntax)
 		const hasSyntaxConflict = leafPattern.includes('//') || leafPattern.includes('/*');
 		if (!hasSyntaxConflict && isSafeJsRegex(leafPattern)) {
 			const escaped = leafPattern.replace(/`/g, '\\`').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\0/g, '\\0');
@@ -270,10 +279,6 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		lines.push('');
 	}
 
-	// Supertype FromInput unions — e.g. ExpressionFromInput = UnaryExpressionFromInput | ...
-	// Supertype FromInput unions are now in types.ts (derived from NodeFromInput<G, K>)
-
-	// assignByKind, per-kind assign functions, and edit() are in assign.ts
 	lines.push('');
 
 	return lines.join('\n');

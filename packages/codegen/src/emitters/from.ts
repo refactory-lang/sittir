@@ -12,7 +12,7 @@
 import type { HydratedNodeModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
-import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
+import { toTypeName, toFactoryName, toRawFactoryName, toFieldName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
 
@@ -205,13 +205,14 @@ function emitFromFunction(
 	ctx: ProjectionContext,
 ): string {
 	const typeName = toTypeName(node.kind);
-	const factoryName = toFactoryName(node.kind);
+	const factoryName = toRawFactoryName(node.kind);
+	const camelFactoryName = toFactoryName(node.kind);
 	const fields = fieldsOf(node);
 
 	const lines: string[] = [];
 
 	// Function overloads
-	const exportName = `${factoryName}From`;
+	const exportName = `${camelFactoryName}From`;
 	lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
 	lines.push(`export function ${exportName}(input: ${typeName}): any;`);
 	lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): any;`);
@@ -304,15 +305,15 @@ function emitResolveCall(
 		const lt = resolved.leafTypes[0]!;
 		if (keywordKinds.has(lt)) {
 			const text = keywordKinds.get(lt)!;
-			return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' && ${varName} === '${escapeString(text)}' ? ${toFactoryName(lt)}() : ${varName})`;
+			return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' && ${varName} === '${escapeString(text)}' ? ${toRawFactoryName(lt)}() : ${varName})`;
 		}
-		const factory = toFactoryName(lt);
+		const factory = toRawFactoryName(lt);
 		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(''+${varName} as any) : ${varName})`;
 	}
 
 	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
-		const factory = toFactoryName(resolved.branchTypes[0]!);
-		const fromFn = `${factory}From`;
+		const factory = toRawFactoryName(resolved.branchTypes[0]!);
+		const fromFn = `${toFactoryName(resolved.branchTypes[0]!)}From`;
 		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName} as any) : typeof ${varName} === 'object' ? ${fromFn}(${varName}) : ${varName})`;
 	}
 
@@ -348,17 +349,17 @@ function emitResolveBody(
 	parts.push(`if(isNodeData(${v}))return ${v}`);
 
 	if (leafTypes.includes('boolean_literal') || (leafTypes.length === 0 && leafSet.has('boolean_literal'))) {
-		parts.push(`if(typeof ${v}==='boolean')return booleanLiteral(${v}?'true':'false')`);
+		parts.push(`if(typeof ${v}==='boolean')return ${toRawFactoryName('boolean_literal')}(${v}?'true':'false')`);
 	}
 
 	const hasInt = leafTypes.includes('integer_literal') || (leafTypes.length === 0 && leafSet.has('integer_literal'));
 	const hasFloat = leafTypes.includes('float_literal') || (leafTypes.length === 0 && leafSet.has('float_literal'));
 	if (hasInt && hasFloat) {
-		parts.push(`if(typeof ${v}==='number')return Number.isInteger(${v})?integerLiteral(''+${v}):floatLiteral(''+${v})`);
+		parts.push(`if(typeof ${v}==='number')return Number.isInteger(${v})?${toRawFactoryName('integer_literal')}(\`\${${v}}\`):${toRawFactoryName('float_literal')}(\`\${${v}}\`)`);
 	} else if (hasInt) {
-		parts.push(`if(typeof ${v}==='number')return integerLiteral(''+${v})`);
+		parts.push(`if(typeof ${v}==='number')return ${toRawFactoryName('integer_literal')}(\`\${${v}}\`)`);
 	} else if (hasFloat) {
-		parts.push(`if(typeof ${v}==='number')return floatLiteral(''+${v})`);
+		parts.push(`if(typeof ${v}==='number')return ${toRawFactoryName('float_literal')}(\`\${${v}}\`)`);
 	}
 
 	parts.push(`if(typeof ${v}==='string'){${emitStringResolve(v, leafTypes, anonTokens, leafSet, leafValueMap, keywordKinds, grammar)}}`);
@@ -397,9 +398,9 @@ function emitStringResolve(
 	const callLeaf = (kind: string, textVar: string) => {
 		if (keywordKinds.has(kind)) {
 			const expectedText = keywordKinds.get(kind)!;
-			return `(${textVar}==='${escapeString(expectedText)}'?${toFactoryName(kind)}():(()=>{throw new Error(\`Expected '${escapeString(expectedText)}' for ${kind}, got '\${${textVar}}'\`)})())`;
+			return `(${textVar}==='${escapeString(expectedText)}'?${toRawFactoryName(kind)}():(()=>{throw new Error(\`Expected '${escapeString(expectedText)}' for ${kind}, got '\${${textVar}}'\`)})())`;
 		}
-		return `${toFactoryName(kind)}(${textVar} as any)`;
+		return `${toRawFactoryName(kind)}(${textVar} as any)`;
 	};
 
 	if (leafTypes.length === 1) {
@@ -534,7 +535,7 @@ function collectReferencedFactories(
 	const refs = new Set<string>();
 
 	for (const node of nodes) {
-		refs.add(toFactoryName(node.kind));
+		refs.add(toRawFactoryName(node.kind));
 	}
 
 	for (const node of nodes) {
@@ -543,7 +544,7 @@ function collectReferencedFactories(
 			const proj = projectKinds(f.kinds, ctx);
 			for (const t of proj.expandedAll) {
 				if (leafSet.has(t)) {
-					refs.add(toFactoryName(t));
+					refs.add(toRawFactoryName(t));
 				}
 			}
 		}
@@ -552,20 +553,20 @@ function collectReferencedFactories(
 				const childProj = projectKinds(slot.kinds, ctx);
 				for (const t of childProj.expandedAll) {
 					if (leafSet.has(t)) {
-						refs.add(toFactoryName(t));
+						refs.add(toRawFactoryName(t));
 					}
 				}
 			});
 		}
-		if (leafSet.has('boolean_literal')) refs.add(toFactoryName('boolean_literal'));
-		if (leafSet.has('integer_literal')) refs.add(toFactoryName('integer_literal'));
-		if (leafSet.has('float_literal')) refs.add(toFactoryName('float_literal'));
+		if (leafSet.has('boolean_literal')) refs.add(toRawFactoryName('boolean_literal'));
+		if (leafSet.has('integer_literal')) refs.add(toRawFactoryName('integer_literal'));
+		if (leafSet.has('float_literal')) refs.add(toRawFactoryName('float_literal'));
 	}
 
 	// Collect factories referenced by supertype resolvers
 	for (const [, concreteKinds] of ctx.expandedSupertypes) {
 		for (const k of concreteKinds) {
-			if (leafSet.has(k)) refs.add(toFactoryName(k));
+			if (leafSet.has(k)) refs.add(toRawFactoryName(k));
 		}
 	}
 

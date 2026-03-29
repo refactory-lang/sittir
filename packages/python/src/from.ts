@@ -4,7 +4,7 @@
 import type { AliasedImport, ArgumentList, AsPattern, AssertStatement, Assignment, Attribute, AugmentedAssignment, Await, BinaryOperator, Block, BooleanOperator, Call, CaseClause, CasePattern, Chevron, ClassDefinition, ClassPattern, ComparisonOperator, ComplexPattern, ConcatenatedString, ConditionalExpression, ConstrainedType, DecoratedDefinition, Decorator, DefaultParameter, DeleteStatement, DictPattern, Dictionary, DictionaryComprehension, DictionarySplat, DictionarySplatPattern, DottedName, ElifClause, ElseClause, ExceptClause, ExecStatement, ExpressionList, ExpressionStatement, FinallyClause, ForInClause, ForStatement, FormatExpression, FormatSpecifier, FunctionDefinition, FutureImportStatement, GeneratorExpression, GenericType, GlobalStatement, IfClause, IfStatement, ImportFromStatement, ImportStatement, Interpolation, KeywordArgument, KeywordPattern, Lambda, LambdaParameters, List, ListComprehension, ListPattern, ListSplat, ListSplatPattern, MatchStatement, MemberType, Module, NamedExpression, NonlocalStatement, NotOperator, Pair, Parameters, ParenthesizedExpression, ParenthesizedListSplat, PatternList, PrintStatement, RaiseStatement, RelativeImport, ReturnStatement, Set, SetComprehension, Slice, SplatPattern, SplatType, String, StringContent, Subscript, TryStatement, Tuple, TuplePattern, Type, TypeAliasStatement, TypeParameter, TypedDefaultParameter, TypedParameter, UnaryOperator, UnionPattern, UnionType, WhileStatement, WithClause, WithItem, WithStatement, Yield, AliasedImportTree, ArgumentListTree, AsPatternTree, AssertStatementTree, AssignmentTree, AttributeTree, AugmentedAssignmentTree, AwaitTree, BinaryOperatorTree, BlockTree, BooleanOperatorTree, CallTree, CaseClauseTree, CasePatternTree, ChevronTree, ClassDefinitionTree, ClassPatternTree, ComparisonOperatorTree, ComplexPatternTree, ConcatenatedStringTree, ConditionalExpressionTree, ConstrainedTypeTree, DecoratedDefinitionTree, DecoratorTree, DefaultParameterTree, DeleteStatementTree, DictPatternTree, DictionaryComprehensionTree, DictionarySplatPatternTree, DictionarySplatTree, DictionaryTree, DottedNameTree, ElifClauseTree, ElseClauseTree, ExceptClauseTree, ExecStatementTree, ExpressionListTree, ExpressionStatementTree, FinallyClauseTree, ForInClauseTree, ForStatementTree, FormatExpressionTree, FormatSpecifierTree, FunctionDefinitionTree, FutureImportStatementTree, GeneratorExpressionTree, GenericTypeTree, GlobalStatementTree, IfClauseTree, IfStatementTree, ImportFromStatementTree, ImportStatementTree, InterpolationTree, KeywordArgumentTree, KeywordPatternTree, LambdaParametersTree, LambdaTree, ListComprehensionTree, ListPatternTree, ListSplatPatternTree, ListSplatTree, ListTree, MatchStatementTree, MemberTypeTree, ModuleTree, NamedExpressionTree, NonlocalStatementTree, NotOperatorTree, PairTree, ParametersTree, ParenthesizedExpressionTree, ParenthesizedListSplatTree, PatternListTree, PrintStatementTree, RaiseStatementTree, RelativeImportTree, ReturnStatementTree, SetComprehensionTree, SetTree, SliceTree, SplatPatternTree, SplatTypeTree, StringContentTree, StringTree, SubscriptTree, TryStatementTree, TuplePatternTree, TupleTree, TypeAliasStatementTree, TypeParameterTree, TypeTree, TypedDefaultParameterTree, TypedParameterTree, UnaryOperatorTree, UnionPatternTree, UnionTypeTree, WhileStatementTree, WithClauseTree, WithItemTree, WithStatementTree, YieldTree } from './types.js';
 import { isNodeData, isTreeNode, _inferBranch } from './utils.js';
 
-import { aliasedImport, argumentList, asPattern, assertStatement, assignment, attribute, augmentedAssignment, await_, binaryOperator, block, booleanOperator, breakStatement, call, caseClause, casePattern, chevron, classDefinition, classPattern, comparisonOperator, complexPattern, concatenatedString, conditionalExpression, constrainedType, continueStatement, decoratedDefinition, decorator, defaultParameter, deleteStatement, dictPattern, dictionary, dictionaryComprehension, dictionarySplat, dictionarySplatPattern, dottedName, elifClause, ellipsis, elseClause, escapeInterpolation, escapeSequence, exceptClause, execStatement, expressionList, expressionStatement, false_, finallyClause, float, forInClause, forStatement, formatExpression, formatSpecifier, functionDefinition, futureImportStatement, generatorExpression, genericType, globalStatement, identifier, ifClause, ifStatement, importFromStatement, importPrefix, importStatement, integer, interpolation, keywordArgument, keywordPattern, keywordSeparator, lambda, lambdaParameters, list, listComprehension, listPattern, listSplat, listSplatPattern, matchStatement, memberType, module, namedExpression, none, nonlocalStatement, notOperator, pair, parameters, parenthesizedExpression, parenthesizedListSplat, passStatement, patternList, positionalSeparator, printStatement, raiseStatement, relativeImport, returnStatement, set, setComprehension, slice, splatPattern, splatType, string, stringContent, stringEnd, stringStart, subscript, true_, tryStatement, tuple, tuplePattern, typeAliasStatement, typeConversion, typeParameter, type_, typedDefaultParameter, typedParameter, unaryOperator, unionPattern, unionType, whileStatement, wildcardImport, withClause, withItem, withStatement, yield_ } from './factories.js';
+import { aliased_import_, argument_list_, as_pattern_, assert_statement_, assignment_, attribute_, augmented_assignment_, await_, binary_operator_, block_, boolean_operator_, break_statement_, call_, case_clause_, case_pattern_, chevron_, class_definition_, class_pattern_, comparison_operator_, complex_pattern_, concatenated_string_, conditional_expression_, constrained_type_, continue_statement_, decorated_definition_, decorator_, default_parameter_, delete_statement_, dict_pattern_, dictionary_, dictionary_comprehension_, dictionary_splat_, dictionary_splat_pattern_, dotted_name_, elif_clause_, ellipsis_, else_clause_, escape_interpolation_, escape_sequence_, except_clause_, exec_statement_, expression_list_, expression_statement_, false_, finally_clause_, float_, for_in_clause_, for_statement_, format_expression_, format_specifier_, function_definition_, future_import_statement_, generator_expression_, generic_type_, global_statement_, identifier_, if_clause_, if_statement_, import_from_statement_, import_prefix_, import_statement_, integer_, interpolation_, keyword_argument_, keyword_pattern_, keyword_separator_, lambda_, lambda_parameters_, list_, list_comprehension_, list_pattern_, list_splat_, list_splat_pattern_, match_statement_, member_type_, module_, named_expression_, none_, nonlocal_statement_, not_operator_, pair_, parameters_, parenthesized_expression_, parenthesized_list_splat_, pass_statement_, pattern_list_, positional_separator_, print_statement_, raise_statement_, relative_import_, return_statement_, set_, set_comprehension_, slice_, splat_pattern_, splat_type_, string_, string_content_, string_end_, string_start_, subscript_, true_, try_statement_, tuple_, tuple_pattern_, type_, type_alias_statement_, type_conversion_, type_parameter_, typed_default_parameter_, typed_parameter_, unary_operator_, union_pattern_, union_type_, while_statement_, wildcard_import_, with_clause_, with_item_, with_statement_, yield_ } from './factories.js';
 import { assignAliasedImport, assignArgumentList, assignAsPattern, assignAssertStatement, assignAssignment, assignAttribute, assignAugmentedAssignment, assignAwait, assignBinaryOperator, assignBlock, assignBooleanOperator, assignCall, assignCaseClause, assignCasePattern, assignChevron, assignClassDefinition, assignClassPattern, assignComparisonOperator, assignComplexPattern, assignConcatenatedString, assignConditionalExpression, assignConstrainedType, assignDecoratedDefinition, assignDecorator, assignDefaultParameter, assignDeleteStatement, assignDictPattern, assignDictionary, assignDictionaryComprehension, assignDictionarySplat, assignDictionarySplatPattern, assignDottedName, assignElifClause, assignElseClause, assignExceptClause, assignExecStatement, assignExpressionList, assignExpressionStatement, assignFinallyClause, assignForInClause, assignForStatement, assignFormatExpression, assignFormatSpecifier, assignFunctionDefinition, assignFutureImportStatement, assignGeneratorExpression, assignGenericType, assignGlobalStatement, assignIfClause, assignIfStatement, assignImportFromStatement, assignImportStatement, assignInterpolation, assignKeywordArgument, assignKeywordPattern, assignLambda, assignLambdaParameters, assignList, assignListComprehension, assignListPattern, assignListSplat, assignListSplatPattern, assignMatchStatement, assignMemberType, assignModule, assignNamedExpression, assignNonlocalStatement, assignNotOperator, assignPair, assignParameters, assignParenthesizedExpression, assignParenthesizedListSplat, assignPatternList, assignPrintStatement, assignRaiseStatement, assignRelativeImport, assignReturnStatement, assignSet, assignSetComprehension, assignSlice, assignSplatPattern, assignSplatType, assignString, assignStringContent, assignSubscript, assignTryStatement, assignTuple, assignTuplePattern, assignType, assignTypeAliasStatement, assignTypeParameter, assignTypedDefaultParameter, assignTypedParameter, assignUnaryOperator, assignUnionPattern, assignUnionType, assignWhileStatement, assignWithClause, assignWithItem, assignWithStatement, assignYield } from './assign.js';
 import type { AliasedImportFromInput, ArgumentListFromInput, AsPatternFromInput, AssertStatementFromInput, AssignmentFromInput, AttributeFromInput, AugmentedAssignmentFromInput, AwaitFromInput, BinaryOperatorFromInput, BlockFromInput, BooleanOperatorFromInput, CallFromInput, CaseClauseFromInput, CasePatternFromInput, ChevronFromInput, ClassDefinitionFromInput, ClassPatternFromInput, ComparisonOperatorFromInput, ComplexPatternFromInput, ConcatenatedStringFromInput, ConditionalExpressionFromInput, ConstrainedTypeFromInput, DecoratedDefinitionFromInput, DecoratorFromInput, DefaultParameterFromInput, DeleteStatementFromInput, DictPatternFromInput, DictionaryFromInput, DictionaryComprehensionFromInput, DictionarySplatFromInput, DictionarySplatPatternFromInput, DottedNameFromInput, ElifClauseFromInput, ElseClauseFromInput, ExceptClauseFromInput, ExecStatementFromInput, ExpressionListFromInput, ExpressionStatementFromInput, FinallyClauseFromInput, ForInClauseFromInput, ForStatementFromInput, FormatExpressionFromInput, FormatSpecifierFromInput, FunctionDefinitionFromInput, FutureImportStatementFromInput, GeneratorExpressionFromInput, GenericTypeFromInput, GlobalStatementFromInput, IfClauseFromInput, IfStatementFromInput, ImportFromStatementFromInput, ImportStatementFromInput, InterpolationFromInput, KeywordArgumentFromInput, KeywordPatternFromInput, LambdaFromInput, LambdaParametersFromInput, ListFromInput, ListComprehensionFromInput, ListPatternFromInput, ListSplatFromInput, ListSplatPatternFromInput, MatchStatementFromInput, MemberTypeFromInput, ModuleFromInput, NamedExpressionFromInput, NonlocalStatementFromInput, NotOperatorFromInput, PairFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, ParenthesizedListSplatFromInput, PatternListFromInput, PrintStatementFromInput, RaiseStatementFromInput, RelativeImportFromInput, ReturnStatementFromInput, SetFromInput, SetComprehensionFromInput, SliceFromInput, SplatPatternFromInput, SplatTypeFromInput, StringFromInput, StringContentFromInput, SubscriptFromInput, TryStatementFromInput, TupleFromInput, TuplePatternFromInput, TypeFromInput, TypeAliasStatementFromInput, TypeParameterFromInput, TypedDefaultParameterFromInput, TypedParameterFromInput, UnaryOperatorFromInput, UnionPatternFromInput, UnionTypeFromInput, WhileStatementFromInput, WithClauseFromInput, WithItemFromInput, WithStatementFromInput, YieldFromInput } from './types.js';
 
@@ -120,23 +120,23 @@ function _resolveCompoundStatement(v: any): any {
 }
 
 function _resolveSimpleStatement(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^break$/.test(v))return (v==='break'?breakStatement():(()=>{throw new Error(`Expected 'break' for break_statement, got '${v}'`)})());if(/^continue$/.test(v))return (v==='continue'?continueStatement():(()=>{throw new Error(`Expected 'continue' for continue_statement, got '${v}'`)})());if(/^pass$/.test(v))return (v==='pass'?passStatement():(()=>{throw new Error(`Expected 'pass' for pass_statement, got '${v}'`)})());return (v==='break'?breakStatement():(()=>{throw new Error(`Expected 'break' for break_statement, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'assert_statement':return assertStatementFrom(rest);case 'delete_statement':return deleteStatementFrom(rest);case 'exec_statement':return execStatementFrom(rest);case 'expression_statement':return expressionStatementFrom(rest);case 'future_import_statement':return futureImportStatementFrom(rest);case 'global_statement':return globalStatementFrom(rest);case 'import_from_statement':return importFromStatementFrom(rest);case 'import_statement':return importStatementFrom(rest);case 'nonlocal_statement':return nonlocalStatementFrom(rest);case 'print_statement':return printStatementFrom(rest);case 'raise_statement':return raiseStatementFrom(rest);case 'return_statement':return returnStatementFrom(rest);case 'type_alias_statement':return typeAliasStatementFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["assert_statement","delete_statement","exec_statement","expression_statement","future_import_statement","global_statement","import_from_statement","import_statement","nonlocal_statement","print_statement","raise_statement","return_statement","type_alias_statement"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: assert_statement, delete_statement, exec_statement, expression_statement, future_import_statement, global_statement, import_from_statement, import_statement, nonlocal_statement, print_statement, raise_statement, return_statement, type_alias_statement. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^break$/.test(v))return (v==='break'?break_statement_():(()=>{throw new Error(`Expected 'break' for break_statement, got '${v}'`)})());if(/^continue$/.test(v))return (v==='continue'?continue_statement_():(()=>{throw new Error(`Expected 'continue' for continue_statement, got '${v}'`)})());if(/^pass$/.test(v))return (v==='pass'?pass_statement_():(()=>{throw new Error(`Expected 'pass' for pass_statement, got '${v}'`)})());return (v==='break'?break_statement_():(()=>{throw new Error(`Expected 'break' for break_statement, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'assert_statement':return assertStatementFrom(rest);case 'delete_statement':return deleteStatementFrom(rest);case 'exec_statement':return execStatementFrom(rest);case 'expression_statement':return expressionStatementFrom(rest);case 'future_import_statement':return futureImportStatementFrom(rest);case 'global_statement':return globalStatementFrom(rest);case 'import_from_statement':return importFromStatementFrom(rest);case 'import_statement':return importStatementFrom(rest);case 'nonlocal_statement':return nonlocalStatementFrom(rest);case 'print_statement':return printStatementFrom(rest);case 'raise_statement':return raiseStatementFrom(rest);case 'return_statement':return returnStatementFrom(rest);case 'type_alias_statement':return typeAliasStatementFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["assert_statement","delete_statement","exec_statement","expression_statement","future_import_statement","global_statement","import_from_statement","import_statement","nonlocal_statement","print_statement","raise_statement","return_statement","type_alias_statement"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: assert_statement, delete_statement, exec_statement, expression_statement, future_import_statement, global_statement, import_from_statement, import_statement, nonlocal_statement, print_statement, raise_statement, return_statement, type_alias_statement. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _resolvePrimaryExpression(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\.\.\.$/.test(v))return (v==='...'?ellipsis():(()=>{throw new Error(`Expected '...' for ellipsis, got '${v}'`)})());if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer(v as any);if(/^None$/.test(v))return (v==='None'?none():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'await':return await_From(rest);case 'binary_operator':return binaryOperatorFrom(rest);case 'call':return callFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dictionary':return dictionaryFrom(rest);case 'dictionary_comprehension':return dictionaryComprehensionFrom(rest);case 'generator_expression':return generatorExpressionFrom(rest);case 'list':return listFrom(rest);case 'list_comprehension':return listComprehensionFrom(rest);case 'list_splat':return listSplatFrom(rest);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest);case 'set':return setFrom(rest);case 'set_comprehension':return setComprehensionFrom(rest);case 'string':return stringFrom(rest);case 'subscript':return subscriptFrom(rest);case 'tuple':return tupleFrom(rest);case 'unary_operator':return unaryOperatorFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\.\.\.$/.test(v))return (v==='...'?ellipsis_():(()=>{throw new Error(`Expected '...' for ellipsis, got '${v}'`)})());if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float_(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer_(v as any);if(/^None$/.test(v))return (v==='None'?none_():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'await':return await_From(rest);case 'binary_operator':return binaryOperatorFrom(rest);case 'call':return callFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dictionary':return dictionaryFrom(rest);case 'dictionary_comprehension':return dictionaryComprehensionFrom(rest);case 'generator_expression':return generatorExpressionFrom(rest);case 'list':return listFrom(rest);case 'list_comprehension':return listComprehensionFrom(rest);case 'list_splat':return listSplatFrom(rest);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest);case 'set':return setFrom(rest);case 'set_comprehension':return setComprehensionFrom(rest);case 'string':return stringFrom(rest);case 'subscript':return subscriptFrom(rest);case 'tuple':return tupleFrom(rest);case 'unary_operator':return unaryOperatorFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _resolveExpression(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\.\.\.$/.test(v))return (v==='...'?ellipsis():(()=>{throw new Error(`Expected '...' for ellipsis, got '${v}'`)})());if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer(v as any);if(/^None$/.test(v))return (v==='None'?none():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'as_pattern':return asPatternFrom(rest);case 'attribute':return attributeFrom(rest);case 'await':return await_From(rest);case 'binary_operator':return binaryOperatorFrom(rest);case 'boolean_operator':return booleanOperatorFrom(rest);case 'call':return callFrom(rest);case 'comparison_operator':return comparisonOperatorFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'conditional_expression':return conditionalExpressionFrom(rest);case 'dictionary':return dictionaryFrom(rest);case 'dictionary_comprehension':return dictionaryComprehensionFrom(rest);case 'generator_expression':return generatorExpressionFrom(rest);case 'lambda':return lambdaFrom(rest);case 'list':return listFrom(rest);case 'list_comprehension':return listComprehensionFrom(rest);case 'list_splat':return listSplatFrom(rest);case 'named_expression':return namedExpressionFrom(rest);case 'not_operator':return notOperatorFrom(rest);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest);case 'set':return setFrom(rest);case 'set_comprehension':return setComprehensionFrom(rest);case 'string':return stringFrom(rest);case 'subscript':return subscriptFrom(rest);case 'tuple':return tupleFrom(rest);case 'unary_operator':return unaryOperatorFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","generator_expression","lambda","list","list_comprehension","list_splat","named_expression","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: as_pattern, attribute, await, binary_operator, boolean_operator, call, comparison_operator, concatenated_string, conditional_expression, dictionary, dictionary_comprehension, generator_expression, lambda, list, list_comprehension, list_splat, named_expression, not_operator, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\.\.\.$/.test(v))return (v==='...'?ellipsis_():(()=>{throw new Error(`Expected '...' for ellipsis, got '${v}'`)})());if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float_(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer_(v as any);if(/^None$/.test(v))return (v==='None'?none_():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'as_pattern':return asPatternFrom(rest);case 'attribute':return attributeFrom(rest);case 'await':return await_From(rest);case 'binary_operator':return binaryOperatorFrom(rest);case 'boolean_operator':return booleanOperatorFrom(rest);case 'call':return callFrom(rest);case 'comparison_operator':return comparisonOperatorFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'conditional_expression':return conditionalExpressionFrom(rest);case 'dictionary':return dictionaryFrom(rest);case 'dictionary_comprehension':return dictionaryComprehensionFrom(rest);case 'generator_expression':return generatorExpressionFrom(rest);case 'lambda':return lambdaFrom(rest);case 'list':return listFrom(rest);case 'list_comprehension':return listComprehensionFrom(rest);case 'list_splat':return listSplatFrom(rest);case 'named_expression':return namedExpressionFrom(rest);case 'not_operator':return notOperatorFrom(rest);case 'parenthesized_expression':return parenthesizedExpressionFrom(rest);case 'set':return setFrom(rest);case 'set_comprehension':return setComprehensionFrom(rest);case 'string':return stringFrom(rest);case 'subscript':return subscriptFrom(rest);case 'tuple':return tupleFrom(rest);case 'unary_operator':return unaryOperatorFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","generator_expression","lambda","list","list_comprehension","list_splat","named_expression","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: as_pattern, attribute, await, binary_operator, boolean_operator, call, comparison_operator, concatenated_string, conditional_expression, dictionary, dictionary_comprehension, generator_expression, lambda, list, list_comprehension, list_splat, named_expression, not_operator, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _resolveParameter(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\*$/.test(v))return (v==='*'?keywordSeparator():(()=>{throw new Error(`Expected '*' for keyword_separator, got '${v}'`)})());if(/^\/$/.test(v))return (v==='/'?positionalSeparator():(()=>{throw new Error(`Expected '/' for positional_separator, got '${v}'`)})());return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'default_parameter':return defaultParameterFrom(rest);case 'dictionary_splat_pattern':return dictionarySplatPatternFrom(rest);case 'list_splat_pattern':return listSplatPatternFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'typed_default_parameter':return typedDefaultParameterFrom(rest);case 'typed_parameter':return typedParameterFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["default_parameter","dictionary_splat_pattern","list_splat_pattern","tuple_pattern","typed_default_parameter","typed_parameter"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: default_parameter, dictionary_splat_pattern, list_splat_pattern, tuple_pattern, typed_default_parameter, typed_parameter. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\*$/.test(v))return (v==='*'?keyword_separator_():(()=>{throw new Error(`Expected '*' for keyword_separator, got '${v}'`)})());if(/^\/$/.test(v))return (v==='/'?positional_separator_():(()=>{throw new Error(`Expected '/' for positional_separator, got '${v}'`)})());return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'default_parameter':return defaultParameterFrom(rest);case 'dictionary_splat_pattern':return dictionarySplatPatternFrom(rest);case 'list_splat_pattern':return listSplatPatternFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'typed_default_parameter':return typedDefaultParameterFrom(rest);case 'typed_parameter':return typedParameterFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["default_parameter","dictionary_splat_pattern","list_splat_pattern","tuple_pattern","typed_default_parameter","typed_parameter"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: default_parameter, dictionary_splat_pattern, list_splat_pattern, tuple_pattern, typed_default_parameter, typed_parameter. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _resolvePattern(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'list_splat_pattern':return listSplatPatternFrom(rest);case 'subscript':return subscriptFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","list_pattern","list_splat_pattern","subscript","tuple_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, list_pattern, list_splat_pattern, subscript, tuple_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'list_splat_pattern':return listSplatPatternFrom(rest);case 'subscript':return subscriptFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","list_pattern","list_splat_pattern","subscript","tuple_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, list_pattern, list_splat_pattern, subscript, tuple_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rkthp94(v: any): any {
@@ -148,7 +148,7 @@ function _rd4g2sg(v: any): any {
 }
 
 function _rb6s74c(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'case_pattern':return casePatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["case_pattern","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: case_pattern, as_pattern, boolean_operator, comparison_operator, conditional_expression, lambda, named_expression, not_operator, attribute, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'case_pattern':return casePatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["case_pattern","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: case_pattern, as_pattern, boolean_operator, comparison_operator, conditional_expression, lambda, named_expression, not_operator, attribute, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1y1wbqv(v: any): any {
@@ -180,7 +180,7 @@ function _rgmxmo(v: any): any {
 }
 
 function _r2a1f3k(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer(v as any);if(/^None$/.test(v))return (v==='None'?none():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'as_pattern':return asPatternFrom(rest);case 'class_pattern':return classPatternFrom(rest);case 'complex_pattern':return complexPatternFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dict_pattern':return dictPatternFrom(rest);case 'dotted_name':return dottedNameFrom(rest);case 'keyword_pattern':return keywordPatternFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'splat_pattern':return splatPatternFrom(rest);case 'string':return stringFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'union_pattern':return unionPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["as_pattern","class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","keyword_pattern","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: as_pattern, class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, keyword_pattern, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float_(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer_(v as any);if(/^None$/.test(v))return (v==='None'?none_():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'as_pattern':return asPatternFrom(rest);case 'class_pattern':return classPatternFrom(rest);case 'complex_pattern':return complexPatternFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dict_pattern':return dictPatternFrom(rest);case 'dotted_name':return dottedNameFrom(rest);case 'keyword_pattern':return keywordPatternFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'splat_pattern':return splatPatternFrom(rest);case 'string':return stringFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'union_pattern':return unionPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["as_pattern","class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","keyword_pattern","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: as_pattern, class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, keyword_pattern, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1detdb4(v: any): any {
@@ -188,7 +188,7 @@ function _r1detdb4(v: any): any {
 }
 
 function _r1q8uqc0(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer(v as any);return float(v as any);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float_(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer_(v as any);return float_(v as any);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rdlbv6g(v: any): any {
@@ -196,7 +196,7 @@ function _rdlbv6g(v: any): any {
 }
 
 function _r17ic1ai(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))return tuplePatternFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'tuple_pattern':return tuplePatternFrom(rest);}return _resolveByKind(k,rest);}return tuplePatternFrom(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v as any);};if(Array.isArray(v))return tuplePatternFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'tuple_pattern':return tuplePatternFrom(rest);}return _resolveByKind(k,rest);}return tuplePatternFrom(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _ra9cmgr(v: any): any {
@@ -212,11 +212,11 @@ function _r4vgrkg(v: any): any {
 }
 
 function _r1odq136(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'subscript':return subscriptFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","subscript"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, subscript. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'subscript':return subscriptFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","subscript"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, subscript. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rq3krei(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))return stringFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'string':return stringFrom(rest);}return _resolveByKind(k,rest);}return stringFrom(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v as any);};if(Array.isArray(v))return stringFrom(v as any);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'string':return stringFrom(rest);}return _resolveByKind(k,rest);}return stringFrom(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rldymh6(v: any): any {
@@ -244,7 +244,7 @@ function _rrq3952(v: any): any {
 }
 
 function _rl9y3fp(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer(v as any);if(/^None$/.test(v))return (v==='None'?none():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest);case 'complex_pattern':return complexPatternFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dict_pattern':return dictPatternFrom(rest);case 'dotted_name':return dottedNameFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'splat_pattern':return splatPatternFrom(rest);case 'string':return stringFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'union_pattern':return unionPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float_(v as any);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer_(v as any);if(/^None$/.test(v))return (v==='None'?none_():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest);case 'complex_pattern':return complexPatternFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dict_pattern':return dictPatternFrom(rest);case 'dotted_name':return dottedNameFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'splat_pattern':return splatPatternFrom(rest);case 'string':return stringFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'union_pattern':return unionPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rtx2b9u(v: any): any {
@@ -256,7 +256,7 @@ function _rc9xpef(v: any): any {
 }
 
 function _r11t6afm(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'subscript':return subscriptFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","subscript","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, subscript, as_pattern, boolean_operator, comparison_operator, conditional_expression, lambda, named_expression, not_operator, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute':return attributeFrom(rest);case 'subscript':return subscriptFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute","subscript","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","tuple","unary_operator"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute, subscript, as_pattern, boolean_operator, comparison_operator, conditional_expression, lambda, named_expression, not_operator, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rs19yyr(v: any): any {
@@ -272,7 +272,7 @@ function _r2im5d1(v: any): any {
 }
 
 function _r1uewv1p(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\\(?:u[a-fA-F\d]{4}|U[a-fA-F\d]{8}|x[a-fA-F\d]{2}|\d{1,3}|\r?\n|['"abfrntv\\]|N\{[^}]+\})$/.test(v))return escapeSequence(v as any);return escapeInterpolation(v as any);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^\\(?:u[a-fA-F\d]{4}|U[a-fA-F\d]{8}|x[a-fA-F\d]{2}|\d{1,3}|\r?\n|['"abfrntv\\]|N\{[^}]+\})$/.test(v))return escape_sequence_(v as any);return escape_interpolation_(v as any);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1s4dtcw(v: any): any {
@@ -284,7 +284,7 @@ function _rsof3up(v: any): any {
 }
 
 function _r10r1qu9(v: any): any {
-  if(isNodeData(v))return v;if(typeof v==='string'){return identifier(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dictionary_splat_pattern':return dictionarySplatPatternFrom(rest);case 'list_splat_pattern':return listSplatPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["dictionary_splat_pattern","list_splat_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: dictionary_splat_pattern, list_splat_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dictionary_splat_pattern':return dictionarySplatPatternFrom(rest);case 'list_splat_pattern':return listSplatPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["dictionary_splat_pattern","list_splat_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: dictionary_splat_pattern, list_splat_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r12do1e6(v: any): any {
@@ -296,16 +296,16 @@ export function aliasedImportFrom(input: AliasedImport): any;
 export function aliasedImportFrom(input: AliasedImportFromInput & {readonly kind?: 'aliased_import'}): any;
 export function aliasedImportFrom(input: any): any {
   if (isTreeNode(input)) return assignAliasedImport(input);
-  if (isNodeData(input)) return aliasedImport((input as any).fields);
+  if (isNodeData(input)) return aliased_import_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.alias !== undefined) {
-    resolved.alias = (isNodeData(obj.alias) ? obj.alias : typeof obj.alias === 'string' || typeof obj.alias === 'number' || typeof obj.alias === 'boolean' ? identifier(''+obj.alias as any) : obj.alias);
+    resolved.alias = (isNodeData(obj.alias) ? obj.alias : typeof obj.alias === 'string' || typeof obj.alias === 'number' || typeof obj.alias === 'boolean' ? identifier_(''+obj.alias as any) : obj.alias);
   }
   if (obj.name !== undefined) {
     resolved.name = (isNodeData(obj.name) ? obj.name : Array.isArray(obj.name) ? dottedNameFrom(obj.name as any) : typeof obj.name === 'object' ? dottedNameFrom(obj.name) : obj.name);
   }
-  return aliasedImport(resolved);
+  return aliased_import_(resolved);
 }
 
 export function argumentListFrom(input: ArgumentListTree): any;
@@ -313,7 +313,7 @@ export function argumentListFrom(input: ArgumentList): any;
 export function argumentListFrom(input: ArgumentListFromInput & {readonly kind?: 'argument_list'}): any;
 export function argumentListFrom(input: any): any {
   if (isTreeNode(input)) return assignArgumentList(input);
-  if (isNodeData(input)) return argumentList((input as any).fields);
+  if (isNodeData(input)) return argument_list_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -323,7 +323,7 @@ export function argumentListFrom(input: any): any {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => _rkthp94(v));
   }
-  return argumentList(resolved);
+  return argument_list_(resolved);
 }
 
 export function asPatternFrom(input: AsPatternTree): any;
@@ -331,7 +331,7 @@ export function asPatternFrom(input: AsPattern): any;
 export function asPatternFrom(input: AsPatternFromInput & {readonly kind?: 'as_pattern'}): any;
 export function asPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignAsPattern(input);
-  if (isNodeData(input)) return asPattern((input as any).fields);
+  if (isNodeData(input)) return as_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.alias !== undefined) {
@@ -340,7 +340,7 @@ export function asPatternFrom(input: any): any {
   if (obj.children !== undefined) {
     resolved.children = _rb6s74c(obj.children);
   }
-  return asPattern(resolved);
+  return as_pattern_(resolved);
 }
 
 export function assertStatementFrom(input: AssertStatementTree): any;
@@ -348,7 +348,7 @@ export function assertStatementFrom(input: AssertStatement): any;
 export function assertStatementFrom(input: AssertStatementFromInput & {readonly kind?: 'assert_statement'}): any;
 export function assertStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignAssertStatement(input);
-  if (isNodeData(input)) return assertStatement((input as any).fields);
+  if (isNodeData(input)) return assert_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.expression1 !== undefined) {
@@ -358,7 +358,7 @@ export function assertStatementFrom(input: any): any {
     const arr = Array.isArray(obj.expression2) ? obj.expression2 : [obj.expression2];
     resolved.expression2 = arr.map((v: any) => _resolveExpression(v));
   }
-  return assertStatement(resolved);
+  return assert_statement_(resolved);
 }
 
 export function assignmentFrom(input: AssignmentTree): any;
@@ -366,7 +366,7 @@ export function assignmentFrom(input: Assignment): any;
 export function assignmentFrom(input: AssignmentFromInput & {readonly kind?: 'assignment'}): any;
 export function assignmentFrom(input: any): any {
   if (isTreeNode(input)) return assignAssignment(input);
-  if (isNodeData(input)) return assignment((input as any).fields);
+  if (isNodeData(input)) return assignment_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -378,7 +378,7 @@ export function assignmentFrom(input: any): any {
   if (obj.type !== undefined) {
     resolved.type = (isNodeData(obj.type) ? obj.type : Array.isArray(obj.type) ? type_From(obj.type as any) : typeof obj.type === 'object' ? type_From(obj.type) : obj.type);
   }
-  return assignment(resolved);
+  return assignment_(resolved);
 }
 
 export function attributeFrom(input: AttributeTree): any;
@@ -386,16 +386,16 @@ export function attributeFrom(input: Attribute): any;
 export function attributeFrom(input: AttributeFromInput & {readonly kind?: 'attribute'}): any;
 export function attributeFrom(input: any): any {
   if (isTreeNode(input)) return assignAttribute(input);
-  if (isNodeData(input)) return attribute((input as any).fields);
+  if (isNodeData(input)) return attribute_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.attribute !== undefined) {
-    resolved.attribute = (isNodeData(obj.attribute) ? obj.attribute : typeof obj.attribute === 'string' || typeof obj.attribute === 'number' || typeof obj.attribute === 'boolean' ? identifier(''+obj.attribute as any) : obj.attribute);
+    resolved.attribute = (isNodeData(obj.attribute) ? obj.attribute : typeof obj.attribute === 'string' || typeof obj.attribute === 'number' || typeof obj.attribute === 'boolean' ? identifier_(''+obj.attribute as any) : obj.attribute);
   }
   if (obj.object !== undefined) {
     resolved.object = _resolvePrimaryExpression(obj.object);
   }
-  return attribute(resolved);
+  return attribute_(resolved);
 }
 
 export function augmentedAssignmentFrom(input: AugmentedAssignmentTree): any;
@@ -403,7 +403,7 @@ export function augmentedAssignmentFrom(input: AugmentedAssignment): any;
 export function augmentedAssignmentFrom(input: AugmentedAssignmentFromInput & {readonly kind?: 'augmented_assignment'}): any;
 export function augmentedAssignmentFrom(input: any): any {
   if (isTreeNode(input)) return assignAugmentedAssignment(input);
-  if (isNodeData(input)) return augmentedAssignment((input as any).fields);
+  if (isNodeData(input)) return augmented_assignment_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -415,7 +415,7 @@ export function augmentedAssignmentFrom(input: any): any {
   if (obj.right !== undefined) {
     resolved.right = _rqrr0au(obj.right);
   }
-  return augmentedAssignment(resolved);
+  return augmented_assignment_(resolved);
 }
 
 export function await_From(input: AwaitTree): any;
@@ -437,7 +437,7 @@ export function binaryOperatorFrom(input: BinaryOperator): any;
 export function binaryOperatorFrom(input: BinaryOperatorFromInput & {readonly kind?: 'binary_operator'}): any;
 export function binaryOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignBinaryOperator(input);
-  if (isNodeData(input)) return binaryOperator((input as any).fields);
+  if (isNodeData(input)) return binary_operator_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -449,7 +449,7 @@ export function binaryOperatorFrom(input: any): any {
   if (obj.right !== undefined) {
     resolved.right = _resolvePrimaryExpression(obj.right);
   }
-  return binaryOperator(resolved);
+  return binary_operator_(resolved);
 }
 
 export function blockFrom(input: BlockTree): any;
@@ -457,7 +457,7 @@ export function blockFrom(input: Block): any;
 export function blockFrom(input: BlockFromInput & {readonly kind?: 'block'}): any;
 export function blockFrom(input: any): any {
   if (isTreeNode(input)) return assignBlock(input);
-  if (isNodeData(input)) return block((input as any).fields);
+  if (isNodeData(input)) return block_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.alternative !== undefined) {
@@ -469,7 +469,7 @@ export function blockFrom(input: any): any {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _r1ntg9k1(v));
   }
-  return block(resolved);
+  return block_(resolved);
 }
 
 export function booleanOperatorFrom(input: BooleanOperatorTree): any;
@@ -477,7 +477,7 @@ export function booleanOperatorFrom(input: BooleanOperator): any;
 export function booleanOperatorFrom(input: BooleanOperatorFromInput & {readonly kind?: 'boolean_operator'}): any;
 export function booleanOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignBooleanOperator(input);
-  if (isNodeData(input)) return booleanOperator((input as any).fields);
+  if (isNodeData(input)) return boolean_operator_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -489,7 +489,7 @@ export function booleanOperatorFrom(input: any): any {
   if (obj.right !== undefined) {
     resolved.right = _resolveExpression(obj.right);
   }
-  return booleanOperator(resolved);
+  return boolean_operator_(resolved);
 }
 
 export function callFrom(input: CallTree): any;
@@ -497,7 +497,7 @@ export function callFrom(input: Call): any;
 export function callFrom(input: CallFromInput & {readonly kind?: 'call'}): any;
 export function callFrom(input: any): any {
   if (isTreeNode(input)) return assignCall(input);
-  if (isNodeData(input)) return call((input as any).fields);
+  if (isNodeData(input)) return call_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.arguments !== undefined) {
@@ -506,7 +506,7 @@ export function callFrom(input: any): any {
   if (obj.function !== undefined) {
     resolved.function = _resolvePrimaryExpression(obj.function);
   }
-  return call(resolved);
+  return call_(resolved);
 }
 
 export function caseClauseFrom(input: CaseClauseTree): any;
@@ -514,7 +514,7 @@ export function caseClauseFrom(input: CaseClause): any;
 export function caseClauseFrom(input: CaseClauseFromInput & {readonly kind?: 'case_clause'}): any;
 export function caseClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignCaseClause(input);
-  if (isNodeData(input)) return caseClause((input as any).fields);
+  if (isNodeData(input)) return case_clause_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.consequence !== undefined) {
@@ -530,7 +530,7 @@ export function caseClauseFrom(input: any): any {
     const arr = Array.isArray(obj.casePattern2) ? obj.casePattern2 : [obj.casePattern2];
     resolved.casePattern2 = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v as any) : typeof v === 'object' ? casePatternFrom(v) : v));
   }
-  return caseClause(resolved);
+  return case_clause_(resolved);
 }
 
 export function casePatternFrom(input: CasePatternTree): any;
@@ -538,13 +538,13 @@ export function casePatternFrom(input: CasePattern): any;
 export function casePatternFrom(input: CasePatternFromInput & {readonly kind?: 'case_pattern'}): any;
 export function casePatternFrom(input: any): any {
   if (isTreeNode(input)) return assignCasePattern(input);
-  if (isNodeData(input)) return casePattern((input as any).fields);
+  if (isNodeData(input)) return case_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _r2a1f3k(obj.children);
   }
-  return casePattern(resolved);
+  return case_pattern_(resolved);
 }
 
 export function chevronFrom(input: ChevronTree): any;
@@ -552,13 +552,13 @@ export function chevronFrom(input: Chevron): any;
 export function chevronFrom(input: ChevronFromInput & {readonly kind?: 'chevron'}): any;
 export function chevronFrom(input: any): any {
   if (isTreeNode(input)) return assignChevron(input);
-  if (isNodeData(input)) return chevron((input as any).fields);
+  if (isNodeData(input)) return chevron_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _resolveExpression(obj.children);
   }
-  return chevron(resolved);
+  return chevron_(resolved);
 }
 
 export function classDefinitionFrom(input: ClassDefinitionTree): any;
@@ -566,14 +566,14 @@ export function classDefinitionFrom(input: ClassDefinition): any;
 export function classDefinitionFrom(input: ClassDefinitionFromInput & {readonly kind?: 'class_definition'}): any;
 export function classDefinitionFrom(input: any): any {
   if (isTreeNode(input)) return assignClassDefinition(input);
-  if (isNodeData(input)) return classDefinition((input as any).fields);
+  if (isNodeData(input)) return class_definition_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
     resolved.body = (isNodeData(obj.body) ? obj.body : Array.isArray(obj.body) ? blockFrom(obj.body as any) : typeof obj.body === 'object' ? blockFrom(obj.body) : obj.body);
   }
   if (obj.name !== undefined) {
-    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier(''+obj.name as any) : obj.name);
+    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier_(''+obj.name as any) : obj.name);
   }
   if (obj.superclasses !== undefined) {
     resolved.superclasses = (isNodeData(obj.superclasses) ? obj.superclasses : Array.isArray(obj.superclasses) ? argumentListFrom(obj.superclasses as any) : typeof obj.superclasses === 'object' ? argumentListFrom(obj.superclasses) : obj.superclasses);
@@ -581,7 +581,7 @@ export function classDefinitionFrom(input: any): any {
   if (obj.typeParameters !== undefined) {
     resolved.typeParameters = (isNodeData(obj.typeParameters) ? obj.typeParameters : Array.isArray(obj.typeParameters) ? typeParameterFrom(obj.typeParameters as any) : typeof obj.typeParameters === 'object' ? typeParameterFrom(obj.typeParameters) : obj.typeParameters);
   }
-  return classDefinition(resolved);
+  return class_definition_(resolved);
 }
 
 export function classPatternFrom(input: ClassPatternTree): any;
@@ -589,7 +589,7 @@ export function classPatternFrom(input: ClassPattern): any;
 export function classPatternFrom(input: ClassPatternFromInput & {readonly kind?: 'class_pattern'}): any;
 export function classPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignClassPattern(input);
-  if (isNodeData(input)) return classPattern((input as any).fields);
+  if (isNodeData(input)) return class_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.dottedName !== undefined) {
@@ -602,7 +602,7 @@ export function classPatternFrom(input: any): any {
     const arr = Array.isArray(obj.casePattern2) ? obj.casePattern2 : [obj.casePattern2];
     resolved.casePattern2 = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v as any) : typeof v === 'object' ? casePatternFrom(v) : v));
   }
-  return classPattern(resolved);
+  return class_pattern_(resolved);
 }
 
 export function comparisonOperatorFrom(input: ComparisonOperatorTree): any;
@@ -610,7 +610,7 @@ export function comparisonOperatorFrom(input: ComparisonOperator): any;
 export function comparisonOperatorFrom(input: ComparisonOperatorFromInput & {readonly kind?: 'comparison_operator'}): any;
 export function comparisonOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignComparisonOperator(input);
-  if (isNodeData(input)) return comparisonOperator((input as any).fields);
+  if (isNodeData(input)) return comparison_operator_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.operators !== undefined) {
@@ -629,7 +629,7 @@ export function comparisonOperatorFrom(input: any): any {
   } else {
     resolved.primaryExpression2 = [];
   }
-  return comparisonOperator(resolved);
+  return comparison_operator_(resolved);
 }
 
 export function complexPatternFrom(input: ComplexPatternTree): any;
@@ -637,7 +637,7 @@ export function complexPatternFrom(input: ComplexPattern): any;
 export function complexPatternFrom(input: ComplexPatternFromInput & {readonly kind?: 'complex_pattern'}): any;
 export function complexPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignComplexPattern(input);
-  if (isNodeData(input)) return complexPattern((input as any).fields);
+  if (isNodeData(input)) return complex_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -646,7 +646,7 @@ export function complexPatternFrom(input: any): any {
   if (obj.children1 !== undefined) {
     resolved.children1 = _r1q8uqc0(obj.children1);
   }
-  return complexPattern(resolved);
+  return complex_pattern_(resolved);
 }
 
 export function concatenatedStringFrom(input: ConcatenatedStringTree): any;
@@ -654,7 +654,7 @@ export function concatenatedStringFrom(input: ConcatenatedString): any;
 export function concatenatedStringFrom(input: ConcatenatedStringFromInput & {readonly kind?: 'concatenated_string'}): any;
 export function concatenatedStringFrom(input: any): any {
   if (isTreeNode(input)) return assignConcatenatedString(input);
-  if (isNodeData(input)) return concatenatedString((input as any).fields);
+  if (isNodeData(input)) return concatenated_string_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.string1 !== undefined) {
@@ -666,7 +666,7 @@ export function concatenatedStringFrom(input: any): any {
   } else {
     resolved.string2 = [];
   }
-  return concatenatedString(resolved);
+  return concatenated_string_(resolved);
 }
 
 export function conditionalExpressionFrom(input: ConditionalExpressionTree): any;
@@ -674,7 +674,7 @@ export function conditionalExpressionFrom(input: ConditionalExpression): any;
 export function conditionalExpressionFrom(input: ConditionalExpressionFromInput & {readonly kind?: 'conditional_expression'}): any;
 export function conditionalExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignConditionalExpression(input);
-  if (isNodeData(input)) return conditionalExpression((input as any).fields);
+  if (isNodeData(input)) return conditional_expression_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.expression1 !== undefined) {
@@ -686,7 +686,7 @@ export function conditionalExpressionFrom(input: any): any {
   if (obj.expression3 !== undefined) {
     resolved.expression3 = _resolveExpression(obj.expression3);
   }
-  return conditionalExpression(resolved);
+  return conditional_expression_(resolved);
 }
 
 export function constrainedTypeFrom(input: ConstrainedTypeTree): any;
@@ -694,7 +694,7 @@ export function constrainedTypeFrom(input: ConstrainedType): any;
 export function constrainedTypeFrom(input: ConstrainedTypeFromInput & {readonly kind?: 'constrained_type'}): any;
 export function constrainedTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignConstrainedType(input);
-  if (isNodeData(input)) return constrainedType((input as any).fields);
+  if (isNodeData(input)) return constrained_type_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -703,7 +703,7 @@ export function constrainedTypeFrom(input: any): any {
   if (obj.children1 !== undefined) {
     resolved.children1 = (isNodeData(obj.children1) ? obj.children1 : Array.isArray(obj.children1) ? type_From(obj.children1 as any) : typeof obj.children1 === 'object' ? type_From(obj.children1) : obj.children1);
   }
-  return constrainedType(resolved);
+  return constrained_type_(resolved);
 }
 
 export function decoratedDefinitionFrom(input: DecoratedDefinitionTree): any;
@@ -711,7 +711,7 @@ export function decoratedDefinitionFrom(input: DecoratedDefinition): any;
 export function decoratedDefinitionFrom(input: DecoratedDefinitionFromInput & {readonly kind?: 'decorated_definition'}): any;
 export function decoratedDefinitionFrom(input: any): any {
   if (isTreeNode(input)) return assignDecoratedDefinition(input);
-  if (isNodeData(input)) return decoratedDefinition((input as any).fields);
+  if (isNodeData(input)) return decorated_definition_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.definition !== undefined) {
@@ -723,7 +723,7 @@ export function decoratedDefinitionFrom(input: any): any {
   } else {
     resolved.children = [];
   }
-  return decoratedDefinition(resolved);
+  return decorated_definition_(resolved);
 }
 
 export function decoratorFrom(input: DecoratorTree): any;
@@ -731,13 +731,13 @@ export function decoratorFrom(input: Decorator): any;
 export function decoratorFrom(input: DecoratorFromInput & {readonly kind?: 'decorator'}): any;
 export function decoratorFrom(input: any): any {
   if (isTreeNode(input)) return assignDecorator(input);
-  if (isNodeData(input)) return decorator((input as any).fields);
+  if (isNodeData(input)) return decorator_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _resolveExpression(obj.children);
   }
-  return decorator(resolved);
+  return decorator_(resolved);
 }
 
 export function defaultParameterFrom(input: DefaultParameterTree): any;
@@ -745,7 +745,7 @@ export function defaultParameterFrom(input: DefaultParameter): any;
 export function defaultParameterFrom(input: DefaultParameterFromInput & {readonly kind?: 'default_parameter'}): any;
 export function defaultParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignDefaultParameter(input);
-  if (isNodeData(input)) return defaultParameter((input as any).fields);
+  if (isNodeData(input)) return default_parameter_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
@@ -754,7 +754,7 @@ export function defaultParameterFrom(input: any): any {
   if (obj.value !== undefined) {
     resolved.value = _resolveExpression(obj.value);
   }
-  return defaultParameter(resolved);
+  return default_parameter_(resolved);
 }
 
 export function deleteStatementFrom(input: DeleteStatementTree): any;
@@ -762,13 +762,13 @@ export function deleteStatementFrom(input: DeleteStatement): any;
 export function deleteStatementFrom(input: DeleteStatementFromInput & {readonly kind?: 'delete_statement'}): any;
 export function deleteStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignDeleteStatement(input);
-  if (isNodeData(input)) return deleteStatement((input as any).fields);
+  if (isNodeData(input)) return delete_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _ra9cmgr(obj.children);
   }
-  return deleteStatement(resolved);
+  return delete_statement_(resolved);
 }
 
 export function dictPatternFrom(input: DictPatternTree): any;
@@ -776,7 +776,7 @@ export function dictPatternFrom(input: DictPattern): any;
 export function dictPatternFrom(input: DictPatternFromInput & {readonly kind?: 'dict_pattern'}): any;
 export function dictPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignDictPattern(input);
-  if (isNodeData(input)) return dictPattern((input as any).fields);
+  if (isNodeData(input)) return dict_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.splatPattern1 !== undefined) {
@@ -786,7 +786,7 @@ export function dictPatternFrom(input: any): any {
     const arr = Array.isArray(obj.splatPattern2) ? obj.splatPattern2 : [obj.splatPattern2];
     resolved.splatPattern2 = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? splatPatternFrom(v as any) : typeof v === 'object' ? splatPatternFrom(v) : v));
   }
-  return dictPattern(resolved);
+  return dict_pattern_(resolved);
 }
 
 export function dictionaryFrom(input: DictionaryTree): any;
@@ -794,7 +794,7 @@ export function dictionaryFrom(input: Dictionary): any;
 export function dictionaryFrom(input: DictionaryFromInput & {readonly kind?: 'dictionary'}): any;
 export function dictionaryFrom(input: any): any {
   if (isTreeNode(input)) return assignDictionary(input);
-  if (isNodeData(input)) return dictionary((input as any).fields);
+  if (isNodeData(input)) return dictionary_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -804,7 +804,7 @@ export function dictionaryFrom(input: any): any {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => _rr1mjap(v));
   }
-  return dictionary(resolved);
+  return dictionary_(resolved);
 }
 
 export function dictionaryComprehensionFrom(input: DictionaryComprehensionTree): any;
@@ -812,7 +812,7 @@ export function dictionaryComprehensionFrom(input: DictionaryComprehension): any
 export function dictionaryComprehensionFrom(input: DictionaryComprehensionFromInput & {readonly kind?: 'dictionary_comprehension'}): any;
 export function dictionaryComprehensionFrom(input: any): any {
   if (isTreeNode(input)) return assignDictionaryComprehension(input);
-  if (isNodeData(input)) return dictionaryComprehension((input as any).fields);
+  if (isNodeData(input)) return dictionary_comprehension_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -825,7 +825,7 @@ export function dictionaryComprehensionFrom(input: any): any {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => _r4vgrkg(v));
   }
-  return dictionaryComprehension(resolved);
+  return dictionary_comprehension_(resolved);
 }
 
 export function dictionarySplatFrom(input: DictionarySplatTree): any;
@@ -833,13 +833,13 @@ export function dictionarySplatFrom(input: DictionarySplat): any;
 export function dictionarySplatFrom(input: DictionarySplatFromInput & {readonly kind?: 'dictionary_splat'}): any;
 export function dictionarySplatFrom(input: any): any {
   if (isTreeNode(input)) return assignDictionarySplat(input);
-  if (isNodeData(input)) return dictionarySplat((input as any).fields);
+  if (isNodeData(input)) return dictionary_splat_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _resolveExpression(obj.children);
   }
-  return dictionarySplat(resolved);
+  return dictionary_splat_(resolved);
 }
 
 export function dictionarySplatPatternFrom(input: DictionarySplatPatternTree): any;
@@ -847,13 +847,13 @@ export function dictionarySplatPatternFrom(input: DictionarySplatPattern): any;
 export function dictionarySplatPatternFrom(input: DictionarySplatPatternFromInput & {readonly kind?: 'dictionary_splat_pattern'}): any;
 export function dictionarySplatPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignDictionarySplatPattern(input);
-  if (isNodeData(input)) return dictionarySplatPattern((input as any).fields);
+  if (isNodeData(input)) return dictionary_splat_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _r1odq136(obj.children);
   }
-  return dictionarySplatPattern(resolved);
+  return dictionary_splat_pattern_(resolved);
 }
 
 export function dottedNameFrom(input: DottedNameTree): any;
@@ -861,17 +861,17 @@ export function dottedNameFrom(input: DottedName): any;
 export function dottedNameFrom(input: DottedNameFromInput & {readonly kind?: 'dotted_name'}): any;
 export function dottedNameFrom(input: any): any {
   if (isTreeNode(input)) return assignDottedName(input);
-  if (isNodeData(input)) return dottedName((input as any).fields);
+  if (isNodeData(input)) return dotted_name_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier1 !== undefined) {
-    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier(''+obj.identifier1 as any) : obj.identifier1);
+    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier_(''+obj.identifier1 as any) : obj.identifier1);
   }
   if (obj.identifier2 !== undefined) {
     const arr = Array.isArray(obj.identifier2) ? obj.identifier2 : [obj.identifier2];
-    resolved.identifier2 = arr.map((v: any) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier(''+v as any) : v));
+    resolved.identifier2 = arr.map((v: any) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v as any) : v));
   }
-  return dottedName(resolved);
+  return dotted_name_(resolved);
 }
 
 export function elifClauseFrom(input: ElifClauseTree): any;
@@ -879,7 +879,7 @@ export function elifClauseFrom(input: ElifClause): any;
 export function elifClauseFrom(input: ElifClauseFromInput & {readonly kind?: 'elif_clause'}): any;
 export function elifClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignElifClause(input);
-  if (isNodeData(input)) return elifClause((input as any).fields);
+  if (isNodeData(input)) return elif_clause_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.condition !== undefined) {
@@ -888,7 +888,7 @@ export function elifClauseFrom(input: any): any {
   if (obj.consequence !== undefined) {
     resolved.consequence = (isNodeData(obj.consequence) ? obj.consequence : Array.isArray(obj.consequence) ? blockFrom(obj.consequence as any) : typeof obj.consequence === 'object' ? blockFrom(obj.consequence) : obj.consequence);
   }
-  return elifClause(resolved);
+  return elif_clause_(resolved);
 }
 
 export function elseClauseFrom(input: ElseClauseTree): any;
@@ -896,13 +896,13 @@ export function elseClauseFrom(input: ElseClause): any;
 export function elseClauseFrom(input: ElseClauseFromInput & {readonly kind?: 'else_clause'}): any;
 export function elseClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignElseClause(input);
-  if (isNodeData(input)) return elseClause((input as any).fields);
+  if (isNodeData(input)) return else_clause_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
     resolved.body = (isNodeData(obj.body) ? obj.body : Array.isArray(obj.body) ? blockFrom(obj.body as any) : typeof obj.body === 'object' ? blockFrom(obj.body) : obj.body);
   }
-  return elseClause(resolved);
+  return else_clause_(resolved);
 }
 
 export function exceptClauseFrom(input: ExceptClauseTree): any;
@@ -910,7 +910,7 @@ export function exceptClauseFrom(input: ExceptClause): any;
 export function exceptClauseFrom(input: ExceptClauseFromInput & {readonly kind?: 'except_clause'}): any;
 export function exceptClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignExceptClause(input);
-  if (isNodeData(input)) return exceptClause((input as any).fields);
+  if (isNodeData(input)) return except_clause_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.alias !== undefined) {
@@ -924,7 +924,7 @@ export function exceptClauseFrom(input: any): any {
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : Array.isArray(obj.children) ? blockFrom(obj.children as any) : typeof obj.children === 'object' ? blockFrom(obj.children) : obj.children);
   }
-  return exceptClause(resolved);
+  return except_clause_(resolved);
 }
 
 export function execStatementFrom(input: ExecStatementTree): any;
@@ -932,7 +932,7 @@ export function execStatementFrom(input: ExecStatement): any;
 export function execStatementFrom(input: ExecStatementFromInput & {readonly kind?: 'exec_statement'}): any;
 export function execStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignExecStatement(input);
-  if (isNodeData(input)) return execStatement((input as any).fields);
+  if (isNodeData(input)) return exec_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.code !== undefined) {
@@ -945,7 +945,7 @@ export function execStatementFrom(input: any): any {
     const arr = Array.isArray(obj.expression2) ? obj.expression2 : [obj.expression2];
     resolved.expression2 = arr.map((v: any) => _resolveExpression(v));
   }
-  return execStatement(resolved);
+  return exec_statement_(resolved);
 }
 
 export function expressionListFrom(input: ExpressionListTree): any;
@@ -953,7 +953,7 @@ export function expressionListFrom(input: ExpressionList): any;
 export function expressionListFrom(input: ExpressionListFromInput & {readonly kind?: 'expression_list'}): any;
 export function expressionListFrom(input: any): any {
   if (isTreeNode(input)) return assignExpressionList(input);
-  if (isNodeData(input)) return expressionList((input as any).fields);
+  if (isNodeData(input)) return expression_list_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.expression1 !== undefined) {
@@ -963,7 +963,7 @@ export function expressionListFrom(input: any): any {
     const arr = Array.isArray(obj.expression2) ? obj.expression2 : [obj.expression2];
     resolved.expression2 = arr.map((v: any) => _resolveExpression(v));
   }
-  return expressionList(resolved);
+  return expression_list_(resolved);
 }
 
 export function expressionStatementFrom(input: ExpressionStatementTree): any;
@@ -971,7 +971,7 @@ export function expressionStatementFrom(input: ExpressionStatement): any;
 export function expressionStatementFrom(input: ExpressionStatementFromInput & {readonly kind?: 'expression_statement'}): any;
 export function expressionStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignExpressionStatement(input);
-  if (isNodeData(input)) return expressionStatement((input as any).fields);
+  if (isNodeData(input)) return expression_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -981,7 +981,7 @@ export function expressionStatementFrom(input: any): any {
     const arr = Array.isArray(obj.expression) ? obj.expression : [obj.expression];
     resolved.expression = arr.map((v: any) => _resolveExpression(v));
   }
-  return expressionStatement(resolved);
+  return expression_statement_(resolved);
 }
 
 export function finallyClauseFrom(input: FinallyClauseTree): any;
@@ -989,13 +989,13 @@ export function finallyClauseFrom(input: FinallyClause): any;
 export function finallyClauseFrom(input: FinallyClauseFromInput & {readonly kind?: 'finally_clause'}): any;
 export function finallyClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignFinallyClause(input);
-  if (isNodeData(input)) return finallyClause((input as any).fields);
+  if (isNodeData(input)) return finally_clause_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : Array.isArray(obj.children) ? blockFrom(obj.children as any) : typeof obj.children === 'object' ? blockFrom(obj.children) : obj.children);
   }
-  return finallyClause(resolved);
+  return finally_clause_(resolved);
 }
 
 export function forInClauseFrom(input: ForInClauseTree): any;
@@ -1003,7 +1003,7 @@ export function forInClauseFrom(input: ForInClause): any;
 export function forInClauseFrom(input: ForInClauseFromInput & {readonly kind?: 'for_in_clause'}): any;
 export function forInClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignForInClause(input);
-  if (isNodeData(input)) return forInClause((input as any).fields);
+  if (isNodeData(input)) return for_in_clause_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -1016,7 +1016,7 @@ export function forInClauseFrom(input: any): any {
   } else {
     resolved.right = [];
   }
-  return forInClause(resolved);
+  return for_in_clause_(resolved);
 }
 
 export function forStatementFrom(input: ForStatementTree): any;
@@ -1024,7 +1024,7 @@ export function forStatementFrom(input: ForStatement): any;
 export function forStatementFrom(input: ForStatementFromInput & {readonly kind?: 'for_statement'}): any;
 export function forStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignForStatement(input);
-  if (isNodeData(input)) return forStatement((input as any).fields);
+  if (isNodeData(input)) return for_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.alternative !== undefined) {
@@ -1039,7 +1039,7 @@ export function forStatementFrom(input: any): any {
   if (obj.right !== undefined) {
     resolved.right = _ra9cmgr(obj.right);
   }
-  return forStatement(resolved);
+  return for_statement_(resolved);
 }
 
 export function formatExpressionFrom(input: FormatExpressionTree): any;
@@ -1047,7 +1047,7 @@ export function formatExpressionFrom(input: FormatExpression): any;
 export function formatExpressionFrom(input: FormatExpressionFromInput & {readonly kind?: 'format_expression'}): any;
 export function formatExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignFormatExpression(input);
-  if (isNodeData(input)) return formatExpression((input as any).fields);
+  if (isNodeData(input)) return format_expression_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.expression !== undefined) {
@@ -1057,9 +1057,9 @@ export function formatExpressionFrom(input: any): any {
     resolved.formatSpecifier = (isNodeData(obj.formatSpecifier) ? obj.formatSpecifier : Array.isArray(obj.formatSpecifier) ? formatSpecifierFrom(obj.formatSpecifier as any) : typeof obj.formatSpecifier === 'object' ? formatSpecifierFrom(obj.formatSpecifier) : obj.formatSpecifier);
   }
   if (obj.typeConversion !== undefined) {
-    resolved.typeConversion = (isNodeData(obj.typeConversion) ? obj.typeConversion : typeof obj.typeConversion === 'string' || typeof obj.typeConversion === 'number' || typeof obj.typeConversion === 'boolean' ? typeConversion(''+obj.typeConversion as any) : obj.typeConversion);
+    resolved.typeConversion = (isNodeData(obj.typeConversion) ? obj.typeConversion : typeof obj.typeConversion === 'string' || typeof obj.typeConversion === 'number' || typeof obj.typeConversion === 'boolean' ? type_conversion_(''+obj.typeConversion as any) : obj.typeConversion);
   }
-  return formatExpression(resolved);
+  return format_expression_(resolved);
 }
 
 export function formatSpecifierFrom(input: FormatSpecifierTree): any;
@@ -1067,14 +1067,14 @@ export function formatSpecifierFrom(input: FormatSpecifier): any;
 export function formatSpecifierFrom(input: FormatSpecifierFromInput & {readonly kind?: 'format_specifier'}): any;
 export function formatSpecifierFrom(input: any): any {
   if (isTreeNode(input)) return assignFormatSpecifier(input);
-  if (isNodeData(input)) return formatSpecifier((input as any).fields);
+  if (isNodeData(input)) return format_specifier_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? formatExpressionFrom(v as any) : typeof v === 'object' ? formatExpressionFrom(v) : v));
   }
-  return formatSpecifier(resolved);
+  return format_specifier_(resolved);
 }
 
 export function functionDefinitionFrom(input: FunctionDefinitionTree): any;
@@ -1082,14 +1082,14 @@ export function functionDefinitionFrom(input: FunctionDefinition): any;
 export function functionDefinitionFrom(input: FunctionDefinitionFromInput & {readonly kind?: 'function_definition'}): any;
 export function functionDefinitionFrom(input: any): any {
   if (isTreeNode(input)) return assignFunctionDefinition(input);
-  if (isNodeData(input)) return functionDefinition((input as any).fields);
+  if (isNodeData(input)) return function_definition_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
     resolved.body = (isNodeData(obj.body) ? obj.body : Array.isArray(obj.body) ? blockFrom(obj.body as any) : typeof obj.body === 'object' ? blockFrom(obj.body) : obj.body);
   }
   if (obj.name !== undefined) {
-    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier(''+obj.name as any) : obj.name);
+    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier_(''+obj.name as any) : obj.name);
   }
   if (obj.parameters !== undefined) {
     resolved.parameters = (isNodeData(obj.parameters) ? obj.parameters : Array.isArray(obj.parameters) ? parametersFrom(obj.parameters as any) : typeof obj.parameters === 'object' ? parametersFrom(obj.parameters) : obj.parameters);
@@ -1100,7 +1100,7 @@ export function functionDefinitionFrom(input: any): any {
   if (obj.typeParameters !== undefined) {
     resolved.typeParameters = (isNodeData(obj.typeParameters) ? obj.typeParameters : Array.isArray(obj.typeParameters) ? typeParameterFrom(obj.typeParameters as any) : typeof obj.typeParameters === 'object' ? typeParameterFrom(obj.typeParameters) : obj.typeParameters);
   }
-  return functionDefinition(resolved);
+  return function_definition_(resolved);
 }
 
 export function futureImportStatementFrom(input: FutureImportStatementTree): any;
@@ -1108,7 +1108,7 @@ export function futureImportStatementFrom(input: FutureImportStatement): any;
 export function futureImportStatementFrom(input: FutureImportStatementFromInput & {readonly kind?: 'future_import_statement'}): any;
 export function futureImportStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignFutureImportStatement(input);
-  if (isNodeData(input)) return futureImportStatement((input as any).fields);
+  if (isNodeData(input)) return future_import_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
@@ -1118,7 +1118,7 @@ export function futureImportStatementFrom(input: any): any {
   } else {
     resolved.name = [];
   }
-  return futureImportStatement(resolved);
+  return future_import_statement_(resolved);
 }
 
 export function generatorExpressionFrom(input: GeneratorExpressionTree): any;
@@ -1126,7 +1126,7 @@ export function generatorExpressionFrom(input: GeneratorExpression): any;
 export function generatorExpressionFrom(input: GeneratorExpressionFromInput & {readonly kind?: 'generator_expression'}): any;
 export function generatorExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignGeneratorExpression(input);
-  if (isNodeData(input)) return generatorExpression((input as any).fields);
+  if (isNodeData(input)) return generator_expression_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1139,7 +1139,7 @@ export function generatorExpressionFrom(input: any): any {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => _r4vgrkg(v));
   }
-  return generatorExpression(resolved);
+  return generator_expression_(resolved);
 }
 
 export function genericTypeFrom(input: GenericTypeTree): any;
@@ -1147,16 +1147,16 @@ export function genericTypeFrom(input: GenericType): any;
 export function genericTypeFrom(input: GenericTypeFromInput & {readonly kind?: 'generic_type'}): any;
 export function genericTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignGenericType(input);
-  if (isNodeData(input)) return genericType((input as any).fields);
+  if (isNodeData(input)) return generic_type_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier !== undefined) {
-    resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier(''+obj.identifier as any) : obj.identifier);
+    resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier_(''+obj.identifier as any) : obj.identifier);
   }
   if (obj.typeParameter !== undefined) {
     resolved.typeParameter = (isNodeData(obj.typeParameter) ? obj.typeParameter : Array.isArray(obj.typeParameter) ? typeParameterFrom(obj.typeParameter as any) : typeof obj.typeParameter === 'object' ? typeParameterFrom(obj.typeParameter) : obj.typeParameter);
   }
-  return genericType(resolved);
+  return generic_type_(resolved);
 }
 
 export function globalStatementFrom(input: GlobalStatementTree): any;
@@ -1164,17 +1164,17 @@ export function globalStatementFrom(input: GlobalStatement): any;
 export function globalStatementFrom(input: GlobalStatementFromInput & {readonly kind?: 'global_statement'}): any;
 export function globalStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignGlobalStatement(input);
-  if (isNodeData(input)) return globalStatement((input as any).fields);
+  if (isNodeData(input)) return global_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier1 !== undefined) {
-    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier(''+obj.identifier1 as any) : obj.identifier1);
+    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier_(''+obj.identifier1 as any) : obj.identifier1);
   }
   if (obj.identifier2 !== undefined) {
     const arr = Array.isArray(obj.identifier2) ? obj.identifier2 : [obj.identifier2];
-    resolved.identifier2 = arr.map((v: any) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier(''+v as any) : v));
+    resolved.identifier2 = arr.map((v: any) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v as any) : v));
   }
-  return globalStatement(resolved);
+  return global_statement_(resolved);
 }
 
 export function ifClauseFrom(input: IfClauseTree): any;
@@ -1182,13 +1182,13 @@ export function ifClauseFrom(input: IfClause): any;
 export function ifClauseFrom(input: IfClauseFromInput & {readonly kind?: 'if_clause'}): any;
 export function ifClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignIfClause(input);
-  if (isNodeData(input)) return ifClause((input as any).fields);
+  if (isNodeData(input)) return if_clause_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _resolveExpression(obj.children);
   }
-  return ifClause(resolved);
+  return if_clause_(resolved);
 }
 
 export function ifStatementFrom(input: IfStatementTree): any;
@@ -1196,7 +1196,7 @@ export function ifStatementFrom(input: IfStatement): any;
 export function ifStatementFrom(input: IfStatementFromInput & {readonly kind?: 'if_statement'}): any;
 export function ifStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignIfStatement(input);
-  if (isNodeData(input)) return ifStatement((input as any).fields);
+  if (isNodeData(input)) return if_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.alternative !== undefined) {
@@ -1210,7 +1210,7 @@ export function ifStatementFrom(input: any): any {
   if (obj.consequence !== undefined) {
     resolved.consequence = (isNodeData(obj.consequence) ? obj.consequence : Array.isArray(obj.consequence) ? blockFrom(obj.consequence as any) : typeof obj.consequence === 'object' ? blockFrom(obj.consequence) : obj.consequence);
   }
-  return ifStatement(resolved);
+  return if_statement_(resolved);
 }
 
 export function importFromStatementFrom(input: ImportFromStatementTree): any;
@@ -1218,7 +1218,7 @@ export function importFromStatementFrom(input: ImportFromStatement): any;
 export function importFromStatementFrom(input: ImportFromStatementFromInput & {readonly kind?: 'import_from_statement'}): any;
 export function importFromStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignImportFromStatement(input);
-  if (isNodeData(input)) return importFromStatement((input as any).fields);
+  if (isNodeData(input)) return import_from_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.moduleName !== undefined) {
@@ -1230,9 +1230,9 @@ export function importFromStatementFrom(input: any): any {
     resolved.name = arr.map((v: any) => _r144bmot(v));
   }
   if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === '*' ? wildcardImport() : obj.children);
+    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === '*' ? wildcard_import_() : obj.children);
   }
-  return importFromStatement(resolved);
+  return import_from_statement_(resolved);
 }
 
 export function importStatementFrom(input: ImportStatementTree): any;
@@ -1240,7 +1240,7 @@ export function importStatementFrom(input: ImportStatement): any;
 export function importStatementFrom(input: ImportStatementFromInput & {readonly kind?: 'import_statement'}): any;
 export function importStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignImportStatement(input);
-  if (isNodeData(input)) return importStatement((input as any).fields);
+  if (isNodeData(input)) return import_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
@@ -1250,7 +1250,7 @@ export function importStatementFrom(input: any): any {
   } else {
     resolved.name = [];
   }
-  return importStatement(resolved);
+  return import_statement_(resolved);
 }
 
 export function interpolationFrom(input: InterpolationTree): any;
@@ -1258,7 +1258,7 @@ export function interpolationFrom(input: Interpolation): any;
 export function interpolationFrom(input: InterpolationFromInput & {readonly kind?: 'interpolation'}): any;
 export function interpolationFrom(input: any): any {
   if (isTreeNode(input)) return assignInterpolation(input);
-  if (isNodeData(input)) return interpolation((input as any).fields);
+  if (isNodeData(input)) return interpolation_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.expression !== undefined) {
@@ -1268,9 +1268,9 @@ export function interpolationFrom(input: any): any {
     resolved.formatSpecifier = (isNodeData(obj.formatSpecifier) ? obj.formatSpecifier : Array.isArray(obj.formatSpecifier) ? formatSpecifierFrom(obj.formatSpecifier as any) : typeof obj.formatSpecifier === 'object' ? formatSpecifierFrom(obj.formatSpecifier) : obj.formatSpecifier);
   }
   if (obj.typeConversion !== undefined) {
-    resolved.typeConversion = (isNodeData(obj.typeConversion) ? obj.typeConversion : typeof obj.typeConversion === 'string' || typeof obj.typeConversion === 'number' || typeof obj.typeConversion === 'boolean' ? typeConversion(''+obj.typeConversion as any) : obj.typeConversion);
+    resolved.typeConversion = (isNodeData(obj.typeConversion) ? obj.typeConversion : typeof obj.typeConversion === 'string' || typeof obj.typeConversion === 'number' || typeof obj.typeConversion === 'boolean' ? type_conversion_(''+obj.typeConversion as any) : obj.typeConversion);
   }
-  return interpolation(resolved);
+  return interpolation_(resolved);
 }
 
 export function keywordArgumentFrom(input: KeywordArgumentTree): any;
@@ -1278,16 +1278,16 @@ export function keywordArgumentFrom(input: KeywordArgument): any;
 export function keywordArgumentFrom(input: KeywordArgumentFromInput & {readonly kind?: 'keyword_argument'}): any;
 export function keywordArgumentFrom(input: any): any {
   if (isTreeNode(input)) return assignKeywordArgument(input);
-  if (isNodeData(input)) return keywordArgument((input as any).fields);
+  if (isNodeData(input)) return keyword_argument_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
-    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier(''+obj.name as any) : obj.name);
+    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier_(''+obj.name as any) : obj.name);
   }
   if (obj.value !== undefined) {
     resolved.value = _resolveExpression(obj.value);
   }
-  return keywordArgument(resolved);
+  return keyword_argument_(resolved);
 }
 
 export function keywordPatternFrom(input: KeywordPatternTree): any;
@@ -1295,16 +1295,16 @@ export function keywordPatternFrom(input: KeywordPattern): any;
 export function keywordPatternFrom(input: KeywordPatternFromInput & {readonly kind?: 'keyword_pattern'}): any;
 export function keywordPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignKeywordPattern(input);
-  if (isNodeData(input)) return keywordPattern((input as any).fields);
+  if (isNodeData(input)) return keyword_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier !== undefined) {
-    resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier(''+obj.identifier as any) : obj.identifier);
+    resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier_(''+obj.identifier as any) : obj.identifier);
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _rl9y3fp(obj.children1);
   }
-  return keywordPattern(resolved);
+  return keyword_pattern_(resolved);
 }
 
 export function lambdaFrom(input: LambdaTree): any;
@@ -1312,7 +1312,7 @@ export function lambdaFrom(input: Lambda): any;
 export function lambdaFrom(input: LambdaFromInput & {readonly kind?: 'lambda'}): any;
 export function lambdaFrom(input: any): any {
   if (isTreeNode(input)) return assignLambda(input);
-  if (isNodeData(input)) return lambda((input as any).fields);
+  if (isNodeData(input)) return lambda_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1321,7 +1321,7 @@ export function lambdaFrom(input: any): any {
   if (obj.parameters !== undefined) {
     resolved.parameters = (isNodeData(obj.parameters) ? obj.parameters : Array.isArray(obj.parameters) ? lambdaParametersFrom(obj.parameters as any) : typeof obj.parameters === 'object' ? lambdaParametersFrom(obj.parameters) : obj.parameters);
   }
-  return lambda(resolved);
+  return lambda_(resolved);
 }
 
 export function lambdaParametersFrom(input: LambdaParametersTree): any;
@@ -1329,7 +1329,7 @@ export function lambdaParametersFrom(input: LambdaParameters): any;
 export function lambdaParametersFrom(input: LambdaParametersFromInput & {readonly kind?: 'lambda_parameters'}): any;
 export function lambdaParametersFrom(input: any): any {
   if (isTreeNode(input)) return assignLambdaParameters(input);
-  if (isNodeData(input)) return lambdaParameters((input as any).fields);
+  if (isNodeData(input)) return lambda_parameters_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1338,7 +1338,7 @@ export function lambdaParametersFrom(input: any): any {
   } else {
     resolved.children = [];
   }
-  return lambdaParameters(resolved);
+  return lambda_parameters_(resolved);
 }
 
 export function listFrom(input: ListTree): any;
@@ -1346,14 +1346,14 @@ export function listFrom(input: List): any;
 export function listFrom(input: ListFromInput & {readonly kind?: 'list'}): any;
 export function listFrom(input: any): any {
   if (isTreeNode(input)) return assignList(input);
-  if (isNodeData(input)) return list((input as any).fields);
+  if (isNodeData(input)) return list_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _rtx2b9u(v));
   }
-  return list(resolved);
+  return list_(resolved);
 }
 
 export function listComprehensionFrom(input: ListComprehensionTree): any;
@@ -1361,7 +1361,7 @@ export function listComprehensionFrom(input: ListComprehension): any;
 export function listComprehensionFrom(input: ListComprehensionFromInput & {readonly kind?: 'list_comprehension'}): any;
 export function listComprehensionFrom(input: any): any {
   if (isTreeNode(input)) return assignListComprehension(input);
-  if (isNodeData(input)) return listComprehension((input as any).fields);
+  if (isNodeData(input)) return list_comprehension_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1374,7 +1374,7 @@ export function listComprehensionFrom(input: any): any {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => _r4vgrkg(v));
   }
-  return listComprehension(resolved);
+  return list_comprehension_(resolved);
 }
 
 export function listPatternFrom(input: ListPatternTree): any;
@@ -1382,14 +1382,14 @@ export function listPatternFrom(input: ListPattern): any;
 export function listPatternFrom(input: ListPatternFromInput & {readonly kind?: 'list_pattern'}): any;
 export function listPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignListPattern(input);
-  if (isNodeData(input)) return listPattern((input as any).fields);
+  if (isNodeData(input)) return list_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _rc9xpef(v));
   }
-  return listPattern(resolved);
+  return list_pattern_(resolved);
 }
 
 export function listSplatFrom(input: ListSplatTree): any;
@@ -1397,13 +1397,13 @@ export function listSplatFrom(input: ListSplat): any;
 export function listSplatFrom(input: ListSplatFromInput & {readonly kind?: 'list_splat'}): any;
 export function listSplatFrom(input: any): any {
   if (isTreeNode(input)) return assignListSplat(input);
-  if (isNodeData(input)) return listSplat((input as any).fields);
+  if (isNodeData(input)) return list_splat_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _r11t6afm(obj.children);
   }
-  return listSplat(resolved);
+  return list_splat_(resolved);
 }
 
 export function listSplatPatternFrom(input: ListSplatPatternTree): any;
@@ -1411,13 +1411,13 @@ export function listSplatPatternFrom(input: ListSplatPattern): any;
 export function listSplatPatternFrom(input: ListSplatPatternFromInput & {readonly kind?: 'list_splat_pattern'}): any;
 export function listSplatPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignListSplatPattern(input);
-  if (isNodeData(input)) return listSplatPattern((input as any).fields);
+  if (isNodeData(input)) return list_splat_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _r1odq136(obj.children);
   }
-  return listSplatPattern(resolved);
+  return list_splat_pattern_(resolved);
 }
 
 export function matchStatementFrom(input: MatchStatementTree): any;
@@ -1425,7 +1425,7 @@ export function matchStatementFrom(input: MatchStatement): any;
 export function matchStatementFrom(input: MatchStatementFromInput & {readonly kind?: 'match_statement'}): any;
 export function matchStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignMatchStatement(input);
-  if (isNodeData(input)) return matchStatement((input as any).fields);
+  if (isNodeData(input)) return match_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1438,7 +1438,7 @@ export function matchStatementFrom(input: any): any {
   } else {
     resolved.subject = [];
   }
-  return matchStatement(resolved);
+  return match_statement_(resolved);
 }
 
 export function memberTypeFrom(input: MemberTypeTree): any;
@@ -1446,16 +1446,16 @@ export function memberTypeFrom(input: MemberType): any;
 export function memberTypeFrom(input: MemberTypeFromInput & {readonly kind?: 'member_type'}): any;
 export function memberTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignMemberType(input);
-  if (isNodeData(input)) return memberType((input as any).fields);
+  if (isNodeData(input)) return member_type_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
     resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0 as any) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
   }
   if (obj.identifier !== undefined) {
-    resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier(''+obj.identifier as any) : obj.identifier);
+    resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier_(''+obj.identifier as any) : obj.identifier);
   }
-  return memberType(resolved);
+  return member_type_(resolved);
 }
 
 export function moduleFrom(input: ModuleTree): any;
@@ -1463,14 +1463,14 @@ export function moduleFrom(input: Module): any;
 export function moduleFrom(input: ModuleFromInput & {readonly kind?: 'module'}): any;
 export function moduleFrom(input: any): any {
   if (isTreeNode(input)) return assignModule(input);
-  if (isNodeData(input)) return module((input as any).fields);
+  if (isNodeData(input)) return module_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _r1ntg9k1(v));
   }
-  return module(resolved);
+  return module_(resolved);
 }
 
 export function namedExpressionFrom(input: NamedExpressionTree): any;
@@ -1478,16 +1478,16 @@ export function namedExpressionFrom(input: NamedExpression): any;
 export function namedExpressionFrom(input: NamedExpressionFromInput & {readonly kind?: 'named_expression'}): any;
 export function namedExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignNamedExpression(input);
-  if (isNodeData(input)) return namedExpression((input as any).fields);
+  if (isNodeData(input)) return named_expression_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
-    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier(''+obj.name as any) : obj.name);
+    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier_(''+obj.name as any) : obj.name);
   }
   if (obj.value !== undefined) {
     resolved.value = _resolveExpression(obj.value);
   }
-  return namedExpression(resolved);
+  return named_expression_(resolved);
 }
 
 export function nonlocalStatementFrom(input: NonlocalStatementTree): any;
@@ -1495,17 +1495,17 @@ export function nonlocalStatementFrom(input: NonlocalStatement): any;
 export function nonlocalStatementFrom(input: NonlocalStatementFromInput & {readonly kind?: 'nonlocal_statement'}): any;
 export function nonlocalStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignNonlocalStatement(input);
-  if (isNodeData(input)) return nonlocalStatement((input as any).fields);
+  if (isNodeData(input)) return nonlocal_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier1 !== undefined) {
-    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier(''+obj.identifier1 as any) : obj.identifier1);
+    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier_(''+obj.identifier1 as any) : obj.identifier1);
   }
   if (obj.identifier2 !== undefined) {
     const arr = Array.isArray(obj.identifier2) ? obj.identifier2 : [obj.identifier2];
-    resolved.identifier2 = arr.map((v: any) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier(''+v as any) : v));
+    resolved.identifier2 = arr.map((v: any) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v as any) : v));
   }
-  return nonlocalStatement(resolved);
+  return nonlocal_statement_(resolved);
 }
 
 export function notOperatorFrom(input: NotOperatorTree): any;
@@ -1513,13 +1513,13 @@ export function notOperatorFrom(input: NotOperator): any;
 export function notOperatorFrom(input: NotOperatorFromInput & {readonly kind?: 'not_operator'}): any;
 export function notOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignNotOperator(input);
-  if (isNodeData(input)) return notOperator((input as any).fields);
+  if (isNodeData(input)) return not_operator_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.argument !== undefined) {
     resolved.argument = _resolveExpression(obj.argument);
   }
-  return notOperator(resolved);
+  return not_operator_(resolved);
 }
 
 export function pairFrom(input: PairTree): any;
@@ -1527,7 +1527,7 @@ export function pairFrom(input: Pair): any;
 export function pairFrom(input: PairFromInput & {readonly kind?: 'pair'}): any;
 export function pairFrom(input: any): any {
   if (isTreeNode(input)) return assignPair(input);
-  if (isNodeData(input)) return pair((input as any).fields);
+  if (isNodeData(input)) return pair_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.key !== undefined) {
@@ -1536,7 +1536,7 @@ export function pairFrom(input: any): any {
   if (obj.value !== undefined) {
     resolved.value = _resolveExpression(obj.value);
   }
-  return pair(resolved);
+  return pair_(resolved);
 }
 
 export function parametersFrom(input: ParametersTree): any;
@@ -1544,14 +1544,14 @@ export function parametersFrom(input: Parameters): any;
 export function parametersFrom(input: ParametersFromInput & {readonly kind?: 'parameters'}): any;
 export function parametersFrom(input: any): any {
   if (isTreeNode(input)) return assignParameters(input);
-  if (isNodeData(input)) return parameters((input as any).fields);
+  if (isNodeData(input)) return parameters_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _resolveParameter(v));
   }
-  return parameters(resolved);
+  return parameters_(resolved);
 }
 
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionTree): any;
@@ -1559,13 +1559,13 @@ export function parenthesizedExpressionFrom(input: ParenthesizedExpression): any
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionFromInput & {readonly kind?: 'parenthesized_expression'}): any;
 export function parenthesizedExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignParenthesizedExpression(input);
-  if (isNodeData(input)) return parenthesizedExpression((input as any).fields);
+  if (isNodeData(input)) return parenthesized_expression_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _rs19yyr(obj.children);
   }
-  return parenthesizedExpression(resolved);
+  return parenthesized_expression_(resolved);
 }
 
 export function parenthesizedListSplatFrom(input: ParenthesizedListSplatTree): any;
@@ -1573,13 +1573,13 @@ export function parenthesizedListSplatFrom(input: ParenthesizedListSplat): any;
 export function parenthesizedListSplatFrom(input: ParenthesizedListSplatFromInput & {readonly kind?: 'parenthesized_list_splat'}): any;
 export function parenthesizedListSplatFrom(input: any): any {
   if (isTreeNode(input)) return assignParenthesizedListSplat(input);
-  if (isNodeData(input)) return parenthesizedListSplat((input as any).fields);
+  if (isNodeData(input)) return parenthesized_list_splat_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _rqjjrtc(obj.children);
   }
-  return parenthesizedListSplat(resolved);
+  return parenthesized_list_splat_(resolved);
 }
 
 export function patternListFrom(input: PatternListTree): any;
@@ -1587,7 +1587,7 @@ export function patternListFrom(input: PatternList): any;
 export function patternListFrom(input: PatternListFromInput & {readonly kind?: 'pattern_list'}): any;
 export function patternListFrom(input: any): any {
   if (isTreeNode(input)) return assignPatternList(input);
-  if (isNodeData(input)) return patternList((input as any).fields);
+  if (isNodeData(input)) return pattern_list_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.pattern1 !== undefined) {
@@ -1597,7 +1597,7 @@ export function patternListFrom(input: any): any {
     const arr = Array.isArray(obj.pattern2) ? obj.pattern2 : [obj.pattern2];
     resolved.pattern2 = arr.map((v: any) => _resolvePattern(v));
   }
-  return patternList(resolved);
+  return pattern_list_(resolved);
 }
 
 export function printStatementFrom(input: PrintStatementTree): any;
@@ -1605,7 +1605,7 @@ export function printStatementFrom(input: PrintStatement): any;
 export function printStatementFrom(input: PrintStatementFromInput & {readonly kind?: 'print_statement'}): any;
 export function printStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignPrintStatement(input);
-  if (isNodeData(input)) return printStatement((input as any).fields);
+  if (isNodeData(input)) return print_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.argument !== undefined) {
@@ -1616,7 +1616,7 @@ export function printStatementFrom(input: any): any {
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : Array.isArray(obj.children) ? chevronFrom(obj.children as any) : typeof obj.children === 'object' ? chevronFrom(obj.children) : obj.children);
   }
-  return printStatement(resolved);
+  return print_statement_(resolved);
 }
 
 export function raiseStatementFrom(input: RaiseStatementTree): any;
@@ -1624,7 +1624,7 @@ export function raiseStatementFrom(input: RaiseStatement): any;
 export function raiseStatementFrom(input: RaiseStatementFromInput & {readonly kind?: 'raise_statement'}): any;
 export function raiseStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignRaiseStatement(input);
-  if (isNodeData(input)) return raiseStatement((input as any).fields);
+  if (isNodeData(input)) return raise_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.cause !== undefined) {
@@ -1633,7 +1633,7 @@ export function raiseStatementFrom(input: any): any {
   if (obj.children !== undefined) {
     resolved.children = _ra9cmgr(obj.children);
   }
-  return raiseStatement(resolved);
+  return raise_statement_(resolved);
 }
 
 export function relativeImportFrom(input: RelativeImportTree): any;
@@ -1641,16 +1641,16 @@ export function relativeImportFrom(input: RelativeImport): any;
 export function relativeImportFrom(input: RelativeImportFromInput & {readonly kind?: 'relative_import'}): any;
 export function relativeImportFrom(input: any): any {
   if (isTreeNode(input)) return assignRelativeImport(input);
-  if (isNodeData(input)) return relativeImport((input as any).fields);
+  if (isNodeData(input)) return relative_import_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.importPrefix !== undefined) {
-    resolved.importPrefix = (isNodeData(obj.importPrefix) ? obj.importPrefix : typeof obj.importPrefix === 'string' || typeof obj.importPrefix === 'number' || typeof obj.importPrefix === 'boolean' ? importPrefix(''+obj.importPrefix as any) : obj.importPrefix);
+    resolved.importPrefix = (isNodeData(obj.importPrefix) ? obj.importPrefix : typeof obj.importPrefix === 'string' || typeof obj.importPrefix === 'number' || typeof obj.importPrefix === 'boolean' ? import_prefix_(''+obj.importPrefix as any) : obj.importPrefix);
   }
   if (obj.dottedName !== undefined) {
     resolved.dottedName = (isNodeData(obj.dottedName) ? obj.dottedName : Array.isArray(obj.dottedName) ? dottedNameFrom(obj.dottedName as any) : typeof obj.dottedName === 'object' ? dottedNameFrom(obj.dottedName) : obj.dottedName);
   }
-  return relativeImport(resolved);
+  return relative_import_(resolved);
 }
 
 export function returnStatementFrom(input: ReturnStatementTree): any;
@@ -1658,13 +1658,13 @@ export function returnStatementFrom(input: ReturnStatement): any;
 export function returnStatementFrom(input: ReturnStatementFromInput & {readonly kind?: 'return_statement'}): any;
 export function returnStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignReturnStatement(input);
-  if (isNodeData(input)) return returnStatement((input as any).fields);
+  if (isNodeData(input)) return return_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     resolved.children = _ra9cmgr(obj.children);
   }
-  return returnStatement(resolved);
+  return return_statement_(resolved);
 }
 
 export function setFrom(input: SetTree): any;
@@ -1672,7 +1672,7 @@ export function setFrom(input: Set): any;
 export function setFrom(input: SetFromInput & {readonly kind?: 'set'}): any;
 export function setFrom(input: any): any {
   if (isTreeNode(input)) return assignSet(input);
-  if (isNodeData(input)) return set((input as any).fields);
+  if (isNodeData(input)) return set_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1681,7 +1681,7 @@ export function setFrom(input: any): any {
   } else {
     resolved.children = [];
   }
-  return set(resolved);
+  return set_(resolved);
 }
 
 export function setComprehensionFrom(input: SetComprehensionTree): any;
@@ -1689,7 +1689,7 @@ export function setComprehensionFrom(input: SetComprehension): any;
 export function setComprehensionFrom(input: SetComprehensionFromInput & {readonly kind?: 'set_comprehension'}): any;
 export function setComprehensionFrom(input: any): any {
   if (isTreeNode(input)) return assignSetComprehension(input);
-  if (isNodeData(input)) return setComprehension((input as any).fields);
+  if (isNodeData(input)) return set_comprehension_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1702,7 +1702,7 @@ export function setComprehensionFrom(input: any): any {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => _r4vgrkg(v));
   }
-  return setComprehension(resolved);
+  return set_comprehension_(resolved);
 }
 
 export function sliceFrom(input: SliceTree): any;
@@ -1710,7 +1710,7 @@ export function sliceFrom(input: Slice): any;
 export function sliceFrom(input: SliceFromInput & {readonly kind?: 'slice'}): any;
 export function sliceFrom(input: any): any {
   if (isTreeNode(input)) return assignSlice(input);
-  if (isNodeData(input)) return slice((input as any).fields);
+  if (isNodeData(input)) return slice_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.expression1 !== undefined) {
@@ -1722,7 +1722,7 @@ export function sliceFrom(input: any): any {
   if (obj.expression3 !== undefined) {
     resolved.expression3 = _resolveExpression(obj.expression3);
   }
-  return slice(resolved);
+  return slice_(resolved);
 }
 
 export function splatPatternFrom(input: SplatPatternTree): any;
@@ -1730,13 +1730,13 @@ export function splatPatternFrom(input: SplatPattern): any;
 export function splatPatternFrom(input: SplatPatternFromInput & {readonly kind?: 'splat_pattern'}): any;
 export function splatPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignSplatPattern(input);
-  if (isNodeData(input)) return splatPattern((input as any).fields);
+  if (isNodeData(input)) return splat_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' || typeof obj.children === 'number' || typeof obj.children === 'boolean' ? identifier(''+obj.children as any) : obj.children);
+    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' || typeof obj.children === 'number' || typeof obj.children === 'boolean' ? identifier_(''+obj.children as any) : obj.children);
   }
-  return splatPattern(resolved);
+  return splat_pattern_(resolved);
 }
 
 export function splatTypeFrom(input: SplatTypeTree): any;
@@ -1744,13 +1744,13 @@ export function splatTypeFrom(input: SplatType): any;
 export function splatTypeFrom(input: SplatTypeFromInput & {readonly kind?: 'splat_type'}): any;
 export function splatTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignSplatType(input);
-  if (isNodeData(input)) return splatType((input as any).fields);
+  if (isNodeData(input)) return splat_type_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' || typeof obj.children === 'number' || typeof obj.children === 'boolean' ? identifier(''+obj.children as any) : obj.children);
+    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' || typeof obj.children === 'number' || typeof obj.children === 'boolean' ? identifier_(''+obj.children as any) : obj.children);
   }
-  return splatType(resolved);
+  return splat_type_(resolved);
 }
 
 export function stringFrom(input: StringTree): any;
@@ -1758,20 +1758,20 @@ export function stringFrom(input: String): any;
 export function stringFrom(input: StringFromInput & {readonly kind?: 'string'}): any;
 export function stringFrom(input: any): any {
   if (isTreeNode(input)) return assignString(input);
-  if (isNodeData(input)) return string((input as any).fields);
+  if (isNodeData(input)) return string_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.stringStart !== undefined) {
-    resolved.stringStart = (isNodeData(obj.stringStart) ? obj.stringStart : typeof obj.stringStart === 'string' || typeof obj.stringStart === 'number' || typeof obj.stringStart === 'boolean' ? stringStart(''+obj.stringStart as any) : obj.stringStart);
+    resolved.stringStart = (isNodeData(obj.stringStart) ? obj.stringStart : typeof obj.stringStart === 'string' || typeof obj.stringStart === 'number' || typeof obj.stringStart === 'boolean' ? string_start_(''+obj.stringStart as any) : obj.stringStart);
   }
   if (obj.children1 !== undefined) {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => _r2im5d1(v));
   }
   if (obj.stringEnd !== undefined) {
-    resolved.stringEnd = (isNodeData(obj.stringEnd) ? obj.stringEnd : typeof obj.stringEnd === 'string' || typeof obj.stringEnd === 'number' || typeof obj.stringEnd === 'boolean' ? stringEnd(''+obj.stringEnd as any) : obj.stringEnd);
+    resolved.stringEnd = (isNodeData(obj.stringEnd) ? obj.stringEnd : typeof obj.stringEnd === 'string' || typeof obj.stringEnd === 'number' || typeof obj.stringEnd === 'boolean' ? string_end_(''+obj.stringEnd as any) : obj.stringEnd);
   }
-  return string(resolved);
+  return string_(resolved);
 }
 
 export function stringContentFrom(input: StringContentTree): any;
@@ -1779,14 +1779,14 @@ export function stringContentFrom(input: StringContent): any;
 export function stringContentFrom(input: StringContentFromInput & {readonly kind?: 'string_content'}): any;
 export function stringContentFrom(input: any): any {
   if (isTreeNode(input)) return assignStringContent(input);
-  if (isNodeData(input)) return stringContent((input as any).fields);
+  if (isNodeData(input)) return string_content_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _r1uewv1p(v));
   }
-  return stringContent(resolved);
+  return string_content_(resolved);
 }
 
 export function subscriptFrom(input: SubscriptTree): any;
@@ -1794,7 +1794,7 @@ export function subscriptFrom(input: Subscript): any;
 export function subscriptFrom(input: SubscriptFromInput & {readonly kind?: 'subscript'}): any;
 export function subscriptFrom(input: any): any {
   if (isTreeNode(input)) return assignSubscript(input);
-  if (isNodeData(input)) return subscript((input as any).fields);
+  if (isNodeData(input)) return subscript_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.subscript !== undefined) {
@@ -1807,7 +1807,7 @@ export function subscriptFrom(input: any): any {
   if (obj.value !== undefined) {
     resolved.value = _resolvePrimaryExpression(obj.value);
   }
-  return subscript(resolved);
+  return subscript_(resolved);
 }
 
 export function tryStatementFrom(input: TryStatementTree): any;
@@ -1815,7 +1815,7 @@ export function tryStatementFrom(input: TryStatement): any;
 export function tryStatementFrom(input: TryStatementFromInput & {readonly kind?: 'try_statement'}): any;
 export function tryStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignTryStatement(input);
-  if (isNodeData(input)) return tryStatement((input as any).fields);
+  if (isNodeData(input)) return try_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1831,7 +1831,7 @@ export function tryStatementFrom(input: any): any {
   if (obj.finallyClause !== undefined) {
     resolved.finallyClause = (isNodeData(obj.finallyClause) ? obj.finallyClause : Array.isArray(obj.finallyClause) ? finallyClauseFrom(obj.finallyClause as any) : typeof obj.finallyClause === 'object' ? finallyClauseFrom(obj.finallyClause) : obj.finallyClause);
   }
-  return tryStatement(resolved);
+  return try_statement_(resolved);
 }
 
 export function tupleFrom(input: TupleTree): any;
@@ -1839,14 +1839,14 @@ export function tupleFrom(input: Tuple): any;
 export function tupleFrom(input: TupleFromInput & {readonly kind?: 'tuple'}): any;
 export function tupleFrom(input: any): any {
   if (isTreeNode(input)) return assignTuple(input);
-  if (isNodeData(input)) return tuple((input as any).fields);
+  if (isNodeData(input)) return tuple_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _rtx2b9u(v));
   }
-  return tuple(resolved);
+  return tuple_(resolved);
 }
 
 export function tuplePatternFrom(input: TuplePatternTree): any;
@@ -1854,14 +1854,14 @@ export function tuplePatternFrom(input: TuplePattern): any;
 export function tuplePatternFrom(input: TuplePatternFromInput & {readonly kind?: 'tuple_pattern'}): any;
 export function tuplePatternFrom(input: any): any {
   if (isTreeNode(input)) return assignTuplePattern(input);
-  if (isNodeData(input)) return tuplePattern((input as any).fields);
+  if (isNodeData(input)) return tuple_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _rc9xpef(v));
   }
-  return tuplePattern(resolved);
+  return tuple_pattern_(resolved);
 }
 
 export function type_From(input: TypeTree): any;
@@ -1883,7 +1883,7 @@ export function typeAliasStatementFrom(input: TypeAliasStatement): any;
 export function typeAliasStatementFrom(input: TypeAliasStatementFromInput & {readonly kind?: 'type_alias_statement'}): any;
 export function typeAliasStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignTypeAliasStatement(input);
-  if (isNodeData(input)) return typeAliasStatement((input as any).fields);
+  if (isNodeData(input)) return type_alias_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -1892,7 +1892,7 @@ export function typeAliasStatementFrom(input: any): any {
   if (obj.right !== undefined) {
     resolved.right = (isNodeData(obj.right) ? obj.right : Array.isArray(obj.right) ? type_From(obj.right as any) : typeof obj.right === 'object' ? type_From(obj.right) : obj.right);
   }
-  return typeAliasStatement(resolved);
+  return type_alias_statement_(resolved);
 }
 
 export function typeParameterFrom(input: TypeParameterTree): any;
@@ -1900,7 +1900,7 @@ export function typeParameterFrom(input: TypeParameter): any;
 export function typeParameterFrom(input: TypeParameterFromInput & {readonly kind?: 'type_parameter'}): any;
 export function typeParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignTypeParameter(input);
-  if (isNodeData(input)) return typeParameter((input as any).fields);
+  if (isNodeData(input)) return type_parameter_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -1910,7 +1910,7 @@ export function typeParameterFrom(input: any): any {
     const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
     resolved.children1 = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v as any) : typeof v === 'object' ? type_From(v) : v));
   }
-  return typeParameter(resolved);
+  return type_parameter_(resolved);
 }
 
 export function typedDefaultParameterFrom(input: TypedDefaultParameterTree): any;
@@ -1918,11 +1918,11 @@ export function typedDefaultParameterFrom(input: TypedDefaultParameter): any;
 export function typedDefaultParameterFrom(input: TypedDefaultParameterFromInput & {readonly kind?: 'typed_default_parameter'}): any;
 export function typedDefaultParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignTypedDefaultParameter(input);
-  if (isNodeData(input)) return typedDefaultParameter((input as any).fields);
+  if (isNodeData(input)) return typed_default_parameter_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
-    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier(''+obj.name as any) : obj.name);
+    resolved.name = (isNodeData(obj.name) ? obj.name : typeof obj.name === 'string' || typeof obj.name === 'number' || typeof obj.name === 'boolean' ? identifier_(''+obj.name as any) : obj.name);
   }
   if (obj.type !== undefined) {
     resolved.type = (isNodeData(obj.type) ? obj.type : Array.isArray(obj.type) ? type_From(obj.type as any) : typeof obj.type === 'object' ? type_From(obj.type) : obj.type);
@@ -1930,7 +1930,7 @@ export function typedDefaultParameterFrom(input: any): any {
   if (obj.value !== undefined) {
     resolved.value = _resolveExpression(obj.value);
   }
-  return typedDefaultParameter(resolved);
+  return typed_default_parameter_(resolved);
 }
 
 export function typedParameterFrom(input: TypedParameterTree): any;
@@ -1938,7 +1938,7 @@ export function typedParameterFrom(input: TypedParameter): any;
 export function typedParameterFrom(input: TypedParameterFromInput & {readonly kind?: 'typed_parameter'}): any;
 export function typedParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignTypedParameter(input);
-  if (isNodeData(input)) return typedParameter((input as any).fields);
+  if (isNodeData(input)) return typed_parameter_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.type !== undefined) {
@@ -1947,7 +1947,7 @@ export function typedParameterFrom(input: any): any {
   if (obj.children !== undefined) {
     resolved.children = _r10r1qu9(obj.children);
   }
-  return typedParameter(resolved);
+  return typed_parameter_(resolved);
 }
 
 export function unaryOperatorFrom(input: UnaryOperatorTree): any;
@@ -1955,7 +1955,7 @@ export function unaryOperatorFrom(input: UnaryOperator): any;
 export function unaryOperatorFrom(input: UnaryOperatorFromInput & {readonly kind?: 'unary_operator'}): any;
 export function unaryOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignUnaryOperator(input);
-  if (isNodeData(input)) return unaryOperator((input as any).fields);
+  if (isNodeData(input)) return unary_operator_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.argument !== undefined) {
@@ -1964,7 +1964,7 @@ export function unaryOperatorFrom(input: any): any {
   if (obj.operator !== undefined) {
     resolved.operator = _r12do1e6(obj.operator);
   }
-  return unaryOperator(resolved);
+  return unary_operator_(resolved);
 }
 
 export function unionPatternFrom(input: UnionPatternTree): any;
@@ -1972,14 +1972,14 @@ export function unionPatternFrom(input: UnionPattern): any;
 export function unionPatternFrom(input: UnionPatternFromInput & {readonly kind?: 'union_pattern'}): any;
 export function unionPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignUnionPattern(input);
-  if (isNodeData(input)) return unionPattern((input as any).fields);
+  if (isNodeData(input)) return union_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: any) => _rl9y3fp(v));
   }
-  return unionPattern(resolved);
+  return union_pattern_(resolved);
 }
 
 export function unionTypeFrom(input: UnionTypeTree): any;
@@ -1987,7 +1987,7 @@ export function unionTypeFrom(input: UnionType): any;
 export function unionTypeFrom(input: UnionTypeFromInput & {readonly kind?: 'union_type'}): any;
 export function unionTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignUnionType(input);
-  if (isNodeData(input)) return unionType((input as any).fields);
+  if (isNodeData(input)) return union_type_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -1996,7 +1996,7 @@ export function unionTypeFrom(input: any): any {
   if (obj.children1 !== undefined) {
     resolved.children1 = (isNodeData(obj.children1) ? obj.children1 : Array.isArray(obj.children1) ? type_From(obj.children1 as any) : typeof obj.children1 === 'object' ? type_From(obj.children1) : obj.children1);
   }
-  return unionType(resolved);
+  return union_type_(resolved);
 }
 
 export function whileStatementFrom(input: WhileStatementTree): any;
@@ -2004,7 +2004,7 @@ export function whileStatementFrom(input: WhileStatement): any;
 export function whileStatementFrom(input: WhileStatementFromInput & {readonly kind?: 'while_statement'}): any;
 export function whileStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignWhileStatement(input);
-  if (isNodeData(input)) return whileStatement((input as any).fields);
+  if (isNodeData(input)) return while_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.alternative !== undefined) {
@@ -2016,7 +2016,7 @@ export function whileStatementFrom(input: any): any {
   if (obj.condition !== undefined) {
     resolved.condition = _resolveExpression(obj.condition);
   }
-  return whileStatement(resolved);
+  return while_statement_(resolved);
 }
 
 export function withClauseFrom(input: WithClauseTree): any;
@@ -2024,7 +2024,7 @@ export function withClauseFrom(input: WithClause): any;
 export function withClauseFrom(input: WithClauseFromInput & {readonly kind?: 'with_clause'}): any;
 export function withClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignWithClause(input);
-  if (isNodeData(input)) return withClause((input as any).fields);
+  if (isNodeData(input)) return with_clause_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.withItem1 !== undefined) {
@@ -2034,7 +2034,7 @@ export function withClauseFrom(input: any): any {
     const arr = Array.isArray(obj.withItem2) ? obj.withItem2 : [obj.withItem2];
     resolved.withItem2 = arr.map((v: any) => (isNodeData(v) ? v : Array.isArray(v) ? withItemFrom(v as any) : typeof v === 'object' ? withItemFrom(v) : v));
   }
-  return withClause(resolved);
+  return with_clause_(resolved);
 }
 
 export function withItemFrom(input: WithItemTree): any;
@@ -2042,13 +2042,13 @@ export function withItemFrom(input: WithItem): any;
 export function withItemFrom(input: WithItemFromInput & {readonly kind?: 'with_item'}): any;
 export function withItemFrom(input: any): any {
   if (isTreeNode(input)) return assignWithItem(input);
-  if (isNodeData(input)) return withItem((input as any).fields);
+  if (isNodeData(input)) return with_item_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.value !== undefined) {
     resolved.value = _resolveExpression(obj.value);
   }
-  return withItem(resolved);
+  return with_item_(resolved);
 }
 
 export function withStatementFrom(input: WithStatementTree): any;
@@ -2056,7 +2056,7 @@ export function withStatementFrom(input: WithStatement): any;
 export function withStatementFrom(input: WithStatementFromInput & {readonly kind?: 'with_statement'}): any;
 export function withStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignWithStatement(input);
-  if (isNodeData(input)) return withStatement((input as any).fields);
+  if (isNodeData(input)) return with_statement_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -2065,7 +2065,7 @@ export function withStatementFrom(input: any): any {
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : Array.isArray(obj.children) ? withClauseFrom(obj.children as any) : typeof obj.children === 'object' ? withClauseFrom(obj.children) : obj.children);
   }
-  return withStatement(resolved);
+  return with_statement_(resolved);
 }
 
 export function yield_From(input: YieldTree): any;

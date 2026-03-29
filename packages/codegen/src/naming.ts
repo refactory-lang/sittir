@@ -52,6 +52,15 @@ export function toFactoryName(kind: string): string {
   return name;
 }
 
+/**
+ * Raw kind name + trailing underscore for factory function names.
+ * All factories get the suffix uniformly — no reserved-word special cases.
+ * Assign uses `factories[kind + '_']` for dynamic lookup.
+ */
+export function toRawFactoryName(kind: string): string {
+  return kind + '_';
+}
+
 /** snake_case to PascalCase: `struct_item` -> `StructItem` */
 export function toTypeName(kind: string): string {
   return snakeToPascal(kind);

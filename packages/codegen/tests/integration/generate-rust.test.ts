@@ -16,8 +16,8 @@ describe('generate() for Rust', () => {
 	});
 
 	it('should generate unified factory functions', () => {
-		expect(result.factories).toContain('export function structItem(');
-		expect(result.factories).toContain('export function functionItem(');
+		expect(result.factories).toContain('export function struct_item_(');
+		expect(result.factories).toContain('export function function_item_(');
 		expect(result.factories).toContain("type: 'struct_item'");
 		expect(result.factories).toContain('render() { return render(this)');
 

@@ -20,11 +20,12 @@ describe('emitFactory', () => {
 		const node = getNode('function_item');
 		const source = emitFactory({ node, leafKinds: ['identifier', 'metavariable'], ctx });
 
-		expect(source).toContain('export function functionItem(');
+		expect(source).toContain('export function function_item_(');
 		expect(source).toContain('config: FunctionItemConfig,');
 		expect(source).toContain("type: 'function_item' as const,");
-		expect(source).toContain("body: (v: Block) => functionItem({");
-		expect(source).toContain('returnType: (v:');
+		expect(source).toContain('fields,');
+		expect(source).toContain('body(v?:');
+		expect(source).toContain('returnType(v?:');
 		expect(source).toContain('render() { return render(this); },');
 		expect(source).toContain('toEdit(startOrRange:');
 	});
@@ -33,7 +34,7 @@ describe('emitFactory', () => {
 		const node = getNode('block');
 		const source = emitFactory({ node, leafKinds: [], ctx });
 
-		expect(source).toContain('export function block(');
+		expect(source).toContain('export function block_(');
 		expect(source).toContain("type: 'block'");
 	});
 
@@ -41,7 +42,7 @@ describe('emitFactory', () => {
 		const node = getNode('binary_expression');
 		const source = emitFactory({ node, leafKinds: [], ctx });
 
-		expect(source).toContain('export function binaryExpression(');
+		expect(source).toContain('export function binary_expression_(');
 		expect(source).toContain("type: 'binary_expression'");
 	});
 
@@ -57,17 +58,17 @@ describe('emitFactory', () => {
 		const node = getNode('function_item');
 		const source = emitFactory({ node, leafKinds: [], ctx });
 
-		// function_item has 3 positional child slots — names derived from kinds
-		expect(source).toContain('visibilityModifier: (v: VisibilityModifier)');
-		expect(source).toContain('functionModifiers: (v: FunctionModifiers)');
-		expect(source).toContain('whereClause: (v: WhereClause)');
+		// function_item has 3 positional child slots — getter/setter methods
+		expect(source).toContain('visibilityModifier(v?: VisibilityModifier)');
+		expect(source).toContain('functionModifiers(v?: FunctionModifiers)');
+		expect(source).toContain('whereClause(v?: WhereClause)');
 	});
 
 	it('generates single children setter for nodes with one child slot', () => {
 		const node = getNode('expression_statement');
 		const source = emitFactory({ node, leafKinds: [], ctx });
 
-		expect(source).toContain('children: (');
+		expect(source).toContain('children(');
 	});
 });
 
@@ -75,7 +76,7 @@ describe('emitTerminalFactory', () => {
 	it('generates keyword factory with fixed text', () => {
 		const source = emitTerminalFactory('self', 'self');
 
-		expect(source).toContain('export function self(');
+		expect(source).toContain('export function self_(');
 		expect(source).toContain("type: 'self'");
 		expect(source).toContain("text: 'self'");
 		expect(source).not.toContain('text: string');
@@ -84,7 +85,7 @@ describe('emitTerminalFactory', () => {
 	it('generates text factory for identifiers', () => {
 		const source = emitTerminalFactory('identifier');
 
-		expect(source).toContain('export function identifier(text: string)');
+		expect(source).toContain('export function identifier_(text: string)');
 		expect(source).toContain("type: 'identifier'");
 	});
 });
