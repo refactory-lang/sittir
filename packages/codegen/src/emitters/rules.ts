@@ -1,14 +1,15 @@
 /**
  * Render template emitter.
  *
- * Walks structural model members to produce S-expression render templates
- * + field metadata for the @sittir/core render engine.
+ * Walks the raw grammar rule tree directly to produce S-expression templates.
+ * No intermediary — the grammar rule IS the template schema.
  *
  * The template uses tree-sitter query syntax:
  *   (function_item "fn" name: (_) "(" parameters: (_)* ")" return_type: (_)? body: (_))
  */
 
-import type { HydratedNodeModel, NodeMember } from '../node-model.ts';
+import type { GrammarRule } from '../grammar.ts';
+import type { HydratedNodeModel } from '../node-model.ts';
 import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
 
 export interface EmitRulesConfig {
@@ -23,7 +24,7 @@ export interface EmittedRule {
 
 /**
  * Emit a render rule (S-expression template + field metadata) for a single node kind.
- * Consumes the pre-computed model members instead of walking raw GrammarRule.
+ * Walks the raw grammar rule tree directly.
  */
 export function emitRule(config: EmitRulesConfig): EmittedRule {
 	const { node } = config;
@@ -38,76 +39,128 @@ export function emitRule(config: EmitRulesConfig): EmittedRule {
 		};
 	}
 
-	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
-	const sexprs = membersToSExpr(node.members, false);
-
-	// Deduplicate: keep first occurrence of each field
-	const seen = new Set<string>();
-	const deduped = sexprs.filter(el => {
-		if (el === '(_)*') return true;
-		const fieldMatch = el.match(/^(\w+): /);
-		if (fieldMatch) {
-			if (seen.has(fieldMatch[1]!)) return false;
-			seen.add(fieldMatch[1]!);
-		}
-		return true;
-	});
-
-	// If node has children but none were captured, append at end
-	if (hasChildren && !deduped.some(e => e === '(_)*')) {
-		deduped.push('(_)*');
+	// Build field quantifier map from the enriched model (source of truth)
+	const fieldQuantifiers = new Map<string, string>();
+	for (const f of nodeFields) {
+		fieldQuantifiers.set(f.name, !f.required ? '?' : f.multiple ? '*' : '');
 	}
 
-	// Deduplicate consecutive (_)* entries
-	const final = deduped.filter((el, i) => !(el === '(_)*' && deduped[i - 1] === '(_)*'));
+	const rawRule = node.rule?.rule;
+	const seen = new Set<string>();
+	const parts = rawRule ? ruleToSExpr(rawRule, false, seen, fieldQuantifiers) : [];
 
-	const template = cleanTemplate(`(${node.kind} ${final.join(' ')})`);
+	// Validate: every field in the template must exist in the node model
+	for (const fieldName of seen) {
+		if (!fieldQuantifiers.has(fieldName)) {
+			throw new Error(`Template for '${node.kind}' references field '${fieldName}' not found in node model`);
+		}
+	}
+
+	// If node has children but template doesn't have (_)*, append it
+	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
+	if (hasChildren && !parts.includes('(_)*')) {
+		parts.push('(_)*');
+	}
+
+	// Collapse consecutive (_)* entries
+	const final = parts.filter((el, i) => !(el === '(_)*' && parts[i - 1] === '(_)*'));
+
+	const template = `(${node.kind} ${final.join(' ')})`.replace(/\s+/g, ' ').trim();
 	return { template, fields };
 }
 
 /**
- * Convert NodeMembers to S-expression parts.
+ * Walk a grammar rule tree and emit S-expression parts.
+ *
+ * The grammar rule tree directly encodes the structure:
+ * - STRING → quoted token
+ * - FIELD → named field reference with quantifier
+ * - SYMBOL (unnamed) → (_)* child
+ * - CHOICE with BLANK → marks contents as optional
+ * - SEQ → sequential parts
+ * - PREC/TOKEN/ALIAS → unwrap transparently
  */
-function membersToSExpr(members: readonly NodeMember[], optional: boolean): string[] {
-	const parts: string[] = [];
-	for (const m of members) {
-		switch (m.member) {
-			case 'field': {
-				const q = !m.field.required ? '?' : m.field.multiple ? '*' : '';
-				parts.push(`${m.field.name}: (_)${q}`);
-				break;
-			}
-			case 'token':
-				// Skip tokens inside optional branches — they're contextual
-				if (!optional && !m.optional) {
-					parts.push(`"${escapeQuotes(m.value)}"`);
-				}
-				break;
-			case 'child':
-				parts.push('(_)*');
-				break;
-			case 'choice': {
-				// Pick the branch with the most fields
-				let best: string[] = [];
-				let bestCount = -1;
-				for (const branch of m.branches) {
-					const branchParts = membersToSExpr(branch, optional);
-					const fieldCount = branchParts.filter(e => e.includes(': (_)')).length;
-					if (fieldCount > bestCount) {
-						bestCount = fieldCount;
-						best = branchParts;
-					}
-				}
-				parts.push(...best);
-				break;
-			}
+function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq: Map<string, string>): string[] {
+	switch (rule.type) {
+		case 'SEQ': {
+			const parts: string[] = [];
+			for (const m of rule.members) parts.push(...ruleToSExpr(m, optional, seen, fq));
+			return parts;
 		}
-	}
-	return parts;
-}
 
-function cleanTemplate(template: string): string {
-	return template.replace(/\s+/g, ' ').trim();
+		case 'STRING':
+			if (optional) return [];
+			return [`"${escapeQuotes(rule.value)}"`];
+
+		case 'FIELD': {
+			if (seen.has(rule.name)) return [];
+			seen.add(rule.name);
+			// Use enriched model quantifier (source of truth for required/multiple)
+			const q = fq.get(rule.name) ?? '';
+			return [`${rule.name}: (_)${q}`];
+		}
+
+		case 'SYMBOL':
+			return ['(_)*'];
+
+		case 'CHOICE': {
+			const hasBlank = rule.members.some(m => m.type === 'BLANK');
+			if (hasBlank) {
+				const parts: string[] = [];
+				for (const m of rule.members) {
+					if (m.type === 'BLANK') continue;
+					parts.push(...ruleToSExpr(m, true, seen, fq));
+				}
+				return parts;
+			}
+			let best: string[] = [];
+			let bestCount = -1;
+			for (const m of rule.members) {
+				const branchParts = ruleToSExpr(m, optional, seen, fq);
+				const fieldCount = branchParts.filter(e => e.includes(': (_)')).length;
+				if (fieldCount > bestCount) {
+					bestCount = fieldCount;
+					best = branchParts;
+				}
+			}
+			return best;
+		}
+
+		case 'REPEAT':
+		case 'REPEAT1':
+			return ruleToSExpr(rule.content, optional, seen, fq);
+
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+			return ruleToSExpr(rule.content, optional, seen, fq);
+
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN': {
+			let inner: GrammarRule = rule.content;
+			while (inner.type === 'PREC' || inner.type === 'PREC_LEFT' || inner.type === 'PREC_RIGHT' || inner.type === 'PREC_DYNAMIC') {
+				inner = inner.content;
+			}
+			if (inner.type === 'STRING') {
+				if (optional) return [];
+				return [`"${escapeQuotes(inner.value)}"`];
+			}
+			return [];
+		}
+
+		case 'ALIAS':
+			if (rule.named) return ['(_)*'];
+			if (rule.value) {
+				if (optional) return [];
+				return [`"${escapeQuotes(rule.value)}"`];
+			}
+			return ruleToSExpr(rule.content, optional, seen, fq);
+
+		case 'BLANK':
+		case 'PATTERN':
+			return [];
+	}
 }
 
 function escapeQuotes(s: string): string {
