@@ -260,7 +260,7 @@ export function binaryExpression(
   return {
     type: 'binary_expression' as const,
     left: (v: Expression) => binaryExpression({ ...config, left: v }),
-    operator: (v: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||') => binaryExpression({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||') => binaryExpression({ ...config, operator: v }),
     right: (v: Expression) => binaryExpression({ ...config, right: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -433,7 +433,7 @@ export function compoundAssignmentExpr(
   return {
     type: 'compound_assignment_expr' as const,
     left: (v: Expression) => compoundAssignmentExpr({ ...config, left: v }),
-    operator: (v: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=') => compoundAssignmentExpr({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=') => compoundAssignmentExpr({ ...config, operator: v }),
     right: (v: Expression) => compoundAssignmentExpr({ ...config, right: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

@@ -327,7 +327,7 @@ export function augmentedAssignmentExpression(
   return {
     type: 'augmented_assignment_expression' as const,
     left: (v: Identifier | MemberExpression | NonNullExpression | ParenthesizedExpression | SubscriptExpression) => augmentedAssignmentExpression({ ...config, left: v }),
-    operator: (v: '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??=') => augmentedAssignmentExpression({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??=') => augmentedAssignmentExpression({ ...config, operator: v }),
     right: (v: Expression) => augmentedAssignmentExpression({ ...config, right: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -361,7 +361,7 @@ export function binaryExpression(
   return {
     type: 'binary_expression' as const,
     left: (v: Expression | PrivatePropertyIdentifier) => binaryExpression({ ...config, left: v }),
-    operator: (v: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||') => binaryExpression({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||') => binaryExpression({ ...config, operator: v }),
     right: (v: Expression) => binaryExpression({ ...config, right: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -894,9 +894,9 @@ export function forInStatement(
   return {
     type: 'for_in_statement' as const,
     body: (v: Statement) => forInStatement({ ...config, body: v }),
-    kind: (v: 'var' | 'let' | 'const') => forInStatement({ ...config, kind: { type: v, text: v } as const }),
+    kind: (v: 'var' | 'let' | 'const') => forInStatement({ ...config, kind: v }),
     left: (v: ArrayPattern | Identifier | MemberExpression | NonNullExpression | ObjectPattern | ParenthesizedExpression | SubscriptExpression | Undefined) => forInStatement({ ...config, left: v }),
-    operator: (v: 'in' | 'of') => forInStatement({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: 'in' | 'of') => forInStatement({ ...config, operator: v }),
     right: (v: Expression | SequenceExpression) => forInStatement({ ...config, right: v }),
     value: (v: Expression) => forInStatement({ ...config, value: v }),
     render() { return render(this); },
@@ -1222,7 +1222,7 @@ export function indexSignature(
     type: 'index_signature' as const,
     indexType: (v: Type) => indexSignature({ ...config, indexType: v }),
     name: (v: Identifier) => indexSignature({ ...config, name: v }),
-    sign: (v: '-' | '+') => indexSignature({ ...config, sign: { type: v, text: v } as const }),
+    sign: (v: '-' | '+') => indexSignature({ ...config, sign: v }),
     typeField: (v: AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation) => indexSignature({ ...config, type: v }),
     children: (v: MappedTypeClause) => indexSignature({ ...config, children: v }),
     render() { return render(this); },
@@ -1377,7 +1377,7 @@ export function lexicalDeclaration(
 ) {
   return {
     type: 'lexical_declaration' as const,
-    kind: (v: 'let' | 'const') => lexicalDeclaration({ ...config, kind: { type: v, text: v } as const }),
+    kind: (v: 'let' | 'const') => lexicalDeclaration({ ...config, kind: v }),
     variableDeclarator1: (v: VariableDeclarator) => lexicalDeclaration({ ...config, variableDeclarator1: v }),
     variableDeclarator2: (...v: (VariableDeclarator)[]) => lexicalDeclaration({ ...config, variableDeclarator2: v }),
     render() { return render(this); },
@@ -2457,7 +2457,7 @@ export function unaryExpression(
   return {
     type: 'unary_expression' as const,
     argument: (v: Expression | Number) => unaryExpression({ ...config, argument: v }),
-    operator: (v: '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete') => unaryExpression({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete') => unaryExpression({ ...config, operator: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2491,7 +2491,7 @@ export function updateExpression(
   return {
     type: 'update_expression' as const,
     argument: (v: Expression) => updateExpression({ ...config, argument: v }),
-    operator: (v: '++' | '--') => updateExpression({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '++' | '--') => updateExpression({ ...config, operator: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

@@ -156,7 +156,7 @@ export function augmentedAssignment(
   return {
     type: 'augmented_assignment' as const,
     left: (v: Pattern | PatternList) => augmentedAssignment({ ...config, left: v }),
-    operator: (v: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=') => augmentedAssignment({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=') => augmentedAssignment({ ...config, operator: v }),
     right: (v: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | Yield) => augmentedAssignment({ ...config, right: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -190,7 +190,7 @@ export function binaryOperator(
   return {
     type: 'binary_operator' as const,
     left: (v: PrimaryExpression) => binaryOperator({ ...config, left: v }),
-    operator: (v: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|') => binaryOperator({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|') => binaryOperator({ ...config, operator: v }),
     right: (v: PrimaryExpression) => binaryOperator({ ...config, right: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -225,7 +225,7 @@ export function booleanOperator(
   return {
     type: 'boolean_operator' as const,
     left: (v: Expression) => booleanOperator({ ...config, left: v }),
-    operator: (v: 'and' | 'or') => booleanOperator({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: 'and' | 'or') => booleanOperator({ ...config, operator: v }),
     right: (v: Expression) => booleanOperator({ ...config, right: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -347,7 +347,7 @@ export function comparisonOperator(
 ) {
   return {
     type: 'comparison_operator' as const,
-    operators: (...v: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[]) => comparisonOperator({ ...config, operators: v.map(t => ({ type: t, text: t }) as const) }),
+    operators: (...v: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[]) => comparisonOperator({ ...config, operators: v }),
     primaryExpression1: (v: PrimaryExpression) => comparisonOperator({ ...config, primaryExpression1: v }),
     primaryExpression2: (...v: (PrimaryExpression)[]) => comparisonOperator({ ...config, primaryExpression2: v }),
     render() { return render(this); },
@@ -1634,7 +1634,7 @@ export function unaryOperator(
   return {
     type: 'unary_operator' as const,
     argument: (v: PrimaryExpression) => unaryOperator({ ...config, argument: v }),
-    operator: (v: '+' | '-' | '~') => unaryOperator({ ...config, operator: { type: v, text: v } as const }),
+    operator: (v: '+' | '-' | '~') => unaryOperator({ ...config, operator: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

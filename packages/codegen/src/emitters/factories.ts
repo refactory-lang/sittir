@@ -14,7 +14,7 @@ import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString, childSlotNames } from './utils.ts';
-import { buildProjectionContext, projectKinds, projAllTypes, type ProjectionContext } from './kind-projections.ts';
+import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
@@ -60,19 +60,11 @@ export function emitFactory(config: {
 		const configKey = camel;
 		const proj = projectKinds(f.kinds, ctx);
 		const fieldType = fieldTypeExprFromProj(proj, leafSet);
-		const isAnonymousOnly = proj.expandedAll.length === 0 && projAllTypes(proj).length > 0;
+
 		if (f.multiple) {
-			if (isAnonymousOnly) {
-				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, ${configKey}: v.map(t => ({ type: t, text: t }) as const) }),`);
-			} else {
-				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, ${configKey}: v }),`);
-			}
+			lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, ${configKey}: v }),`);
 		} else {
-			if (isAnonymousOnly) {
-				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, ${configKey}: { type: v, text: v } as const }),`);
-			} else {
-				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, ${configKey}: v }),`);
-			}
+			lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, ${configKey}: v }),`);
 		}
 	}
 	if (hasChildren) {
