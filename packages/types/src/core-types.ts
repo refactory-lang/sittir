@@ -19,6 +19,7 @@
 export interface AnyNodeData {
 	readonly type: string;
 	readonly fields?: Readonly<Record<string, unknown>>;
+	readonly children?: readonly AnyNodeData[];
 	readonly text?: string;
 }
 

@@ -65,14 +65,9 @@ export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: Join
 			}
 
 			case 'children': {
-				const children = node.fields?.['children'] as AnyNodeData | AnyNodeData[] | string | number | undefined;
-				if (children === undefined) break;
-
-				if (Array.isArray(children)) {
-					parts.push(children.map(c => renderValue(c, registry, joinBy)).join(sep));
-				} else {
-					parts.push(renderValue(children, registry, joinBy));
-				}
+				const children = node.children;
+				if (!children || children.length === 0) break;
+				parts.push(children.map(c => renderValue(c, registry, joinBy)).join(sep));
 				break;
 			}
 

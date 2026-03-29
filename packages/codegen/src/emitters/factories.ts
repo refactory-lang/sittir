@@ -53,19 +53,29 @@ export function emitFactory(config: {
 		const camel = f.propertyName ?? toFieldName(f.name);
 		lines.push(`    ${f.name}: config${opt}.${camel},`);
 	}
-	// Children slots → fields.children
+	lines.push(`  };`);
+
+	// Build children array from child slots in config
 	if (hasChildren) {
 		const slotNames = childSlotNames(node.children!, ctx);
-		eachChildSlot(node.children!, (_slot, i) => {
+		const childExprs: string[] = [];
+		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
-			lines.push(`    ${name}: config${opt}.${name},`);
+			if (slot.multiple) {
+				childExprs.push(`...(config${opt}.${name} ?? [])`);
+			} else {
+				childExprs.push(`config${opt}.${name}`);
+			}
 		});
+		lines.push(`  const children = [${childExprs.join(', ')}].filter(Boolean) as unknown as AnyNodeData[];`);
 	}
-	lines.push(`  };`);
 
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
 	lines.push(`    fields,`);
+	if (hasChildren) {
+		lines.push(`    children,`);
+	}
 
 	// Fluent getters/setters — no-arg = getter (reads fields), with-arg = setter (re-calls factory)
 	for (const f of fields) {
@@ -84,12 +94,14 @@ export function emitFactory(config: {
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
+			// Skip getter/setter for 'children' — the children array IS the data
+			if (name === 'children') return;
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (slot.multiple) {
-				lines.push(`    ${name}(...v: (${slotType})[]): any { return v.length ? ${internalName}({ ...config, ${name}: v }) : fields.${name}; },`);
+				lines.push(`    ${name}(...v: (${slotType})[]): any { return v.length ? ${internalName}({ ...config, ${name}: v }) : config?.${name}; },`);
 			} else {
-				lines.push(`    ${name}(v?: ${slotType}): any { return v !== undefined ? ${internalName}({ ...config, ${name}: v }) : fields.${name}; },`);
+				lines.push(`    ${name}(v?: ${slotType}): any { return v !== undefined ? ${internalName}({ ...config, ${name}: v }) : config?.${name}; },`);
 			}
 		});
 	}

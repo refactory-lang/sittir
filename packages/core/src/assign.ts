@@ -42,6 +42,7 @@ export function assign(node: AnyTreeNode, rules: RulesRegistry): AnyNodeData {
 
 	const parsed = getParsed(template);
 	const fields: Record<string, unknown> = {};
+	let children: AnyNodeData[] | undefined;
 	const fieldedIds = new Set<number>();
 
 	for (const el of parsed.elements) {
@@ -78,12 +79,14 @@ export function assign(node: AnyTreeNode, rules: RulesRegistry): AnyNodeData {
 				// Unnamed children — named children not already covered by fields
 				const rest = node.children().filter(c => c.isNamed() && !fieldedIds.has(c.id()));
 				if (rest.length > 0) {
-					fields['children'] = rest.map(c => assign(c, rules));
+					children = rest.map(c => assign(c, rules));
 				}
 				break;
 			}
 		}
 	}
 
-	return { type: kind, fields };
+	const result: AnyNodeData = { type: kind, fields };
+	if (children) (result as any).children = children;
+	return result;
 }
