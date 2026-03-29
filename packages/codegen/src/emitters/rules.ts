@@ -118,9 +118,18 @@ function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq
 		case 'SYMBOL': {
 			// Inline _-prefixed (hidden/abstract) rules that contain fields the model expects
 			if (rule.name.startsWith('_') && gr[rule.name]) {
-				const inlined = ruleToSExpr(gr[rule.name]!, optional, seen, fq, gr);
-				// Only use inlined result if it produced field references
-				if (inlined.some(p => p.includes(': (_)'))) return inlined;
+				const inlineSeen = new Set(seen);
+				const inlined = ruleToSExpr(gr[rule.name]!, optional, inlineSeen, fq, gr);
+				// Filter to only fields that belong to this node's model
+				const filtered = inlined.filter(p => {
+					const m = p.match(/^(\w+): \(_\)/);
+					return !m || fq.has(m[1]!);
+				});
+				if (filtered.some(p => p.includes(': (_)'))) {
+					// Merge accepted fields back into seen
+					for (const f of inlineSeen) if (fq.has(f)) seen.add(f);
+					return filtered;
+				}
 			}
 			return ['(_)*'];
 		}

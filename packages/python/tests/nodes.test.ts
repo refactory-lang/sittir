@@ -75,11 +75,6 @@ describe('as_pattern', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
-  it('renders with optional fields', () => {
-    const node = ir.asPattern({ alias: { type: 'unknown', fields: {} } as any, children: ir.identifier('test_children') as any });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('assert_statement', () => {
@@ -218,11 +213,6 @@ describe('block', () => {
     const node = ir.block();
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.block({ alternative: [], children: [] });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -402,16 +392,16 @@ describe('comparison_operator', () => {
 
 describe('complex_pattern', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.complexPattern({ children0: ir.float('test') as any, children1: ir.float('test') as any });
+    const node = ir.complexPattern({ children0: ir.float('3.14e0') as any, children1: ir.float('3.14e0') as any });
     expect(node.type).toBe('complex_pattern');
   });
   it('renders to non-empty string', () => {
-    const node = ir.complexPattern({ children0: ir.float('test') as any, children1: ir.float('test') as any });
+    const node = ir.complexPattern({ children0: ir.float('3.14e0') as any, children1: ir.float('3.14e0') as any });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.complexPattern({ children0: ir.float('test') as any, children1: ir.float('test') as any });
+    const node = ir.complexPattern({ children0: ir.float('3.14e0') as any, children1: ir.float('3.14e0') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
@@ -953,7 +943,7 @@ describe('format_expression', () => {
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
   it('renders with optional fields', () => {
-    const node = ir.formatExpression({ expression: ir.identifier('test_expression') as any, formatSpecifier: ir.formatSpecifier() as any, typeConversion: ir.typeConversion('test') as any });
+    const node = ir.formatExpression({ expression: ir.identifier('test_expression') as any, formatSpecifier: ir.formatSpecifier() as any, typeConversion: ir.typeConversion('!r') as any });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1232,7 +1222,7 @@ describe('interpolation', () => {
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
   it('renders with optional fields', () => {
-    const node = ir.interpolation({ expression: ir.identifier('test_expression') as any, formatSpecifier: ir.formatSpecifier() as any, typeConversion: ir.typeConversion('test') as any });
+    const node = ir.interpolation({ expression: ir.identifier('test_expression') as any, formatSpecifier: ir.formatSpecifier() as any, typeConversion: ir.typeConversion('!r') as any });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1515,11 +1505,6 @@ describe('module', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
-  it('renders with optional fields', () => {
-    const node = ir.module({ children: [] });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('named_expression', () => {
@@ -1772,21 +1757,21 @@ describe('raise_statement', () => {
 
 describe('relative_import', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.relativeImport({ importPrefix: ir.importPrefix('test') as any });
+    const node = ir.relativeImport({ importPrefix: ir.importPrefix('.') as any });
     expect(node.type).toBe('relative_import');
   });
   it('renders to non-empty string', () => {
-    const node = ir.relativeImport({ importPrefix: ir.importPrefix('test') as any });
+    const node = ir.relativeImport({ importPrefix: ir.importPrefix('.') as any });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.relativeImport({ importPrefix: ir.importPrefix('test') as any });
+    const node = ir.relativeImport({ importPrefix: ir.importPrefix('.') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
   it('renders with optional fields', () => {
-    const node = ir.relativeImport({ importPrefix: ir.importPrefix('test') as any, dottedName: ir.dottedName({ identifier1: ir.identifier('test_identifier1') as any }) as any });
+    const node = ir.relativeImport({ importPrefix: ir.importPrefix('.') as any, dottedName: ir.dottedName({ identifier1: ir.identifier('test_identifier1') as any }) as any });
     const source = render(node, rules, joinBy);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1962,11 +1947,6 @@ describe('string_content', () => {
     const node = ir.stringContent();
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.stringContent({ children: [] });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2425,14 +2405,14 @@ describe('terminal factories', () => {
     expect(node.text).toBe('True');
   });
   it('import_prefix accepts text', () => {
-    const node = ir.importPrefix('test_value');
+    const node = ir.importPrefix('.');
     expect(node.type).toBe('import_prefix');
-    expect(node.text).toBe('test_value');
+    expect(node.text).toBe('.');
   });
   it('comment accepts text', () => {
-    const node = ir.comment('test_value');
+    const node = ir.comment('# test');
     expect(node.type).toBe('comment');
-    expect(node.text).toBe('test_value');
+    expect(node.text).toBe('# test');
   });
   it('escape_interpolation accepts text', () => {
     const node = ir.escapeInterpolation('test_value');
@@ -2445,9 +2425,9 @@ describe('terminal factories', () => {
     expect(node.text).toBe('\\n');
   });
   it('float accepts text', () => {
-    const node = ir.float('test_value');
+    const node = ir.float('3.14e0');
     expect(node.type).toBe('float');
-    expect(node.text).toBe('test_value');
+    expect(node.text).toBe('3.14e0');
   });
   it('identifier accepts text', () => {
     const node = ir.identifier('test_value');
@@ -2455,14 +2435,14 @@ describe('terminal factories', () => {
     expect(node.text).toBe('test_value');
   });
   it('integer accepts text', () => {
-    const node = ir.integer('test_value');
+    const node = ir.integer('42');
     expect(node.type).toBe('integer');
-    expect(node.text).toBe('test_value');
+    expect(node.text).toBe('42');
   });
   it('line_continuation accepts text', () => {
-    const node = ir.lineContinuation('test_value');
+    const node = ir.lineContinuation('\\\n');
     expect(node.type).toBe('line_continuation');
-    expect(node.text).toBe('test_value');
+    expect(node.text).toBe('\\\n');
   });
   it('string_end accepts text', () => {
     const node = ir.stringEnd('test_value');
@@ -2475,8 +2455,8 @@ describe('terminal factories', () => {
     expect(node.text).toBe('test_value');
   });
   it('type_conversion accepts text', () => {
-    const node = ir.typeConversion('test_value');
+    const node = ir.typeConversion('!r');
     expect(node.type).toBe('type_conversion');
-    expect(node.text).toBe('test_value');
+    expect(node.text).toBe('!r');
   });
 });

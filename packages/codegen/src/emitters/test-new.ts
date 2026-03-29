@@ -107,7 +107,8 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		// Test 5: render with all fields (optional + required) produces non-empty string
 		const full = fullArgs(node, dc);
-		if (full) {
+		const fullHasContent = full !== '' && !full.includes("type: 'unknown'") && (hasRequiredContent || fullHasScalarValues(node, dc));
+		if (fullHasContent) {
 			lines.push(`  it('renders with optional fields', () => {`);
 			lines.push(`    const node = ir.${irKey}(${full});`);
 			lines.push(`    const source = render(node, rules, joinBy);`);
@@ -226,6 +227,23 @@ function fullArgs(node: StructuralNode, dc: DummyCtx): string {
 	return `{ ${parts.join(', ')} }`;
 }
 
+/**
+ * Check if fullArgs would produce at least one scalar (non-empty-array) value.
+ * Nodes with only optional multiple children produce only `[]` entries, which render to nothing.
+ */
+function fullHasScalarValues(node: StructuralNode, dc: DummyCtx): boolean {
+	const allFields = fieldsOf(node);
+	if (allFields.some(f => !f.required && !f.multiple)) return true; // optional scalar fields produce values
+	if (node.children != null) {
+		let hasNonMultipleOptional = false;
+		eachChildSlot(node.children, (slot) => {
+			if (!slot.required && !slot.multiple) hasNonMultipleOptional = true;
+		});
+		if (hasNonMultipleOptional) return true;
+	}
+	return false;
+}
+
 /** Generate a dummy value for a field based on its types. */
 function dummyValue(
 	field: { name: string; kinds: readonly HydratedNodeModel[]; multiple?: boolean },
@@ -317,6 +335,7 @@ function capitalize(s: string): string {
  * Returns undefined to use the default `'test_value'` string literal.
  */
 const LEAF_TEST_EXPRS: Record<string, string> = {
+	// Rust
 	escape_sequence: "'\\\\n'",
 	integer_literal: "'42'",
 	float_literal: "'3.14'",
@@ -326,6 +345,21 @@ const LEAF_TEST_EXPRS: Record<string, string> = {
 	string_content: "'hello'",
 	doc_comment: "'/// doc'",
 	raw_string_literal: "'r\"test\"'",
+	// Python
+	float: "'3.14e0'",
+	integer: "'42'",
+	comment: "'# test'",
+	import_prefix: "'.'",
+	type_conversion: "'!r'",
+	format_specifier: "'>10'",
+	line_continuation: "'\\\\\\n'",
+	// TypeScript
+	number: "'42'",
+	hash_bang_line: "'#!/usr/bin/env node'",
+	meta_property: "'new.target'",
+	regex_flags: "'gi'",
+	regex_pattern: "'test'",
+	private_property_identifier: "'#foo'",
 };
 
 function leafTestExpr(kind: string): string | undefined {

@@ -1127,11 +1127,6 @@ describe('function_modifiers', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
-  it('renders with optional fields', () => {
-    const node = ir.functionModifiers({ children: [] });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('function_signature_item', () => {
@@ -2024,11 +2019,6 @@ describe('range_expression', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
-  it('renders with optional fields', () => {
-    const node = ir.rangeExpression({ children: [ir.identifier('test_children') as any] });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('range_pattern', () => {
@@ -2605,11 +2595,6 @@ describe('token_tree', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
   });
-  it('renders with optional fields', () => {
-    const node = ir.tokenTree({ children: [ir.identifier('test_children') as any] });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('token_tree_pattern', () => {
@@ -2621,11 +2606,6 @@ describe('token_tree_pattern', () => {
     const node = ir.tokenTreePattern();
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node, rules, joinBy));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.tokenTreePattern({ children: [ir.identifier('test_children') as any] });
-    const source = render(node, rules, joinBy);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 

@@ -95,16 +95,8 @@ Used `ir.kindName(minimalArgs)` factory calls instead of raw objects. Recursion 
 ### [FIXED] No tests for optional fields
 Added "renders with optional fields" test that exercises all optional non-multiple fields populated.
 
-### 10. Placeholder text fails pattern-constrained leaf validation
-**Severity: High — causes 58 test failures across Python (19) and TypeScript (39)**
-
-`dummyValue` falls back to `ir.kindName('test')` or `'test_value'` for leaves with grammar-derived regex patterns. The factory validates text against these patterns and throws.
-
-**Affected leaf kinds:**
-- Python: `float`, `integer`, `comment`, `import_prefix`, `type_conversion`, `format_specifier`, `line_continuation`
-- TypeScript: `number`, `meta_property`, `hash_bang_line`, `regex_flags`
-
-**Fix:** Use the factory's pattern to generate valid sample text (e.g., `'42'` for number, `'#!...'` for hash_bang_line), extending `LEAF_TEST_EXPRS`.
+### [FIXED] Placeholder text fails pattern-constrained leaf validation
+Extended `LEAF_TEST_EXPRS` with valid test values for pattern-constrained leaves across Python (`float`, `integer`, `comment`, `import_prefix`, `type_conversion`, `format_specifier`, `line_continuation`) and TypeScript (`number`, `meta_property`, `hash_bang_line`, `regex_flags`, `regex_pattern`, `private_property_identifier`). Also skip "renders with optional fields" tests for nodes with only multiple-optional children (empty arrays render to nothing) and nodes with `{ type: 'unknown' }` fallback values.
 
 ### 11. `{ type: 'unknown' }` fallback still reachable
 **Severity: Low**
