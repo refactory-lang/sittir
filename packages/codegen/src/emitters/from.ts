@@ -232,19 +232,20 @@ function emitFromFunction(
 	}
 	lines.push(`  const resolved: any = {};`);
 	for (const field of fields) {
-		lines.push(`  if (obj['${field.name}'] !== undefined) {`);
+		const camel = field.propertyName ?? toFieldName(field.name);
+		lines.push(`  if (obj.${camel} !== undefined) {`);
 		const fieldProj = projectKinds(field.kinds, ctx);
-		const resolveCall = emitResolveCall(fieldProj, `obj['${field.name}']`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+		const resolveCall = emitResolveCall(fieldProj, `obj.${camel}`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 		if (field.multiple) {
-			lines.push(`    const raw = obj['${field.name}'];`);
+			lines.push(`    const raw = obj.${camel};`);
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
-			lines.push(`    resolved['${field.name}'] = arr.map((v: any) => ${resolveCall.replace(/obj\['[^']+'\]/g, 'v')});`);
+			lines.push(`    resolved.${camel} = arr.map((v: any) => ${resolveCall.replace(/obj\.\w+/g, 'v')});`);
 		} else {
-			lines.push(`    resolved['${field.name}'] = ${resolveCall};`);
+			lines.push(`    resolved.${camel} = ${resolveCall};`);
 		}
 		if (field.multiple && field.required) {
 			lines.push(`  } else {`);
-			lines.push(`    resolved['${field.name}'] = [];`);
+			lines.push(`    resolved.${camel} = [];`);
 		}
 		lines.push(`  }`);
 	}
@@ -253,18 +254,18 @@ function emitFromFunction(
 		eachChildSlot(node.children!, (slot, i) => {
 			const propName = slotNames[i]!;
 			const slotProj = projectKinds(slot.kinds, ctx);
-			lines.push(`  if (obj['${propName}'] !== undefined) {`);
+			lines.push(`  if (obj.${propName} !== undefined) {`);
 			if (slot.multiple) {
-				lines.push(`    const arr = Array.isArray(obj['${propName}']) ? obj['${propName}'] : [obj['${propName}']];`);
+				lines.push(`    const arr = Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}];`);
 				const slotResolve = emitResolveCall(slotProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-				lines.push(`    resolved['${propName}'] = arr.map((v: any) => ${slotResolve});`);
+				lines.push(`    resolved.${propName} = arr.map((v: any) => ${slotResolve});`);
 			} else {
-				const slotResolve = emitResolveCall(slotProj, `obj['${propName}']`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-				lines.push(`    resolved['${propName}'] = ${slotResolve};`);
+				const slotResolve = emitResolveCall(slotProj, `obj.${propName}`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+				lines.push(`    resolved.${propName} = ${slotResolve};`);
 			}
 			if (slot.required && slot.multiple) {
 				lines.push(`  } else {`);
-				lines.push(`    resolved['${propName}'] = [];`);
+				lines.push(`    resolved.${propName} = [];`);
 			}
 			lines.push(`  }`);
 		});

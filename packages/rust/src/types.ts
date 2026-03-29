@@ -355,7 +355,7 @@ export interface AssociatedType {
   readonly fields: {
     readonly bounds?: TraitBounds;
     readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
+    readonly typeParameters?: TypeParameters;
   };
   readonly children?: WhereClause;
 }
@@ -436,7 +436,7 @@ export interface ClosureExpression {
   readonly fields: {
     readonly body: Block | Expression;
     readonly parameters: ClosureParameters;
-    readonly return_type?: Type;
+    readonly returnType?: Type;
   };
 }
 export interface ClosureParameters {
@@ -498,7 +498,7 @@ export interface EnumItem {
   readonly fields: {
     readonly body: EnumVariantList;
     readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
+    readonly typeParameters?: TypeParameters;
   };
   readonly visibilityModifier?: VisibilityModifier;
   readonly whereClause?: WhereClause;
@@ -605,8 +605,8 @@ export interface FunctionItem {
     readonly body: Block;
     readonly name: Identifier | Metavariable;
     readonly parameters: Parameters;
-    readonly return_type?: Type;
-    readonly type_parameters?: TypeParameters;
+    readonly returnType?: Type;
+    readonly typeParameters?: TypeParameters;
   };
   readonly visibilityModifier?: VisibilityModifier;
   readonly functionModifiers?: FunctionModifiers;
@@ -621,8 +621,8 @@ export interface FunctionSignatureItem {
   readonly fields: {
     readonly name: Identifier | Metavariable;
     readonly parameters: Parameters;
-    readonly return_type?: Type;
-    readonly type_parameters?: TypeParameters;
+    readonly returnType?: Type;
+    readonly typeParameters?: TypeParameters;
   };
   readonly visibilityModifier?: VisibilityModifier;
   readonly functionModifiers?: FunctionModifiers;
@@ -632,7 +632,7 @@ export interface FunctionType {
   readonly type: 'function_type';
   readonly fields: {
     readonly parameters: Parameters;
-    readonly return_type?: Type;
+    readonly returnType?: Type;
     readonly trait?: ScopedTypeIdentifier | TypeIdentifier;
   };
   readonly forLifetimes?: ForLifetimes;
@@ -646,13 +646,13 @@ export interface GenericFunction {
   readonly type: 'generic_function';
   readonly fields: {
     readonly function: FieldExpression | Identifier | ScopedIdentifier;
-    readonly type_arguments: TypeArguments;
+    readonly typeArguments: TypeArguments;
   };
 }
 export interface GenericPattern {
   readonly type: 'generic_pattern';
   readonly fields: {
-    readonly type_arguments: TypeArguments;
+    readonly typeArguments: TypeArguments;
   };
   readonly children: Identifier | ScopedIdentifier;
 }
@@ -660,21 +660,21 @@ export interface GenericType {
   readonly type: 'generic_type';
   readonly fields: {
     readonly type: Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier;
-    readonly type_arguments: TypeArguments;
+    readonly typeArguments: TypeArguments;
   };
 }
 export interface GenericTypeWithTurbofish {
   readonly type: 'generic_type_with_turbofish';
   readonly fields: {
     readonly type: ScopedIdentifier | TypeIdentifier;
-    readonly type_arguments: TypeArguments;
+    readonly typeArguments: TypeArguments;
   };
 }
 export interface HigherRankedTraitBound {
   readonly type: 'higher_ranked_trait_bound';
   readonly fields: {
     readonly type: Type;
-    readonly type_parameters: TypeParameters;
+    readonly typeParameters: TypeParameters;
   };
 }
 export interface IfExpression {
@@ -691,7 +691,7 @@ export interface ImplItem {
     readonly body?: DeclarationList;
     readonly trait?: GenericType | ScopedTypeIdentifier | TypeIdentifier;
     readonly type: Type;
-    readonly type_parameters?: TypeParameters;
+    readonly typeParameters?: TypeParameters;
   };
   readonly children?: WhereClause;
 }
@@ -979,7 +979,7 @@ export interface StructItem {
   readonly fields: {
     readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
     readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
+    readonly typeParameters?: TypeParameters;
   };
   readonly visibilityModifier?: VisibilityModifier;
   readonly whereClause?: WhereClause;
@@ -1026,7 +1026,7 @@ export interface TraitItem {
     readonly body: DeclarationList;
     readonly bounds?: TraitBounds;
     readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
+    readonly typeParameters?: TypeParameters;
   };
   readonly visibilityModifier?: VisibilityModifier;
   readonly whereClause?: WhereClause;
@@ -1074,7 +1074,7 @@ export interface TypeBinding {
   readonly fields: {
     readonly name: TypeIdentifier;
     readonly type: Type;
-    readonly type_arguments?: TypeArguments;
+    readonly typeArguments?: TypeArguments;
   };
 }
 export interface TypeCastExpression {
@@ -1089,7 +1089,7 @@ export interface TypeItem {
   readonly fields: {
     readonly name: TypeIdentifier;
     readonly type: Type;
-    readonly type_parameters?: TypeParameters;
+    readonly typeParameters?: TypeParameters;
   };
   readonly visibilityModifier?: VisibilityModifier;
   readonly whereClause1?: WhereClause;
@@ -1099,7 +1099,7 @@ export interface TypeParameter {
   readonly type: 'type_parameter';
   readonly fields: {
     readonly bounds?: TraitBounds;
-    readonly default_type?: Type;
+    readonly defaultType?: Type;
     readonly name: TypeIdentifier;
   };
 }
@@ -1118,7 +1118,7 @@ export interface UnionItem {
   readonly fields: {
     readonly body: FieldDeclarationList;
     readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
+    readonly typeParameters?: TypeParameters;
   };
   readonly visibilityModifier?: VisibilityModifier;
   readonly whereClause?: WhereClause;

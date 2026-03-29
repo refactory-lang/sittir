@@ -93,7 +93,7 @@ export function emitConsts(config: EmitConstsConfig): string {
   for (const node of [...nodes].sort((a, b) => a.kind.localeCompare(b.kind))) {
     lines.push(`  '${node.kind}': [`);
     for (const field of fieldsOf(node)) {
-      lines.push(`    { name: '${toFieldName(field.name)}', required: ${field.required}, multiple: ${field.multiple} },`);
+      lines.push(`    { name: '${field.propertyName ?? toFieldName(field.name)}', required: ${field.required}, multiple: ${field.multiple} },`);
     }
     lines.push('  ],');
   }

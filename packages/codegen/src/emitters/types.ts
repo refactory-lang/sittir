@@ -275,7 +275,7 @@ function emitConcreteInterface(
 			const proj = projectKinds(f.kinds, ctx);
 			const typeExpr = fieldTypeExpr(proj, leafSet);
 			const opt = f.required ? '' : '?';
-			const key = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(f.name) ? f.name : `'${f.name}'`;
+			const key = f.propertyName ?? toFieldName(f.name);
 			if (f.multiple) {
 				lines.push(`    readonly ${key}${opt}: readonly (${typeExpr})[];`);
 			} else {

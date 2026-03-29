@@ -338,7 +338,7 @@ export interface ClassDefinition {
     readonly body: Block;
     readonly name: Identifier;
     readonly superclasses?: ArgumentList;
-    readonly type_parameters?: TypeParameter;
+    readonly typeParameters?: TypeParameter;
   };
 }
 export interface ClassPattern {
@@ -492,8 +492,8 @@ export interface FormatExpression {
   readonly type: 'format_expression';
   readonly fields: {
     readonly expression: Expression | ExpressionList | PatternList | Yield;
-    readonly format_specifier?: FormatSpecifier;
-    readonly type_conversion?: TypeConversion;
+    readonly formatSpecifier?: FormatSpecifier;
+    readonly typeConversion?: TypeConversion;
   };
 }
 export interface FormatSpecifier {
@@ -506,8 +506,8 @@ export interface FunctionDefinition {
     readonly body: Block;
     readonly name: Identifier;
     readonly parameters: Parameters;
-    readonly return_type?: Type;
-    readonly type_parameters?: TypeParameter;
+    readonly returnType?: Type;
+    readonly typeParameters?: TypeParameter;
   };
 }
 export interface FutureImportStatement {
@@ -549,7 +549,7 @@ export interface IfStatement {
 export interface ImportFromStatement {
   readonly type: 'import_from_statement';
   readonly fields: {
-    readonly module_name: DottedName | RelativeImport;
+    readonly moduleName: DottedName | RelativeImport;
     readonly name?: readonly (AliasedImport | DottedName)[];
   };
   readonly children?: WildcardImport;
@@ -564,8 +564,8 @@ export interface Interpolation {
   readonly type: 'interpolation';
   readonly fields: {
     readonly expression: Expression | ExpressionList | PatternList | Yield;
-    readonly format_specifier?: FormatSpecifier;
-    readonly type_conversion?: TypeConversion;
+    readonly formatSpecifier?: FormatSpecifier;
+    readonly typeConversion?: TypeConversion;
   };
 }
 export interface KeywordArgument {

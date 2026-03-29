@@ -55,22 +55,23 @@ export function emitFactory(config: {
 
 	// Fluent setters — immutable: return a new node via factory re-call
 	for (const f of fieldsOf(node)) {
-		const camel = toFieldName(f.name);
+		const camel = f.propertyName ?? toFieldName(f.name);
 		const setterName = camel === 'type' ? 'typeField' : camel;
+		const configKey = camel;
 		const proj = projectKinds(f.kinds, ctx);
 		const fieldType = fieldTypeExprFromProj(proj, leafSet);
 		const isAnonymousOnly = proj.expandedAll.length === 0 && projAllTypes(proj).length > 0;
 		if (f.multiple) {
 			if (isAnonymousOnly) {
-				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, '${f.name}': v.map(t => ({ type: t, text: t }) as const) }),`);
+				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, ${configKey}: v.map(t => ({ type: t, text: t }) as const) }),`);
 			} else {
-				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, '${f.name}': v }),`);
+				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, ${configKey}: v }),`);
 			}
 		} else {
 			if (isAnonymousOnly) {
-				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, '${f.name}': { type: v, text: v } as const }),`);
+				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, ${configKey}: { type: v, text: v } as const }),`);
 			} else {
-				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, '${f.name}': v }),`);
+				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, ${configKey}: v }),`);
 			}
 		}
 	}

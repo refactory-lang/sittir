@@ -10,7 +10,7 @@
 
 import type { HydratedNodeModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
-import { toTypeName, toFactoryName, toGrammarTypeName } from '../naming.ts';
+import { toTypeName, toFactoryName, toFieldName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
@@ -107,18 +107,19 @@ export function emitAssign(config: EmitAssignConfig): string {
 		lines.push(`  const config: Record<string, unknown> = {};`);
 
 		for (const f of fields) {
+			const camel = f.propertyName ?? toFieldName(f.name);
 			const proj = projectKinds(f.kinds, ctx);
 			const named = expandForRuntime(proj.expandedAll, ctx);
 			if (named.length === 0) {
 				// Anonymous-only field (operator tokens etc.) — read as text node
 				if (f.required) {
-					lines.push(`  config['${f.name}'] = { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() };`);
+					lines.push(`  config.${camel} = { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() };`);
 				} else {
-					lines.push(`  config['${f.name}'] = target.field('${f.name}') ? { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() } : undefined;`);
+					lines.push(`  config.${camel} = target.field('${f.name}') ? { type: target.field('${f.name}')!.type, text: target.field('${f.name}')!.text() } : undefined;`);
 				}
 				continue;
 			}
-			emitAssignField(lines, f, named, leafSet, node.kind);
+			emitAssignField(lines, f, camel, named, leafSet, node.kind);
 		}
 
 		// Hydrate children field if present
@@ -156,14 +157,14 @@ export function emitAssign(config: EmitAssignConfig): string {
 }
 
 /** Emit a single field assignment line inside an assign function. */
-function emitAssignField(lines: string[], f: { name: string; required: boolean; multiple: boolean }, fieldNamedTypes: string[], leafSet: Set<string>, nodeKind: string): void {
+function emitAssignField(lines: string[], f: { name: string; required: boolean; multiple: boolean }, configKey: string, fieldNamedTypes: string[], leafSet: Set<string>, nodeKind: string): void {
 	const fieldAccess = `target.field('${f.name}')`;
 	const kindSet = JSON.stringify(fieldNamedTypes);
 
 	if (f.required) {
 		if (f.multiple) {
 			// Multiple required: collect all children matching this field's accepted kinds
-			lines.push(`  config['${f.name}'] = (() => {`);
+			lines.push(`  config.${configKey} = (() => {`);
 			lines.push(`    const _kinds = new Set(${kindSet});`);
 			lines.push(`    const _items = target.children().filter((c) => _kinds.has(c.type));`);
 			lines.push(`    if (_items.length === 0) throw new Error(\`Required field '${f.name}' has no children on '${nodeKind}' tree node\`);`);
@@ -172,17 +173,17 @@ function emitAssignField(lines: string[], f: { name: string; required: boolean; 
 		} else if (fieldNamedTypes.length === 1) {
 			const childKind = fieldNamedTypes[0]!;
 			if (leafSet.has(childKind)) {
-				lines.push(`  config['${f.name}'] = assignByKind('${childKind}', ${fieldAccess}!);`);
+				lines.push(`  config.${configKey} = assignByKind('${childKind}', ${fieldAccess}!);`);
 			} else {
-				lines.push(`  config['${f.name}'] = assign${toTypeName(childKind)}(${fieldAccess}! as ${toTypeName(childKind)}Tree);`);
+				lines.push(`  config.${configKey} = assign${toTypeName(childKind)}(${fieldAccess}! as ${toTypeName(childKind)}Tree);`);
 			}
 		} else {
-			lines.push(`  config['${f.name}'] = assignByKind(${fieldAccess}!.type, ${fieldAccess}!);`);
+			lines.push(`  config.${configKey} = assignByKind(${fieldAccess}!.type, ${fieldAccess}!);`);
 		}
 	} else {
 		if (f.multiple) {
 			// Multiple optional: collect matching children, undefined if none
-			lines.push(`  config['${f.name}'] = (() => {`);
+			lines.push(`  config.${configKey} = (() => {`);
 			lines.push(`    const _kinds = new Set(${kindSet});`);
 			lines.push(`    const _items = target.children().filter((c) => _kinds.has(c.type));`);
 			lines.push(`    return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;`);
@@ -190,12 +191,12 @@ function emitAssignField(lines: string[], f: { name: string; required: boolean; 
 		} else if (fieldNamedTypes.length === 1) {
 			const childKind = fieldNamedTypes[0]!;
 			if (leafSet.has(childKind)) {
-				lines.push(`  config['${f.name}'] = ${fieldAccess} ? assignByKind('${childKind}', ${fieldAccess}!) : undefined;`);
+				lines.push(`  config.${configKey} = ${fieldAccess} ? assignByKind('${childKind}', ${fieldAccess}!) : undefined;`);
 			} else {
-				lines.push(`  config['${f.name}'] = ${fieldAccess} ? assign${toTypeName(childKind)}(${fieldAccess}! as ${toTypeName(childKind)}Tree) : undefined;`);
+				lines.push(`  config.${configKey} = ${fieldAccess} ? assign${toTypeName(childKind)}(${fieldAccess}! as ${toTypeName(childKind)}Tree) : undefined;`);
 			}
 		} else {
-			lines.push(`  config['${f.name}'] = ${fieldAccess} ? assignByKind(${fieldAccess}!.type, ${fieldAccess}!) : undefined;`);
+			lines.push(`  config.${configKey} = ${fieldAccess} ? assignByKind(${fieldAccess}!.type, ${fieldAccess}!) : undefined;`);
 		}
 	}
 }
@@ -210,7 +211,7 @@ function emitAssignChildren(
 ): void {
 	const kindSet = JSON.stringify(childNamed);
 	if (ch.multiple) {
-		lines.push(`  config['${propName}'] = (() => {`);
+		lines.push(`  config.${propName} = (() => {`);
 		lines.push(`    const _kinds = new Set(${kindSet});`);
 		lines.push(`    const _items = target.children().filter((c) => _kinds.has(c.type));`);
 		if (ch.required) {
@@ -219,7 +220,7 @@ function emitAssignChildren(
 		lines.push(`    return _items.map((c) => assignByKind(c.type, c));`);
 		lines.push(`  })();`);
 	} else {
-		lines.push(`  config['${propName}'] = (() => {`);
+		lines.push(`  config.${propName} = (() => {`);
 		lines.push(`    const _kinds = new Set(${kindSet});`);
 		lines.push(`    const _child = target.children().find((c) => _kinds.has(c.type));`);
 		if (ch.required) {

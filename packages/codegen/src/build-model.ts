@@ -79,7 +79,7 @@ function serializeToJson5(nodes: Map<string, NodeModel>): string {
 			// Convert fields to match old format for compatibility
 			if (branchRest.fields) {
 				branchRest.fields = branchRest.fields.map((f: any) => {
-					const { propertyName, fieldSignature, ...fieldRest } = f;
+					const { fieldSignature, ...fieldRest } = f;
 					return fieldRest;
 				});
 			}

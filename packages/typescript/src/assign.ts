@@ -201,15 +201,15 @@ export function assignByKind(kind: string, target: any): unknown {
 
 export function assignAbstractClassDeclaration(target: AbstractClassDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignClassBody(target.field('body')! as ClassBodyTree);
-  config['decorator'] = (() => {
+  config.body = assignClassBody(target.field('body')! as ClassBodyTree);
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['name'] = assignByKind('type_identifier', target.field('name')!);
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children'] = (() => {
+  config.name = assignByKind('type_identifier', target.field('name')!);
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.children = (() => {
     const _kinds = new Set(["class_heritage"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -221,17 +221,17 @@ export function assignAbstractClassDeclaration(target: AbstractClassDeclarationT
 
 export function assignAbstractMethodSignature(target: AbstractMethodSignatureTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['accessibilityModifier'] = (() => {
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.accessibilityModifier = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['overrideModifier'] = (() => {
+  config.overrideModifier = (() => {
     const _kinds = new Set(["override_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -243,7 +243,7 @@ export function assignAbstractMethodSignature(target: AbstractMethodSignatureTre
 
 export function assignAddingTypeAnnotation(target: AddingTypeAnnotationTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'adding_type_annotation' tree node`);
@@ -255,13 +255,13 @@ export function assignAddingTypeAnnotation(target: AddingTypeAnnotationTree) {
 
 export function assignAmbientDeclaration(target: AmbientDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","class_declaration","enum_declaration","function_declaration","function_signature","generator_function_declaration","import_alias","interface_declaration","internal_module","lexical_declaration","module","property_identifier","statement_block","type_alias_declaration","variable_declaration"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'ambient_declaration' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['type'] = (() => {
+  config.type = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -273,13 +273,13 @@ export function assignAmbientDeclaration(target: AmbientDeclarationTree) {
 
 export function assignArguments(target: ArgumentsTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -290,13 +290,13 @@ export function assignArguments(target: ArgumentsTree) {
 
 export function assignArray(target: ArrayTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -307,13 +307,13 @@ export function assignArray(target: ArrayTree) {
 
 export function assignArrayPattern(target: ArrayPatternTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["array_pattern","assignment_pattern","identifier","member_expression","non_null_expression","object_pattern","rest_pattern","subscript_expression","undefined"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["array_pattern","assignment_pattern","identifier","member_expression","non_null_expression","object_pattern","rest_pattern","subscript_expression","undefined"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -324,7 +324,7 @@ export function assignArrayPattern(target: ArrayPatternTree) {
 
 export function assignArrayType(target: ArrayTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","conditional_type","existential_type","flow_maybe_type","generic_type","index_type_query","intersection_type","literal_type","lookup_type","nested_type_identifier","object_type","parenthesized_type","predefined_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'array_type' tree node`);
@@ -336,24 +336,24 @@ export function assignArrayType(target: ArrayTypeTree) {
 
 export function assignArrowFunction(target: ArrowFunctionTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['parameter'] = target.field('parameter') ? assignByKind('identifier', target.field('parameter')!) : undefined;
-  config['parameters'] = target.field('parameters') ? assignFormalParameters(target.field('parameters')! as FormalParametersTree) : undefined;
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.body = assignByKind(target.field('body')!.type, target.field('body')!);
+  config.parameter = target.field('parameter') ? assignByKind('identifier', target.field('parameter')!) : undefined;
+  config.parameters = target.field('parameters') ? assignFormalParameters(target.field('parameters')! as FormalParametersTree) : undefined;
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = arrowFunction(config as ArrowFunctionConfig);
   return bindRange(target, result);
 }
 
 export function assignAsExpression(target: AsExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['expression'] = (() => {
+  config.expression = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'as_expression' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['type'] = (() => {
+  config.type = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -365,7 +365,7 @@ export function assignAsExpression(target: AsExpressionTree) {
 
 export function assignAsserts(target: AssertsTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["identifier","this","type_predicate"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'asserts' tree node`);
@@ -377,7 +377,7 @@ export function assignAsserts(target: AssertsTree) {
 
 export function assignAssertsAnnotation(target: AssertsAnnotationTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["asserts"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'asserts_annotation' tree node`);
@@ -389,32 +389,32 @@ export function assignAssertsAnnotation(target: AssertsAnnotationTree) {
 
 export function assignAssignmentExpression(target: AssignmentExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
-  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  config.left = assignByKind(target.field('left')!.type, target.field('left')!);
+  config.right = assignByKind(target.field('right')!.type, target.field('right')!);
   const result = assignmentExpression(config as AssignmentExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignAssignmentPattern(target: AssignmentPatternTree) {
   const config: Record<string, unknown> = {};
-  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
-  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  config.left = assignByKind(target.field('left')!.type, target.field('left')!);
+  config.right = assignByKind(target.field('right')!.type, target.field('right')!);
   const result = assignmentPattern(config as AssignmentPatternConfig);
   return bindRange(target, result);
 }
 
 export function assignAugmentedAssignmentExpression(target: AugmentedAssignmentExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
-  config['operator'] = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
-  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  config.left = assignByKind(target.field('left')!.type, target.field('left')!);
+  config.operator = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
+  config.right = assignByKind(target.field('right')!.type, target.field('right')!);
   const result = augmentedAssignmentExpression(config as AugmentedAssignmentExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignAwaitExpression(target: AwaitExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'await_expression' tree node`);
@@ -426,58 +426,58 @@ export function assignAwaitExpression(target: AwaitExpressionTree) {
 
 export function assignBinaryExpression(target: BinaryExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
-  config['operator'] = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
-  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  config.left = assignByKind(target.field('left')!.type, target.field('left')!);
+  config.operator = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
+  config.right = assignByKind(target.field('right')!.type, target.field('right')!);
   const result = binaryExpression(config as BinaryExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignBreakStatement(target: BreakStatementTree) {
   const config: Record<string, unknown> = {};
-  config['label'] = target.field('label') ? assignByKind('statement_identifier', target.field('label')!) : undefined;
+  config.label = target.field('label') ? assignByKind('statement_identifier', target.field('label')!) : undefined;
   const result = breakStatement(config as BreakStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignCallExpression(target: CallExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['arguments'] = assignByKind(target.field('arguments')!.type, target.field('arguments')!);
-  config['function'] = assignByKind(target.field('function')!.type, target.field('function')!);
-  config['type_arguments'] = target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree) : undefined;
+  config.arguments = assignByKind(target.field('arguments')!.type, target.field('arguments')!);
+  config.function = assignByKind(target.field('function')!.type, target.field('function')!);
+  config.typeArguments = target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree) : undefined;
   const result = callExpression(config as CallExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignCallSignature(target: CallSignatureTree) {
   const config: Record<string, unknown> = {};
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = callSignature(config as CallSignatureConfig);
   return bindRange(target, result);
 }
 
 export function assignCatchClause(target: CatchClauseTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
-  config['parameter'] = target.field('parameter') ? assignByKind(target.field('parameter')!.type, target.field('parameter')!) : undefined;
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.parameter = target.field('parameter') ? assignByKind(target.field('parameter')!.type, target.field('parameter')!) : undefined;
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
   const result = catchClause(config as CatchClauseConfig);
   return bindRange(target, result);
 }
 
 export function assignClass(target: ClassTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignClassBody(target.field('body')! as ClassBodyTree);
-  config['decorator'] = (() => {
+  config.body = assignClassBody(target.field('body')! as ClassBodyTree);
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['name'] = target.field('name') ? assignByKind('type_identifier', target.field('name')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children'] = (() => {
+  config.name = target.field('name') ? assignByKind('type_identifier', target.field('name')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.children = (() => {
     const _kinds = new Set(["class_heritage"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -489,12 +489,12 @@ export function assignClass(target: ClassTree) {
 
 export function assignClassBody(target: ClassBodyTree) {
   const config: Record<string, unknown> = {};
-  config['decorator'] = (() => {
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["abstract_method_signature","class_static_block","index_signature","method_definition","method_signature","public_field_definition"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -505,15 +505,15 @@ export function assignClassBody(target: ClassBodyTree) {
 
 export function assignClassDeclaration(target: ClassDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignClassBody(target.field('body')! as ClassBodyTree);
-  config['decorator'] = (() => {
+  config.body = assignClassBody(target.field('body')! as ClassBodyTree);
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['name'] = assignByKind('type_identifier', target.field('name')!);
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children'] = (() => {
+  config.name = assignByKind('type_identifier', target.field('name')!);
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.children = (() => {
     const _kinds = new Set(["class_heritage"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -525,13 +525,13 @@ export function assignClassDeclaration(target: ClassDeclarationTree) {
 
 export function assignClassHeritage(target: ClassHeritageTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["extends_clause","implements_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'class_heritage' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['implementsClause'] = (() => {
+  config.implementsClause = (() => {
     const _kinds = new Set(["implements_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -543,14 +543,14 @@ export function assignClassHeritage(target: ClassHeritageTree) {
 
 export function assignClassStaticBlock(target: ClassStaticBlockTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
   const result = classStaticBlock(config as ClassStaticBlockConfig);
   return bindRange(target, result);
 }
 
 export function assignComputedPropertyName(target: ComputedPropertyNameTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'computed_property_name' tree node`);
@@ -562,17 +562,17 @@ export function assignComputedPropertyName(target: ComputedPropertyNameTree) {
 
 export function assignConditionalType(target: ConditionalTypeTree) {
   const config: Record<string, unknown> = {};
-  config['alternative'] = assignByKind(target.field('alternative')!.type, target.field('alternative')!);
-  config['consequence'] = assignByKind(target.field('consequence')!.type, target.field('consequence')!);
-  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
-  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  config.alternative = assignByKind(target.field('alternative')!.type, target.field('alternative')!);
+  config.consequence = assignByKind(target.field('consequence')!.type, target.field('consequence')!);
+  config.left = assignByKind(target.field('left')!.type, target.field('left')!);
+  config.right = assignByKind(target.field('right')!.type, target.field('right')!);
   const result = conditionalType(config as ConditionalTypeConfig);
   return bindRange(target, result);
 }
 
 export function assignConstraint(target: ConstraintTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'constraint' tree node`);
@@ -584,32 +584,32 @@ export function assignConstraint(target: ConstraintTree) {
 
 export function assignConstructSignature(target: ConstructSignatureTree) {
   const config: Record<string, unknown> = {};
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = constructSignature(config as ConstructSignatureConfig);
   return bindRange(target, result);
 }
 
 export function assignConstructorType(target: ConstructorTypeTree) {
   const config: Record<string, unknown> = {};
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.type = assignByKind(target.field('type')!.type, target.field('type')!);
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = constructorType(config as ConstructorTypeConfig);
   return bindRange(target, result);
 }
 
 export function assignContinueStatement(target: ContinueStatementTree) {
   const config: Record<string, unknown> = {};
-  config['label'] = target.field('label') ? assignByKind('statement_identifier', target.field('label')!) : undefined;
+  config.label = target.field('label') ? assignByKind('statement_identifier', target.field('label')!) : undefined;
   const result = continueStatement(config as ContinueStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignDecorator(target: DecoratorTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["call_expression","identifier","member_expression","parenthesized_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'decorator' tree node`);
@@ -621,7 +621,7 @@ export function assignDecorator(target: DecoratorTree) {
 
 export function assignDefaultType(target: DefaultTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'default_type' tree node`);
@@ -633,15 +633,15 @@ export function assignDefaultType(target: DefaultTypeTree) {
 
 export function assignDoStatement(target: DoStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['condition'] = assignParenthesizedExpression(target.field('condition')! as ParenthesizedExpressionTree);
+  config.body = assignByKind(target.field('body')!.type, target.field('body')!);
+  config.condition = assignParenthesizedExpression(target.field('condition')! as ParenthesizedExpressionTree);
   const result = doStatement(config as DoStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignElseClause(target: ElseClauseTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'else_clause' tree node`);
@@ -653,26 +653,26 @@ export function assignElseClause(target: ElseClauseTree) {
 
 export function assignEnumAssignment(target: EnumAssignmentTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.value = assignByKind(target.field('value')!.type, target.field('value')!);
   const result = enumAssignment(config as EnumAssignmentConfig);
   return bindRange(target, result);
 }
 
 export function assignEnumBody(target: EnumBodyTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = (() => {
+  config.name = (() => {
     const _kinds = new Set(["computed_property_name","number","private_property_identifier","property_identifier","string"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['enumAssignment1'] = (() => {
+  config.enumAssignment1 = (() => {
     const _kinds = new Set(["enum_assignment"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['enumAssignment2'] = (() => {
+  config.enumAssignment2 = (() => {
     const _kinds = new Set(["enum_assignment"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -683,21 +683,21 @@ export function assignEnumBody(target: EnumBodyTree) {
 
 export function assignEnumDeclaration(target: EnumDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignEnumBody(target.field('body')! as EnumBodyTree);
-  config['name'] = assignByKind('identifier', target.field('name')!);
+  config.body = assignEnumBody(target.field('body')! as EnumBodyTree);
+  config.name = assignByKind('identifier', target.field('name')!);
   const result = enumDeclaration(config as EnumDeclarationConfig);
   return bindRange(target, result);
 }
 
 export function assignExportClause(target: ExportClauseTree) {
   const config: Record<string, unknown> = {};
-  config['exportSpecifier1'] = (() => {
+  config.exportSpecifier1 = (() => {
     const _kinds = new Set(["export_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['exportSpecifier2'] = (() => {
+  config.exportSpecifier2 = (() => {
     const _kinds = new Set(["export_specifier"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -708,23 +708,23 @@ export function assignExportClause(target: ExportClauseTree) {
 
 export function assignExportSpecifier(target: ExportSpecifierTree) {
   const config: Record<string, unknown> = {};
-  config['alias'] = target.field('alias') ? assignByKind(target.field('alias')!.type, target.field('alias')!) : undefined;
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.alias = target.field('alias') ? assignByKind(target.field('alias')!.type, target.field('alias')!) : undefined;
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
   const result = exportSpecifier(config as ExportSpecifierConfig);
   return bindRange(target, result);
 }
 
 export function assignExportStatement(target: ExportStatementTree) {
   const config: Record<string, unknown> = {};
-  config['declaration'] = target.field('declaration') ? assignByKind(target.field('declaration')!.type, target.field('declaration')!) : undefined;
-  config['decorator'] = (() => {
+  config.declaration = target.field('declaration') ? assignByKind(target.field('declaration')!.type, target.field('declaration')!) : undefined;
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['source'] = target.field('source') ? assignString(target.field('source')! as StringTree) : undefined;
-  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
-  config['children'] = (() => {
+  config.source = target.field('source') ? assignString(target.field('source')! as StringTree) : undefined;
+  config.value = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","export_clause","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","namespace_export","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -736,7 +736,7 @@ export function assignExportStatement(target: ExportStatementTree) {
 
 export function assignExpressionStatement(target: ExpressionStatementTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","sequence_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'expression_statement' tree node`);
@@ -748,12 +748,12 @@ export function assignExpressionStatement(target: ExpressionStatementTree) {
 
 export function assignExtendsClause(target: ExtendsClauseTree) {
   const config: Record<string, unknown> = {};
-  config['type_arguments'] = (() => {
+  config.typeArguments = (() => {
     const _kinds = new Set(["type_arguments"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['value'] = (() => {
+  config.value = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     if (_items.length === 0) throw new Error(`Required field 'value' has no children on 'extends_clause' tree node`);
@@ -765,7 +765,7 @@ export function assignExtendsClause(target: ExtendsClauseTree) {
 
 export function assignExtendsTypeClause(target: ExtendsTypeClauseTree) {
   const config: Record<string, unknown> = {};
-  config['type'] = (() => {
+  config.type = (() => {
     const _kinds = new Set(["generic_type","nested_type_identifier","type_identifier"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     if (_items.length === 0) throw new Error(`Required field 'type' has no children on 'extends_type_clause' tree node`);
@@ -777,14 +777,14 @@ export function assignExtendsTypeClause(target: ExtendsTypeClauseTree) {
 
 export function assignFinallyClause(target: FinallyClauseTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
   const result = finallyClause(config as FinallyClauseConfig);
   return bindRange(target, result);
 }
 
 export function assignFlowMaybeType(target: FlowMaybeTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","conditional_type","existential_type","flow_maybe_type","generic_type","index_type_query","intersection_type","literal_type","lookup_type","nested_type_identifier","object_type","parenthesized_type","predefined_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'flow_maybe_type' tree node`);
@@ -796,34 +796,34 @@ export function assignFlowMaybeType(target: FlowMaybeTypeTree) {
 
 export function assignForInStatement(target: ForInStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['kind'] = target.field('kind') ? { type: target.field('kind')!.type, text: target.field('kind')!.text() } : undefined;
-  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
-  config['operator'] = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
-  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
-  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config.body = assignByKind(target.field('body')!.type, target.field('body')!);
+  config.kind = target.field('kind') ? { type: target.field('kind')!.type, text: target.field('kind')!.text() } : undefined;
+  config.left = assignByKind(target.field('left')!.type, target.field('left')!);
+  config.operator = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
+  config.right = assignByKind(target.field('right')!.type, target.field('right')!);
+  config.value = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
   const result = forInStatement(config as ForInStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignForStatement(target: ForStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['condition'] = (() => {
+  config.body = assignByKind(target.field('body')!.type, target.field('body')!);
+  config.condition = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","empty_statement","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","sequence_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     if (_items.length === 0) throw new Error(`Required field 'condition' has no children on 'for_statement' tree node`);
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  config['increment'] = target.field('increment') ? assignByKind(target.field('increment')!.type, target.field('increment')!) : undefined;
-  config['initializer'] = assignByKind(target.field('initializer')!.type, target.field('initializer')!);
+  config.increment = target.field('increment') ? assignByKind(target.field('increment')!.type, target.field('increment')!) : undefined;
+  config.initializer = assignByKind(target.field('initializer')!.type, target.field('initializer')!);
   const result = forStatement(config as ForStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignFormalParameters(target: FormalParametersTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["optional_parameter","required_parameter"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -834,93 +834,93 @@ export function assignFormalParameters(target: FormalParametersTree) {
 
 export function assignFunctionDeclaration(target: FunctionDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
-  config['name'] = assignByKind('identifier', target.field('name')!);
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.name = assignByKind('identifier', target.field('name')!);
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = functionDeclaration(config as FunctionDeclarationConfig);
   return bindRange(target, result);
 }
 
 export function assignFunctionExpression(target: FunctionExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
-  config['name'] = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.name = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = functionExpression(config as FunctionExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignFunctionSignature(target: FunctionSignatureTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind('identifier', target.field('name')!);
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.name = assignByKind('identifier', target.field('name')!);
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = functionSignature(config as FunctionSignatureConfig);
   return bindRange(target, result);
 }
 
 export function assignFunctionType(target: FunctionTypeTree) {
   const config: Record<string, unknown> = {};
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = assignByKind(target.field('return_type')!.type, target.field('return_type')!);
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = assignByKind(target.field('return_type')!.type, target.field('return_type')!);
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = functionType(config as FunctionTypeConfig);
   return bindRange(target, result);
 }
 
 export function assignGeneratorFunction(target: GeneratorFunctionTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
-  config['name'] = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.name = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = generatorFunction(config as GeneratorFunctionConfig);
   return bindRange(target, result);
 }
 
 export function assignGeneratorFunctionDeclaration(target: GeneratorFunctionDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
-  config['name'] = assignByKind('identifier', target.field('name')!);
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.name = assignByKind('identifier', target.field('name')!);
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
   const result = generatorFunctionDeclaration(config as GeneratorFunctionDeclarationConfig);
   return bindRange(target, result);
 }
 
 export function assignGenericType(target: GenericTypeTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['type_arguments'] = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.typeArguments = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
   const result = genericType(config as GenericTypeConfig);
   return bindRange(target, result);
 }
 
 export function assignIfStatement(target: IfStatementTree) {
   const config: Record<string, unknown> = {};
-  config['alternative'] = target.field('alternative') ? assignElseClause(target.field('alternative')! as ElseClauseTree) : undefined;
-  config['condition'] = assignParenthesizedExpression(target.field('condition')! as ParenthesizedExpressionTree);
-  config['consequence'] = assignByKind(target.field('consequence')!.type, target.field('consequence')!);
+  config.alternative = target.field('alternative') ? assignElseClause(target.field('alternative')! as ElseClauseTree) : undefined;
+  config.condition = assignParenthesizedExpression(target.field('condition')! as ParenthesizedExpressionTree);
+  config.consequence = assignByKind(target.field('consequence')!.type, target.field('consequence')!);
   const result = ifStatement(config as IfStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignImplementsClause(target: ImplementsClauseTree) {
   const config: Record<string, unknown> = {};
-  config['type1'] = (() => {
+  config.type1 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'implements_clause' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['type2'] = (() => {
+  config.type2 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -931,13 +931,13 @@ export function assignImplementsClause(target: ImplementsClauseTree) {
 
 export function assignImportAlias(target: ImportAliasTree) {
   const config: Record<string, unknown> = {};
-  config['identifier'] = (() => {
+  config.identifier = (() => {
     const _kinds = new Set(["identifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'import_alias' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["identifier","nested_identifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'import_alias' tree node`);
@@ -949,7 +949,7 @@ export function assignImportAlias(target: ImportAliasTree) {
 
 export function assignImportAttribute(target: ImportAttributeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["object"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'import_attribute' tree node`);
@@ -961,13 +961,13 @@ export function assignImportAttribute(target: ImportAttributeTree) {
 
 export function assignImportClause(target: ImportClauseTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["identifier","named_imports","namespace_import"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'import_clause' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["named_imports","namespace_import"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -979,8 +979,8 @@ export function assignImportClause(target: ImportClauseTree) {
 
 export function assignImportRequireClause(target: ImportRequireClauseTree) {
   const config: Record<string, unknown> = {};
-  config['source'] = assignString(target.field('source')! as StringTree);
-  config['children'] = (() => {
+  config.source = assignString(target.field('source')! as StringTree);
+  config.children = (() => {
     const _kinds = new Set(["identifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'import_require_clause' tree node`);
@@ -992,22 +992,22 @@ export function assignImportRequireClause(target: ImportRequireClauseTree) {
 
 export function assignImportSpecifier(target: ImportSpecifierTree) {
   const config: Record<string, unknown> = {};
-  config['alias'] = target.field('alias') ? assignByKind('identifier', target.field('alias')!) : undefined;
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.alias = target.field('alias') ? assignByKind('identifier', target.field('alias')!) : undefined;
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
   const result = importSpecifier(config as ImportSpecifierConfig);
   return bindRange(target, result);
 }
 
 export function assignImportStatement(target: ImportStatementTree) {
   const config: Record<string, unknown> = {};
-  config['source'] = target.field('source') ? assignString(target.field('source')! as StringTree) : undefined;
-  config['children0'] = (() => {
+  config.source = target.field('source') ? assignString(target.field('source')! as StringTree) : undefined;
+  config.children0 = (() => {
     const _kinds = new Set(["import_clause","import_require_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['importAttribute'] = (() => {
+  config.importAttribute = (() => {
     const _kinds = new Set(["import_attribute"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1019,11 +1019,11 @@ export function assignImportStatement(target: ImportStatementTree) {
 
 export function assignIndexSignature(target: IndexSignatureTree) {
   const config: Record<string, unknown> = {};
-  config['index_type'] = target.field('index_type') ? assignByKind(target.field('index_type')!.type, target.field('index_type')!) : undefined;
-  config['name'] = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
-  config['sign'] = target.field('sign') ? { type: target.field('sign')!.type, text: target.field('sign')!.text() } : undefined;
-  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
-  config['children'] = (() => {
+  config.indexType = target.field('index_type') ? assignByKind(target.field('index_type')!.type, target.field('index_type')!) : undefined;
+  config.name = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
+  config.sign = target.field('sign') ? { type: target.field('sign')!.type, text: target.field('sign')!.text() } : undefined;
+  config.type = assignByKind(target.field('type')!.type, target.field('type')!);
+  config.children = (() => {
     const _kinds = new Set(["mapped_type_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1035,7 +1035,7 @@ export function assignIndexSignature(target: IndexSignatureTree) {
 
 export function assignIndexTypeQuery(target: IndexTypeQueryTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","conditional_type","existential_type","flow_maybe_type","generic_type","index_type_query","intersection_type","literal_type","lookup_type","nested_type_identifier","object_type","parenthesized_type","predefined_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'index_type_query' tree node`);
@@ -1047,13 +1047,13 @@ export function assignIndexTypeQuery(target: IndexTypeQueryTree) {
 
 export function assignInferType(target: InferTypeTree) {
   const config: Record<string, unknown> = {};
-  config['typeIdentifier'] = (() => {
+  config.typeIdentifier = (() => {
     const _kinds = new Set(["type_identifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'infer_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['type'] = (() => {
+  config.type = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1065,9 +1065,9 @@ export function assignInferType(target: InferTypeTree) {
 
 export function assignInstantiationExpression(target: InstantiationExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['function'] = target.field('function') ? assignByKind(target.field('function')!.type, target.field('function')!) : undefined;
-  config['type_arguments'] = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
-  config['children'] = (() => {
+  config.function = target.field('function') ? assignByKind(target.field('function')!.type, target.field('function')!) : undefined;
+  config.typeArguments = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'instantiation_expression' tree node`);
@@ -1079,7 +1079,7 @@ export function assignInstantiationExpression(target: InstantiationExpressionTre
 
 export function assignInterfaceBody(target: InterfaceBodyTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1090,10 +1090,10 @@ export function assignInterfaceBody(target: InterfaceBodyTree) {
 
 export function assignInterfaceDeclaration(target: InterfaceDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignInterfaceBody(target.field('body')! as InterfaceBodyTree);
-  config['name'] = assignByKind('type_identifier', target.field('name')!);
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children'] = (() => {
+  config.body = assignInterfaceBody(target.field('body')! as InterfaceBodyTree);
+  config.name = assignByKind('type_identifier', target.field('name')!);
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.children = (() => {
     const _kinds = new Set(["extends_type_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1105,21 +1105,21 @@ export function assignInterfaceDeclaration(target: InterfaceDeclarationTree) {
 
 export function assignInternalModule(target: InternalModuleTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = target.field('body') ? assignStatementBlock(target.field('body')! as StatementBlockTree) : undefined;
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.body = target.field('body') ? assignStatementBlock(target.field('body')! as StatementBlockTree) : undefined;
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
   const result = internalModule(config as InternalModuleConfig);
   return bindRange(target, result);
 }
 
 export function assignIntersectionType(target: IntersectionTypeTree) {
   const config: Record<string, unknown> = {};
-  config['type1'] = (() => {
+  config.type1 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['type2'] = (() => {
+  config.type2 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'intersection_type' tree node`);
@@ -1131,22 +1131,22 @@ export function assignIntersectionType(target: IntersectionTypeTree) {
 
 export function assignLabeledStatement(target: LabeledStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['label'] = assignByKind('statement_identifier', target.field('label')!);
+  config.body = assignByKind(target.field('body')!.type, target.field('body')!);
+  config.label = assignByKind('statement_identifier', target.field('label')!);
   const result = labeledStatement(config as LabeledStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignLexicalDeclaration(target: LexicalDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['kind'] = { type: target.field('kind')!.type, text: target.field('kind')!.text() };
-  config['variableDeclarator1'] = (() => {
+  config.kind = { type: target.field('kind')!.type, text: target.field('kind')!.text() };
+  config.variableDeclarator1 = (() => {
     const _kinds = new Set(["variable_declarator"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'lexical_declaration' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['variableDeclarator2'] = (() => {
+  config.variableDeclarator2 = (() => {
     const _kinds = new Set(["variable_declarator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1157,7 +1157,7 @@ export function assignLexicalDeclaration(target: LexicalDeclarationTree) {
 
 export function assignLiteralType(target: LiteralTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["false","null","number","string","true","unary_expression","undefined"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'literal_type' tree node`);
@@ -1169,13 +1169,13 @@ export function assignLiteralType(target: LiteralTypeTree) {
 
 export function assignLookupType(target: LookupTypeTree) {
   const config: Record<string, unknown> = {};
-  config['primaryType'] = (() => {
+  config.primaryType = (() => {
     const _kinds = new Set(["array_type","conditional_type","existential_type","flow_maybe_type","generic_type","index_type_query","intersection_type","literal_type","lookup_type","nested_type_identifier","object_type","parenthesized_type","predefined_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'lookup_type' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['type'] = (() => {
+  config.type = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'lookup_type' tree node`);
@@ -1187,36 +1187,36 @@ export function assignLookupType(target: LookupTypeTree) {
 
 export function assignMappedTypeClause(target: MappedTypeClauseTree) {
   const config: Record<string, unknown> = {};
-  config['alias'] = target.field('alias') ? assignByKind(target.field('alias')!.type, target.field('alias')!) : undefined;
-  config['name'] = assignByKind('type_identifier', target.field('name')!);
-  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config.alias = target.field('alias') ? assignByKind(target.field('alias')!.type, target.field('alias')!) : undefined;
+  config.name = assignByKind('type_identifier', target.field('name')!);
+  config.type = assignByKind(target.field('type')!.type, target.field('type')!);
   const result = mappedTypeClause(config as MappedTypeClauseConfig);
   return bindRange(target, result);
 }
 
 export function assignMemberExpression(target: MemberExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['object'] = assignByKind(target.field('object')!.type, target.field('object')!);
-  config['optional_chain'] = target.field('optional_chain') ? assignByKind('optional_chain', target.field('optional_chain')!) : undefined;
-  config['property'] = assignByKind(target.field('property')!.type, target.field('property')!);
+  config.object = assignByKind(target.field('object')!.type, target.field('object')!);
+  config.optionalChain = target.field('optional_chain') ? assignByKind('optional_chain', target.field('optional_chain')!) : undefined;
+  config.property = assignByKind(target.field('property')!.type, target.field('property')!);
   const result = memberExpression(config as MemberExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignMethodDefinition(target: MethodDefinitionTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['accessibilityModifier'] = (() => {
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.accessibilityModifier = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['overrideModifier'] = (() => {
+  config.overrideModifier = (() => {
     const _kinds = new Set(["override_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1228,17 +1228,17 @@ export function assignMethodDefinition(target: MethodDefinitionTree) {
 
 export function assignMethodSignature(target: MethodSignatureTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['parameters'] = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
-  config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['accessibilityModifier'] = (() => {
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.parameters = assignFormalParameters(target.field('parameters')! as FormalParametersTree);
+  config.returnType = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.accessibilityModifier = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['overrideModifier'] = (() => {
+  config.overrideModifier = (() => {
     const _kinds = new Set(["override_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1250,21 +1250,21 @@ export function assignMethodSignature(target: MethodSignatureTree) {
 
 export function assignModule(target: ModuleTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = target.field('body') ? assignStatementBlock(target.field('body')! as StatementBlockTree) : undefined;
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.body = target.field('body') ? assignStatementBlock(target.field('body')! as StatementBlockTree) : undefined;
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
   const result = module(config as ModuleConfig);
   return bindRange(target, result);
 }
 
 export function assignNamedImports(target: NamedImportsTree) {
   const config: Record<string, unknown> = {};
-  config['importSpecifier1'] = (() => {
+  config.importSpecifier1 = (() => {
     const _kinds = new Set(["import_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['importSpecifier2'] = (() => {
+  config.importSpecifier2 = (() => {
     const _kinds = new Set(["import_specifier"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1275,7 +1275,7 @@ export function assignNamedImports(target: NamedImportsTree) {
 
 export function assignNamespaceExport(target: NamespaceExportTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["identifier","string"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'namespace_export' tree node`);
@@ -1287,7 +1287,7 @@ export function assignNamespaceExport(target: NamespaceExportTree) {
 
 export function assignNamespaceImport(target: NamespaceImportTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["identifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'namespace_import' tree node`);
@@ -1299,32 +1299,32 @@ export function assignNamespaceImport(target: NamespaceImportTree) {
 
 export function assignNestedIdentifier(target: NestedIdentifierTree) {
   const config: Record<string, unknown> = {};
-  config['object'] = assignByKind(target.field('object')!.type, target.field('object')!);
-  config['property'] = assignByKind('property_identifier', target.field('property')!);
+  config.object = assignByKind(target.field('object')!.type, target.field('object')!);
+  config.property = assignByKind('property_identifier', target.field('property')!);
   const result = nestedIdentifier(config as NestedIdentifierConfig);
   return bindRange(target, result);
 }
 
 export function assignNestedTypeIdentifier(target: NestedTypeIdentifierTree) {
   const config: Record<string, unknown> = {};
-  config['module'] = assignByKind(target.field('module')!.type, target.field('module')!);
-  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config.module = assignByKind(target.field('module')!.type, target.field('module')!);
+  config.name = assignByKind('type_identifier', target.field('name')!);
   const result = nestedTypeIdentifier(config as NestedTypeIdentifierConfig);
   return bindRange(target, result);
 }
 
 export function assignNewExpression(target: NewExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['arguments'] = target.field('arguments') ? assignArguments(target.field('arguments')! as ArgumentsTree) : undefined;
-  config['constructor'] = assignByKind(target.field('constructor')!.type, target.field('constructor')!);
-  config['type_arguments'] = target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree) : undefined;
+  config.arguments = target.field('arguments') ? assignArguments(target.field('arguments')! as ArgumentsTree) : undefined;
+  config.constructor = assignByKind(target.field('constructor')!.type, target.field('constructor')!);
+  config.typeArguments = target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree) : undefined;
   const result = newExpression(config as NewExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignNonNullExpression(target: NonNullExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'non_null_expression' tree node`);
@@ -1336,13 +1336,13 @@ export function assignNonNullExpression(target: NonNullExpressionTree) {
 
 export function assignObject(target: ObjectTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["method_definition","pair","shorthand_property_identifier","spread_element"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["method_definition","pair","shorthand_property_identifier","spread_element"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1353,21 +1353,21 @@ export function assignObject(target: ObjectTree) {
 
 export function assignObjectAssignmentPattern(target: ObjectAssignmentPatternTree) {
   const config: Record<string, unknown> = {};
-  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
-  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  config.left = assignByKind(target.field('left')!.type, target.field('left')!);
+  config.right = assignByKind(target.field('right')!.type, target.field('right')!);
   const result = objectAssignmentPattern(config as ObjectAssignmentPatternConfig);
   return bindRange(target, result);
 }
 
 export function assignObjectPattern(target: ObjectPatternTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["object_assignment_pattern","pair_pattern","rest_pattern","shorthand_property_identifier_pattern"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["object_assignment_pattern","pair_pattern","rest_pattern","shorthand_property_identifier_pattern"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1378,13 +1378,13 @@ export function assignObjectPattern(target: ObjectPatternTree) {
 
 export function assignObjectType(target: ObjectTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config.children0 = (() => {
     const _kinds = new Set(["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config.children1 = (() => {
     const _kinds = new Set(["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1395,7 +1395,7 @@ export function assignObjectType(target: ObjectTypeTree) {
 
 export function assignOmittingTypeAnnotation(target: OmittingTypeAnnotationTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'omitting_type_annotation' tree node`);
@@ -1407,7 +1407,7 @@ export function assignOmittingTypeAnnotation(target: OmittingTypeAnnotationTree)
 
 export function assignOptingTypeAnnotation(target: OptingTypeAnnotationTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'opting_type_annotation' tree node`);
@@ -1419,22 +1419,22 @@ export function assignOptingTypeAnnotation(target: OptingTypeAnnotationTree) {
 
 export function assignOptionalParameter(target: OptionalParameterTree) {
   const config: Record<string, unknown> = {};
-  config['decorator'] = (() => {
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['name'] = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
-  config['pattern'] = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
-  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
-  config['accessibilityModifier'] = (() => {
+  config.name = target.field('name') ? assignByKind('identifier', target.field('name')!) : undefined;
+  config.pattern = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.value = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config.accessibilityModifier = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['overrideModifier'] = (() => {
+  config.overrideModifier = (() => {
     const _kinds = new Set(["override_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1446,7 +1446,7 @@ export function assignOptionalParameter(target: OptionalParameterTree) {
 
 export function assignOptionalType(target: OptionalTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'optional_type' tree node`);
@@ -1458,24 +1458,24 @@ export function assignOptionalType(target: OptionalTypeTree) {
 
 export function assignPair(target: PairTree) {
   const config: Record<string, unknown> = {};
-  config['key'] = assignByKind(target.field('key')!.type, target.field('key')!);
-  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config.key = assignByKind(target.field('key')!.type, target.field('key')!);
+  config.value = assignByKind(target.field('value')!.type, target.field('value')!);
   const result = pair(config as PairConfig);
   return bindRange(target, result);
 }
 
 export function assignPairPattern(target: PairPatternTree) {
   const config: Record<string, unknown> = {};
-  config['key'] = assignByKind(target.field('key')!.type, target.field('key')!);
-  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config.key = assignByKind(target.field('key')!.type, target.field('key')!);
+  config.value = assignByKind(target.field('value')!.type, target.field('value')!);
   const result = pairPattern(config as PairPatternConfig);
   return bindRange(target, result);
 }
 
 export function assignParenthesizedExpression(target: ParenthesizedExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
-  config['children'] = (() => {
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","sequence_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'parenthesized_expression' tree node`);
@@ -1487,7 +1487,7 @@ export function assignParenthesizedExpression(target: ParenthesizedExpressionTre
 
 export function assignParenthesizedType(target: ParenthesizedTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'parenthesized_type' tree node`);
@@ -1499,13 +1499,13 @@ export function assignParenthesizedType(target: ParenthesizedTypeTree) {
 
 export function assignProgram(target: ProgramTree) {
   const config: Record<string, unknown> = {};
-  config['hashBangLine'] = (() => {
+  config.hashBangLine = (() => {
     const _kinds = new Set(["hash_bang_line"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['statement'] = (() => {
+  config.statement = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1516,15 +1516,15 @@ export function assignProgram(target: ProgramTree) {
 
 export function assignPropertySignature(target: PropertySignatureTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
-  config['accessibilityModifier'] = (() => {
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.accessibilityModifier = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['overrideModifier'] = (() => {
+  config.overrideModifier = (() => {
     const _kinds = new Set(["override_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1536,21 +1536,21 @@ export function assignPropertySignature(target: PropertySignatureTree) {
 
 export function assignPublicFieldDefinition(target: PublicFieldDefinitionTree) {
   const config: Record<string, unknown> = {};
-  config['decorator'] = (() => {
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
-  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
-  config['accessibilityModifier'] = (() => {
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.value = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config.accessibilityModifier = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['overrideModifier'] = (() => {
+  config.overrideModifier = (() => {
     const _kinds = new Set(["override_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1562,7 +1562,7 @@ export function assignPublicFieldDefinition(target: PublicFieldDefinitionTree) {
 
 export function assignReadonlyType(target: ReadonlyTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'readonly_type' tree node`);
@@ -1574,30 +1574,30 @@ export function assignReadonlyType(target: ReadonlyTypeTree) {
 
 export function assignRegex(target: RegexTree) {
   const config: Record<string, unknown> = {};
-  config['flags'] = target.field('flags') ? assignByKind('regex_flags', target.field('flags')!) : undefined;
-  config['pattern'] = assignByKind('regex_pattern', target.field('pattern')!);
+  config.flags = target.field('flags') ? assignByKind('regex_flags', target.field('flags')!) : undefined;
+  config.pattern = assignByKind('regex_pattern', target.field('pattern')!);
   const result = regex(config as RegexConfig);
   return bindRange(target, result);
 }
 
 export function assignRequiredParameter(target: RequiredParameterTree) {
   const config: Record<string, unknown> = {};
-  config['decorator'] = (() => {
+  config.decorator = (() => {
     const _kinds = new Set(["decorator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['name'] = target.field('name') ? assignByKind(target.field('name')!.type, target.field('name')!) : undefined;
-  config['pattern'] = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
-  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
-  config['accessibilityModifier'] = (() => {
+  config.name = target.field('name') ? assignByKind(target.field('name')!.type, target.field('name')!) : undefined;
+  config.pattern = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.value = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config.accessibilityModifier = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['overrideModifier'] = (() => {
+  config.overrideModifier = (() => {
     const _kinds = new Set(["override_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1609,7 +1609,7 @@ export function assignRequiredParameter(target: RequiredParameterTree) {
 
 export function assignRestPattern(target: RestPatternTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_pattern","identifier","member_expression","non_null_expression","object_pattern","subscript_expression","undefined"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'rest_pattern' tree node`);
@@ -1621,7 +1621,7 @@ export function assignRestPattern(target: RestPatternTree) {
 
 export function assignRestType(target: RestTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'rest_type' tree node`);
@@ -1633,7 +1633,7 @@ export function assignRestType(target: RestTypeTree) {
 
 export function assignReturnStatement(target: ReturnStatementTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","sequence_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1645,13 +1645,13 @@ export function assignReturnStatement(target: ReturnStatementTree) {
 
 export function assignSatisfiesExpression(target: SatisfiesExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['expression'] = (() => {
+  config.expression = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'satisfies_expression' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['type'] = (() => {
+  config.type = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'satisfies_expression' tree node`);
@@ -1663,13 +1663,13 @@ export function assignSatisfiesExpression(target: SatisfiesExpressionTree) {
 
 export function assignSequenceExpression(target: SequenceExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['expression1'] = (() => {
+  config.expression1 = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'sequence_expression' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['expression2'] = (() => {
+  config.expression2 = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1680,7 +1680,7 @@ export function assignSequenceExpression(target: SequenceExpressionTree) {
 
 export function assignSpreadElement(target: SpreadElementTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'spread_element' tree node`);
@@ -1692,7 +1692,7 @@ export function assignSpreadElement(target: SpreadElementTree) {
 
 export function assignStatementBlock(target: StatementBlockTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1703,7 +1703,7 @@ export function assignStatementBlock(target: StatementBlockTree) {
 
 export function assignString(target: StringTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["escape_sequence","string_fragment"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1714,16 +1714,16 @@ export function assignString(target: StringTree) {
 
 export function assignSubscriptExpression(target: SubscriptExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['index'] = assignByKind(target.field('index')!.type, target.field('index')!);
-  config['object'] = assignByKind(target.field('object')!.type, target.field('object')!);
-  config['optional_chain'] = target.field('optional_chain') ? assignByKind('optional_chain', target.field('optional_chain')!) : undefined;
+  config.index = assignByKind(target.field('index')!.type, target.field('index')!);
+  config.object = assignByKind(target.field('object')!.type, target.field('object')!);
+  config.optionalChain = target.field('optional_chain') ? assignByKind('optional_chain', target.field('optional_chain')!) : undefined;
   const result = subscriptExpression(config as SubscriptExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignSwitchBody(target: SwitchBodyTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["switch_case","switch_default"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1734,19 +1734,19 @@ export function assignSwitchBody(target: SwitchBodyTree) {
 
 export function assignSwitchCase(target: SwitchCaseTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = (() => {
+  config.body = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config.value = assignByKind(target.field('value')!.type, target.field('value')!);
   const result = switchCase(config as SwitchCaseConfig);
   return bindRange(target, result);
 }
 
 export function assignSwitchDefault(target: SwitchDefaultTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = (() => {
+  config.body = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
@@ -1757,15 +1757,15 @@ export function assignSwitchDefault(target: SwitchDefaultTree) {
 
 export function assignSwitchStatement(target: SwitchStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignSwitchBody(target.field('body')! as SwitchBodyTree);
-  config['value'] = assignParenthesizedExpression(target.field('value')! as ParenthesizedExpressionTree);
+  config.body = assignSwitchBody(target.field('body')! as SwitchBodyTree);
+  config.value = assignParenthesizedExpression(target.field('value')! as ParenthesizedExpressionTree);
   const result = switchStatement(config as SwitchStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignTemplateLiteralType(target: TemplateLiteralTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["string_fragment","template_type"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1776,7 +1776,7 @@ export function assignTemplateLiteralType(target: TemplateLiteralTypeTree) {
 
 export function assignTemplateString(target: TemplateStringTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["escape_sequence","string_fragment","template_substitution"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1787,7 +1787,7 @@ export function assignTemplateString(target: TemplateStringTree) {
 
 export function assignTemplateSubstitution(target: TemplateSubstitutionTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","sequence_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'template_substitution' tree node`);
@@ -1799,7 +1799,7 @@ export function assignTemplateSubstitution(target: TemplateSubstitutionTree) {
 
 export function assignTemplateType(target: TemplateTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","conditional_type","existential_type","flow_maybe_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","nested_type_identifier","object_type","parenthesized_type","predefined_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'template_type' tree node`);
@@ -1811,16 +1811,16 @@ export function assignTemplateType(target: TemplateTypeTree) {
 
 export function assignTernaryExpression(target: TernaryExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['alternative'] = assignByKind(target.field('alternative')!.type, target.field('alternative')!);
-  config['condition'] = assignByKind(target.field('condition')!.type, target.field('condition')!);
-  config['consequence'] = assignByKind(target.field('consequence')!.type, target.field('consequence')!);
+  config.alternative = assignByKind(target.field('alternative')!.type, target.field('alternative')!);
+  config.condition = assignByKind(target.field('condition')!.type, target.field('condition')!);
+  config.consequence = assignByKind(target.field('consequence')!.type, target.field('consequence')!);
   const result = ternaryExpression(config as TernaryExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignThrowStatement(target: ThrowStatementTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","sequence_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'throw_statement' tree node`);
@@ -1832,16 +1832,16 @@ export function assignThrowStatement(target: ThrowStatementTree) {
 
 export function assignTryStatement(target: TryStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignStatementBlock(target.field('body')! as StatementBlockTree);
-  config['finalizer'] = target.field('finalizer') ? assignFinallyClause(target.field('finalizer')! as FinallyClauseTree) : undefined;
-  config['handler'] = target.field('handler') ? assignCatchClause(target.field('handler')! as CatchClauseTree) : undefined;
+  config.body = assignStatementBlock(target.field('body')! as StatementBlockTree);
+  config.finalizer = target.field('finalizer') ? assignFinallyClause(target.field('finalizer')! as FinallyClauseTree) : undefined;
+  config.handler = target.field('handler') ? assignCatchClause(target.field('handler')! as CatchClauseTree) : undefined;
   const result = tryStatement(config as TryStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignTupleType(target: TupleTypeTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","optional_parameter","optional_type","parenthesized_type","predefined_type","readonly_type","required_parameter","rest_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1852,16 +1852,16 @@ export function assignTupleType(target: TupleTypeTree) {
 
 export function assignTypeAliasDeclaration(target: TypeAliasDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind('type_identifier', target.field('name')!);
-  config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config.name = assignByKind('type_identifier', target.field('name')!);
+  config.typeParameters = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config.value = assignByKind(target.field('value')!.type, target.field('value')!);
   const result = typeAliasDeclaration(config as TypeAliasDeclarationConfig);
   return bindRange(target, result);
 }
 
 export function assignTypeAnnotation(target: TypeAnnotationTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_annotation' tree node`);
@@ -1873,13 +1873,13 @@ export function assignTypeAnnotation(target: TypeAnnotationTree) {
 
 export function assignTypeArguments(target: TypeArgumentsTree) {
   const config: Record<string, unknown> = {};
-  config['type1'] = (() => {
+  config.type1 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_arguments' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['type2'] = (() => {
+  config.type2 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1890,13 +1890,13 @@ export function assignTypeArguments(target: TypeArgumentsTree) {
 
 export function assignTypeAssertion(target: TypeAssertionTree) {
   const config: Record<string, unknown> = {};
-  config['typeArguments'] = (() => {
+  config.typeArguments = (() => {
     const _kinds = new Set(["type_arguments"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_assertion' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['expression'] = (() => {
+  config.expression = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_assertion' tree node`);
@@ -1908,22 +1908,22 @@ export function assignTypeAssertion(target: TypeAssertionTree) {
 
 export function assignTypeParameter(target: TypeParameterTree) {
   const config: Record<string, unknown> = {};
-  config['constraint'] = target.field('constraint') ? assignConstraint(target.field('constraint')! as ConstraintTree) : undefined;
-  config['name'] = assignByKind('type_identifier', target.field('name')!);
-  config['value'] = target.field('value') ? assignDefaultType(target.field('value')! as DefaultTypeTree) : undefined;
+  config.constraint = target.field('constraint') ? assignConstraint(target.field('constraint')! as ConstraintTree) : undefined;
+  config.name = assignByKind('type_identifier', target.field('name')!);
+  config.value = target.field('value') ? assignDefaultType(target.field('value')! as DefaultTypeTree) : undefined;
   const result = typeParameter(config as TypeParameterConfig);
   return bindRange(target, result);
 }
 
 export function assignTypeParameters(target: TypeParametersTree) {
   const config: Record<string, unknown> = {};
-  config['typeParameter1'] = (() => {
+  config.typeParameter1 = (() => {
     const _kinds = new Set(["type_parameter"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_parameters' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['typeParameter2'] = (() => {
+  config.typeParameter2 = (() => {
     const _kinds = new Set(["type_parameter"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1934,15 +1934,15 @@ export function assignTypeParameters(target: TypeParametersTree) {
 
 export function assignTypePredicate(target: TypePredicateTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.type = assignByKind(target.field('type')!.type, target.field('type')!);
   const result = typePredicate(config as TypePredicateConfig);
   return bindRange(target, result);
 }
 
 export function assignTypePredicateAnnotation(target: TypePredicateAnnotationTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["type_predicate"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_predicate_annotation' tree node`);
@@ -1954,7 +1954,7 @@ export function assignTypePredicateAnnotation(target: TypePredicateAnnotationTre
 
 export function assignTypeQuery(target: TypeQueryTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["call_expression","identifier","instantiation_expression","member_expression","subscript_expression","this"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'type_query' tree node`);
@@ -1966,21 +1966,21 @@ export function assignTypeQuery(target: TypeQueryTree) {
 
 export function assignUnaryExpression(target: UnaryExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['argument'] = assignByKind(target.field('argument')!.type, target.field('argument')!);
-  config['operator'] = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
+  config.argument = assignByKind(target.field('argument')!.type, target.field('argument')!);
+  config.operator = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
   const result = unaryExpression(config as UnaryExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignUnionType(target: UnionTypeTree) {
   const config: Record<string, unknown> = {};
-  config['type1'] = (() => {
+  config.type1 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['type2'] = (() => {
+  config.type2 = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'union_type' tree node`);
@@ -1992,21 +1992,21 @@ export function assignUnionType(target: UnionTypeTree) {
 
 export function assignUpdateExpression(target: UpdateExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['argument'] = assignByKind(target.field('argument')!.type, target.field('argument')!);
-  config['operator'] = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
+  config.argument = assignByKind(target.field('argument')!.type, target.field('argument')!);
+  config.operator = { type: target.field('operator')!.type, text: target.field('operator')!.text() };
   const result = updateExpression(config as UpdateExpressionConfig);
   return bindRange(target, result);
 }
 
 export function assignVariableDeclaration(target: VariableDeclarationTree) {
   const config: Record<string, unknown> = {};
-  config['variableDeclarator1'] = (() => {
+  config.variableDeclarator1 = (() => {
     const _kinds = new Set(["variable_declarator"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'variable_declaration' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['variableDeclarator2'] = (() => {
+  config.variableDeclarator2 = (() => {
     const _kinds = new Set(["variable_declarator"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -2017,32 +2017,32 @@ export function assignVariableDeclaration(target: VariableDeclarationTree) {
 
 export function assignVariableDeclarator(target: VariableDeclaratorTree) {
   const config: Record<string, unknown> = {};
-  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
-  config['type'] = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
-  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config.name = assignByKind(target.field('name')!.type, target.field('name')!);
+  config.type = target.field('type') ? assignTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  config.value = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
   const result = variableDeclarator(config as VariableDeclaratorConfig);
   return bindRange(target, result);
 }
 
 export function assignWhileStatement(target: WhileStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['condition'] = assignParenthesizedExpression(target.field('condition')! as ParenthesizedExpressionTree);
+  config.body = assignByKind(target.field('body')!.type, target.field('body')!);
+  config.condition = assignParenthesizedExpression(target.field('condition')! as ParenthesizedExpressionTree);
   const result = whileStatement(config as WhileStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignWithStatement(target: WithStatementTree) {
   const config: Record<string, unknown> = {};
-  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
-  config['object'] = assignParenthesizedExpression(target.field('object')! as ParenthesizedExpressionTree);
+  config.body = assignByKind(target.field('body')!.type, target.field('body')!);
+  config.object = assignParenthesizedExpression(target.field('object')! as ParenthesizedExpressionTree);
   const result = withStatement(config as WithStatementConfig);
   return bindRange(target, result);
 }
 
 export function assignYieldExpression(target: YieldExpressionTree) {
   const config: Record<string, unknown> = {};
-  config['children'] = (() => {
+  config.children = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
