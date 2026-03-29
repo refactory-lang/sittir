@@ -570,8 +570,8 @@ export function enumItem(
     body: (v: EnumVariantList) => enumItem({ ...config, 'body': v }),
     name: (v: TypeIdentifier) => enumItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => enumItem({ ...config, 'type_parameters': v }),
-    children0: (v: VisibilityModifier) => enumItem({ ...config, children0: v }),
-    children1: (v: WhereClause) => enumItem({ ...config, children1: v }),
+    visibilityModifier: (v: VisibilityModifier) => enumItem({ ...config, visibilityModifier: v }),
+    whereClause: (v: WhereClause) => enumItem({ ...config, whereClause: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -606,8 +606,8 @@ export function enumVariantList(
 ) {
   return {
     type: 'enum_variant_list' as const,
-    children0: (...v: (AttributeItem)[]) => enumVariantList({ ...config, children0: v }),
-    children1: (v: EnumVariant) => enumVariantList({ ...config, children1: v }),
+    attributeItem: (...v: (AttributeItem)[]) => enumVariantList({ ...config, attributeItem: v }),
+    enumVariant: (v: EnumVariant) => enumVariantList({ ...config, enumVariant: v }),
     children2: (...v: (AttributeItem | EnumVariant)[]) => enumVariantList({ ...config, children2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -642,8 +642,8 @@ export function externCrateDeclaration(
     type: 'extern_crate_declaration' as const,
     alias: (v: Identifier) => externCrateDeclaration({ ...config, 'alias': v }),
     name: (v: Identifier) => externCrateDeclaration({ ...config, 'name': v }),
-    children0: (v: VisibilityModifier) => externCrateDeclaration({ ...config, children0: v }),
-    children1: (v: Crate) => externCrateDeclaration({ ...config, children1: v }),
+    visibilityModifier: (v: VisibilityModifier) => externCrateDeclaration({ ...config, visibilityModifier: v }),
+    crate: (v: Crate) => externCrateDeclaration({ ...config, crate: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -693,8 +693,8 @@ export function fieldDeclarationList(
 ) {
   return {
     type: 'field_declaration_list' as const,
-    children0: (...v: (AttributeItem)[]) => fieldDeclarationList({ ...config, children0: v }),
-    children1: (v: FieldDeclaration) => fieldDeclarationList({ ...config, children1: v }),
+    attributeItem: (...v: (AttributeItem)[]) => fieldDeclarationList({ ...config, attributeItem: v }),
+    fieldDeclaration: (v: FieldDeclaration) => fieldDeclarationList({ ...config, fieldDeclaration: v }),
     children2: (...v: (AttributeItem | FieldDeclaration)[]) => fieldDeclarationList({ ...config, children2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -800,8 +800,8 @@ export function forLifetimes(
 ) {
   return {
     type: 'for_lifetimes' as const,
-    children0: (v: Lifetime) => forLifetimes({ ...config, children0: v }),
-    children1: (...v: (Lifetime)[]) => forLifetimes({ ...config, children1: v }),
+    lifetime1: (v: Lifetime) => forLifetimes({ ...config, lifetime1: v }),
+    lifetime2: (...v: (Lifetime)[]) => forLifetimes({ ...config, lifetime2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -818,8 +818,8 @@ export function foreignModItem(
   return {
     type: 'foreign_mod_item' as const,
     body: (v: DeclarationList) => foreignModItem({ ...config, 'body': v }),
-    children0: (v: VisibilityModifier) => foreignModItem({ ...config, children0: v }),
-    children1: (v: ExternModifier) => foreignModItem({ ...config, children1: v }),
+    visibilityModifier: (v: VisibilityModifier) => foreignModItem({ ...config, visibilityModifier: v }),
+    externModifier: (v: ExternModifier) => foreignModItem({ ...config, externModifier: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -840,9 +840,9 @@ export function functionItem(
     parameters: (v: Parameters) => functionItem({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionItem({ ...config, 'return_type': v }),
     typeParameters: (v: TypeParameters) => functionItem({ ...config, 'type_parameters': v }),
-    children0: (v: VisibilityModifier) => functionItem({ ...config, children0: v }),
-    children1: (v: FunctionModifiers) => functionItem({ ...config, children1: v }),
-    children2: (v: WhereClause) => functionItem({ ...config, children2: v }),
+    visibilityModifier: (v: VisibilityModifier) => functionItem({ ...config, visibilityModifier: v }),
+    functionModifiers: (v: FunctionModifiers) => functionItem({ ...config, functionModifiers: v }),
+    whereClause: (v: WhereClause) => functionItem({ ...config, whereClause: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -878,9 +878,9 @@ export function functionSignatureItem(
     parameters: (v: Parameters) => functionSignatureItem({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionSignatureItem({ ...config, 'return_type': v }),
     typeParameters: (v: TypeParameters) => functionSignatureItem({ ...config, 'type_parameters': v }),
-    children0: (v: VisibilityModifier) => functionSignatureItem({ ...config, children0: v }),
-    children1: (v: FunctionModifiers) => functionSignatureItem({ ...config, children1: v }),
-    children2: (v: WhereClause) => functionSignatureItem({ ...config, children2: v }),
+    visibilityModifier: (v: VisibilityModifier) => functionSignatureItem({ ...config, visibilityModifier: v }),
+    functionModifiers: (v: FunctionModifiers) => functionSignatureItem({ ...config, functionModifiers: v }),
+    whereClause: (v: WhereClause) => functionSignatureItem({ ...config, whereClause: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -899,8 +899,8 @@ export function functionType(
     parameters: (v: Parameters) => functionType({ ...config, 'parameters': v }),
     returnType: (v: Type) => functionType({ ...config, 'return_type': v }),
     trait: (v: ScopedTypeIdentifier | TypeIdentifier) => functionType({ ...config, 'trait': v }),
-    children0: (v: ForLifetimes) => functionType({ ...config, children0: v }),
-    children1: (v: FunctionModifiers) => functionType({ ...config, children1: v }),
+    forLifetimes: (v: ForLifetimes) => functionType({ ...config, forLifetimes: v }),
+    functionModifiers: (v: FunctionModifiers) => functionType({ ...config, functionModifiers: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1225,8 +1225,8 @@ export function macroDefinition(
   return {
     type: 'macro_definition' as const,
     name: (v: Identifier) => macroDefinition({ ...config, 'name': v }),
-    children0: (...v: (MacroRule)[]) => macroDefinition({ ...config, children0: v }),
-    children1: (v: MacroRule) => macroDefinition({ ...config, children1: v }),
+    macroRule1: (...v: (MacroRule)[]) => macroDefinition({ ...config, macroRule1: v }),
+    macroRule2: (v: MacroRule) => macroDefinition({ ...config, macroRule2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1294,8 +1294,8 @@ export function matchBlock(
 ) {
   return {
     type: 'match_block' as const,
-    children0: (...v: (MatchArm)[]) => matchBlock({ ...config, children0: v }),
-    children1: (v: MatchArm) => matchBlock({ ...config, children1: v }),
+    matchArm1: (...v: (MatchArm)[]) => matchBlock({ ...config, matchArm1: v }),
+    matchArm2: (v: MatchArm) => matchBlock({ ...config, matchArm2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1413,8 +1413,8 @@ export function orderedFieldDeclarationList(
   return {
     type: 'ordered_field_declaration_list' as const,
     typeField: (...v: (Type)[]) => orderedFieldDeclarationList({ ...config, 'type': v }),
-    children0: (...v: (AttributeItem)[]) => orderedFieldDeclarationList({ ...config, children0: v }),
-    children1: (v: VisibilityModifier) => orderedFieldDeclarationList({ ...config, children1: v }),
+    attributeItem: (...v: (AttributeItem)[]) => orderedFieldDeclarationList({ ...config, attributeItem: v }),
+    visibilityModifier: (v: VisibilityModifier) => orderedFieldDeclarationList({ ...config, visibilityModifier: v }),
     children2: (...v: (AttributeItem | VisibilityModifier)[]) => orderedFieldDeclarationList({ ...config, children2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1617,8 +1617,8 @@ export function referenceType(
   return {
     type: 'reference_type' as const,
     typeField: (v: Type) => referenceType({ ...config, 'type': v }),
-    children0: (v: Lifetime) => referenceType({ ...config, children0: v }),
-    children1: (v: MutableSpecifier) => referenceType({ ...config, children1: v }),
+    lifetime: (v: Lifetime) => referenceType({ ...config, lifetime: v }),
+    mutableSpecifier: (v: MutableSpecifier) => referenceType({ ...config, mutableSpecifier: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1717,9 +1717,9 @@ export function selfParameter(
 ) {
   return {
     type: 'self_parameter' as const,
-    children0: (v: Lifetime) => selfParameter({ ...config, children0: v }),
-    children1: (v: MutableSpecifier) => selfParameter({ ...config, children1: v }),
-    children2: (v: Self) => selfParameter({ ...config, children2: v }),
+    lifetime: (v: Lifetime) => selfParameter({ ...config, lifetime: v }),
+    mutableSpecifier: (v: MutableSpecifier) => selfParameter({ ...config, mutableSpecifier: v }),
+    self: (v: Self) => selfParameter({ ...config, self: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1735,8 +1735,8 @@ export function shorthandFieldInitializer(
 ) {
   return {
     type: 'shorthand_field_initializer' as const,
-    children0: (...v: (AttributeItem)[]) => shorthandFieldInitializer({ ...config, children0: v }),
-    children1: (v: Identifier) => shorthandFieldInitializer({ ...config, children1: v }),
+    attributeItem: (...v: (AttributeItem)[]) => shorthandFieldInitializer({ ...config, attributeItem: v }),
+    identifier: (v: Identifier) => shorthandFieldInitializer({ ...config, identifier: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1788,8 +1788,8 @@ export function staticItem(
     name: (v: Identifier) => staticItem({ ...config, 'name': v }),
     typeField: (v: Type) => staticItem({ ...config, 'type': v }),
     value: (v: Expression) => staticItem({ ...config, 'value': v }),
-    children0: (v: VisibilityModifier) => staticItem({ ...config, children0: v }),
-    children1: (v: MutableSpecifier) => staticItem({ ...config, children1: v }),
+    visibilityModifier: (v: VisibilityModifier) => staticItem({ ...config, visibilityModifier: v }),
+    mutableSpecifier: (v: MutableSpecifier) => staticItem({ ...config, mutableSpecifier: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1841,8 +1841,8 @@ export function structItem(
     body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => structItem({ ...config, 'body': v }),
     name: (v: TypeIdentifier) => structItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => structItem({ ...config, 'type_parameters': v }),
-    children0: (v: VisibilityModifier) => structItem({ ...config, children0: v }),
-    children1: (v: WhereClause) => structItem({ ...config, children1: v }),
+    visibilityModifier: (v: VisibilityModifier) => structItem({ ...config, visibilityModifier: v }),
+    whereClause: (v: WhereClause) => structItem({ ...config, whereClause: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1978,8 +1978,8 @@ export function traitItem(
     bounds: (v: TraitBounds) => traitItem({ ...config, 'bounds': v }),
     name: (v: TypeIdentifier) => traitItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => traitItem({ ...config, 'type_parameters': v }),
-    children0: (v: VisibilityModifier) => traitItem({ ...config, children0: v }),
-    children1: (v: WhereClause) => traitItem({ ...config, children1: v }),
+    visibilityModifier: (v: VisibilityModifier) => traitItem({ ...config, visibilityModifier: v }),
+    whereClause: (v: WhereClause) => traitItem({ ...config, whereClause: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2153,9 +2153,9 @@ export function typeItem(
     name: (v: TypeIdentifier) => typeItem({ ...config, 'name': v }),
     typeField: (v: Type) => typeItem({ ...config, 'type': v }),
     typeParameters: (v: TypeParameters) => typeItem({ ...config, 'type_parameters': v }),
-    children0: (v: VisibilityModifier) => typeItem({ ...config, children0: v }),
-    children1: (v: WhereClause) => typeItem({ ...config, children1: v }),
-    children2: (v: WhereClause) => typeItem({ ...config, children2: v }),
+    visibilityModifier: (v: VisibilityModifier) => typeItem({ ...config, visibilityModifier: v }),
+    whereClause1: (v: WhereClause) => typeItem({ ...config, whereClause1: v }),
+    whereClause2: (v: WhereClause) => typeItem({ ...config, whereClause2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2189,7 +2189,7 @@ export function typeParameters(
 ) {
   return {
     type: 'type_parameters' as const,
-    children0: (...v: (AttributeItem)[]) => typeParameters({ ...config, children0: v }),
+    attributeItem: (...v: (AttributeItem)[]) => typeParameters({ ...config, attributeItem: v }),
     children1: (v: ConstParameter | LifetimeParameter | Metavariable | TypeParameter) => typeParameters({ ...config, children1: v }),
     children2: (...v: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) => typeParameters({ ...config, children2: v }),
     render() { return render(this); },
@@ -2226,8 +2226,8 @@ export function unionItem(
     body: (v: FieldDeclarationList) => unionItem({ ...config, 'body': v }),
     name: (v: TypeIdentifier) => unionItem({ ...config, 'name': v }),
     typeParameters: (v: TypeParameters) => unionItem({ ...config, 'type_parameters': v }),
-    children0: (v: VisibilityModifier) => unionItem({ ...config, children0: v }),
-    children1: (v: WhereClause) => unionItem({ ...config, children1: v }),
+    visibilityModifier: (v: VisibilityModifier) => unionItem({ ...config, visibilityModifier: v }),
+    whereClause: (v: WhereClause) => unionItem({ ...config, whereClause: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2375,8 +2375,8 @@ export function whereClause(
 ) {
   return {
     type: 'where_clause' as const,
-    children0: (v: WherePredicate) => whereClause({ ...config, children0: v }),
-    children1: (...v: (WherePredicate)[]) => whereClause({ ...config, children1: v }),
+    wherePredicate1: (v: WherePredicate) => whereClause({ ...config, wherePredicate1: v }),
+    wherePredicate2: (...v: (WherePredicate)[]) => whereClause({ ...config, wherePredicate2: v }),
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

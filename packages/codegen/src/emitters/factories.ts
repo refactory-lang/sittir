@@ -13,7 +13,7 @@ import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString } from './utils.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, projAllTypes, type ProjectionContext } from './kind-projections.ts';
 
 export interface EmitFactoriesConfig {
@@ -75,27 +75,17 @@ export function emitFactory(config: {
 		}
 	}
 	if (hasChildren) {
-		if (isTupleChildren(node.children!)) {
-			// Tuple children — each slot gets its own setter (children0, children1, ...)
-			eachChildSlot(node.children!, (slot, i) => {
-				const slotProj = projectKinds(slot.kinds, ctx);
-				const slotType = slotProj.collapsedTypes.join(' | ');
-				if (slot.multiple) {
-					lines.push(`    children${i}: (...v: (${slotType})[]) => ${factoryName}({ ...config, children${i}: v }),`);
-				} else {
-					lines.push(`    children${i}: (v: ${slotType}) => ${factoryName}({ ...config, children${i}: v }),`);
-				}
-			});
-		} else {
-			const children = node.children!;
-			const childProj = projectKinds(children.kinds, ctx);
-			const childTypeUnion = childProj.collapsedTypes.join(' | ');
-			if (children.multiple) {
-				lines.push(`    children: (...v: (${childTypeUnion})[]) => ${factoryName}({ ...config, children: v }),`);
+		const slotNames = childSlotNames(node.children!, ctx);
+		eachChildSlot(node.children!, (slot, i) => {
+			const name = slotNames[i]!;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			const slotType = slotProj.collapsedTypes.join(' | ');
+			if (slot.multiple) {
+				lines.push(`    ${name}: (...v: (${slotType})[]) => ${factoryName}({ ...config, ${name}: v }),`);
 			} else {
-				lines.push(`    children: (v: ${childTypeUnion}) => ${factoryName}({ ...config, children: v }),`);
+				lines.push(`    ${name}: (v: ${slotType}) => ${factoryName}({ ...config, ${name}: v }),`);
 			}
-		}
+		});
 	}
 
 	// Render/edit methods — use bound renderer (rules/joinBy closed over at module level)

@@ -12,7 +12,10 @@ import type {
 	HydratedTokenModel,
 	HydratedSupertypeModel,
 	HydratedFieldModel,
+	HydratedChildrenModel,
 } from '../node-model.ts';
+import { isTupleChildren } from '../node-model.ts';
+import { projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export type StructuralNode = HydratedBranchModel | HydratedContainerModel;
 
@@ -133,6 +136,47 @@ export function selectConstructorField(node: StructuralNode): HydratedFieldModel
 
 	// Fall back to first required
 	return required[0] ?? null;
+}
+
+/**
+ * Derive meaningful names for positional child slots.
+ *
+ * Single-slot children → ['children'] (unchanged).
+ * Tuple children → names derived from collapsed type projections:
+ *   - 1 collapsed type → lcfirst (e.g. VisibilityModifier → visibilityModifier)
+ *   - Duplicate names across slots → append 1-based index (expression1, expression2)
+ *   - No single collapsed type → children{index} fallback
+ */
+export function childSlotNames(children: HydratedChildrenModel, ctx: ProjectionContext): string[] {
+	if (!isTupleChildren(children)) return ['children'];
+
+	// Compute candidate name per slot
+	const candidates = children.map(slot => {
+		const proj = projectKinds(slot.kinds, ctx);
+		if (proj.collapsedTypes.length === 1) {
+			const name = proj.collapsedTypes[0]!;
+			return name.charAt(0).toLowerCase() + name.slice(1);
+		}
+		return null;
+	});
+
+	// Count occurrences of each candidate
+	const counts = new Map<string, number>();
+	for (const name of candidates) {
+		if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
+	}
+
+	// Assign final names — append 1-based index for duplicates
+	const seen = new Map<string, number>();
+	return candidates.map((name, i) => {
+		if (!name) return `children${i}`;
+		if (counts.get(name)! > 1) {
+			const idx = (seen.get(name) ?? 0) + 1;
+			seen.set(name, idx);
+			return `${name}${idx}`;
+		}
+		return name;
+	});
 }
 
 /** Escape backslashes, quotes, and control characters for embedding in generated string literals. */

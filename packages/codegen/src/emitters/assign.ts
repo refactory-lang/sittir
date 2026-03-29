@@ -11,7 +11,7 @@
 import type { HydratedNodeModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { toTypeName, toFactoryName, toGrammarTypeName } from '../naming.ts';
-import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf } from './utils.ts';
+import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export interface EmitAssignConfig {
@@ -123,16 +123,11 @@ export function emitAssign(config: EmitAssignConfig): string {
 
 		// Hydrate children field if present
 		if (node.children != null) {
-			if (isTupleChildren(node.children)) {
-				// Tuple children — hydrate each positional slot
-				eachChildSlot(node.children, (slot, i) => {
-					const slotProj = projectKinds(slot.kinds, ctx);
-					emitAssignChildren(lines, slot, expandForRuntime(slotProj.expandedAll, ctx), node.kind, `children${i}`);
-				});
-			} else {
-				const childProj = projectKinds(node.children.kinds, ctx);
-				emitAssignChildren(lines, node.children, expandForRuntime(childProj.expandedAll, ctx), node.kind, 'children');
-			}
+			const slotNames = childSlotNames(node.children, ctx);
+			eachChildSlot(node.children, (slot, i) => {
+				const slotProj = projectKinds(slot.kinds, ctx);
+				emitAssignChildren(lines, slot, expandForRuntime(slotProj.expandedAll, ctx), node.kind, slotNames[i]!);
+			});
 		}
 
 		lines.push(`  const result = ${factoryName}(config as ${configTypeName});`);

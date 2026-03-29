@@ -570,13 +570,13 @@ export function assignEnumItem(target: EnumItemTree) {
   config['body'] = assignEnumVariantList(target.field('body')! as EnumVariantListTree);
   config['name'] = assignByKind('type_identifier', target.field('name')!);
   config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['whereClause'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -603,12 +603,12 @@ export function assignEnumVariant(target: EnumVariantTree) {
 
 export function assignEnumVariantList(target: EnumVariantListTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['attributeItem'] = (() => {
     const _kinds = new Set(["attribute_item"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  config['children1'] = (() => {
+  config['enumVariant'] = (() => {
     const _kinds = new Set(["enum_variant"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -639,13 +639,13 @@ export function assignExternCrateDeclaration(target: ExternCrateDeclarationTree)
   const config: Record<string, unknown> = {};
   config['alias'] = target.field('alias') ? assignByKind('identifier', target.field('alias')!) : undefined;
   config['name'] = assignByKind('identifier', target.field('name')!);
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['crate'] = (() => {
     const _kinds = new Set(["crate"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'extern_crate_declaration' tree node`);
@@ -683,12 +683,12 @@ export function assignFieldDeclaration(target: FieldDeclarationTree) {
 
 export function assignFieldDeclarationList(target: FieldDeclarationListTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['attributeItem'] = (() => {
     const _kinds = new Set(["attribute_item"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  config['children1'] = (() => {
+  config['fieldDeclaration'] = (() => {
     const _kinds = new Set(["field_declaration"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -772,13 +772,13 @@ export function assignForExpression(target: ForExpressionTree) {
 
 export function assignForLifetimes(target: ForLifetimesTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['lifetime1'] = (() => {
     const _kinds = new Set(["lifetime"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'for_lifetimes' tree node`);
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['lifetime2'] = (() => {
     const _kinds = new Set(["lifetime"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -790,13 +790,13 @@ export function assignForLifetimes(target: ForLifetimesTree) {
 export function assignForeignModItem(target: ForeignModItemTree) {
   const config: Record<string, unknown> = {};
   config['body'] = target.field('body') ? assignDeclarationList(target.field('body')! as DeclarationListTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['externModifier'] = (() => {
     const _kinds = new Set(["extern_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'foreign_mod_item' tree node`);
@@ -813,19 +813,19 @@ export function assignFunctionItem(target: FunctionItemTree) {
   config['parameters'] = assignParameters(target.field('parameters')! as ParametersTree);
   config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
   config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['functionModifiers'] = (() => {
     const _kinds = new Set(["function_modifiers"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children2'] = (() => {
+  config['whereClause'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -852,19 +852,19 @@ export function assignFunctionSignatureItem(target: FunctionSignatureItemTree) {
   config['parameters'] = assignParameters(target.field('parameters')! as ParametersTree);
   config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
   config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['functionModifiers'] = (() => {
     const _kinds = new Set(["function_modifiers"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children2'] = (() => {
+  config['whereClause'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -879,13 +879,13 @@ export function assignFunctionType(target: FunctionTypeTree) {
   config['parameters'] = assignParameters(target.field('parameters')! as ParametersTree);
   config['return_type'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
   config['trait'] = target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined;
-  config['children0'] = (() => {
+  config['forLifetimes'] = (() => {
     const _kinds = new Set(["for_lifetimes"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['functionModifiers'] = (() => {
     const _kinds = new Set(["function_modifiers"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1094,12 +1094,12 @@ export function assignLoopExpression(target: LoopExpressionTree) {
 export function assignMacroDefinition(target: MacroDefinitionTree) {
   const config: Record<string, unknown> = {};
   config['name'] = assignByKind('identifier', target.field('name')!);
-  config['children0'] = (() => {
+  config['macroRule1'] = (() => {
     const _kinds = new Set(["macro_rule"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  config['children1'] = (() => {
+  config['macroRule2'] = (() => {
     const _kinds = new Set(["macro_rule"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1145,12 +1145,12 @@ export function assignMatchArm(target: MatchArmTree) {
 
 export function assignMatchBlock(target: MatchBlockTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['matchArm1'] = (() => {
     const _kinds = new Set(["match_arm"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  config['children1'] = (() => {
+  config['matchArm2'] = (() => {
     const _kinds = new Set(["match_arm"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1244,12 +1244,12 @@ export function assignOrderedFieldDeclarationList(target: OrderedFieldDeclaratio
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
   })();
-  config['children0'] = (() => {
+  config['attributeItem'] = (() => {
     const _kinds = new Set(["attribute_item"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  config['children1'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1411,13 +1411,13 @@ export function assignReferencePattern(target: ReferencePatternTree) {
 export function assignReferenceType(target: ReferenceTypeTree) {
   const config: Record<string, unknown> = {};
   config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
-  config['children0'] = (() => {
+  config['lifetime'] = (() => {
     const _kinds = new Set(["lifetime"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['mutableSpecifier'] = (() => {
     const _kinds = new Set(["mutable_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1477,19 +1477,19 @@ export function assignScopedUseList(target: ScopedUseListTree) {
 
 export function assignSelfParameter(target: SelfParameterTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['lifetime'] = (() => {
     const _kinds = new Set(["lifetime"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['mutableSpecifier'] = (() => {
     const _kinds = new Set(["mutable_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children2'] = (() => {
+  config['self'] = (() => {
     const _kinds = new Set(["self"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'self_parameter' tree node`);
@@ -1501,12 +1501,12 @@ export function assignSelfParameter(target: SelfParameterTree) {
 
 export function assignShorthandFieldInitializer(target: ShorthandFieldInitializerTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['attributeItem'] = (() => {
     const _kinds = new Set(["attribute_item"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
   })();
-  config['children1'] = (() => {
+  config['identifier'] = (() => {
     const _kinds = new Set(["identifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) throw new Error(`Required child missing on 'shorthand_field_initializer' tree node`);
@@ -1549,13 +1549,13 @@ export function assignStaticItem(target: StaticItemTree) {
   config['name'] = assignByKind('identifier', target.field('name')!);
   config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
   config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['mutableSpecifier'] = (() => {
     const _kinds = new Set(["mutable_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1589,13 +1589,13 @@ export function assignStructItem(target: StructItemTree) {
   config['body'] = target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined;
   config['name'] = assignByKind('type_identifier', target.field('name')!);
   config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['whereClause'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1698,13 +1698,13 @@ export function assignTraitItem(target: TraitItemTree) {
   config['bounds'] = target.field('bounds') ? assignTraitBounds(target.field('bounds')! as TraitBoundsTree) : undefined;
   config['name'] = assignByKind('type_identifier', target.field('name')!);
   config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['whereClause'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1858,19 +1858,19 @@ export function assignTypeItem(target: TypeItemTree) {
   config['name'] = assignByKind('type_identifier', target.field('name')!);
   config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
   config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['whereClause1'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children2'] = (() => {
+  config['whereClause2'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -1891,7 +1891,7 @@ export function assignTypeParameter(target: TypeParameterTree) {
 
 export function assignTypeParameters(target: TypeParametersTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['attributeItem'] = (() => {
     const _kinds = new Set(["attribute_item"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));
@@ -1928,13 +1928,13 @@ export function assignUnionItem(target: UnionItemTree) {
   config['body'] = assignFieldDeclarationList(target.field('body')! as FieldDeclarationListTree);
   config['name'] = assignByKind('type_identifier', target.field('name')!);
   config['type_parameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
-  config['children0'] = (() => {
+  config['visibilityModifier'] = (() => {
     const _kinds = new Set(["visibility_modifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['whereClause'] = (() => {
     const _kinds = new Set(["where_clause"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
@@ -2044,13 +2044,13 @@ export function assignVisibilityModifier(target: VisibilityModifierTree) {
 
 export function assignWhereClause(target: WhereClauseTree) {
   const config: Record<string, unknown> = {};
-  config['children0'] = (() => {
+  config['wherePredicate1'] = (() => {
     const _kinds = new Set(["where_predicate"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
     if (!_child) return undefined;
     return assignByKind(_child.type, _child);
   })();
-  config['children1'] = (() => {
+  config['wherePredicate2'] = (() => {
     const _kinds = new Set(["where_predicate"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.map((c) => assignByKind(c.type, c));

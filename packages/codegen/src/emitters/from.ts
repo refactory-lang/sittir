@@ -13,7 +13,7 @@ import type { HydratedNodeModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString } from './utils.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
 
 export interface EmitFromConfig {
@@ -249,39 +249,25 @@ function emitFromFunction(
 		lines.push(`  }`);
 	}
 	if (hasChildren) {
-		if (isTupleChildren(node.children!)) {
-			// Tuple children — resolve each positional slot
-			eachChildSlot(node.children!, (slot, i) => {
-				const slotProj = projectKinds(slot.kinds, ctx);
-				const propName = `children${i}`;
-				lines.push(`  if (obj['${propName}'] !== undefined) {`);
-				if (slot.multiple) {
-					lines.push(`    const arr = Array.isArray(obj['${propName}']) ? obj['${propName}'] : [obj['${propName}']];`);
-					const slotResolve = emitResolveCall(slotProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-					lines.push(`    resolved['${propName}'] = arr.map((v: any) => ${slotResolve});`);
-				} else {
-					const slotResolve = emitResolveCall(slotProj, `obj['${propName}']`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-					lines.push(`    resolved['${propName}'] = ${slotResolve};`);
-				}
-				if (slot.required && slot.multiple) {
-					lines.push(`  } else {`);
-					lines.push(`    resolved['${propName}'] = [];`);
-				}
-				lines.push(`  }`);
-			});
-		} else {
-			const children = node.children!;
-			const childProj = projectKinds(children.kinds, ctx);
-			lines.push(`  if (obj['children'] !== undefined) {`);
-			lines.push(`    const arr = Array.isArray(obj['children']) ? obj['children'] : [obj['children']];`);
-			const childResolve = emitResolveCall(childProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-			lines.push(`    resolved['children'] = arr.map((v: any) => ${childResolve});`);
-			if (children.required) {
+		const slotNames = childSlotNames(node.children!, ctx);
+		eachChildSlot(node.children!, (slot, i) => {
+			const propName = slotNames[i]!;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			lines.push(`  if (obj['${propName}'] !== undefined) {`);
+			if (slot.multiple) {
+				lines.push(`    const arr = Array.isArray(obj['${propName}']) ? obj['${propName}'] : [obj['${propName}']];`);
+				const slotResolve = emitResolveCall(slotProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+				lines.push(`    resolved['${propName}'] = arr.map((v: any) => ${slotResolve});`);
+			} else {
+				const slotResolve = emitResolveCall(slotProj, `obj['${propName}']`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+				lines.push(`    resolved['${propName}'] = ${slotResolve};`);
+			}
+			if (slot.required && slot.multiple) {
 				lines.push(`  } else {`);
-				lines.push(`    resolved['children'] = [];`);
+				lines.push(`    resolved['${propName}'] = [];`);
 			}
 			lines.push(`  }`);
-		}
+		});
 	}
 	lines.push(`  return ${factoryName}(resolved);`);
 	lines.push(`}`);
