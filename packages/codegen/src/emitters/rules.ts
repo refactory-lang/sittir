@@ -56,6 +56,18 @@ export function emitRule(config: EmitRulesConfig): EmittedRule {
 		}
 	}
 
+	// Warn about model fields the template walker failed to reach
+	// (typically due to CHOICE branch selection heuristics)
+	for (const [fieldName] of fieldQuantifiers) {
+		if (!seen.has(fieldName)) {
+			console.warn(`Template for '${node.kind}': model field '${fieldName}' not reached by rule walker`);
+			// Append the missing field so render can still handle it
+			const q = fieldQuantifiers.get(fieldName) ?? '?';
+			parts.push(`${fieldName}: (_)${q}`);
+			seen.add(fieldName);
+		}
+	}
+
 	// If node has children but template doesn't have (_)*, append it
 	const hasChildren = node.children != null && (Array.isArray(node.children) ? node.children.length > 0 : true);
 	if (hasChildren && !parts.includes('(_)*')) {
@@ -115,14 +127,19 @@ function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq
 			}
 			let best: string[] = [];
 			let bestCount = -1;
+			let bestSeen = new Set<string>();
 			for (const m of rule.members) {
-				const branchParts = ruleToSExpr(m, optional, seen, fq);
+				const branchSeen = new Set(seen);
+				const branchParts = ruleToSExpr(m, optional, branchSeen, fq);
 				const fieldCount = branchParts.filter(e => e.includes(': (_)')).length;
 				if (fieldCount > bestCount) {
 					bestCount = fieldCount;
 					best = branchParts;
+					bestSeen = branchSeen;
 				}
 			}
+			// Merge winning branch's seen fields back
+			for (const f of bestSeen) seen.add(f);
 			return best;
 		}
 
