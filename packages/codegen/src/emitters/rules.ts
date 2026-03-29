@@ -8,13 +8,15 @@
  *   (function_item "fn" name: (_) "(" parameters: (_)* ")" return_type: (_)? body: (_))
  */
 
-import type { GrammarRule } from '../grammar.ts';
+import type { GrammarRule, Grammar } from '../grammar.ts';
+import { loadGrammar } from '../grammar.ts';
 import type { HydratedNodeModel } from '../node-model.ts';
 import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
 
 export interface EmitRulesConfig {
 	grammar: string;
 	node: StructuralNode;
+	grammarRules?: Record<string, GrammarRule>;
 }
 
 export interface EmittedRule {
@@ -47,7 +49,8 @@ export function emitRule(config: EmitRulesConfig): EmittedRule {
 
 	const rawRule = node.rule?.rule;
 	const seen = new Set<string>();
-	const parts = rawRule ? ruleToSExpr(rawRule, false, seen, fieldQuantifiers) : [];
+	const gr = config.grammarRules ?? {};
+	const parts = rawRule ? ruleToSExpr(rawRule, false, seen, fieldQuantifiers, gr) : [];
 
 	// Validate: every field in the template must exist in the node model
 	for (const fieldName of seen) {
@@ -92,11 +95,11 @@ export function emitRule(config: EmitRulesConfig): EmittedRule {
  * - SEQ → sequential parts
  * - PREC/TOKEN/ALIAS → unwrap transparently
  */
-function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq: Map<string, string>): string[] {
+function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq: Map<string, string>, gr: Record<string, GrammarRule>): string[] {
 	switch (rule.type) {
 		case 'SEQ': {
 			const parts: string[] = [];
-			for (const m of rule.members) parts.push(...ruleToSExpr(m, optional, seen, fq));
+			for (const m of rule.members) parts.push(...ruleToSExpr(m, optional, seen, fq, gr));
 			return parts;
 		}
 
@@ -112,8 +115,15 @@ function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq
 			return [`${rule.name}: (_)${q}`];
 		}
 
-		case 'SYMBOL':
+		case 'SYMBOL': {
+			// Inline _-prefixed (hidden/abstract) rules that contain fields the model expects
+			if (rule.name.startsWith('_') && gr[rule.name]) {
+				const inlined = ruleToSExpr(gr[rule.name]!, optional, seen, fq, gr);
+				// Only use inlined result if it produced field references
+				if (inlined.some(p => p.includes(': (_)'))) return inlined;
+			}
 			return ['(_)*'];
+		}
 
 		case 'CHOICE': {
 			const hasBlank = rule.members.some(m => m.type === 'BLANK');
@@ -121,7 +131,7 @@ function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq
 				const parts: string[] = [];
 				for (const m of rule.members) {
 					if (m.type === 'BLANK') continue;
-					parts.push(...ruleToSExpr(m, true, seen, fq));
+					parts.push(...ruleToSExpr(m, true, seen, fq, gr));
 				}
 				return parts;
 			}
@@ -130,7 +140,7 @@ function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq
 			let bestSeen = new Set<string>();
 			for (const m of rule.members) {
 				const branchSeen = new Set(seen);
-				const branchParts = ruleToSExpr(m, optional, branchSeen, fq);
+				const branchParts = ruleToSExpr(m, optional, branchSeen, fq, gr);
 				const fieldCount = branchParts.filter(e => e.includes(': (_)')).length;
 				if (fieldCount > bestCount) {
 					bestCount = fieldCount;
@@ -145,13 +155,13 @@ function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq
 
 		case 'REPEAT':
 		case 'REPEAT1':
-			return ruleToSExpr(rule.content, optional, seen, fq);
+			return ruleToSExpr(rule.content, optional, seen, fq, gr);
 
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-			return ruleToSExpr(rule.content, optional, seen, fq);
+			return ruleToSExpr(rule.content, optional, seen, fq, gr);
 
 		case 'TOKEN':
 		case 'IMMEDIATE_TOKEN': {
@@ -172,7 +182,7 @@ function ruleToSExpr(rule: GrammarRule, optional: boolean, seen: Set<string>, fq
 				if (optional) return [];
 				return [`"${escapeQuotes(rule.value)}"`];
 			}
-			return ruleToSExpr(rule.content, optional, seen, fq);
+			return ruleToSExpr(rule.content, optional, seen, fq, gr);
 
 		case 'BLANK':
 		case 'PATTERN':
@@ -198,8 +208,9 @@ export function emitRules(config: {
 	lines.push('');
 	lines.push('export const rules: RulesRegistry = {');
 
+	const grammarRules = loadGrammar(config.grammar).rules;
 	for (const node of structuralNodes(config.nodes)) {
-		const rule = emitRule({ grammar: config.grammar, node });
+		const rule = emitRule({ grammar: config.grammar, node, grammarRules });
 		// Use single quotes and escape internal single quotes
 		const escaped = rule.template.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 		lines.push(`  '${node.kind}': '${escaped}',`);
