@@ -19,26 +19,15 @@ $ARGUMENTS
 
 This workflow validates the organization of all spec-kit artifacts in the `specs/` directory, checking for:
 - Sequential numbering (001, 002, 003, etc.)
-- Proper directory structure based on workflow type
-- Required files presence
-- No gaps or duplicate numbers
-
-**IMPORTANT**: This workflow only validates and reorganizes documentation in `specs/`. It **NEVER** moves or modifies code files.
-
-## Instructions
-
-1. **Understand the request**: Parse the user input for:
-   - Whether they want a dry-run (validate only) or to apply fixes
+   - Whether they want to validate only (no changes), preview proposed fixes (dry-run), or apply fixes
    - The reason for cleanup (for documentation)
    - Whether to auto-fix issues or just report them
 
 2. **Run the cleanup script** from the repo root:
 
-   **Validate only (no changes):**  
-   Use this when you just need a report of the current structure and issues without proposing or applying changes.
+   **Validate only (no changes):**
    ```bash
    .specify/extensions/workflows/scripts/bash/create-cleanup.sh --json "$ARGUMENTS"
-   ```
 
 3. **Parse the JSON output** which includes:
    - `status`: "success" or "issues_found"
