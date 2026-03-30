@@ -3,9 +3,11 @@
 import type { NodeData } from './types.js';
 import type { AbstractType, AbstractTypeConfig, AbstractTypeTree, Arguments, ArgumentsConfig, ArgumentsTree, ArrayExpression, ArrayExpressionConfig, ArrayExpressionTree, ArrayType, ArrayTypeConfig, ArrayTypeTree, AssignmentExpression, AssignmentExpressionConfig, AssignmentExpressionTree, AssociatedType, AssociatedTypeConfig, AssociatedTypeTree, AsyncBlock, AsyncBlockConfig, AsyncBlockTree, Attribute, AttributeConfig, AttributeItem, AttributeItemConfig, AttributeItemTree, AttributeTree, AwaitExpression, AwaitExpressionConfig, AwaitExpressionTree, BaseFieldInitializer, BaseFieldInitializerConfig, BaseFieldInitializerTree, BinaryExpression, BinaryExpressionConfig, BinaryExpressionTree, Block, BlockComment, BlockCommentConfig, BlockCommentTree, BlockConfig, BlockTree, BooleanLiteral, BooleanLiteralTree, BoundedType, BoundedTypeConfig, BoundedTypeTree, BracketedType, BracketedTypeConfig, BracketedTypeTree, BreakExpression, BreakExpressionConfig, BreakExpressionTree, CallExpression, CallExpressionConfig, CallExpressionTree, CapturedPattern, CapturedPatternConfig, CapturedPatternTree, CharLiteral, CharLiteralTree, ClosureExpression, ClosureExpressionConfig, ClosureExpressionTree, ClosureParameters, ClosureParametersConfig, ClosureParametersTree, CompoundAssignmentExpr, CompoundAssignmentExprConfig, CompoundAssignmentExprTree, ConstBlock, ConstBlockConfig, ConstBlockTree, ConstItem, ConstItemConfig, ConstItemTree, ConstParameter, ConstParameterConfig, ConstParameterTree, ContinueExpression, ContinueExpressionConfig, ContinueExpressionTree, Crate, CrateTree, DeclarationList, DeclarationListConfig, DeclarationListTree, DeclarationStatement, DocComment, DocCommentTree, DynamicType, DynamicTypeConfig, DynamicTypeTree, ElseClause, ElseClauseConfig, ElseClauseTree, EmptyStatement, EmptyStatementTree, EnumItem, EnumItemConfig, EnumItemTree, EnumVariant, EnumVariantConfig, EnumVariantList, EnumVariantListConfig, EnumVariantListTree, EnumVariantTree, EscapeSequence, EscapeSequenceTree, Expression, ExpressionStatement, ExpressionStatementConfig, ExpressionStatementTree, ExternCrateDeclaration, ExternCrateDeclarationConfig, ExternCrateDeclarationTree, ExternModifier, ExternModifierConfig, ExternModifierTree, FieldDeclaration, FieldDeclarationConfig, FieldDeclarationList, FieldDeclarationListConfig, FieldDeclarationListTree, FieldDeclarationTree, FieldExpression, FieldExpressionConfig, FieldExpressionTree, FieldIdentifier, FieldIdentifierTree, FieldInitializer, FieldInitializerConfig, FieldInitializerList, FieldInitializerListConfig, FieldInitializerListTree, FieldInitializerTree, FieldPattern, FieldPatternConfig, FieldPatternTree, FloatLiteral, FloatLiteralTree, ForExpression, ForExpressionConfig, ForExpressionTree, ForLifetimes, ForLifetimesConfig, ForLifetimesTree, ForeignModItem, ForeignModItemConfig, ForeignModItemTree, FragmentSpecifier, FragmentSpecifierTree, FunctionItem, FunctionItemConfig, FunctionItemTree, FunctionModifiers, FunctionModifiersConfig, FunctionModifiersTree, FunctionSignatureItem, FunctionSignatureItemConfig, FunctionSignatureItemTree, FunctionType, FunctionTypeConfig, FunctionTypeTree, GenBlock, GenBlockConfig, GenBlockTree, GenericFunction, GenericFunctionConfig, GenericFunctionTree, GenericPattern, GenericPatternConfig, GenericPatternTree, GenericType, GenericTypeConfig, GenericTypeTree, GenericTypeWithTurbofish, GenericTypeWithTurbofishConfig, GenericTypeWithTurbofishTree, HigherRankedTraitBound, HigherRankedTraitBoundConfig, HigherRankedTraitBoundTree, Identifier, IdentifierTree, IfExpression, IfExpressionConfig, IfExpressionTree, ImplItem, ImplItemConfig, ImplItemTree, IndexExpression, IndexExpressionConfig, IndexExpressionTree, InnerAttributeItem, InnerAttributeItemConfig, InnerAttributeItemTree, InnerDocCommentMarker, InnerDocCommentMarkerTree, IntegerLiteral, IntegerLiteralTree, Label, LabelConfig, LabelTree, LetChain, LetChainConfig, LetChainTree, LetCondition, LetConditionConfig, LetConditionTree, LetDeclaration, LetDeclarationConfig, LetDeclarationTree, Lifetime, LifetimeConfig, LifetimeParameter, LifetimeParameterConfig, LifetimeParameterTree, LifetimeTree, LineComment, LineCommentConfig, LineCommentTree, Literal, LiteralPattern, LoopExpression, LoopExpressionConfig, LoopExpressionTree, MacroDefinition, MacroDefinitionConfig, MacroDefinitionTree, MacroInvocation, MacroInvocationConfig, MacroInvocationTree, MacroRule, MacroRuleConfig, MacroRuleTree, MatchArm, MatchArmConfig, MatchArmTree, MatchBlock, MatchBlockConfig, MatchBlockTree, MatchExpression, MatchExpressionConfig, MatchExpressionTree, MatchPattern, MatchPatternConfig, MatchPatternTree, Metavariable, MetavariableTree, ModItem, ModItemConfig, ModItemTree, MutPattern, MutPatternConfig, MutPatternTree, MutableSpecifier, MutableSpecifierTree, NegativeLiteral, NegativeLiteralConfig, NegativeLiteralTree, NeverType, NeverTypeTree, OrPattern, OrPatternConfig, OrPatternTree, OrderedFieldDeclarationList, OrderedFieldDeclarationListConfig, OrderedFieldDeclarationListTree, OuterDocCommentMarker, OuterDocCommentMarkerTree, Parameter, ParameterConfig, ParameterTree, Parameters, ParametersConfig, ParametersTree, ParenthesizedExpression, ParenthesizedExpressionConfig, ParenthesizedExpressionTree, Pattern, PointerType, PointerTypeConfig, PointerTypeTree, PrimitiveType, PrimitiveTypeTree, QualifiedType, QualifiedTypeConfig, QualifiedTypeTree, RangeExpression, RangeExpressionConfig, RangeExpressionTree, RangePattern, RangePatternConfig, RangePatternTree, RawStringLiteral, RawStringLiteralConfig, RawStringLiteralTree, RefPattern, RefPatternConfig, RefPatternTree, ReferenceExpression, ReferenceExpressionConfig, ReferenceExpressionTree, ReferencePattern, ReferencePatternConfig, ReferencePatternTree, ReferenceType, ReferenceTypeConfig, ReferenceTypeTree, RemainingFieldPattern, RemainingFieldPatternTree, RemovedTraitBound, RemovedTraitBoundConfig, RemovedTraitBoundTree, ReturnExpression, ReturnExpressionConfig, ReturnExpressionTree, ScopedIdentifier, ScopedIdentifierConfig, ScopedIdentifierTree, ScopedTypeIdentifier, ScopedTypeIdentifierConfig, ScopedTypeIdentifierTree, ScopedUseList, ScopedUseListConfig, ScopedUseListTree, Self, SelfParameter, SelfParameterConfig, SelfParameterTree, SelfTree, Shebang, ShebangTree, ShorthandFieldIdentifier, ShorthandFieldIdentifierTree, ShorthandFieldInitializer, ShorthandFieldInitializerConfig, ShorthandFieldInitializerTree, SlicePattern, SlicePatternConfig, SlicePatternTree, SourceFile, SourceFileConfig, SourceFileTree, StaticItem, StaticItemConfig, StaticItemTree, StringContent, StringContentTree, StringLiteral, StringLiteralConfig, StringLiteralTree, StructExpression, StructExpressionConfig, StructExpressionTree, StructItem, StructItemConfig, StructItemTree, StructPattern, StructPatternConfig, StructPatternTree, Super, SuperTree, TokenBindingPattern, TokenBindingPatternConfig, TokenBindingPatternTree, TokenRepetition, TokenRepetitionConfig, TokenRepetitionPattern, TokenRepetitionPatternConfig, TokenRepetitionPatternTree, TokenRepetitionTree, TokenTree, TokenTreeConfig, TokenTreePattern, TokenTreePatternConfig, TokenTreePatternTree, TokenTreeTree, TraitBounds, TraitBoundsConfig, TraitBoundsTree, TraitItem, TraitItemConfig, TraitItemTree, TryBlock, TryBlockConfig, TryBlockTree, TryExpression, TryExpressionConfig, TryExpressionTree, TupleExpression, TupleExpressionConfig, TupleExpressionTree, TuplePattern, TuplePatternConfig, TuplePatternTree, TupleStructPattern, TupleStructPatternConfig, TupleStructPatternTree, TupleType, TupleTypeConfig, TupleTypeTree, Type, TypeArguments, TypeArgumentsConfig, TypeArgumentsTree, TypeBinding, TypeBindingConfig, TypeBindingTree, TypeCastExpression, TypeCastExpressionConfig, TypeCastExpressionTree, TypeIdentifier, TypeIdentifierTree, TypeItem, TypeItemConfig, TypeItemTree, TypeParameter, TypeParameterConfig, TypeParameterTree, TypeParameters, TypeParametersConfig, TypeParametersTree, UnaryExpression, UnaryExpressionConfig, UnaryExpressionTree, UnionItem, UnionItemConfig, UnionItemTree, UnitExpression, UnitExpressionTree, UnitType, UnitTypeTree, UnsafeBlock, UnsafeBlockConfig, UnsafeBlockTree, UseAsClause, UseAsClauseConfig, UseAsClauseTree, UseBounds, UseBoundsConfig, UseBoundsTree, UseDeclaration, UseDeclarationConfig, UseDeclarationTree, UseList, UseListConfig, UseListTree, UseWildcard, UseWildcardConfig, UseWildcardTree, VariadicParameter, VariadicParameterConfig, VariadicParameterTree, VisibilityModifier, VisibilityModifierConfig, VisibilityModifierTree, WhereClause, WhereClauseConfig, WhereClauseTree, WherePredicate, WherePredicateConfig, WherePredicateTree, WhileExpression, WhileExpressionConfig, WhileExpressionTree, YieldExpression, YieldExpressionConfig, YieldExpressionTree } from './types.js';
 import type { Edit, AnyNodeData } from '@sittir/types';
-import { render, toEdit } from '@sittir/core';
+import { createRenderer } from '@sittir/core';
 import { rules } from './rules.js';
 import { joinBy } from './joinby.js';
+
+const { render, toEdit } = createRenderer(rules, joinBy);
 
 const RESERVED_KEYWORDS = new Set([
   '_',
@@ -62,19 +64,25 @@ const RESERVED_KEYWORDS = new Set([
   'yield',
 ]);
 
-export function abstractType(
+export function abstract_type_(
   config: AbstractTypeConfig,
 ) {
+  const fields = {
+    trait: config.trait,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'abstract_type' as const,
-    trait: (v: BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier) => abstractType({ ...config, 'trait': v }),
-    children: (v: TypeParameters) => abstractType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    trait(trait?: BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier): any { return trait !== undefined ? abstract_type_({ ...config, trait: trait }) : fields.trait; },
+    child(child?: TypeParameters): any { return child !== undefined ? abstract_type_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AbstractTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AbstractTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -82,2304 +90,3148 @@ export function abstractType(
 export function arguments_(
   config?: ArgumentsConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.attributeItem ?? []), config?.expression, ...(config?.children2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'arguments' as const,
-    children: (...v: (AttributeItem | Expression)[]) => arguments_({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? arguments_({ ...config, attributeItem }) : config?.attributeItem; },
+    expression(expression?: Expression): any { return expression !== undefined ? arguments_({ ...config, expression }) : config?.expression; },
+    children2(...children2: (AttributeItem | Expression)[]): any { return children2.length ? arguments_({ ...config, children2 }) : config?.children2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ArgumentsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ArgumentsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function arrayExpression(
+export function array_expression_(
   config?: ArrayExpressionConfig,
 ) {
+  const fields = {
+    length: config?.length,
+  };
+  const children = [...(config?.attributeItem ?? []), ...(config?.children1 ?? []), config?.expression, ...(config?.children3 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'array_expression' as const,
-    length: (v: Expression) => arrayExpression({ ...config, 'length': v }),
-    children: (...v: (AttributeItem | Expression)[]) => arrayExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    length(length?: Expression): any { return length !== undefined ? array_expression_({ ...config, length: length }) : fields.length; },
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? array_expression_({ ...config, attributeItem }) : config?.attributeItem; },
+    children1(...children1: (AttributeItem | Expression)[]): any { return children1.length ? array_expression_({ ...config, children1 }) : config?.children1; },
+    expression(expression?: Expression): any { return expression !== undefined ? array_expression_({ ...config, expression }) : config?.expression; },
+    children3(...children3: (AttributeItem | Expression)[]): any { return children3.length ? array_expression_({ ...config, children3 }) : config?.children3; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ArrayExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ArrayExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function arrayType(
+export function array_type_(
   config: ArrayTypeConfig,
 ) {
+  const fields = {
+    element: config.element,
+    length: config.length,
+  };
   return {
     type: 'array_type' as const,
-    element: (v: Type) => arrayType({ ...config, 'element': v }),
-    length: (v: Expression) => arrayType({ ...config, 'length': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    element(element?: Type): any { return element !== undefined ? array_type_({ ...config, element: element }) : fields.element; },
+    length(length?: Expression): any { return length !== undefined ? array_type_({ ...config, length: length }) : fields.length; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ArrayTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ArrayTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function assignmentExpression(
+export function assignment_expression_(
   config: AssignmentExpressionConfig,
 ) {
+  const fields = {
+    left: config.left,
+    right: config.right,
+  };
   return {
     type: 'assignment_expression' as const,
-    left: (v: Expression) => assignmentExpression({ ...config, 'left': v }),
-    right: (v: Expression) => assignmentExpression({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    left(left?: Expression): any { return left !== undefined ? assignment_expression_({ ...config, left: left }) : fields.left; },
+    right(right?: Expression): any { return right !== undefined ? assignment_expression_({ ...config, right: right }) : fields.right; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AssignmentExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AssignmentExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function associatedType(
+export function associated_type_(
   config: AssociatedTypeConfig,
 ) {
+  const fields = {
+    bounds: config.bounds,
+    name: config.name,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'associated_type' as const,
-    name: (v: TypeIdentifier) => associatedType({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => associatedType({ ...config, 'type_parameters': v }),
-    bounds: (v: TraitBounds) => associatedType({ ...config, 'bounds': v }),
-    children: (v: WhereClause) => associatedType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    bounds(bounds?: TraitBounds): any { return bounds !== undefined ? associated_type_({ ...config, bounds: bounds }) : fields.bounds; },
+    name(name?: TypeIdentifier): any { return name !== undefined ? associated_type_({ ...config, name: name }) : fields.name; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? associated_type_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    child(child?: WhereClause): any { return child !== undefined ? associated_type_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AssociatedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AssociatedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function asyncBlock(
+export function async_block_(
   config: AsyncBlockConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'async_block' as const,
-    children: (v: Block) => asyncBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Block): any { return child !== undefined ? async_block_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AsyncBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AsyncBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function attribute(
+export function attribute_(
   config: AttributeConfig,
 ) {
+  const fields = {
+    arguments: config.arguments,
+    value: config.value,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'attribute' as const,
-    value: (v: Expression) => attribute({ ...config, 'value': v }),
-    arguments: (v: TokenTree) => attribute({ ...config, 'arguments': v }),
-    children: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => attribute({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    arguments(arguments_?: TokenTree): any { return arguments_ !== undefined ? attribute_({ ...config, arguments: arguments_ }) : fields.arguments; },
+    value(value?: Expression): any { return value !== undefined ? attribute_({ ...config, value: value }) : fields.value; },
+    child(child?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super): any { return child !== undefined ? attribute_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AttributeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AttributeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function attributeItem(
+export function attribute_item_(
   config: AttributeItemConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'attribute_item' as const,
-    children: (v: Attribute) => attributeItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Attribute): any { return child !== undefined ? attribute_item_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AttributeItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AttributeItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function awaitExpression(
+export function await_expression_(
   config: AwaitExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'await_expression' as const,
-    children: (v: Expression) => awaitExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? await_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: AwaitExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: AwaitExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function baseFieldInitializer(
+export function base_field_initializer_(
   config: BaseFieldInitializerConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'base_field_initializer' as const,
-    children: (v: Expression) => baseFieldInitializer({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? base_field_initializer_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BaseFieldInitializerTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BaseFieldInitializerTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function binaryExpression(
+export function binary_expression_(
   config: BinaryExpressionConfig,
 ) {
+  const fields = {
+    left: config.left,
+    operator: config.operator,
+    right: config.right,
+  };
   return {
     type: 'binary_expression' as const,
-    left: (v: Expression) => binaryExpression({ ...config, 'left': v }),
-    operator: (v: '&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%') => binaryExpression({ ...config, 'operator': { type: v, text: v } as const }),
-    right: (v: Expression) => binaryExpression({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    left(left?: Expression): any { return left !== undefined ? binary_expression_({ ...config, left: left }) : fields.left; },
+    operator(operator?: '&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%'): any { return operator !== undefined ? binary_expression_({ ...config, operator: operator }) : fields.operator; },
+    right(right?: Expression): any { return right !== undefined ? binary_expression_({ ...config, right: right }) : fields.right; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BinaryExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BinaryExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function block(
+export function block_(
   config?: BlockConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.label, ...(config?.children1 ?? []), config?.expression].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'block' as const,
-    children: (...v: (DeclarationStatement | Expression | ExpressionStatement | Label)[]) => block({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    label(label?: Label): any { return label !== undefined ? block_({ ...config, label }) : config?.label; },
+    children1(...children1: (DeclarationStatement | ExpressionStatement)[]): any { return children1.length ? block_({ ...config, children1 }) : config?.children1; },
+    expression(expression?: Expression): any { return expression !== undefined ? block_({ ...config, expression }) : config?.expression; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function blockComment(
+export function block_comment_(
   config?: BlockCommentConfig,
 ) {
+  const fields = {
+    doc: config?.doc,
+    inner: config?.inner,
+    outer: config?.outer,
+  };
   return {
     type: 'block_comment' as const,
-    outer: (v: OuterDocCommentMarker) => blockComment({ ...config, 'outer': v }),
-    inner: (v: InnerDocCommentMarker) => blockComment({ ...config, 'inner': v }),
-    doc: (v: DocComment) => blockComment({ ...config, 'doc': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    doc(doc?: DocComment): any { return doc !== undefined ? block_comment_({ ...config, doc: doc }) : fields.doc; },
+    inner(inner?: InnerDocCommentMarker): any { return inner !== undefined ? block_comment_({ ...config, inner: inner }) : fields.inner; },
+    outer(outer?: OuterDocCommentMarker): any { return outer !== undefined ? block_comment_({ ...config, outer: outer }) : fields.outer; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BlockCommentTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BlockCommentTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function boundedType(
+export function bounded_type_(
   config: BoundedTypeConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children0, config.children1].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'bounded_type' as const,
-    children: (...v: (Lifetime | Type | UseBounds)[]) => boundedType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    children0(children0?: Lifetime | Type | UseBounds): any { return children0 !== undefined ? bounded_type_({ ...config, children0 }) : config?.children0; },
+    children1(children1?: Lifetime | Type | UseBounds): any { return children1 !== undefined ? bounded_type_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BoundedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BoundedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function bracketedType(
+export function bracketed_type_(
   config: BracketedTypeConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'bracketed_type' as const,
-    children: (v: QualifiedType | Type) => bracketedType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: QualifiedType | Type): any { return child !== undefined ? bracketed_type_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BracketedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BracketedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function breakExpression(
+export function break_expression_(
   config?: BreakExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.label, config?.expression].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'break_expression' as const,
-    children: (...v: (Expression | Label)[]) => breakExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    label(label?: Label): any { return label !== undefined ? break_expression_({ ...config, label }) : config?.label; },
+    expression(expression?: Expression): any { return expression !== undefined ? break_expression_({ ...config, expression }) : config?.expression; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: BreakExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: BreakExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function callExpression(
+export function call_expression_(
   config: CallExpressionConfig,
 ) {
+  const fields = {
+    arguments: config.arguments,
+    function: config.function,
+  };
   return {
     type: 'call_expression' as const,
-    function: (v: ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | Block | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | Literal | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression) => callExpression({ ...config, 'function': v }),
-    arguments: (v: Arguments) => callExpression({ ...config, 'arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    arguments(arguments_?: Arguments): any { return arguments_ !== undefined ? call_expression_({ ...config, arguments: arguments_ }) : fields.arguments; },
+    function(function_?: ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | Block | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | Literal | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression): any { return function_ !== undefined ? call_expression_({ ...config, function: function_ }) : fields.function; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: CallExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: CallExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function capturedPattern(
+export function captured_pattern_(
   config: CapturedPatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.identifier, config.pattern].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'captured_pattern' as const,
-    children: (...v: (Pattern)[]) => capturedPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    identifier(identifier?: Identifier): any { return identifier !== undefined ? captured_pattern_({ ...config, identifier }) : config?.identifier; },
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? captured_pattern_({ ...config, pattern }) : config?.pattern; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: CapturedPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: CapturedPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function closureExpression(
+export function closure_expression_(
   config: ClosureExpressionConfig,
 ) {
+  const fields = {
+    body: config.body,
+    parameters: config.parameters,
+    return_type: config.returnType,
+  };
   return {
     type: 'closure_expression' as const,
-    parameters: (v: ClosureParameters) => closureExpression({ ...config, 'parameters': v }),
-    returnType: (v: Type) => closureExpression({ ...config, 'return_type': v }),
-    body: (v: Expression) => closureExpression({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    body(body?: Block | Expression): any { return body !== undefined ? closure_expression_({ ...config, body: body }) : fields.body; },
+    parameters(parameters?: ClosureParameters): any { return parameters !== undefined ? closure_expression_({ ...config, parameters: parameters }) : fields.parameters; },
+    returnType(returnType?: Type): any { return returnType !== undefined ? closure_expression_({ ...config, returnType: returnType }) : fields.return_type; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ClosureExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ClosureExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function closureParameters(
+export function closure_parameters_(
   config?: ClosureParametersConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children0, ...(config?.children1 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'closure_parameters' as const,
-    children: (...v: (Parameter | Pattern)[]) => closureParameters({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    children0(children0?: Parameter | Pattern): any { return children0 !== undefined ? closure_parameters_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (Parameter | Pattern)[]): any { return children1.length ? closure_parameters_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ClosureParametersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ClosureParametersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function compoundAssignmentExpr(
+export function compound_assignment_expr_(
   config: CompoundAssignmentExprConfig,
 ) {
+  const fields = {
+    left: config.left,
+    operator: config.operator,
+    right: config.right,
+  };
   return {
     type: 'compound_assignment_expr' as const,
-    left: (v: Expression) => compoundAssignmentExpr({ ...config, 'left': v }),
-    operator: (v: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=') => compoundAssignmentExpr({ ...config, 'operator': { type: v, text: v } as const }),
-    right: (v: Expression) => compoundAssignmentExpr({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    left(left?: Expression): any { return left !== undefined ? compound_assignment_expr_({ ...config, left: left }) : fields.left; },
+    operator(operator?: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>='): any { return operator !== undefined ? compound_assignment_expr_({ ...config, operator: operator }) : fields.operator; },
+    right(right?: Expression): any { return right !== undefined ? compound_assignment_expr_({ ...config, right: right }) : fields.right; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: CompoundAssignmentExprTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: CompoundAssignmentExprTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function constBlock(
+export function const_block_(
   config: ConstBlockConfig,
 ) {
+  const fields = {
+    body: config.body,
+  };
   return {
     type: 'const_block' as const,
-    body: (v: Block) => constBlock({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    body(body?: Block): any { return body !== undefined ? const_block_({ ...config, body: body }) : fields.body; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ConstBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ConstBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function constItem(
+export function const_item_(
   config: ConstItemConfig,
 ) {
+  const fields = {
+    name: config.name,
+    type: config.type,
+    value: config.value,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'const_item' as const,
-    name: (v: Identifier) => constItem({ ...config, 'name': v }),
-    typeField: (v: Type) => constItem({ ...config, 'type': v }),
-    value: (v: Expression) => constItem({ ...config, 'value': v }),
-    children: (v: VisibilityModifier) => constItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    name(name?: Identifier): any { return name !== undefined ? const_item_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: Type): any { return type_ !== undefined ? const_item_({ ...config, type: type_ }) : fields.type; },
+    value(value?: Expression): any { return value !== undefined ? const_item_({ ...config, value: value }) : fields.value; },
+    child(child?: VisibilityModifier): any { return child !== undefined ? const_item_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ConstItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ConstItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function constParameter(
+export function const_parameter_(
   config: ConstParameterConfig,
 ) {
+  const fields = {
+    name: config.name,
+    type: config.type,
+    value: config.value,
+  };
   return {
     type: 'const_parameter' as const,
-    name: (v: Identifier) => constParameter({ ...config, 'name': v }),
-    typeField: (v: Type) => constParameter({ ...config, 'type': v }),
-    value: (v: Block | Identifier | LiteralPattern) => constParameter({ ...config, 'value': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    name(name?: Identifier): any { return name !== undefined ? const_parameter_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: Type): any { return type_ !== undefined ? const_parameter_({ ...config, type: type_ }) : fields.type; },
+    value(value?: Block | Identifier | Literal | NegativeLiteral): any { return value !== undefined ? const_parameter_({ ...config, value: value }) : fields.value; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ConstParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ConstParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function continueExpression(
+export function continue_expression_(
   config?: ContinueExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'continue_expression' as const,
-    children: (v: Label) => continueExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Label): any { return child !== undefined ? continue_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ContinueExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ContinueExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function declarationList(
+export function declaration_list_(
   config?: DeclarationListConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'declaration_list' as const,
-    children: (...v: (DeclarationStatement)[]) => declarationList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (DeclarationStatement)[]): any { return declaration_list_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: DeclarationListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: DeclarationListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function dynamicType(
+export function dynamic_type_(
   config: DynamicTypeConfig,
 ) {
+  const fields = {
+    trait: config.trait,
+  };
   return {
     type: 'dynamic_type' as const,
-    trait: (v: FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier) => dynamicType({ ...config, 'trait': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    trait(trait?: FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier): any { return trait !== undefined ? dynamic_type_({ ...config, trait: trait }) : fields.trait; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: DynamicTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: DynamicTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function elseClause(
+export function else_clause_(
   config: ElseClauseConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'else_clause' as const,
-    children: (v: Block | IfExpression) => elseClause({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Block | IfExpression): any { return child !== undefined ? else_clause_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ElseClauseTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ElseClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function enumItem(
+export function enum_item_(
   config: EnumItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+    name: config.name,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.visibilityModifier, config.whereClause].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'enum_item' as const,
-    name: (v: TypeIdentifier) => enumItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => enumItem({ ...config, 'type_parameters': v }),
-    body: (v: EnumVariantList) => enumItem({ ...config, 'body': v }),
-    children: (...v: (VisibilityModifier | WhereClause)[]) => enumItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: EnumVariantList): any { return body !== undefined ? enum_item_({ ...config, body: body }) : fields.body; },
+    name(name?: TypeIdentifier): any { return name !== undefined ? enum_item_({ ...config, name: name }) : fields.name; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? enum_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? enum_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    whereClause(whereClause?: WhereClause): any { return whereClause !== undefined ? enum_item_({ ...config, whereClause }) : config?.whereClause; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: EnumItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: EnumItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function enumVariant(
+export function enum_variant_(
   config: EnumVariantConfig,
 ) {
+  const fields = {
+    body: config.body,
+    name: config.name,
+    value: config.value,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'enum_variant' as const,
-    name: (v: Identifier) => enumVariant({ ...config, 'name': v }),
-    body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => enumVariant({ ...config, 'body': v }),
-    value: (v: Expression) => enumVariant({ ...config, 'value': v }),
-    children: (v: VisibilityModifier) => enumVariant({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: FieldDeclarationList | OrderedFieldDeclarationList): any { return body !== undefined ? enum_variant_({ ...config, body: body }) : fields.body; },
+    name(name?: Identifier): any { return name !== undefined ? enum_variant_({ ...config, name: name }) : fields.name; },
+    value(value?: Expression): any { return value !== undefined ? enum_variant_({ ...config, value: value }) : fields.value; },
+    child(child?: VisibilityModifier): any { return child !== undefined ? enum_variant_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: EnumVariantTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: EnumVariantTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function enumVariantList(
+export function enum_variant_list_(
   config?: EnumVariantListConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.attributeItem ?? []), config?.enumVariant, ...(config?.children2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'enum_variant_list' as const,
-    children: (...v: (AttributeItem | EnumVariant)[]) => enumVariantList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? enum_variant_list_({ ...config, attributeItem }) : config?.attributeItem; },
+    enumVariant(enumVariant?: EnumVariant): any { return enumVariant !== undefined ? enum_variant_list_({ ...config, enumVariant }) : config?.enumVariant; },
+    children2(...children2: (AttributeItem | EnumVariant)[]): any { return children2.length ? enum_variant_list_({ ...config, children2 }) : config?.children2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: EnumVariantListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: EnumVariantListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function expressionStatement(
+export function expression_statement_(
   config: ExpressionStatementConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'expression_statement' as const,
-    children: (v: Expression) => expressionStatement({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? expression_statement_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ExpressionStatementTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ExpressionStatementTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function externCrateDeclaration(
+export function extern_crate_declaration_(
   config: ExternCrateDeclarationConfig,
 ) {
+  const fields = {
+    alias: config.alias,
+    name: config.name,
+  };
+  const children = [config.visibilityModifier, config.crate].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'extern_crate_declaration' as const,
-    name: (v: Identifier) => externCrateDeclaration({ ...config, 'name': v }),
-    alias: (v: Identifier) => externCrateDeclaration({ ...config, 'alias': v }),
-    children: (...v: (Crate | VisibilityModifier)[]) => externCrateDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    alias(alias?: Identifier): any { return alias !== undefined ? extern_crate_declaration_({ ...config, alias: alias }) : fields.alias; },
+    name(name?: Identifier): any { return name !== undefined ? extern_crate_declaration_({ ...config, name: name }) : fields.name; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? extern_crate_declaration_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    crate(crate?: Crate): any { return crate !== undefined ? extern_crate_declaration_({ ...config, crate }) : config?.crate; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ExternCrateDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ExternCrateDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function externModifier(
+export function extern_modifier_(
   config?: ExternModifierConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'extern_modifier' as const,
-    children: (v: StringLiteral) => externModifier({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: StringLiteral): any { return child !== undefined ? extern_modifier_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ExternModifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ExternModifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function fieldDeclaration(
+export function field_declaration_(
   config: FieldDeclarationConfig,
 ) {
+  const fields = {
+    name: config.name,
+    type: config.type,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'field_declaration' as const,
-    name: (v: FieldIdentifier) => fieldDeclaration({ ...config, 'name': v }),
-    typeField: (v: Type) => fieldDeclaration({ ...config, 'type': v }),
-    children: (v: VisibilityModifier) => fieldDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    name(name?: FieldIdentifier): any { return name !== undefined ? field_declaration_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: Type): any { return type_ !== undefined ? field_declaration_({ ...config, type: type_ }) : fields.type; },
+    child(child?: VisibilityModifier): any { return child !== undefined ? field_declaration_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function fieldDeclarationList(
+export function field_declaration_list_(
   config?: FieldDeclarationListConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.attributeItem ?? []), config?.fieldDeclaration, ...(config?.children2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'field_declaration_list' as const,
-    children: (...v: (AttributeItem | FieldDeclaration)[]) => fieldDeclarationList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? field_declaration_list_({ ...config, attributeItem }) : config?.attributeItem; },
+    fieldDeclaration(fieldDeclaration?: FieldDeclaration): any { return fieldDeclaration !== undefined ? field_declaration_list_({ ...config, fieldDeclaration }) : config?.fieldDeclaration; },
+    children2(...children2: (AttributeItem | FieldDeclaration)[]): any { return children2.length ? field_declaration_list_({ ...config, children2 }) : config?.children2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldDeclarationListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldDeclarationListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function fieldExpression(
+export function field_expression_(
   config: FieldExpressionConfig,
 ) {
+  const fields = {
+    field: config.field,
+    value: config.value,
+  };
   return {
     type: 'field_expression' as const,
-    value: (v: Expression) => fieldExpression({ ...config, 'value': v }),
-    field: (v: FieldIdentifier | IntegerLiteral) => fieldExpression({ ...config, 'field': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    field(field?: FieldIdentifier | IntegerLiteral): any { return field !== undefined ? field_expression_({ ...config, field: field }) : fields.field; },
+    value(value?: Expression): any { return value !== undefined ? field_expression_({ ...config, value: value }) : fields.value; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function fieldInitializer(
+export function field_initializer_(
   config: FieldInitializerConfig,
 ) {
+  const fields = {
+    field: config.field,
+    value: config.value,
+  };
+  const children = [...(config.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'field_initializer' as const,
-    field: (v: FieldIdentifier | IntegerLiteral) => fieldInitializer({ ...config, 'field': v }),
-    value: (v: Expression) => fieldInitializer({ ...config, 'value': v }),
-    children: (...v: (AttributeItem)[]) => fieldInitializer({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    field(field?: FieldIdentifier | IntegerLiteral): any { return field !== undefined ? field_initializer_({ ...config, field: field }) : fields.field; },
+    value(value?: Expression): any { return value !== undefined ? field_initializer_({ ...config, value: value }) : fields.value; },
+    getChildren(): any { return children; },
+    setChildren(...children: (AttributeItem)[]): any { return field_initializer_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldInitializerTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldInitializerTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function fieldInitializerList(
+export function field_initializer_list_(
   config?: FieldInitializerListConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children0, ...(config?.children1 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'field_initializer_list' as const,
-    children: (...v: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]) => fieldInitializerList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    children0(children0?: BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer): any { return children0 !== undefined ? field_initializer_list_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]): any { return children1.length ? field_initializer_list_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldInitializerListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldInitializerListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function fieldPattern(
+export function field_pattern_(
   config: FieldPatternConfig,
 ) {
+  const fields = {
+    name: config.name,
+    pattern: config.pattern,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'field_pattern' as const,
-    name: (v: FieldIdentifier | ShorthandFieldIdentifier) => fieldPattern({ ...config, 'name': v }),
-    pattern: (v: Pattern) => fieldPattern({ ...config, 'pattern': v }),
-    children: (v: MutableSpecifier) => fieldPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    name(name?: FieldIdentifier | ShorthandFieldIdentifier): any { return name !== undefined ? field_pattern_({ ...config, name: name }) : fields.name; },
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? field_pattern_({ ...config, pattern: pattern }) : fields.pattern; },
+    child(child?: MutableSpecifier): any { return child !== undefined ? field_pattern_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FieldPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FieldPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function forExpression(
+export function for_expression_(
   config: ForExpressionConfig,
 ) {
+  const fields = {
+    body: config.body,
+    pattern: config.pattern,
+    value: config.value,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'for_expression' as const,
-    pattern: (v: Pattern) => forExpression({ ...config, 'pattern': v }),
-    value: (v: Expression) => forExpression({ ...config, 'value': v }),
-    body: (v: Block) => forExpression({ ...config, 'body': v }),
-    children: (v: Label) => forExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: Block): any { return body !== undefined ? for_expression_({ ...config, body: body }) : fields.body; },
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? for_expression_({ ...config, pattern: pattern }) : fields.pattern; },
+    value(value?: Expression): any { return value !== undefined ? for_expression_({ ...config, value: value }) : fields.value; },
+    child(child?: Label): any { return child !== undefined ? for_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ForExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ForExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function forLifetimes(
+export function for_lifetimes_(
   config: ForLifetimesConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.lifetime1, ...(config.lifetime2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'for_lifetimes' as const,
-    children: (...v: (Lifetime)[]) => forLifetimes({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    lifetime1(lifetime1?: Lifetime): any { return lifetime1 !== undefined ? for_lifetimes_({ ...config, lifetime1 }) : config?.lifetime1; },
+    lifetime2(...lifetime2: (Lifetime)[]): any { return lifetime2.length ? for_lifetimes_({ ...config, lifetime2 }) : config?.lifetime2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ForLifetimesTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ForLifetimesTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function foreignModItem(
+export function foreign_mod_item_(
   config: ForeignModItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+  };
+  const children = [config.visibilityModifier, config.externModifier].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'foreign_mod_item' as const,
-    body: (v: DeclarationList) => foreignModItem({ ...config, 'body': v }),
-    children: (...v: (ExternModifier | VisibilityModifier)[]) => foreignModItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: DeclarationList): any { return body !== undefined ? foreign_mod_item_({ ...config, body: body }) : fields.body; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? foreign_mod_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    externModifier(externModifier?: ExternModifier): any { return externModifier !== undefined ? foreign_mod_item_({ ...config, externModifier }) : config?.externModifier; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ForeignModItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ForeignModItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function functionItem(
+export function function_item_(
   config: FunctionItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+    name: config.name,
+    parameters: config.parameters,
+    return_type: config.returnType,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.visibilityModifier, config.functionModifiers, config.whereClause].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'function_item' as const,
-    name: (v: Identifier | Metavariable) => functionItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => functionItem({ ...config, 'type_parameters': v }),
-    parameters: (v: Parameters) => functionItem({ ...config, 'parameters': v }),
-    returnType: (v: Type) => functionItem({ ...config, 'return_type': v }),
-    body: (v: Block) => functionItem({ ...config, 'body': v }),
-    children: (...v: (FunctionModifiers | VisibilityModifier | WhereClause)[]) => functionItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: Block): any { return body !== undefined ? function_item_({ ...config, body: body }) : fields.body; },
+    name(name?: Identifier | Metavariable): any { return name !== undefined ? function_item_({ ...config, name: name }) : fields.name; },
+    parameters(parameters?: Parameters): any { return parameters !== undefined ? function_item_({ ...config, parameters: parameters }) : fields.parameters; },
+    returnType(returnType?: Type): any { return returnType !== undefined ? function_item_({ ...config, returnType: returnType }) : fields.return_type; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? function_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? function_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    functionModifiers(functionModifiers?: FunctionModifiers): any { return functionModifiers !== undefined ? function_item_({ ...config, functionModifiers }) : config?.functionModifiers; },
+    whereClause(whereClause?: WhereClause): any { return whereClause !== undefined ? function_item_({ ...config, whereClause }) : config?.whereClause; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function functionModifiers(
+export function function_modifiers_(
   config?: FunctionModifiersConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'function_modifiers' as const,
-    children: (...v: (ExternModifier)[]) => functionModifiers({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (ExternModifier)[]): any { return function_modifiers_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionModifiersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionModifiersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function functionSignatureItem(
+export function function_signature_item_(
   config: FunctionSignatureItemConfig,
 ) {
+  const fields = {
+    name: config.name,
+    parameters: config.parameters,
+    return_type: config.returnType,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.visibilityModifier, config.functionModifiers, config.whereClause].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'function_signature_item' as const,
-    name: (v: Identifier | Metavariable) => functionSignatureItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => functionSignatureItem({ ...config, 'type_parameters': v }),
-    parameters: (v: Parameters) => functionSignatureItem({ ...config, 'parameters': v }),
-    returnType: (v: Type) => functionSignatureItem({ ...config, 'return_type': v }),
-    children: (...v: (FunctionModifiers | VisibilityModifier | WhereClause)[]) => functionSignatureItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    name(name?: Identifier | Metavariable): any { return name !== undefined ? function_signature_item_({ ...config, name: name }) : fields.name; },
+    parameters(parameters?: Parameters): any { return parameters !== undefined ? function_signature_item_({ ...config, parameters: parameters }) : fields.parameters; },
+    returnType(returnType?: Type): any { return returnType !== undefined ? function_signature_item_({ ...config, returnType: returnType }) : fields.return_type; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? function_signature_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? function_signature_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    functionModifiers(functionModifiers?: FunctionModifiers): any { return functionModifiers !== undefined ? function_signature_item_({ ...config, functionModifiers }) : config?.functionModifiers; },
+    whereClause(whereClause?: WhereClause): any { return whereClause !== undefined ? function_signature_item_({ ...config, whereClause }) : config?.whereClause; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionSignatureItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionSignatureItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function functionType(
+export function function_type_(
   config: FunctionTypeConfig,
 ) {
+  const fields = {
+    parameters: config.parameters,
+    return_type: config.returnType,
+    trait: config.trait,
+  };
+  const children = [config.forLifetimes, config.functionModifiers].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'function_type' as const,
-    trait: (v: ScopedTypeIdentifier | TypeIdentifier) => functionType({ ...config, 'trait': v }),
-    parameters: (v: Parameters) => functionType({ ...config, 'parameters': v }),
-    returnType: (v: Type) => functionType({ ...config, 'return_type': v }),
-    children: (...v: (ForLifetimes | FunctionModifiers)[]) => functionType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    parameters(parameters?: Parameters): any { return parameters !== undefined ? function_type_({ ...config, parameters: parameters }) : fields.parameters; },
+    returnType(returnType?: Type): any { return returnType !== undefined ? function_type_({ ...config, returnType: returnType }) : fields.return_type; },
+    trait(trait?: ScopedTypeIdentifier | TypeIdentifier): any { return trait !== undefined ? function_type_({ ...config, trait: trait }) : fields.trait; },
+    forLifetimes(forLifetimes?: ForLifetimes): any { return forLifetimes !== undefined ? function_type_({ ...config, forLifetimes }) : config?.forLifetimes; },
+    functionModifiers(functionModifiers?: FunctionModifiers): any { return functionModifiers !== undefined ? function_type_({ ...config, functionModifiers }) : config?.functionModifiers; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: FunctionTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: FunctionTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function genBlock(
+export function gen_block_(
   config: GenBlockConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'gen_block' as const,
-    children: (v: Block) => genBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Block): any { return child !== undefined ? gen_block_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function genericFunction(
+export function generic_function_(
   config: GenericFunctionConfig,
 ) {
+  const fields = {
+    function: config.function,
+    type_arguments: config.typeArguments,
+  };
   return {
     type: 'generic_function' as const,
-    function: (v: FieldExpression | Identifier | ScopedIdentifier) => genericFunction({ ...config, 'function': v }),
-    typeArguments: (v: TypeArguments) => genericFunction({ ...config, 'type_arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    function(function_?: FieldExpression | Identifier | ScopedIdentifier): any { return function_ !== undefined ? generic_function_({ ...config, function: function_ }) : fields.function; },
+    typeArguments(typeArguments?: TypeArguments): any { return typeArguments !== undefined ? generic_function_({ ...config, typeArguments: typeArguments }) : fields.type_arguments; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericFunctionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericFunctionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function genericPattern(
+export function generic_pattern_(
   config: GenericPatternConfig,
 ) {
+  const fields = {
+    type_arguments: config.typeArguments,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'generic_pattern' as const,
-    typeArguments: (v: TypeArguments) => genericPattern({ ...config, 'type_arguments': v }),
-    children: (v: Identifier | ScopedIdentifier) => genericPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    typeArguments(typeArguments?: TypeArguments): any { return typeArguments !== undefined ? generic_pattern_({ ...config, typeArguments: typeArguments }) : fields.type_arguments; },
+    child(child?: Identifier | ScopedIdentifier): any { return child !== undefined ? generic_pattern_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function genericType(
+export function generic_type_(
   config: GenericTypeConfig,
 ) {
+  const fields = {
+    type: config.type,
+    type_arguments: config.typeArguments,
+  };
   return {
     type: 'generic_type' as const,
-    typeField: (v: Identifier | ScopedTypeIdentifier | TypeIdentifier) => genericType({ ...config, 'type': v }),
-    typeArguments: (v: TypeArguments) => genericType({ ...config, 'type_arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    typeField(type_?: Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier): any { return type_ !== undefined ? generic_type_({ ...config, type: type_ }) : fields.type; },
+    typeArguments(typeArguments?: TypeArguments): any { return typeArguments !== undefined ? generic_type_({ ...config, typeArguments: typeArguments }) : fields.type_arguments; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function genericTypeWithTurbofish(
+export function generic_type_with_turbofish_(
   config: GenericTypeWithTurbofishConfig,
 ) {
+  const fields = {
+    type: config.type,
+    type_arguments: config.typeArguments,
+  };
   return {
     type: 'generic_type_with_turbofish' as const,
-    typeField: (v: ScopedIdentifier | TypeIdentifier) => genericTypeWithTurbofish({ ...config, 'type': v }),
-    typeArguments: (v: TypeArguments) => genericTypeWithTurbofish({ ...config, 'type_arguments': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    typeField(type_?: ScopedIdentifier | TypeIdentifier): any { return type_ !== undefined ? generic_type_with_turbofish_({ ...config, type: type_ }) : fields.type; },
+    typeArguments(typeArguments?: TypeArguments): any { return typeArguments !== undefined ? generic_type_with_turbofish_({ ...config, typeArguments: typeArguments }) : fields.type_arguments; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: GenericTypeWithTurbofishTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: GenericTypeWithTurbofishTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function higherRankedTraitBound(
+export function higher_ranked_trait_bound_(
   config: HigherRankedTraitBoundConfig,
 ) {
+  const fields = {
+    type: config.type,
+    type_parameters: config.typeParameters,
+  };
   return {
     type: 'higher_ranked_trait_bound' as const,
-    typeParameters: (v: TypeParameters) => higherRankedTraitBound({ ...config, 'type_parameters': v }),
-    typeField: (v: Type) => higherRankedTraitBound({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    typeField(type_?: Type): any { return type_ !== undefined ? higher_ranked_trait_bound_({ ...config, type: type_ }) : fields.type; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? higher_ranked_trait_bound_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: HigherRankedTraitBoundTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: HigherRankedTraitBoundTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function ifExpression(
+export function if_expression_(
   config: IfExpressionConfig,
 ) {
+  const fields = {
+    alternative: config.alternative,
+    condition: config.condition,
+    consequence: config.consequence,
+  };
   return {
     type: 'if_expression' as const,
-    condition: (v: Expression | LetChain | LetCondition) => ifExpression({ ...config, 'condition': v }),
-    consequence: (v: Block) => ifExpression({ ...config, 'consequence': v }),
-    alternative: (v: ElseClause) => ifExpression({ ...config, 'alternative': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    alternative(alternative?: ElseClause): any { return alternative !== undefined ? if_expression_({ ...config, alternative: alternative }) : fields.alternative; },
+    condition(condition?: Expression | LetChain | LetCondition): any { return condition !== undefined ? if_expression_({ ...config, condition: condition }) : fields.condition; },
+    consequence(consequence?: Block): any { return consequence !== undefined ? if_expression_({ ...config, consequence: consequence }) : fields.consequence; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: IfExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: IfExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function implItem(
+export function impl_item_(
   config: ImplItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+    trait: config.trait,
+    type: config.type,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'impl_item' as const,
-    typeParameters: (v: TypeParameters) => implItem({ ...config, 'type_parameters': v }),
-    trait: (v: GenericType | ScopedTypeIdentifier | TypeIdentifier) => implItem({ ...config, 'trait': v }),
-    typeField: (v: Type) => implItem({ ...config, 'type': v }),
-    body: (v: DeclarationList) => implItem({ ...config, 'body': v }),
-    children: (v: WhereClause) => implItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: DeclarationList): any { return body !== undefined ? impl_item_({ ...config, body: body }) : fields.body; },
+    trait(trait?: GenericType | ScopedTypeIdentifier | TypeIdentifier): any { return trait !== undefined ? impl_item_({ ...config, trait: trait }) : fields.trait; },
+    typeField(type_?: Type): any { return type_ !== undefined ? impl_item_({ ...config, type: type_ }) : fields.type; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? impl_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    child(child?: WhereClause): any { return child !== undefined ? impl_item_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ImplItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ImplItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function indexExpression(
+export function index_expression_(
   config: IndexExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'index_expression' as const,
-    children: (...v: (Expression)[]) => indexExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Expression)[]): any { return index_expression_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: IndexExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: IndexExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function innerAttributeItem(
+export function inner_attribute_item_(
   config: InnerAttributeItemConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'inner_attribute_item' as const,
-    children: (v: Attribute) => innerAttributeItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Attribute): any { return child !== undefined ? inner_attribute_item_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: InnerAttributeItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: InnerAttributeItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function label(
+export function label_(
   config: LabelConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'label' as const,
-    children: (v: Identifier) => label({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Identifier): any { return child !== undefined ? label_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LabelTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LabelTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function letChain(
+export function let_chain_(
   config: LetChainConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'let_chain' as const,
-    children: (...v: (Expression | LetCondition)[]) => letChain({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Expression | LetCondition)[]): any { return let_chain_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LetChainTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LetChainTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function letCondition(
+export function let_condition_(
   config: LetConditionConfig,
 ) {
+  const fields = {
+    pattern: config.pattern,
+    value: config.value,
+  };
   return {
     type: 'let_condition' as const,
-    pattern: (v: Pattern) => letCondition({ ...config, 'pattern': v }),
-    value: (v: Expression) => letCondition({ ...config, 'value': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? let_condition_({ ...config, pattern: pattern }) : fields.pattern; },
+    value(value?: Expression): any { return value !== undefined ? let_condition_({ ...config, value: value }) : fields.value; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LetConditionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LetConditionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function letDeclaration(
+export function let_declaration_(
   config: LetDeclarationConfig,
 ) {
+  const fields = {
+    alternative: config.alternative,
+    pattern: config.pattern,
+    type: config.type,
+    value: config.value,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'let_declaration' as const,
-    pattern: (v: Pattern) => letDeclaration({ ...config, 'pattern': v }),
-    typeField: (v: Type) => letDeclaration({ ...config, 'type': v }),
-    value: (v: Expression) => letDeclaration({ ...config, 'value': v }),
-    alternative: (v: Block) => letDeclaration({ ...config, 'alternative': v }),
-    children: (v: MutableSpecifier) => letDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    alternative(alternative?: Block): any { return alternative !== undefined ? let_declaration_({ ...config, alternative: alternative }) : fields.alternative; },
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? let_declaration_({ ...config, pattern: pattern }) : fields.pattern; },
+    typeField(type_?: Type): any { return type_ !== undefined ? let_declaration_({ ...config, type: type_ }) : fields.type; },
+    value(value?: Expression): any { return value !== undefined ? let_declaration_({ ...config, value: value }) : fields.value; },
+    child(child?: MutableSpecifier): any { return child !== undefined ? let_declaration_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LetDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LetDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function lifetime(
+export function lifetime_(
   config: LifetimeConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'lifetime' as const,
-    children: (v: Identifier) => lifetime({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Identifier): any { return child !== undefined ? lifetime_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LifetimeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LifetimeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function lifetimeParameter(
+export function lifetime_parameter_(
   config: LifetimeParameterConfig,
 ) {
+  const fields = {
+    bounds: config.bounds,
+    name: config.name,
+  };
   return {
     type: 'lifetime_parameter' as const,
-    name: (v: Lifetime) => lifetimeParameter({ ...config, 'name': v }),
-    bounds: (v: TraitBounds) => lifetimeParameter({ ...config, 'bounds': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    bounds(bounds?: TraitBounds): any { return bounds !== undefined ? lifetime_parameter_({ ...config, bounds: bounds }) : fields.bounds; },
+    name(name?: Lifetime): any { return name !== undefined ? lifetime_parameter_({ ...config, name: name }) : fields.name; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LifetimeParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LifetimeParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function lineComment(
+export function line_comment_(
   config?: LineCommentConfig,
 ) {
+  const fields = {
+    doc: config?.doc,
+    inner: config?.inner,
+    outer: config?.outer,
+  };
   return {
     type: 'line_comment' as const,
-    outer: (v: OuterDocCommentMarker) => lineComment({ ...config, 'outer': v }),
-    inner: (v: InnerDocCommentMarker) => lineComment({ ...config, 'inner': v }),
-    doc: (v: DocComment) => lineComment({ ...config, 'doc': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    doc(doc?: DocComment): any { return doc !== undefined ? line_comment_({ ...config, doc: doc }) : fields.doc; },
+    inner(inner?: InnerDocCommentMarker): any { return inner !== undefined ? line_comment_({ ...config, inner: inner }) : fields.inner; },
+    outer(outer?: OuterDocCommentMarker): any { return outer !== undefined ? line_comment_({ ...config, outer: outer }) : fields.outer; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LineCommentTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LineCommentTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function loopExpression(
+export function loop_expression_(
   config: LoopExpressionConfig,
 ) {
+  const fields = {
+    body: config.body,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'loop_expression' as const,
-    body: (v: Block) => loopExpression({ ...config, 'body': v }),
-    children: (v: Label) => loopExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: Block): any { return body !== undefined ? loop_expression_({ ...config, body: body }) : fields.body; },
+    child(child?: Label): any { return child !== undefined ? loop_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: LoopExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: LoopExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function macroDefinition(
+export function macro_definition_(
   config: MacroDefinitionConfig,
 ) {
+  const fields = {
+    name: config.name,
+  };
+  const children = [...(config.macroRule1 ?? []), config.macroRule2].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'macro_definition' as const,
-    name: (v: Identifier) => macroDefinition({ ...config, 'name': v }),
-    children: (...v: (MacroRule)[]) => macroDefinition({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    name(name?: Identifier): any { return name !== undefined ? macro_definition_({ ...config, name: name }) : fields.name; },
+    macroRule1(...macroRule1: (MacroRule)[]): any { return macroRule1.length ? macro_definition_({ ...config, macroRule1 }) : config?.macroRule1; },
+    macroRule2(macroRule2?: MacroRule): any { return macroRule2 !== undefined ? macro_definition_({ ...config, macroRule2 }) : config?.macroRule2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MacroDefinitionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MacroDefinitionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function macroInvocation(
+export function macro_invocation_(
   config: MacroInvocationConfig,
 ) {
+  const fields = {
+    macro: config.macro,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'macro_invocation' as const,
-    macro: (v: Identifier | ScopedIdentifier) => macroInvocation({ ...config, 'macro': v }),
-    children: (v: TokenTree) => macroInvocation({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    macro(macro?: Identifier | ScopedIdentifier): any { return macro !== undefined ? macro_invocation_({ ...config, macro: macro }) : fields.macro; },
+    child(child?: TokenTree): any { return child !== undefined ? macro_invocation_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MacroInvocationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MacroInvocationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function macroRule(
+export function macro_rule_(
   config: MacroRuleConfig,
 ) {
+  const fields = {
+    left: config.left,
+    right: config.right,
+  };
   return {
     type: 'macro_rule' as const,
-    left: (v: TokenTreePattern) => macroRule({ ...config, 'left': v }),
-    right: (v: TokenTree) => macroRule({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    left(left?: TokenTreePattern): any { return left !== undefined ? macro_rule_({ ...config, left: left }) : fields.left; },
+    right(right?: TokenTree): any { return right !== undefined ? macro_rule_({ ...config, right: right }) : fields.right; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MacroRuleTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MacroRuleTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function matchArm(
+export function match_arm_(
   config: MatchArmConfig,
 ) {
+  const fields = {
+    pattern: config.pattern,
+    value: config.value,
+  };
+  const children = [...(config.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'match_arm' as const,
-    pattern: (v: MatchPattern) => matchArm({ ...config, 'pattern': v }),
-    value: (v: Expression) => matchArm({ ...config, 'value': v }),
-    children: (...v: (AttributeItem | InnerAttributeItem)[]) => matchArm({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    pattern(pattern?: MatchPattern): any { return pattern !== undefined ? match_arm_({ ...config, pattern: pattern }) : fields.pattern; },
+    value(value?: Expression): any { return value !== undefined ? match_arm_({ ...config, value: value }) : fields.value; },
+    getChildren(): any { return children; },
+    setChildren(...children: (AttributeItem | InnerAttributeItem)[]): any { return match_arm_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchArmTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchArmTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function matchBlock(
+export function match_block_(
   config?: MatchBlockConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.matchArm1 ?? []), config?.matchArm2].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'match_block' as const,
-    children: (...v: (MatchArm)[]) => matchBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    matchArm1(...matchArm1: (MatchArm)[]): any { return matchArm1.length ? match_block_({ ...config, matchArm1 }) : config?.matchArm1; },
+    matchArm2(matchArm2?: MatchArm): any { return matchArm2 !== undefined ? match_block_({ ...config, matchArm2 }) : config?.matchArm2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function matchExpression(
+export function match_expression_(
   config: MatchExpressionConfig,
 ) {
+  const fields = {
+    body: config.body,
+    value: config.value,
+  };
   return {
     type: 'match_expression' as const,
-    value: (v: Expression) => matchExpression({ ...config, 'value': v }),
-    body: (v: MatchBlock) => matchExpression({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    body(body?: MatchBlock): any { return body !== undefined ? match_expression_({ ...config, body: body }) : fields.body; },
+    value(value?: Expression): any { return value !== undefined ? match_expression_({ ...config, value: value }) : fields.value; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function matchPattern(
+export function match_pattern_(
   config: MatchPatternConfig,
 ) {
+  const fields = {
+    condition: config.condition,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'match_pattern' as const,
-    condition: (v: Expression | LetChain | LetCondition) => matchPattern({ ...config, 'condition': v }),
-    children: (v: Pattern) => matchPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    condition(condition?: Expression | LetChain | LetCondition): any { return condition !== undefined ? match_pattern_({ ...config, condition: condition }) : fields.condition; },
+    child(child?: Pattern): any { return child !== undefined ? match_pattern_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MatchPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MatchPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function modItem(
+export function mod_item_(
   config: ModItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+    name: config.name,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'mod_item' as const,
-    name: (v: Identifier) => modItem({ ...config, 'name': v }),
-    body: (v: DeclarationList) => modItem({ ...config, 'body': v }),
-    children: (v: VisibilityModifier) => modItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: DeclarationList): any { return body !== undefined ? mod_item_({ ...config, body: body }) : fields.body; },
+    name(name?: Identifier): any { return name !== undefined ? mod_item_({ ...config, name: name }) : fields.name; },
+    child(child?: VisibilityModifier): any { return child !== undefined ? mod_item_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ModItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ModItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function mutPattern(
+export function mut_pattern_(
   config: MutPatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.mutableSpecifier, config.pattern].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'mut_pattern' as const,
-    children: (...v: (MutableSpecifier | Pattern)[]) => mutPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier): any { return mutableSpecifier !== undefined ? mut_pattern_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? mut_pattern_({ ...config, pattern }) : config?.pattern; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: MutPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: MutPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function negativeLiteral(
+export function negative_literal_(
   config: NegativeLiteralConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'negative_literal' as const,
-    children: (v: FloatLiteral | IntegerLiteral) => negativeLiteral({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: FloatLiteral | IntegerLiteral): any { return child !== undefined ? negative_literal_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: NegativeLiteralTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: NegativeLiteralTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function orPattern(
+export function or_pattern_(
   config: OrPatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'or_pattern' as const,
-    children: (...v: (Pattern)[]) => orPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Pattern)[]): any { return or_pattern_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: OrPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: OrPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function orderedFieldDeclarationList(
+export function ordered_field_declaration_list_(
   config?: OrderedFieldDeclarationListConfig,
 ) {
+  const fields = {
+    type: config?.type,
+  };
+  const children = [...(config?.attributeItem ?? []), config?.visibilityModifier, ...(config?.children2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'ordered_field_declaration_list' as const,
-    typeField: (...v: (Type)[]) => orderedFieldDeclarationList({ ...config, 'type': v }),
-    children: (...v: (AttributeItem | VisibilityModifier)[]) => orderedFieldDeclarationList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    typeField(...type_: (Type)[]): any { return type_.length ? ordered_field_declaration_list_({ ...config, type: type_ }) : fields.type; },
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? ordered_field_declaration_list_({ ...config, attributeItem }) : config?.attributeItem; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? ordered_field_declaration_list_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    children2(...children2: (AttributeItem | VisibilityModifier)[]): any { return children2.length ? ordered_field_declaration_list_({ ...config, children2 }) : config?.children2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: OrderedFieldDeclarationListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: OrderedFieldDeclarationListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function parameter(
+export function parameter_(
   config: ParameterConfig,
 ) {
+  const fields = {
+    pattern: config.pattern,
+    type: config.type,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'parameter' as const,
-    pattern: (v: Pattern | Self) => parameter({ ...config, 'pattern': v }),
-    typeField: (v: Type) => parameter({ ...config, 'type': v }),
-    children: (v: MutableSpecifier) => parameter({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    pattern(pattern?: Pattern | Self): any { return pattern !== undefined ? parameter_({ ...config, pattern: pattern }) : fields.pattern; },
+    typeField(type_?: Type): any { return type_ !== undefined ? parameter_({ ...config, type: type_ }) : fields.type; },
+    child(child?: MutableSpecifier): any { return child !== undefined ? parameter_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function parameters(
+export function parameters_(
   config?: ParametersConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.attributeItem, config?.children1, ...(config?.children2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'parameters' as const,
-    children: (...v: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]) => parameters({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    attributeItem(attributeItem?: AttributeItem): any { return attributeItem !== undefined ? parameters_({ ...config, attributeItem }) : config?.attributeItem; },
+    children1(children1?: Parameter | SelfParameter | Type | VariadicParameter): any { return children1 !== undefined ? parameters_({ ...config, children1 }) : config?.children1; },
+    children2(...children2: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]): any { return children2.length ? parameters_({ ...config, children2 }) : config?.children2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ParametersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ParametersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function parenthesizedExpression(
+export function parenthesized_expression_(
   config: ParenthesizedExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'parenthesized_expression' as const,
-    children: (v: Expression) => parenthesizedExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? parenthesized_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ParenthesizedExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ParenthesizedExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function pointerType(
+export function pointer_type_(
   config: PointerTypeConfig,
 ) {
+  const fields = {
+    type: config.type,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'pointer_type' as const,
-    typeField: (v: Type) => pointerType({ ...config, 'type': v }),
-    children: (v: MutableSpecifier) => pointerType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    typeField(type_?: Type): any { return type_ !== undefined ? pointer_type_({ ...config, type: type_ }) : fields.type; },
+    child(child?: MutableSpecifier): any { return child !== undefined ? pointer_type_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: PointerTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: PointerTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function qualifiedType(
+export function qualified_type_(
   config: QualifiedTypeConfig,
 ) {
+  const fields = {
+    alias: config.alias,
+    type: config.type,
+  };
   return {
     type: 'qualified_type' as const,
-    typeField: (v: Type) => qualifiedType({ ...config, 'type': v }),
-    alias: (v: Type) => qualifiedType({ ...config, 'alias': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    alias(alias?: Type): any { return alias !== undefined ? qualified_type_({ ...config, alias: alias }) : fields.alias; },
+    typeField(type_?: Type): any { return type_ !== undefined ? qualified_type_({ ...config, type: type_ }) : fields.type; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: QualifiedTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: QualifiedTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function rangeExpression(
+export function range_expression_(
   config?: RangeExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'range_expression' as const,
-    children: (...v: (Expression)[]) => rangeExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Expression)[]): any { return range_expression_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RangeExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RangeExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function rangePattern(
+export function range_pattern_(
   config?: RangePatternConfig,
 ) {
+  const fields = {
+    left: config?.left,
+    right: config?.right,
+  };
   return {
     type: 'range_pattern' as const,
-    left: (v: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super) => rangePattern({ ...config, 'left': v }),
-    right: (v: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super) => rangePattern({ ...config, 'right': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    left(left?: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super): any { return left !== undefined ? range_pattern_({ ...config, left: left }) : fields.left; },
+    right(right?: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super): any { return right !== undefined ? range_pattern_({ ...config, right: right }) : fields.right; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RangePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RangePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function rawStringLiteral(
+export function raw_string_literal_(
   config: RawStringLiteralConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'raw_string_literal' as const,
-    children: (v: StringContent) => rawStringLiteral({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: StringContent): any { return child !== undefined ? raw_string_literal_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RawStringLiteralTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RawStringLiteralTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function refPattern(
+export function ref_pattern_(
   config: RefPatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'ref_pattern' as const,
-    children: (v: Pattern) => refPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Pattern): any { return child !== undefined ? ref_pattern_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RefPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RefPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function referenceExpression(
+export function reference_expression_(
   config: ReferenceExpressionConfig,
 ) {
+  const fields = {
+    value: config.value,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'reference_expression' as const,
-    value: (v: Expression) => referenceExpression({ ...config, 'value': v }),
-    children: (v: MutableSpecifier) => referenceExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    value(value?: Expression): any { return value !== undefined ? reference_expression_({ ...config, value: value }) : fields.value; },
+    child(child?: MutableSpecifier): any { return child !== undefined ? reference_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReferenceExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReferenceExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function referencePattern(
+export function reference_pattern_(
   config: ReferencePatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.mutableSpecifier, config.pattern].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'reference_pattern' as const,
-    children: (...v: (MutableSpecifier | Pattern)[]) => referencePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier): any { return mutableSpecifier !== undefined ? reference_pattern_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? reference_pattern_({ ...config, pattern }) : config?.pattern; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReferencePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReferencePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function referenceType(
+export function reference_type_(
   config: ReferenceTypeConfig,
 ) {
+  const fields = {
+    type: config.type,
+  };
+  const children = [config.lifetime, config.mutableSpecifier].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'reference_type' as const,
-    typeField: (v: Type) => referenceType({ ...config, 'type': v }),
-    children: (...v: (Lifetime | MutableSpecifier)[]) => referenceType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    typeField(type_?: Type): any { return type_ !== undefined ? reference_type_({ ...config, type: type_ }) : fields.type; },
+    lifetime(lifetime?: Lifetime): any { return lifetime !== undefined ? reference_type_({ ...config, lifetime }) : config?.lifetime; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier): any { return mutableSpecifier !== undefined ? reference_type_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReferenceTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReferenceTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function removedTraitBound(
+export function removed_trait_bound_(
   config: RemovedTraitBoundConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'removed_trait_bound' as const,
-    children: (v: Type) => removedTraitBound({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Type): any { return child !== undefined ? removed_trait_bound_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: RemovedTraitBoundTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: RemovedTraitBoundTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function returnExpression(
+export function return_expression_(
   config?: ReturnExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'return_expression' as const,
-    children: (v: Expression) => returnExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? return_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ReturnExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ReturnExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function scopedIdentifier(
+export function scoped_identifier_(
   config: ScopedIdentifierConfig,
 ) {
+  const fields = {
+    name: config.name,
+    path: config.path,
+  };
   return {
     type: 'scoped_identifier' as const,
-    path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedIdentifier({ ...config, 'path': v }),
-    name: (v: Identifier | Super) => scopedIdentifier({ ...config, 'name': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    name(name?: Identifier | Super): any { return name !== undefined ? scoped_identifier_({ ...config, name: name }) : fields.name; },
+    path(path?: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super): any { return path !== undefined ? scoped_identifier_({ ...config, path: path }) : fields.path; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ScopedIdentifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ScopedIdentifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function scopedTypeIdentifier(
+export function scoped_type_identifier_(
   config: ScopedTypeIdentifierConfig,
 ) {
+  const fields = {
+    name: config.name,
+    path: config.path,
+  };
   return {
     type: 'scoped_type_identifier' as const,
-    path: (v: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedTypeIdentifier({ ...config, 'path': v }),
-    name: (v: TypeIdentifier) => scopedTypeIdentifier({ ...config, 'name': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    name(name?: TypeIdentifier): any { return name !== undefined ? scoped_type_identifier_({ ...config, name: name }) : fields.name; },
+    path(path?: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super): any { return path !== undefined ? scoped_type_identifier_({ ...config, path: path }) : fields.path; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ScopedTypeIdentifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ScopedTypeIdentifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function scopedUseList(
+export function scoped_use_list_(
   config: ScopedUseListConfig,
 ) {
+  const fields = {
+    list: config.list,
+    path: config.path,
+  };
   return {
     type: 'scoped_use_list' as const,
-    path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => scopedUseList({ ...config, 'path': v }),
-    list: (v: UseList) => scopedUseList({ ...config, 'list': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    list(list?: UseList): any { return list !== undefined ? scoped_use_list_({ ...config, list: list }) : fields.list; },
+    path(path?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super): any { return path !== undefined ? scoped_use_list_({ ...config, path: path }) : fields.path; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ScopedUseListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ScopedUseListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function selfParameter(
+export function self_parameter_(
   config: SelfParameterConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.lifetime, config.mutableSpecifier, config.self].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'self_parameter' as const,
-    children: (...v: (Lifetime | MutableSpecifier | Self)[]) => selfParameter({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    lifetime(lifetime?: Lifetime): any { return lifetime !== undefined ? self_parameter_({ ...config, lifetime }) : config?.lifetime; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier): any { return mutableSpecifier !== undefined ? self_parameter_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
+    self(self?: Self): any { return self !== undefined ? self_parameter_({ ...config, self }) : config?.self; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: SelfParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: SelfParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function shorthandFieldInitializer(
+export function shorthand_field_initializer_(
   config: ShorthandFieldInitializerConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config.attributeItem ?? []), config.identifier].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'shorthand_field_initializer' as const,
-    children: (...v: (AttributeItem | Identifier)[]) => shorthandFieldInitializer({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? shorthand_field_initializer_({ ...config, attributeItem }) : config?.attributeItem; },
+    identifier(identifier?: Identifier): any { return identifier !== undefined ? shorthand_field_initializer_({ ...config, identifier }) : config?.identifier; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: ShorthandFieldInitializerTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: ShorthandFieldInitializerTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function slicePattern(
+export function slice_pattern_(
   config?: SlicePatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'slice_pattern' as const,
-    children: (...v: (Pattern)[]) => slicePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Pattern)[]): any { return slice_pattern_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: SlicePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: SlicePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function sourceFile(
+export function source_file_(
   config?: SourceFileConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.shebang, ...(config?.children1 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'source_file' as const,
-    children: (...v: (DeclarationStatement | ExpressionStatement | Shebang)[]) => sourceFile({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    shebang(shebang?: Shebang): any { return shebang !== undefined ? source_file_({ ...config, shebang }) : config?.shebang; },
+    children1(...children1: (DeclarationStatement | ExpressionStatement)[]): any { return children1.length ? source_file_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: SourceFileTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: SourceFileTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function staticItem(
+export function static_item_(
   config: StaticItemConfig,
 ) {
+  const fields = {
+    name: config.name,
+    type: config.type,
+    value: config.value,
+  };
+  const children = [config.visibilityModifier, config.mutableSpecifier].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'static_item' as const,
-    name: (v: Identifier) => staticItem({ ...config, 'name': v }),
-    typeField: (v: Type) => staticItem({ ...config, 'type': v }),
-    value: (v: Expression) => staticItem({ ...config, 'value': v }),
-    children: (...v: (MutableSpecifier | VisibilityModifier)[]) => staticItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    name(name?: Identifier): any { return name !== undefined ? static_item_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: Type): any { return type_ !== undefined ? static_item_({ ...config, type: type_ }) : fields.type; },
+    value(value?: Expression): any { return value !== undefined ? static_item_({ ...config, value: value }) : fields.value; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? static_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier): any { return mutableSpecifier !== undefined ? static_item_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StaticItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StaticItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function stringLiteral(
+export function string_literal_(
   config?: StringLiteralConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'string_literal' as const,
-    children: (...v: (EscapeSequence | StringContent)[]) => stringLiteral({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (EscapeSequence | StringContent)[]): any { return string_literal_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StringLiteralTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StringLiteralTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function structExpression(
+export function struct_expression_(
   config: StructExpressionConfig,
 ) {
+  const fields = {
+    body: config.body,
+    name: config.name,
+  };
   return {
     type: 'struct_expression' as const,
-    name: (v: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier) => structExpression({ ...config, 'name': v }),
-    body: (v: FieldInitializerList) => structExpression({ ...config, 'body': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    body(body?: FieldInitializerList): any { return body !== undefined ? struct_expression_({ ...config, body: body }) : fields.body; },
+    name(name?: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier): any { return name !== undefined ? struct_expression_({ ...config, name: name }) : fields.name; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StructExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StructExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function structItem(
+export function struct_item_(
   config: StructItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+    name: config.name,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.visibilityModifier, config.whereClause].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'struct_item' as const,
-    name: (v: TypeIdentifier) => structItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => structItem({ ...config, 'type_parameters': v }),
-    body: (v: FieldDeclarationList | OrderedFieldDeclarationList) => structItem({ ...config, 'body': v }),
-    children: (...v: (VisibilityModifier | WhereClause)[]) => structItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: FieldDeclarationList | OrderedFieldDeclarationList): any { return body !== undefined ? struct_item_({ ...config, body: body }) : fields.body; },
+    name(name?: TypeIdentifier): any { return name !== undefined ? struct_item_({ ...config, name: name }) : fields.name; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? struct_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? struct_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    whereClause(whereClause?: WhereClause): any { return whereClause !== undefined ? struct_item_({ ...config, whereClause }) : config?.whereClause; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StructItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StructItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function structPattern(
+export function struct_pattern_(
   config: StructPatternConfig,
 ) {
+  const fields = {
+    type: config.type,
+  };
+  const children = [config.children0, ...(config.children1 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'struct_pattern' as const,
-    typeField: (v: ScopedTypeIdentifier | TypeIdentifier) => structPattern({ ...config, 'type': v }),
-    children: (...v: (FieldPattern | RemainingFieldPattern)[]) => structPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    typeField(type_?: ScopedTypeIdentifier | TypeIdentifier): any { return type_ !== undefined ? struct_pattern_({ ...config, type: type_ }) : fields.type; },
+    children0(children0?: FieldPattern | RemainingFieldPattern): any { return children0 !== undefined ? struct_pattern_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (FieldPattern | RemainingFieldPattern)[]): any { return children1.length ? struct_pattern_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: StructPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: StructPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tokenBindingPattern(
+export function token_binding_pattern_(
   config: TokenBindingPatternConfig,
 ) {
+  const fields = {
+    name: config.name,
+    type: config.type,
+  };
   return {
     type: 'token_binding_pattern' as const,
-    name: (v: Metavariable) => tokenBindingPattern({ ...config, 'name': v }),
-    typeField: (v: FragmentSpecifier) => tokenBindingPattern({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    name(name?: Metavariable): any { return name !== undefined ? token_binding_pattern_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: FragmentSpecifier): any { return type_ !== undefined ? token_binding_pattern_({ ...config, type: type_ }) : fields.type; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenBindingPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenBindingPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tokenRepetition(
+export function token_repetition_(
   config?: TokenRepetitionConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'token_repetition' as const,
-    children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) => tokenRepetition({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]): any { return token_repetition_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenRepetitionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenRepetitionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tokenRepetitionPattern(
+export function token_repetition_pattern_(
   config?: TokenRepetitionPatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'token_repetition_pattern' as const,
-    children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) => tokenRepetitionPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]): any { return token_repetition_pattern_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenRepetitionPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenRepetitionPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tokenTree(
+export function token_tree_(
   config?: TokenTreeConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'token_tree' as const,
-    children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) => tokenTree({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]): any { return token_tree_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenTreeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenTreeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tokenTreePattern(
+export function token_tree_pattern_(
   config?: TokenTreePatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'token_tree_pattern' as const,
-    children: (...v: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) => tokenTreePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]): any { return token_tree_pattern_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TokenTreePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TokenTreePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function traitBounds(
+export function trait_bounds_(
   config: TraitBoundsConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children0, ...(config.children1 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'trait_bounds' as const,
-    children: (...v: (HigherRankedTraitBound | Lifetime | Type)[]) => traitBounds({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    children0(children0?: HigherRankedTraitBound | Lifetime | Type): any { return children0 !== undefined ? trait_bounds_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (HigherRankedTraitBound | Lifetime | Type)[]): any { return children1.length ? trait_bounds_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TraitBoundsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TraitBoundsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function traitItem(
+export function trait_item_(
   config: TraitItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+    bounds: config.bounds,
+    name: config.name,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.visibilityModifier, config.whereClause].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'trait_item' as const,
-    name: (v: TypeIdentifier) => traitItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => traitItem({ ...config, 'type_parameters': v }),
-    bounds: (v: TraitBounds) => traitItem({ ...config, 'bounds': v }),
-    body: (v: DeclarationList) => traitItem({ ...config, 'body': v }),
-    children: (...v: (VisibilityModifier | WhereClause)[]) => traitItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: DeclarationList): any { return body !== undefined ? trait_item_({ ...config, body: body }) : fields.body; },
+    bounds(bounds?: TraitBounds): any { return bounds !== undefined ? trait_item_({ ...config, bounds: bounds }) : fields.bounds; },
+    name(name?: TypeIdentifier): any { return name !== undefined ? trait_item_({ ...config, name: name }) : fields.name; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? trait_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? trait_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    whereClause(whereClause?: WhereClause): any { return whereClause !== undefined ? trait_item_({ ...config, whereClause }) : config?.whereClause; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TraitItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TraitItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tryBlock(
+export function try_block_(
   config: TryBlockConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'try_block' as const,
-    children: (v: Block) => tryBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Block): any { return child !== undefined ? try_block_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TryBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TryBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tryExpression(
+export function try_expression_(
   config: TryExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'try_expression' as const,
-    children: (v: Expression) => tryExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? try_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TryExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TryExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tupleExpression(
+export function tuple_expression_(
   config: TupleExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config.attributeItem ?? []), config.expression1, ...(config.expression2 ?? []), config.expression3].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'tuple_expression' as const,
-    children: (...v: (AttributeItem | Expression)[]) => tupleExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? tuple_expression_({ ...config, attributeItem }) : config?.attributeItem; },
+    expression1(expression1?: Expression): any { return expression1 !== undefined ? tuple_expression_({ ...config, expression1 }) : config?.expression1; },
+    expression2(...expression2: (Expression)[]): any { return expression2.length ? tuple_expression_({ ...config, expression2 }) : config?.expression2; },
+    expression3(expression3?: Expression): any { return expression3 !== undefined ? tuple_expression_({ ...config, expression3 }) : config?.expression3; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TupleExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TupleExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tuplePattern(
+export function tuple_pattern_(
   config?: TuplePatternConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children0, ...(config?.children1 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'tuple_pattern' as const,
-    children: (...v: (ClosureExpression | Pattern)[]) => tuplePattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    children0(children0?: ClosureExpression | Pattern): any { return children0 !== undefined ? tuple_pattern_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (ClosureExpression | Pattern)[]): any { return children1.length ? tuple_pattern_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TuplePatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TuplePatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tupleStructPattern(
+export function tuple_struct_pattern_(
   config: TupleStructPatternConfig,
 ) {
+  const fields = {
+    type: config.type,
+  };
+  const children = [config.pattern1, ...(config.pattern2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'tuple_struct_pattern' as const,
-    typeField: (v: GenericType | Identifier | ScopedIdentifier) => tupleStructPattern({ ...config, 'type': v }),
-    children: (...v: (Pattern)[]) => tupleStructPattern({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    typeField(type_?: GenericType | Identifier | ScopedIdentifier): any { return type_ !== undefined ? tuple_struct_pattern_({ ...config, type: type_ }) : fields.type; },
+    pattern1(pattern1?: Pattern): any { return pattern1 !== undefined ? tuple_struct_pattern_({ ...config, pattern1 }) : config?.pattern1; },
+    pattern2(...pattern2: (Pattern)[]): any { return pattern2.length ? tuple_struct_pattern_({ ...config, pattern2 }) : config?.pattern2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TupleStructPatternTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TupleStructPatternTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function tupleType(
+export function tuple_type_(
   config: TupleTypeConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'tuple_type' as const,
-    children: (...v: (Type)[]) => tupleType({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Type)[]): any { return tuple_type_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TupleTypeTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TupleTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function typeArguments(
+export function type_arguments_(
   config: TypeArgumentsConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children0, config.traitBounds, ...(config.children2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'type_arguments' as const,
-    children: (...v: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]) => typeArguments({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    children0(children0?: Block | Lifetime | Literal | Type | TypeBinding): any { return children0 !== undefined ? type_arguments_({ ...config, children0 }) : config?.children0; },
+    traitBounds(traitBounds?: TraitBounds): any { return traitBounds !== undefined ? type_arguments_({ ...config, traitBounds }) : config?.traitBounds; },
+    children2(...children2: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]): any { return children2.length ? type_arguments_({ ...config, children2 }) : config?.children2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeArgumentsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeArgumentsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function typeBinding(
+export function type_binding_(
   config: TypeBindingConfig,
 ) {
+  const fields = {
+    name: config.name,
+    type: config.type,
+    type_arguments: config.typeArguments,
+  };
   return {
     type: 'type_binding' as const,
-    name: (v: TypeIdentifier) => typeBinding({ ...config, 'name': v }),
-    typeArguments: (v: TypeArguments) => typeBinding({ ...config, 'type_arguments': v }),
-    typeField: (v: Type) => typeBinding({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    name(name?: TypeIdentifier): any { return name !== undefined ? type_binding_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: Type): any { return type_ !== undefined ? type_binding_({ ...config, type: type_ }) : fields.type; },
+    typeArguments(typeArguments?: TypeArguments): any { return typeArguments !== undefined ? type_binding_({ ...config, typeArguments: typeArguments }) : fields.type_arguments; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeBindingTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeBindingTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function typeCastExpression(
+export function type_cast_expression_(
   config: TypeCastExpressionConfig,
 ) {
+  const fields = {
+    type: config.type,
+    value: config.value,
+  };
   return {
     type: 'type_cast_expression' as const,
-    value: (v: Expression) => typeCastExpression({ ...config, 'value': v }),
-    typeField: (v: Type) => typeCastExpression({ ...config, 'type': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    typeField(type_?: Type): any { return type_ !== undefined ? type_cast_expression_({ ...config, type: type_ }) : fields.type; },
+    value(value?: Expression): any { return value !== undefined ? type_cast_expression_({ ...config, value: value }) : fields.value; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeCastExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeCastExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function typeItem(
+export function type_item_(
   config: TypeItemConfig,
 ) {
+  const fields = {
+    name: config.name,
+    type: config.type,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.visibilityModifier, config.whereClause1, config.whereClause2].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'type_item' as const,
-    name: (v: TypeIdentifier) => typeItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => typeItem({ ...config, 'type_parameters': v }),
-    typeField: (v: Type) => typeItem({ ...config, 'type': v }),
-    children: (...v: (VisibilityModifier | WhereClause)[]) => typeItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    name(name?: TypeIdentifier): any { return name !== undefined ? type_item_({ ...config, name: name }) : fields.name; },
+    typeField(type_?: Type): any { return type_ !== undefined ? type_item_({ ...config, type: type_ }) : fields.type; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? type_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? type_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    whereClause1(whereClause1?: WhereClause): any { return whereClause1 !== undefined ? type_item_({ ...config, whereClause1 }) : config?.whereClause1; },
+    whereClause2(whereClause2?: WhereClause): any { return whereClause2 !== undefined ? type_item_({ ...config, whereClause2 }) : config?.whereClause2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function typeParameter(
+export function type_parameter_(
   config: TypeParameterConfig,
 ) {
+  const fields = {
+    bounds: config.bounds,
+    default_type: config.defaultType,
+    name: config.name,
+  };
   return {
     type: 'type_parameter' as const,
-    name: (v: TypeIdentifier) => typeParameter({ ...config, 'name': v }),
-    bounds: (v: TraitBounds) => typeParameter({ ...config, 'bounds': v }),
-    defaultType: (v: Type) => typeParameter({ ...config, 'default_type': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    bounds(bounds?: TraitBounds): any { return bounds !== undefined ? type_parameter_({ ...config, bounds: bounds }) : fields.bounds; },
+    defaultType(defaultType?: Type): any { return defaultType !== undefined ? type_parameter_({ ...config, defaultType: defaultType }) : fields.default_type; },
+    name(name?: TypeIdentifier): any { return name !== undefined ? type_parameter_({ ...config, name: name }) : fields.name; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function typeParameters(
+export function type_parameters_(
   config: TypeParametersConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config.attributeItem ?? []), config.children1, ...(config.children2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'type_parameters' as const,
-    children: (...v: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) => typeParameters({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    attributeItem(...attributeItem: (AttributeItem)[]): any { return attributeItem.length ? type_parameters_({ ...config, attributeItem }) : config?.attributeItem; },
+    children1(children1?: ConstParameter | LifetimeParameter | Metavariable | TypeParameter): any { return children1 !== undefined ? type_parameters_({ ...config, children1 }) : config?.children1; },
+    children2(...children2: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]): any { return children2.length ? type_parameters_({ ...config, children2 }) : config?.children2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: TypeParametersTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: TypeParametersTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function unaryExpression(
+export function unary_expression_(
   config: UnaryExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'unary_expression' as const,
-    children: (v: Expression) => unaryExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? unary_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UnaryExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UnaryExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function unionItem(
+export function union_item_(
   config: UnionItemConfig,
 ) {
+  const fields = {
+    body: config.body,
+    name: config.name,
+    type_parameters: config.typeParameters,
+  };
+  const children = [config.visibilityModifier, config.whereClause].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'union_item' as const,
-    name: (v: TypeIdentifier) => unionItem({ ...config, 'name': v }),
-    typeParameters: (v: TypeParameters) => unionItem({ ...config, 'type_parameters': v }),
-    body: (v: FieldDeclarationList) => unionItem({ ...config, 'body': v }),
-    children: (...v: (VisibilityModifier | WhereClause)[]) => unionItem({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: FieldDeclarationList): any { return body !== undefined ? union_item_({ ...config, body: body }) : fields.body; },
+    name(name?: TypeIdentifier): any { return name !== undefined ? union_item_({ ...config, name: name }) : fields.name; },
+    typeParameters(typeParameters?: TypeParameters): any { return typeParameters !== undefined ? union_item_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
+    visibilityModifier(visibilityModifier?: VisibilityModifier): any { return visibilityModifier !== undefined ? union_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
+    whereClause(whereClause?: WhereClause): any { return whereClause !== undefined ? union_item_({ ...config, whereClause }) : config?.whereClause; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UnionItemTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UnionItemTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function unsafeBlock(
+export function unsafe_block_(
   config: UnsafeBlockConfig,
 ) {
+  const fields = {
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'unsafe_block' as const,
-    children: (v: Block) => unsafeBlock({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Block): any { return child !== undefined ? unsafe_block_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UnsafeBlockTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UnsafeBlockTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function useAsClause(
+export function use_as_clause_(
   config: UseAsClauseConfig,
 ) {
+  const fields = {
+    alias: config.alias,
+    path: config.path,
+  };
   return {
     type: 'use_as_clause' as const,
-    path: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => useAsClause({ ...config, 'path': v }),
-    alias: (v: Identifier) => useAsClause({ ...config, 'alias': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    alias(alias?: Identifier): any { return alias !== undefined ? use_as_clause_({ ...config, alias: alias }) : fields.alias; },
+    path(path?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super): any { return path !== undefined ? use_as_clause_({ ...config, path: path }) : fields.path; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseAsClauseTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseAsClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function useBounds(
+export function use_bounds_(
   config?: UseBoundsConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children0, ...(config?.children1 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'use_bounds' as const,
-    children: (...v: (Lifetime | TypeIdentifier)[]) => useBounds({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    children0(children0?: Lifetime | TypeIdentifier): any { return children0 !== undefined ? use_bounds_({ ...config, children0 }) : config?.children0; },
+    children1(...children1: (Lifetime | TypeIdentifier)[]): any { return children1.length ? use_bounds_({ ...config, children1 }) : config?.children1; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseBoundsTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseBoundsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function useDeclaration(
+export function use_declaration_(
   config: UseDeclarationConfig,
 ) {
+  const fields = {
+    argument: config.argument,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'use_declaration' as const,
-    argument: (v: Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard) => useDeclaration({ ...config, 'argument': v }),
-    children: (v: VisibilityModifier) => useDeclaration({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    argument(argument?: Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard): any { return argument !== undefined ? use_declaration_({ ...config, argument: argument }) : fields.argument; },
+    child(child?: VisibilityModifier): any { return child !== undefined ? use_declaration_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseDeclarationTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseDeclarationTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function useList(
+export function use_list_(
   config?: UseListConfig,
 ) {
+  const fields = {
+  };
+  const children = [...(config?.children ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'use_list' as const,
-    children: (...v: (Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard)[]) => useList({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    getChildren(): any { return children; },
+    setChildren(...children: (Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard)[]): any { return use_list_({ ...config, children }); },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseListTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function useWildcard(
+export function use_wildcard_(
   config?: UseWildcardConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'use_wildcard' as const,
-    children: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => useWildcard({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super): any { return child !== undefined ? use_wildcard_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: UseWildcardTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: UseWildcardTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function variadicParameter(
+export function variadic_parameter_(
   config?: VariadicParameterConfig,
 ) {
+  const fields = {
+    pattern: config?.pattern,
+  };
+  const children = [config?.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'variadic_parameter' as const,
-    pattern: (v: Pattern) => variadicParameter({ ...config, 'pattern': v }),
-    children: (v: MutableSpecifier) => variadicParameter({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    pattern(pattern?: Pattern): any { return pattern !== undefined ? variadic_parameter_({ ...config, pattern: pattern }) : fields.pattern; },
+    child(child?: MutableSpecifier): any { return child !== undefined ? variadic_parameter_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: VariadicParameterTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: VariadicParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function visibilityModifier(
+export function visibility_modifier_(
   config?: VisibilityModifierConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'visibility_modifier' as const,
-    children: (v: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super) => visibilityModifier({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super): any { return child !== undefined ? visibility_modifier_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: VisibilityModifierTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: VisibilityModifierTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function whereClause(
+export function where_clause_(
   config?: WhereClauseConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.wherePredicate1, ...(config?.wherePredicate2 ?? [])].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'where_clause' as const,
-    children: (...v: (WherePredicate)[]) => whereClause({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    wherePredicate1(wherePredicate1?: WherePredicate): any { return wherePredicate1 !== undefined ? where_clause_({ ...config, wherePredicate1 }) : config?.wherePredicate1; },
+    wherePredicate2(...wherePredicate2: (WherePredicate)[]): any { return wherePredicate2.length ? where_clause_({ ...config, wherePredicate2 }) : config?.wherePredicate2; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: WhereClauseTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: WhereClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function wherePredicate(
+export function where_predicate_(
   config: WherePredicateConfig,
 ) {
+  const fields = {
+    bounds: config.bounds,
+    left: config.left,
+  };
   return {
     type: 'where_predicate' as const,
-    left: (v: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier) => wherePredicate({ ...config, 'left': v }),
-    bounds: (v: TraitBounds) => wherePredicate({ ...config, 'bounds': v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    bounds(bounds?: TraitBounds): any { return bounds !== undefined ? where_predicate_({ ...config, bounds: bounds }) : fields.bounds; },
+    left(left?: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier): any { return left !== undefined ? where_predicate_({ ...config, left: left }) : fields.left; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: WherePredicateTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: WherePredicateTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function whileExpression(
+export function while_expression_(
   config: WhileExpressionConfig,
 ) {
+  const fields = {
+    body: config.body,
+    condition: config.condition,
+  };
+  const children = [config.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'while_expression' as const,
-    condition: (v: Expression | LetChain | LetCondition) => whileExpression({ ...config, 'condition': v }),
-    body: (v: Block) => whileExpression({ ...config, 'body': v }),
-    children: (v: Label) => whileExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    body(body?: Block): any { return body !== undefined ? while_expression_({ ...config, body: body }) : fields.body; },
+    condition(condition?: Expression | LetChain | LetCondition): any { return condition !== undefined ? while_expression_({ ...config, condition: condition }) : fields.condition; },
+    child(child?: Label): any { return child !== undefined ? while_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: WhileExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: WhileExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function yieldExpression(
+export function yield_expression_(
   config?: YieldExpressionConfig,
 ) {
+  const fields = {
+  };
+  const children = [config?.children].filter(Boolean) as unknown as AnyNodeData[];
   return {
     type: 'yield_expression' as const,
-    children: (v: Expression) => yieldExpression({ ...config, children: v }),
-    render() { return render(this, rules, joinBy); },
+    fields,
+    children,
+    child(child?: Expression): any { return child !== undefined ? yield_expression_({ ...config, children: child }) : config?.children; },
+    render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);
-      return toEdit(this, rules, startOrRange, joinBy);
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: YieldExpressionTree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },
+    replace(target: YieldExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
 
-export function booleanLiteral(text: 'false' | 'true') {
+export function boolean_literal_(text: 'false' | 'true') {
   return {
     type: 'boolean_literal' as const,
     text,
@@ -2395,7 +3247,7 @@ export function booleanLiteral(text: 'false' | 'true') {
   };
 }
 
-export function emptyStatement() {
+export function empty_statement_() {
   return {
     type: 'empty_statement' as const,
     text: ';',
@@ -2411,7 +3263,7 @@ export function emptyStatement() {
   };
 }
 
-export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') {
+export function fragment_specifier_(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') {
   return {
     type: 'fragment_specifier' as const,
     text,
@@ -2427,7 +3279,7 @@ export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident'
   };
 }
 
-export function innerDocCommentMarker(text: string) {
+export function inner_doc_comment_marker_(text: string) {
   return {
     type: 'inner_doc_comment_marker' as const,
     text,
@@ -2443,7 +3295,7 @@ export function innerDocCommentMarker(text: string) {
   };
 }
 
-export function neverType() {
+export function never_type_() {
   return {
     type: 'never_type' as const,
     text: '!',
@@ -2459,7 +3311,7 @@ export function neverType() {
   };
 }
 
-export function outerDocCommentMarker(text: string) {
+export function outer_doc_comment_marker_(text: string) {
   return {
     type: 'outer_doc_comment_marker' as const,
     text,
@@ -2475,7 +3327,7 @@ export function outerDocCommentMarker(text: string) {
   };
 }
 
-export function remainingFieldPattern() {
+export function remaining_field_pattern_() {
   return {
     type: 'remaining_field_pattern' as const,
     text: '..',
@@ -2491,7 +3343,7 @@ export function remainingFieldPattern() {
   };
 }
 
-export function unitExpression() {
+export function unit_expression_() {
   return {
     type: 'unit_expression' as const,
     text: '()',
@@ -2507,7 +3359,7 @@ export function unitExpression() {
   };
 }
 
-export function unitType() {
+export function unit_type_() {
   return {
     type: 'unit_type' as const,
     text: '()',
@@ -2523,7 +3375,7 @@ export function unitType() {
   };
 }
 
-export function charLiteral(text: string) {
+export function char_literal_(text: string) {
   if (!/^b?'(?:\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})|[^\\'])?'$/.test(text)) throw new Error(`Invalid char_literal: '${text}' does not match grammar pattern`);
   return {
     type: 'char_literal' as const,
@@ -2540,7 +3392,7 @@ export function charLiteral(text: string) {
   };
 }
 
-export function crate() {
+export function crate_() {
   return {
     type: 'crate' as const,
     text: 'crate',
@@ -2556,7 +3408,7 @@ export function crate() {
   };
 }
 
-export function docComment(text: string) {
+export function doc_comment_(text: string) {
   return {
     type: 'doc_comment' as const,
     text,
@@ -2572,7 +3424,7 @@ export function docComment(text: string) {
   };
 }
 
-export function escapeSequence(text: `\\${string}`) {
+export function escape_sequence_(text: `\\${string}`) {
   if (!/^\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})$/.test(text)) throw new Error(`Invalid escape_sequence: '${text}' does not match grammar pattern`);
   return {
     type: 'escape_sequence' as const,
@@ -2589,7 +3441,7 @@ export function escapeSequence(text: `\\${string}`) {
   };
 }
 
-export function fieldIdentifier(text: string) {
+export function field_identifier_(text: string) {
   if (RESERVED_KEYWORDS.has(text)) throw new Error(`'${text}' is a reserved keyword, not a valid field_identifier`);
   return {
     type: 'field_identifier' as const,
@@ -2606,7 +3458,7 @@ export function fieldIdentifier(text: string) {
   };
 }
 
-export function floatLiteral(text: string) {
+export function float_literal_(text: string) {
   return {
     type: 'float_literal' as const,
     text,
@@ -2622,7 +3474,7 @@ export function floatLiteral(text: string) {
   };
 }
 
-export function identifier(text: string) {
+export function identifier_(text: string) {
   if (RESERVED_KEYWORDS.has(text)) throw new Error(`'${text}' is a reserved keyword, not a valid identifier`);
   if (!/^(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*$/u.test(text)) throw new Error(`Invalid identifier: '${text}' does not match grammar pattern`);
   return {
@@ -2640,7 +3492,7 @@ export function identifier(text: string) {
   };
 }
 
-export function integerLiteral(text: string) {
+export function integer_literal_(text: string) {
   if (!/^(?:[0-9][0-9_]*|0x[0-9a-fA-F_]+|0b[01_]+|0o[0-7_]+)(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64)?$/.test(text)) throw new Error(`Invalid integer_literal: '${text}' does not match grammar pattern`);
   return {
     type: 'integer_literal' as const,
@@ -2657,7 +3509,7 @@ export function integerLiteral(text: string) {
   };
 }
 
-export function metavariable(text: string) {
+export function metavariable_(text: string) {
   if (!/^\$[a-zA-Z_]\w*$/.test(text)) throw new Error(`Invalid metavariable: '${text}' does not match grammar pattern`);
   return {
     type: 'metavariable' as const,
@@ -2674,7 +3526,7 @@ export function metavariable(text: string) {
   };
 }
 
-export function mutableSpecifier() {
+export function mutable_specifier_() {
   return {
     type: 'mutable_specifier' as const,
     text: 'mut',
@@ -2690,7 +3542,7 @@ export function mutableSpecifier() {
   };
 }
 
-export function primitiveType(text: 'bool' | 'char' | 'f32' | 'f64' | 'i128' | 'i16' | 'i32' | 'i64' | 'i8' | 'isize' | 'str' | 'u128' | 'u16' | 'u32' | 'u64' | 'u8' | 'usize') {
+export function primitive_type_(text: 'bool' | 'char' | 'f32' | 'f64' | 'i128' | 'i16' | 'i32' | 'i64' | 'i8' | 'isize' | 'str' | 'u128' | 'u16' | 'u32' | 'u64' | 'u8' | 'usize') {
   return {
     type: 'primitive_type' as const,
     text,
@@ -2703,12 +3555,10 @@ export function primitiveType(text: 'bool' | 'char' | 'f32' | 'f64' | 'i128' | '
       return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText: text };
     },
     replace: (target: PrimitiveTypeTree) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-
   };
-  let t : PrimitiveType = 'a';
 }
 
-export function self() {
+export function self_() {
   return {
     type: 'self' as const,
     text: 'self',
@@ -2724,7 +3574,7 @@ export function self() {
   };
 }
 
-export function shebang(text: string) {
+export function shebang_(text: string) {
   if (!/^#![\r\f\t\v ]*([^\[\n].*)?\n$/.test(text)) throw new Error(`Invalid shebang: '${text}' does not match grammar pattern`);
   return {
     type: 'shebang' as const,
@@ -2741,7 +3591,7 @@ export function shebang(text: string) {
   };
 }
 
-export function shorthandFieldIdentifier(text: string) {
+export function shorthand_field_identifier_(text: string) {
   return {
     type: 'shorthand_field_identifier' as const,
     text,
@@ -2757,7 +3607,7 @@ export function shorthandFieldIdentifier(text: string) {
   };
 }
 
-export function stringContent(text: string) {
+export function string_content_(text: string) {
   return {
     type: 'string_content' as const,
     text,
@@ -2789,7 +3639,7 @@ export function super_() {
   };
 }
 
-export function typeIdentifier(text: string) {
+export function type_identifier_(text: string) {
   if (RESERVED_KEYWORDS.has(text)) throw new Error(`'${text}' is a reserved keyword, not a valid type_identifier`);
   return {
     type: 'type_identifier' as const,
@@ -2805,3 +3655,4 @@ export function typeIdentifier(text: string) {
     replace: (target: TypeIdentifierTree) => { const r = target.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
+

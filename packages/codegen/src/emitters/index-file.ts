@@ -2,9 +2,11 @@
  * Emits an index.ts barrel file that re-exports all generated modules.
  */
 
+import type { HydratedNodeModel } from '../node-model.ts';
+
 export interface EmitIndexConfig {
 	grammar: string;
-	nodeKinds: string[];
+	nodes: HydratedNodeModel[];
 }
 
 export function emitIndex(config: EmitIndexConfig): string {
@@ -37,7 +39,7 @@ export function emitIndex(config: EmitIndexConfig): string {
 		'',
 		'// Core re-exports',
 		"export { render, toEdit, toCst } from '@sittir/core';",
-		"export type { NodeData, NodeFields, TreeNode } from './types.js';",
+		"export type { NodeData, TreeNode } from './types.js';",
 		"export type { Edit, CSTNode, RenderContext } from '@sittir/types';",
 		'',
 	];

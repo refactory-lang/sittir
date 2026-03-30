@@ -17,7 +17,6 @@
  *   sittir --grammar rust --all --output src/
  */
 
-import { readGrammarKind, listBranchKinds, listLeafKinds, listKeywordKinds, listOperatorContexts, listKeywordTokens, listOperatorTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
 import { toIrKey, toFactoryName } from './naming.ts';
 import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
@@ -33,13 +32,15 @@ import { emitTests } from './emitters/test-new.ts';
 import { emitTypeTests } from './emitters/type-test.ts';
 import { emitConfig } from './emitters/config.ts';
 import { emitIndex } from './emitters/index-file.ts';
+import { buildGrammarModel } from './grammar-model.ts';
+import type { HydratedNodeModel } from './node-model.ts';
 
-export { readGrammarKind, listBranchKinds, listLeafKinds, listOperatorContexts, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
+export { listBranchKinds, listLeafKinds, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
 
 export interface CodegenConfig {
 	/** Grammar language (e.g., 'rust', 'typescript', 'python') */
 	grammar: string;
-	/** Branch kinds to generate for. If empty, uses listBranchKinds() to auto-discover. */
+	/** Node kinds to generate for. If empty, generates for all. */
 	nodes?: string[];
 	/** Output directory */
 	outputDir: string;
@@ -76,60 +77,37 @@ export interface GeneratedFiles {
 	typeTests: string;
 	/** vitest.config.ts source */
 	config: string;
+	/** node-model.json5 — serialized pre-computed grammar model */
+	nodeModel: string;
 }
 
 /**
  * Generate typed factory code from a tree-sitter grammar definition.
  */
-export function generate(config: CodegenConfig): GeneratedFiles {
-	const branchKinds = config.nodes && config.nodes.length > 0
-		? config.nodes
-		: listBranchKinds(config.grammar);
+export function generate(cfg: CodegenConfig): GeneratedFiles {
+	const { model, serialized: nodeModel, newModel } = buildGrammarModel(cfg.grammar);
 
-	const leafKinds = listLeafKinds(config.grammar);
-	const keywordKinds = listKeywordKinds(config.grammar);
-	const keywordTokens = listKeywordTokens(config.grammar);
-	const operatorTokens = listOperatorTokens(config.grammar);
-	const supertypes = listSupertypes(config.grammar);
-
-	const leafValueKinds = leafKinds
-		.map(kind => ({ kind, values: listLeafValues(config.grammar, kind) }))
-		.filter(ek => ek.values.length > 0);
-
-	const nodes = branchKinds.map((kind) =>
-		readGrammarKind(config.grammar, kind),
-	);
+	// Use new pipeline's HydratedNodeModel[] for emitters
+	const allNewNodes = [...newModel.models.values()];
+	const nodes: HydratedNodeModel[] = cfg.nodes && cfg.nodes.length > 0
+		? allNewNodes.filter(n => cfg.nodes!.includes(n.kind))
+		: allNewNodes;
 
 	return {
-		grammar: emitGrammar({ grammar: config.grammar }),
-		types: emitTypes({ grammar: config.grammar, nodeKinds: branchKinds, leafKinds, supertypes }),
-		rules: emitRules({ grammar: config.grammar, nodes }),
-		factories: emitFactories({
-			grammar: config.grammar,
-			nodes,
-			leafKinds,
-			keywordKinds,
-			leafValues: new Map(leafValueKinds.map(lv => [lv.kind, lv.values])),
-			keywordTokens,
-			operatorTokens,
-			supertypes,
-		}),
-		assign: emitAssign({ grammar: config.grammar, nodes, leafKinds, keywordKinds }),
-		utils: emitClientUtils({ nodes, leafKinds }),
-		from: emitFrom({
-			grammar: config.grammar,
-			nodes,
-			leafKinds,
-			keywordKinds,
-			leafValues: new Map(leafValueKinds.map(lv => [lv.kind, lv.values])),
-			supertypes,
-		}),
-		irNamespace: emitIrNamespace({ grammar: config.grammar, branchKinds, leafKinds, keywordKinds, operatorContexts: listOperatorContexts(config.grammar), supertypes }),
-		joinBy: emitJoinBy({ grammar: config.grammar, nodes }),
-		consts: emitConsts({ grammar: config.grammar, nodeKinds: branchKinds, leafKinds, keywords: keywordTokens, operators: operatorTokens, nodes, enumKinds: leafValueKinds }),
-		index: emitIndex({ grammar: config.grammar, nodeKinds: branchKinds }),
-		tests: emitTests({ grammar: config.grammar, nodes, leafKinds, keywordKinds }),
+		grammar: emitGrammar({ grammar: cfg.grammar }),
+		types: emitTypes({ grammar: cfg.grammar, nodes }),
+		rules: emitRules({ grammar: cfg.grammar, nodes }),
+		factories: emitFactories({ grammar: cfg.grammar, nodes }),
+		assign: emitAssign({ grammar: cfg.grammar, nodes }),
+		utils: emitClientUtils({ nodes }),
+		from: emitFrom({ grammar: cfg.grammar, nodes }),
+		irNamespace: emitIrNamespace({ grammar: cfg.grammar, nodes }),
+		joinBy: emitJoinBy({ grammar: cfg.grammar, nodes }),
+		consts: emitConsts({ grammar: cfg.grammar, nodes }),
+		index: emitIndex({ grammar: cfg.grammar, nodes }),
+		tests: emitTests({ grammar: cfg.grammar, nodes }),
 		typeTests: emitTypeTests({ nodes }),
-		config: emitConfig({ grammar: config.grammar }),
+		config: emitConfig({ grammar: cfg.grammar }),
+		nodeModel,
 	};
 }

@@ -1,105 +1,125 @@
 /**
  * Unified factory emitter.
  *
- * Generates factory functions for branch node kinds:
- *   - Declarative: ir.function({ name: ..., body: ... })
- *   - Fluent: ir.function({ name }).body(block)
+ * Factory functions are named by raw kind (function_item, not functionItem).
+ * The ir namespace maps to camelCase for the developer API.
  *
- * Factories accept *Config (fields + children) only.
- * Produces immutable nodes as single object literals — no mutation, no assignment.
+ * Factories accept camelCase Config, store under raw field names in `fields`.
+ * Fluent API: no-arg = getter (reads from fields), with-arg = setter (returns new node).
  */
 
-import type { KindMeta, FieldMeta, SupertypeInfo } from '../grammar-reader.ts';
+import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
-import { toTypeName, toFactoryName, toFieldName } from '../naming.ts';
-import { escapeString } from './utils.ts';
+import { toTypeName, toFactoryName, toFieldName, toParamName, toRawFactoryName } from '../naming.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString, childSlotNames } from './utils.ts';
+import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
-	nodes: KindMeta[];
-	leafKinds: string[];
-	keywordKinds: Map<string, string>;
-	/** leaf kind → list of valid string values (enum-like) */
-	leafValues?: Map<string, string[]>;
-	/** Reserved keyword tokens — used for input validation */
-	keywordTokens?: string[];
-	/** Operator tokens (non-alphabetic anonymous tokens) */
-	operatorTokens?: string[];
-	/** Supertype groupings — used to collapse inline unions into supertype names */
-	supertypes?: SupertypeInfo[];
+	nodes: HydratedNodeModel[];
 }
 
 /**
  * Emit a factory function for a single branch node kind.
+ * Function name = raw kind (e.g. function_item).
+ * Output has: type, fields (raw names), fluent getters/setters (camelCase), render/edit methods.
  */
 export function emitFactory(config: {
-	node: KindMeta;
+	node: StructuralNode;
 	leafKinds: string[];
-	/** Maps supertype name → Set of concrete subtypes */
-	supertypeMap?: Map<string, Set<string>>;
+	ctx: ProjectionContext;
 }): string {
-	const { node, leafKinds, supertypeMap } = config;
+	const { node, leafKinds, ctx } = config;
 	const leafSet = new Set(leafKinds);
 	const typeName = toTypeName(node.kind);
-	const factoryName = toFactoryName(node.kind);
+	const internalName = toRawFactoryName(node.kind);
 
 	const lines: string[] = [];
 
-	// Factory function — accepts *Config (fields + children), return type inferred
-	const hasRequiredFields = node.fields.some(f => f.required) || (node.hasChildren && node.children?.required);
-	if (hasRequiredFields) {
-		lines.push(`export function ${factoryName}(`);
-		lines.push(`  config: ${typeName}Config,`);
-		lines.push(`) {`);
-	} else {
-		lines.push(`export function ${factoryName}(`);
-		lines.push(`  config?: ${typeName}Config,`);
-		lines.push(`) {`);
+	// Factory function — accepts *Config (camelCase), return type inferred
+	const hasChildren = node.children != null;
+	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && childHasRequired(node.children!));
+
+	const opt = hasRequiredFields ? '' : '?';
+	lines.push(`export function ${internalName}(`);
+	lines.push(`  config${opt}: ${typeName}Config,`);
+	lines.push(`) {`);
+
+	// Build fields object — raw names, values from camelCase config
+	const fields = fieldsOf(node);
+	lines.push(`  const fields = {`);
+	for (const f of fields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		lines.push(`    ${f.name}: config${opt}.${camel},`);
+	}
+	lines.push(`  };`);
+
+	// Build children array from child slots in config
+	if (hasChildren) {
+		const slotNames = childSlotNames(node.children!, ctx);
+		const childExprs: string[] = [];
+		eachChildSlot(node.children!, (slot, i) => {
+			const name = slotNames[i]!;
+			if (slot.multiple) {
+				childExprs.push(`...(config${opt}.${name} ?? [])`);
+			} else {
+				childExprs.push(`config${opt}.${name}`);
+			}
+		});
+		lines.push(`  const children = [${childExprs.join(', ')}].filter(Boolean) as unknown as AnyNodeData[];`);
 	}
 
-	// Direct return — setters + methods, no mutation
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
+	lines.push(`    fields,`);
+	if (hasChildren) {
+		lines.push(`    children,`);
+	}
 
-	// Fluent setters — immutable: return a new node via factory re-call
-	for (const f of node.fields) {
-		const camel = toFieldName(f.name);
-		const setterName = camel === 'type' ? 'typeField' : camel;
-		const fieldType = fieldTypeExpr(f, leafSet, supertypeMap);
-		const isAnonymousOnly = f.namedTypes.length === 0 && f.types.length > 0;
+	// Fluent getters/setters — no-arg = getter (reads fields), with-arg = setter (re-calls factory)
+	for (const f of fields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		const paramName = toParamName(f.name);
+		const methodName = camel === 'type' ? 'typeField' : camel;
+		const proj = projectKinds(f.kinds, ctx);
+		const fieldType = fieldTypeExprFromProj(proj, leafSet);
+
 		if (f.multiple) {
-			if (isAnonymousOnly) {
-				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, '${f.name}': v.map(t => ({ type: t, text: t }) as const) }),`);
-			} else {
-				lines.push(`    ${setterName}: (...v: (${fieldType})[]) => ${factoryName}({ ...config, '${f.name}': v }),`);
-			}
+			lines.push(`    ${methodName}(...${paramName}: (${fieldType})[]): any { return ${paramName}.length ? ${internalName}({ ...config, ${camel}: ${paramName} }) : fields.${f.name}; },`);
 		} else {
-			if (isAnonymousOnly) {
-				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, '${f.name}': { type: v, text: v } as const }),`);
-			} else {
-				lines.push(`    ${setterName}: (v: ${fieldType}) => ${factoryName}({ ...config, '${f.name}': v }),`);
-			}
+			lines.push(`    ${methodName}(${paramName}?: ${fieldType}): any { return ${paramName} !== undefined ? ${internalName}({ ...config, ${camel}: ${paramName} }) : fields.${f.name}; },`);
 		}
 	}
-	if (node.hasChildren && node.children) {
-		const childTypeUnion = collapseToSupertypes(
-			node.children.namedTypes.filter(t => t !== '_'),
-			supertypeMap,
-		).join(' | ');
-		if (node.children.multiple) {
-			lines.push(`    children: (...v: (${childTypeUnion})[]) => ${factoryName}({ ...config, children: v }),`);
-		} else {
-			lines.push(`    children: (v: ${childTypeUnion}) => ${factoryName}({ ...config, children: v }),`);
-		}
+	if (hasChildren) {
+		const slotNames = childSlotNames(node.children!, ctx);
+		eachChildSlot(node.children!, (slot, i) => {
+			const name = slotNames[i]!;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			const slotType = slotProj.collapsedTypes.join(' | ');
+			if (name === 'children') {
+				// Single children slot — use child/getChildren/setChildren to avoid name collision
+				if (slot.multiple) {
+					lines.push(`    getChildren(): any { return children; },`);
+					lines.push(`    setChildren(...children: (${slotType})[]): any { return ${internalName}({ ...config, children }); },`);
+				} else {
+					lines.push(`    child(child?: ${slotType}): any { return child !== undefined ? ${internalName}({ ...config, children: child }) : config?.children; },`);
+				}
+			} else if (slot.multiple) {
+				lines.push(`    ${name}(...${name}: (${slotType})[]): any { return ${name}.length ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
+			} else {
+				lines.push(`    ${name}(${name}?: ${slotType}): any { return ${name} !== undefined ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
+			}
+		});
 	}
 
-	// Render/edit methods — use `this` via method shorthand for direct return
-	lines.push(`    render() { return render(this, rules, joinBy); },`);
+	// Render/edit methods — use bound renderer (rules/joinBy closed over at module level)
+	lines.push(`    render() { return render(this); },`);
 	lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`);
-	lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, rules, startOrRange, endPos!, joinBy);`);
-	lines.push(`      return toEdit(this, rules, startOrRange, joinBy);`);
+	lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`);
+	lines.push(`      return toEdit(this, startOrRange);`);
 	lines.push(`    },`);
-	lines.push(`    replace(target: ${typeName}Tree) { const r = target.range(); return toEdit(this, rules, r, joinBy); },`);
+	lines.push(`    replace(target: ${typeName}Tree) { const r = target.range(); return toEdit(this, r); },`);
 
 	lines.push(`  };`);
 	lines.push(`}`);
@@ -118,14 +138,12 @@ export function emitTerminalFactory(
 	keywordTokens?: Set<string>,
 	grammar?: string,
 ): string {
-	const factoryName = toFactoryName(kind);
-
-	const typeName = toTypeName(kind);
+	const internalName = toRawFactoryName(kind);
 
 	if (fixedText !== undefined) {
 		// Keyword factory — zero args, fixed text, return type inferred
 		const lines = [];
-		lines.push(`export function ${factoryName}() {`);
+		lines.push(`export function ${internalName}() {`);
 		lines.push(`  return {`);
 		lines.push(`    type: '${kind}' as const,`);
 		lines.push(`    text: '${escapeString(fixedText)}',`);
@@ -161,16 +179,14 @@ export function emitTerminalFactory(
 	const leafPattern = grammar ? extractLeafPattern(grammar, kind) : undefined;
 
 	const lines: string[] = [];
-	lines.push(`export function ${factoryName}(text: ${textType}) {`);
+	lines.push(`export function ${internalName}(text: ${textType}) {`);
 	if (needsKeywordValidation) {
 		lines.push(`  if (RESERVED_KEYWORDS.has(text)) throw new Error(\`'\${text}' is a reserved keyword, not a valid ${kind}\`);`);
 	}
 	if (leafPattern && !enumValues?.length) {
-		// Skip patterns that can't be safely embedded in JS regex literals
-		// (e.g., comment patterns containing // or /* which conflict with JS syntax)
 		const hasSyntaxConflict = leafPattern.includes('//') || leafPattern.includes('/*');
 		if (!hasSyntaxConflict && isSafeJsRegex(leafPattern)) {
-			const escaped = leafPattern.replace(/`/g, '\\`');
+			const escaped = leafPattern.replace(/`/g, '\\`').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\0/g, '\\0');
 			const flags = leafPattern.includes('\\p{') ? 'u' : '';
 			lines.push(`  if (!/^${escaped}$/${flags}.test(text)) throw new Error(\`Invalid ${kind}: '\${text}' does not match grammar pattern\`);`);
 		}
@@ -196,16 +212,14 @@ export function emitTerminalFactory(
  * Emit the full factories file for all node kinds.
  */
 export function emitFactories(config: EmitFactoriesConfig): string {
-	const { nodes, leafKinds, keywordKinds, leafValues, keywordTokens, supertypes } = config;
+	const nodes = structuralNodes(config.nodes);
+	const leafKinds = leafKindsOf(config.nodes);
+	const keywordKinds = keywordKindsOf(config.nodes);
+	const leafValueMap = leafValuesOf(config.nodes);
+	const keywordTokenSet = new Set(keywordTokensOf(config.nodes));
+	const ctx = buildProjectionContext(new Map(config.nodes.map(n => [n.kind, n])));
 
 	const branchKinds = nodes.map(n => n.kind);
-	const keywordTokenSet = new Set(keywordTokens ?? []);
-	const leafValueMap = leafValues ?? new Map<string, string[]>();
-
-	// Build supertype reverse lookup: name → Set of fully-expanded concrete subtypes
-	// Supertypes can reference other supertypes (e.g., _expression includes _literal),
-	// so we recursively expand until all entries are concrete kinds.
-	const supertypeMap = buildExpandedSupertypeMap(supertypes ?? []);
 
 	const lines: string[] = [];
 	lines.push('// Auto-generated by @sittir/codegen — do not edit');
@@ -215,19 +229,23 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	const allTypeNames = new Set<string>();
 	for (const n of nodes) {
 		allTypeNames.add(toTypeName(n.kind));
-		for (const f of n.fields) {
-			for (const t of f.namedTypes) {
+		for (const f of fieldsOf(n)) {
+			const proj = projectKinds(f.kinds, ctx);
+			for (const t of proj.expandedAll) {
 				if (t === '_') continue; // skip bare underscore
 				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
 				allTypeNames.add(name);
 			}
 		}
-		if (n.children) {
-			for (const t of n.children.namedTypes) {
-				if (t === '_') continue;
-				const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
-				allTypeNames.add(name);
-			}
+		if (n.children != null) {
+			eachChildSlot(n.children, (slot) => {
+				const childProj = projectKinds(slot.kinds, ctx);
+				for (const t of childProj.expandedAll) {
+					if (t === '_') continue;
+					const name = t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t);
+					allTypeNames.add(name);
+				}
+			});
 		}
 	}
 	for (const k of leafKinds) allTypeNames.add(toTypeName(k));
@@ -241,16 +259,18 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		allTypeNames.add(toTypeName(k) + 'Tree');
 	}
 	// Add supertype names (used in collapsed setter unions: Type, Literal, etc.)
-	for (const stName of supertypeMap.keys()) {
+	for (const stName of ctx.expandedSupertypes.keys()) {
 		const cleanName = stName.replace(/^_/, '');
 		allTypeNames.add(toTypeName(cleanName));
 	}
 	const sortedTypes = [...allTypeNames].sort();
 	lines.push(`import type { ${sortedTypes.join(', ')} } from './types.js';`);
 	lines.push("import type { Edit, AnyNodeData } from '@sittir/types';");
-	lines.push("import { render, toEdit } from '@sittir/core';");
+	lines.push("import { createRenderer } from '@sittir/core';");
 	lines.push("import { rules } from './rules.js';");
 	lines.push("import { joinBy } from './joinby.js';");
+	lines.push('');
+	lines.push('const { render, toEdit } = createRenderer(rules, joinBy);');
 	lines.push('');
 
 	// Reserved keywords set for input validation (FR-023)
@@ -266,7 +286,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 
 	// Branch node factories
 	for (const node of nodes) {
-		lines.push(emitFactory({ node, leafKinds, supertypeMap }));
+		lines.push(emitFactory({ node, leafKinds, ctx }));
 		lines.push('');
 	}
 
@@ -278,10 +298,6 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		lines.push('');
 	}
 
-	// Supertype FromInput unions — e.g. ExpressionFromInput = UnaryExpressionFromInput | ...
-	// Supertype FromInput unions are now in types.ts (derived from NodeFromInput<G, K>)
-
-	// assignByKind, per-kind assign functions, and edit() are in assign.ts
 	lines.push('');
 
 	return lines.join('\n');
@@ -292,151 +308,30 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Compute the TypeScript type for a field in a fluent setter.
+ * Compute the TypeScript type for a field in a fluent setter from a KindProjection.
  * Uses named interfaces from types.ts — no bare NodeData<'kind'>.
  * Collapses concrete type sets into supertype names where possible.
  */
-function fieldTypeExpr(field: FieldMeta, _leafSet: Set<string>, supertypeMap?: Map<string, Set<string>>): string {
-	if (field.namedTypes.length === 0) {
+function fieldTypeExprFromProj(proj: import('./kind-projections.ts').KindProjection, _leafSet: Set<string>): string {
+	if (proj.expandedAll.length === 0) {
 		// Anonymous-only field (e.g., operator tokens) — use string literal union
-		const anon = field.types.filter(t => t !== '_');
+		// Use anonTokens directly to preserve node-types.json ordering
+		const anon = proj.anonTokens.filter(t => t !== '_');
 		if (anon.length > 0) {
 			return anon.map(t => `'${escapeString(t)}'`).join(' | ');
 		}
 		return 'string';
 	}
 
-	const collapsed = collapseToSupertypes(
-		field.namedTypes.filter(t => t !== '_'),
-		supertypeMap,
-	);
-	return collapsed.join(' | ');
+	return proj.collapsedTypes.join(' | ');
 }
 
-/**
- * Collapse a list of concrete type names into supertype references where possible.
- *
- * For each supertype, if ALL of its subtypes appear in the input set, replace them
- * with the supertype name. Any remaining concrete types that aren't covered by a
- * supertype are kept as-is.
- *
- * Returns sorted TypeScript type names (e.g., ['DeclarationStatement', 'Expression', 'Label']).
- */
-function collapseToSupertypes(
-	namedTypes: string[],
-	supertypeMap?: Map<string, Set<string>>,
-): string[] {
-	if (!supertypeMap || supertypeMap.size === 0) {
-		// No supertypes — just convert to type names
-		return namedTypes
-			.map(t => t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t))
-			.sort();
+/** Check if any child slot has `required: true`. */
+function childHasRequired(children: { required: boolean } | { required: boolean }[]): boolean {
+	if (Array.isArray(children)) {
+		return children.some(slot => slot.required);
 	}
-
-	const inputSet = new Set(namedTypes);
-	const result: string[] = [];
-
-	// First pass: find all supertypes whose concrete subtypes are ALL present
-	// in the input. Check against original set (not mutated) so overlapping
-	// supertypes (e.g., _expression and _declaration_statement share macro_invocation)
-	// both match.
-	const matched: { name: string; subtypes: Set<string> }[] = [];
-	for (const [stName, subtypes] of supertypeMap) {
-		if (subtypes.size === 0) continue;
-
-		let allPresent = true;
-		for (const sub of subtypes) {
-			if (!inputSet.has(sub)) {
-				allPresent = false;
-				break;
-			}
-		}
-
-		if (allPresent) {
-			matched.push({ name: stName, subtypes });
-		}
-	}
-
-	// Remove matched supertypes that are strict subsets of other matched supertypes
-	// (e.g., _literal ⊂ _expression — keep _expression, drop _literal)
-	const pruned = matched.filter(st => {
-		return !matched.some(other =>
-			other !== st &&
-			other.subtypes.size > st.subtypes.size &&
-			isSubsetOf(st.subtypes, other.subtypes),
-		);
-	});
-
-	// Collect all concrete types covered by matched supertypes
-	const covered = new Set<string>();
-	for (const st of pruned) {
-		for (const sub of st.subtypes) {
-			covered.add(sub);
-		}
-		const cleanName = st.name.replace(/^_/, '');
-		result.push(toTypeName(cleanName));
-	}
-
-	// Add any remaining concrete types that weren't covered
-	for (const t of inputSet) {
-		if (!covered.has(t)) {
-			result.push(t.startsWith('_') ? toTypeName(t.replace(/^_/, '')) : toTypeName(t));
-		}
-	}
-
-	return result.sort();
-}
-
-/** Check if set A is a subset of set B. */
-function isSubsetOf<T>(a: Set<T>, b: Set<T>): boolean {
-	for (const item of a) {
-		if (!b.has(item)) return false;
-	}
-	return true;
-}
-
-/**
- * Build a supertype map with fully expanded concrete subtypes.
- * Supertypes can reference other supertypes (e.g., _expression includes _literal).
- * This recursively expands until all entries are concrete (non-supertype) kinds.
- */
-function buildExpandedSupertypeMap(supertypes: SupertypeInfo[]): Map<string, Set<string>> {
-	const raw = new Map<string, string[]>();
-	for (const st of supertypes) {
-		raw.set(st.name, st.subtypes);
-	}
-
-	const expanded = new Map<string, Set<string>>();
-
-	function expand(name: string, visited: Set<string>): Set<string> {
-		if (expanded.has(name)) return expanded.get(name)!;
-		if (visited.has(name)) return new Set(); // cycle guard
-		visited.add(name);
-
-		const subtypes = raw.get(name);
-		if (!subtypes) return new Set();
-
-		const result = new Set<string>();
-		for (const sub of subtypes) {
-			if (raw.has(sub)) {
-				// sub is itself a supertype — expand it
-				for (const concrete of expand(sub, visited)) {
-					result.add(concrete);
-				}
-			} else {
-				result.add(sub);
-			}
-		}
-
-		expanded.set(name, result);
-		return result;
-	}
-
-	for (const name of raw.keys()) {
-		expand(name, new Set());
-	}
-
-	return expanded;
+	return children.required;
 }
 
 /** Check if a pattern can be safely embedded as a JS regex literal. */

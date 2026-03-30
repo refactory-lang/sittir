@@ -8,6 +8,6 @@
     "declarationMap": true
   },
   "include": ["src", "tests"],
-  "exclude": ["node_modules", "dist", "src/from.ts", "src/assign.ts"],
+  "exclude": ["node_modules", "dist"],
   "references": [{ "path": "../types" }]
 }

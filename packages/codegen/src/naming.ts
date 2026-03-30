@@ -1,7 +1,12 @@
 /**
  * Naming conventions for converting tree-sitter grammar node kinds
  * to TypeScript identifiers.
+ *
+ * Also contains pipeline Step 10 functions: applyNaming, nameModel, nameField.
  */
+
+import type { NodeModel, FieldModel } from './node-model.ts';
+import { isBranch, isContainer } from './node-model.ts';
 
 const SUFFIXES = ['_item'] as const;
 
@@ -45,6 +50,15 @@ export function toFactoryName(kind: string): string {
     return name + '_';
   }
   return name;
+}
+
+/**
+ * Raw kind name + trailing underscore for factory function names.
+ * All factories get the suffix uniformly — no reserved-word special cases.
+ * Assign uses `factories[kind + '_']` for dynamic lookup.
+ */
+export function toRawFactoryName(kind: string): string {
+  return kind + '_';
 }
 
 /** snake_case to PascalCase: `struct_item` -> `StructItem` */
@@ -139,4 +153,31 @@ export function resolveFileNames(kinds: string[]): Map<string, string> {
     }
   }
   return result;
+}
+
+// ---------------------------------------------------------------------------
+// Pipeline Step 10: applyNaming
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute typeName (PascalCase) and factoryName (camelCase) on each model.
+ * Compute propertyName (camelCase) on each field.
+ */
+export function applyNaming(models: Map<string, NodeModel>): void {
+  for (const model of models.values()) {
+    nameModel(model);
+    if (isBranch(model)) {
+      for (const field of model.fields) nameField(field);
+    }
+  }
+}
+
+function nameModel(model: NodeModel): void {
+  const kind = model.kind.replace(/^_/, '');
+  model.typeName = snakeToPascal(kind);
+  model.factoryName = toFactoryName(kind);
+}
+
+function nameField(field: FieldModel): void {
+  field.propertyName = snakeToCamel(field.name);
 }

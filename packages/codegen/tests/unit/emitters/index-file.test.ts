@@ -3,7 +3,7 @@ import { emitIndex } from '../../../src/emitters/index-file.ts';
 
 describe('emitIndex', () => {
 	it('should re-export types, ir, rules, and core', () => {
-		const source = emitIndex({ grammar: 'rust', nodeKinds: ['struct_item', 'function_item'] });
+		const source = emitIndex({ grammar: 'rust', nodes: [] });
 		expect(source).toContain("from './types.js'");
 		expect(source).toContain("from './ir.js'");
 		expect(source).toContain("from './rules.js'");

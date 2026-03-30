@@ -28,13 +28,13 @@ export interface KindMeta {
 
 // --- Raw node-types.json shape (from tree-sitter grammars) ---
 
-interface RawFieldEntry {
+export interface RawFieldEntry {
 	required: boolean;
 	multiple: boolean;
 	types: Array<{ type: string; named: boolean }>;
 }
 
-interface RawNodeEntry {
+export interface RawNodeEntry {
 	type: string;
 	named: boolean;
 	fields?: Record<string, RawFieldEntry>;
@@ -58,6 +58,7 @@ export type GrammarRule =
 	| { type: 'PREC'; value: number; content: GrammarRule }
 	| { type: 'PREC_LEFT'; value: number; content: GrammarRule }
 	| { type: 'PREC_RIGHT'; value: number; content: GrammarRule }
+	| { type: 'PREC_DYNAMIC'; value: number; content: GrammarRule }
 	| { type: 'ALIAS'; content: GrammarRule; named: boolean; value: string }
 	| { type: 'TOKEN'; content: GrammarRule }
 	| { type: 'IMMEDIATE_TOKEN'; content: GrammarRule }
@@ -161,7 +162,7 @@ export function listLeafValues(grammar: string, nodeKind: string): string[] {
 /** Extract STRING values from a CHOICE rule, unwrapping precedence wrappers. */
 function extractChoiceStrings(rule: GrammarRule): string[] {
 	// Unwrap precedence/token wrappers
-	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT'
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC'
 		|| rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN') {
 		return extractChoiceStrings(rule.content);
 	}
@@ -250,6 +251,7 @@ function walkForTokens(rule: GrammarRule, optional: boolean, tokens: string[]): 
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
 			walkForTokens(rule.content, optional, tokens);
 			break;
 		case 'REPEAT':
@@ -388,7 +390,7 @@ function walkForFields(
 		case 'REPEAT1':
 			walkForFields(rule.content, optional, true, fields, grammar, visited);
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			walkForFields(rule.content, optional, repeated, fields, grammar, visited);
 			break;
 		case 'ALIAS':
@@ -474,7 +476,7 @@ function walkForChildren(
 		case 'REPEAT1':
 			walkForChildren(rule.content, optional, true, children, insideField, grammar, visited);
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			walkForChildren(rule.content, optional, repeated, children, insideField, grammar, visited);
 			break;
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
@@ -491,7 +493,7 @@ function hasBlankChoice(rule: GrammarRule): boolean {
 		return rule.members.some(m => m.type === 'BLANK');
 	}
 	// Unwrap precedence wrappers
-	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT') {
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
 		return hasBlankChoice(rule.content);
 	}
 	return false;
@@ -524,7 +526,7 @@ function extractTypesFromContent(rule: GrammarRule, types: Set<string>, namedTyp
 		case 'SEQ':
 			for (const m of rule.members) extractTypesFromContent(m, types, namedTypes);
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			extractTypesFromContent(rule.content, types, namedTypes);
 			break;
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
@@ -576,7 +578,7 @@ function collectConcreteTypes(grammar: string, rule: GrammarRule, types: string[
 				if (m.type !== 'BLANK') collectConcreteTypes(grammar, m, types, visited);
 			}
 			break;
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			collectConcreteTypes(grammar, rule.content, types, visited);
 			break;
 		case 'SEQ':
@@ -608,6 +610,7 @@ function extractPattern(rule: GrammarRule): string | undefined {
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
 			return extractPattern(rule.content);
 		case 'SEQ': {
 			// SEQ of patterns → concatenate
@@ -655,7 +658,7 @@ function isLeafRule(rule: GrammarRule): boolean {
 		case 'SEQ':
 			// SEQ of all leaf parts (e.g., template literal pieces) — still a leaf
 			return rule.members.every(m => isLeafRule(m));
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT':
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 			return isLeafRule(rule.content);
 		case 'REPEAT': case 'REPEAT1':
 			return isLeafRule(rule.content);
@@ -957,6 +960,7 @@ function extractConstantText(rule: GrammarRule): string | undefined {
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
 		case 'TOKEN':
 		case 'IMMEDIATE_TOKEN':
 			return extractConstantText(rule.content);

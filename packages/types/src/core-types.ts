@@ -19,6 +19,7 @@
 export interface AnyNodeData {
 	readonly type: string;
 	readonly fields?: Readonly<Record<string, unknown>>;
+	readonly children?: readonly AnyNodeData[];
 	readonly text?: string;
 }
 
@@ -132,17 +133,16 @@ export interface ReplaceTarget<T extends string = string> {
 }
 
 /**
- * A parsed tree node that can be assigned to a factory.
- * Structurally compatible with ast-grep SgNode and tree-sitter Node.
- */
-/**
- * @deprecated Use TreeNode<G, K> from @sittir/types for grammar-derived tree navigation.
- * This loose version is kept for @sittir/core internal use only.
+ * A parsed tree node that can be assigned from.
+ * Structurally compatible with ast-grep SgNode.
  */
 export interface AnyTreeNode extends ReplaceTarget {
+	id(): number;
 	field(name: string): AnyTreeNode | null;
+	fieldChildren(name: string): AnyTreeNode[];
 	text(): string;
 	children(): AnyTreeNode[];
+	isNamed(): boolean;
 }
 
 /** Factory output that can render itself. */

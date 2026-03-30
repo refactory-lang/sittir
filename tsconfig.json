@@ -9,7 +9,7 @@
     "sourceMap": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "verbatimModuleSyntax": true,
     "noEmit": false,
     "skipLibCheck": true,

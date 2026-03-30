@@ -4,14 +4,16 @@
 import type { RustGrammar } from './grammar.js';
 import type { NodeKind, Edit, Simplify } from '@sittir/types';
 import type { AbstractTypeTree, ArgumentsTree, ArrayExpressionTree, ArrayTypeTree, AssignmentExpressionTree, AssociatedTypeTree, AsyncBlockTree, AttributeItemTree, AttributeTree, AwaitExpressionTree, BaseFieldInitializerTree, BinaryExpressionTree, BlockCommentTree, BlockTree, BoundedTypeTree, BracketedTypeTree, BreakExpressionTree, CallExpressionTree, CapturedPatternTree, ClosureExpressionTree, ClosureParametersTree, CompoundAssignmentExprTree, ConstBlockTree, ConstItemTree, ConstParameterTree, ContinueExpressionTree, DeclarationListTree, DynamicTypeTree, ElseClauseTree, EnumItemTree, EnumVariantListTree, EnumVariantTree, ExpressionStatementTree, ExternCrateDeclarationTree, ExternModifierTree, FieldDeclarationListTree, FieldDeclarationTree, FieldExpressionTree, FieldInitializerListTree, FieldInitializerTree, FieldPatternTree, ForExpressionTree, ForLifetimesTree, ForeignModItemTree, FunctionItemTree, FunctionModifiersTree, FunctionSignatureItemTree, FunctionTypeTree, GenBlockTree, GenericFunctionTree, GenericPatternTree, GenericTypeTree, GenericTypeWithTurbofishTree, HigherRankedTraitBoundTree, IfExpressionTree, ImplItemTree, IndexExpressionTree, InnerAttributeItemTree, LabelTree, LetChainTree, LetConditionTree, LetDeclarationTree, LifetimeParameterTree, LifetimeTree, LineCommentTree, LoopExpressionTree, MacroDefinitionTree, MacroInvocationTree, MacroRuleTree, MatchArmTree, MatchBlockTree, MatchExpressionTree, MatchPatternTree, ModItemTree, MutPatternTree, NegativeLiteralTree, NodeData, OrPatternTree, OrderedFieldDeclarationListTree, ParameterTree, ParametersTree, ParenthesizedExpressionTree, PointerTypeTree, QualifiedTypeTree, RangeExpressionTree, RangePatternTree, RawStringLiteralTree, RefPatternTree, ReferenceExpressionTree, ReferencePatternTree, ReferenceTypeTree, RemovedTraitBoundTree, ReturnExpressionTree, ScopedIdentifierTree, ScopedTypeIdentifierTree, ScopedUseListTree, SelfParameterTree, ShorthandFieldInitializerTree, SlicePatternTree, SourceFileTree, StaticItemTree, StringLiteralTree, StructExpressionTree, StructItemTree, StructPatternTree, TokenBindingPatternTree, TokenRepetitionPatternTree, TokenRepetitionTree, TokenTreePatternTree, TokenTreeTree, TraitBoundsTree, TraitItemTree, TreeNode, TryBlockTree, TryExpressionTree, TupleExpressionTree, TuplePatternTree, TupleStructPatternTree, TupleTypeTree, TypeArgumentsTree, TypeBindingTree, TypeCastExpressionTree, TypeItemTree, TypeParameterTree, TypeParametersTree, UnaryExpressionTree, UnionItemTree, UnsafeBlockTree, UseAsClauseTree, UseBoundsTree, UseDeclarationTree, UseListTree, UseWildcardTree, VariadicParameterTree, VisibilityModifierTree, WhereClauseTree, WherePredicateTree, WhileExpressionTree, YieldExpressionTree } from './types.js';
-import { render } from '@sittir/core';
+import { createRenderer, bindRange } from '@sittir/core';
 import { rules } from './rules.js';
 import { joinBy } from './joinby.js';
-import { abstractType, arguments_, arrayExpression, arrayType, assignmentExpression, associatedType, asyncBlock, attribute, attributeItem, awaitExpression, baseFieldInitializer, binaryExpression, block, blockComment, boundedType, bracketedType, breakExpression, callExpression, capturedPattern, closureExpression, closureParameters, compoundAssignmentExpr, constBlock, constItem, constParameter, continueExpression, declarationList, dynamicType, elseClause, enumItem, enumVariant, enumVariantList, expressionStatement, externCrateDeclaration, externModifier, fieldDeclaration, fieldDeclarationList, fieldExpression, fieldInitializer, fieldInitializerList, fieldPattern, forExpression, forLifetimes, foreignModItem, functionItem, functionModifiers, functionSignatureItem, functionType, genBlock, genericFunction, genericPattern, genericType, genericTypeWithTurbofish, higherRankedTraitBound, ifExpression, implItem, indexExpression, innerAttributeItem, label, letChain, letCondition, letDeclaration, lifetime, lifetimeParameter, lineComment, loopExpression, macroDefinition, macroInvocation, macroRule, matchArm, matchBlock, matchExpression, matchPattern, modItem, mutPattern, negativeLiteral, orPattern, orderedFieldDeclarationList, parameter, parameters, parenthesizedExpression, pointerType, qualifiedType, rangeExpression, rangePattern, rawStringLiteral, refPattern, referenceExpression, referencePattern, referenceType, removedTraitBound, returnExpression, scopedIdentifier, scopedTypeIdentifier, scopedUseList, selfParameter, shorthandFieldInitializer, slicePattern, sourceFile, staticItem, stringLiteral, structExpression, structItem, structPattern, tokenBindingPattern, tokenRepetition, tokenRepetitionPattern, tokenTree, tokenTreePattern, traitBounds, traitItem, tryBlock, tryExpression, tupleExpression, tuplePattern, tupleStructPattern, tupleType, typeArguments, typeBinding, typeCastExpression, typeItem, typeParameter, typeParameters, unaryExpression, unionItem, unsafeBlock, useAsClause, useBounds, useDeclaration, useList, useWildcard, variadicParameter, visibilityModifier, whereClause, wherePredicate, whileExpression, yieldExpression, booleanLiteral, emptyStatement, fragmentSpecifier, innerDocCommentMarker, neverType, outerDocCommentMarker, remainingFieldPattern, unitExpression, unitType, charLiteral, crate, docComment, escapeSequence, fieldIdentifier, floatLiteral, identifier, integerLiteral, metavariable, mutableSpecifier, primitiveType, self, shebang, shorthandFieldIdentifier, stringContent, super_, typeIdentifier } from './factories.js';
-import type { AbstractType, Arguments, ArrayExpression, ArrayType, AssignmentExpression, AssociatedType, AsyncBlock, Attribute, AttributeItem, AwaitExpression, BaseFieldInitializer, BinaryExpression, Block, BlockComment, BooleanLiteral, BoundedType, BracketedType, BreakExpression, CallExpression, CapturedPattern, CharLiteral, ClosureExpression, ClosureParameters, CompoundAssignmentExpr, ConstBlock, ConstItem, ConstParameter, ContinueExpression, Crate, DeclarationList, DocComment, DynamicType, ElseClause, EmptyStatement, EnumItem, EnumVariant, EnumVariantList, EscapeSequence, ExpressionStatement, ExternCrateDeclaration, ExternModifier, FieldDeclaration, FieldDeclarationList, FieldExpression, FieldIdentifier, FieldInitializer, FieldInitializerList, FieldPattern, FloatLiteral, ForExpression, ForLifetimes, ForeignModItem, FragmentSpecifier, FunctionItem, FunctionModifiers, FunctionSignatureItem, FunctionType, GenBlock, GenericFunction, GenericPattern, GenericType, GenericTypeWithTurbofish, HigherRankedTraitBound, Identifier, IfExpression, ImplItem, IndexExpression, InnerAttributeItem, InnerDocCommentMarker, IntegerLiteral, Label, LetChain, LetCondition, LetDeclaration, Lifetime, LifetimeParameter, LineComment, LoopExpression, MacroDefinition, MacroInvocation, MacroRule, MatchArm, MatchBlock, MatchExpression, MatchPattern, Metavariable, ModItem, MutPattern, MutableSpecifier, NegativeLiteral, NeverType, OrPattern, OrderedFieldDeclarationList, OuterDocCommentMarker, Parameter, Parameters, ParenthesizedExpression, PointerType, PrimitiveType, QualifiedType, RangeExpression, RangePattern, RawStringLiteral, RefPattern, ReferenceExpression, ReferencePattern, ReferenceType, RemainingFieldPattern, RemovedTraitBound, ReturnExpression, ScopedIdentifier, ScopedTypeIdentifier, ScopedUseList, Self, SelfParameter, Shebang, ShorthandFieldIdentifier, ShorthandFieldInitializer, SlicePattern, SourceFile, StaticItem, StringContent, StringLiteral, StructExpression, StructItem, StructPattern, Super, TokenBindingPattern, TokenRepetition, TokenRepetitionPattern, TokenTree, TokenTreePattern, TraitBounds, TraitItem, TryBlock, TryExpression, TupleExpression, TuplePattern, TupleStructPattern, TupleType, TypeArguments, TypeBinding, TypeCastExpression, TypeIdentifier, TypeItem, TypeParameter, TypeParameters, UnaryExpression, UnionItem, UnitExpression, UnitType, UnsafeBlock, UseAsClause, UseBounds, UseDeclaration, UseList, UseWildcard, VariadicParameter, VisibilityModifier, WhereClause, WherePredicate, WhileExpression, YieldExpression } from './types.js';
+
+const { render } = createRenderer(rules, joinBy);
+import { abstract_type_, arguments_, array_expression_, array_type_, assignment_expression_, associated_type_, async_block_, attribute_, attribute_item_, await_expression_, base_field_initializer_, binary_expression_, block_, block_comment_, bounded_type_, bracketed_type_, break_expression_, call_expression_, captured_pattern_, closure_expression_, closure_parameters_, compound_assignment_expr_, const_block_, const_item_, const_parameter_, continue_expression_, declaration_list_, dynamic_type_, else_clause_, enum_item_, enum_variant_, enum_variant_list_, expression_statement_, extern_crate_declaration_, extern_modifier_, field_declaration_, field_declaration_list_, field_expression_, field_initializer_, field_initializer_list_, field_pattern_, for_expression_, for_lifetimes_, foreign_mod_item_, function_item_, function_modifiers_, function_signature_item_, function_type_, gen_block_, generic_function_, generic_pattern_, generic_type_, generic_type_with_turbofish_, higher_ranked_trait_bound_, if_expression_, impl_item_, index_expression_, inner_attribute_item_, label_, let_chain_, let_condition_, let_declaration_, lifetime_, lifetime_parameter_, line_comment_, loop_expression_, macro_definition_, macro_invocation_, macro_rule_, match_arm_, match_block_, match_expression_, match_pattern_, mod_item_, mut_pattern_, negative_literal_, or_pattern_, ordered_field_declaration_list_, parameter_, parameters_, parenthesized_expression_, pointer_type_, qualified_type_, range_expression_, range_pattern_, raw_string_literal_, ref_pattern_, reference_expression_, reference_pattern_, reference_type_, removed_trait_bound_, return_expression_, scoped_identifier_, scoped_type_identifier_, scoped_use_list_, self_parameter_, shorthand_field_initializer_, slice_pattern_, source_file_, static_item_, string_literal_, struct_expression_, struct_item_, struct_pattern_, token_binding_pattern_, token_repetition_, token_repetition_pattern_, token_tree_, token_tree_pattern_, trait_bounds_, trait_item_, try_block_, try_expression_, tuple_expression_, tuple_pattern_, tuple_struct_pattern_, tuple_type_, type_arguments_, type_binding_, type_cast_expression_, type_item_, type_parameter_, type_parameters_, unary_expression_, union_item_, unsafe_block_, use_as_clause_, use_bounds_, use_declaration_, use_list_, use_wildcard_, variadic_parameter_, visibility_modifier_, where_clause_, where_predicate_, while_expression_, yield_expression_, boolean_literal_, empty_statement_, fragment_specifier_, inner_doc_comment_marker_, never_type_, outer_doc_comment_marker_, remaining_field_pattern_, unit_expression_, unit_type_, char_literal_, crate_, doc_comment_, escape_sequence_, field_identifier_, float_literal_, identifier_, integer_literal_, metavariable_, mutable_specifier_, primitive_type_, self_, shebang_, shorthand_field_identifier_, string_content_, super_, type_identifier_ } from './factories.js';
+import type { AbstractTypeConfig, ArgumentsConfig, ArrayExpressionConfig, ArrayTypeConfig, AssignmentExpressionConfig, AssociatedTypeConfig, AsyncBlockConfig, AttributeConfig, AttributeItemConfig, AwaitExpressionConfig, BaseFieldInitializerConfig, BinaryExpressionConfig, BlockCommentConfig, BlockConfig, BoundedTypeConfig, BracketedTypeConfig, BreakExpressionConfig, CallExpressionConfig, CapturedPatternConfig, ClosureExpressionConfig, ClosureParametersConfig, CompoundAssignmentExprConfig, ConstBlockConfig, ConstItemConfig, ConstParameterConfig, ContinueExpressionConfig, DeclarationListConfig, DynamicTypeConfig, ElseClauseConfig, EnumItemConfig, EnumVariantConfig, EnumVariantListConfig, ExpressionStatementConfig, ExternCrateDeclarationConfig, ExternModifierConfig, FieldDeclarationConfig, FieldDeclarationListConfig, FieldExpressionConfig, FieldInitializerConfig, FieldInitializerListConfig, FieldPatternConfig, ForExpressionConfig, ForLifetimesConfig, ForeignModItemConfig, FunctionItemConfig, FunctionModifiersConfig, FunctionSignatureItemConfig, FunctionTypeConfig, GenBlockConfig, GenericFunctionConfig, GenericPatternConfig, GenericTypeConfig, GenericTypeWithTurbofishConfig, HigherRankedTraitBoundConfig, IfExpressionConfig, ImplItemConfig, IndexExpressionConfig, InnerAttributeItemConfig, LabelConfig, LetChainConfig, LetConditionConfig, LetDeclarationConfig, LifetimeConfig, LifetimeParameterConfig, LineCommentConfig, LoopExpressionConfig, MacroDefinitionConfig, MacroInvocationConfig, MacroRuleConfig, MatchArmConfig, MatchBlockConfig, MatchExpressionConfig, MatchPatternConfig, ModItemConfig, MutPatternConfig, NegativeLiteralConfig, OrPatternConfig, OrderedFieldDeclarationListConfig, ParameterConfig, ParametersConfig, ParenthesizedExpressionConfig, PointerTypeConfig, QualifiedTypeConfig, RangeExpressionConfig, RangePatternConfig, RawStringLiteralConfig, RefPatternConfig, ReferenceExpressionConfig, ReferencePatternConfig, ReferenceTypeConfig, RemovedTraitBoundConfig, ReturnExpressionConfig, ScopedIdentifierConfig, ScopedTypeIdentifierConfig, ScopedUseListConfig, SelfParameterConfig, ShorthandFieldInitializerConfig, SlicePatternConfig, SourceFileConfig, StaticItemConfig, StringLiteralConfig, StructExpressionConfig, StructItemConfig, StructPatternConfig, TokenBindingPatternConfig, TokenRepetitionConfig, TokenRepetitionPatternConfig, TokenTreeConfig, TokenTreePatternConfig, TraitBoundsConfig, TraitItemConfig, TryBlockConfig, TryExpressionConfig, TupleExpressionConfig, TuplePatternConfig, TupleStructPatternConfig, TupleTypeConfig, TypeArgumentsConfig, TypeBindingConfig, TypeCastExpressionConfig, TypeItemConfig, TypeParameterConfig, TypeParametersConfig, UnaryExpressionConfig, UnionItemConfig, UnsafeBlockConfig, UseAsClauseConfig, UseBoundsConfig, UseDeclarationConfig, UseListConfig, UseWildcardConfig, VariadicParameterConfig, VisibilityModifierConfig, WhereClauseConfig, WherePredicateConfig, WhileExpressionConfig, YieldExpressionConfig } from './types.js';
 
 /** Kind → assign function. Branches call .assign() recursively, leaves read text(). */
-const _assignTable: Record<string, (target) => unknown> = {
+const _assignTable: Record<string, (target: any) => unknown> = {
   'abstract_type': (t) => assignAbstractType(t),
   'arguments': (t) => assignArguments(t),
   'array_expression': (t) => assignArrayExpression(t),
@@ -149,1980 +151,1946 @@ const _assignTable: Record<string, (target) => unknown> = {
   'where_predicate': (t) => assignWherePredicate(t),
   'while_expression': (t) => assignWhileExpression(t),
   'yield_expression': (t) => assignYieldExpression(t),
-  'boolean_literal': (t) => booleanLiteral(t.text()),
-  'empty_statement': () => emptyStatement(),
-  'fragment_specifier': (t) => fragmentSpecifier(t.text()),
-  'inner_doc_comment_marker': (t) => innerDocCommentMarker(t.text()),
-  'never_type': () => neverType(),
-  'outer_doc_comment_marker': (t) => outerDocCommentMarker(t.text()),
-  'remaining_field_pattern': () => remainingFieldPattern(),
-  'unit_expression': () => unitExpression(),
-  'unit_type': () => unitType(),
-  'char_literal': (t) => charLiteral(t.text()),
-  'crate': () => crate(),
-  'doc_comment': (t) => docComment(t.text()),
-  'escape_sequence': (t) => escapeSequence(t.text()),
-  'field_identifier': (t) => fieldIdentifier(t.text()),
-  'float_literal': (t) => floatLiteral(t.text()),
-  'identifier': (t) => identifier(t.text()),
-  'integer_literal': (t) => integerLiteral(t.text()),
-  'metavariable': (t) => metavariable(t.text()),
-  'mutable_specifier': () => mutableSpecifier(),
-  'primitive_type': (t) => primitiveType(t.text()),
-  'self': () => self(),
-  'shebang': (t) => shebang(t.text()),
-  'shorthand_field_identifier': (t) => shorthandFieldIdentifier(t.text()),
-  'string_content': (t) => stringContent(t.text()),
+  'boolean_literal': (t) => boolean_literal_(t.text()),
+  'empty_statement': () => empty_statement_(),
+  'fragment_specifier': (t) => fragment_specifier_(t.text()),
+  'inner_doc_comment_marker': (t) => inner_doc_comment_marker_(t.text()),
+  'never_type': () => never_type_(),
+  'outer_doc_comment_marker': (t) => outer_doc_comment_marker_(t.text()),
+  'remaining_field_pattern': () => remaining_field_pattern_(),
+  'unit_expression': () => unit_expression_(),
+  'unit_type': () => unit_type_(),
+  'char_literal': (t) => char_literal_(t.text()),
+  'crate': () => crate_(),
+  'doc_comment': (t) => doc_comment_(t.text()),
+  'escape_sequence': (t) => escape_sequence_(t.text()),
+  'field_identifier': (t) => field_identifier_(t.text()),
+  'float_literal': (t) => float_literal_(t.text()),
+  'identifier': (t) => identifier_(t.text()),
+  'integer_literal': (t) => integer_literal_(t.text()),
+  'metavariable': (t) => metavariable_(t.text()),
+  'mutable_specifier': () => mutable_specifier_(),
+  'primitive_type': (t) => primitive_type_(t.text()),
+  'self': () => self_(),
+  'shebang': (t) => shebang_(t.text()),
+  'shorthand_field_identifier': (t) => shorthand_field_identifier_(t.text()),
+  'string_content': (t) => string_content_(t.text()),
   'super': () => super_(),
-  'type_identifier': (t) => typeIdentifier(t.text()),
+  'type_identifier': (t) => type_identifier_(t.text()),
 };
 
 /** Lookup assign function for a kind. Throws if kind is unknown. */
-export function assignByKind(kind: string, target) {
+export function assignByKind(kind: string, target: any): unknown {
   const fn = _assignTable[kind];
   if (!fn) throw new Error(`No assign function for kind '${kind}' in RustGrammar grammar`);
   return fn(target);
 }
 
-export function assignAbstractType(target: AbstractTypeTree): AbstractType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = abstractType({
-    trait: assignByKind(target.field('trait')!.type, target.field('trait')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignArguments(target: ArgumentsTree): Arguments & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = arguments_({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignArrayExpression(target: ArrayExpressionTree): ArrayExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = arrayExpression({
-    length: target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignArrayType(target: ArrayTypeTree): ArrayType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = arrayType({
-    element: assignByKind(target.field('element')!.type, target.field('element')!),
-    length: target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignAssignmentExpression(target: AssignmentExpressionTree): AssignmentExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = assignmentExpression({
-    left: assignByKind(target.field('left')!.type, target.field('left')!),
-    right: assignByKind(target.field('right')!.type, target.field('right')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignAssociatedType(target: AssociatedTypeTree): AssociatedType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = associatedType({
-    name: assignByKind('type_identifier', target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignAsyncBlock(target: AsyncBlockTree): AsyncBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = asyncBlock({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignAttribute(target: AttributeTree): Attribute & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = attribute({
-    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-    arguments: target.field('arguments') ? assignTokenTree(target.field('arguments')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignAttributeItem(target: AttributeItemTree): AttributeItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = attributeItem({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignAwaitExpression(target: AwaitExpressionTree): AwaitExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = awaitExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignBaseFieldInitializer(target: BaseFieldInitializerTree): BaseFieldInitializer & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = baseFieldInitializer({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignBinaryExpression(target: BinaryExpressionTree): BinaryExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = binaryExpression({
-    left: assignByKind(target.field('left')!.type, target.field('left')!),
-    right: assignByKind(target.field('right')!.type, target.field('right')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignBlock(target: BlockTree): Block & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = block({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignBlockComment(target: BlockCommentTree): BlockComment & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = blockComment({
-    outer: target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined,
-    inner: target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined,
-    doc: target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignBoundedType(target: BoundedTypeTree): BoundedType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = boundedType({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignBracketedType(target: BracketedTypeTree): BracketedType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = bracketedType({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignBreakExpression(target: BreakExpressionTree): BreakExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = breakExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignCallExpression(target: CallExpressionTree): CallExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = callExpression({
-    function: assignByKind(target.field('function')!.type, target.field('function')!),
-    arguments: assignArguments(target.field('arguments')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignCapturedPattern(target: CapturedPatternTree): CapturedPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = capturedPattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignClosureExpression(target: ClosureExpressionTree): ClosureExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = closureExpression({
-    parameters: assignClosureParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
-    body: assignByKind(target.field('body')!.type, target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignClosureParameters(target: ClosureParametersTree): ClosureParameters & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = closureParameters({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignCompoundAssignmentExpr(target: CompoundAssignmentExprTree): CompoundAssignmentExpr & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = compoundAssignmentExpr({
-    left: assignByKind(target.field('left')!.type, target.field('left')!),
-    right: assignByKind(target.field('right')!.type, target.field('right')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignConstBlock(target: ConstBlockTree): ConstBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = constBlock({
-    body: assignBlock(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignConstItem(target: ConstItemTree): ConstItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = constItem({
-    name: assignByKind('identifier', target.field('name')!),
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignConstParameter(target: ConstParameterTree): ConstParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = constParameter({
-    name: assignByKind('identifier', target.field('name')!),
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignContinueExpression(target: ContinueExpressionTree): ContinueExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = continueExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignDeclarationList(target: DeclarationListTree): DeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = declarationList({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignDynamicType(target: DynamicTypeTree): DynamicType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = dynamicType({
-    trait: assignByKind(target.field('trait')!.type, target.field('trait')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignElseClause(target: ElseClauseTree): ElseClause & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = elseClause({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignEnumItem(target: EnumItemTree): EnumItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = enumItem({
-    name: assignByKind('type_identifier', target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    body: assignEnumVariantList(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignEnumVariant(target: EnumVariantTree): EnumVariant & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = enumVariant({
-    name: assignByKind('identifier', target.field('name')!),
-    body: target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined,
-    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignEnumVariantList(target: EnumVariantListTree): EnumVariantList & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = enumVariantList({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignExpressionStatement(target: ExpressionStatementTree): ExpressionStatement & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = expressionStatement({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignExternCrateDeclaration(target: ExternCrateDeclarationTree): ExternCrateDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = externCrateDeclaration({
-    name: assignByKind('identifier', target.field('name')!),
-    alias: target.field('alias') ? assignByKind('identifier', target.field('alias')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignExternModifier(target: ExternModifierTree): ExternModifier & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = externModifier({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFieldDeclaration(target: FieldDeclarationTree): FieldDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = fieldDeclaration({
-    name: assignByKind('field_identifier', target.field('name')!),
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFieldDeclarationList(target: FieldDeclarationListTree): FieldDeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = fieldDeclarationList({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFieldExpression(target: FieldExpressionTree): FieldExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = fieldExpression({
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-    field: assignByKind(target.field('field')!.type, target.field('field')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFieldInitializer(target: FieldInitializerTree): FieldInitializer & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = fieldInitializer({
-    field: assignByKind(target.field('field')!.type, target.field('field')!),
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFieldInitializerList(target: FieldInitializerListTree): FieldInitializerList & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = fieldInitializerList({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFieldPattern(target: FieldPatternTree): FieldPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = fieldPattern({
-    name: assignByKind(target.field('name')!.type, target.field('name')!),
-    pattern: target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignForExpression(target: ForExpressionTree): ForExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = forExpression({
-    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-    body: assignBlock(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignForLifetimes(target: ForLifetimesTree): ForLifetimes & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = forLifetimes({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignForeignModItem(target: ForeignModItemTree): ForeignModItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = foreignModItem({
-    body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFunctionItem(target: FunctionItemTree): FunctionItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = functionItem({
-    name: assignByKind(target.field('name')!.type, target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    parameters: assignParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
-    body: assignBlock(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFunctionModifiers(target: FunctionModifiersTree): FunctionModifiers & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = functionModifiers({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFunctionSignatureItem(target: FunctionSignatureItemTree): FunctionSignatureItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = functionSignatureItem({
-    name: assignByKind(target.field('name')!.type, target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    parameters: assignParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignFunctionType(target: FunctionTypeTree): FunctionType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = functionType({
-    trait: target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined,
-    parameters: assignParameters(target.field('parameters')!),
-    return_type: target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignGenBlock(target: GenBlockTree): GenBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = genBlock({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignGenericFunction(target: GenericFunctionTree): GenericFunction & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = genericFunction({
-    function: assignByKind(target.field('function')!.type, target.field('function')!),
-    type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignGenericPattern(target: GenericPatternTree): GenericPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = genericPattern({
-    type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignGenericType(target: GenericTypeTree): GenericType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = genericType({
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-    type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignGenericTypeWithTurbofish(target: GenericTypeWithTurbofishTree): GenericTypeWithTurbofish & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = genericTypeWithTurbofish({
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-    type_arguments: assignTypeArguments(target.field('type_arguments')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignHigherRankedTraitBound(target: HigherRankedTraitBoundTree): HigherRankedTraitBound & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = higherRankedTraitBound({
-    type_parameters: assignTypeParameters(target.field('type_parameters')!),
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignIfExpression(target: IfExpressionTree): IfExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = ifExpression({
-    condition: assignByKind(target.field('condition')!.type, target.field('condition')!),
-    consequence: assignBlock(target.field('consequence')!),
-    alternative: target.field('alternative') ? assignElseClause(target.field('alternative')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignImplItem(target: ImplItemTree): ImplItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = implItem({
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    trait: target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined,
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-    body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignIndexExpression(target: IndexExpressionTree): IndexExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = indexExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignInnerAttributeItem(target: InnerAttributeItemTree): InnerAttributeItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = innerAttributeItem({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLabel(target: LabelTree): Label & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = label({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLetChain(target: LetChainTree): LetChain & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = letChain({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLetCondition(target: LetConditionTree): LetCondition & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = letCondition({
-    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLetDeclaration(target: LetDeclarationTree): LetDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = letDeclaration({
-    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
-    type: target.field('type') ? assignByKind(target.field('type')!.type, target.field('type')!) : undefined,
-    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-    alternative: target.field('alternative') ? assignBlock(target.field('alternative')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLifetime(target: LifetimeTree): Lifetime & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = lifetime({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLifetimeParameter(target: LifetimeParameterTree): LifetimeParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = lifetimeParameter({
-    name: assignLifetime(target.field('name')!),
-    bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLineComment(target: LineCommentTree): LineComment & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = lineComment({
-    outer: target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined,
-    inner: target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined,
-    doc: target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignLoopExpression(target: LoopExpressionTree): LoopExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = loopExpression({
-    body: assignBlock(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMacroDefinition(target: MacroDefinitionTree): MacroDefinition & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = macroDefinition({
-    name: assignByKind('identifier', target.field('name')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMacroInvocation(target: MacroInvocationTree): MacroInvocation & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = macroInvocation({
-    macro: assignByKind(target.field('macro')!.type, target.field('macro')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMacroRule(target: MacroRuleTree): MacroRule & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = macroRule({
-    left: assignTokenTreePattern(target.field('left')!),
-    right: assignTokenTree(target.field('right')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMatchArm(target: MatchArmTree): MatchArm & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = matchArm({
-    pattern: assignMatchPattern(target.field('pattern')!),
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMatchBlock(target: MatchBlockTree): MatchBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = matchBlock({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMatchExpression(target: MatchExpressionTree): MatchExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = matchExpression({
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-    body: assignMatchBlock(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMatchPattern(target: MatchPatternTree): MatchPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = matchPattern({
-    condition: target.field('condition') ? assignByKind(target.field('condition')!.type, target.field('condition')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignModItem(target: ModItemTree): ModItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = modItem({
-    name: assignByKind('identifier', target.field('name')!),
-    body: target.field('body') ? assignDeclarationList(target.field('body')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignMutPattern(target: MutPatternTree): MutPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = mutPattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignNegativeLiteral(target: NegativeLiteralTree): NegativeLiteral & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = negativeLiteral({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignOrPattern(target: OrPatternTree): OrPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = orPattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignOrderedFieldDeclarationList(target: OrderedFieldDeclarationListTree): OrderedFieldDeclarationList & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = orderedFieldDeclarationList({
-    type: (() => {
-      const _kinds = new Set(["abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","primitive_type"]);
-      const _items = target.children().filter((c) => _kinds.has(c.type));
-      return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
-    })(),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignParameter(target: ParameterTree): Parameter & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = parameter({
-    pattern: assignByKind(target.field('pattern')!.type, target.field('pattern')!),
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignParameters(target: ParametersTree): Parameters & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = parameters({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignParenthesizedExpression(target: ParenthesizedExpressionTree): ParenthesizedExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = parenthesizedExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignPointerType(target: PointerTypeTree): PointerType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = pointerType({
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignQualifiedType(target: QualifiedTypeTree): QualifiedType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = qualifiedType({
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-    alias: assignByKind(target.field('alias')!.type, target.field('alias')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignRangeExpression(target: RangeExpressionTree): RangeExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = rangeExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignRangePattern(target: RangePatternTree): RangePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = rangePattern({
-    left: target.field('left') ? assignByKind(target.field('left')!.type, target.field('left')!) : undefined,
-    right: target.field('right') ? assignByKind(target.field('right')!.type, target.field('right')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignRawStringLiteral(target: RawStringLiteralTree): RawStringLiteral & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = rawStringLiteral({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignRefPattern(target: RefPatternTree): RefPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = refPattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignReferenceExpression(target: ReferenceExpressionTree): ReferenceExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = referenceExpression({
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignReferencePattern(target: ReferencePatternTree): ReferencePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = referencePattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignReferenceType(target: ReferenceTypeTree): ReferenceType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = referenceType({
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignRemovedTraitBound(target: RemovedTraitBoundTree): RemovedTraitBound & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = removedTraitBound({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignReturnExpression(target: ReturnExpressionTree): ReturnExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = returnExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignScopedIdentifier(target: ScopedIdentifierTree): ScopedIdentifier & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = scopedIdentifier({
-    path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
-    name: assignByKind(target.field('name')!.type, target.field('name')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignScopedTypeIdentifier(target: ScopedTypeIdentifierTree): ScopedTypeIdentifier & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = scopedTypeIdentifier({
-    path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
-    name: assignByKind('type_identifier', target.field('name')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignScopedUseList(target: ScopedUseListTree): ScopedUseList & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = scopedUseList({
-    path: target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined,
-    list: assignUseList(target.field('list')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignSelfParameter(target: SelfParameterTree): SelfParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = selfParameter({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignShorthandFieldInitializer(target: ShorthandFieldInitializerTree): ShorthandFieldInitializer & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = shorthandFieldInitializer({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignSlicePattern(target: SlicePatternTree): SlicePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = slicePattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignSourceFile(target: SourceFileTree): SourceFile & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = sourceFile({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignStaticItem(target: StaticItemTree): StaticItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = staticItem({
-    name: assignByKind('identifier', target.field('name')!),
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-    value: target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignStringLiteral(target: StringLiteralTree): StringLiteral & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = stringLiteral({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignStructExpression(target: StructExpressionTree): StructExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = structExpression({
-    name: assignByKind(target.field('name')!.type, target.field('name')!),
-    body: assignFieldInitializerList(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignStructItem(target: StructItemTree): StructItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = structItem({
-    name: assignByKind('type_identifier', target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    body: target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignStructPattern(target: StructPatternTree): StructPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = structPattern({
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTokenBindingPattern(target: TokenBindingPatternTree): TokenBindingPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tokenBindingPattern({
-    name: assignByKind('metavariable', target.field('name')!),
-    type: assignByKind('fragment_specifier', target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTokenRepetition(target: TokenRepetitionTree): TokenRepetition & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tokenRepetition({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTokenRepetitionPattern(target: TokenRepetitionPatternTree): TokenRepetitionPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tokenRepetitionPattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTokenTree(target: TokenTreeTree): TokenTree & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tokenTree({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTokenTreePattern(target: TokenTreePatternTree): TokenTreePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tokenTreePattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTraitBounds(target: TraitBoundsTree): TraitBounds & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = traitBounds({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTraitItem(target: TraitItemTree): TraitItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = traitItem({
-    name: assignByKind('type_identifier', target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
-    body: assignDeclarationList(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTryBlock(target: TryBlockTree): TryBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tryBlock({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTryExpression(target: TryExpressionTree): TryExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tryExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTupleExpression(target: TupleExpressionTree): TupleExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tupleExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTuplePattern(target: TuplePatternTree): TuplePattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tuplePattern({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTupleStructPattern(target: TupleStructPatternTree): TupleStructPattern & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tupleStructPattern({
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTupleType(target: TupleTypeTree): TupleType & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = tupleType({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTypeArguments(target: TypeArgumentsTree): TypeArguments & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = typeArguments({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTypeBinding(target: TypeBindingTree): TypeBinding & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = typeBinding({
-    name: assignByKind('type_identifier', target.field('name')!),
-    type_arguments: target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')!) : undefined,
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTypeCastExpression(target: TypeCastExpressionTree): TypeCastExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = typeCastExpression({
-    value: assignByKind(target.field('value')!.type, target.field('value')!),
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTypeItem(target: TypeItemTree): TypeItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = typeItem({
-    name: assignByKind('type_identifier', target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    type: assignByKind(target.field('type')!.type, target.field('type')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTypeParameter(target: TypeParameterTree): TypeParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = typeParameter({
-    name: assignByKind('type_identifier', target.field('name')!),
-    bounds: target.field('bounds') ? assignTraitBounds(target.field('bounds')!) : undefined,
-    default_type: target.field('default_type') ? assignByKind(target.field('default_type')!.type, target.field('default_type')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignTypeParameters(target: TypeParametersTree): TypeParameters & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = typeParameters({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUnaryExpression(target: UnaryExpressionTree): UnaryExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = unaryExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUnionItem(target: UnionItemTree): UnionItem & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = unionItem({
-    name: assignByKind('type_identifier', target.field('name')!),
-    type_parameters: target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')!) : undefined,
-    body: assignFieldDeclarationList(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUnsafeBlock(target: UnsafeBlockTree): UnsafeBlock & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = unsafeBlock({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUseAsClause(target: UseAsClauseTree): UseAsClause & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = useAsClause({
-    path: assignByKind(target.field('path')!.type, target.field('path')!),
-    alias: assignByKind('identifier', target.field('alias')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUseBounds(target: UseBoundsTree): UseBounds & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = useBounds({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUseDeclaration(target: UseDeclarationTree): UseDeclaration & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = useDeclaration({
-    argument: assignByKind(target.field('argument')!.type, target.field('argument')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUseList(target: UseListTree): UseList & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = useList({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignUseWildcard(target: UseWildcardTree): UseWildcard & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = useWildcard({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignVariadicParameter(target: VariadicParameterTree): VariadicParameter & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = variadicParameter({
-    pattern: target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined,
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignVisibilityModifier(target: VisibilityModifierTree): VisibilityModifier & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = visibilityModifier({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignWhereClause(target: WhereClauseTree): WhereClause & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = whereClause({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignWherePredicate(target: WherePredicateTree): WherePredicate & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = wherePredicate({
-    left: assignByKind(target.field('left')!.type, target.field('left')!),
-    bounds: assignTraitBounds(target.field('bounds')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignWhileExpression(target: WhileExpressionTree): WhileExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = whileExpression({
-    condition: assignByKind(target.field('condition')!.type, target.field('condition')!),
-    body: assignBlock(target.field('body')!),
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
-}
-
-export function assignYieldExpression(target: YieldExpressionTree): YieldExpression & { toEdit(): Edit; replace(): Edit; render(): string } {
-  const result = yieldExpression({
-  });
-  const _origToEdit = result.toEdit.bind(result);
-  const boundToEdit = () => {
-    const r = target.range();
-    return { startPos: r.start.index, endPos: r.end.index, insertedText: result.render() } as Edit;
-  };
-  result.toEdit = boundToEdit;
-  result.replace = boundToEdit;
-  return result;
+export function assignAbstractType(target: AbstractTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['trait'] = assignByKind(target.field('trait')!.type, target.field('trait')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["type_parameters"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = abstract_type_(config as AbstractTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignArguments(target: ArgumentsTree) {
+  const config: Record<string, unknown> = {};
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['expression'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children2'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = arguments_(config as ArgumentsConfig);
+  return bindRange(target, result);
+}
+
+export function assignArrayExpression(target: ArrayExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['length'] = target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined;
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['expression'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children3'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = array_expression_(config as ArrayExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignArrayType(target: ArrayTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['element'] = assignByKind(target.field('element')!.type, target.field('element')!);
+  config['length'] = target.field('length') ? assignByKind(target.field('length')!.type, target.field('length')!) : undefined;
+  const result = array_type_(config as ArrayTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignAssignmentExpression(target: AssignmentExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
+  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  const result = assignment_expression_(config as AssignmentExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignAssociatedType(target: AssociatedTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['bounds'] = target.field('bounds') ? assignTraitBounds(target.field('bounds')! as TraitBoundsTree) : undefined;
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = associated_type_(config as AssociatedTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignAsyncBlock(target: AsyncBlockTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["block"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'async_block' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = async_block_(config as AsyncBlockConfig);
+  return bindRange(target, result);
+}
+
+export function assignAttribute(target: AttributeTree) {
+  const config: Record<string, unknown> = {};
+  config['arguments'] = target.field('arguments') ? assignTokenTree(target.field('arguments')! as TokenTreeTree) : undefined;
+  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["crate","identifier","metavariable","scoped_identifier","self","super"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'attribute' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = attribute_(config as AttributeConfig);
+  return bindRange(target, result);
+}
+
+export function assignAttributeItem(target: AttributeItemTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["attribute"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'attribute_item' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = attribute_item_(config as AttributeItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignAwaitExpression(target: AwaitExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'await_expression' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = await_expression_(config as AwaitExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignBaseFieldInitializer(target: BaseFieldInitializerTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'base_field_initializer' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = base_field_initializer_(config as BaseFieldInitializerConfig);
+  return bindRange(target, result);
+}
+
+export function assignBinaryExpression(target: BinaryExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
+  config['operator'] = target.field('operator')!.text();
+  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  const result = binary_expression_(config as BinaryExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignBlock(target: BlockTree) {
+  const config: Record<string, unknown> = {};
+  config['label'] = (() => {
+    const _kinds = new Set(["label"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['expression'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = block_(config as BlockConfig);
+  return bindRange(target, result);
+}
+
+export function assignBlockComment(target: BlockCommentTree) {
+  const config: Record<string, unknown> = {};
+  config['doc'] = target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined;
+  config['inner'] = target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined;
+  config['outer'] = target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined;
+  const result = block_comment_(config as BlockCommentConfig);
+  return bindRange(target, result);
+}
+
+export function assignBoundedType(target: BoundedTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['children0'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'bounded_type' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'bounded_type' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = bounded_type_(config as BoundedTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignBracketedType(target: BracketedTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","metavariable","never_type","pointer_type","primitive_type","qualified_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'bracketed_type' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = bracketed_type_(config as BracketedTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignBreakExpression(target: BreakExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['label'] = (() => {
+    const _kinds = new Set(["label"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['expression'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = break_expression_(config as BreakExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignCallExpression(target: CallExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['arguments'] = assignArguments(target.field('arguments')! as ArgumentsTree);
+  config['function'] = assignByKind(target.field('function')!.type, target.field('function')!);
+  const result = call_expression_(config as CallExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignCapturedPattern(target: CapturedPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['identifier'] = (() => {
+    const _kinds = new Set(["identifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'captured_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['pattern'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'captured_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = captured_pattern_(config as CapturedPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignClosureExpression(target: ClosureExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignByKind(target.field('body')!.type, target.field('body')!);
+  config['parameters'] = assignClosureParameters(target.field('parameters')! as ClosureParametersTree);
+  config['returnType'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  const result = closure_expression_(config as ClosureExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignClosureParameters(target: ClosureParametersTree) {
+  const config: Record<string, unknown> = {};
+  config['children0'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","parameter","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","parameter","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = closure_parameters_(config as ClosureParametersConfig);
+  return bindRange(target, result);
+}
+
+export function assignCompoundAssignmentExpr(target: CompoundAssignmentExprTree) {
+  const config: Record<string, unknown> = {};
+  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
+  config['operator'] = target.field('operator')!.text();
+  config['right'] = assignByKind(target.field('right')!.type, target.field('right')!);
+  const result = compound_assignment_expr_(config as CompoundAssignmentExprConfig);
+  return bindRange(target, result);
+}
+
+export function assignConstBlock(target: ConstBlockTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignBlock(target.field('body')! as BlockTree);
+  const result = const_block_(config as ConstBlockConfig);
+  return bindRange(target, result);
+}
+
+export function assignConstItem(target: ConstItemTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('identifier', target.field('name')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = const_item_(config as ConstItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignConstParameter(target: ConstParameterTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('identifier', target.field('name')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  const result = const_parameter_(config as ConstParameterConfig);
+  return bindRange(target, result);
+}
+
+export function assignContinueExpression(target: ContinueExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["label"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = continue_expression_(config as ContinueExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignDeclarationList(target: DeclarationListTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["associated_type","attribute_item","const_item","empty_statement","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = declaration_list_(config as DeclarationListConfig);
+  return bindRange(target, result);
+}
+
+export function assignDynamicType(target: DynamicTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['trait'] = assignByKind(target.field('trait')!.type, target.field('trait')!);
+  const result = dynamic_type_(config as DynamicTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignElseClause(target: ElseClauseTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["block","if_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'else_clause' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = else_clause_(config as ElseClauseConfig);
+  return bindRange(target, result);
+}
+
+export function assignEnumItem(target: EnumItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignEnumVariantList(target.field('body')! as EnumVariantListTree);
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = enum_item_(config as EnumItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignEnumVariant(target: EnumVariantTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined;
+  config['name'] = assignByKind('identifier', target.field('name')!);
+  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = enum_variant_(config as EnumVariantConfig);
+  return bindRange(target, result);
+}
+
+export function assignEnumVariantList(target: EnumVariantListTree) {
+  const config: Record<string, unknown> = {};
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['enumVariant'] = (() => {
+    const _kinds = new Set(["enum_variant"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children2'] = (() => {
+    const _kinds = new Set(["attribute_item","enum_variant"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = enum_variant_list_(config as EnumVariantListConfig);
+  return bindRange(target, result);
+}
+
+export function assignExpressionStatement(target: ExpressionStatementTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'expression_statement' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = expression_statement_(config as ExpressionStatementConfig);
+  return bindRange(target, result);
+}
+
+export function assignExternCrateDeclaration(target: ExternCrateDeclarationTree) {
+  const config: Record<string, unknown> = {};
+  config['alias'] = target.field('alias') ? assignByKind('identifier', target.field('alias')!) : undefined;
+  config['name'] = assignByKind('identifier', target.field('name')!);
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['crate'] = (() => {
+    const _kinds = new Set(["crate"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'extern_crate_declaration' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = extern_crate_declaration_(config as ExternCrateDeclarationConfig);
+  return bindRange(target, result);
+}
+
+export function assignExternModifier(target: ExternModifierTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["string_literal"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = extern_modifier_(config as ExternModifierConfig);
+  return bindRange(target, result);
+}
+
+export function assignFieldDeclaration(target: FieldDeclarationTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('field_identifier', target.field('name')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = field_declaration_(config as FieldDeclarationConfig);
+  return bindRange(target, result);
+}
+
+export function assignFieldDeclarationList(target: FieldDeclarationListTree) {
+  const config: Record<string, unknown> = {};
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['fieldDeclaration'] = (() => {
+    const _kinds = new Set(["field_declaration"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children2'] = (() => {
+    const _kinds = new Set(["attribute_item","field_declaration"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = field_declaration_list_(config as FieldDeclarationListConfig);
+  return bindRange(target, result);
+}
+
+export function assignFieldExpression(target: FieldExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['field'] = assignByKind(target.field('field')!.type, target.field('field')!);
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  const result = field_expression_(config as FieldExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignFieldInitializer(target: FieldInitializerTree) {
+  const config: Record<string, unknown> = {};
+  config['field'] = assignByKind(target.field('field')!.type, target.field('field')!);
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = field_initializer_(config as FieldInitializerConfig);
+  return bindRange(target, result);
+}
+
+export function assignFieldInitializerList(target: FieldInitializerListTree) {
+  const config: Record<string, unknown> = {};
+  config['children0'] = (() => {
+    const _kinds = new Set(["base_field_initializer","field_initializer","shorthand_field_initializer"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["base_field_initializer","field_initializer","shorthand_field_initializer"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = field_initializer_list_(config as FieldInitializerListConfig);
+  return bindRange(target, result);
+}
+
+export function assignFieldPattern(target: FieldPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config['pattern'] = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = field_pattern_(config as FieldPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignForExpression(target: ForExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignBlock(target.field('body')! as BlockTree);
+  config['pattern'] = assignByKind(target.field('pattern')!.type, target.field('pattern')!);
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["label"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = for_expression_(config as ForExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignForLifetimes(target: ForLifetimesTree) {
+  const config: Record<string, unknown> = {};
+  config['lifetime1'] = (() => {
+    const _kinds = new Set(["lifetime"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'for_lifetimes' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['lifetime2'] = (() => {
+    const _kinds = new Set(["lifetime"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = for_lifetimes_(config as ForLifetimesConfig);
+  return bindRange(target, result);
+}
+
+export function assignForeignModItem(target: ForeignModItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = target.field('body') ? assignDeclarationList(target.field('body')! as DeclarationListTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['externModifier'] = (() => {
+    const _kinds = new Set(["extern_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'foreign_mod_item' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = foreign_mod_item_(config as ForeignModItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignFunctionItem(target: FunctionItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignBlock(target.field('body')! as BlockTree);
+  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config['parameters'] = assignParameters(target.field('parameters')! as ParametersTree);
+  config['returnType'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['functionModifiers'] = (() => {
+    const _kinds = new Set(["function_modifiers"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = function_item_(config as FunctionItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignFunctionModifiers(target: FunctionModifiersTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["extern_modifier"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = function_modifiers_(config as FunctionModifiersConfig);
+  return bindRange(target, result);
+}
+
+export function assignFunctionSignatureItem(target: FunctionSignatureItemTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config['parameters'] = assignParameters(target.field('parameters')! as ParametersTree);
+  config['returnType'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['functionModifiers'] = (() => {
+    const _kinds = new Set(["function_modifiers"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = function_signature_item_(config as FunctionSignatureItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignFunctionType(target: FunctionTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['parameters'] = assignParameters(target.field('parameters')! as ParametersTree);
+  config['returnType'] = target.field('return_type') ? assignByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
+  config['trait'] = target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined;
+  config['forLifetimes'] = (() => {
+    const _kinds = new Set(["for_lifetimes"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['functionModifiers'] = (() => {
+    const _kinds = new Set(["function_modifiers"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = function_type_(config as FunctionTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignGenBlock(target: GenBlockTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["block"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'gen_block' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = gen_block_(config as GenBlockConfig);
+  return bindRange(target, result);
+}
+
+export function assignGenericFunction(target: GenericFunctionTree) {
+  const config: Record<string, unknown> = {};
+  config['function'] = assignByKind(target.field('function')!.type, target.field('function')!);
+  config['typeArguments'] = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
+  const result = generic_function_(config as GenericFunctionConfig);
+  return bindRange(target, result);
+}
+
+export function assignGenericPattern(target: GenericPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['typeArguments'] = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
+  config['children'] = (() => {
+    const _kinds = new Set(["identifier","scoped_identifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'generic_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = generic_pattern_(config as GenericPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignGenericType(target: GenericTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['typeArguments'] = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
+  const result = generic_type_(config as GenericTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignGenericTypeWithTurbofish(target: GenericTypeWithTurbofishTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['typeArguments'] = assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree);
+  const result = generic_type_with_turbofish_(config as GenericTypeWithTurbofishConfig);
+  return bindRange(target, result);
+}
+
+export function assignHigherRankedTraitBound(target: HigherRankedTraitBoundTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['typeParameters'] = assignTypeParameters(target.field('type_parameters')! as TypeParametersTree);
+  const result = higher_ranked_trait_bound_(config as HigherRankedTraitBoundConfig);
+  return bindRange(target, result);
+}
+
+export function assignIfExpression(target: IfExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['alternative'] = target.field('alternative') ? assignElseClause(target.field('alternative')! as ElseClauseTree) : undefined;
+  config['condition'] = assignByKind(target.field('condition')!.type, target.field('condition')!);
+  config['consequence'] = assignBlock(target.field('consequence')! as BlockTree);
+  const result = if_expression_(config as IfExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignImplItem(target: ImplItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = target.field('body') ? assignDeclarationList(target.field('body')! as DeclarationListTree) : undefined;
+  config['trait'] = target.field('trait') ? assignByKind(target.field('trait')!.type, target.field('trait')!) : undefined;
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = impl_item_(config as ImplItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignIndexExpression(target: IndexExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    if (_items.length === 0) throw new Error(`Required children missing on 'index_expression' tree node`);
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = index_expression_(config as IndexExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignInnerAttributeItem(target: InnerAttributeItemTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["attribute"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'inner_attribute_item' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = inner_attribute_item_(config as InnerAttributeItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignLabel(target: LabelTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["identifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'label' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = label_(config as LabelConfig);
+  return bindRange(target, result);
+}
+
+export function assignLetChain(target: LetChainTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","let_condition","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    if (_items.length === 0) throw new Error(`Required children missing on 'let_chain' tree node`);
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = let_chain_(config as LetChainConfig);
+  return bindRange(target, result);
+}
+
+export function assignLetCondition(target: LetConditionTree) {
+  const config: Record<string, unknown> = {};
+  config['pattern'] = assignByKind(target.field('pattern')!.type, target.field('pattern')!);
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  const result = let_condition_(config as LetConditionConfig);
+  return bindRange(target, result);
+}
+
+export function assignLetDeclaration(target: LetDeclarationTree) {
+  const config: Record<string, unknown> = {};
+  config['alternative'] = target.field('alternative') ? assignBlock(target.field('alternative')! as BlockTree) : undefined;
+  config['pattern'] = assignByKind(target.field('pattern')!.type, target.field('pattern')!);
+  config['type'] = target.field('type') ? assignByKind(target.field('type')!.type, target.field('type')!) : undefined;
+  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = let_declaration_(config as LetDeclarationConfig);
+  return bindRange(target, result);
+}
+
+export function assignLifetime(target: LifetimeTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["identifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'lifetime' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = lifetime_(config as LifetimeConfig);
+  return bindRange(target, result);
+}
+
+export function assignLifetimeParameter(target: LifetimeParameterTree) {
+  const config: Record<string, unknown> = {};
+  config['bounds'] = target.field('bounds') ? assignTraitBounds(target.field('bounds')! as TraitBoundsTree) : undefined;
+  config['name'] = assignLifetime(target.field('name')! as LifetimeTree);
+  const result = lifetime_parameter_(config as LifetimeParameterConfig);
+  return bindRange(target, result);
+}
+
+export function assignLineComment(target: LineCommentTree) {
+  const config: Record<string, unknown> = {};
+  config['doc'] = target.field('doc') ? assignByKind('doc_comment', target.field('doc')!) : undefined;
+  config['inner'] = target.field('inner') ? assignByKind('inner_doc_comment_marker', target.field('inner')!) : undefined;
+  config['outer'] = target.field('outer') ? assignByKind('outer_doc_comment_marker', target.field('outer')!) : undefined;
+  const result = line_comment_(config as LineCommentConfig);
+  return bindRange(target, result);
+}
+
+export function assignLoopExpression(target: LoopExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignBlock(target.field('body')! as BlockTree);
+  config['children'] = (() => {
+    const _kinds = new Set(["label"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = loop_expression_(config as LoopExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignMacroDefinition(target: MacroDefinitionTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('identifier', target.field('name')!);
+  config['macroRule1'] = (() => {
+    const _kinds = new Set(["macro_rule"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['macroRule2'] = (() => {
+    const _kinds = new Set(["macro_rule"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = macro_definition_(config as MacroDefinitionConfig);
+  return bindRange(target, result);
+}
+
+export function assignMacroInvocation(target: MacroInvocationTree) {
+  const config: Record<string, unknown> = {};
+  config['macro'] = assignByKind(target.field('macro')!.type, target.field('macro')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["token_tree"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'macro_invocation' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = macro_invocation_(config as MacroInvocationConfig);
+  return bindRange(target, result);
+}
+
+export function assignMacroRule(target: MacroRuleTree) {
+  const config: Record<string, unknown> = {};
+  config['left'] = assignTokenTreePattern(target.field('left')! as TokenTreePatternTree);
+  config['right'] = assignTokenTree(target.field('right')! as TokenTreeTree);
+  const result = macro_rule_(config as MacroRuleConfig);
+  return bindRange(target, result);
+}
+
+export function assignMatchArm(target: MatchArmTree) {
+  const config: Record<string, unknown> = {};
+  config['pattern'] = assignMatchPattern(target.field('pattern')! as MatchPatternTree);
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["attribute_item","inner_attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = match_arm_(config as MatchArmConfig);
+  return bindRange(target, result);
+}
+
+export function assignMatchBlock(target: MatchBlockTree) {
+  const config: Record<string, unknown> = {};
+  config['matchArm1'] = (() => {
+    const _kinds = new Set(["match_arm"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['matchArm2'] = (() => {
+    const _kinds = new Set(["match_arm"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = match_block_(config as MatchBlockConfig);
+  return bindRange(target, result);
+}
+
+export function assignMatchExpression(target: MatchExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignMatchBlock(target.field('body')! as MatchBlockTree);
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  const result = match_expression_(config as MatchExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignMatchPattern(target: MatchPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['condition'] = target.field('condition') ? assignByKind(target.field('condition')!.type, target.field('condition')!) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'match_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = match_pattern_(config as MatchPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignModItem(target: ModItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = target.field('body') ? assignDeclarationList(target.field('body')! as DeclarationListTree) : undefined;
+  config['name'] = assignByKind('identifier', target.field('name')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = mod_item_(config as ModItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignMutPattern(target: MutPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['mutableSpecifier'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'mut_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['pattern'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'mut_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = mut_pattern_(config as MutPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignNegativeLiteral(target: NegativeLiteralTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["float_literal","integer_literal"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'negative_literal' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = negative_literal_(config as NegativeLiteralConfig);
+  return bindRange(target, result);
+}
+
+export function assignOrPattern(target: OrPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    if (_items.length === 0) throw new Error(`Required children missing on 'or_pattern' tree node`);
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = or_pattern_(config as OrPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignOrderedFieldDeclarationList(target: OrderedFieldDeclarationListTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.length > 0 ? _items.map((c) => assignByKind(c.type, c)) : undefined;
+  })();
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children2'] = (() => {
+    const _kinds = new Set(["attribute_item","visibility_modifier"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = ordered_field_declaration_list_(config as OrderedFieldDeclarationListConfig);
+  return bindRange(target, result);
+}
+
+export function assignParameter(target: ParameterTree) {
+  const config: Record<string, unknown> = {};
+  config['pattern'] = assignByKind(target.field('pattern')!.type, target.field('pattern')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = parameter_(config as ParameterConfig);
+  return bindRange(target, result);
+}
+
+export function assignParameters(target: ParametersTree) {
+  const config: Record<string, unknown> = {};
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","metavariable","never_type","parameter","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","self_parameter","tuple_type","type_identifier","unit_type","variadic_parameter"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children2'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","attribute_item","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","metavariable","never_type","parameter","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","self_parameter","tuple_type","type_identifier","unit_type","variadic_parameter"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = parameters_(config as ParametersConfig);
+  return bindRange(target, result);
+}
+
+export function assignParenthesizedExpression(target: ParenthesizedExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'parenthesized_expression' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = parenthesized_expression_(config as ParenthesizedExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignPointerType(target: PointerTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = pointer_type_(config as PointerTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignQualifiedType(target: QualifiedTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['alias'] = assignByKind(target.field('alias')!.type, target.field('alias')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  const result = qualified_type_(config as QualifiedTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignRangeExpression(target: RangeExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = range_expression_(config as RangeExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignRangePattern(target: RangePatternTree) {
+  const config: Record<string, unknown> = {};
+  config['left'] = target.field('left') ? assignByKind(target.field('left')!.type, target.field('left')!) : undefined;
+  config['right'] = target.field('right') ? assignByKind(target.field('right')!.type, target.field('right')!) : undefined;
+  const result = range_pattern_(config as RangePatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignRawStringLiteral(target: RawStringLiteralTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["string_content"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'raw_string_literal' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = raw_string_literal_(config as RawStringLiteralConfig);
+  return bindRange(target, result);
+}
+
+export function assignRefPattern(target: RefPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'ref_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = ref_pattern_(config as RefPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignReferenceExpression(target: ReferenceExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = reference_expression_(config as ReferenceExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignReferencePattern(target: ReferencePatternTree) {
+  const config: Record<string, unknown> = {};
+  config['mutableSpecifier'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['pattern'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'reference_pattern' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = reference_pattern_(config as ReferencePatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignReferenceType(target: ReferenceTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['lifetime'] = (() => {
+    const _kinds = new Set(["lifetime"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['mutableSpecifier'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = reference_type_(config as ReferenceTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignRemovedTraitBound(target: RemovedTraitBoundTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'removed_trait_bound' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = removed_trait_bound_(config as RemovedTraitBoundConfig);
+  return bindRange(target, result);
+}
+
+export function assignReturnExpression(target: ReturnExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = return_expression_(config as ReturnExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignScopedIdentifier(target: ScopedIdentifierTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  config['path'] = target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined;
+  const result = scoped_identifier_(config as ScopedIdentifierConfig);
+  return bindRange(target, result);
+}
+
+export function assignScopedTypeIdentifier(target: ScopedTypeIdentifierTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['path'] = target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined;
+  const result = scoped_type_identifier_(config as ScopedTypeIdentifierConfig);
+  return bindRange(target, result);
+}
+
+export function assignScopedUseList(target: ScopedUseListTree) {
+  const config: Record<string, unknown> = {};
+  config['list'] = assignUseList(target.field('list')! as UseListTree);
+  config['path'] = target.field('path') ? assignByKind(target.field('path')!.type, target.field('path')!) : undefined;
+  const result = scoped_use_list_(config as ScopedUseListConfig);
+  return bindRange(target, result);
+}
+
+export function assignSelfParameter(target: SelfParameterTree) {
+  const config: Record<string, unknown> = {};
+  config['lifetime'] = (() => {
+    const _kinds = new Set(["lifetime"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['mutableSpecifier'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['self'] = (() => {
+    const _kinds = new Set(["self"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'self_parameter' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = self_parameter_(config as SelfParameterConfig);
+  return bindRange(target, result);
+}
+
+export function assignShorthandFieldInitializer(target: ShorthandFieldInitializerTree) {
+  const config: Record<string, unknown> = {};
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['identifier'] = (() => {
+    const _kinds = new Set(["identifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'shorthand_field_initializer' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = shorthand_field_initializer_(config as ShorthandFieldInitializerConfig);
+  return bindRange(target, result);
+}
+
+export function assignSlicePattern(target: SlicePatternTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = slice_pattern_(config as SlicePatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignSourceFile(target: SourceFileTree) {
+  const config: Record<string, unknown> = {};
+  config['shebang'] = (() => {
+    const _kinds = new Set(["shebang"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = source_file_(config as SourceFileConfig);
+  return bindRange(target, result);
+}
+
+export function assignStaticItem(target: StaticItemTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('identifier', target.field('name')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['value'] = target.field('value') ? assignByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['mutableSpecifier'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = static_item_(config as StaticItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignStringLiteral(target: StringLiteralTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["escape_sequence","string_content"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = string_literal_(config as StringLiteralConfig);
+  return bindRange(target, result);
+}
+
+export function assignStructExpression(target: StructExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignFieldInitializerList(target.field('body')! as FieldInitializerListTree);
+  config['name'] = assignByKind(target.field('name')!.type, target.field('name')!);
+  const result = struct_expression_(config as StructExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignStructItem(target: StructItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = target.field('body') ? assignByKind(target.field('body')!.type, target.field('body')!) : undefined;
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = struct_item_(config as StructItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignStructPattern(target: StructPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['children0'] = (() => {
+    const _kinds = new Set(["field_pattern","remaining_field_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["field_pattern","remaining_field_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = struct_pattern_(config as StructPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignTokenBindingPattern(target: TokenBindingPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('metavariable', target.field('name')!);
+  config['type'] = assignByKind('fragment_specifier', target.field('type')!);
+  const result = token_binding_pattern_(config as TokenBindingPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignTokenRepetition(target: TokenRepetitionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","char_literal","crate","float_literal","identifier","integer_literal","metavariable","mutable_specifier","primitive_type","raw_string_literal","self","string_literal","super","token_repetition","token_tree"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = token_repetition_(config as TokenRepetitionConfig);
+  return bindRange(target, result);
+}
+
+export function assignTokenRepetitionPattern(target: TokenRepetitionPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","char_literal","crate","float_literal","identifier","integer_literal","metavariable","mutable_specifier","primitive_type","raw_string_literal","self","string_literal","super","token_binding_pattern","token_repetition_pattern","token_tree_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = token_repetition_pattern_(config as TokenRepetitionPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignTokenTree(target: TokenTreeTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","char_literal","crate","float_literal","identifier","integer_literal","metavariable","mutable_specifier","primitive_type","raw_string_literal","self","string_literal","super","token_repetition","token_tree"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = token_tree_(config as TokenTreeConfig);
+  return bindRange(target, result);
+}
+
+export function assignTokenTreePattern(target: TokenTreePatternTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["boolean_literal","char_literal","crate","float_literal","identifier","integer_literal","metavariable","mutable_specifier","primitive_type","raw_string_literal","self","string_literal","super","token_binding_pattern","token_repetition_pattern","token_tree_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = token_tree_pattern_(config as TokenTreePatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignTraitBounds(target: TraitBoundsTree) {
+  const config: Record<string, unknown> = {};
+  config['children0'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","higher_ranked_trait_bound","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'trait_bounds' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","higher_ranked_trait_bound","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = trait_bounds_(config as TraitBoundsConfig);
+  return bindRange(target, result);
+}
+
+export function assignTraitItem(target: TraitItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignDeclarationList(target.field('body')! as DeclarationListTree);
+  config['bounds'] = target.field('bounds') ? assignTraitBounds(target.field('bounds')! as TraitBoundsTree) : undefined;
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = trait_item_(config as TraitItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignTryBlock(target: TryBlockTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["block"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'try_block' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = try_block_(config as TryBlockConfig);
+  return bindRange(target, result);
+}
+
+export function assignTryExpression(target: TryExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'try_expression' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = try_expression_(config as TryExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignTupleExpression(target: TupleExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['expression1'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'tuple_expression' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['expression2'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['expression3'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = tuple_expression_(config as TupleExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignTuplePattern(target: TuplePatternTree) {
+  const config: Record<string, unknown> = {};
+  config['children0'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","closure_expression","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","closure_expression","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = tuple_pattern_(config as TuplePatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignTupleStructPattern(target: TupleStructPatternTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['pattern1'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['pattern2'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = tuple_struct_pattern_(config as TupleStructPatternConfig);
+  return bindRange(target, result);
+}
+
+export function assignTupleType(target: TupleTypeTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    if (_items.length === 0) throw new Error(`Required children missing on 'tuple_type' tree node`);
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = tuple_type_(config as TupleTypeConfig);
+  return bindRange(target, result);
+}
+
+export function assignTypeArguments(target: TypeArgumentsTree) {
+  const config: Record<string, unknown> = {};
+  config['children0'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","block","boolean_literal","bounded_type","char_literal","dynamic_type","float_literal","function_type","generic_type","integer_literal","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","raw_string_literal","reference_type","removed_trait_bound","scoped_type_identifier","string_literal","tuple_type","type_binding","type_identifier","unit_type"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'type_arguments' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['traitBounds'] = (() => {
+    const _kinds = new Set(["trait_bounds"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children2'] = (() => {
+    const _kinds = new Set(["abstract_type","array_type","block","boolean_literal","bounded_type","char_literal","dynamic_type","float_literal","function_type","generic_type","integer_literal","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","raw_string_literal","reference_type","removed_trait_bound","scoped_type_identifier","string_literal","trait_bounds","tuple_type","type_binding","type_identifier","unit_type"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = type_arguments_(config as TypeArgumentsConfig);
+  return bindRange(target, result);
+}
+
+export function assignTypeBinding(target: TypeBindingTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['typeArguments'] = target.field('type_arguments') ? assignTypeArguments(target.field('type_arguments')! as TypeArgumentsTree) : undefined;
+  const result = type_binding_(config as TypeBindingConfig);
+  return bindRange(target, result);
+}
+
+export function assignTypeCastExpression(target: TypeCastExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  const result = type_cast_expression_(config as TypeCastExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignTypeItem(target: TypeItemTree) {
+  const config: Record<string, unknown> = {};
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause1'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause2'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = type_item_(config as TypeItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignTypeParameter(target: TypeParameterTree) {
+  const config: Record<string, unknown> = {};
+  config['bounds'] = target.field('bounds') ? assignTraitBounds(target.field('bounds')! as TraitBoundsTree) : undefined;
+  config['defaultType'] = target.field('default_type') ? assignByKind(target.field('default_type')!.type, target.field('default_type')!) : undefined;
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  const result = type_parameter_(config as TypeParameterConfig);
+  return bindRange(target, result);
+}
+
+export function assignTypeParameters(target: TypeParametersTree) {
+  const config: Record<string, unknown> = {};
+  config['attributeItem'] = (() => {
+    const _kinds = new Set(["attribute_item"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["const_parameter","lifetime_parameter","metavariable","type_parameter"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'type_parameters' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  config['children2'] = (() => {
+    const _kinds = new Set(["attribute_item","const_parameter","lifetime_parameter","metavariable","type_parameter"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = type_parameters_(config as TypeParametersConfig);
+  return bindRange(target, result);
+}
+
+export function assignUnaryExpression(target: UnaryExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'unary_expression' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = unary_expression_(config as UnaryExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignUnionItem(target: UnionItemTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignFieldDeclarationList(target.field('body')! as FieldDeclarationListTree);
+  config['name'] = assignByKind('type_identifier', target.field('name')!);
+  config['typeParameters'] = target.field('type_parameters') ? assignTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  config['visibilityModifier'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['whereClause'] = (() => {
+    const _kinds = new Set(["where_clause"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = union_item_(config as UnionItemConfig);
+  return bindRange(target, result);
+}
+
+export function assignUnsafeBlock(target: UnsafeBlockTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["block"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) throw new Error(`Required child missing on 'unsafe_block' tree node`);
+    return assignByKind(_child.type, _child);
+  })();
+  const result = unsafe_block_(config as UnsafeBlockConfig);
+  return bindRange(target, result);
+}
+
+export function assignUseAsClause(target: UseAsClauseTree) {
+  const config: Record<string, unknown> = {};
+  config['alias'] = assignByKind('identifier', target.field('alias')!);
+  config['path'] = assignByKind(target.field('path')!.type, target.field('path')!);
+  const result = use_as_clause_(config as UseAsClauseConfig);
+  return bindRange(target, result);
+}
+
+export function assignUseBounds(target: UseBoundsTree) {
+  const config: Record<string, unknown> = {};
+  config['children0'] = (() => {
+    const _kinds = new Set(["lifetime","type_identifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['children1'] = (() => {
+    const _kinds = new Set(["lifetime","type_identifier"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = use_bounds_(config as UseBoundsConfig);
+  return bindRange(target, result);
+}
+
+export function assignUseDeclaration(target: UseDeclarationTree) {
+  const config: Record<string, unknown> = {};
+  config['argument'] = assignByKind(target.field('argument')!.type, target.field('argument')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["visibility_modifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = use_declaration_(config as UseDeclarationConfig);
+  return bindRange(target, result);
+}
+
+export function assignUseList(target: UseListTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["crate","identifier","metavariable","scoped_identifier","scoped_use_list","self","super","use_as_clause","use_list","use_wildcard"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = use_list_(config as UseListConfig);
+  return bindRange(target, result);
+}
+
+export function assignUseWildcard(target: UseWildcardTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["crate","identifier","metavariable","scoped_identifier","self","super"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = use_wildcard_(config as UseWildcardConfig);
+  return bindRange(target, result);
+}
+
+export function assignVariadicParameter(target: VariadicParameterTree) {
+  const config: Record<string, unknown> = {};
+  config['pattern'] = target.field('pattern') ? assignByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
+  config['children'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = variadic_parameter_(config as VariadicParameterConfig);
+  return bindRange(target, result);
+}
+
+export function assignVisibilityModifier(target: VisibilityModifierTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["crate","identifier","metavariable","scoped_identifier","self","super"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = visibility_modifier_(config as VisibilityModifierConfig);
+  return bindRange(target, result);
+}
+
+export function assignWhereClause(target: WhereClauseTree) {
+  const config: Record<string, unknown> = {};
+  config['wherePredicate1'] = (() => {
+    const _kinds = new Set(["where_predicate"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  config['wherePredicate2'] = (() => {
+    const _kinds = new Set(["where_predicate"]);
+    const _items = target.children().filter((c) => _kinds.has(c.type));
+    return _items.map((c) => assignByKind(c.type, c));
+  })();
+  const result = where_clause_(config as WhereClauseConfig);
+  return bindRange(target, result);
+}
+
+export function assignWherePredicate(target: WherePredicateTree) {
+  const config: Record<string, unknown> = {};
+  config['bounds'] = assignTraitBounds(target.field('bounds')! as TraitBoundsTree);
+  config['left'] = assignByKind(target.field('left')!.type, target.field('left')!);
+  const result = where_predicate_(config as WherePredicateConfig);
+  return bindRange(target, result);
+}
+
+export function assignWhileExpression(target: WhileExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['body'] = assignBlock(target.field('body')! as BlockTree);
+  config['condition'] = assignByKind(target.field('condition')!.type, target.field('condition')!);
+  config['children'] = (() => {
+    const _kinds = new Set(["label"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = while_expression_(config as WhileExpressionConfig);
+  return bindRange(target, result);
+}
+
+export function assignYieldExpression(target: YieldExpressionTree) {
+  const config: Record<string, unknown> = {};
+  config['children'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    const _child = target.children().find((c) => _kinds.has(c.type));
+    if (!_child) return undefined;
+    return assignByKind(_child.type, _child);
+  })();
+  const result = yield_expression_(config as YieldExpressionConfig);
+  return bindRange(target, result);
 }
 
 /**
@@ -2130,5 +2098,7 @@ export function assignYieldExpression(target: YieldExpressionTree): YieldExpress
  * Recursively hydrates via assignByKind, attaches range for .toEdit().
  */
 export function edit<K extends NodeKind<RustGrammar>>(target: TreeNode<K>): Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }> {
-  return assignByKind(target.type, target);
+  const fn = _assignTable[target.type];
+  if (!fn) throw new Error(`No assign function for kind '${target.type}' in RustGrammar grammar`);
+  return fn(target) as Simplify<NodeData<K> & { toEdit(): Edit; replace(): Edit; render(): string }>;
 }

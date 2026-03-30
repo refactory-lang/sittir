@@ -474,3 +474,68 @@ export type FluentNode<
 > = N &
 	FluentSetters<Fields, Excluded, N & FluentSetters<Fields, Excluded> & NodeMethods<N['type']>> &
 	NodeMethods<N['type']>;
+
+// ---------------------------------------------------------------------------
+// Concrete interface transformations
+// ---------------------------------------------------------------------------
+
+/** Extract the fields record from a concrete node interface, or `{}` if none. */
+type FieldsOf<T> = T extends { readonly fields: infer F } ? F : {};
+
+/** Extract child slot properties (everything except `type` and `fields`). */
+type ChildSlotsOf<T> = Omit<T, 'type' | 'fields' | 'text'>;
+
+/**
+ * ConfigOf<T> — factory input shape derived from a concrete node interface.
+ * Hoists fields to top level and removes `type`. Preserves required/optional.
+ */
+export type ConfigOf<T> = FieldsOf<T> & ChildSlotsOf<T>;
+
+/**
+ * TreeNodeOf<T> — parsed tree node derived from a concrete node interface.
+ * Provides typed `.field()` access matching the concrete interface's fields.
+ */
+/** A tree node with no typed field access — returned by `.children()`. */
+export interface AnyTreeNodeOf {
+	readonly type: string;
+	field(name: string): AnyTreeNodeOf | null;
+	text(): string;
+	children(): AnyTreeNodeOf[];
+	range(): ByteRange;
+}
+
+export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
+	? {
+		readonly type: K;
+		field<F extends keyof FieldsOf<T> & string>(name: F): TreeNodeOf<
+			FieldsOf<T>[F] extends readonly (infer E)[] ? E : NonNullable<FieldsOf<T>[F]>
+		> | null;
+		text(): string;
+		children(): AnyTreeNodeOf[];
+		range(): ByteRange;
+	}
+	: never;
+
+/**
+ * FromInputOf<T> — widened input type derived from a concrete node interface.
+ * Accepts NodeData passthroughs, strings for leaves, objects for branches.
+ * Required fields stay required; optional fields stay optional.
+ */
+export type FromInputOf<T> = {
+	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? K : never]: WidenValue<FieldsOf<T>[K]>;
+} & {
+	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : K]?: WidenValue<FieldsOf<T>[K]>;
+} & {
+	readonly [K in keyof ChildSlotsOf<T>]?: ChildSlotsOf<T>[K];
+};
+
+/** Keys of T that are required (not optional). */
+type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
+
+/** Widen a value type for FromInput: nodes pass through, leaf text becomes `string | NodeData`. */
+type WidenValue<T> =
+	T extends readonly (infer E)[] ? (WidenValue<E>)[] | WidenValue<E>
+	: T extends { readonly type: string; readonly text: string } ? T | string
+	: T extends { readonly type: string } ? T | FromInputOf<T>
+	: T;
+
