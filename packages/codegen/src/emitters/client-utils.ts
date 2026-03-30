@@ -77,7 +77,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push(' *');
 	lines.push(' * Returns the inferred kind string, or null if no candidate matches.');
 	lines.push(' */');
-	lines.push('export function _inferBranch(obj: Record<string, unknown>, candidates: string[]): string | null {');
+	lines.push('export function _inferBranch(obj: object, candidates: string[]): string | null {');
 	lines.push("  const keys = Object.keys(obj).filter(k => k !== 'children');");
 	lines.push('  let best: string | null = null;');
 	lines.push('  let bestScore = 0;');

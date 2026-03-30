@@ -132,10 +132,7 @@ export function emitAssign(config: EmitAssignConfig): string {
 			});
 		}
 
-		lines.push(`  const result = ${rawFn}(config as ${configTypeName});`);
-
-		// Bind target's range for no-arg toEdit()/replace()
-		lines.push(`  return bindRange(target, result);`);
+		lines.push(`  return bindRange(target, ${rawFn}(config as ${configTypeName}));`);
 		lines.push(`}`);
 		lines.push('');
 	}

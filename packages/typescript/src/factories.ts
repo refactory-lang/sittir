@@ -3218,7 +3218,7 @@ export function yield_expression_(
 }
 
 
-export function accessibility_modifier_(text: 'private' | 'protected' | 'public') {
+export function accessibility_modifier_(text: string) {
   return {
     type: 'accessibility_modifier' as const,
     text,
@@ -3364,7 +3364,7 @@ export function override_modifier_() {
   };
 }
 
-export function predefined_type_(text: 'any' | 'boolean' | 'never' | 'number' | 'object' | 'string' | 'string' | 'symbol' | 'unknown' | 'void') {
+export function predefined_type_(text: string) {
   return {
     type: 'predefined_type' as const,
     text,
@@ -3396,7 +3396,7 @@ export function comment_(text: string) {
   };
 }
 
-export function escape_sequence_(text: `\\${string}`) {
+export function escape_sequence_(text: string) {
   return {
     type: 'escape_sequence' as const,
     text,

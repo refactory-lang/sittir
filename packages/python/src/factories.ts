@@ -2315,7 +2315,7 @@ export function escape_interpolation_(text: string) {
   };
 }
 
-export function escape_sequence_(text: `\\${string}`) {
+export function escape_sequence_(text: string) {
   if (!/^\\(?:u[a-fA-F\d]{4}|U[a-fA-F\d]{8}|x[a-fA-F\d]{2}|\d{1,3}|\r?\n|['"abfrntv\\]|N\{[^}]+\})$/.test(text)) throw new Error(`Invalid escape_sequence: '${text}' does not match grammar pattern`);
   return {
     type: 'escape_sequence' as const,

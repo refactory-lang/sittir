@@ -3040,7 +3040,7 @@ export function yield_expression_(
 }
 
 
-export function boolean_literal_(text: 'false' | 'true') {
+export function boolean_literal_(text: string) {
   return {
     type: 'boolean_literal' as const,
     text,
@@ -3072,7 +3072,7 @@ export function empty_statement_() {
   };
 }
 
-export function fragment_specifier_(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') {
+export function fragment_specifier_(text: string) {
   return {
     type: 'fragment_specifier' as const,
     text,
@@ -3233,7 +3233,7 @@ export function doc_comment_(text: string) {
   };
 }
 
-export function escape_sequence_(text: `\\${string}`) {
+export function escape_sequence_(text: string) {
   if (!/^\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})$/.test(text)) throw new Error(`Invalid escape_sequence: '${text}' does not match grammar pattern`);
   return {
     type: 'escape_sequence' as const,
@@ -3351,7 +3351,7 @@ export function mutable_specifier_() {
   };
 }
 
-export function primitive_type_(text: 'bool' | 'char' | 'f32' | 'f64' | 'i128' | 'i16' | 'i32' | 'i64' | 'i8' | 'isize' | 'str' | 'u128' | 'u16' | 'u32' | 'u64' | 'u8' | 'usize') {
+export function primitive_type_(text: string) {
   return {
     type: 'primitive_type' as const,
     text,

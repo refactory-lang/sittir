@@ -30,7 +30,7 @@ export function replace(
  * The generated `edit(target)` creates the right factory for the target's kind,
  * then calls `bindRange()` to attach the range.
  */
-export function bindRange<T extends AnyNodeData & Renderable>(
+export function bindRange<T extends { readonly type: string; render(): string }>(
 	target: ReplaceTarget,
 	factoryOutput: T,
 ): T & { toEdit(): Edit; replace(): Edit } {

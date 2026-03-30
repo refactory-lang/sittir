@@ -10,7 +10,7 @@ describe('emitFrom', () => {
 	const source = emitFrom({ grammar, nodes: allNodes });
 
 	it('emits _resolveByKind dispatch', () => {
-		expect(source).toContain('function _resolveByKind(kind: string, rest: any)');
+		expect(source).toContain('function _resolveByKind(kind: string, rest: unknown)');
 		expect(source).toContain("case 'function_item':");
 	});
 

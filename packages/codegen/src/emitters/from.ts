@@ -159,7 +159,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('');
 
 	// _resolveByKind dispatch
-	lines.push('function _resolveByKind(kind: string, rest: unknown) {');
+	lines.push('function _resolveByKind(kind: string, rest: unknown): unknown {');
 	lines.push('  switch (kind) {');
 	for (const node of nodes) {
 		const fromFn = `${toFactoryName(node.kind)}From`;
@@ -172,7 +172,7 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// --- Emit shared resolver functions ---
 	for (const [, { name, resolved }] of resolverRegistry) {
-		lines.push(`function ${name}(v: unknown) {`);
+		lines.push(`function ${name}(v: unknown): unknown {`);
 		const body = emitResolveBody('v', resolved, leafSet, leafValueMap, keywordKinds, nodes, supertypeResolverNames, ctx.expandedSupertypes, branchNodeSet, config.grammar);
 		lines.push(`  ${body}`);
 		lines.push('}');
@@ -214,18 +214,36 @@ function emitFromFunction(
 
 	// Function overloads
 	const exportName = `${camelFactoryName}From`;
-	lines.push(`export function ${exportName}(input: ${typeName}Tree | ${typeName} | ${typeName}FromInput | {type?: '${node.kind}'}) {`);
+	lines.push(`export function ${exportName}(input: ${typeName}Tree | ${typeName} | ${typeName}FromInput): ${typeName};`);
+	lines.push(`export function ${exportName}(input: unknown): unknown;`);
+	lines.push(`export function ${exportName}(input: unknown): unknown {`);
 
 	// --- Path 1: TreeNode → assign ---
-	lines.push(`  if (isTreeNode(input)) return assign${typeName}(input);`);
+	lines.push(`  if (isTreeNode(input)) return assign${typeName}(input as ${typeName}Tree);`);
 
-	// --- Path 2: NodeData → pass through ---
-	const hasBranchFields = node.modelType === 'branch' && fieldsOf(node).length > 0;
-	if (hasBranchFields) {
-		lines.push(`  if (isNodeData(input)) return ${factoryName}((input as ${typeName}).fields as ${typeName}Config);`);
-	} else {
-		lines.push(`  if (isNodeData(input)) return ${factoryName}(input as ${typeName}Config);`);
+	// --- Path 2: NodeData → reconstruct with fluent API ---
+	// NodeData has raw snake_case fields; remap to camelCase config and re-call factory
+	lines.push(`  if (isNodeData(input)) {`);
+	lines.push(`    const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };`);
+	lines.push(`    const f = nd.fields;`);
+	lines.push(`    const c = nd.children;`);
+	lines.push(`    return ${factoryName}({`);
+	for (const f of fields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		if (camel !== f.name) {
+			lines.push(`      ${camel}: f?.['${f.name}'],`);
+		} else {
+			lines.push(`      ${camel}: f?.['${f.name}'],`);
+		}
 	}
+	if (node.children != null) {
+		const slotNames = childSlotNames(node.children, ctx);
+		if (!isTupleChildren(node.children)) {
+			lines.push(`      ${slotNames[0]!}: c,`);
+		}
+	}
+	lines.push(`    } as unknown as ${typeName}Config);`);
+	lines.push(`  }`);
 
 	// --- Path 3: FromInput → resolve ---
 	const hasChildren = node.children != null;
@@ -237,19 +255,19 @@ function emitFromFunction(
 	lines.push(`  const resolved: Record<string, unknown> = {};`);
 	for (const field of fields) {
 		const camel = field.propertyName ?? toFieldName(field.name);
-		lines.push(`  if (obj.${camel} !== undefined) {`);
+		lines.push(`  if (obj['${camel}'] !== undefined) {`);
 		const fieldProj = projectKinds(field.kinds, ctx);
-		const resolveCall = emitResolveCall(fieldProj, `obj.${camel}`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+		const resolveCall = emitResolveCall(fieldProj, `obj['${camel}']`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 		if (field.multiple) {
-			lines.push(`    const raw = obj.${camel};`);
+			lines.push(`    const raw = obj['${camel}'];`);
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
-			lines.push(`    resolved.${camel} = arr.map((v: unknown) => ${resolveCall.replace(/obj\.\w+/g, 'v')});`);
+			lines.push(`    resolved['${camel}'] = arr.map((v: unknown) => ${resolveCall.replace(/obj\['\w+'\]/g, 'v')});`);
 		} else {
-			lines.push(`    resolved.${camel} = ${resolveCall};`);
+			lines.push(`    resolved['${camel}'] = ${resolveCall};`);
 		}
 		if (field.multiple && field.required) {
 			lines.push(`  } else {`);
-			lines.push(`    resolved.${camel} = [];`);
+			lines.push(`    resolved['${camel}'] = [];`);
 		}
 		lines.push(`  }`);
 	}

@@ -17,10 +17,10 @@
  * AnyNodeData is the structural supertype that all NodeData<G, K> satisfy.
  */
 export interface AnyNodeData {
-	readonly type: string;
-	readonly fields?: Readonly<Record<string, unknown>>;
-	readonly children?: readonly AnyNodeData[];
-	readonly text?: string;
+	type: string;
+	fields?: Record<string, unknown>;
+	children?: readonly unknown[];
+	text?: string;
 }
 
 // ---------------------------------------------------------------------------

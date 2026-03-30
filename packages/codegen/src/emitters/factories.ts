@@ -179,15 +179,8 @@ export function emitTerminalFactory(
 		return lines.join('\n');
 	}
 
-	// Determine type constraint for text parameter
-	let textType = 'string';
-	if (enumValues && enumValues.length > 0) {
-		// Enum-like leaf — literal union type
-		textType = enumValues.map(v => `'${escapeString(v)}'`).join(' | ');
-	} else if (kind === 'escape_sequence') {
-		// Escape sequences must start with backslash
-		textType = '`\\\\${string}`';
-	}
+	// Text parameter is always string — runtime validation handles constraints
+	const textType = 'string';
 
 	// Input validation for identifier-like kinds
 	const needsKeywordValidation = keywordTokens && keywordTokens.size > 0 &&

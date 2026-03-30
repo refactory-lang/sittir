@@ -31,11 +31,11 @@ describe('emitTypes', () => {
 		expect(source).toContain("readonly type: 'function_item'");
 	});
 
-	it('should emit Config as ConfigOf and Tree/FromInput as grammar projections', () => {
+	it('should emit Config as ConfigOf, Tree as grammar-derived, FromInput as FromInputOf', () => {
 		const source = emitTypes({ grammar: 'rust', nodes: [branchNode('function_item')] });
 		expect(source).toContain("export type FunctionItemConfig = ConfigOf<FunctionItem>;");
 		expect(source).toContain("export interface FunctionItemTree extends TreeNode<'function_item'> {}");
-		expect(source).toContain("export interface FunctionItemFromInput extends NodeFromInput<'function_item'> {}");
+		expect(source).toContain("export type FunctionItemFromInput = FromInputOf<FunctionItem>;");
 	});
 
 	it('should emit discriminated union', () => {

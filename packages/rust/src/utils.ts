@@ -113,7 +113,7 @@ export const _BRANCH_FIELDS: Record<string, string[]> = {
  *
  * Returns the inferred kind string, or null if no candidate matches.
  */
-export function _inferBranch(obj: Record<string, unknown>, candidates: string[]): string | null {
+export function _inferBranch(obj: object, candidates: string[]): string | null {
   const keys = Object.keys(obj).filter(k => k !== 'children');
   let best: string | null = null;
   let bestScore = 0;
