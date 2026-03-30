@@ -1,8 +1,6 @@
 ---
 name: speckit-review-slop
-description: "Detect AI-generated code patterns \u2014 unnecessary abstractions, over-documentation,\
-  \ defensive coding against impossible states, type assertion abuse. Flags code that\
-  \ looks machine-generated rather than human-crafted."
+description: Detect AI-generated code patterns — unnecessary abstractions, over-documentation, defensive coding against impossible states, type assertion abuse. Flags code that looks machine-generated rather than human-crafted.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
