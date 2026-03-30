@@ -1,0 +1,190 @@
+{
+  "generated": "2026-03-30T00:00:00Z",
+  "project": "sittir",
+  "summary": {
+    "specs_analyzed": 3,
+    "requirements_checked": 45,
+    "aligned": 30,
+    "drifted": 8,
+    "not_implemented": 7,
+    "unspecced_features": 3
+  },
+  "specs": [
+    {
+      "id": "001-codegen-grammarjs-rewrite",
+      "title": "Rewrite Codegen from grammar.js",
+      "aligned": [
+        "FR-001", "FR-002", "FR-003", "FR-004", "FR-006", "FR-008", "FR-009",
+        "FR-010", "FR-011", "FR-012", "FR-013", "FR-014", "FR-015", "FR-016",
+        "FR-017", "FR-018", "FR-019", "FR-020", "FR-023", "FR-024", "FR-025",
+        "FR-026", "FR-027", "FR-030", "FR-031"
+      ],
+      "drifted": [
+        {
+          "requirement": "FR-005",
+          "spec_text": "Three usage modes: declarative, fluent, and mixed (positional + config)",
+          "actual": "Only declarative (config object) and fluent (setter methods). No mixed mode with positional args.",
+          "location": "packages/codegen/src/emitters/factories.ts:40-56",
+          "severity": "moderate"
+        },
+        {
+          "requirement": "FR-006",
+          "spec_text": "Setters mutate the NodeData fields and return the same object",
+          "actual": "Setters create a new object (immutable pattern: { ...config, field: newValue })",
+          "location": "packages/codegen/src/emitters/factories.ts:80-114",
+          "severity": "minor"
+        },
+        {
+          "requirement": "FR-021",
+          "spec_text": ".from() accepts shorthand string values, numbers, and booleans",
+          "actual": "Strings and objects accepted; number/boolean shorthand resolution incomplete",
+          "location": "packages/codegen/src/emitters/from.ts",
+          "severity": "minor"
+        },
+        {
+          "requirement": "FR-028",
+          "spec_text": ".from() returns FromNode with ergonomic setters accepting FromInput types",
+          "actual": "Returns same fluent node type as regular factory",
+          "location": "packages/codegen/src/emitters/from.ts",
+          "severity": "minor"
+        },
+        {
+          "requirement": "FR-029",
+          "spec_text": ".from() resolution logic generated inline per factory",
+          "actual": "Uses shared resolver registry with IIFE bodies keyed by deduped signatures",
+          "location": "packages/codegen/src/emitters/from.ts",
+          "severity": "minor"
+        },
+        {
+          "requirement": "SC-003",
+          "spec_text": "Rendered output is syntactically valid when parsed by tree-sitter",
+          "actual": "Render engine joins all parts with single spaces, producing 'name ( params )' instead of 'name(params)'",
+          "location": "packages/core/src/render.ts",
+          "severity": "moderate"
+        },
+        {
+          "requirement": "SC-005",
+          "spec_text": "5-level-deep AST fragment in under 10 lines of factory code",
+          "actual": "No positional args or single-field compression makes deeply nested construction verbose",
+          "location": "packages/codegen/src/emitters/factories.ts",
+          "severity": "minor"
+        },
+        {
+          "requirement": "SC-007",
+          "spec_text": "Regenerating from unchanged grammar produces byte-identical output",
+          "actual": "Not verified — depends on Map iteration order and signature interning consistency",
+          "location": "packages/codegen/src/build-model.ts",
+          "severity": "minor"
+        }
+      ],
+      "not_implemented": [
+        "FR-007",
+        "FR-022"
+      ]
+    },
+    {
+      "id": "002-enriched-grammar-model",
+      "title": "Enriched Grammar Model & Pre-computed Signatures",
+      "status": "superseded_by_003",
+      "aligned": [
+        "EnrichedRule layer",
+        "NodeModel layer",
+        "node-model.json5 serialization",
+        "Emitters receive hydrated models"
+      ],
+      "drifted": [
+        {
+          "requirement": "NodeElement ordered sequence",
+          "spec_text": "Central representation is NodeElement[] (field, token, child, choice) ordered sequence",
+          "actual": "Uses FieldModel[] + ChildrenModel + EnrichedRule — no NodeElement sequence",
+          "location": "packages/codegen/src/node-model.ts",
+          "severity": "major"
+        },
+        {
+          "requirement": "FieldTypeClass pre-computed",
+          "spec_text": "Each field carries FieldTypeClass with leafTypes, branchTypes, anonTokens, etc.",
+          "actual": "Fields store kinds: string[] / HydratedNodeModel[], projections computed on demand",
+          "location": "packages/codegen/src/node-model.ts",
+          "severity": "moderate"
+        }
+      ],
+      "not_implemented": [
+        "NodeElement type",
+        "FieldTypeClass",
+        "FactorySignature/FromSignature/HydrationSignature interning"
+      ]
+    },
+    {
+      "id": "003-grammar-model-pipeline",
+      "title": "Grammar Model Pipeline Refactoring",
+      "aligned": [
+        "7 NodeModel variants",
+        "Type guards (isBranch, isContainer, etc.)",
+        "FieldModel discriminated by multiple",
+        "ChildModel parallel to FieldModel",
+        "Steps 1-5 (load, classify, initialize, reconcile)",
+        "Steps 7-8 (semantic aliases)",
+        "Step 9 (naming)",
+        "Step 10 (optimize with signature interning)",
+        "Step 11 (hydrate with Hydrate<T>)",
+        "Hydrated types",
+        "GrammarModel with ReadonlyMap",
+        "In-place mutation, readonly consumers",
+        "node-model.json5 serialization",
+        "Single-cutover migration"
+      ],
+      "drifted": [
+        {
+          "requirement": "NodeMember and applyAllMembers",
+          "spec_text": "BranchModel has members: NodeMember[]. Step 6 is applyAllMembers(models) — walks rules to produce ordered NodeMember[] for structural models.",
+          "actual": "NodeMember type, applyAllMembers, and all member infrastructure intentionally removed. EnrichedRule retained on models; rules emitter reads it directly.",
+          "location": "packages/codegen/src/node-model.ts:139-145, build-model.ts",
+          "severity": "major"
+        },
+        {
+          "requirement": "13-step pipeline",
+          "spec_text": "Pipeline has 13 steps with step 6 = Apply Members",
+          "actual": "Pipeline has 12 steps — step 6 removed, renumbered",
+          "location": "packages/codegen/src/build-model.ts",
+          "severity": "minor"
+        }
+      ],
+      "not_implemented": [
+        "NodeMember type (intentionally removed)",
+        "applyAllMembers step (intentionally removed)",
+        "Context-aware semantic alias inference (deferred per spec)"
+      ]
+    }
+  ],
+  "unspecced": [
+    {
+      "feature": "joinBy separator maps",
+      "location": "packages/codegen/src/emitters/joinby.ts",
+      "suggested_spec": "001-codegen-grammarjs-rewrite"
+    },
+    {
+      "feature": "Compile-time type assertion tests",
+      "location": "packages/codegen/src/emitters/type-test.ts",
+      "suggested_spec": "001-codegen-grammarjs-rewrite"
+    },
+    {
+      "feature": "Reconcile field/children mismatch warnings",
+      "location": "packages/codegen/src/node-model.ts",
+      "suggested_spec": "003-grammar-model-pipeline"
+    }
+  ],
+  "conflicts": [
+    {
+      "specs": ["002-enriched-grammar-model", "003-grammar-model-pipeline"],
+      "description": "Spec 002 proposes NodeElement sequences; spec 003 proposes NodeMember sequences. Neither implemented — codebase uses EnrichedRule directly. Spec 003 supersedes 002."
+    },
+    {
+      "specs": ["003-grammar-model-pipeline", "implementation"],
+      "description": "Spec 003 describes NodeMember[] on structural models. Implementation intentionally removed members, relying on EnrichedRule for template generation."
+    },
+    {
+      "specs": ["001-codegen-grammarjs-rewrite", "implementation"],
+      "description": "FR-006 says setters mutate and return same object. Implementation returns new objects (immutable pattern)."
+    }
+  ]
+}
