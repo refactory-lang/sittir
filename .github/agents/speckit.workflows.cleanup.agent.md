@@ -34,17 +34,8 @@ This workflow validates the organization of all spec-kit artifacts in the `specs
 
 2. **Run the cleanup script** from the repo root:
 
-   **For validation only (dry-run):**
-   ```bash
-   .specify/extensions/workflows/scripts/bash/create-cleanup.sh --json --dry-run "$ARGUMENTS"
-   ```
-
-   **For validation with auto-fix:**
-   ```bash
-   .specify/extensions/workflows/scripts/bash/create-cleanup.sh --json --auto-fix "$ARGUMENTS"
-   ```
-
-   **For validation only:**
+   **Validate only (no changes):**  
+   Use this when you just need a report of the current structure and issues without proposing or applying changes.
    ```bash
    .specify/extensions/workflows/scripts/bash/create-cleanup.sh --json "$ARGUMENTS"
    ```
