@@ -64,10 +64,10 @@ export function emitFactory(config: {
 			if (slot.multiple) {
 				childExprs.push(`...(config${opt}.${name} ?? [])`);
 			} else {
-				childExprs.push(`config${opt}.${name}`);
+				childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
 			}
 		});
-		lines.push(`  const children = [${childExprs.join(', ')}].filter((v): v is AnyNodeData => v != null);`);
+		lines.push(`  const children = [${childExprs.join(', ')}];`);
 	}
 
 	lines.push(`  return {`);

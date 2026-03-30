@@ -71,7 +71,7 @@ export function abstract_type_(
   const fields = {
     trait: config.trait,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'abstract_type' as const,
     fields,
@@ -93,7 +93,7 @@ export function arguments_(
 ) {
   const fields = {
   };
-  const children = [...(config?.attributeItem ?? []), config?.expression, ...(config?.children2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.attributeItem ?? []), ...(config?.expression ? [config?.expression] : []), ...(config?.children2 ?? [])];
   return {
     type: 'arguments' as const,
     fields,
@@ -117,7 +117,7 @@ export function array_expression_(
   const fields = {
     length: config?.length,
   };
-  const children = [...(config?.attributeItem ?? []), ...(config?.children1 ?? []), config?.expression, ...(config?.children3 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.attributeItem ?? []), ...(config?.children1 ?? []), ...(config?.expression ? [config?.expression] : []), ...(config?.children3 ?? [])];
   return {
     type: 'array_expression' as const,
     fields,
@@ -189,7 +189,7 @@ export function associated_type_(
     name: config.name,
     type_parameters: config.typeParameters,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'associated_type' as const,
     fields,
@@ -213,7 +213,7 @@ export function async_block_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'async_block' as const,
     fields,
@@ -236,7 +236,7 @@ export function attribute_(
     arguments: config.arguments,
     value: config.value,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'attribute' as const,
     fields,
@@ -259,7 +259,7 @@ export function attribute_item_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'attribute_item' as const,
     fields,
@@ -280,7 +280,7 @@ export function await_expression_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'await_expression' as const,
     fields,
@@ -301,7 +301,7 @@ export function base_field_initializer_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'base_field_initializer' as const,
     fields,
@@ -346,7 +346,7 @@ export function block_(
 ) {
   const fields = {
   };
-  const children = [config?.label, ...(config?.children1 ?? []), config?.expression].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.label ? [config?.label] : []), ...(config?.children1 ?? []), ...(config?.expression ? [config?.expression] : [])];
   return {
     type: 'block' as const,
     fields,
@@ -393,7 +393,7 @@ export function bounded_type_(
 ) {
   const fields = {
   };
-  const children = [config.children0, config.children1].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children0 ? [config.children0] : []), ...(config.children1 ? [config.children1] : [])];
   return {
     type: 'bounded_type' as const,
     fields,
@@ -415,7 +415,7 @@ export function bracketed_type_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'bracketed_type' as const,
     fields,
@@ -436,7 +436,7 @@ export function break_expression_(
 ) {
   const fields = {
   };
-  const children = [config?.label, config?.expression].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.label ? [config?.label] : []), ...(config?.expression ? [config?.expression] : [])];
   return {
     type: 'break_expression' as const,
     fields,
@@ -480,7 +480,7 @@ export function captured_pattern_(
 ) {
   const fields = {
   };
-  const children = [config.identifier, config.pattern].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.identifier ? [config.identifier] : []), ...(config.pattern ? [config.pattern] : [])];
   return {
     type: 'captured_pattern' as const,
     fields,
@@ -526,7 +526,7 @@ export function closure_parameters_(
 ) {
   const fields = {
   };
-  const children = [config?.children0, ...(config?.children1 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children0 ? [config?.children0] : []), ...(config?.children1 ?? [])];
   return {
     type: 'closure_parameters' as const,
     fields,
@@ -595,7 +595,7 @@ export function const_item_(
     type: config.type,
     value: config.value,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'const_item' as const,
     fields,
@@ -643,7 +643,7 @@ export function continue_expression_(
 ) {
   const fields = {
   };
-  const children = [config?.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ? [config?.children] : [])];
   return {
     type: 'continue_expression' as const,
     fields,
@@ -664,7 +664,7 @@ export function declaration_list_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'declaration_list' as const,
     fields,
@@ -706,7 +706,7 @@ export function else_clause_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'else_clause' as const,
     fields,
@@ -730,7 +730,7 @@ export function enum_item_(
     name: config.name,
     type_parameters: config.typeParameters,
   };
-  const children = [config.visibilityModifier, config.whereClause].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
   return {
     type: 'enum_item' as const,
     fields,
@@ -758,7 +758,7 @@ export function enum_variant_(
     name: config.name,
     value: config.value,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'enum_variant' as const,
     fields,
@@ -782,7 +782,7 @@ export function enum_variant_list_(
 ) {
   const fields = {
   };
-  const children = [...(config?.attributeItem ?? []), config?.enumVariant, ...(config?.children2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.attributeItem ?? []), ...(config?.enumVariant ? [config?.enumVariant] : []), ...(config?.children2 ?? [])];
   return {
     type: 'enum_variant_list' as const,
     fields,
@@ -805,7 +805,7 @@ export function expression_statement_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'expression_statement' as const,
     fields,
@@ -828,7 +828,7 @@ export function extern_crate_declaration_(
     alias: config.alias,
     name: config.name,
   };
-  const children = [config.visibilityModifier, config.crate].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.crate ? [config.crate] : [])];
   return {
     type: 'extern_crate_declaration' as const,
     fields,
@@ -852,7 +852,7 @@ export function extern_modifier_(
 ) {
   const fields = {
   };
-  const children = [config?.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ? [config?.children] : [])];
   return {
     type: 'extern_modifier' as const,
     fields,
@@ -875,7 +875,7 @@ export function field_declaration_(
     name: config.name,
     type: config.type,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'field_declaration' as const,
     fields,
@@ -898,7 +898,7 @@ export function field_declaration_list_(
 ) {
   const fields = {
   };
-  const children = [...(config?.attributeItem ?? []), config?.fieldDeclaration, ...(config?.children2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.attributeItem ?? []), ...(config?.fieldDeclaration ? [config?.fieldDeclaration] : []), ...(config?.children2 ?? [])];
   return {
     type: 'field_declaration_list' as const,
     fields,
@@ -945,7 +945,7 @@ export function field_initializer_(
     field: config.field,
     value: config.value,
   };
-  const children = [...(config.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ?? [])];
   return {
     type: 'field_initializer' as const,
     fields,
@@ -969,7 +969,7 @@ export function field_initializer_list_(
 ) {
   const fields = {
   };
-  const children = [config?.children0, ...(config?.children1 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children0 ? [config?.children0] : []), ...(config?.children1 ?? [])];
   return {
     type: 'field_initializer_list' as const,
     fields,
@@ -993,7 +993,7 @@ export function field_pattern_(
     name: config.name,
     pattern: config.pattern,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'field_pattern' as const,
     fields,
@@ -1019,7 +1019,7 @@ export function for_expression_(
     pattern: config.pattern,
     value: config.value,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'for_expression' as const,
     fields,
@@ -1043,7 +1043,7 @@ export function for_lifetimes_(
 ) {
   const fields = {
   };
-  const children = [config.lifetime1, ...(config.lifetime2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.lifetime1 ? [config.lifetime1] : []), ...(config.lifetime2 ?? [])];
   return {
     type: 'for_lifetimes' as const,
     fields,
@@ -1066,7 +1066,7 @@ export function foreign_mod_item_(
   const fields = {
     body: config.body,
   };
-  const children = [config.visibilityModifier, config.externModifier].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.externModifier ? [config.externModifier] : [])];
   return {
     type: 'foreign_mod_item' as const,
     fields,
@@ -1094,7 +1094,7 @@ export function function_item_(
     return_type: config.returnType,
     type_parameters: config.typeParameters,
   };
-  const children = [config.visibilityModifier, config.functionModifiers, config.whereClause].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.functionModifiers ? [config.functionModifiers] : []), ...(config.whereClause ? [config.whereClause] : [])];
   return {
     type: 'function_item' as const,
     fields,
@@ -1122,7 +1122,7 @@ export function function_modifiers_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'function_modifiers' as const,
     fields,
@@ -1148,7 +1148,7 @@ export function function_signature_item_(
     return_type: config.returnType,
     type_parameters: config.typeParameters,
   };
-  const children = [config.visibilityModifier, config.functionModifiers, config.whereClause].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.functionModifiers ? [config.functionModifiers] : []), ...(config.whereClause ? [config.whereClause] : [])];
   return {
     type: 'function_signature_item' as const,
     fields,
@@ -1178,7 +1178,7 @@ export function function_type_(
     return_type: config.returnType,
     trait: config.trait,
   };
-  const children = [config.forLifetimes, config.functionModifiers].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.forLifetimes ? [config.forLifetimes] : []), ...(config.functionModifiers ? [config.functionModifiers] : [])];
   return {
     type: 'function_type' as const,
     fields,
@@ -1203,7 +1203,7 @@ export function gen_block_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'gen_block' as const,
     fields,
@@ -1247,7 +1247,7 @@ export function generic_pattern_(
   const fields = {
     type_arguments: config.typeArguments,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'generic_pattern' as const,
     fields,
@@ -1363,7 +1363,7 @@ export function impl_item_(
     type: config.type,
     type_parameters: config.typeParameters,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'impl_item' as const,
     fields,
@@ -1388,7 +1388,7 @@ export function index_expression_(
 ) {
   const fields = {
   };
-  const children = [...(config.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ?? [])];
   return {
     type: 'index_expression' as const,
     fields,
@@ -1410,7 +1410,7 @@ export function inner_attribute_item_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'inner_attribute_item' as const,
     fields,
@@ -1431,7 +1431,7 @@ export function label_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'label' as const,
     fields,
@@ -1452,7 +1452,7 @@ export function let_chain_(
 ) {
   const fields = {
   };
-  const children = [...(config.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ?? [])];
   return {
     type: 'let_chain' as const,
     fields,
@@ -1500,7 +1500,7 @@ export function let_declaration_(
     type: config.type,
     value: config.value,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'let_declaration' as const,
     fields,
@@ -1525,7 +1525,7 @@ export function lifetime_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'lifetime' as const,
     fields,
@@ -1593,7 +1593,7 @@ export function loop_expression_(
   const fields = {
     body: config.body,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'loop_expression' as const,
     fields,
@@ -1616,7 +1616,7 @@ export function macro_definition_(
   const fields = {
     name: config.name,
   };
-  const children = [...(config.macroRule1 ?? []), config.macroRule2].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.macroRule1 ?? []), ...(config.macroRule2 ? [config.macroRule2] : [])];
   return {
     type: 'macro_definition' as const,
     fields,
@@ -1640,7 +1640,7 @@ export function macro_invocation_(
   const fields = {
     macro: config.macro,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'macro_invocation' as const,
     fields,
@@ -1686,7 +1686,7 @@ export function match_arm_(
     pattern: config.pattern,
     value: config.value,
   };
-  const children = [...(config.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ?? [])];
   return {
     type: 'match_arm' as const,
     fields,
@@ -1710,7 +1710,7 @@ export function match_block_(
 ) {
   const fields = {
   };
-  const children = [...(config?.matchArm1 ?? []), config?.matchArm2].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.matchArm1 ?? []), ...(config?.matchArm2 ? [config?.matchArm2] : [])];
   return {
     type: 'match_block' as const,
     fields,
@@ -1755,7 +1755,7 @@ export function match_pattern_(
   const fields = {
     condition: config.condition,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'match_pattern' as const,
     fields,
@@ -1779,7 +1779,7 @@ export function mod_item_(
     body: config.body,
     name: config.name,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'mod_item' as const,
     fields,
@@ -1802,7 +1802,7 @@ export function mut_pattern_(
 ) {
   const fields = {
   };
-  const children = [config.mutableSpecifier, config.pattern].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.mutableSpecifier ? [config.mutableSpecifier] : []), ...(config.pattern ? [config.pattern] : [])];
   return {
     type: 'mut_pattern' as const,
     fields,
@@ -1824,7 +1824,7 @@ export function negative_literal_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'negative_literal' as const,
     fields,
@@ -1845,7 +1845,7 @@ export function or_pattern_(
 ) {
   const fields = {
   };
-  const children = [...(config.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ?? [])];
   return {
     type: 'or_pattern' as const,
     fields,
@@ -1868,7 +1868,7 @@ export function ordered_field_declaration_list_(
   const fields = {
     type: config?.type,
   };
-  const children = [...(config?.attributeItem ?? []), config?.visibilityModifier, ...(config?.children2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.attributeItem ?? []), ...(config?.visibilityModifier ? [config?.visibilityModifier] : []), ...(config?.children2 ?? [])];
   return {
     type: 'ordered_field_declaration_list' as const,
     fields,
@@ -1894,7 +1894,7 @@ export function parameter_(
     pattern: config.pattern,
     type: config.type,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'parameter' as const,
     fields,
@@ -1917,7 +1917,7 @@ export function parameters_(
 ) {
   const fields = {
   };
-  const children = [config?.attributeItem, config?.children1, ...(config?.children2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.attributeItem ? [config?.attributeItem] : []), ...(config?.children1 ? [config?.children1] : []), ...(config?.children2 ?? [])];
   return {
     type: 'parameters' as const,
     fields,
@@ -1940,7 +1940,7 @@ export function parenthesized_expression_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'parenthesized_expression' as const,
     fields,
@@ -1962,7 +1962,7 @@ export function pointer_type_(
   const fields = {
     type: config.type,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'pointer_type' as const,
     fields,
@@ -2006,7 +2006,7 @@ export function range_expression_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'range_expression' as const,
     fields,
@@ -2050,7 +2050,7 @@ export function raw_string_literal_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'raw_string_literal' as const,
     fields,
@@ -2071,7 +2071,7 @@ export function ref_pattern_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'ref_pattern' as const,
     fields,
@@ -2093,7 +2093,7 @@ export function reference_expression_(
   const fields = {
     value: config.value,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'reference_expression' as const,
     fields,
@@ -2115,7 +2115,7 @@ export function reference_pattern_(
 ) {
   const fields = {
   };
-  const children = [config.mutableSpecifier, config.pattern].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.mutableSpecifier ? [config.mutableSpecifier] : []), ...(config.pattern ? [config.pattern] : [])];
   return {
     type: 'reference_pattern' as const,
     fields,
@@ -2138,7 +2138,7 @@ export function reference_type_(
   const fields = {
     type: config.type,
   };
-  const children = [config.lifetime, config.mutableSpecifier].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.lifetime ? [config.lifetime] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : [])];
   return {
     type: 'reference_type' as const,
     fields,
@@ -2161,7 +2161,7 @@ export function removed_trait_bound_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'removed_trait_bound' as const,
     fields,
@@ -2182,7 +2182,7 @@ export function return_expression_(
 ) {
   const fields = {
   };
-  const children = [config?.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ? [config?.children] : [])];
   return {
     type: 'return_expression' as const,
     fields,
@@ -2269,7 +2269,7 @@ export function self_parameter_(
 ) {
   const fields = {
   };
-  const children = [config.lifetime, config.mutableSpecifier, config.self].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.lifetime ? [config.lifetime] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : []), ...(config.self ? [config.self] : [])];
   return {
     type: 'self_parameter' as const,
     fields,
@@ -2292,7 +2292,7 @@ export function shorthand_field_initializer_(
 ) {
   const fields = {
   };
-  const children = [...(config.attributeItem ?? []), config.identifier].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.attributeItem ?? []), ...(config.identifier ? [config.identifier] : [])];
   return {
     type: 'shorthand_field_initializer' as const,
     fields,
@@ -2314,7 +2314,7 @@ export function slice_pattern_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'slice_pattern' as const,
     fields,
@@ -2336,7 +2336,7 @@ export function source_file_(
 ) {
   const fields = {
   };
-  const children = [config?.shebang, ...(config?.children1 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.shebang ? [config?.shebang] : []), ...(config?.children1 ?? [])];
   return {
     type: 'source_file' as const,
     fields,
@@ -2361,7 +2361,7 @@ export function static_item_(
     type: config.type,
     value: config.value,
   };
-  const children = [config.visibilityModifier, config.mutableSpecifier].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : [])];
   return {
     type: 'static_item' as const,
     fields,
@@ -2386,7 +2386,7 @@ export function string_literal_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'string_literal' as const,
     fields,
@@ -2433,7 +2433,7 @@ export function struct_item_(
     name: config.name,
     type_parameters: config.typeParameters,
   };
-  const children = [config.visibilityModifier, config.whereClause].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
   return {
     type: 'struct_item' as const,
     fields,
@@ -2459,7 +2459,7 @@ export function struct_pattern_(
   const fields = {
     type: config.type,
   };
-  const children = [config.children0, ...(config.children1 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children0 ? [config.children0] : []), ...(config.children1 ?? [])];
   return {
     type: 'struct_pattern' as const,
     fields,
@@ -2504,7 +2504,7 @@ export function token_repetition_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'token_repetition' as const,
     fields,
@@ -2526,7 +2526,7 @@ export function token_repetition_pattern_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'token_repetition_pattern' as const,
     fields,
@@ -2548,7 +2548,7 @@ export function token_tree_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'token_tree' as const,
     fields,
@@ -2570,7 +2570,7 @@ export function token_tree_pattern_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'token_tree_pattern' as const,
     fields,
@@ -2592,7 +2592,7 @@ export function trait_bounds_(
 ) {
   const fields = {
   };
-  const children = [config.children0, ...(config.children1 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children0 ? [config.children0] : []), ...(config.children1 ?? [])];
   return {
     type: 'trait_bounds' as const,
     fields,
@@ -2618,7 +2618,7 @@ export function trait_item_(
     name: config.name,
     type_parameters: config.typeParameters,
   };
-  const children = [config.visibilityModifier, config.whereClause].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
   return {
     type: 'trait_item' as const,
     fields,
@@ -2644,7 +2644,7 @@ export function try_block_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'try_block' as const,
     fields,
@@ -2665,7 +2665,7 @@ export function try_expression_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'try_expression' as const,
     fields,
@@ -2686,7 +2686,7 @@ export function tuple_expression_(
 ) {
   const fields = {
   };
-  const children = [...(config.attributeItem ?? []), config.expression1, ...(config.expression2 ?? []), config.expression3].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.attributeItem ?? []), ...(config.expression1 ? [config.expression1] : []), ...(config.expression2 ?? []), ...(config.expression3 ? [config.expression3] : [])];
   return {
     type: 'tuple_expression' as const,
     fields,
@@ -2710,7 +2710,7 @@ export function tuple_pattern_(
 ) {
   const fields = {
   };
-  const children = [config?.children0, ...(config?.children1 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children0 ? [config?.children0] : []), ...(config?.children1 ?? [])];
   return {
     type: 'tuple_pattern' as const,
     fields,
@@ -2733,7 +2733,7 @@ export function tuple_struct_pattern_(
   const fields = {
     type: config.type,
   };
-  const children = [config.pattern1, ...(config.pattern2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.pattern1 ? [config.pattern1] : []), ...(config.pattern2 ?? [])];
   return {
     type: 'tuple_struct_pattern' as const,
     fields,
@@ -2756,7 +2756,7 @@ export function tuple_type_(
 ) {
   const fields = {
   };
-  const children = [...(config.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ?? [])];
   return {
     type: 'tuple_type' as const,
     fields,
@@ -2778,7 +2778,7 @@ export function type_arguments_(
 ) {
   const fields = {
   };
-  const children = [config.children0, config.traitBounds, ...(config.children2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children0 ? [config.children0] : []), ...(config.traitBounds ? [config.traitBounds] : []), ...(config.children2 ?? [])];
   return {
     type: 'type_arguments' as const,
     fields,
@@ -2850,7 +2850,7 @@ export function type_item_(
     type: config.type,
     type_parameters: config.typeParameters,
   };
-  const children = [config.visibilityModifier, config.whereClause1, config.whereClause2].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause1 ? [config.whereClause1] : []), ...(config.whereClause2 ? [config.whereClause2] : [])];
   return {
     type: 'type_item' as const,
     fields,
@@ -2900,7 +2900,7 @@ export function type_parameters_(
 ) {
   const fields = {
   };
-  const children = [...(config.attributeItem ?? []), config.children1, ...(config.children2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.attributeItem ?? []), ...(config.children1 ? [config.children1] : []), ...(config.children2 ?? [])];
   return {
     type: 'type_parameters' as const,
     fields,
@@ -2923,7 +2923,7 @@ export function unary_expression_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'unary_expression' as const,
     fields,
@@ -2947,7 +2947,7 @@ export function union_item_(
     name: config.name,
     type_parameters: config.typeParameters,
   };
-  const children = [config.visibilityModifier, config.whereClause].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
   return {
     type: 'union_item' as const,
     fields,
@@ -2972,7 +2972,7 @@ export function unsafe_block_(
 ) {
   const fields = {
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'unsafe_block' as const,
     fields,
@@ -3015,7 +3015,7 @@ export function use_bounds_(
 ) {
   const fields = {
   };
-  const children = [config?.children0, ...(config?.children1 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children0 ? [config?.children0] : []), ...(config?.children1 ?? [])];
   return {
     type: 'use_bounds' as const,
     fields,
@@ -3038,7 +3038,7 @@ export function use_declaration_(
   const fields = {
     argument: config.argument,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'use_declaration' as const,
     fields,
@@ -3060,7 +3060,7 @@ export function use_list_(
 ) {
   const fields = {
   };
-  const children = [...(config?.children ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ?? [])];
   return {
     type: 'use_list' as const,
     fields,
@@ -3082,7 +3082,7 @@ export function use_wildcard_(
 ) {
   const fields = {
   };
-  const children = [config?.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ? [config?.children] : [])];
   return {
     type: 'use_wildcard' as const,
     fields,
@@ -3104,7 +3104,7 @@ export function variadic_parameter_(
   const fields = {
     pattern: config?.pattern,
   };
-  const children = [config?.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ? [config?.children] : [])];
   return {
     type: 'variadic_parameter' as const,
     fields,
@@ -3126,7 +3126,7 @@ export function visibility_modifier_(
 ) {
   const fields = {
   };
-  const children = [config?.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ? [config?.children] : [])];
   return {
     type: 'visibility_modifier' as const,
     fields,
@@ -3147,7 +3147,7 @@ export function where_clause_(
 ) {
   const fields = {
   };
-  const children = [config?.wherePredicate1, ...(config?.wherePredicate2 ?? [])].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.wherePredicate1 ? [config?.wherePredicate1] : []), ...(config?.wherePredicate2 ?? [])];
   return {
     type: 'where_clause' as const,
     fields,
@@ -3193,7 +3193,7 @@ export function while_expression_(
     body: config.body,
     condition: config.condition,
   };
-  const children = [config.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config.children ? [config.children] : [])];
   return {
     type: 'while_expression' as const,
     fields,
@@ -3216,7 +3216,7 @@ export function yield_expression_(
 ) {
   const fields = {
   };
-  const children = [config?.children].filter((v): v is AnyNodeData => v != null);
+  const children = [...(config?.children ? [config?.children] : [])];
   return {
     type: 'yield_expression' as const,
     fields,
