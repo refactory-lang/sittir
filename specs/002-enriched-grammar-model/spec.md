@@ -2,7 +2,7 @@
 
 **Feature Branch**: `002-enriched-grammar-model`
 **Created**: 2026-03-27
-**Status**: Draft
+**Status**: Archived — superseded by spec 003 (grammar-model-pipeline)
 **Input**: Emitters independently re-derive the same field type analysis via grammar retraversal. Consolidate all shared analysis into a pre-generation model so emitters become pure template producers.
 
 ## Problem

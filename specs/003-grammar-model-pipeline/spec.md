@@ -2,7 +2,7 @@
 
 **Feature Branch**: `003-grammar-model-pipeline`
 **Created**: 2026-03-27
-**Status**: Draft
+**Status**: Implemented
 **Supersedes**: spec 002 (enriched-grammar-model)
 
 ## Mental Model
@@ -17,9 +17,6 @@ node-types.json ───► NodeTypes ──► NodeModel[]          (initial s
                                     │ reconcile (merge EnrichedRule[])
                                     ▼
                                  NodeModel[]            (grammar + NT merged, rules attached)
-                                    │ apply members
-                                    ▼
-                                 NodeModel[]            (ordered members from rule walking)
                                     │ refine model type
                                     ▼
                                  NodeModel[]            (final model type classification)
@@ -159,8 +156,8 @@ Each model type corresponds to a unique set of fields. 1:1 mapping. No optional 
 
 ```typescript
 type NodeModel =
-  | BranchModel          // named node with fields, optional children, members, rule
-  | ContainerModel       // named node with children only, members, rule
+  | BranchModel          // named node with fields, optional children, rule
+  | ContainerModel       // named node with children only, rule
   | LeafModel            // named node with variable text, optional pattern
   | EnumModel            // named node with fixed set of values
   | KeywordModel         // named node with constant text
@@ -178,26 +175,24 @@ interface NodeModelBase {
 ```
 
 #### BranchModel
-Named node with fields and optionally children. Has members and rule.
+Named node with fields and optionally children. Retains the EnrichedRule for template generation.
 ```typescript
 interface BranchModel extends NodeModelBase {
   modelType: 'branch';
   kind: string;
   fields: FieldModel[];
-  children?: ChildModel[];
-  members: NodeMember[];
+  children?: ChildrenModel;
   rule: EnrichedRule;
 }
 ```
 
 #### ContainerModel
-Named node with children but no fields. Has members and rule.
+Named node with children but no fields. Retains the EnrichedRule for template generation.
 ```typescript
 interface ContainerModel extends NodeModelBase {
   modelType: 'container';
   kind: string;
-  children: ChildModel[];
-  members: NodeMember[];
+  children: ChildrenModel;
   rule: EnrichedRule;
 }
 ```
@@ -269,7 +264,7 @@ export function isKeyword(n: NodeModel): n is KeywordModel { return n.modelType 
 export function isToken(n: NodeModel): n is TokenModel { return n.modelType === 'token'; }
 export function isSupertype(n: NodeModel): n is SupertypeModel { return n.modelType === 'supertype'; }
 
-/** Branch or Container — nodes with members and rules */
+/** Branch or Container — structural nodes with rules */
 export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
   return n.modelType === 'branch' || n.modelType === 'container';
 }
@@ -327,15 +322,6 @@ interface ListChildModel {
 }
 ```
 
-#### NodeMember
-```typescript
-type NodeMember =
-  | { member: 'field'; field: FieldModel }
-  | { member: 'token'; value: string; optional: boolean }
-  | { member: 'child'; child: ChildModel }
-  | { member: 'choice'; branches: NodeMember[][] };
-```
-
 ### Kind Projections (derived, computed on-demand)
 
 Emitters that need to partition a field's kinds into leaf vs branch, or collapse supertypes for TypeScript type expressions, use derived projections. These are not stored on the field — they're computed from the hydrated `kinds` references.
@@ -365,7 +351,7 @@ function projectKinds(kinds: NodeModel[]): KindProjection {
 
 ### Hydrated Types (post-hydration, emitter-facing)
 
-After step 12 (hydrate), all models are promoted to hydrated variants via a type transformation. `Hydrate<T>` recursively replaces `kinds: string[]` with `kinds: NodeModel[]` and makes all properties `readonly`. Every NodeModel subtype has a hydrated counterpart.
+After step 11 (hydrate), all models are promoted to hydrated variants via a type transformation. `Hydrate<T>` recursively replaces `kinds: string[]` with `kinds: NodeModel[]` and makes all properties `readonly`. Every NodeModel subtype has a hydrated counterpart.
 
 ```typescript
 // Core transformation: replace kinds + freeze
@@ -422,7 +408,7 @@ interface SignaturePool {
 
 ## Pipeline Steps
 
-The 13-step pipeline as orchestrated by `build-model.ts`:
+The 12-step pipeline as orchestrated by `build-model.ts`:
 
 ### Step 1–2: Load Sources
 
@@ -463,59 +449,51 @@ For each model, lookup matching EnrichedRule:
 - Grammar narrows (leaf→keyword, leaf→enum) → promote, then enrich
 - Mismatch → throw error (needs manual review)
 
-### Step 6: Apply Members
+### Step 6: Refine Model Type
 
 | Step | Method | What it does |
 |------|--------|-------------|
-| 6 | `applyAllMembers(models)` | Walk rules to produce ordered NodeMember[] for structural models |
-
-For each BranchModel and ContainerModel, walks the enriched rule to produce members. Sub-heuristics: abstract symbol inlining, CHOICE merging, multiplicity, optionality, ALIAS handling, TOKEN wrapping.
-
-### Step 7: Refine Model Type
-
-| Step | Method | What it does |
-|------|--------|-------------|
-| 7 | `refineAllModelTypes(models)` | Final classification check after all data available |
+| 6 | `refineAllModelTypes(models)` | Final classification check after all data available |
 
 Grammar-based enrichment may reveal that a model needs reclassification (e.g., BranchModel with no fields and only children → ContainerModel).
 
-### Step 8–9: Semantic Aliases (v1: naming-only; context inference deferred)
+### Step 7–8: Semantic Aliases (v1: naming-only; context inference deferred)
 
 | Step | Method | What it does |
 |------|--------|-------------|
-| 8 | `inferTokenAliases(models, grammar)` | **v1:** Character-to-name table for non-alphanumeric tokens. **Deferred:** context-aware inference (e.g., `AddOperator`, `PathSeparator`). |
-| 9 | `applyTokenAliases(models, aliases)` | Replace raw token kinds with readable alias names so naming step produces valid identifiers. |
+| 7 | `inferTokenAliases(models, grammar)` | **v1:** Character-to-name table for non-alphanumeric tokens. **Deferred:** context-aware inference (e.g., `AddOperator`, `PathSeparator`). |
+| 8 | `applyTokenAliases(models, aliases)` | Replace raw token kinds with readable alias names so naming step produces valid identifiers. |
 
 **v1 naming convention:** `Nx[Name]` where `1x` is omitted.
 - `+` → `Plus`, `-` → `Minus`, `*` → `Star`
 - `&&` → `2xAmpersand`, `||` → `2xPipe`, `::` → `2xColon`
 - `>>=` → `2xGreaterThanEquals` (each char named, repetition prefixed)
 
-### Step 10: Naming
+### Step 9: Naming
 
 | Step | Method | What it does |
 |------|--------|-------------|
-| 10 | `applyNaming(models)` | Compute typeName (PascalCase), factoryName (camelCase) on models; propertyName (camelCase) on fields |
+| 9 | `applyNaming(models)` | Compute typeName (PascalCase), factoryName (camelCase) on models; propertyName (camelCase) on fields |
 
-### Step 11: Optimize
-
-| Step | Method | What it does |
-|------|--------|-------------|
-| 11 | `optimize(models)` | Signature interning (field, child), enum pattern detection |
-
-### Step 12: Hydrate
+### Step 10: Optimize
 
 | Step | Method | What it does |
 |------|--------|-------------|
-| 12 | `hydrate(models)` | Resolve all `kinds: string[]` to `kinds: NodeModel[]` references |
+| 10 | `optimize(models)` | Signature interning (field, child), enum pattern detection |
 
-### Step 13: Return
+### Step 11: Hydrate
+
+| Step | Method | What it does |
+|------|--------|-------------|
+| 11 | `hydrate(models)` | Resolve all `kinds: string[]` to `kinds: NodeModel[]` references |
+
+### Step 12: Return
 
 Return `{ name, models, signatures }` — fully built, hydrated, optimized GrammarModel ready for emitters.
 
 ---
 
-## Semantic Token Aliases (Steps 8–9)
+## Semantic Token Aliases (Steps 7–8)
 
 **v1 scope:** Character-to-name table for non-alphanumeric tokens. Produces valid identifiers for the naming step. Uses `Nx[Name]` convention where `1x` is omitted.
 
@@ -550,12 +528,12 @@ packages/codegen/src/
   grammar.ts                 # Layer 1: Grammar (raw grammar.json)
   enriched-grammar.ts        # Layer 2: classifyRules (grammar introspection only)
   node-types.ts              # Layer 3: NodeTypes (raw node-types.json)
-  node-model.ts              # Layer 4: NodeModel types, type guards, initialize, reconcile, members, refine
+  node-model.ts              # Layer 4: NodeModel types, type guards, initialize, reconcile, refine
   naming.ts                  # Naming: typeName, factoryName, propertyName
   hydration.ts               # Hydrate: kind strings → NodeModel references
   optimization.ts            # Optimize: signatures, dedup, kind utilities
   semantic-aliases.ts        # Semantic aliases: infer + apply token aliases
-  build-model.ts             # Orchestrator: 13-step pipeline
+  build-model.ts             # Orchestrator: 12-step pipeline
   emitters/
     utils.ts                 # Updated: use type guards, KindProjection helpers
     *.ts                     # Updated: receive hydrated NodeModel[], use type guards
@@ -571,7 +549,7 @@ packages/codegen/src/
 
 **Steps:**
 1. Implement new model types + type guards
-2. Implement 13-step pipeline (`build-model.ts` + domain files)
+2. Implement 12-step pipeline (`build-model.ts` + domain files)
 3. Update emitters to consume hydrated `NodeModel[]` with type guards
 4. Run codegen for all three grammars, diff against current output
 5. Remove old grammar-reader.ts / grammar-model.ts functions
@@ -595,3 +573,7 @@ packages/codegen/src/
 - Q: What's the minimum scope for semantic aliases in v1? → A: Naming-only — character-to-name table (`Plus`, `2xColon`). Convention: `Nx[Name]` where `1x` omitted. Context-aware inference (e.g., `AddOperator`) deferred to follow-up.
 - Q: Incremental migration or single cutover? → A: Single cutover — replace pipeline, validate via generated output diff test against all three grammars. No parallel coexistence.
 - Q: Do emitters receive hydrated model types or resolve kinds via map? → A: Hydrated model variants — `HydratedBranchModel`, `HydratedNodeModel` union. All fields `readonly`. `GrammarModel` uses `ReadonlyMap<string, HydratedNodeModel>`.
+
+### Session 2026-03-30
+
+- `NodeMember` type and `applyAllMembers` pipeline step removed. Members were a redundant intermediate representation — the `EnrichedRule` attached to each structural model already encodes token ordering, field placement, and CHOICE structure. The rules emitter (`emitters/rules.ts`) walks the `EnrichedRule` directly to produce S-expression templates. Pipeline reduced from 13 to 12 steps.
