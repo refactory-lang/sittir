@@ -992,14 +992,11 @@ export function buildGrammarModel(grammar: string): { model: GrammarModel; seria
 		nodes[kind] = { modelType: 'token', kind };
 	}
 
-	// Serialize step 3 output (before signatures)
-	const serialized = serializeToJson5(nodes);
-
 	// Step 4: Compute signatures (branches only)
 	nodesToSignatures(nodes);
 
 	// Also run the new 13-step pipeline (for future emitter migration)
-	const { grammarModel: newModel } = buildModel(grammar);
+	const { grammarModel: newModel, serialized } = buildModel(grammar);
 
 	return { model: { name: grammar, nodes }, serialized, newModel };
 }
