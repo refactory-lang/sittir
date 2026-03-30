@@ -2425,10 +2425,12 @@ export function readonlyTypeFrom(input: any): any {
   return readonly_type_(resolved);
 }
 
+export function regexFrom(input: string): any;
 export function regexFrom(input: RegexTree): any;
 export function regexFrom(input: Regex): any;
 export function regexFrom(input: RegexFromInput & {readonly kind?: 'regex'}): any;
 export function regexFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return regexFrom({ pattern: input });
   if (isTreeNode(input)) return assignRegex(input);
   if (isNodeData(input)) return regex_((input as any).fields);
   const obj = input;
@@ -2880,10 +2882,12 @@ export function typeAssertionFrom(input: any): any {
   return type_assertion_(resolved);
 }
 
+export function typeParameterFrom(input: string): any;
 export function typeParameterFrom(input: TypeParameterTree): any;
 export function typeParameterFrom(input: TypeParameter): any;
 export function typeParameterFrom(input: TypeParameterFromInput & {readonly kind?: 'type_parameter'}): any;
 export function typeParameterFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return typeParameterFrom({ name: input });
   if (isTreeNode(input)) return assignTypeParameter(input);
   if (isNodeData(input)) return type_parameter_((input as any).fields);
   const obj = input;

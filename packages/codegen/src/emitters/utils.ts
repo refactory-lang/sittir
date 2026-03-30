@@ -14,7 +14,7 @@ import type {
 	HydratedFieldModel,
 	HydratedChildrenModel,
 } from '../node-model.ts';
-import { isTupleChildren } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export type StructuralNode = HydratedBranchModel | HydratedContainerModel;
@@ -118,6 +118,41 @@ export function enumKindsOf(nodes: HydratedNodeModel[]): { kind: string; values:
 /** Get fields from a structural node (empty for container) */
 export function fieldsOf(node: StructuralNode): readonly HydratedFieldModel[] {
 	return node.modelType === 'branch' ? node.fields : [];
+}
+
+/**
+ * Detect single-field compression eligibility for .from() API.
+ *
+ * A node qualifies when:
+ *   - Exactly 1 required non-multiple field
+ *   - No required children
+ *   - All kinds on that field are leaf kinds (string input is unambiguous —
+ *     disambiguated at compile time via template literal types and at runtime
+ *     via pattern matching)
+ *
+ * Returns the compressible field, or null.
+ */
+export function singleFieldCompression(node: StructuralNode, ctx: ProjectionContext): HydratedFieldModel | null {
+	const fields = fieldsOf(node);
+	const requiredScalars = fields.filter(f => f.required && !f.multiple);
+	if (requiredScalars.length !== 1) return null;
+
+	// Check no required children
+	if (node.children != null) {
+		let hasRequiredChild = false;
+		eachChildSlot(node.children, (slot) => {
+			if (slot.required) hasRequiredChild = true;
+		});
+		if (hasRequiredChild) return null;
+	}
+
+	const field = requiredScalars[0]!;
+
+	// All kinds must be leaf types (leaf, keyword, enum — no branches/supertypes)
+	const allLeaf = field.kinds.every(k => ctx.leafKinds.has(k.kind));
+	if (!allLeaf) return null;
+
+	return field;
 }
 
 /**

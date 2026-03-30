@@ -13,7 +13,7 @@ import type { HydratedNodeModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
 import { toTypeName, toFactoryName, toRawFactoryName, toFieldName } from '../naming.ts';
-import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString, childSlotNames } from './utils.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, escapeString, childSlotNames, singleFieldCompression } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
 
 export interface EmitFromConfig {
@@ -211,12 +211,24 @@ function emitFromFunction(
 
 	const lines: string[] = [];
 
+	// Single-field compression: detect if .from() can accept a direct value
+	const compressed = singleFieldCompression(node, ctx);
+	const compressedCamel = compressed ? (compressed.propertyName ?? toFieldName(compressed.name)) : null;
+
 	// Function overloads
 	const exportName = `${camelFactoryName}From`;
+	if (compressed) {
+		lines.push(`export function ${exportName}(input: string): any;`);
+	}
 	lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
 	lines.push(`export function ${exportName}(input: ${typeName}): any;`);
 	lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): any;`);
 	lines.push(`export function ${exportName}(input: any): any {`);
+
+	// --- Path 0: Single-field compression → wrap scalar into config ---
+	if (compressed && compressedCamel) {
+		lines.push(`  if (typeof input === 'string' || typeof input === 'number') return ${exportName}({ ${compressedCamel}: input });`);
+	}
 
 	// --- Path 1: TreeNode → assign ---
 	lines.push(`  if (isTreeNode(input)) return assign${typeName}(input);`);

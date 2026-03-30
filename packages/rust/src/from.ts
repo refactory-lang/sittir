@@ -489,10 +489,12 @@ export function assignmentExpressionFrom(input: any): any {
   return assignment_expression_(resolved);
 }
 
+export function associatedTypeFrom(input: string): any;
 export function associatedTypeFrom(input: AssociatedTypeTree): any;
 export function associatedTypeFrom(input: AssociatedType): any;
 export function associatedTypeFrom(input: AssociatedTypeFromInput & {readonly kind?: 'associated_type'}): any;
 export function associatedTypeFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return associatedTypeFrom({ name: input });
   if (isTreeNode(input)) return assignAssociatedType(input);
   if (isNodeData(input)) return associated_type_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
@@ -929,10 +931,12 @@ export function enumItemFrom(input: any): any {
   return enum_item_(resolved);
 }
 
+export function enumVariantFrom(input: string): any;
 export function enumVariantFrom(input: EnumVariantTree): any;
 export function enumVariantFrom(input: EnumVariant): any;
 export function enumVariantFrom(input: EnumVariantFromInput & {readonly kind?: 'enum_variant'}): any;
 export function enumVariantFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return enumVariantFrom({ name: input });
   if (isTreeNode(input)) return assignEnumVariant(input);
   if (isNodeData(input)) return enum_variant_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
@@ -1123,10 +1127,12 @@ export function fieldInitializerListFrom(input: any): any {
   return field_initializer_list_(resolved);
 }
 
+export function fieldPatternFrom(input: string): any;
 export function fieldPatternFrom(input: FieldPatternTree): any;
 export function fieldPatternFrom(input: FieldPattern): any;
 export function fieldPatternFrom(input: FieldPatternFromInput & {readonly kind?: 'field_pattern'}): any;
 export function fieldPatternFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return fieldPatternFrom({ name: input });
   if (isTreeNode(input)) return assignFieldPattern(input);
   if (isNodeData(input)) return field_pattern_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
@@ -1630,10 +1636,12 @@ export function loopExpressionFrom(input: any): any {
   return loop_expression_(resolved);
 }
 
+export function macroDefinitionFrom(input: string): any;
 export function macroDefinitionFrom(input: MacroDefinitionTree): any;
 export function macroDefinitionFrom(input: MacroDefinition): any;
 export function macroDefinitionFrom(input: MacroDefinitionFromInput & {readonly kind?: 'macro_definition'}): any;
 export function macroDefinitionFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return macroDefinitionFrom({ name: input });
   if (isTreeNode(input)) return assignMacroDefinition(input);
   if (isNodeData(input)) return macro_definition_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
@@ -1758,10 +1766,12 @@ export function matchPatternFrom(input: any): any {
   return match_pattern_(resolved);
 }
 
+export function modItemFrom(input: string): any;
 export function modItemFrom(input: ModItemTree): any;
 export function modItemFrom(input: ModItem): any;
 export function modItemFrom(input: ModItemFromInput & {readonly kind?: 'mod_item'}): any;
 export function modItemFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return modItemFrom({ name: input });
   if (isTreeNode(input)) return assignModItem(input);
   if (isNodeData(input)) return mod_item_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
@@ -2084,10 +2094,12 @@ export function returnExpressionFrom(input: any): any {
   return return_expression_(resolved);
 }
 
+export function scopedIdentifierFrom(input: string): any;
 export function scopedIdentifierFrom(input: ScopedIdentifierTree): any;
 export function scopedIdentifierFrom(input: ScopedIdentifier): any;
 export function scopedIdentifierFrom(input: ScopedIdentifierFromInput & {readonly kind?: 'scoped_identifier'}): any;
 export function scopedIdentifierFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return scopedIdentifierFrom({ name: input });
   if (isTreeNode(input)) return assignScopedIdentifier(input);
   if (isNodeData(input)) return scoped_identifier_((input as any).fields);
   const obj = input;
@@ -2101,10 +2113,12 @@ export function scopedIdentifierFrom(input: any): any {
   return scoped_identifier_(resolved);
 }
 
+export function scopedTypeIdentifierFrom(input: string): any;
 export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifierTree): any;
 export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifier): any;
 export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifierFromInput & {readonly kind?: 'scoped_type_identifier'}): any;
 export function scopedTypeIdentifierFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return scopedTypeIdentifierFrom({ name: input });
   if (isTreeNode(input)) return assignScopedTypeIdentifier(input);
   if (isNodeData(input)) return scoped_type_identifier_((input as any).fields);
   const obj = input;
@@ -2264,10 +2278,12 @@ export function structExpressionFrom(input: any): any {
   return struct_expression_(resolved);
 }
 
+export function structItemFrom(input: string): any;
 export function structItemFrom(input: StructItemTree): any;
 export function structItemFrom(input: StructItem): any;
 export function structItemFrom(input: StructItemFromInput & {readonly kind?: 'struct_item'}): any;
 export function structItemFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return structItemFrom({ name: input });
   if (isTreeNode(input)) return assignStructItem(input);
   if (isNodeData(input)) return struct_item_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
@@ -2631,10 +2647,12 @@ export function typeItemFrom(input: any): any {
   return type_item_(resolved);
 }
 
+export function typeParameterFrom(input: string): any;
 export function typeParameterFrom(input: TypeParameterTree): any;
 export function typeParameterFrom(input: TypeParameter): any;
 export function typeParameterFrom(input: TypeParameterFromInput & {readonly kind?: 'type_parameter'}): any;
 export function typeParameterFrom(input: any): any {
+  if (typeof input === 'string' || typeof input === 'number') return typeParameterFrom({ name: input });
   if (isTreeNode(input)) return assignTypeParameter(input);
   if (isNodeData(input)) return type_parameter_((input as any).fields);
   const obj = input;
