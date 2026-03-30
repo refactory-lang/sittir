@@ -135,8 +135,9 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// Type-only imports
 	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
+	const configTypeImports = nodes.map(n => toTypeName(n.kind) + 'Config').sort();
 	const treeTypeImports = nodes.map(n => toTypeName(n.kind) + 'Tree').sort();
-	lines.push(`import type { ${[...baseTypeImports, ...treeTypeImports].join(', ')} } from './types.js';`);
+	lines.push(`import type { ${[...baseTypeImports, ...configTypeImports, ...treeTypeImports].join(', ')} } from './types.js';`);
 	lines.push("import { isNodeData, isTreeNode, _inferBranch } from './utils.js';");
 	lines.push('');
 
@@ -158,7 +159,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	lines.push('');
 
 	// _resolveByKind dispatch
-	lines.push('function _resolveByKind(kind: string, rest: any): any {');
+	lines.push('function _resolveByKind(kind: string, rest: unknown) {');
 	lines.push('  switch (kind) {');
 	for (const node of nodes) {
 		const fromFn = `${toFactoryName(node.kind)}From`;
@@ -171,7 +172,7 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// --- Emit shared resolver functions ---
 	for (const [, { name, resolved }] of resolverRegistry) {
-		lines.push(`function ${name}(v: any): any {`);
+		lines.push(`function ${name}(v: unknown) {`);
 		const body = emitResolveBody('v', resolved, leafSet, leafValueMap, keywordKinds, nodes, supertypeResolverNames, ctx.expandedSupertypes, branchNodeSet, config.grammar);
 		lines.push(`  ${body}`);
 		lines.push('}');
@@ -213,25 +214,27 @@ function emitFromFunction(
 
 	// Function overloads
 	const exportName = `${camelFactoryName}From`;
-	lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
-	lines.push(`export function ${exportName}(input: ${typeName}): any;`);
-	lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): any;`);
-	lines.push(`export function ${exportName}(input: any): any {`);
+	lines.push(`export function ${exportName}(input: ${typeName}Tree | ${typeName} | ${typeName}FromInput | {type?: '${node.kind}'}) {`);
 
 	// --- Path 1: TreeNode → assign ---
 	lines.push(`  if (isTreeNode(input)) return assign${typeName}(input);`);
 
 	// --- Path 2: NodeData → pass through ---
-	lines.push(`  if (isNodeData(input)) return ${factoryName}((input as any).fields);`);
+	const hasBranchFields = node.modelType === 'branch' && fieldsOf(node).length > 0;
+	if (hasBranchFields) {
+		lines.push(`  if (isNodeData(input)) return ${factoryName}((input as ${typeName}).fields as ${typeName}Config);`);
+	} else {
+		lines.push(`  if (isNodeData(input)) return ${factoryName}(input as ${typeName}Config);`);
+	}
 
 	// --- Path 3: FromInput → resolve ---
 	const hasChildren = node.children != null;
 	if (hasChildren) {
-		lines.push(`  const obj = Array.isArray(input) ? { children: input } : input;`);
+		lines.push(`  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;`);
 	} else {
-		lines.push(`  const obj = input;`);
+		lines.push(`  const obj = input as Record<string, unknown>;`);
 	}
-	lines.push(`  const resolved: any = {};`);
+	lines.push(`  const resolved: Record<string, unknown> = {};`);
 	for (const field of fields) {
 		const camel = field.propertyName ?? toFieldName(field.name);
 		lines.push(`  if (obj.${camel} !== undefined) {`);
@@ -240,7 +243,7 @@ function emitFromFunction(
 		if (field.multiple) {
 			lines.push(`    const raw = obj.${camel};`);
 			lines.push(`    const arr = Array.isArray(raw) ? raw : [raw];`);
-			lines.push(`    resolved.${camel} = arr.map((v: any) => ${resolveCall.replace(/obj\.\w+/g, 'v')});`);
+			lines.push(`    resolved.${camel} = arr.map((v: unknown) => ${resolveCall.replace(/obj\.\w+/g, 'v')});`);
 		} else {
 			lines.push(`    resolved.${camel} = ${resolveCall};`);
 		}
@@ -259,7 +262,7 @@ function emitFromFunction(
 			if (slot.multiple) {
 				lines.push(`    const arr = Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}];`);
 				const slotResolve = emitResolveCall(slotProj, 'v', leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-				lines.push(`    resolved.${propName} = arr.map((v: any) => ${slotResolve});`);
+				lines.push(`    resolved.${propName} = arr.map((v: unknown) => ${slotResolve});`);
 			} else {
 				const slotResolve = emitResolveCall(slotProj, `obj.${propName}`, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 				lines.push(`    resolved.${propName} = ${slotResolve};`);
@@ -271,7 +274,7 @@ function emitFromFunction(
 			lines.push(`  }`);
 		});
 	}
-	lines.push(`  return ${factoryName}(resolved);`);
+	lines.push(`  return ${factoryName}(resolved as ${typeName}Config);`);
 	lines.push(`}`);
 
 	return lines.join('\n');
@@ -308,13 +311,13 @@ function emitResolveCall(
 			return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' && ${varName} === '${escapeString(text)}' ? ${toRawFactoryName(lt)}() : ${varName})`;
 		}
 		const factory = toRawFactoryName(lt);
-		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(''+${varName} as any) : ${varName})`;
+		return `(isNodeData(${varName}) ? ${varName} : typeof ${varName} === 'string' || typeof ${varName} === 'number' || typeof ${varName} === 'boolean' ? ${factory}(''+${varName}) : ${varName})`;
 	}
 
 	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
 		const factory = toRawFactoryName(resolved.branchTypes[0]!);
 		const fromFn = `${toFactoryName(resolved.branchTypes[0]!)}From`;
-		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName} as any) : typeof ${varName} === 'object' ? ${fromFn}(${varName}) : ${varName})`;
+		return `(isNodeData(${varName}) ? ${varName} : Array.isArray(${varName}) ? ${fromFn}(${varName}) : typeof ${varName} === 'object' ? ${fromFn}(${varName}) : ${varName})`;
 	}
 
 	// Single supertype — delegate to its resolver
@@ -368,7 +371,7 @@ function emitResolveBody(
 	if (allBranch > 0) {
 		if (allBranch === 1 && branchTypes.length === 1) {
 			const fromFn = `${toFactoryName(branchTypes[0]!)}From`;
-			parts.push(`if(Array.isArray(${v}))return ${fromFn}(${v} as any)`);
+			parts.push(`if(Array.isArray(${v}))return ${fromFn}(${v})`);
 		} else if (allBranch === 1 && supertypes.length === 1) {
 			const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
 			parts.push(`if(Array.isArray(${v}))return ${resolverFn}(${v})`);
@@ -400,7 +403,7 @@ function emitStringResolve(
 			const expectedText = keywordKinds.get(kind)!;
 			return `(${textVar}==='${escapeString(expectedText)}'?${toRawFactoryName(kind)}():(()=>{throw new Error(\`Expected '${escapeString(expectedText)}' for ${kind}, got '\${${textVar}}'\`)})())`;
 		}
-		return `${toRawFactoryName(kind)}(${textVar} as any)`;
+		return `${toRawFactoryName(kind)}(${textVar})`;
 	};
 
 	if (leafTypes.length === 1) {

@@ -71,7 +71,7 @@ export function assign(node: AnyTreeNode, config: RulesConfig): AnyNodeData {
 	const template = typeof rule === 'string' ? rule : rule.template;
 	const refs = extractFieldRefs(template);
 
-	const fields: Record<string, unknown> = {};
+	const fields: Record<string, AnyNodeData | AnyNodeData[] | string | number> = {};
 	let children: AnyNodeData[] | undefined;
 	const fieldedIds = new Set<number>();
 
@@ -112,7 +112,7 @@ export function assign(node: AnyTreeNode, config: RulesConfig): AnyNodeData {
 		}
 	}
 
-	const result: AnyNodeData = { type: kind, fields };
+	const result: AnyNodeData = { type: kind, fields: fields as Readonly<Record<string, unknown>> };
 	if (children) (result as any).children = children;
 	return result;
 }
