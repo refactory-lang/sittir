@@ -151,8 +151,10 @@ export function emitFrom(config: EmitFromConfig): string {
 	const assignImports = nodes.map(n => `assign${toTypeName(n.kind)}`).sort().join(', ');
 	lines.push(`import { ${assignImports} } from './assign.js';`);
 
-	// Import FromInput types from types.ts
-	const fromInputImports = nodes.map(n => `${toTypeName(n.kind)}FromInput`);
+	// Import FromInput types from types.ts (structural nodes + supertype unions for compressed overloads)
+	const fromInputSet = new Set(nodes.map(n => `${toTypeName(n.kind)}FromInput`));
+	for (const imp of collectCompressedFromInputImports(nodes, ctx)) fromInputSet.add(imp);
+	const fromInputImports = [...fromInputSet].sort();
 	lines.push(`import type { ${fromInputImports.join(', ')} } from './types.js';`);
 
 	lines.push('');
@@ -188,6 +190,47 @@ export function emitFrom(config: EmitFromConfig): string {
 }
 
 // ---------------------------------------------------------------------------
+// FromInput type expression builder — only branch/supertype collapsed names
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a TypeScript type expression for a slot's FromInput overload.
+ * Only includes FromInput types for branch/supertype kinds (which have
+ * generated FromInput interfaces). Leaf kinds are represented as 'string'.
+ */
+function buildFromInputTypeExpr(proj: KindProjection, ctx: ProjectionContext): string {
+	// collapsedTypes includes both branch/supertype AND leaf names.
+	// We need to filter: only include names that correspond to structural
+	// nodes or supertypes (which have FromInput interfaces).
+	const leafNameSet = new Set(proj.leafTypes.map(t => toTypeName(t)));
+	const parts: string[] = [];
+	for (const name of proj.collapsedTypes) {
+		if (!leafNameSet.has(name)) parts.push(`${name}FromInput`);
+	}
+	if (proj.leafTypes.length > 0) parts.push('string');
+	return parts.join(' | ') || 'any';
+}
+
+/**
+ * Collect FromInput import names needed by compressed slot overloads.
+ * Only includes branch/supertype names (not leaf-derived names).
+ */
+function collectCompressedFromInputImports(nodes: StructuralNode[], ctx: ProjectionContext): string[] {
+	const imports: string[] = [];
+	for (const node of nodes) {
+		const compression = singleSlotCompression(node, ctx);
+		if (compression) {
+			const slotProj = projectKinds(compression.kinds, ctx);
+			const leafNameSet = new Set(slotProj.leafTypes.map(t => toTypeName(t)));
+			for (const name of slotProj.collapsedTypes) {
+				if (!leafNameSet.has(name)) imports.push(`${name}FromInput`);
+			}
+		}
+	}
+	return imports;
+}
+
+// ---------------------------------------------------------------------------
 // Per-kind .from() function emitter
 // ---------------------------------------------------------------------------
 
@@ -219,23 +262,8 @@ function emitFromFunction(
 	const isSpread = compression?.multiple === true;
 
 	if (isSpread) {
-		// Spread overload typed from the slot's accepted kinds.
-		// For slots with supertypes (large unions), use NodeData + string fallback
-		// to keep the overload readable. For small unions, list concrete FromInput types.
 		const slotProj = projectKinds(compression.kinds, ctx);
-		let elemType: string;
-		if (slotProj.supertypeKinds.length === 0 && slotProj.branchTypes.length <= 10) {
-			const parts: string[] = [];
-			for (const kind of slotProj.branchTypes) parts.push(`${toTypeName(kind)}FromInput`);
-			if (slotProj.leafTypes.length > 0) parts.push('string');
-			parts.push('{ readonly type: string }');
-			elemType = parts.join(' | ');
-		} else {
-			// Large union — use broad type for readability
-			elemType = slotProj.leafTypes.length > 0
-				? '{ readonly type: string } | string'
-				: '{ readonly type: string }';
-		}
+		const elemType = buildFromInputTypeExpr(slotProj, ctx);
 
 		lines.push(`export function ${exportName}(...items: (${elemType})[]): any;`);
 		lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
@@ -243,11 +271,16 @@ function emitFromFunction(
 		lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): any;`);
 		lines.push(`export function ${exportName}(...args: any[]): any {`);
 		// Multiple args → all are list items
-		lines.push(`  if (args.length !== 1) return ${exportName}({ ${compression.propName}: args });`);
+		lines.push(`  if (args.length !== 1) return ${exportName}({ ${compression.propName}: args } as any);`);
 		lines.push(`  const input = args[0];`);
 	} else {
-		if (compression?.scalar) {
-			lines.push(`export function ${exportName}(input: string): any;`);
+		if (compression) {
+			// Typed overload for the compressed direct value
+			const slotProj = projectKinds(compression.kinds, ctx);
+			const directType = buildFromInputTypeExpr(slotProj, ctx);
+			if (directType && directType !== 'any') {
+				lines.push(`export function ${exportName}(input: ${directType}): any;`);
+			}
 		}
 		lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
 		lines.push(`export function ${exportName}(input: ${typeName}): any;`);
@@ -265,7 +298,7 @@ function emitFromFunction(
 		// Anything that isn't a config object for THIS node is a direct value.
 		// A config object is a plain object with our slot's property name as key.
 		lines.push(`  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('${compression.propName}' in input)) {`);
-		lines.push(`    return ${exportName}({ ${compression.propName}: input });`);
+		lines.push(`    return ${exportName}({ ${compression.propName}: input } as any);`);
 		lines.push(`  }`);
 	} else {
 		lines.push(`  if (isNodeData(input)) return ${factoryName}((input as any).fields);`);

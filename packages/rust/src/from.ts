@@ -6,7 +6,7 @@ import { isNodeData, isTreeNode, _inferBranch } from './utils.js';
 
 import { abstract_type_, arguments_, array_expression_, array_type_, assignment_expression_, associated_type_, async_block_, attribute_, attribute_item_, await_expression_, base_field_initializer_, binary_expression_, block_, block_comment_, boolean_literal_, bounded_type_, bracketed_type_, break_expression_, call_expression_, captured_pattern_, char_literal_, closure_expression_, closure_parameters_, compound_assignment_expr_, const_block_, const_item_, const_parameter_, continue_expression_, crate_, declaration_list_, doc_comment_, dynamic_type_, else_clause_, empty_statement_, enum_item_, enum_variant_, enum_variant_list_, escape_sequence_, expression_statement_, extern_crate_declaration_, extern_modifier_, field_declaration_, field_declaration_list_, field_expression_, field_identifier_, field_initializer_, field_initializer_list_, field_pattern_, float_literal_, for_expression_, for_lifetimes_, foreign_mod_item_, fragment_specifier_, function_item_, function_modifiers_, function_signature_item_, function_type_, gen_block_, generic_function_, generic_pattern_, generic_type_, generic_type_with_turbofish_, higher_ranked_trait_bound_, identifier_, if_expression_, impl_item_, index_expression_, inner_attribute_item_, inner_doc_comment_marker_, integer_literal_, label_, let_chain_, let_condition_, let_declaration_, lifetime_, lifetime_parameter_, line_comment_, loop_expression_, macro_definition_, macro_invocation_, macro_rule_, match_arm_, match_block_, match_expression_, match_pattern_, metavariable_, mod_item_, mut_pattern_, mutable_specifier_, negative_literal_, never_type_, or_pattern_, ordered_field_declaration_list_, outer_doc_comment_marker_, parameter_, parameters_, parenthesized_expression_, pointer_type_, primitive_type_, qualified_type_, range_expression_, range_pattern_, raw_string_literal_, ref_pattern_, reference_expression_, reference_pattern_, reference_type_, remaining_field_pattern_, removed_trait_bound_, return_expression_, scoped_identifier_, scoped_type_identifier_, scoped_use_list_, self_, self_parameter_, shebang_, shorthand_field_identifier_, shorthand_field_initializer_, slice_pattern_, source_file_, static_item_, string_content_, string_literal_, struct_expression_, struct_item_, struct_pattern_, super_, token_binding_pattern_, token_repetition_, token_repetition_pattern_, token_tree_, token_tree_pattern_, trait_bounds_, trait_item_, try_block_, try_expression_, tuple_expression_, tuple_pattern_, tuple_struct_pattern_, tuple_type_, type_arguments_, type_binding_, type_cast_expression_, type_identifier_, type_item_, type_parameter_, type_parameters_, unary_expression_, union_item_, unit_expression_, unit_type_, unsafe_block_, use_as_clause_, use_bounds_, use_declaration_, use_list_, use_wildcard_, variadic_parameter_, visibility_modifier_, where_clause_, where_predicate_, while_expression_, yield_expression_ } from './factories.js';
 import { assignAbstractType, assignArguments, assignArrayExpression, assignArrayType, assignAssignmentExpression, assignAssociatedType, assignAsyncBlock, assignAttribute, assignAttributeItem, assignAwaitExpression, assignBaseFieldInitializer, assignBinaryExpression, assignBlock, assignBlockComment, assignBoundedType, assignBracketedType, assignBreakExpression, assignCallExpression, assignCapturedPattern, assignClosureExpression, assignClosureParameters, assignCompoundAssignmentExpr, assignConstBlock, assignConstItem, assignConstParameter, assignContinueExpression, assignDeclarationList, assignDynamicType, assignElseClause, assignEnumItem, assignEnumVariant, assignEnumVariantList, assignExpressionStatement, assignExternCrateDeclaration, assignExternModifier, assignFieldDeclaration, assignFieldDeclarationList, assignFieldExpression, assignFieldInitializer, assignFieldInitializerList, assignFieldPattern, assignForExpression, assignForLifetimes, assignForeignModItem, assignFunctionItem, assignFunctionModifiers, assignFunctionSignatureItem, assignFunctionType, assignGenBlock, assignGenericFunction, assignGenericPattern, assignGenericType, assignGenericTypeWithTurbofish, assignHigherRankedTraitBound, assignIfExpression, assignImplItem, assignIndexExpression, assignInnerAttributeItem, assignLabel, assignLetChain, assignLetCondition, assignLetDeclaration, assignLifetime, assignLifetimeParameter, assignLineComment, assignLoopExpression, assignMacroDefinition, assignMacroInvocation, assignMacroRule, assignMatchArm, assignMatchBlock, assignMatchExpression, assignMatchPattern, assignModItem, assignMutPattern, assignNegativeLiteral, assignOrPattern, assignOrderedFieldDeclarationList, assignParameter, assignParameters, assignParenthesizedExpression, assignPointerType, assignQualifiedType, assignRangeExpression, assignRangePattern, assignRawStringLiteral, assignRefPattern, assignReferenceExpression, assignReferencePattern, assignReferenceType, assignRemovedTraitBound, assignReturnExpression, assignScopedIdentifier, assignScopedTypeIdentifier, assignScopedUseList, assignSelfParameter, assignShorthandFieldInitializer, assignSlicePattern, assignSourceFile, assignStaticItem, assignStringLiteral, assignStructExpression, assignStructItem, assignStructPattern, assignTokenBindingPattern, assignTokenRepetition, assignTokenRepetitionPattern, assignTokenTree, assignTokenTreePattern, assignTraitBounds, assignTraitItem, assignTryBlock, assignTryExpression, assignTupleExpression, assignTuplePattern, assignTupleStructPattern, assignTupleType, assignTypeArguments, assignTypeBinding, assignTypeCastExpression, assignTypeItem, assignTypeParameter, assignTypeParameters, assignUnaryExpression, assignUnionItem, assignUnsafeBlock, assignUseAsClause, assignUseBounds, assignUseDeclaration, assignUseList, assignUseWildcard, assignVariadicParameter, assignVisibilityModifier, assignWhereClause, assignWherePredicate, assignWhileExpression, assignYieldExpression } from './assign.js';
-import type { AbstractTypeFromInput, ArgumentsFromInput, ArrayExpressionFromInput, ArrayTypeFromInput, AssignmentExpressionFromInput, AssociatedTypeFromInput, AsyncBlockFromInput, AttributeFromInput, AttributeItemFromInput, AwaitExpressionFromInput, BaseFieldInitializerFromInput, BinaryExpressionFromInput, BlockFromInput, BlockCommentFromInput, BoundedTypeFromInput, BracketedTypeFromInput, BreakExpressionFromInput, CallExpressionFromInput, CapturedPatternFromInput, ClosureExpressionFromInput, ClosureParametersFromInput, CompoundAssignmentExprFromInput, ConstBlockFromInput, ConstItemFromInput, ConstParameterFromInput, ContinueExpressionFromInput, DeclarationListFromInput, DynamicTypeFromInput, ElseClauseFromInput, EnumItemFromInput, EnumVariantFromInput, EnumVariantListFromInput, ExpressionStatementFromInput, ExternCrateDeclarationFromInput, ExternModifierFromInput, FieldDeclarationFromInput, FieldDeclarationListFromInput, FieldExpressionFromInput, FieldInitializerFromInput, FieldInitializerListFromInput, FieldPatternFromInput, ForExpressionFromInput, ForLifetimesFromInput, ForeignModItemFromInput, FunctionItemFromInput, FunctionModifiersFromInput, FunctionSignatureItemFromInput, FunctionTypeFromInput, GenBlockFromInput, GenericFunctionFromInput, GenericPatternFromInput, GenericTypeFromInput, GenericTypeWithTurbofishFromInput, HigherRankedTraitBoundFromInput, IfExpressionFromInput, ImplItemFromInput, IndexExpressionFromInput, InnerAttributeItemFromInput, LabelFromInput, LetChainFromInput, LetConditionFromInput, LetDeclarationFromInput, LifetimeFromInput, LifetimeParameterFromInput, LineCommentFromInput, LoopExpressionFromInput, MacroDefinitionFromInput, MacroInvocationFromInput, MacroRuleFromInput, MatchArmFromInput, MatchBlockFromInput, MatchExpressionFromInput, MatchPatternFromInput, ModItemFromInput, MutPatternFromInput, NegativeLiteralFromInput, OrPatternFromInput, OrderedFieldDeclarationListFromInput, ParameterFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, PointerTypeFromInput, QualifiedTypeFromInput, RangeExpressionFromInput, RangePatternFromInput, RawStringLiteralFromInput, RefPatternFromInput, ReferenceExpressionFromInput, ReferencePatternFromInput, ReferenceTypeFromInput, RemovedTraitBoundFromInput, ReturnExpressionFromInput, ScopedIdentifierFromInput, ScopedTypeIdentifierFromInput, ScopedUseListFromInput, SelfParameterFromInput, ShorthandFieldInitializerFromInput, SlicePatternFromInput, SourceFileFromInput, StaticItemFromInput, StringLiteralFromInput, StructExpressionFromInput, StructItemFromInput, StructPatternFromInput, TokenBindingPatternFromInput, TokenRepetitionFromInput, TokenRepetitionPatternFromInput, TokenTreeFromInput, TokenTreePatternFromInput, TraitBoundsFromInput, TraitItemFromInput, TryBlockFromInput, TryExpressionFromInput, TupleExpressionFromInput, TuplePatternFromInput, TupleStructPatternFromInput, TupleTypeFromInput, TypeArgumentsFromInput, TypeBindingFromInput, TypeCastExpressionFromInput, TypeItemFromInput, TypeParameterFromInput, TypeParametersFromInput, UnaryExpressionFromInput, UnionItemFromInput, UnsafeBlockFromInput, UseAsClauseFromInput, UseBoundsFromInput, UseDeclarationFromInput, UseListFromInput, UseWildcardFromInput, VariadicParameterFromInput, VisibilityModifierFromInput, WhereClauseFromInput, WherePredicateFromInput, WhileExpressionFromInput, YieldExpressionFromInput } from './types.js';
+import type { AbstractTypeFromInput, ArgumentsFromInput, ArrayExpressionFromInput, ArrayTypeFromInput, AssignmentExpressionFromInput, AssociatedTypeFromInput, AsyncBlockFromInput, AttributeFromInput, AttributeItemFromInput, AwaitExpressionFromInput, BaseFieldInitializerFromInput, BinaryExpressionFromInput, BlockCommentFromInput, BlockFromInput, BoundedTypeFromInput, BracketedTypeFromInput, BreakExpressionFromInput, CallExpressionFromInput, CapturedPatternFromInput, ClosureExpressionFromInput, ClosureParametersFromInput, CompoundAssignmentExprFromInput, ConstBlockFromInput, ConstItemFromInput, ConstParameterFromInput, ContinueExpressionFromInput, DeclarationListFromInput, DynamicTypeFromInput, ElseClauseFromInput, EnumItemFromInput, EnumVariantFromInput, EnumVariantListFromInput, ExpressionFromInput, ExpressionStatementFromInput, ExternCrateDeclarationFromInput, ExternModifierFromInput, FieldDeclarationFromInput, FieldDeclarationListFromInput, FieldExpressionFromInput, FieldInitializerFromInput, FieldInitializerListFromInput, FieldPatternFromInput, ForExpressionFromInput, ForLifetimesFromInput, ForeignModItemFromInput, FunctionItemFromInput, FunctionModifiersFromInput, FunctionSignatureItemFromInput, FunctionTypeFromInput, GenBlockFromInput, GenericFunctionFromInput, GenericPatternFromInput, GenericTypeFromInput, GenericTypeWithTurbofishFromInput, HigherRankedTraitBoundFromInput, IfExpressionFromInput, ImplItemFromInput, IndexExpressionFromInput, InnerAttributeItemFromInput, LabelFromInput, LetChainFromInput, LetConditionFromInput, LetDeclarationFromInput, LifetimeFromInput, LifetimeParameterFromInput, LineCommentFromInput, LiteralFromInput, LoopExpressionFromInput, MacroDefinitionFromInput, MacroInvocationFromInput, MacroRuleFromInput, MatchArmFromInput, MatchBlockFromInput, MatchExpressionFromInput, MatchPatternFromInput, ModItemFromInput, MutPatternFromInput, NegativeLiteralFromInput, OrPatternFromInput, OrderedFieldDeclarationListFromInput, ParameterFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, PatternFromInput, PointerTypeFromInput, QualifiedTypeFromInput, RangeExpressionFromInput, RangePatternFromInput, RawStringLiteralFromInput, RefPatternFromInput, ReferenceExpressionFromInput, ReferencePatternFromInput, ReferenceTypeFromInput, RemovedTraitBoundFromInput, ReturnExpressionFromInput, ScopedIdentifierFromInput, ScopedTypeIdentifierFromInput, ScopedUseListFromInput, SelfParameterFromInput, ShorthandFieldInitializerFromInput, SlicePatternFromInput, SourceFileFromInput, StaticItemFromInput, StringLiteralFromInput, StructExpressionFromInput, StructItemFromInput, StructPatternFromInput, TokenBindingPatternFromInput, TokenRepetitionFromInput, TokenRepetitionPatternFromInput, TokenTreeFromInput, TokenTreePatternFromInput, TraitBoundsFromInput, TraitItemFromInput, TryBlockFromInput, TryExpressionFromInput, TupleExpressionFromInput, TuplePatternFromInput, TupleStructPatternFromInput, TupleTypeFromInput, TypeArgumentsFromInput, TypeBindingFromInput, TypeCastExpressionFromInput, TypeFromInput, TypeItemFromInput, TypeParameterFromInput, TypeParametersFromInput, UnaryExpressionFromInput, UnionItemFromInput, UnsafeBlockFromInput, UseAsClauseFromInput, UseBoundsFromInput, UseDeclarationFromInput, UseListFromInput, UseWildcardFromInput, VariadicParameterFromInput, VisibilityModifierFromInput, WhereClauseFromInput, WherePredicateFromInput, WhileExpressionFromInput, YieldExpressionFromInput } from './types.js';
 
 function _resolveByKind(kind: string, rest: any): any {
   switch (kind) {
@@ -387,6 +387,7 @@ function _r184t66(v: any): any {
   if(isNodeData(v))return v;if(typeof v==='string'){if(['bool','char','f32','f64','i128','i16','i32','i64','i8','isize','str','u128','u16','u32','u64','u8','usize'].includes(v))return primitive_type_(v as any);return type_identifier_(v as any);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'array_type':return arrayTypeFrom(rest);case 'generic_type':return genericTypeFrom(rest);case 'higher_ranked_trait_bound':return higherRankedTraitBoundFrom(rest);case 'lifetime':return lifetimeFrom(rest);case 'pointer_type':return pointerTypeFrom(rest);case 'reference_type':return referenceTypeFrom(rest);case 'scoped_type_identifier':return scopedTypeIdentifierFrom(rest);case 'tuple_type':return tupleTypeFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["array_type","generic_type","higher_ranked_trait_bound","lifetime","pointer_type","reference_type","scoped_type_identifier","tuple_type"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_type, generic_type, higher_ranked_trait_bound, lifetime, pointer_type, reference_type, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
+export function abstractTypeFrom(input: BoundedTypeFromInput | FunctionTypeFromInput | GenericTypeFromInput | RemovedTraitBoundFromInput | ScopedTypeIdentifierFromInput | TupleTypeFromInput | string): any;
 export function abstractTypeFrom(input: AbstractTypeTree): any;
 export function abstractTypeFrom(input: AbstractType): any;
 export function abstractTypeFrom(input: AbstractTypeFromInput & {readonly kind?: 'abstract_type'}): any;
@@ -394,7 +395,7 @@ export function abstractTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignAbstractType(input);
   if (isNodeData(input) && input.type === 'abstract_type') return abstract_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('trait' in input)) {
-    return abstractTypeFrom({ trait: input });
+    return abstractTypeFrom({ trait: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -458,6 +459,7 @@ export function arrayExpressionFrom(input: any): any {
   return array_expression_(resolved);
 }
 
+export function arrayTypeFrom(input: TypeFromInput): any;
 export function arrayTypeFrom(input: ArrayTypeTree): any;
 export function arrayTypeFrom(input: ArrayType): any;
 export function arrayTypeFrom(input: ArrayTypeFromInput & {readonly kind?: 'array_type'}): any;
@@ -465,7 +467,7 @@ export function arrayTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignArrayType(input);
   if (isNodeData(input) && input.type === 'array_type') return array_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('element' in input)) {
-    return arrayTypeFrom({ element: input });
+    return arrayTypeFrom({ element: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -503,7 +505,7 @@ export function associatedTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignAssociatedType(input);
   if (isNodeData(input) && input.type === 'associated_type') return associated_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return associatedTypeFrom({ name: input });
+    return associatedTypeFrom({ name: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -522,6 +524,7 @@ export function associatedTypeFrom(input: any): any {
   return associated_type_(resolved);
 }
 
+export function asyncBlockFrom(input: BlockFromInput): any;
 export function asyncBlockFrom(input: AsyncBlockTree): any;
 export function asyncBlockFrom(input: AsyncBlock): any;
 export function asyncBlockFrom(input: AsyncBlockFromInput & {readonly kind?: 'async_block'}): any;
@@ -529,7 +532,7 @@ export function asyncBlockFrom(input: any): any {
   if (isTreeNode(input)) return assignAsyncBlock(input);
   if (isNodeData(input) && input.type === 'async_block') return async_block_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return asyncBlockFrom({ children: input });
+    return asyncBlockFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -539,6 +542,7 @@ export function asyncBlockFrom(input: any): any {
   return async_block_(resolved);
 }
 
+export function attributeFrom(input: ScopedIdentifierFromInput | string): any;
 export function attributeFrom(input: AttributeTree): any;
 export function attributeFrom(input: Attribute): any;
 export function attributeFrom(input: AttributeFromInput & {readonly kind?: 'attribute'}): any;
@@ -546,7 +550,7 @@ export function attributeFrom(input: any): any {
   if (isTreeNode(input)) return assignAttribute(input);
   if (isNodeData(input) && input.type === 'attribute') return attribute_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return attributeFrom({ children: input });
+    return attributeFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -562,6 +566,7 @@ export function attributeFrom(input: any): any {
   return attribute_(resolved);
 }
 
+export function attributeItemFrom(input: AttributeFromInput): any;
 export function attributeItemFrom(input: AttributeItemTree): any;
 export function attributeItemFrom(input: AttributeItem): any;
 export function attributeItemFrom(input: AttributeItemFromInput & {readonly kind?: 'attribute_item'}): any;
@@ -569,7 +574,7 @@ export function attributeItemFrom(input: any): any {
   if (isTreeNode(input)) return assignAttributeItem(input);
   if (isNodeData(input) && input.type === 'attribute_item') return attribute_item_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return attributeItemFrom({ children: input });
+    return attributeItemFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -579,6 +584,7 @@ export function attributeItemFrom(input: any): any {
   return attribute_item_(resolved);
 }
 
+export function awaitExpressionFrom(input: ExpressionFromInput): any;
 export function awaitExpressionFrom(input: AwaitExpressionTree): any;
 export function awaitExpressionFrom(input: AwaitExpression): any;
 export function awaitExpressionFrom(input: AwaitExpressionFromInput & {readonly kind?: 'await_expression'}): any;
@@ -586,7 +592,7 @@ export function awaitExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignAwaitExpression(input);
   if (isNodeData(input) && input.type === 'await_expression') return await_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return awaitExpressionFrom({ children: input });
+    return awaitExpressionFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -596,6 +602,7 @@ export function awaitExpressionFrom(input: any): any {
   return await_expression_(resolved);
 }
 
+export function baseFieldInitializerFrom(input: ExpressionFromInput): any;
 export function baseFieldInitializerFrom(input: BaseFieldInitializerTree): any;
 export function baseFieldInitializerFrom(input: BaseFieldInitializer): any;
 export function baseFieldInitializerFrom(input: BaseFieldInitializerFromInput & {readonly kind?: 'base_field_initializer'}): any;
@@ -603,7 +610,7 @@ export function baseFieldInitializerFrom(input: any): any {
   if (isTreeNode(input)) return assignBaseFieldInitializer(input);
   if (isNodeData(input) && input.type === 'base_field_initializer') return base_field_initializer_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return baseFieldInitializerFrom({ children: input });
+    return baseFieldInitializerFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -691,6 +698,7 @@ export function boundedTypeFrom(input: any): any {
   return bounded_type_(resolved);
 }
 
+export function bracketedTypeFrom(input: QualifiedTypeFromInput | TypeFromInput): any;
 export function bracketedTypeFrom(input: BracketedTypeTree): any;
 export function bracketedTypeFrom(input: BracketedType): any;
 export function bracketedTypeFrom(input: BracketedTypeFromInput & {readonly kind?: 'bracketed_type'}): any;
@@ -698,7 +706,7 @@ export function bracketedTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignBracketedType(input);
   if (isNodeData(input) && input.type === 'bracketed_type') return bracketed_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return bracketedTypeFrom({ children: input });
+    return bracketedTypeFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -817,6 +825,7 @@ export function compoundAssignmentExprFrom(input: any): any {
   return compound_assignment_expr_(resolved);
 }
 
+export function constBlockFrom(input: BlockFromInput): any;
 export function constBlockFrom(input: ConstBlockTree): any;
 export function constBlockFrom(input: ConstBlock): any;
 export function constBlockFrom(input: ConstBlockFromInput & {readonly kind?: 'const_block'}): any;
@@ -824,7 +833,7 @@ export function constBlockFrom(input: any): any {
   if (isTreeNode(input)) return assignConstBlock(input);
   if (isNodeData(input) && input.type === 'const_block') return const_block_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('body' in input)) {
-    return constBlockFrom({ body: input });
+    return constBlockFrom({ body: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -906,6 +915,7 @@ export function declarationListFrom(input: any): any {
   return declaration_list_(resolved);
 }
 
+export function dynamicTypeFrom(input: FunctionTypeFromInput | GenericTypeFromInput | HigherRankedTraitBoundFromInput | ScopedTypeIdentifierFromInput | TupleTypeFromInput | string): any;
 export function dynamicTypeFrom(input: DynamicTypeTree): any;
 export function dynamicTypeFrom(input: DynamicType): any;
 export function dynamicTypeFrom(input: DynamicTypeFromInput & {readonly kind?: 'dynamic_type'}): any;
@@ -913,7 +923,7 @@ export function dynamicTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignDynamicType(input);
   if (isNodeData(input) && input.type === 'dynamic_type') return dynamic_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('trait' in input)) {
-    return dynamicTypeFrom({ trait: input });
+    return dynamicTypeFrom({ trait: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -923,6 +933,7 @@ export function dynamicTypeFrom(input: any): any {
   return dynamic_type_(resolved);
 }
 
+export function elseClauseFrom(input: BlockFromInput | IfExpressionFromInput): any;
 export function elseClauseFrom(input: ElseClauseTree): any;
 export function elseClauseFrom(input: ElseClause): any;
 export function elseClauseFrom(input: ElseClauseFromInput & {readonly kind?: 'else_clause'}): any;
@@ -930,7 +941,7 @@ export function elseClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignElseClause(input);
   if (isNodeData(input) && input.type === 'else_clause') return else_clause_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return elseClauseFrom({ children: input });
+    return elseClauseFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -974,7 +985,7 @@ export function enumVariantFrom(input: any): any {
   if (isTreeNode(input)) return assignEnumVariant(input);
   if (isNodeData(input) && input.type === 'enum_variant') return enum_variant_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return enumVariantFrom({ name: input });
+    return enumVariantFrom({ name: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1015,6 +1026,7 @@ export function enumVariantListFrom(input: any): any {
   return enum_variant_list_(resolved);
 }
 
+export function expressionStatementFrom(input: ExpressionFromInput): any;
 export function expressionStatementFrom(input: ExpressionStatementTree): any;
 export function expressionStatementFrom(input: ExpressionStatement): any;
 export function expressionStatementFrom(input: ExpressionStatementFromInput & {readonly kind?: 'expression_statement'}): any;
@@ -1022,7 +1034,7 @@ export function expressionStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignExpressionStatement(input);
   if (isNodeData(input) && input.type === 'expression_statement') return expression_statement_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return expressionStatementFrom({ children: input });
+    return expressionStatementFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1175,7 +1187,7 @@ export function fieldPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignFieldPattern(input);
   if (isNodeData(input) && input.type === 'field_pattern') return field_pattern_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return fieldPatternFrom({ name: input });
+    return fieldPatternFrom({ name: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1214,6 +1226,7 @@ export function forExpressionFrom(input: any): any {
   return for_expression_(resolved);
 }
 
+export function forLifetimesFrom(input: LifetimeFromInput): any;
 export function forLifetimesFrom(input: ForLifetimesTree): any;
 export function forLifetimesFrom(input: ForLifetimes): any;
 export function forLifetimesFrom(input: ForLifetimesFromInput & {readonly kind?: 'for_lifetimes'}): any;
@@ -1221,7 +1234,7 @@ export function forLifetimesFrom(input: any): any {
   if (isTreeNode(input)) return assignForLifetimes(input);
   if (isNodeData(input) && input.type === 'for_lifetimes') return for_lifetimes_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('lifetime1' in input)) {
-    return forLifetimesFrom({ lifetime1: input });
+    return forLifetimesFrom({ lifetime1: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1235,6 +1248,7 @@ export function forLifetimesFrom(input: any): any {
   return for_lifetimes_(resolved);
 }
 
+export function foreignModItemFrom(input: ExternModifierFromInput): any;
 export function foreignModItemFrom(input: ForeignModItemTree): any;
 export function foreignModItemFrom(input: ForeignModItem): any;
 export function foreignModItemFrom(input: ForeignModItemFromInput & {readonly kind?: 'foreign_mod_item'}): any;
@@ -1242,7 +1256,7 @@ export function foreignModItemFrom(input: any): any {
   if (isTreeNode(input)) return assignForeignModItem(input);
   if (isNodeData(input) && input.type === 'foreign_mod_item') return foreign_mod_item_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('externModifier' in input)) {
-    return foreignModItemFrom({ externModifier: input });
+    return foreignModItemFrom({ externModifier: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1340,6 +1354,7 @@ export function functionSignatureItemFrom(input: any): any {
   return function_signature_item_(resolved);
 }
 
+export function functionTypeFrom(input: ParametersFromInput): any;
 export function functionTypeFrom(input: FunctionTypeTree): any;
 export function functionTypeFrom(input: FunctionType): any;
 export function functionTypeFrom(input: FunctionTypeFromInput & {readonly kind?: 'function_type'}): any;
@@ -1347,7 +1362,7 @@ export function functionTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignFunctionType(input);
   if (isNodeData(input) && input.type === 'function_type') return function_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('parameters' in input)) {
-    return functionTypeFrom({ parameters: input });
+    return functionTypeFrom({ parameters: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1369,6 +1384,7 @@ export function functionTypeFrom(input: any): any {
   return function_type_(resolved);
 }
 
+export function genBlockFrom(input: BlockFromInput): any;
 export function genBlockFrom(input: GenBlockTree): any;
 export function genBlockFrom(input: GenBlock): any;
 export function genBlockFrom(input: GenBlockFromInput & {readonly kind?: 'gen_block'}): any;
@@ -1376,7 +1392,7 @@ export function genBlockFrom(input: any): any {
   if (isTreeNode(input)) return assignGenBlock(input);
   if (isNodeData(input) && input.type === 'gen_block') return gen_block_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return genBlockFrom({ children: input });
+    return genBlockFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1491,6 +1507,7 @@ export function ifExpressionFrom(input: any): any {
   return if_expression_(resolved);
 }
 
+export function implItemFrom(input: TypeFromInput): any;
 export function implItemFrom(input: ImplItemTree): any;
 export function implItemFrom(input: ImplItem): any;
 export function implItemFrom(input: ImplItemFromInput & {readonly kind?: 'impl_item'}): any;
@@ -1498,7 +1515,7 @@ export function implItemFrom(input: any): any {
   if (isTreeNode(input)) return assignImplItem(input);
   if (isNodeData(input) && input.type === 'impl_item') return impl_item_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('type' in input)) {
-    return implItemFrom({ type: input });
+    return implItemFrom({ type: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1520,17 +1537,17 @@ export function implItemFrom(input: any): any {
   return impl_item_(resolved);
 }
 
-export function indexExpressionFrom(...items: ({ readonly type: string })[]): any;
+export function indexExpressionFrom(...items: (ExpressionFromInput)[]): any;
 export function indexExpressionFrom(input: IndexExpressionTree): any;
 export function indexExpressionFrom(input: IndexExpression): any;
 export function indexExpressionFrom(input: IndexExpressionFromInput & {readonly kind?: 'index_expression'}): any;
 export function indexExpressionFrom(...args: any[]): any {
-  if (args.length !== 1) return indexExpressionFrom({ children: args });
+  if (args.length !== 1) return indexExpressionFrom({ children: args } as any);
   const input = args[0];
   if (isTreeNode(input)) return assignIndexExpression(input);
   if (isNodeData(input) && input.type === 'index_expression') return index_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return indexExpressionFrom({ children: input });
+    return indexExpressionFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1543,6 +1560,7 @@ export function indexExpressionFrom(...args: any[]): any {
   return index_expression_(resolved);
 }
 
+export function innerAttributeItemFrom(input: AttributeFromInput): any;
 export function innerAttributeItemFrom(input: InnerAttributeItemTree): any;
 export function innerAttributeItemFrom(input: InnerAttributeItem): any;
 export function innerAttributeItemFrom(input: InnerAttributeItemFromInput & {readonly kind?: 'inner_attribute_item'}): any;
@@ -1550,7 +1568,7 @@ export function innerAttributeItemFrom(input: any): any {
   if (isTreeNode(input)) return assignInnerAttributeItem(input);
   if (isNodeData(input) && input.type === 'inner_attribute_item') return inner_attribute_item_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return innerAttributeItemFrom({ children: input });
+    return innerAttributeItemFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1568,7 +1586,7 @@ export function labelFrom(input: any): any {
   if (isTreeNode(input)) return assignLabel(input);
   if (isNodeData(input) && input.type === 'label') return label_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return labelFrom({ children: input });
+    return labelFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1578,17 +1596,17 @@ export function labelFrom(input: any): any {
   return label_(resolved);
 }
 
-export function letChainFrom(...items: ({ readonly type: string })[]): any;
+export function letChainFrom(...items: (ExpressionFromInput | LetConditionFromInput)[]): any;
 export function letChainFrom(input: LetChainTree): any;
 export function letChainFrom(input: LetChain): any;
 export function letChainFrom(input: LetChainFromInput & {readonly kind?: 'let_chain'}): any;
 export function letChainFrom(...args: any[]): any {
-  if (args.length !== 1) return letChainFrom({ children: args });
+  if (args.length !== 1) return letChainFrom({ children: args } as any);
   const input = args[0];
   if (isTreeNode(input)) return assignLetChain(input);
   if (isNodeData(input) && input.type === 'let_chain') return let_chain_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return letChainFrom({ children: input });
+    return letChainFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1618,6 +1636,7 @@ export function letConditionFrom(input: any): any {
   return let_condition_(resolved);
 }
 
+export function letDeclarationFrom(input: PatternFromInput): any;
 export function letDeclarationFrom(input: LetDeclarationTree): any;
 export function letDeclarationFrom(input: LetDeclaration): any;
 export function letDeclarationFrom(input: LetDeclarationFromInput & {readonly kind?: 'let_declaration'}): any;
@@ -1625,7 +1644,7 @@ export function letDeclarationFrom(input: any): any {
   if (isTreeNode(input)) return assignLetDeclaration(input);
   if (isNodeData(input) && input.type === 'let_declaration') return let_declaration_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('pattern' in input)) {
-    return letDeclarationFrom({ pattern: input });
+    return letDeclarationFrom({ pattern: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1655,7 +1674,7 @@ export function lifetimeFrom(input: any): any {
   if (isTreeNode(input)) return assignLifetime(input);
   if (isNodeData(input) && input.type === 'lifetime') return lifetime_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return lifetimeFrom({ children: input });
+    return lifetimeFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1665,6 +1684,7 @@ export function lifetimeFrom(input: any): any {
   return lifetime_(resolved);
 }
 
+export function lifetimeParameterFrom(input: LifetimeFromInput): any;
 export function lifetimeParameterFrom(input: LifetimeParameterTree): any;
 export function lifetimeParameterFrom(input: LifetimeParameter): any;
 export function lifetimeParameterFrom(input: LifetimeParameterFromInput & {readonly kind?: 'lifetime_parameter'}): any;
@@ -1672,7 +1692,7 @@ export function lifetimeParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignLifetimeParameter(input);
   if (isNodeData(input) && input.type === 'lifetime_parameter') return lifetime_parameter_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return lifetimeParameterFrom({ name: input });
+    return lifetimeParameterFrom({ name: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -1705,6 +1725,7 @@ export function lineCommentFrom(input: any): any {
   return line_comment_(resolved);
 }
 
+export function loopExpressionFrom(input: BlockFromInput): any;
 export function loopExpressionFrom(input: LoopExpressionTree): any;
 export function loopExpressionFrom(input: LoopExpression): any;
 export function loopExpressionFrom(input: LoopExpressionFromInput & {readonly kind?: 'loop_expression'}): any;
@@ -1712,7 +1733,7 @@ export function loopExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignLoopExpression(input);
   if (isNodeData(input) && input.type === 'loop_expression') return loop_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('body' in input)) {
-    return loopExpressionFrom({ body: input });
+    return loopExpressionFrom({ body: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1733,7 +1754,7 @@ export function macroDefinitionFrom(input: any): any {
   if (isTreeNode(input)) return assignMacroDefinition(input);
   if (isNodeData(input) && input.type === 'macro_definition') return macro_definition_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return macroDefinitionFrom({ name: input });
+    return macroDefinitionFrom({ name: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1840,6 +1861,7 @@ export function matchExpressionFrom(input: any): any {
   return match_expression_(resolved);
 }
 
+export function matchPatternFrom(input: PatternFromInput): any;
 export function matchPatternFrom(input: MatchPatternTree): any;
 export function matchPatternFrom(input: MatchPattern): any;
 export function matchPatternFrom(input: MatchPatternFromInput & {readonly kind?: 'match_pattern'}): any;
@@ -1847,7 +1869,7 @@ export function matchPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignMatchPattern(input);
   if (isNodeData(input) && input.type === 'match_pattern') return match_pattern_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return matchPatternFrom({ children: input });
+    return matchPatternFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1868,7 +1890,7 @@ export function modItemFrom(input: any): any {
   if (isTreeNode(input)) return assignModItem(input);
   if (isNodeData(input) && input.type === 'mod_item') return mod_item_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return modItemFrom({ name: input });
+    return modItemFrom({ name: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1909,7 +1931,7 @@ export function negativeLiteralFrom(input: any): any {
   if (isTreeNode(input)) return assignNegativeLiteral(input);
   if (isNodeData(input) && input.type === 'negative_literal') return negative_literal_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return negativeLiteralFrom({ children: input });
+    return negativeLiteralFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -1919,17 +1941,17 @@ export function negativeLiteralFrom(input: any): any {
   return negative_literal_(resolved);
 }
 
-export function orPatternFrom(...items: ({ readonly type: string })[]): any;
+export function orPatternFrom(...items: (PatternFromInput)[]): any;
 export function orPatternFrom(input: OrPatternTree): any;
 export function orPatternFrom(input: OrPattern): any;
 export function orPatternFrom(input: OrPatternFromInput & {readonly kind?: 'or_pattern'}): any;
 export function orPatternFrom(...args: any[]): any {
-  if (args.length !== 1) return orPatternFrom({ children: args });
+  if (args.length !== 1) return orPatternFrom({ children: args } as any);
   const input = args[0];
   if (isTreeNode(input)) return assignOrPattern(input);
   if (isNodeData(input) && input.type === 'or_pattern') return or_pattern_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return orPatternFrom({ children: input });
+    return orPatternFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2010,6 +2032,7 @@ export function parametersFrom(input: any): any {
   return parameters_(resolved);
 }
 
+export function parenthesizedExpressionFrom(input: ExpressionFromInput): any;
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionTree): any;
 export function parenthesizedExpressionFrom(input: ParenthesizedExpression): any;
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionFromInput & {readonly kind?: 'parenthesized_expression'}): any;
@@ -2017,7 +2040,7 @@ export function parenthesizedExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignParenthesizedExpression(input);
   if (isNodeData(input) && input.type === 'parenthesized_expression') return parenthesized_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return parenthesizedExpressionFrom({ children: input });
+    return parenthesizedExpressionFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2027,6 +2050,7 @@ export function parenthesizedExpressionFrom(input: any): any {
   return parenthesized_expression_(resolved);
 }
 
+export function pointerTypeFrom(input: TypeFromInput): any;
 export function pointerTypeFrom(input: PointerTypeTree): any;
 export function pointerTypeFrom(input: PointerType): any;
 export function pointerTypeFrom(input: PointerTypeFromInput & {readonly kind?: 'pointer_type'}): any;
@@ -2034,7 +2058,7 @@ export function pointerTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignPointerType(input);
   if (isNodeData(input) && input.type === 'pointer_type') return pointer_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('type' in input)) {
-    return pointerTypeFrom({ type: input });
+    return pointerTypeFrom({ type: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2104,7 +2128,7 @@ export function rawStringLiteralFrom(input: any): any {
   if (isTreeNode(input)) return assignRawStringLiteral(input);
   if (isNodeData(input) && input.type === 'raw_string_literal') return raw_string_literal_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return rawStringLiteralFrom({ children: input });
+    return rawStringLiteralFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2114,6 +2138,7 @@ export function rawStringLiteralFrom(input: any): any {
   return raw_string_literal_(resolved);
 }
 
+export function refPatternFrom(input: PatternFromInput): any;
 export function refPatternFrom(input: RefPatternTree): any;
 export function refPatternFrom(input: RefPattern): any;
 export function refPatternFrom(input: RefPatternFromInput & {readonly kind?: 'ref_pattern'}): any;
@@ -2121,7 +2146,7 @@ export function refPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignRefPattern(input);
   if (isNodeData(input) && input.type === 'ref_pattern') return ref_pattern_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return refPatternFrom({ children: input });
+    return refPatternFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2131,6 +2156,7 @@ export function refPatternFrom(input: any): any {
   return ref_pattern_(resolved);
 }
 
+export function referenceExpressionFrom(input: ExpressionFromInput): any;
 export function referenceExpressionFrom(input: ReferenceExpressionTree): any;
 export function referenceExpressionFrom(input: ReferenceExpression): any;
 export function referenceExpressionFrom(input: ReferenceExpressionFromInput & {readonly kind?: 'reference_expression'}): any;
@@ -2138,7 +2164,7 @@ export function referenceExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignReferenceExpression(input);
   if (isNodeData(input) && input.type === 'reference_expression') return reference_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('value' in input)) {
-    return referenceExpressionFrom({ value: input });
+    return referenceExpressionFrom({ value: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2151,6 +2177,7 @@ export function referenceExpressionFrom(input: any): any {
   return reference_expression_(resolved);
 }
 
+export function referencePatternFrom(input: PatternFromInput): any;
 export function referencePatternFrom(input: ReferencePatternTree): any;
 export function referencePatternFrom(input: ReferencePattern): any;
 export function referencePatternFrom(input: ReferencePatternFromInput & {readonly kind?: 'reference_pattern'}): any;
@@ -2158,7 +2185,7 @@ export function referencePatternFrom(input: any): any {
   if (isTreeNode(input)) return assignReferencePattern(input);
   if (isNodeData(input) && input.type === 'reference_pattern') return reference_pattern_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('pattern' in input)) {
-    return referencePatternFrom({ pattern: input });
+    return referencePatternFrom({ pattern: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2171,6 +2198,7 @@ export function referencePatternFrom(input: any): any {
   return reference_pattern_(resolved);
 }
 
+export function referenceTypeFrom(input: TypeFromInput): any;
 export function referenceTypeFrom(input: ReferenceTypeTree): any;
 export function referenceTypeFrom(input: ReferenceType): any;
 export function referenceTypeFrom(input: ReferenceTypeFromInput & {readonly kind?: 'reference_type'}): any;
@@ -2178,7 +2206,7 @@ export function referenceTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignReferenceType(input);
   if (isNodeData(input) && input.type === 'reference_type') return reference_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('type' in input)) {
-    return referenceTypeFrom({ type: input });
+    return referenceTypeFrom({ type: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2194,6 +2222,7 @@ export function referenceTypeFrom(input: any): any {
   return reference_type_(resolved);
 }
 
+export function removedTraitBoundFrom(input: TypeFromInput): any;
 export function removedTraitBoundFrom(input: RemovedTraitBoundTree): any;
 export function removedTraitBoundFrom(input: RemovedTraitBound): any;
 export function removedTraitBoundFrom(input: RemovedTraitBoundFromInput & {readonly kind?: 'removed_trait_bound'}): any;
@@ -2201,7 +2230,7 @@ export function removedTraitBoundFrom(input: any): any {
   if (isTreeNode(input)) return assignRemovedTraitBound(input);
   if (isNodeData(input) && input.type === 'removed_trait_bound') return removed_trait_bound_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return removedTraitBoundFrom({ children: input });
+    return removedTraitBoundFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2233,7 +2262,7 @@ export function scopedIdentifierFrom(input: any): any {
   if (isTreeNode(input)) return assignScopedIdentifier(input);
   if (isNodeData(input) && input.type === 'scoped_identifier') return scoped_identifier_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return scopedIdentifierFrom({ name: input });
+    return scopedIdentifierFrom({ name: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -2254,7 +2283,7 @@ export function scopedTypeIdentifierFrom(input: any): any {
   if (isTreeNode(input)) return assignScopedTypeIdentifier(input);
   if (isNodeData(input) && input.type === 'scoped_type_identifier') return scoped_type_identifier_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return scopedTypeIdentifierFrom({ name: input });
+    return scopedTypeIdentifierFrom({ name: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -2267,6 +2296,7 @@ export function scopedTypeIdentifierFrom(input: any): any {
   return scoped_type_identifier_(resolved);
 }
 
+export function scopedUseListFrom(input: UseListFromInput): any;
 export function scopedUseListFrom(input: ScopedUseListTree): any;
 export function scopedUseListFrom(input: ScopedUseList): any;
 export function scopedUseListFrom(input: ScopedUseListFromInput & {readonly kind?: 'scoped_use_list'}): any;
@@ -2274,7 +2304,7 @@ export function scopedUseListFrom(input: any): any {
   if (isTreeNode(input)) return assignScopedUseList(input);
   if (isNodeData(input) && input.type === 'scoped_use_list') return scoped_use_list_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('list' in input)) {
-    return scopedUseListFrom({ list: input });
+    return scopedUseListFrom({ list: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -2295,7 +2325,7 @@ export function selfParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignSelfParameter(input);
   if (isNodeData(input) && input.type === 'self_parameter') return self_parameter_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('self' in input)) {
-    return selfParameterFrom({ self: input });
+    return selfParameterFrom({ self: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2319,7 +2349,7 @@ export function shorthandFieldInitializerFrom(input: any): any {
   if (isTreeNode(input)) return assignShorthandFieldInitializer(input);
   if (isNodeData(input) && input.type === 'shorthand_field_initializer') return shorthand_field_initializer_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('identifier' in input)) {
-    return shorthandFieldInitializerFrom({ identifier: input });
+    return shorthandFieldInitializerFrom({ identifier: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2432,7 +2462,7 @@ export function structItemFrom(input: any): any {
   if (isTreeNode(input)) return assignStructItem(input);
   if (isNodeData(input) && input.type === 'struct_item') return struct_item_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return structItemFrom({ name: input });
+    return structItemFrom({ name: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2454,6 +2484,7 @@ export function structItemFrom(input: any): any {
   return struct_item_(resolved);
 }
 
+export function structPatternFrom(input: ScopedTypeIdentifierFromInput | string): any;
 export function structPatternFrom(input: StructPatternTree): any;
 export function structPatternFrom(input: StructPattern): any;
 export function structPatternFrom(input: StructPatternFromInput & {readonly kind?: 'struct_pattern'}): any;
@@ -2461,7 +2492,7 @@ export function structPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignStructPattern(input);
   if (isNodeData(input) && input.type === 'struct_pattern') return struct_pattern_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('type' in input)) {
-    return structPatternFrom({ type: input });
+    return structPatternFrom({ type: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2555,6 +2586,7 @@ export function tokenTreePatternFrom(input: any): any {
   return token_tree_pattern_(resolved);
 }
 
+export function traitBoundsFrom(input: HigherRankedTraitBoundFromInput | LifetimeFromInput | TypeFromInput): any;
 export function traitBoundsFrom(input: TraitBoundsTree): any;
 export function traitBoundsFrom(input: TraitBounds): any;
 export function traitBoundsFrom(input: TraitBoundsFromInput & {readonly kind?: 'trait_bounds'}): any;
@@ -2562,7 +2594,7 @@ export function traitBoundsFrom(input: any): any {
   if (isTreeNode(input)) return assignTraitBounds(input);
   if (isNodeData(input) && input.type === 'trait_bounds') return trait_bounds_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children0' in input)) {
-    return traitBoundsFrom({ children0: input });
+    return traitBoundsFrom({ children0: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2605,6 +2637,7 @@ export function traitItemFrom(input: any): any {
   return trait_item_(resolved);
 }
 
+export function tryBlockFrom(input: BlockFromInput): any;
 export function tryBlockFrom(input: TryBlockTree): any;
 export function tryBlockFrom(input: TryBlock): any;
 export function tryBlockFrom(input: TryBlockFromInput & {readonly kind?: 'try_block'}): any;
@@ -2612,7 +2645,7 @@ export function tryBlockFrom(input: any): any {
   if (isTreeNode(input)) return assignTryBlock(input);
   if (isNodeData(input) && input.type === 'try_block') return try_block_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return tryBlockFrom({ children: input });
+    return tryBlockFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2622,6 +2655,7 @@ export function tryBlockFrom(input: any): any {
   return try_block_(resolved);
 }
 
+export function tryExpressionFrom(input: ExpressionFromInput): any;
 export function tryExpressionFrom(input: TryExpressionTree): any;
 export function tryExpressionFrom(input: TryExpression): any;
 export function tryExpressionFrom(input: TryExpressionFromInput & {readonly kind?: 'try_expression'}): any;
@@ -2629,7 +2663,7 @@ export function tryExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignTryExpression(input);
   if (isNodeData(input) && input.type === 'try_expression') return try_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return tryExpressionFrom({ children: input });
+    return tryExpressionFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2639,6 +2673,7 @@ export function tryExpressionFrom(input: any): any {
   return try_expression_(resolved);
 }
 
+export function tupleExpressionFrom(input: ExpressionFromInput): any;
 export function tupleExpressionFrom(input: TupleExpressionTree): any;
 export function tupleExpressionFrom(input: TupleExpression): any;
 export function tupleExpressionFrom(input: TupleExpressionFromInput & {readonly kind?: 'tuple_expression'}): any;
@@ -2646,7 +2681,7 @@ export function tupleExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignTupleExpression(input);
   if (isNodeData(input) && input.type === 'tuple_expression') return tuple_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('expression1' in input)) {
-    return tupleExpressionFrom({ expression1: input });
+    return tupleExpressionFrom({ expression1: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2685,6 +2720,7 @@ export function tuplePatternFrom(input: any): any {
   return tuple_pattern_(resolved);
 }
 
+export function tupleStructPatternFrom(input: GenericTypeFromInput | ScopedIdentifierFromInput | string): any;
 export function tupleStructPatternFrom(input: TupleStructPatternTree): any;
 export function tupleStructPatternFrom(input: TupleStructPattern): any;
 export function tupleStructPatternFrom(input: TupleStructPatternFromInput & {readonly kind?: 'tuple_struct_pattern'}): any;
@@ -2692,7 +2728,7 @@ export function tupleStructPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignTupleStructPattern(input);
   if (isNodeData(input) && input.type === 'tuple_struct_pattern') return tuple_struct_pattern_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('type' in input)) {
-    return tupleStructPatternFrom({ type: input });
+    return tupleStructPatternFrom({ type: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2709,17 +2745,17 @@ export function tupleStructPatternFrom(input: any): any {
   return tuple_struct_pattern_(resolved);
 }
 
-export function tupleTypeFrom(...items: ({ readonly type: string })[]): any;
+export function tupleTypeFrom(...items: (TypeFromInput)[]): any;
 export function tupleTypeFrom(input: TupleTypeTree): any;
 export function tupleTypeFrom(input: TupleType): any;
 export function tupleTypeFrom(input: TupleTypeFromInput & {readonly kind?: 'tuple_type'}): any;
 export function tupleTypeFrom(...args: any[]): any {
-  if (args.length !== 1) return tupleTypeFrom({ children: args });
+  if (args.length !== 1) return tupleTypeFrom({ children: args } as any);
   const input = args[0];
   if (isTreeNode(input)) return assignTupleType(input);
   if (isNodeData(input) && input.type === 'tuple_type') return tuple_type_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return tupleTypeFrom({ children: input });
+    return tupleTypeFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2732,6 +2768,7 @@ export function tupleTypeFrom(...args: any[]): any {
   return tuple_type_(resolved);
 }
 
+export function typeArgumentsFrom(input: BlockFromInput | LifetimeFromInput | LiteralFromInput | TypeFromInput | TypeBindingFromInput): any;
 export function typeArgumentsFrom(input: TypeArgumentsTree): any;
 export function typeArgumentsFrom(input: TypeArguments): any;
 export function typeArgumentsFrom(input: TypeArgumentsFromInput & {readonly kind?: 'type_arguments'}): any;
@@ -2739,7 +2776,7 @@ export function typeArgumentsFrom(input: any): any {
   if (isTreeNode(input)) return assignTypeArguments(input);
   if (isNodeData(input) && input.type === 'type_arguments') return type_arguments_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children0' in input)) {
-    return typeArgumentsFrom({ children0: input });
+    return typeArgumentsFrom({ children0: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2830,7 +2867,7 @@ export function typeParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignTypeParameter(input);
   if (isNodeData(input) && input.type === 'type_parameter') return type_parameter_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
-    return typeParameterFrom({ name: input });
+    return typeParameterFrom({ name: input } as any);
   }
   const obj = input;
   const resolved: any = {};
@@ -2846,6 +2883,7 @@ export function typeParameterFrom(input: any): any {
   return type_parameter_(resolved);
 }
 
+export function typeParametersFrom(input: ConstParameterFromInput | LifetimeParameterFromInput | TypeParameterFromInput | string): any;
 export function typeParametersFrom(input: TypeParametersTree): any;
 export function typeParametersFrom(input: TypeParameters): any;
 export function typeParametersFrom(input: TypeParametersFromInput & {readonly kind?: 'type_parameters'}): any;
@@ -2853,7 +2891,7 @@ export function typeParametersFrom(input: any): any {
   if (isTreeNode(input)) return assignTypeParameters(input);
   if (isNodeData(input) && input.type === 'type_parameters') return type_parameters_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children1' in input)) {
-    return typeParametersFrom({ children1: input });
+    return typeParametersFrom({ children1: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2871,6 +2909,7 @@ export function typeParametersFrom(input: any): any {
   return type_parameters_(resolved);
 }
 
+export function unaryExpressionFrom(input: ExpressionFromInput): any;
 export function unaryExpressionFrom(input: UnaryExpressionTree): any;
 export function unaryExpressionFrom(input: UnaryExpression): any;
 export function unaryExpressionFrom(input: UnaryExpressionFromInput & {readonly kind?: 'unary_expression'}): any;
@@ -2878,7 +2917,7 @@ export function unaryExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignUnaryExpression(input);
   if (isNodeData(input) && input.type === 'unary_expression') return unary_expression_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return unaryExpressionFrom({ children: input });
+    return unaryExpressionFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2914,6 +2953,7 @@ export function unionItemFrom(input: any): any {
   return union_item_(resolved);
 }
 
+export function unsafeBlockFrom(input: BlockFromInput): any;
 export function unsafeBlockFrom(input: UnsafeBlockTree): any;
 export function unsafeBlockFrom(input: UnsafeBlock): any;
 export function unsafeBlockFrom(input: UnsafeBlockFromInput & {readonly kind?: 'unsafe_block'}): any;
@@ -2921,7 +2961,7 @@ export function unsafeBlockFrom(input: any): any {
   if (isTreeNode(input)) return assignUnsafeBlock(input);
   if (isNodeData(input) && input.type === 'unsafe_block') return unsafe_block_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
-    return unsafeBlockFrom({ children: input });
+    return unsafeBlockFrom({ children: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
@@ -2966,6 +3006,7 @@ export function useBoundsFrom(input: any): any {
   return use_bounds_(resolved);
 }
 
+export function useDeclarationFrom(input: ScopedIdentifierFromInput | ScopedUseListFromInput | UseAsClauseFromInput | UseListFromInput | UseWildcardFromInput | string): any;
 export function useDeclarationFrom(input: UseDeclarationTree): any;
 export function useDeclarationFrom(input: UseDeclaration): any;
 export function useDeclarationFrom(input: UseDeclarationFromInput & {readonly kind?: 'use_declaration'}): any;
@@ -2973,7 +3014,7 @@ export function useDeclarationFrom(input: any): any {
   if (isTreeNode(input)) return assignUseDeclaration(input);
   if (isNodeData(input) && input.type === 'use_declaration') return use_declaration_((input as any).fields);
   if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('argument' in input)) {
-    return useDeclarationFrom({ argument: input });
+    return useDeclarationFrom({ argument: input } as any);
   }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};

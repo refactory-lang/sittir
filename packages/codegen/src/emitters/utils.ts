@@ -184,10 +184,11 @@ export function singleSlotCompression(node: StructuralNode, ctx: ProjectionConte
 	}
 
 	// Single required child, no required fields
-	if (requiredChild) {
-		const { slot, name } = requiredChild;
-		const scalar = slot.kinds.every((k: HydratedNodeModel) => ctx.leafKinds.has(k.kind));
-		return { propName: name, scalar, multiple: slot.multiple, kinds: slot.kinds };
+	// (requiredChild is assigned inside the eachChildSlot callback — TS can't track mutation)
+	if (requiredChild != null) {
+		const rc = requiredChild as { slot: { kinds: readonly HydratedNodeModel[]; required: boolean; multiple: boolean }; name: string };
+		const scalar = rc.slot.kinds.every((k: HydratedNodeModel) => ctx.leafKinds.has(k.kind));
+		return { propName: rc.name, scalar, multiple: rc.slot.multiple, kinds: rc.slot.kinds };
 	}
 
 	return null;
