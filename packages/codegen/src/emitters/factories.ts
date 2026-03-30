@@ -48,31 +48,49 @@ export function emitFactory(config: {
 
 	// Build fields object — raw names, values from camelCase config
 	const fields = fieldsOf(node);
-	lines.push(`  const fields = {`);
-	for (const f of fields) {
-		const camel = f.propertyName ?? toFieldName(f.name);
-		lines.push(`    ${f.name}: config${opt}.${camel},`);
+	const hasFields = fields.length > 0;
+	if (hasFields) {
+		lines.push(`  const fields = {`);
+		for (const f of fields) {
+			const camel = f.propertyName ?? toFieldName(f.name);
+			lines.push(`    ${f.name}: config${opt}.${camel},`);
+		}
+		lines.push(`  };`);
 	}
-	lines.push(`  };`);
 
 	// Build children array from child slots in config
 	if (hasChildren) {
 		const slotNames = childSlotNames(node.children!, ctx);
-		const childExprs: string[] = [];
-		eachChildSlot(node.children!, (slot, i) => {
-			const name = slotNames[i]!;
+		const isTuple = isTupleChildren(node.children!);
+		if (!isTuple) {
+			// Single child slot — direct assignment, no spread
+			const name = slotNames[0]!;
+			const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
 			if (slot.multiple) {
-				childExprs.push(`...(config${opt}.${name} ?? [])`);
+				lines.push(`  const children = config${opt}.${name} ?? [];`);
 			} else {
-				childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
+				lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
 			}
-		});
-		lines.push(`  const children = [${childExprs.join(', ')}];`);
+		} else {
+			// Multiple child slots — merge into one array
+			const childExprs: string[] = [];
+			eachChildSlot(node.children!, (slot, i) => {
+				const name = slotNames[i]!;
+				if (slot.multiple) {
+					childExprs.push(`...(config${opt}.${name} ?? [])`);
+				} else {
+					childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
+				}
+			});
+			lines.push(`  const children = [${childExprs.join(', ')}];`);
+		}
 	}
 
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
-	lines.push(`    fields,`);
+	if (hasFields) {
+		lines.push(`    fields,`);
+	}
 	if (hasChildren) {
 		lines.push(`    children,`);
 	}

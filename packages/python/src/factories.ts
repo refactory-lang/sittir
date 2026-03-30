@@ -73,12 +73,9 @@ export function aliased_import_(
 export function argument_list_(
   config?: ArgumentListConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config?.children0 ? [config?.children0] : []), ...(config?.children1 ?? [])];
   return {
     type: 'argument_list' as const,
-    fields,
     children,
     children0(children0?: DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression) { return children0 !== undefined ? argument_list_({ ...config, children0 }) : config?.children0; },
     children1(...children1: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]) { return children1.length ? argument_list_({ ...config, children1 }) : config?.children1; },
@@ -98,7 +95,7 @@ export function as_pattern_(
   const fields = {
     alias: config.alias,
   };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'as_pattern' as const,
     fields,
@@ -118,12 +115,9 @@ export function as_pattern_(
 export function assert_statement_(
   config: AssertStatementConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.expression1 ? [config.expression1] : []), ...(config.expression2 ?? [])];
   return {
     type: 'assert_statement' as const,
-    fields,
     children,
     expression1(expression1?: Expression) { return expression1 !== undefined ? assert_statement_({ ...config, expression1 }) : config?.expression1; },
     expression2(...expression2: (Expression)[]) { return expression2.length ? assert_statement_({ ...config, expression2 }) : config?.expression2; },
@@ -210,12 +204,9 @@ export function augmented_assignment_(
 export function await_(
   config: AwaitConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'await' as const,
-    fields,
     children,
     child(child?: PrimaryExpression) { return child !== undefined ? await_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -258,7 +249,7 @@ export function block_(
   const fields = {
     alternative: config?.alternative,
   };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'block' as const,
     fields,
@@ -351,12 +342,9 @@ export function case_clause_(
 export function case_pattern_(
   config?: CasePatternConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ? [config?.children] : [])];
+  const children = config?.children ? [config?.children] : [];
   return {
     type: 'case_pattern' as const,
-    fields,
     children,
     child(child?: AsPattern | ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | KeywordPattern | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern) { return child !== undefined ? case_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -372,12 +360,9 @@ export function case_pattern_(
 export function chevron_(
   config: ChevronConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'chevron' as const,
-    fields,
     children,
     child(child?: Expression) { return child !== undefined ? chevron_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -419,12 +404,9 @@ export function class_definition_(
 export function class_pattern_(
   config: ClassPatternConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.dottedName ? [config.dottedName] : []), ...(config.casePattern1 ? [config.casePattern1] : []), ...(config.casePattern2 ?? [])];
   return {
     type: 'class_pattern' as const,
-    fields,
     children,
     dottedName(dottedName?: DottedName) { return dottedName !== undefined ? class_pattern_({ ...config, dottedName }) : config?.dottedName; },
     casePattern1(casePattern1?: CasePattern) { return casePattern1 !== undefined ? class_pattern_({ ...config, casePattern1 }) : config?.casePattern1; },
@@ -466,12 +448,9 @@ export function comparison_operator_(
 export function complex_pattern_(
   config: ComplexPatternConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.children0 ? [config.children0] : []), ...(config.children1 ? [config.children1] : [])];
   return {
     type: 'complex_pattern' as const,
-    fields,
     children,
     children0(children0?: Float | Integer) { return children0 !== undefined ? complex_pattern_({ ...config, children0 }) : config?.children0; },
     children1(children1?: Float | Integer) { return children1 !== undefined ? complex_pattern_({ ...config, children1 }) : config?.children1; },
@@ -488,12 +467,9 @@ export function complex_pattern_(
 export function concatenated_string_(
   config: ConcatenatedStringConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.string1 ? [config.string1] : []), ...(config.string2 ?? [])];
   return {
     type: 'concatenated_string' as const,
-    fields,
     children,
     string1(string1?: String) { return string1 !== undefined ? concatenated_string_({ ...config, string1 }) : config?.string1; },
     string2(...string2: (String)[]) { return string2.length ? concatenated_string_({ ...config, string2 }) : config?.string2; },
@@ -510,12 +486,9 @@ export function concatenated_string_(
 export function conditional_expression_(
   config: ConditionalExpressionConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.expression1 ? [config.expression1] : []), ...(config.expression2 ? [config.expression2] : []), ...(config.expression3 ? [config.expression3] : [])];
   return {
     type: 'conditional_expression' as const,
-    fields,
     children,
     expression1(expression1?: Expression) { return expression1 !== undefined ? conditional_expression_({ ...config, expression1 }) : config?.expression1; },
     expression2(expression2?: Expression) { return expression2 !== undefined ? conditional_expression_({ ...config, expression2 }) : config?.expression2; },
@@ -533,12 +506,9 @@ export function conditional_expression_(
 export function constrained_type_(
   config: ConstrainedTypeConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.children0 ? [config.children0] : []), ...(config.children1 ? [config.children1] : [])];
   return {
     type: 'constrained_type' as const,
-    fields,
     children,
     children0(children0?: Type) { return children0 !== undefined ? constrained_type_({ ...config, children0 }) : config?.children0; },
     children1(children1?: Type) { return children1 !== undefined ? constrained_type_({ ...config, children1 }) : config?.children1; },
@@ -558,7 +528,7 @@ export function decorated_definition_(
   const fields = {
     definition: config.definition,
   };
-  const children = [...(config.children ?? [])];
+  const children = config.children ?? [];
   return {
     type: 'decorated_definition' as const,
     fields,
@@ -579,12 +549,9 @@ export function decorated_definition_(
 export function decorator_(
   config: DecoratorConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'decorator' as const,
-    fields,
     children,
     child(child?: Expression) { return child !== undefined ? decorator_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -622,12 +589,9 @@ export function default_parameter_(
 export function delete_statement_(
   config: DeleteStatementConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'delete_statement' as const,
-    fields,
     children,
     child(child?: Expression | ExpressionList) { return child !== undefined ? delete_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -643,12 +607,9 @@ export function delete_statement_(
 export function dict_pattern_(
   config?: DictPatternConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config?.splatPattern1 ? [config?.splatPattern1] : []), ...(config?.splatPattern2 ?? [])];
   return {
     type: 'dict_pattern' as const,
-    fields,
     children,
     splatPattern1(splatPattern1?: SplatPattern) { return splatPattern1 !== undefined ? dict_pattern_({ ...config, splatPattern1 }) : config?.splatPattern1; },
     splatPattern2(...splatPattern2: (SplatPattern)[]) { return splatPattern2.length ? dict_pattern_({ ...config, splatPattern2 }) : config?.splatPattern2; },
@@ -665,12 +626,9 @@ export function dict_pattern_(
 export function dictionary_(
   config?: DictionaryConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config?.children0 ? [config?.children0] : []), ...(config?.children1 ?? [])];
   return {
     type: 'dictionary' as const,
-    fields,
     children,
     children0(children0?: DictionarySplat | Pair) { return children0 !== undefined ? dictionary_({ ...config, children0 }) : config?.children0; },
     children1(...children1: (DictionarySplat | Pair)[]) { return children1.length ? dictionary_({ ...config, children1 }) : config?.children1; },
@@ -711,12 +669,9 @@ export function dictionary_comprehension_(
 export function dictionary_splat_(
   config: DictionarySplatConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'dictionary_splat' as const,
-    fields,
     children,
     child(child?: Expression) { return child !== undefined ? dictionary_splat_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -732,12 +687,9 @@ export function dictionary_splat_(
 export function dictionary_splat_pattern_(
   config: DictionarySplatPatternConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'dictionary_splat_pattern' as const,
-    fields,
     children,
     child(child?: Attribute | Identifier | Subscript) { return child !== undefined ? dictionary_splat_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -753,12 +705,9 @@ export function dictionary_splat_pattern_(
 export function dotted_name_(
   config: DottedNameConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.identifier1 ? [config.identifier1] : []), ...(config.identifier2 ?? [])];
   return {
     type: 'dotted_name' as const,
-    fields,
     children,
     identifier1(identifier1?: Identifier) { return identifier1 !== undefined ? dotted_name_({ ...config, identifier1 }) : config?.identifier1; },
     identifier2(...identifier2: (Identifier)[]) { return identifier2.length ? dotted_name_({ ...config, identifier2 }) : config?.identifier2; },
@@ -821,7 +770,7 @@ export function except_clause_(
     alias: config.alias,
     value: config.value,
   };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'except_clause' as const,
     fields,
@@ -866,12 +815,9 @@ export function exec_statement_(
 export function expression_list_(
   config: ExpressionListConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.expression1 ? [config.expression1] : []), ...(config.expression2 ?? [])];
   return {
     type: 'expression_list' as const,
-    fields,
     children,
     expression1(expression1?: Expression) { return expression1 !== undefined ? expression_list_({ ...config, expression1 }) : config?.expression1; },
     expression2(...expression2: (Expression)[]) { return expression2.length ? expression_list_({ ...config, expression2 }) : config?.expression2; },
@@ -888,12 +834,9 @@ export function expression_list_(
 export function expression_statement_(
   config: ExpressionStatementConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.children0 ? [config.children0] : []), ...(config.expression ?? [])];
   return {
     type: 'expression_statement' as const,
-    fields,
     children,
     children0(children0?: Assignment | AugmentedAssignment | Expression | Yield) { return children0 !== undefined ? expression_statement_({ ...config, children0 }) : config?.children0; },
     expression(...expression: (Expression)[]) { return expression.length ? expression_statement_({ ...config, expression }) : config?.expression; },
@@ -910,12 +853,9 @@ export function expression_statement_(
 export function finally_clause_(
   config: FinallyClauseConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'finally_clause' as const,
-    fields,
     children,
     child(child?: Block) { return child !== undefined ? finally_clause_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1003,12 +943,9 @@ export function format_expression_(
 export function format_specifier_(
   config?: FormatSpecifierConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'format_specifier' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (FormatExpression)[]) { return format_specifier_({ ...config, children }); },
@@ -1097,12 +1034,9 @@ export function generator_expression_(
 export function generic_type_(
   config: GenericTypeConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.identifier ? [config.identifier] : []), ...(config.typeParameter ? [config.typeParameter] : [])];
   return {
     type: 'generic_type' as const,
-    fields,
     children,
     identifier(identifier?: Identifier) { return identifier !== undefined ? generic_type_({ ...config, identifier }) : config?.identifier; },
     typeParameter(typeParameter?: TypeParameter) { return typeParameter !== undefined ? generic_type_({ ...config, typeParameter }) : config?.typeParameter; },
@@ -1119,12 +1053,9 @@ export function generic_type_(
 export function global_statement_(
   config: GlobalStatementConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.identifier1 ? [config.identifier1] : []), ...(config.identifier2 ?? [])];
   return {
     type: 'global_statement' as const,
-    fields,
     children,
     identifier1(identifier1?: Identifier) { return identifier1 !== undefined ? global_statement_({ ...config, identifier1 }) : config?.identifier1; },
     identifier2(...identifier2: (Identifier)[]) { return identifier2.length ? global_statement_({ ...config, identifier2 }) : config?.identifier2; },
@@ -1141,12 +1072,9 @@ export function global_statement_(
 export function if_clause_(
   config: IfClauseConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'if_clause' as const,
-    fields,
     children,
     child(child?: Expression) { return child !== undefined ? if_clause_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1190,7 +1118,7 @@ export function import_from_statement_(
     module_name: config.moduleName,
     name: config.name,
   };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'import_from_statement' as const,
     fields,
@@ -1277,12 +1205,9 @@ export function keyword_argument_(
 export function keyword_pattern_(
   config: KeywordPatternConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.identifier ? [config.identifier] : []), ...(config.children1 ? [config.children1] : [])];
   return {
     type: 'keyword_pattern' as const,
-    fields,
     children,
     identifier(identifier?: Identifier) { return identifier !== undefined ? keyword_pattern_({ ...config, identifier }) : config?.identifier; },
     children1(children1?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern) { return children1 !== undefined ? keyword_pattern_({ ...config, children1 }) : config?.children1; },
@@ -1321,12 +1246,9 @@ export function lambda_(
 export function lambda_parameters_(
   config: LambdaParametersConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ?? [])];
+  const children = config.children ?? [];
   return {
     type: 'lambda_parameters' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (Parameter)[]) { return lambda_parameters_({ ...config, children }); },
@@ -1343,12 +1265,9 @@ export function lambda_parameters_(
 export function list_(
   config?: ListConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'list' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return list_({ ...config, children }); },
@@ -1389,12 +1308,9 @@ export function list_comprehension_(
 export function list_pattern_(
   config?: ListPatternConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'list_pattern' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (CasePattern | Pattern)[]) { return list_pattern_({ ...config, children }); },
@@ -1411,12 +1327,9 @@ export function list_pattern_(
 export function list_splat_(
   config: ListSplatConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'list_splat' as const,
-    fields,
     children,
     child(child?: Attribute | Expression | Identifier | Subscript) { return child !== undefined ? list_splat_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1432,12 +1345,9 @@ export function list_splat_(
 export function list_splat_pattern_(
   config: ListSplatPatternConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'list_splat_pattern' as const,
-    fields,
     children,
     child(child?: Attribute | Identifier | Subscript) { return child !== undefined ? list_splat_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1475,12 +1385,9 @@ export function match_statement_(
 export function member_type_(
   config: MemberTypeConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.children0 ? [config.children0] : []), ...(config.identifier ? [config.identifier] : [])];
   return {
     type: 'member_type' as const,
-    fields,
     children,
     children0(children0?: Type) { return children0 !== undefined ? member_type_({ ...config, children0 }) : config?.children0; },
     identifier(identifier?: Identifier) { return identifier !== undefined ? member_type_({ ...config, identifier }) : config?.identifier; },
@@ -1497,12 +1404,9 @@ export function member_type_(
 export function module_(
   config?: ModuleConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'module' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (CompoundStatement | SimpleStatement)[]) { return module_({ ...config, children }); },
@@ -1541,12 +1445,9 @@ export function named_expression_(
 export function nonlocal_statement_(
   config: NonlocalStatementConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.identifier1 ? [config.identifier1] : []), ...(config.identifier2 ?? [])];
   return {
     type: 'nonlocal_statement' as const,
-    fields,
     children,
     identifier1(identifier1?: Identifier) { return identifier1 !== undefined ? nonlocal_statement_({ ...config, identifier1 }) : config?.identifier1; },
     identifier2(...identifier2: (Identifier)[]) { return identifier2.length ? nonlocal_statement_({ ...config, identifier2 }) : config?.identifier2; },
@@ -1605,12 +1506,9 @@ export function pair_(
 export function parameters_(
   config?: ParametersConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'parameters' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (Parameter)[]) { return parameters_({ ...config, children }); },
@@ -1627,12 +1525,9 @@ export function parameters_(
 export function parenthesized_expression_(
   config: ParenthesizedExpressionConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'parenthesized_expression' as const,
-    fields,
     children,
     child(child?: Expression | ListSplat | ParenthesizedExpression | Yield) { return child !== undefined ? parenthesized_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1648,12 +1543,9 @@ export function parenthesized_expression_(
 export function parenthesized_list_splat_(
   config: ParenthesizedListSplatConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'parenthesized_list_splat' as const,
-    fields,
     children,
     child(child?: ListSplat | ParenthesizedExpression) { return child !== undefined ? parenthesized_list_splat_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1669,12 +1561,9 @@ export function parenthesized_list_splat_(
 export function pattern_list_(
   config: PatternListConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.pattern1 ? [config.pattern1] : []), ...(config.pattern2 ?? [])];
   return {
     type: 'pattern_list' as const,
-    fields,
     children,
     pattern1(pattern1?: Pattern) { return pattern1 !== undefined ? pattern_list_({ ...config, pattern1 }) : config?.pattern1; },
     pattern2(...pattern2: (Pattern)[]) { return pattern2.length ? pattern_list_({ ...config, pattern2 }) : config?.pattern2; },
@@ -1694,7 +1583,7 @@ export function print_statement_(
   const fields = {
     argument: config?.argument,
   };
-  const children = [...(config?.children ? [config?.children] : [])];
+  const children = config?.children ? [config?.children] : [];
   return {
     type: 'print_statement' as const,
     fields,
@@ -1717,7 +1606,7 @@ export function raise_statement_(
   const fields = {
     cause: config?.cause,
   };
-  const children = [...(config?.children ? [config?.children] : [])];
+  const children = config?.children ? [config?.children] : [];
   return {
     type: 'raise_statement' as const,
     fields,
@@ -1737,12 +1626,9 @@ export function raise_statement_(
 export function relative_import_(
   config: RelativeImportConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.importPrefix ? [config.importPrefix] : []), ...(config.dottedName ? [config.dottedName] : [])];
   return {
     type: 'relative_import' as const,
-    fields,
     children,
     importPrefix(importPrefix?: ImportPrefix) { return importPrefix !== undefined ? relative_import_({ ...config, importPrefix }) : config?.importPrefix; },
     dottedName(dottedName?: DottedName) { return dottedName !== undefined ? relative_import_({ ...config, dottedName }) : config?.dottedName; },
@@ -1759,12 +1645,9 @@ export function relative_import_(
 export function return_statement_(
   config?: ReturnStatementConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ? [config?.children] : [])];
+  const children = config?.children ? [config?.children] : [];
   return {
     type: 'return_statement' as const,
-    fields,
     children,
     child(child?: Expression | ExpressionList) { return child !== undefined ? return_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1780,12 +1663,9 @@ export function return_statement_(
 export function set_(
   config: SetConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ?? [])];
+  const children = config.children ?? [];
   return {
     type: 'set' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return set_({ ...config, children }); },
@@ -1826,12 +1706,9 @@ export function set_comprehension_(
 export function slice_(
   config?: SliceConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config?.expression1 ? [config?.expression1] : []), ...(config?.expression2 ? [config?.expression2] : []), ...(config?.expression3 ? [config?.expression3] : [])];
   return {
     type: 'slice' as const,
-    fields,
     children,
     expression1(expression1?: Expression) { return expression1 !== undefined ? slice_({ ...config, expression1 }) : config?.expression1; },
     expression2(expression2?: Expression) { return expression2 !== undefined ? slice_({ ...config, expression2 }) : config?.expression2; },
@@ -1849,12 +1726,9 @@ export function slice_(
 export function splat_pattern_(
   config?: SplatPatternConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ? [config?.children] : [])];
+  const children = config?.children ? [config?.children] : [];
   return {
     type: 'splat_pattern' as const,
-    fields,
     children,
     child(child?: Identifier) { return child !== undefined ? splat_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1870,12 +1744,9 @@ export function splat_pattern_(
 export function splat_type_(
   config: SplatTypeConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'splat_type' as const,
-    fields,
     children,
     child(child?: Identifier) { return child !== undefined ? splat_type_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -1891,12 +1762,9 @@ export function splat_type_(
 export function string_(
   config: StringConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.stringStart ? [config.stringStart] : []), ...(config.children1 ?? []), ...(config.stringEnd ? [config.stringEnd] : [])];
   return {
     type: 'string' as const,
-    fields,
     children,
     stringStart(stringStart?: StringStart) { return stringStart !== undefined ? string_({ ...config, stringStart }) : config?.stringStart; },
     children1(...children1: (Interpolation | StringContent)[]) { return children1.length ? string_({ ...config, children1 }) : config?.children1; },
@@ -1914,12 +1782,9 @@ export function string_(
 export function string_content_(
   config?: StringContentConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'string_content' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (EscapeInterpolation | EscapeSequence)[]) { return string_content_({ ...config, children }); },
@@ -1983,12 +1848,9 @@ export function try_statement_(
 export function tuple_(
   config?: TupleConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'tuple' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return tuple_({ ...config, children }); },
@@ -2005,12 +1867,9 @@ export function tuple_(
 export function tuple_pattern_(
   config?: TuplePatternConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'tuple_pattern' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (CasePattern | Pattern)[]) { return tuple_pattern_({ ...config, children }); },
@@ -2027,12 +1886,9 @@ export function tuple_pattern_(
 export function type_(
   config: TypeConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'type' as const,
-    fields,
     children,
     child(child?: ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType) { return child !== undefined ? type_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
@@ -2070,12 +1926,9 @@ export function type_alias_statement_(
 export function type_parameter_(
   config: TypeParameterConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.children0 ? [config.children0] : []), ...(config.children1 ?? [])];
   return {
     type: 'type_parameter' as const,
-    fields,
     children,
     children0(children0?: Type) { return children0 !== undefined ? type_parameter_({ ...config, children0 }) : config?.children0; },
     children1(...children1: (Type)[]) { return children1.length ? type_parameter_({ ...config, children1 }) : config?.children1; },
@@ -2119,7 +1972,7 @@ export function typed_parameter_(
   const fields = {
     type: config.type,
   };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'typed_parameter' as const,
     fields,
@@ -2161,12 +2014,9 @@ export function unary_operator_(
 export function union_pattern_(
   config?: UnionPatternConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'union_pattern' as const,
-    fields,
     children,
     getChildren() { return children; },
     setChildren(...children: (ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern)[]) { return union_pattern_({ ...config, children }); },
@@ -2183,12 +2033,9 @@ export function union_pattern_(
 export function union_type_(
   config: UnionTypeConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.children0 ? [config.children0] : []), ...(config.children1 ? [config.children1] : [])];
   return {
     type: 'union_type' as const,
-    fields,
     children,
     children0(children0?: Type) { return children0 !== undefined ? union_type_({ ...config, children0 }) : config?.children0; },
     children1(children1?: Type) { return children1 !== undefined ? union_type_({ ...config, children1 }) : config?.children1; },
@@ -2229,12 +2076,9 @@ export function while_statement_(
 export function with_clause_(
   config: WithClauseConfig,
 ) {
-  const fields = {
-  };
   const children = [...(config.withItem1 ? [config.withItem1] : []), ...(config.withItem2 ?? [])];
   return {
     type: 'with_clause' as const,
-    fields,
     children,
     withItem1(withItem1?: WithItem) { return withItem1 !== undefined ? with_clause_({ ...config, withItem1 }) : config?.withItem1; },
     withItem2(...withItem2: (WithItem)[]) { return withItem2.length ? with_clause_({ ...config, withItem2 }) : config?.withItem2; },
@@ -2274,7 +2118,7 @@ export function with_statement_(
   const fields = {
     body: config.body,
   };
-  const children = [...(config.children ? [config.children] : [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'with_statement' as const,
     fields,
@@ -2294,12 +2138,9 @@ export function with_statement_(
 export function yield_(
   config?: YieldConfig,
 ) {
-  const fields = {
-  };
-  const children = [...(config?.children ? [config?.children] : [])];
+  const children = config?.children ? [config?.children] : [];
   return {
     type: 'yield' as const,
-    fields,
     children,
     child(child?: Expression | ExpressionList) { return child !== undefined ? yield_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },

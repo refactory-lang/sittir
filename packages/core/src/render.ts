@@ -20,8 +20,8 @@ const VAR_RE = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
 function render(node: AnyNodeData, config: RulesConfig): string {
 	if (node.text !== undefined) return node.text;
 
-	if (!node.fields) {
-		throw new Error(`Branch node '${node.type}' has no 'fields' — did you mean to set 'text' for a leaf node?`);
+	if (!node.fields && !node.children) {
+		throw new Error(`Node '${node.type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
 	}
 
 	const rule = config.rules[node.type];
