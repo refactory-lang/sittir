@@ -328,12 +328,12 @@ export function argumentListFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _rkthp94(obj.children0);
-  }
   if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _rkthp94(v));
+    resolved.children1 = _rkthp94(obj.children1);
+  }
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _rkthp94(v));
   }
   return argument_list_(resolved as ArgumentListConfig);
 }
@@ -767,11 +767,11 @@ export function complexPatternFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _r1q8uqc0(obj.children0);
+  if (obj.floatOrInteger1 !== undefined) {
+    resolved.floatOrInteger1 = _r1q8uqc0(obj.floatOrInteger1);
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = _r1q8uqc0(obj.children1);
+  if (obj.floatOrInteger2 !== undefined) {
+    resolved.floatOrInteger2 = _r1q8uqc0(obj.floatOrInteger2);
   }
   return complex_pattern_(resolved as ComplexPatternConfig);
 }
@@ -839,11 +839,11 @@ export function constrainedTypeFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
+  if (obj.childType1 !== undefined) {
+    resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = (isNodeData(obj.children1) ? obj.children1 : Array.isArray(obj.children1) ? type_From(obj.children1) : typeof obj.children1 === 'object' ? type_From(obj.children1) : obj.children1);
+  if (obj.childType2 !== undefined) {
+    resolved.childType2 = (isNodeData(obj.childType2) ? obj.childType2 : Array.isArray(obj.childType2) ? type_From(obj.childType2) : typeof obj.childType2 === 'object' ? type_From(obj.childType2) : obj.childType2);
   }
   return constrained_type_(resolved as ConstrainedTypeConfig);
 }
@@ -975,12 +975,12 @@ export function dictionaryFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _rr1mjap(obj.children0);
+  if (obj.dictionarySplatOrPair1 !== undefined) {
+    resolved.dictionarySplatOrPair1 = _rr1mjap(obj.dictionarySplatOrPair1);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _rr1mjap(v));
+  if (obj.dictionarySplatOrPair2 !== undefined) {
+    const arr = Array.isArray(obj.dictionarySplatOrPair2) ? obj.dictionarySplatOrPair2 : [obj.dictionarySplatOrPair2];
+    resolved.dictionarySplatOrPair2 = arr.map((v: unknown) => _rr1mjap(v));
   }
   return dictionary_(resolved as DictionaryConfig);
 }
@@ -1005,9 +1005,9 @@ export function dictionaryComprehensionFrom(input: unknown): unknown {
   if (obj.forInClause !== undefined) {
     resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return dictionary_comprehension_(resolved as DictionaryComprehensionConfig);
 }
@@ -1212,8 +1212,8 @@ export function expressionStatementFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _rldymh6(obj.children0);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _rldymh6(obj.children1);
   }
   if (obj.expression !== undefined) {
     const arr = Array.isArray(obj.expression) ? obj.expression : [obj.expression];
@@ -1431,9 +1431,9 @@ export function generatorExpressionFrom(input: unknown): unknown {
   if (obj.forInClause !== undefined) {
     resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return generator_expression_(resolved as GeneratorExpressionConfig);
 }
@@ -1655,8 +1655,8 @@ export function keywordPatternFrom(input: unknown): unknown {
   if (obj.identifier !== undefined) {
     resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier_(''+obj.identifier) : obj.identifier);
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = _rl9y3fp(obj.children1);
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rl9y3fp(obj.children2);
   }
   return keyword_pattern_(resolved as KeywordPatternConfig);
 }
@@ -1749,9 +1749,9 @@ export function listComprehensionFrom(input: unknown): unknown {
   if (obj.forInClause !== undefined) {
     resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return list_comprehension_(resolved as ListComprehensionConfig);
 }
@@ -1858,8 +1858,8 @@ export function memberTypeFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
+  if (obj.childType !== undefined) {
+    resolved.childType = (isNodeData(obj.childType) ? obj.childType : Array.isArray(obj.childType) ? type_From(obj.childType) : typeof obj.childType === 'object' ? type_From(obj.childType) : obj.childType);
   }
   if (obj.identifier !== undefined) {
     resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier_(''+obj.identifier) : obj.identifier);
@@ -2198,9 +2198,9 @@ export function setComprehensionFrom(input: unknown): unknown {
   if (obj.forInClause !== undefined) {
     resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return set_comprehension_(resolved as SetComprehensionConfig);
 }
@@ -2286,9 +2286,9 @@ export function stringFrom(input: unknown): unknown {
   if (obj.stringStart !== undefined) {
     resolved.stringStart = (isNodeData(obj.stringStart) ? obj.stringStart : typeof obj.stringStart === 'string' || typeof obj.stringStart === 'number' || typeof obj.stringStart === 'boolean' ? string_start_(''+obj.stringStart) : obj.stringStart);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r2im5d1(v));
+  if (obj.interpolationOrStringContent !== undefined) {
+    const arr = Array.isArray(obj.interpolationOrStringContent) ? obj.interpolationOrStringContent : [obj.interpolationOrStringContent];
+    resolved.interpolationOrStringContent = arr.map((v: unknown) => _r2im5d1(v));
   }
   if (obj.stringEnd !== undefined) {
     resolved.stringEnd = (isNodeData(obj.stringEnd) ? obj.stringEnd : typeof obj.stringEnd === 'string' || typeof obj.stringEnd === 'number' || typeof obj.stringEnd === 'boolean' ? string_end_(''+obj.stringEnd) : obj.stringEnd);
@@ -2474,12 +2474,12 @@ export function typeParameterFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
+  if (obj.childType1 !== undefined) {
+    resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v) : typeof v === 'object' ? type_From(v) : v));
+  if (obj.childType2 !== undefined) {
+    const arr = Array.isArray(obj.childType2) ? obj.childType2 : [obj.childType2];
+    resolved.childType2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v) : typeof v === 'object' ? type_From(v) : v));
   }
   return type_parameter_(resolved as TypeParameterConfig);
 }
@@ -2594,11 +2594,11 @@ export function unionTypeFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = (isNodeData(obj.children0) ? obj.children0 : Array.isArray(obj.children0) ? type_From(obj.children0) : typeof obj.children0 === 'object' ? type_From(obj.children0) : obj.children0);
+  if (obj.childType1 !== undefined) {
+    resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = (isNodeData(obj.children1) ? obj.children1 : Array.isArray(obj.children1) ? type_From(obj.children1) : typeof obj.children1 === 'object' ? type_From(obj.children1) : obj.children1);
+  if (obj.childType2 !== undefined) {
+    resolved.childType2 = (isNodeData(obj.childType2) ? obj.childType2 : Array.isArray(obj.childType2) ? type_From(obj.childType2) : typeof obj.childType2 === 'object' ? type_From(obj.childType2) : obj.childType2);
   }
   return union_type_(resolved as UnionTypeConfig);
 }

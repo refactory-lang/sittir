@@ -144,25 +144,30 @@ export function selectConstructorField(node: StructuralNode): HydratedFieldModel
  * Single-slot children → ['children'] (unchanged).
  * Tuple children → names derived from collapsed type projections:
  *   - 1 collapsed type → lcfirst (e.g. VisibilityModifier → visibilityModifier)
+ *   - Multiple collapsed types → try common base (e.g. [Expression, Statement] → expressionOrStatement)
+ *   - Reserved name collision (e.g. 'type') → prefix with 'child' (e.g. childType)
  *   - Duplicate names across slots → append 1-based index (expression1, expression2)
- *   - No single collapsed type → children{index} fallback
+ *   - No inferrable name → children{index} fallback
  */
 // Reserved property names that cannot be used as child slot names
-const RESERVED_SLOT_NAMES = new Set(['type', 'text', 'fields', 'render', 'toEdit', 'replace']);
+const RESERVED_SLOT_NAMES = new Set(['type', 'text', 'fields', 'children', 'render', 'toEdit', 'replace']);
 
 export function childSlotNames(children: HydratedChildrenModel, ctx: ProjectionContext): string[] {
 	if (!isTupleChildren(children)) return ['children'];
 
 	// Compute candidate name per slot
+	// Priority: 1) raw kind as role name (if single supertype/kind), 2) collapsed projection
 	const candidates = children.map(slot => {
-		const proj = projectKinds(slot.kinds, ctx);
-		if (proj.collapsedTypes.length === 1) {
-			const name = proj.collapsedTypes[0]!;
-			const camel = name.charAt(0).toLowerCase() + name.slice(1);
-			if (RESERVED_SLOT_NAMES.has(camel)) return null;
-			return camel;
+		const rawKinds = slot.kinds.map(k => k.kind);
+		// Single raw kind → use as role name directly (e.g., "expression", "type", "pattern")
+		if (rawKinds.length === 1) {
+			const role = rawKinds[0]!.replace(/^_/, ''); // strip hidden prefix
+			const camel = snakeToCamel(role);
+			if (!RESERVED_SLOT_NAMES.has(camel)) return camel;
 		}
-		return null;
+		// Fall back to projection-based naming
+		const proj = projectKinds(slot.kinds, ctx);
+		return inferSlotName(proj.collapsedTypes);
 	});
 
 	// Count occurrences of each candidate
@@ -174,7 +179,7 @@ export function childSlotNames(children: HydratedChildrenModel, ctx: ProjectionC
 	// Assign final names — append 1-based index for duplicates
 	const seen = new Map<string, number>();
 	return candidates.map((name, i) => {
-		if (!name) return `children${i}`;
+		if (!name) return `children${i + 1}`;
 		if (counts.get(name)! > 1) {
 			const idx = (seen.get(name) ?? 0) + 1;
 			seen.set(name, idx);
@@ -182,6 +187,34 @@ export function childSlotNames(children: HydratedChildrenModel, ctx: ProjectionC
 		}
 		return name;
 	});
+}
+
+/** Infer a camelCase property name from collapsed type names. */
+function inferSlotName(collapsedTypes: string[]): string | null {
+	if (collapsedTypes.length === 0) return null;
+
+	if (collapsedTypes.length === 1) {
+		const camel = lcfirst(collapsedTypes[0]!);
+		if (!RESERVED_SLOT_NAMES.has(camel)) return camel;
+		// Reserved collision → prefix with 'child' (e.g. 'type' → 'childType')
+		return `child${collapsedTypes[0]!}`;
+	}
+
+	// Multiple types: if 2-3 types, join with 'Or' (e.g. expressionOrStatement)
+	if (collapsedTypes.length <= 3) {
+		const joined = collapsedTypes.map((t, i) => i === 0 ? lcfirst(t) : t).join('Or');
+		if (!RESERVED_SLOT_NAMES.has(joined) && joined.length <= 40) return joined;
+	}
+
+	return null;
+}
+
+function lcfirst(s: string): string {
+	return s.charAt(0).toLowerCase() + s.slice(1);
+}
+
+function snakeToCamel(s: string): string {
+	return s.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
 }
 
 /** Escape backslashes, quotes, and control characters for embedding in generated string literals. */

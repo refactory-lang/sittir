@@ -431,9 +431,9 @@ export function arguments_From(input: unknown): unknown {
   if (obj.expression !== undefined) {
     resolved.expression = _resolveExpression(obj.expression);
   }
-  if (obj.children2 !== undefined) {
-    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
-    resolved.children2 = arr.map((v: unknown) => _r1zauz5(v));
+  if (obj.attributeItemOrExpression !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrExpression) ? obj.attributeItemOrExpression : [obj.attributeItemOrExpression];
+    resolved.attributeItemOrExpression = arr.map((v: unknown) => _r1zauz5(v));
   }
   return arguments_(resolved as ArgumentsConfig);
 }
@@ -459,16 +459,16 @@ export function arrayExpressionFrom(input: unknown): unknown {
     const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
     resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r1zauz5(v));
+  if (obj.attributeItemOrExpression1 !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrExpression1) ? obj.attributeItemOrExpression1 : [obj.attributeItemOrExpression1];
+    resolved.attributeItemOrExpression1 = arr.map((v: unknown) => _r1zauz5(v));
   }
   if (obj.expression !== undefined) {
     resolved.expression = _resolveExpression(obj.expression);
   }
-  if (obj.children3 !== undefined) {
-    const arr = Array.isArray(obj.children3) ? obj.children3 : [obj.children3];
-    resolved.children3 = arr.map((v: unknown) => _r1zauz5(v));
+  if (obj.attributeItemOrExpression2 !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrExpression2) ? obj.attributeItemOrExpression2 : [obj.attributeItemOrExpression2];
+    resolved.attributeItemOrExpression2 = arr.map((v: unknown) => _r1zauz5(v));
   }
   return array_expression_(resolved as ArrayExpressionConfig);
 }
@@ -705,9 +705,9 @@ export function blockFrom(input: unknown): unknown {
   if (obj.label !== undefined) {
     resolved.label = (isNodeData(obj.label) ? obj.label : Array.isArray(obj.label) ? labelFrom(obj.label) : typeof obj.label === 'object' ? labelFrom(obj.label) : obj.label);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r149dosd(v));
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _r149dosd(v));
   }
   if (obj.expression !== undefined) {
     resolved.expression = _resolveExpression(obj.expression);
@@ -756,11 +756,11 @@ export function boundedTypeFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _rd726k3(obj.children0);
+  if (obj.lifetimeOrTypeOrUseBounds1 !== undefined) {
+    resolved.lifetimeOrTypeOrUseBounds1 = _rd726k3(obj.lifetimeOrTypeOrUseBounds1);
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = _rd726k3(obj.children1);
+  if (obj.lifetimeOrTypeOrUseBounds2 !== undefined) {
+    resolved.lifetimeOrTypeOrUseBounds2 = _rd726k3(obj.lifetimeOrTypeOrUseBounds2);
   }
   return bounded_type_(resolved as BoundedTypeConfig);
 }
@@ -894,12 +894,12 @@ export function closureParametersFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _rmv6nku(obj.children0);
+  if (obj.parameterOrPattern1 !== undefined) {
+    resolved.parameterOrPattern1 = _rmv6nku(obj.parameterOrPattern1);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _rmv6nku(v));
+  if (obj.parameterOrPattern2 !== undefined) {
+    const arr = Array.isArray(obj.parameterOrPattern2) ? obj.parameterOrPattern2 : [obj.parameterOrPattern2];
+    resolved.parameterOrPattern2 = arr.map((v: unknown) => _rmv6nku(v));
   }
   return closure_parameters_(resolved as ClosureParametersConfig);
 }
@@ -1179,9 +1179,9 @@ export function enumVariantListFrom(input: unknown): unknown {
   if (obj.enumVariant !== undefined) {
     resolved.enumVariant = (isNodeData(obj.enumVariant) ? obj.enumVariant : Array.isArray(obj.enumVariant) ? enumVariantFrom(obj.enumVariant) : typeof obj.enumVariant === 'object' ? enumVariantFrom(obj.enumVariant) : obj.enumVariant);
   }
-  if (obj.children2 !== undefined) {
-    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
-    resolved.children2 = arr.map((v: unknown) => _r18tu9jr(v));
+  if (obj.attributeItemOrEnumVariant !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrEnumVariant) ? obj.attributeItemOrEnumVariant : [obj.attributeItemOrEnumVariant];
+    resolved.attributeItemOrEnumVariant = arr.map((v: unknown) => _r18tu9jr(v));
   }
   return enum_variant_list_(resolved as EnumVariantListConfig);
 }
@@ -1304,9 +1304,9 @@ export function fieldDeclarationListFrom(input: unknown): unknown {
   if (obj.fieldDeclaration !== undefined) {
     resolved.fieldDeclaration = (isNodeData(obj.fieldDeclaration) ? obj.fieldDeclaration : Array.isArray(obj.fieldDeclaration) ? fieldDeclarationFrom(obj.fieldDeclaration) : typeof obj.fieldDeclaration === 'object' ? fieldDeclarationFrom(obj.fieldDeclaration) : obj.fieldDeclaration);
   }
-  if (obj.children2 !== undefined) {
-    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
-    resolved.children2 = arr.map((v: unknown) => _r1wxvtav(v));
+  if (obj.attributeItemOrFieldDeclaration !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrFieldDeclaration) ? obj.attributeItemOrFieldDeclaration : [obj.attributeItemOrFieldDeclaration];
+    resolved.attributeItemOrFieldDeclaration = arr.map((v: unknown) => _r1wxvtav(v));
   }
   return field_declaration_list_(resolved as FieldDeclarationListConfig);
 }
@@ -1377,12 +1377,12 @@ export function fieldInitializerListFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _rc94c35(obj.children0);
-  }
   if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _rc94c35(v));
+    resolved.children1 = _rc94c35(obj.children1);
+  }
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _rc94c35(v));
   }
   return field_initializer_list_(resolved as FieldInitializerListConfig);
 }
@@ -2377,9 +2377,9 @@ export function orderedFieldDeclarationListFrom(input: unknown): unknown {
   if (obj.visibilityModifier !== undefined) {
     resolved.visibilityModifier = (isNodeData(obj.visibilityModifier) ? obj.visibilityModifier : Array.isArray(obj.visibilityModifier) ? visibilityModifierFrom(obj.visibilityModifier) : typeof obj.visibilityModifier === 'object' ? visibilityModifierFrom(obj.visibilityModifier) : obj.visibilityModifier);
   }
-  if (obj.children2 !== undefined) {
-    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
-    resolved.children2 = arr.map((v: unknown) => _r1lprop0(v));
+  if (obj.attributeItemOrVisibilityModifier !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrVisibilityModifier) ? obj.attributeItemOrVisibilityModifier : [obj.attributeItemOrVisibilityModifier];
+    resolved.attributeItemOrVisibilityModifier = arr.map((v: unknown) => _r1lprop0(v));
   }
   return ordered_field_declaration_list_(resolved as OrderedFieldDeclarationListConfig);
 }
@@ -2428,12 +2428,12 @@ export function parametersFrom(input: unknown): unknown {
   if (obj.attributeItem !== undefined) {
     resolved.attributeItem = (isNodeData(obj.attributeItem) ? obj.attributeItem : Array.isArray(obj.attributeItem) ? attributeItemFrom(obj.attributeItem) : typeof obj.attributeItem === 'object' ? attributeItemFrom(obj.attributeItem) : obj.attributeItem);
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = _rh0gutj(obj.children1);
-  }
   if (obj.children2 !== undefined) {
-    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
-    resolved.children2 = arr.map((v: unknown) => _ru3k3th(v));
+    resolved.children2 = _rh0gutj(obj.children2);
+  }
+  if (obj.children3 !== undefined) {
+    const arr = Array.isArray(obj.children3) ? obj.children3 : [obj.children3];
+    resolved.children3 = arr.map((v: unknown) => _ru3k3th(v));
   }
   return parameters_(resolved as ParametersConfig);
 }
@@ -2860,9 +2860,9 @@ export function sourceFileFrom(input: unknown): unknown {
   if (obj.shebang !== undefined) {
     resolved.shebang = (isNodeData(obj.shebang) ? obj.shebang : typeof obj.shebang === 'string' || typeof obj.shebang === 'number' || typeof obj.shebang === 'boolean' ? shebang_(''+obj.shebang) : obj.shebang);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r149dosd(v));
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _r149dosd(v));
   }
   return source_file_(resolved as SourceFileConfig);
 }
@@ -2997,12 +2997,12 @@ export function structPatternFrom(input: unknown): unknown {
   if (obj['type'] !== undefined) {
     resolved['type'] = _r1fuyx5x(obj['type']);
   }
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _r1vr38sb(obj.children0);
+  if (obj.fieldPatternOrRemainingFieldPattern1 !== undefined) {
+    resolved.fieldPatternOrRemainingFieldPattern1 = _r1vr38sb(obj.fieldPatternOrRemainingFieldPattern1);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r1vr38sb(v));
+  if (obj.fieldPatternOrRemainingFieldPattern2 !== undefined) {
+    const arr = Array.isArray(obj.fieldPatternOrRemainingFieldPattern2) ? obj.fieldPatternOrRemainingFieldPattern2 : [obj.fieldPatternOrRemainingFieldPattern2];
+    resolved.fieldPatternOrRemainingFieldPattern2 = arr.map((v: unknown) => _r1vr38sb(v));
   }
   return struct_pattern_(resolved as StructPatternConfig);
 }
@@ -3128,12 +3128,12 @@ export function traitBoundsFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _r1nr92n5(obj.children0);
+  if (obj.higherRankedTraitBoundOrLifetimeOrType1 !== undefined) {
+    resolved.higherRankedTraitBoundOrLifetimeOrType1 = _r1nr92n5(obj.higherRankedTraitBoundOrLifetimeOrType1);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r1nr92n5(v));
+  if (obj.higherRankedTraitBoundOrLifetimeOrType2 !== undefined) {
+    const arr = Array.isArray(obj.higherRankedTraitBoundOrLifetimeOrType2) ? obj.higherRankedTraitBoundOrLifetimeOrType2 : [obj.higherRankedTraitBoundOrLifetimeOrType2];
+    resolved.higherRankedTraitBoundOrLifetimeOrType2 = arr.map((v: unknown) => _r1nr92n5(v));
   }
   return trait_bounds_(resolved as TraitBoundsConfig);
 }
@@ -3259,12 +3259,12 @@ export function tuplePatternFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _r95jlc9(obj.children0);
+  if (obj.closureExpressionOrPattern1 !== undefined) {
+    resolved.closureExpressionOrPattern1 = _r95jlc9(obj.closureExpressionOrPattern1);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r95jlc9(v));
+  if (obj.closureExpressionOrPattern2 !== undefined) {
+    const arr = Array.isArray(obj.closureExpressionOrPattern2) ? obj.closureExpressionOrPattern2 : [obj.closureExpressionOrPattern2];
+    resolved.closureExpressionOrPattern2 = arr.map((v: unknown) => _r95jlc9(v));
   }
   return tuple_pattern_(resolved as TuplePatternConfig);
 }
@@ -3332,15 +3332,15 @@ export function typeArgumentsFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _r1de2jon(obj.children0);
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _r1de2jon(obj.children1);
   }
   if (obj.traitBounds !== undefined) {
     resolved.traitBounds = (isNodeData(obj.traitBounds) ? obj.traitBounds : Array.isArray(obj.traitBounds) ? traitBoundsFrom(obj.traitBounds) : typeof obj.traitBounds === 'object' ? traitBoundsFrom(obj.traitBounds) : obj.traitBounds);
   }
-  if (obj.children2 !== undefined) {
-    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
-    resolved.children2 = arr.map((v: unknown) => _r1co9wyp(v));
+  if (obj.children3 !== undefined) {
+    const arr = Array.isArray(obj.children3) ? obj.children3 : [obj.children3];
+    resolved.children3 = arr.map((v: unknown) => _r1co9wyp(v));
   }
   return type_arguments_(resolved as TypeArgumentsConfig);
 }
@@ -3479,12 +3479,12 @@ export function typeParametersFrom(input: unknown): unknown {
     const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
     resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = _roit17h(obj.children1);
-  }
   if (obj.children2 !== undefined) {
-    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
-    resolved.children2 = arr.map((v: unknown) => _ryeauh7(v));
+    resolved.children2 = _roit17h(obj.children2);
+  }
+  if (obj.children3 !== undefined) {
+    const arr = Array.isArray(obj.children3) ? obj.children3 : [obj.children3];
+    resolved.children3 = arr.map((v: unknown) => _ryeauh7(v));
   }
   return type_parameters_(resolved as TypeParametersConfig);
 }
@@ -3600,12 +3600,12 @@ export function useBoundsFrom(input: unknown): unknown {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children0 !== undefined) {
-    resolved.children0 = _r1qwzk9f(obj.children0);
+  if (obj.lifetimeOrTypeIdentifier1 !== undefined) {
+    resolved.lifetimeOrTypeIdentifier1 = _r1qwzk9f(obj.lifetimeOrTypeIdentifier1);
   }
-  if (obj.children1 !== undefined) {
-    const arr = Array.isArray(obj.children1) ? obj.children1 : [obj.children1];
-    resolved.children1 = arr.map((v: unknown) => _r1qwzk9f(v));
+  if (obj.lifetimeOrTypeIdentifier2 !== undefined) {
+    const arr = Array.isArray(obj.lifetimeOrTypeIdentifier2) ? obj.lifetimeOrTypeIdentifier2 : [obj.lifetimeOrTypeIdentifier2];
+    resolved.lifetimeOrTypeIdentifier2 = arr.map((v: unknown) => _r1qwzk9f(v));
   }
   return use_bounds_(resolved as UseBoundsConfig);
 }
