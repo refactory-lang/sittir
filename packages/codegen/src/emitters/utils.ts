@@ -15,6 +15,7 @@ import type {
 	HydratedChildrenModel,
 } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
+import { toFieldName } from '../naming.ts';
 import { projectKinds, type ProjectionContext } from './kind-projections.ts';
 
 export type StructuralNode = HydratedBranchModel | HydratedContainerModel;
@@ -121,38 +122,70 @@ export function fieldsOf(node: StructuralNode): readonly HydratedFieldModel[] {
 }
 
 /**
- * Detect single-field compression eligibility for .from() API.
- *
- * A node qualifies when:
- *   - Exactly 1 required non-multiple field
- *   - No required children
- *   - All kinds on that field are leaf kinds (string input is unambiguous —
- *     disambiguated at compile time via template literal types and at runtime
- *     via pattern matching)
- *
- * Returns the compressible field, or null.
+ * Compression info for a .from() single-slot shorthand.
+ * When a node has exactly 1 required slot (field or child), the .from() API
+ * can accept the slot's value directly without wrapping in a config object.
  */
-export function singleFieldCompression(node: StructuralNode, ctx: ProjectionContext): HydratedFieldModel | null {
-	const fields = fieldsOf(node);
-	const requiredScalars = fields.filter(f => f.required && !f.multiple);
-	if (requiredScalars.length !== 1) return null;
+export interface CompressionInfo {
+	/** Property name in the config object (camelCase field name or child slot name) */
+	propName: string;
+	/** Whether all accepted kinds are leaf types (enables string/scalar shorthand) */
+	scalar: boolean;
+}
 
-	// Check no required children
+/**
+ * Detect single-slot compression eligibility for .from() API.
+ *
+ * A node qualifies when it has exactly 1 required non-multiple slot total
+ * (either a field or a child). Compressibility (drop field name) and
+ * scalarness (drop kind wrapper) are orthogonal:
+ *
+ *   - Compressible: `ir.constBlock.from(block)` instead of `{ body: block }`
+ *   - Scalar: `ir.modItem.from('main')` instead of `{ name: 'main' }`
+ *   - Both: `ir.modItem.from('main')` resolves string → identifier → name field
+ *
+ * Compression chains recursively through .from() — if `block` is itself
+ * compressible, `ir.constBlock.from([stmt1, stmt2])` works because:
+ *   1. constBlock wraps as `{ body: [stmt1, stmt2] }`
+ *   2. body resolver calls `blockFrom([stmt1, stmt2])`
+ *   3. blockFrom handles the array
+ */
+export function singleSlotCompression(node: StructuralNode, ctx: ProjectionContext): CompressionInfo | null {
+	const fields = fieldsOf(node);
+	const requiredFields = fields.filter(f => f.required && !f.multiple);
+
+	// Count required children
+	let requiredChildCount = 0;
+	let requiredChild: { slot: { kinds: readonly HydratedNodeModel[]; required: boolean; multiple: boolean }; name: string } | null = null;
 	if (node.children != null) {
-		let hasRequiredChild = false;
-		eachChildSlot(node.children, (slot) => {
-			if (slot.required) hasRequiredChild = true;
+		const slotNames = childSlotNames(node.children, ctx);
+		eachChildSlot(node.children, (slot, i) => {
+			if (slot.required && !slot.multiple) {
+				requiredChildCount++;
+				requiredChild = { slot, name: slotNames[i]! };
+			}
 		});
-		if (hasRequiredChild) return null;
 	}
 
-	const field = requiredScalars[0]!;
+	const totalRequired = requiredFields.length + requiredChildCount;
+	if (totalRequired !== 1) return null;
 
-	// All kinds must be leaf types (leaf, keyword, enum — no branches/supertypes)
-	const allLeaf = field.kinds.every(k => ctx.leafKinds.has(k.kind));
-	if (!allLeaf) return null;
+	// Single required field, no required children
+	if (requiredFields.length === 1) {
+		const field = requiredFields[0]!;
+		const propName = field.propertyName ?? toFieldName(field.name);
+		const scalar = field.kinds.every(k => ctx.leafKinds.has(k.kind));
+		return { propName, scalar };
+	}
 
-	return field;
+	// Single required child, no required fields
+	if (requiredChild) {
+		const { slot, name } = requiredChild;
+		const scalar = slot.kinds.every((k: HydratedNodeModel) => ctx.leafKinds.has(k.kind));
+		return { propName: name, scalar };
+	}
+
+	return null;
 }
 
 /**
