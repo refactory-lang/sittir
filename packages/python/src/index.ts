@@ -15,16 +15,10 @@ export { assignByKind, edit } from './assign.js';
 // .from() resolution (tree-shakeable, separate from factories)
 export * from './from.js';
 
-// Render templates
-export { rules } from './rules.js';
-
-// Join separators
-export { joinBy } from './joinby.js';
-
 // Constants (node kinds, keywords, operators)
 export * from './consts.js';
 
 // Core re-exports
-export { render, toEdit, toCst } from '@sittir/core';
+export { createRenderer } from '@sittir/core';
 export type { NodeData, TreeNode } from './types.js';
 export type { Edit, CSTNode, RenderContext } from '@sittir/types';

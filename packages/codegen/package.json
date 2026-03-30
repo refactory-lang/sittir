@@ -41,7 +41,8 @@
   },
   "dependencies": {
     "@sittir/core": "workspace:*",
-    "@sittir/types": "workspace:*"
+    "@sittir/types": "workspace:*",
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@sittir/typescript": "workspace:*",

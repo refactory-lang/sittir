@@ -1,96 +1,150 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, Edit, ByteRange, RenderRule, ParsedTemplate, TemplateElement, RulesRegistry, JoinByMap } from './types.ts';
-import { parseTemplate } from './sexpr.ts';
+import * as fs from 'node:fs';
+import { parse as parseYaml } from 'yaml';
+import type { AnyNodeData, Edit, ByteRange, RulesConfig, TemplateRule } from './types.ts';
 
-export type { RulesRegistry, JoinByMap };
+export type { RulesConfig };
 
 // ---------------------------------------------------------------------------
-// Template cache
+// Variable scanner regex
 // ---------------------------------------------------------------------------
 
-const templateCache = new Map<string, ParsedTemplate>();
-
-function getParsed(template: RenderRule): ParsedTemplate {
-	let parsed = templateCache.get(template);
-	if (!parsed) {
-		parsed = parseTemplate(template);
-		templateCache.set(template, parsed);
-	}
-	return parsed;
-}
+// Matches $$$NAME, $$NAME, $_NAME, $NAME (longest prefix first)
+// Captures: [1] prefix ($$$, $$, $_, $), [2] NAME
+const VAR_RE = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
 
 // ---------------------------------------------------------------------------
 // Render engine
 // ---------------------------------------------------------------------------
 
-export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: JoinByMap): string {
+function render(node: AnyNodeData, config: RulesConfig): string {
 	if (node.text !== undefined) return node.text;
 
 	if (!node.fields) {
 		throw new Error(`Branch node '${node.type}' has no 'fields' — did you mean to set 'text' for a leaf node?`);
 	}
 
-	const template = registry[node.type];
-	if (!template) throw new Error(`No render rules for '${node.type}'`);
+	const rule = config.rules[node.type];
+	if (!rule) throw new Error(`No render rule for '${node.type}'`);
 
-	const parsed = getParsed(template);
-	const sep = joinBy?.[node.type] ?? ' ';
-	const parts: string[] = [];
+	const isObject = typeof rule !== 'string';
+	const template = isObject ? (rule as { template: string }).template : rule;
+	const ruleObj = isObject ? rule as unknown as Record<string, unknown> : undefined;
 
-	for (const el of parsed.elements) {
-		switch (el.type) {
-			case 'token':
-				parts.push(el.value);
-				break;
+	// Resolve expandoChar: if set, the template uses expandoChar instead of $
+	const prefix = config.expandoChar ?? '$';
 
-			case 'field': {
-				const value = node.fields?.[el.name] as AnyNodeData | AnyNodeData[] | string | number | undefined;
+	// Build the regex dynamically if expandoChar differs from $
+	const varPattern = prefix === '$'
+		? VAR_RE
+		: new RegExp(`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`, 'g');
 
-				if (value === undefined) {
-					if (!el.quantifier) {
-						throw new Error(`Required field '${el.name}' missing on '${node.type}'`);
-					}
-					break;
-				}
+	// Trim trailing newline from YAML | block scalar
+	const tmpl = template.endsWith('\n') ? template.slice(0, -1) : template;
 
-				if ((el.quantifier === '*' || el.quantifier === '+') && Array.isArray(value)) {
-					parts.push(value.map(c => renderValue(c, registry, joinBy)).join(sep));
-				} else if (Array.isArray(value)) {
-					// Array value for non-multiple field — error
-					throw new Error(`Field '${el.name}' on '${node.type}' received array but is not multiple (* or +)`);
-				} else {
-					parts.push(renderValue(value, registry, joinBy));
-				}
-				break;
-			}
+	const result = tmpl.replace(varPattern, (_match: string, pfx: string, name: string) => {
+		const fieldKey = name.toLowerCase();
+		const clauseKey = `${fieldKey}`;
 
-			case 'children': {
-				const children = node.children;
-				if (!children || children.length === 0) break;
-				parts.push(children.map(c => renderValue(c, registry, joinBy)).join(sep));
-				break;
-			}
-
-			default: {
-				const _exhaustive: never = el;
-				throw new Error(`Unknown template element type: ${(_exhaustive as TemplateElement).type}`);
-			}
+		// Check if this is a clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
+		if (ruleObj && clauseKey in ruleObj && clauseKey !== 'template' && clauseKey !== 'joinBy') {
+			const clauseTemplate = ruleObj[clauseKey] as string;
+			return renderClause(clauseTemplate, node, config, varPattern);
 		}
-	}
 
-	// Filter empty parts and join — avoids collapsing whitespace inside text values
-	return parts.filter(p => p !== '').join(' ');
+		// For CHILDREN, check node.children (unnamed children array) in addition to fields
+		const value = fieldKey === 'children'
+			? (node.fields?.[fieldKey] ?? node.children)
+			: node.fields?.[fieldKey];
+
+		// $$$ — multi (zero or more)
+		if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
+			if (value === undefined) return '';
+			const items = Array.isArray(value) ? value : [value];
+			const sep = resolveJoinBy(ruleObj, name);
+			return items.map(item => renderValue(item as AnyNodeData | string | number, config)).join(sep);
+		}
+
+		// $$ — unnamed single
+		if (pfx.length === 2 && !pfx.endsWith('_')) {
+			if (value === undefined) return '';
+			return renderValue(value as AnyNodeData | string | number, config);
+		}
+
+		// $_ — non-capturing wildcard (renders the value but doesn't capture)
+		if (pfx.endsWith('_')) {
+			if (value === undefined) return '';
+			return renderValue(value as AnyNodeData | string | number, config);
+		}
+
+		// $ — single named field
+		if (value === undefined) return '';
+		return renderValue(value as AnyNodeData | string | number, config);
+	});
+
+	return result;
+}
+
+/** Render a clause sub-template. If any variable is absent, omit the entire clause. */
+function renderClause(
+	clauseTemplate: string,
+	node: AnyNodeData,
+	config: RulesConfig,
+	varPattern: RegExp,
+): string {
+	// First pass: check if all variables resolve
+	let allPresent = true;
+	clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
+		const fieldKey = name.toLowerCase();
+		const value = node.fields?.[fieldKey];
+		if (value === undefined) allPresent = false;
+		return '';
+	});
+
+	if (!allPresent) return '';
+
+	// Second pass: actually render
+	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
+		const fieldKey = name.toLowerCase();
+		const value = node.fields?.[fieldKey] as AnyNodeData | string | number | undefined;
+		if (value === undefined) return '';
+		return renderValue(value, config);
+	});
+}
+
+/** Resolve joinBy for a $$$ variable. */
+function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {
+	if (!ruleObj) return ' ';
+	const joinBy = ruleObj['joinBy'] as string | Record<string, string> | undefined;
+	if (joinBy === undefined) return ' ';
+	if (typeof joinBy === 'string') return joinBy;
+	return joinBy[varName] ?? ' ';
 }
 
 /** Render a field value — handles AnyNodeData, string, and number. */
-function renderValue(value: AnyNodeData | string | number, registry: RulesRegistry, joinBy?: JoinByMap): string {
+function renderValue(value: AnyNodeData | string | number, config: RulesConfig): string {
 	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return String(value);
-	return render(value, registry, joinBy);
+	return render(value, config);
+}
+
+/** Escape a string for use in a RegExp. */
+function escapeRegex(s: string): string {
+	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // ---------------------------------------------------------------------------
-// createRenderer — close over rules + joinBy once, return bound helpers
+// YAML loading
+// ---------------------------------------------------------------------------
+
+/** Load and parse a templates.yaml file into a RulesConfig. */
+export function loadTemplates(yamlPath: string): RulesConfig {
+	const content = fs.readFileSync(yamlPath, 'utf-8');
+	return parseYaml(content) as RulesConfig;
+}
+
+// ---------------------------------------------------------------------------
+// createRenderer — close over rules once, return bound helpers
 // ---------------------------------------------------------------------------
 
 export interface BoundRenderer {
@@ -100,13 +154,19 @@ export interface BoundRenderer {
 }
 
 /**
- * Create a renderer bound to a specific rules registry and joinBy map.
- * Generated packages call this once at module level — no need to pass
- * rules/joinBy on every render() or toEdit() call.
+ * Create a renderer bound to a specific YAML templates file.
+ * Loads and parses the YAML once — no need to pass config on every render() call.
  */
-export function createRenderer(registry: RulesRegistry, joinBy?: JoinByMap): BoundRenderer {
+export function createRenderer(yamlPath: string): BoundRenderer;
+/**
+ * Create a renderer from a pre-parsed RulesConfig.
+ */
+export function createRenderer(config: RulesConfig): BoundRenderer;
+export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
+	const config = typeof pathOrConfig === 'string' ? loadTemplates(pathOrConfig) : pathOrConfig;
+
 	function boundRender(node: AnyNodeData): string {
-		return render(node, registry, joinBy);
+		return render(node, config);
 	}
 
 	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {

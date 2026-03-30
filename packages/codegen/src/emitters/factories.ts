@@ -267,10 +267,11 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	lines.push(`import type { ${sortedTypes.join(', ')} } from './types.js';`);
 	lines.push("import type { Edit, AnyNodeData } from '@sittir/types';");
 	lines.push("import { createRenderer } from '@sittir/core';");
-	lines.push("import { rules } from './rules.js';");
-	lines.push("import { joinBy } from './joinby.js';");
+	lines.push("import { join, dirname } from 'node:path';");
+	lines.push("import { fileURLToPath } from 'node:url';");
 	lines.push('');
-	lines.push('const { render, toEdit } = createRenderer(rules, joinBy);');
+	lines.push('const __dirname = dirname(fileURLToPath(import.meta.url));');
+	lines.push("const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates.yaml'));");
 	lines.push('');
 
 	// Reserved keywords set for input validation (FR-023)

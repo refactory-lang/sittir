@@ -18,42 +18,59 @@
  */
 export interface AnyNodeData {
 	readonly type: string;
-	readonly fields?: Readonly<Record<string, unknown>>;
+	readonly fields?: Readonly<Record<string, AnyNodeData>>;
 	readonly children?: readonly AnyNodeData[];
 	readonly text?: string;
 }
 
 // ---------------------------------------------------------------------------
-// Render templates — S-expression format (tree-sitter query syntax)
+// YAML render templates — ast-grep-style $VARIABLE syntax
 // ---------------------------------------------------------------------------
 
 /**
- * S-expression render template.
+ * A render template for a single node kind.
  *
- * Uses tree-sitter query syntax:
- *   (function_item "fn" name: (_) "(" parameters: (_)* "," ")" body: (_))
+ * String form (simple template):
+ *   "$LEFT $OPERATOR $RIGHT"
  *
- * Extension: a quoted string after * or + is the separator (handled by render engine).
+ * Object form (template + optional clauses + optional joinBy):
+ *   { template: "fn $NAME(...) $RET_CLAUSE{...}", return_type_clause: "-> $RET ", joinBy: ", " }
+ *
+ * Variable syntax (ast-grep conventions):
+ *   $NAME     — single named field
+ *   $$NAME    — single unnamed (anonymous) node
+ *   $$$NAME   — zero or more nodes (multi)
+ *   $_NAME    — non-capturing wildcard
+ *
+ * Clauses: keys ending in `_clause` are sub-templates that bundle
+ * anonymous tokens with non-required fields. If any variable in the
+ * clause is absent, the entire clause is omitted.
  */
-export type RenderTemplate = string;
+export type TemplateRule =
+	| string
+	| TemplateRuleObject;
 
-/** Render rule for a node kind — just the S-expression template. */
-export type RenderRule = RenderTemplate;
+export interface TemplateRuleObject {
+	template: string;
+	joinBy?: string | Record<string, string>;
+	[clauseKey: `${string}_clause`]: string;
+}
 
-// ---------------------------------------------------------------------------
-// Parsed template — cached from S-expression parse
-// ---------------------------------------------------------------------------
-
-/** A parsed element from an S-expression render template. */
-export type TemplateElement =
-	| { type: 'token'; value: string }
-	| { type: 'field'; name: string; quantifier?: '?' | '*' | '+' }
-	| { type: 'children'; quantifier?: '?' | '*' | '+' };
-
-/** Parsed render template — cached after first use. */
-export interface ParsedTemplate {
-	kind: string;
-	elements: TemplateElement[];
+/**
+ * Full YAML template file shape — one per grammar package.
+ *
+ * Top-level keys follow ast-grep conventions (camelCase for config,
+ * snake_case for rule names from tree-sitter).
+ */
+export interface RulesConfig {
+	language: string;
+	extensions: string[];
+	expandoChar: string | null;
+	metadata: {
+		grammarSha: string;
+		treeSitterVersion?: string;
+	};
+	rules: Record<string, TemplateRule>;
 }
 
 // ---------------------------------------------------------------------------
@@ -117,11 +134,6 @@ export interface RenderContext {
 // Render registries
 // ---------------------------------------------------------------------------
 
-/** A rules registry mapping node type → S-expression render template. */
-export type RulesRegistry = Record<string, RenderRule>;
-
-/** A joinBy map: node type → separator string for joining list children. */
-export type JoinByMap = Record<string, string>;
 
 // ---------------------------------------------------------------------------
 // Edit helpers — structural types for ast-grep SgNode compatibility

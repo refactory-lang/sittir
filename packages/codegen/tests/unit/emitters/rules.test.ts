@@ -1,84 +1,70 @@
 import { describe, it, expect } from 'vitest';
-import { emitRule } from '../../../src/emitters/rules.ts';
+import { parse as parseYaml } from 'yaml';
+import { emitTemplatesYaml } from '../../../src/emitters/rules.ts';
 import { buildGrammarModel } from '../../../src/grammar-model.ts';
-import type { StructuralNode } from '../../../src/emitters/utils.ts';
+import type { RulesConfig } from '@sittir/types';
 
 const { newModel } = buildGrammarModel('rust');
+const nodes = [...newModel.models.values()];
 
-function getNode(kind: string): StructuralNode {
-	const node = newModel.models.get(kind);
-	if (!node || (node.modelType !== 'branch' && node.modelType !== 'container')) {
-		throw new Error(`Node "${kind}" is not a structural node`);
-	}
-	return node;
+function getConfig(): RulesConfig {
+	const yaml = emitTemplatesYaml({ grammar: 'rust', nodes, grammarSha: 'test' });
+	return parseYaml(yaml) as RulesConfig;
 }
 
-describe('emitRule', () => {
-	it('emits S-expression template for function_item', () => {
-		const node = getNode('function_item');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.template).toContain('"fn"');
-		expect(rule.template).toContain('name: (_)');
-		expect(rule.template).toContain('body:');
-		expect(rule.template).toMatch(/^\(function_item/);
-		expect(rule.fields['name']).toEqual({ required: true });
+describe('emitTemplatesYaml', () => {
+	it('produces valid YAML with expected top-level keys', () => {
+		const config = getConfig();
+		expect(config.language).toBe('rust');
+		expect(config.extensions).toEqual(['rs']);
+		expect(config.expandoChar).toBeNull();
+		expect(config.metadata.grammarSha).toBe('test');
+		expect(config.rules).toBeDefined();
 	});
 
-	it('emits S-expression template for struct_item', () => {
-		const node = getNode('struct_item');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.template).toContain('"struct"');
-		expect(rule.template).toContain('name: (_)');
-		expect(rule.template).toMatch(/^\(struct_item/);
+	it('emits template for function_item with $VARIABLE syntax', () => {
+		const config = getConfig();
+		const rule = config.rules['function_item'];
+		expect(rule).toBeDefined();
+		const template = typeof rule === 'string' ? rule : (rule as any).template;
+		expect(template).toContain('$NAME');
+		expect(template).toContain('fn');
 	});
 
-	it('emits S-expression template for if_expression', () => {
-		const node = getNode('if_expression');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.template).toContain('"if"');
-		expect(rule.template).toContain('condition: (_)');
-		expect(rule.template).toContain('consequence: (_)');
+	it('emits template for binary_expression as string form', () => {
+		const config = getConfig();
+		const rule = config.rules['binary_expression'];
+		expect(typeof rule).toBe('string');
+		expect(rule).toContain('$LEFT');
+		expect(rule).toContain('$OPERATOR');
+		expect(rule).toContain('$RIGHT');
 	});
 
-	it('emits S-expression template for use_declaration', () => {
-		const node = getNode('use_declaration');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.template).toContain('"use"');
-		expect(rule.template).toContain('argument: (_)');
+	it('emits template for struct_item', () => {
+		const config = getConfig();
+		const rule = config.rules['struct_item'];
+		expect(rule).toBeDefined();
+		const template = typeof rule === 'string' ? rule : (rule as any).template;
+		expect(template).toContain('struct');
+		expect(template).toContain('$NAME');
 	});
 
-	it('marks optional fields with ? quantifier', () => {
-		const node = getNode('function_item');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.fields['name']!.required).toBe(true);
-		expect(rule.fields['return_type']?.required).toBe(false);
-		expect(rule.template).toContain('return_type: (_)?');
+	it('synthesizes clauses for optional token+field groups', () => {
+		const config = getConfig();
+		const rule = config.rules['function_item'];
+		if (typeof rule === 'object' && rule !== null) {
+			// Should have return_type_clause or similar
+			const clauseKeys = Object.keys(rule).filter(k => k.endsWith('_clause'));
+			expect(clauseKeys.length).toBeGreaterThan(0);
+		}
 	});
 
-	it('marks multiple fields with * quantifier', () => {
-		const node = getNode('function_item');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.template).toBeDefined();
-	});
-
-	it('handles block with braces', () => {
-		const node = getNode('block');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.template).toContain('"{"');
-		expect(rule.template).toContain('"}"');
-	});
-
-	it('produces valid S-expression (starts/ends with parens)', () => {
-		const node = getNode('binary_expression');
-		const rule = emitRule({ grammar: 'rust', node });
-
-		expect(rule.template).toMatch(/^\(.*\)$/);
+	it('includes joinBy for rules with separators', () => {
+		const config = getConfig();
+		// parameters should have joinBy for comma separation
+		const rule = config.rules['parameters'];
+		if (typeof rule === 'object' && rule !== null) {
+			expect((rule as any).joinBy).toBeDefined();
+		}
 	});
 });

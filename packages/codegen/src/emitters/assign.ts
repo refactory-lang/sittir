@@ -46,10 +46,11 @@ export function emitAssign(config: EmitAssignConfig): string {
 	for (const node of nodes) treeImports.add(toTypeName(node.kind) + 'Tree');
 	lines.push(`import type { ${[...treeImports].sort().join(', ')} } from './types.js';`);
 	lines.push("import { createRenderer, bindRange } from '@sittir/core';");
-	lines.push("import { rules } from './rules.js';");
-	lines.push("import { joinBy } from './joinby.js';");
+	lines.push("import { join, dirname } from 'node:path';");
+	lines.push("import { fileURLToPath } from 'node:url';");
 	lines.push('');
-	lines.push('const { render } = createRenderer(rules, joinBy);');
+	lines.push('const __dirname = dirname(fileURLToPath(import.meta.url));');
+	lines.push("const { render } = createRenderer(join(__dirname, '..', 'templates.yaml'));");
 
 	// Import all factory functions (raw kind names, _prefix for reserved words)
 	const factoryImports: string[] = [];

@@ -36,9 +36,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@sittir/types": "workspace:*"
+    "@sittir/types": "workspace:*",
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
-    "@ast-grep/napi": "^0.42.0"
+    "@ast-grep/napi": "^0.42.0",
+    "@types/node": "^25.5.0"
   }
 }

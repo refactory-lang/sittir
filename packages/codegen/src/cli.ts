@@ -100,15 +100,16 @@ const outDir = cliArgs.outputDir;
 // Write source files
 writeFile(join(outDir, 'grammar.ts'), result.grammar);
 writeFile(join(outDir, 'types.ts'), result.types);
-writeFile(join(outDir, 'rules.ts'), result.rules);
 writeFile(join(outDir, 'factories.ts'), result.factories);
 writeFile(join(outDir, 'assign.ts'), result.assign);
 writeFile(join(outDir, 'utils.ts'), result.utils);
 writeFile(join(outDir, 'from.ts'), result.from);
 writeFile(join(outDir, 'ir.ts'), result.irNamespace);
-writeFile(join(outDir, 'joinby.ts'), result.joinBy);
 writeFile(join(outDir, 'consts.ts'), result.consts);
 writeFile(join(outDir, 'index.ts'), result.index);
+
+// Write YAML templates to package root (one level up from src/)
+writeFile(join(dirname(outDir), 'templates.yaml'), result.templatesYaml);
 
 // Write node model
 writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
@@ -125,6 +126,6 @@ writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
 console.log(`
 Done! Generated:
-  grammar.ts, types.ts, rules.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);

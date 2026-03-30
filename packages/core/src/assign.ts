@@ -1,22 +1,48 @@
 // Template-driven tree node → NodeData assignment
-// Uses parsed render templates as the schema — no per-kind codegen needed.
+// Extracts field references from YAML template $VARIABLE syntax.
 
-import type { AnyNodeData, AnyTreeNode, ParsedTemplate, RulesRegistry } from './types.ts';
-import { parseTemplate } from './sexpr.ts';
+import type { AnyNodeData, AnyTreeNode, RulesConfig, TemplateRule } from './types.ts';
 
 // ---------------------------------------------------------------------------
-// Template cache (shared with render.ts via same parseTemplate)
+// Variable extraction from template strings
 // ---------------------------------------------------------------------------
 
-const templateCache = new Map<string, ParsedTemplate>();
+interface FieldRef {
+	name: string;
+	multi: boolean;
+}
 
-function getParsed(template: string): ParsedTemplate {
-	let parsed = templateCache.get(template);
-	if (!parsed) {
-		parsed = parseTemplate(template);
-		templateCache.set(template, parsed);
+/** Cache extracted field refs per template string. */
+const fieldRefCache = new Map<string, FieldRef[]>();
+
+// Matches $$$NAME (multi), $$NAME (unnamed), $_NAME (non-capturing), $NAME (single)
+const VAR_RE = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
+
+function extractFieldRefs(template: string): FieldRef[] {
+	let cached = fieldRefCache.get(template);
+	if (cached) return cached;
+
+	const refs: FieldRef[] = [];
+	const seen = new Set<string>();
+
+	let match: RegExpExecArray | null;
+	VAR_RE.lastIndex = 0;
+	while ((match = VAR_RE.exec(template)) !== null) {
+		const prefix = match[1]!;
+		const name = match[2]!.toLowerCase();
+
+		// Skip non-capturing wildcards and clause references
+		if (prefix === '$_') continue;
+		if (name.endsWith('_clause')) continue;
+
+		if (!seen.has(name)) {
+			seen.add(name);
+			refs.push({ name, multi: prefix === '$$$' });
+		}
 	}
-	return parsed;
+
+	fieldRefCache.set(template, refs);
+	return refs;
 }
 
 // ---------------------------------------------------------------------------
@@ -26,63 +52,63 @@ function getParsed(template: string): ParsedTemplate {
 /**
  * Recursively assign a parsed tree node into a plain NodeData object.
  *
- * Uses the render template as the schema: field names and quantifiers
- * are extracted from the S-expression, so no per-kind metadata is needed.
+ * Uses the YAML render template as the schema: field names are extracted
+ * from $VARIABLE references. $$$NAME → multiple field, $NAME → single field.
+ * Unnamed children ($$$CHILDREN or bare $$$) are collected from remaining
+ * named children not covered by explicit fields.
  *
  * Branch nodes get `{ type, fields }`. Leaf nodes get `{ type, text }`.
  */
-export function assign(node: AnyTreeNode, rules: RulesRegistry): AnyNodeData {
+export function assign(node: AnyTreeNode, config: RulesConfig): AnyNodeData {
 	const kind = node.type;
-	const template = rules[kind];
+	const rule: TemplateRule | undefined = config.rules[kind];
 
-	// No template → leaf node
-	if (!template) {
+	// No rule → leaf node
+	if (!rule) {
 		return { type: kind, text: node.text() };
 	}
 
-	const parsed = getParsed(template);
+	const template = typeof rule === 'string' ? rule : rule.template;
+	const refs = extractFieldRefs(template);
+
 	const fields: Record<string, unknown> = {};
 	let children: AnyNodeData[] | undefined;
 	const fieldedIds = new Set<number>();
 
-	for (const el of parsed.elements) {
-		switch (el.type) {
-			case 'token':
-				// Anonymous token — skip (render reconstructs these from template)
-				break;
+	for (const ref of refs) {
+		if (ref.name === 'children') {
+			// Handled after all named fields
+			continue;
+		}
 
-			case 'field': {
-				if (el.quantifier === '*' || el.quantifier === '+') {
-					// Multiple field
-					const children = node.fieldChildren(el.name);
-					if (children.length > 0) {
-						for (const c of children) fieldedIds.add(c.id());
-						fields[el.name] = children.map(c => assign(c, rules));
-					}
+		if (ref.multi) {
+			// Multiple field
+			const fieldChildren = node.fieldChildren(ref.name);
+			if (fieldChildren.length > 0) {
+				for (const c of fieldChildren) fieldedIds.add(c.id());
+				fields[ref.name] = fieldChildren.map(c => assign(c, config));
+			}
+		} else {
+			// Single field
+			const child = node.field(ref.name);
+			if (child) {
+				fieldedIds.add(child.id());
+				if (child.isNamed()) {
+					fields[ref.name] = assign(child, config);
 				} else {
-					// Single field
-					const child = node.field(el.name);
-					if (child) {
-						fieldedIds.add(child.id());
-						if (child.isNamed()) {
-							fields[el.name] = assign(child, rules);
-						} else {
-							// Anonymous child in a named field (e.g. operator tokens)
-							fields[el.name] = child.text();
-						}
-					}
+					// Anonymous child in a named field (e.g. operator tokens)
+					fields[ref.name] = child.text();
 				}
-				break;
 			}
+		}
+	}
 
-			case 'children': {
-				// Unnamed children — named children not already covered by fields
-				const rest = node.children().filter(c => c.isNamed() && !fieldedIds.has(c.id()));
-				if (rest.length > 0) {
-					children = rest.map(c => assign(c, rules));
-				}
-				break;
-			}
+	// Collect unnamed children — named children not already covered by fields
+	const hasChildrenRef = refs.some(r => r.name === 'children');
+	if (hasChildrenRef) {
+		const rest = node.children().filter(c => c.isNamed() && !fieldedIds.has(c.id()));
+		if (rest.length > 0) {
+			children = rest.map(c => assign(c, config));
 		}
 	}
 

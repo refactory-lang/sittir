@@ -4,10 +4,9 @@
  * Reads tree-sitter grammar definitions and generates:
  * 1. Grammar type literal (grammar.ts)
  * 2. Type projections + const enums + navigation types (types.ts)
- * 3. S-expression render templates (rules.ts / rules.scm)
+ * 3. YAML render templates (templates.yaml)
  * 4. Unified factory functions (factories.ts)
  * 5. ir namespace (ir.ts)
- * 6. JoinBy separator map (joinby.ts)
  * 7. Constants (consts.ts)
  * 8. Barrel re-exports (index.ts)
  * 9. Test scaffolding (*.test.ts)
@@ -20,14 +19,13 @@
 import { toIrKey, toFactoryName } from './naming.ts';
 import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
-import { emitRules, emitRule } from './emitters/rules.ts';
+import { emitTemplatesYaml } from './emitters/rules.ts';
 import { emitFactories } from './emitters/factories.ts';
 import { emitAssign } from './emitters/assign.ts';
 import { emitFrom } from './emitters/from.ts';
 import { emitClientUtils } from './emitters/client-utils.ts';
 import { emitConsts } from './emitters/consts.ts';
 import { emitIrNamespace } from './emitters/ir-namespace.ts';
-import { emitJoinBy } from './emitters/joinby.ts';
 import { emitTests } from './emitters/test-new.ts';
 import { emitTypeTests } from './emitters/type-test.ts';
 import { emitConfig } from './emitters/config.ts';
@@ -53,8 +51,8 @@ export interface GeneratedFiles {
 	grammar: string;
 	/** types.ts — const enums + construction types + navigation types + supertype unions */
 	types: string;
-	/** rules.ts — S-expression render templates + joinBy map */
-	rules: string;
+	/** templates.yaml — YAML render templates with clauses and per-rule joinBy */
+	templatesYaml: string;
 	/** factories.ts — pure factory functions (typed fields in → typed node out) */
 	factories: string;
 	/** assign.ts — assignByKind table, per-kind assign functions, edit() */
@@ -65,8 +63,6 @@ export interface GeneratedFiles {
 	from: string;
 	/** ir.ts — ir namespace re-exporting all factories with short names */
 	irNamespace: string;
-	/** joinby.ts — separator map for list children */
-	joinBy: string;
 	/** consts.ts — discoverable arrays and maps */
 	consts: string;
 	/** index.ts barrel re-exports */
@@ -96,13 +92,12 @@ export function generate(cfg: CodegenConfig): GeneratedFiles {
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
 		types: emitTypes({ grammar: cfg.grammar, nodes }),
-		rules: emitRules({ grammar: cfg.grammar, nodes }),
+		templatesYaml: emitTemplatesYaml({ grammar: cfg.grammar, nodes, grammarSha: '' }),
 		factories: emitFactories({ grammar: cfg.grammar, nodes }),
 		assign: emitAssign({ grammar: cfg.grammar, nodes }),
 		utils: emitClientUtils({ nodes }),
 		from: emitFrom({ grammar: cfg.grammar, nodes }),
 		irNamespace: emitIrNamespace({ grammar: cfg.grammar, nodes }),
-		joinBy: emitJoinBy({ grammar: cfg.grammar, nodes }),
 		consts: emitConsts({ grammar: cfg.grammar, nodes }),
 		index: emitIndex({ grammar: cfg.grammar, nodes }),
 		tests: emitTests({ grammar: cfg.grammar, nodes }),

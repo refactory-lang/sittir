@@ -1,43 +1,7 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, Edit, ByteRange, ReplaceTarget, AnyTreeNode, Renderable, KindOf, RulesRegistry, JoinByMap } from './types.ts';
-import { render } from './render.ts';
+import type { AnyNodeData, Edit, ByteRange, ReplaceTarget, AnyTreeNode, Renderable, KindOf } from './types.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
-
-// ---------------------------------------------------------------------------
-// toEdit — overloaded for raw offsets and Range objects
-// ---------------------------------------------------------------------------
-
-export function toEdit(node: AnyNodeData, registry: RulesRegistry, start: number, end: number, joinBy?: JoinByMap): Edit;
-export function toEdit(node: AnyNodeData, registry: RulesRegistry, range: ByteRange, joinBy?: JoinByMap): Edit;
-export function toEdit(
-	node: AnyNodeData,
-	registry: RulesRegistry,
-	startOrRange: number | ByteRange,
-	endOrJoinBy?: number | JoinByMap,
-	joinBy?: JoinByMap,
-): Edit {
-	const insertedText = render(node, registry, typeof endOrJoinBy === 'object' ? endOrJoinBy : joinBy);
-
-	if (typeof startOrRange === 'number') {
-		if (typeof endOrJoinBy !== 'number') {
-			throw new Error('endPos is required when startPos is a number');
-		}
-		if (startOrRange < 0 || endOrJoinBy < 0) {
-			throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${endOrJoinBy})`);
-		}
-		if (startOrRange > endOrJoinBy) {
-			throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${endOrJoinBy})`);
-		}
-		return { startPos: startOrRange, endPos: endOrJoinBy, insertedText };
-	}
-
-	return {
-		startPos: startOrRange.start.index,
-		endPos: startOrRange.end.index,
-		insertedText,
-	};
-}
 
 // ---------------------------------------------------------------------------
 // replace — loosely typed, any AnyNodeData

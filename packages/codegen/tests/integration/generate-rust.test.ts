@@ -8,11 +8,11 @@ describe('generate() for Rust', () => {
 		outputDir: 'src',
 	});
 
-	it('should generate S-expression render templates', () => {
-		expect(result.rules).toContain('(struct_item');
-		expect(result.rules).toContain('(function_item');
-		expect(result.rules).toContain('"fn"');
-		expect(result.rules).toContain('"struct"');
+	it('should generate YAML render templates', () => {
+		expect(result.templatesYaml).toContain('language: rust');
+		expect(result.templatesYaml).toContain('struct_item:');
+		expect(result.templatesYaml).toContain('function_item:');
+		expect(result.templatesYaml).toContain('$NAME');
 	});
 
 	it('should generate unified factory functions', () => {
@@ -41,7 +41,6 @@ describe('generate() for Rust', () => {
 	});
 
 	it('should generate index barrel with new exports', () => {
-		expect(result.index).toContain("from './rules.js'");
 		expect(result.index).toContain("from './ir.js'");
 		expect(result.index).toContain("from '@sittir/core'");
 	});
@@ -50,8 +49,8 @@ describe('generate() for Rust', () => {
 		expect(result.consts).toBeDefined();
 	});
 
-	it('should generate joinBy separator map', () => {
-		expect(result.joinBy).toContain('export const joinBy');
+	it('should include templates YAML with rules', () => {
+		expect(result.templatesYaml).toContain('rules:');
 	});
 
 	it('should NOT have old builder properties', () => {

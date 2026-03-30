@@ -29,7 +29,7 @@
     "dist"
   ],
   "scripts": {
-    "generate": "rm -rf src/factories.ts src/from.ts src/ir.ts src/utils.ts src/rules.ts src/joinby.ts src/types.ts src/consts.ts src/index.ts tests && node ../codegen/dist/cli.js --grammar rust --all --output src/",
+    "generate": "rm -rf src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests && node ../codegen/dist/cli.js --grammar rust --all --output src/",
     "regenerate": "pnpm generate && pnpm build && pnpm test",
     "build": "tsgo -p tsconfig.build.json",
     "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
@@ -43,6 +43,7 @@
     "@sittir/types": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "type-fest": "^5.5.0"
   }
 }

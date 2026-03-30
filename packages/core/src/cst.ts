@@ -1,7 +1,6 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, CSTNode, Position } from './types.ts';
-import type { RulesRegistry, JoinByMap } from './render.ts';
-import { render } from './render.ts';
+import type { AnyNodeData, CSTNode, Position, RulesConfig } from './types.ts';
+import type { BoundRenderer } from './render.ts';
 
 function offsetToPosition(offset: number, fullText: string, baseOffset: number): Position {
 	const textUpTo = fullText.slice(0, offset - baseOffset);
@@ -17,11 +16,10 @@ function offsetToPosition(offset: number, fullText: string, baseOffset: number):
  */
 export function toCst(
 	node: AnyNodeData,
-	registry: RulesRegistry,
+	renderer: BoundRenderer,
 	offset = 0,
-	joinBy?: JoinByMap,
 ): CSTNode {
-	const text = render(node, registry, joinBy);
+	const text = renderer.render(node);
 
 	if (node.text !== undefined) {
 		return {
