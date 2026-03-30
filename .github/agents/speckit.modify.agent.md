@@ -58,20 +58,20 @@ Given that modification request, do this:
    Run the script `.specify/extensions/workflows/scripts/bash/create-modification.sh --json <feature-number> "<description>"` from repo root and parse its JSON output for MOD_ID, BRANCH_NAME, MOD_SPEC_FILE, IMPACT_FILE, and FEATURE_NAME. All file paths must be absolute.
    **IMPORTANT** You must only ever run this script once per feature selection. The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for.
 
-5. Read the impact analysis from IMPACT_FILE to understand what files and contracts are affected.
+4. Read the impact analysis from IMPACT_FILE to understand what files and contracts are affected.
 
-6. Load the original feature spec from `specs/<FEATURE_NAME>/spec.md` to understand the baseline.
+5. Load the original feature spec from `specs/<FEATURE_NAME>/spec.md` to understand the baseline.
 
-7. Load `.specify/extensions/workflows/templates/modify/modification-template.md` to understand required sections.
+6. Load `.specify/extensions/workflows/templates/modify/modification-template.md` to understand required sections.
 
-8. Write the modification spec to MOD_SPEC_FILE using the template structure:
+7. Write the modification spec to MOD_SPEC_FILE using the template structure:
    - Fill "Why Modify?" with business justification from description
    - Fill "What's Changing?" sections (Added/Modified/Removed) based on description
    - Include impact analysis summary from IMPACT_FILE
    - Document backward compatibility considerations
    - Leave detailed implementation sections for planning phase
 
-9. Report completion with Next Steps:
+8. Report completion with Next Steps:
 
 ```
 Modification workflow initialized
