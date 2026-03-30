@@ -331,7 +331,10 @@ export function asPatternFrom(input: AsPattern): any;
 export function asPatternFrom(input: AsPatternFromInput & {readonly kind?: 'as_pattern'}): any;
 export function asPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignAsPattern(input);
-  if (isNodeData(input)) return as_pattern_((input as any).fields);
+  if (isNodeData(input) && input.type === 'as_pattern') return as_pattern_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return asPatternFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.alias !== undefined) {
@@ -348,7 +351,10 @@ export function assertStatementFrom(input: AssertStatement): any;
 export function assertStatementFrom(input: AssertStatementFromInput & {readonly kind?: 'assert_statement'}): any;
 export function assertStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignAssertStatement(input);
-  if (isNodeData(input)) return assert_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'assert_statement') return assert_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('expression1' in input)) {
+    return assertStatementFrom({ expression1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.expression1 !== undefined) {
@@ -366,7 +372,10 @@ export function assignmentFrom(input: Assignment): any;
 export function assignmentFrom(input: AssignmentFromInput & {readonly kind?: 'assignment'}): any;
 export function assignmentFrom(input: any): any {
   if (isTreeNode(input)) return assignAssignment(input);
-  if (isNodeData(input)) return assignment_((input as any).fields);
+  if (isNodeData(input) && input.type === 'assignment') return assignment_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('left' in input)) {
+    return assignmentFrom({ left: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -423,7 +432,10 @@ export function await_From(input: Await): any;
 export function await_From(input: AwaitFromInput & {readonly kind?: 'await'}): any;
 export function await_From(input: any): any {
   if (isTreeNode(input)) return assignAwait(input);
-  if (isNodeData(input)) return await_((input as any).fields);
+  if (isNodeData(input) && input.type === 'await') return await_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return await_From({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -552,7 +564,10 @@ export function chevronFrom(input: Chevron): any;
 export function chevronFrom(input: ChevronFromInput & {readonly kind?: 'chevron'}): any;
 export function chevronFrom(input: any): any {
   if (isTreeNode(input)) return assignChevron(input);
-  if (isNodeData(input)) return chevron_((input as any).fields);
+  if (isNodeData(input) && input.type === 'chevron') return chevron_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return chevronFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -589,7 +604,10 @@ export function classPatternFrom(input: ClassPattern): any;
 export function classPatternFrom(input: ClassPatternFromInput & {readonly kind?: 'class_pattern'}): any;
 export function classPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignClassPattern(input);
-  if (isNodeData(input)) return class_pattern_((input as any).fields);
+  if (isNodeData(input) && input.type === 'class_pattern') return class_pattern_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('dottedName' in input)) {
+    return classPatternFrom({ dottedName: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.dottedName !== undefined) {
@@ -610,7 +628,10 @@ export function comparisonOperatorFrom(input: ComparisonOperator): any;
 export function comparisonOperatorFrom(input: ComparisonOperatorFromInput & {readonly kind?: 'comparison_operator'}): any;
 export function comparisonOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignComparisonOperator(input);
-  if (isNodeData(input)) return comparison_operator_((input as any).fields);
+  if (isNodeData(input) && input.type === 'comparison_operator') return comparison_operator_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('primaryExpression1' in input)) {
+    return comparisonOperatorFrom({ primaryExpression1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.operators !== undefined) {
@@ -654,7 +675,10 @@ export function concatenatedStringFrom(input: ConcatenatedString): any;
 export function concatenatedStringFrom(input: ConcatenatedStringFromInput & {readonly kind?: 'concatenated_string'}): any;
 export function concatenatedStringFrom(input: any): any {
   if (isTreeNode(input)) return assignConcatenatedString(input);
-  if (isNodeData(input)) return concatenated_string_((input as any).fields);
+  if (isNodeData(input) && input.type === 'concatenated_string') return concatenated_string_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('string1' in input)) {
+    return concatenatedStringFrom({ string1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.string1 !== undefined) {
@@ -711,7 +735,10 @@ export function decoratedDefinitionFrom(input: DecoratedDefinition): any;
 export function decoratedDefinitionFrom(input: DecoratedDefinitionFromInput & {readonly kind?: 'decorated_definition'}): any;
 export function decoratedDefinitionFrom(input: any): any {
   if (isTreeNode(input)) return assignDecoratedDefinition(input);
-  if (isNodeData(input)) return decorated_definition_((input as any).fields);
+  if (isNodeData(input) && input.type === 'decorated_definition') return decorated_definition_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('definition' in input)) {
+    return decoratedDefinitionFrom({ definition: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.definition !== undefined) {
@@ -731,7 +758,10 @@ export function decoratorFrom(input: Decorator): any;
 export function decoratorFrom(input: DecoratorFromInput & {readonly kind?: 'decorator'}): any;
 export function decoratorFrom(input: any): any {
   if (isTreeNode(input)) return assignDecorator(input);
-  if (isNodeData(input)) return decorator_((input as any).fields);
+  if (isNodeData(input) && input.type === 'decorator') return decorator_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return decoratorFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -762,7 +792,10 @@ export function deleteStatementFrom(input: DeleteStatement): any;
 export function deleteStatementFrom(input: DeleteStatementFromInput & {readonly kind?: 'delete_statement'}): any;
 export function deleteStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignDeleteStatement(input);
-  if (isNodeData(input)) return delete_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'delete_statement') return delete_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return deleteStatementFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -833,7 +866,10 @@ export function dictionarySplatFrom(input: DictionarySplat): any;
 export function dictionarySplatFrom(input: DictionarySplatFromInput & {readonly kind?: 'dictionary_splat'}): any;
 export function dictionarySplatFrom(input: any): any {
   if (isTreeNode(input)) return assignDictionarySplat(input);
-  if (isNodeData(input)) return dictionary_splat_((input as any).fields);
+  if (isNodeData(input) && input.type === 'dictionary_splat') return dictionary_splat_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return dictionarySplatFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -847,7 +883,10 @@ export function dictionarySplatPatternFrom(input: DictionarySplatPattern): any;
 export function dictionarySplatPatternFrom(input: DictionarySplatPatternFromInput & {readonly kind?: 'dictionary_splat_pattern'}): any;
 export function dictionarySplatPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignDictionarySplatPattern(input);
-  if (isNodeData(input)) return dictionary_splat_pattern_((input as any).fields);
+  if (isNodeData(input) && input.type === 'dictionary_splat_pattern') return dictionary_splat_pattern_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return dictionarySplatPatternFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -856,12 +895,16 @@ export function dictionarySplatPatternFrom(input: any): any {
   return dictionary_splat_pattern_(resolved);
 }
 
+export function dottedNameFrom(input: string): any;
 export function dottedNameFrom(input: DottedNameTree): any;
 export function dottedNameFrom(input: DottedName): any;
 export function dottedNameFrom(input: DottedNameFromInput & {readonly kind?: 'dotted_name'}): any;
 export function dottedNameFrom(input: any): any {
   if (isTreeNode(input)) return assignDottedName(input);
-  if (isNodeData(input)) return dotted_name_((input as any).fields);
+  if (isNodeData(input) && input.type === 'dotted_name') return dotted_name_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('identifier1' in input)) {
+    return dottedNameFrom({ identifier1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier1 !== undefined) {
@@ -896,7 +939,10 @@ export function elseClauseFrom(input: ElseClause): any;
 export function elseClauseFrom(input: ElseClauseFromInput & {readonly kind?: 'else_clause'}): any;
 export function elseClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignElseClause(input);
-  if (isNodeData(input)) return else_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'else_clause') return else_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('body' in input)) {
+    return elseClauseFrom({ body: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -910,7 +956,10 @@ export function exceptClauseFrom(input: ExceptClause): any;
 export function exceptClauseFrom(input: ExceptClauseFromInput & {readonly kind?: 'except_clause'}): any;
 export function exceptClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignExceptClause(input);
-  if (isNodeData(input)) return except_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'except_clause') return except_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return exceptClauseFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.alias !== undefined) {
@@ -932,7 +981,10 @@ export function execStatementFrom(input: ExecStatement): any;
 export function execStatementFrom(input: ExecStatementFromInput & {readonly kind?: 'exec_statement'}): any;
 export function execStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignExecStatement(input);
-  if (isNodeData(input)) return exec_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'exec_statement') return exec_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('code' in input)) {
+    return execStatementFrom({ code: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.code !== undefined) {
@@ -953,7 +1005,10 @@ export function expressionListFrom(input: ExpressionList): any;
 export function expressionListFrom(input: ExpressionListFromInput & {readonly kind?: 'expression_list'}): any;
 export function expressionListFrom(input: any): any {
   if (isTreeNode(input)) return assignExpressionList(input);
-  if (isNodeData(input)) return expression_list_((input as any).fields);
+  if (isNodeData(input) && input.type === 'expression_list') return expression_list_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('expression1' in input)) {
+    return expressionListFrom({ expression1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.expression1 !== undefined) {
@@ -971,7 +1026,10 @@ export function expressionStatementFrom(input: ExpressionStatement): any;
 export function expressionStatementFrom(input: ExpressionStatementFromInput & {readonly kind?: 'expression_statement'}): any;
 export function expressionStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignExpressionStatement(input);
-  if (isNodeData(input)) return expression_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'expression_statement') return expression_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children0' in input)) {
+    return expressionStatementFrom({ children0: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -989,7 +1047,10 @@ export function finallyClauseFrom(input: FinallyClause): any;
 export function finallyClauseFrom(input: FinallyClauseFromInput & {readonly kind?: 'finally_clause'}): any;
 export function finallyClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignFinallyClause(input);
-  if (isNodeData(input)) return finally_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'finally_clause') return finally_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return finallyClauseFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1003,7 +1064,10 @@ export function forInClauseFrom(input: ForInClause): any;
 export function forInClauseFrom(input: ForInClauseFromInput & {readonly kind?: 'for_in_clause'}): any;
 export function forInClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignForInClause(input);
-  if (isNodeData(input)) return for_in_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'for_in_clause') return for_in_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('left' in input)) {
+    return forInClauseFrom({ left: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -1047,7 +1111,10 @@ export function formatExpressionFrom(input: FormatExpression): any;
 export function formatExpressionFrom(input: FormatExpressionFromInput & {readonly kind?: 'format_expression'}): any;
 export function formatExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignFormatExpression(input);
-  if (isNodeData(input)) return format_expression_((input as any).fields);
+  if (isNodeData(input) && input.type === 'format_expression') return format_expression_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('expression' in input)) {
+    return formatExpressionFrom({ expression: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.expression !== undefined) {
@@ -1159,12 +1226,16 @@ export function genericTypeFrom(input: any): any {
   return generic_type_(resolved);
 }
 
+export function globalStatementFrom(input: string): any;
 export function globalStatementFrom(input: GlobalStatementTree): any;
 export function globalStatementFrom(input: GlobalStatement): any;
 export function globalStatementFrom(input: GlobalStatementFromInput & {readonly kind?: 'global_statement'}): any;
 export function globalStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignGlobalStatement(input);
-  if (isNodeData(input)) return global_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'global_statement') return global_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('identifier1' in input)) {
+    return globalStatementFrom({ identifier1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier1 !== undefined) {
@@ -1182,7 +1253,10 @@ export function ifClauseFrom(input: IfClause): any;
 export function ifClauseFrom(input: IfClauseFromInput & {readonly kind?: 'if_clause'}): any;
 export function ifClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignIfClause(input);
-  if (isNodeData(input)) return if_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'if_clause') return if_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return ifClauseFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1218,7 +1292,10 @@ export function importFromStatementFrom(input: ImportFromStatement): any;
 export function importFromStatementFrom(input: ImportFromStatementFromInput & {readonly kind?: 'import_from_statement'}): any;
 export function importFromStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignImportFromStatement(input);
-  if (isNodeData(input)) return import_from_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'import_from_statement') return import_from_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('moduleName' in input)) {
+    return importFromStatementFrom({ moduleName: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.moduleName !== undefined) {
@@ -1258,7 +1335,10 @@ export function interpolationFrom(input: Interpolation): any;
 export function interpolationFrom(input: InterpolationFromInput & {readonly kind?: 'interpolation'}): any;
 export function interpolationFrom(input: any): any {
   if (isTreeNode(input)) return assignInterpolation(input);
-  if (isNodeData(input)) return interpolation_((input as any).fields);
+  if (isNodeData(input) && input.type === 'interpolation') return interpolation_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('expression' in input)) {
+    return interpolationFrom({ expression: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.expression !== undefined) {
@@ -1290,12 +1370,16 @@ export function keywordArgumentFrom(input: any): any {
   return keyword_argument_(resolved);
 }
 
+export function keywordPatternFrom(input: string): any;
 export function keywordPatternFrom(input: KeywordPatternTree): any;
 export function keywordPatternFrom(input: KeywordPattern): any;
 export function keywordPatternFrom(input: KeywordPatternFromInput & {readonly kind?: 'keyword_pattern'}): any;
 export function keywordPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignKeywordPattern(input);
-  if (isNodeData(input)) return keyword_pattern_((input as any).fields);
+  if (isNodeData(input) && input.type === 'keyword_pattern') return keyword_pattern_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('identifier' in input)) {
+    return keywordPatternFrom({ identifier: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier !== undefined) {
@@ -1312,7 +1396,10 @@ export function lambdaFrom(input: Lambda): any;
 export function lambdaFrom(input: LambdaFromInput & {readonly kind?: 'lambda'}): any;
 export function lambdaFrom(input: any): any {
   if (isTreeNode(input)) return assignLambda(input);
-  if (isNodeData(input)) return lambda_((input as any).fields);
+  if (isNodeData(input) && input.type === 'lambda') return lambda_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('body' in input)) {
+    return lambdaFrom({ body: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1397,7 +1484,10 @@ export function listSplatFrom(input: ListSplat): any;
 export function listSplatFrom(input: ListSplatFromInput & {readonly kind?: 'list_splat'}): any;
 export function listSplatFrom(input: any): any {
   if (isTreeNode(input)) return assignListSplat(input);
-  if (isNodeData(input)) return list_splat_((input as any).fields);
+  if (isNodeData(input) && input.type === 'list_splat') return list_splat_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return listSplatFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1411,7 +1501,10 @@ export function listSplatPatternFrom(input: ListSplatPattern): any;
 export function listSplatPatternFrom(input: ListSplatPatternFromInput & {readonly kind?: 'list_splat_pattern'}): any;
 export function listSplatPatternFrom(input: any): any {
   if (isTreeNode(input)) return assignListSplatPattern(input);
-  if (isNodeData(input)) return list_splat_pattern_((input as any).fields);
+  if (isNodeData(input) && input.type === 'list_splat_pattern') return list_splat_pattern_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return listSplatPatternFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1425,7 +1518,10 @@ export function matchStatementFrom(input: MatchStatement): any;
 export function matchStatementFrom(input: MatchStatementFromInput & {readonly kind?: 'match_statement'}): any;
 export function matchStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignMatchStatement(input);
-  if (isNodeData(input)) return match_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'match_statement') return match_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('body' in input)) {
+    return matchStatementFrom({ body: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1490,12 +1586,16 @@ export function namedExpressionFrom(input: any): any {
   return named_expression_(resolved);
 }
 
+export function nonlocalStatementFrom(input: string): any;
 export function nonlocalStatementFrom(input: NonlocalStatementTree): any;
 export function nonlocalStatementFrom(input: NonlocalStatement): any;
 export function nonlocalStatementFrom(input: NonlocalStatementFromInput & {readonly kind?: 'nonlocal_statement'}): any;
 export function nonlocalStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignNonlocalStatement(input);
-  if (isNodeData(input)) return nonlocal_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'nonlocal_statement') return nonlocal_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('identifier1' in input)) {
+    return nonlocalStatementFrom({ identifier1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.identifier1 !== undefined) {
@@ -1513,7 +1613,10 @@ export function notOperatorFrom(input: NotOperator): any;
 export function notOperatorFrom(input: NotOperatorFromInput & {readonly kind?: 'not_operator'}): any;
 export function notOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignNotOperator(input);
-  if (isNodeData(input)) return not_operator_((input as any).fields);
+  if (isNodeData(input) && input.type === 'not_operator') return not_operator_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('argument' in input)) {
+    return notOperatorFrom({ argument: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.argument !== undefined) {
@@ -1559,7 +1662,10 @@ export function parenthesizedExpressionFrom(input: ParenthesizedExpression): any
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionFromInput & {readonly kind?: 'parenthesized_expression'}): any;
 export function parenthesizedExpressionFrom(input: any): any {
   if (isTreeNode(input)) return assignParenthesizedExpression(input);
-  if (isNodeData(input)) return parenthesized_expression_((input as any).fields);
+  if (isNodeData(input) && input.type === 'parenthesized_expression') return parenthesized_expression_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return parenthesizedExpressionFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1573,7 +1679,10 @@ export function parenthesizedListSplatFrom(input: ParenthesizedListSplat): any;
 export function parenthesizedListSplatFrom(input: ParenthesizedListSplatFromInput & {readonly kind?: 'parenthesized_list_splat'}): any;
 export function parenthesizedListSplatFrom(input: any): any {
   if (isTreeNode(input)) return assignParenthesizedListSplat(input);
-  if (isNodeData(input)) return parenthesized_list_splat_((input as any).fields);
+  if (isNodeData(input) && input.type === 'parenthesized_list_splat') return parenthesized_list_splat_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return parenthesizedListSplatFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1587,7 +1696,10 @@ export function patternListFrom(input: PatternList): any;
 export function patternListFrom(input: PatternListFromInput & {readonly kind?: 'pattern_list'}): any;
 export function patternListFrom(input: any): any {
   if (isTreeNode(input)) return assignPatternList(input);
-  if (isNodeData(input)) return pattern_list_((input as any).fields);
+  if (isNodeData(input) && input.type === 'pattern_list') return pattern_list_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('pattern1' in input)) {
+    return patternListFrom({ pattern1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.pattern1 !== undefined) {
@@ -1636,12 +1748,16 @@ export function raiseStatementFrom(input: any): any {
   return raise_statement_(resolved);
 }
 
+export function relativeImportFrom(input: string): any;
 export function relativeImportFrom(input: RelativeImportTree): any;
 export function relativeImportFrom(input: RelativeImport): any;
 export function relativeImportFrom(input: RelativeImportFromInput & {readonly kind?: 'relative_import'}): any;
 export function relativeImportFrom(input: any): any {
   if (isTreeNode(input)) return assignRelativeImport(input);
-  if (isNodeData(input)) return relative_import_((input as any).fields);
+  if (isNodeData(input) && input.type === 'relative_import') return relative_import_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('importPrefix' in input)) {
+    return relativeImportFrom({ importPrefix: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.importPrefix !== undefined) {
@@ -1739,12 +1855,16 @@ export function splatPatternFrom(input: any): any {
   return splat_pattern_(resolved);
 }
 
+export function splatTypeFrom(input: string): any;
 export function splatTypeFrom(input: SplatTypeTree): any;
 export function splatTypeFrom(input: SplatType): any;
 export function splatTypeFrom(input: SplatTypeFromInput & {readonly kind?: 'splat_type'}): any;
 export function splatTypeFrom(input: any): any {
   if (isTreeNode(input)) return assignSplatType(input);
-  if (isNodeData(input)) return splat_type_((input as any).fields);
+  if (isNodeData(input) && input.type === 'splat_type') return splat_type_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return splatTypeFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1794,7 +1914,10 @@ export function subscriptFrom(input: Subscript): any;
 export function subscriptFrom(input: SubscriptFromInput & {readonly kind?: 'subscript'}): any;
 export function subscriptFrom(input: any): any {
   if (isTreeNode(input)) return assignSubscript(input);
-  if (isNodeData(input)) return subscript_((input as any).fields);
+  if (isNodeData(input) && input.type === 'subscript') return subscript_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('value' in input)) {
+    return subscriptFrom({ value: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.subscript !== undefined) {
@@ -1815,7 +1938,10 @@ export function tryStatementFrom(input: TryStatement): any;
 export function tryStatementFrom(input: TryStatementFromInput & {readonly kind?: 'try_statement'}): any;
 export function tryStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignTryStatement(input);
-  if (isNodeData(input)) return try_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'try_statement') return try_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('body' in input)) {
+    return tryStatementFrom({ body: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1869,7 +1995,10 @@ export function type_From(input: Type): any;
 export function type_From(input: TypeFromInput & {readonly kind?: 'type'}): any;
 export function type_From(input: any): any {
   if (isTreeNode(input)) return assignType(input);
-  if (isNodeData(input)) return type_((input as any).fields);
+  if (isNodeData(input) && input.type === 'type') return type_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return type_From({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1900,7 +2029,10 @@ export function typeParameterFrom(input: TypeParameter): any;
 export function typeParameterFrom(input: TypeParameterFromInput & {readonly kind?: 'type_parameter'}): any;
 export function typeParameterFrom(input: any): any {
   if (isTreeNode(input)) return assignTypeParameter(input);
-  if (isNodeData(input)) return type_parameter_((input as any).fields);
+  if (isNodeData(input) && input.type === 'type_parameter') return type_parameter_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children0' in input)) {
+    return typeParameterFrom({ children0: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children0 !== undefined) {
@@ -2024,7 +2156,10 @@ export function withClauseFrom(input: WithClause): any;
 export function withClauseFrom(input: WithClauseFromInput & {readonly kind?: 'with_clause'}): any;
 export function withClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignWithClause(input);
-  if (isNodeData(input)) return with_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'with_clause') return with_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('withItem1' in input)) {
+    return withClauseFrom({ withItem1: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.withItem1 !== undefined) {
@@ -2042,7 +2177,10 @@ export function withItemFrom(input: WithItem): any;
 export function withItemFrom(input: WithItemFromInput & {readonly kind?: 'with_item'}): any;
 export function withItemFrom(input: any): any {
   if (isTreeNode(input)) return assignWithItem(input);
-  if (isNodeData(input)) return with_item_((input as any).fields);
+  if (isNodeData(input) && input.type === 'with_item') return with_item_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('value' in input)) {
+    return withItemFrom({ value: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.value !== undefined) {
