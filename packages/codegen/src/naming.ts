@@ -1,9 +1,14 @@
 /**
  * Naming conventions for converting tree-sitter grammar node kinds
  * to TypeScript identifiers.
+ *
+ * Also contains pipeline Step 10 functions: applyNaming, nameModel, nameField.
  */
 
-const SUFFIXES = ['_item', '_declaration', '_statement', '_expression'] as const;
+import type { NodeModel, FieldModel } from './node-model.ts';
+import { isBranch, isContainer } from './node-model.ts';
+
+const SUFFIXES = ['_item'] as const;
 
 const JS_RESERVED = new Set([
   'if', 'for', 'while', 'class', 'import', 'export', 'type', 'in', 'do',
@@ -12,14 +17,10 @@ const JS_RESERVED = new Set([
   'void', 'typeof', 'instanceof', 'enum', 'const', 'let', 'var',
   'function', 'extends', 'implements', 'interface', 'package', 'private',
   'protected', 'public', 'static', 'struct', 'use', 'arguments', 'await',
-  'eval', 'abstract',
+  'eval', 'abstract', 'true', 'false', 'null', 'undefined',
 ]);
 
-const SHORT_NAME_ALIASES: Record<string, string> = {
-  function_item: 'fn',
-  source_file: 'file',
-  program: 'file',
-};
+const SHORT_NAME_ALIASES: Record<string, string> = {};
 
 /** Convert snake_case to camelCase */
 function snakeToCamel(s: string): string {
@@ -51,6 +52,15 @@ export function toFactoryName(kind: string): string {
   return name;
 }
 
+/**
+ * Raw kind name + trailing underscore for factory function names.
+ * All factories get the suffix uniformly — no reserved-word special cases.
+ * Assign uses `factories[kind + '_']` for dynamic lookup.
+ */
+export function toRawFactoryName(kind: string): string {
+  return kind + '_';
+}
+
 /** snake_case to PascalCase: `struct_item` -> `StructItem` */
 export function toTypeName(kind: string): string {
   return snakeToPascal(kind);
@@ -75,6 +85,17 @@ export function toShortName(kind: string): string {
     return shortName + '_';
   }
   return shortName;
+}
+
+/**
+ * CamelCase ir namespace property key.
+ * Strips suffixes, applies aliases, converts to camelCase.
+ * `struct_item` -> `struct`, `array_type` -> `arrayType`, `function_item` -> `fn`
+ */
+export function toIrKey(kind: string): string {
+  const short = toShortName(kind);
+  const base = short.endsWith('_') ? short.slice(0, -1) : short;
+  return snakeToCamel(base);
 }
 
 /** kebab-case without suffix: `struct_item` -> `struct` */
@@ -124,7 +145,7 @@ export function resolveFileNames(kinds: string[]): Map<string, string> {
   const result = new Map<string, string>();
   for (const [stripped, colliding] of strippedToKinds) {
     if (colliding.length === 1) {
-      result.set(colliding[0], stripped);
+      result.set(colliding[0]!, stripped);
     } else {
       for (const kind of colliding) {
         result.set(kind, kind.replace(/_/g, '-'));
@@ -132,4 +153,31 @@ export function resolveFileNames(kinds: string[]): Map<string, string> {
     }
   }
   return result;
+}
+
+// ---------------------------------------------------------------------------
+// Pipeline Step 10: applyNaming
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute typeName (PascalCase) and factoryName (camelCase) on each model.
+ * Compute propertyName (camelCase) on each field.
+ */
+export function applyNaming(models: Map<string, NodeModel>): void {
+  for (const model of models.values()) {
+    nameModel(model);
+    if (isBranch(model)) {
+      for (const field of model.fields) nameField(field);
+    }
+  }
+}
+
+function nameModel(model: NodeModel): void {
+  const kind = model.kind.replace(/^_/, '');
+  model.typeName = snakeToPascal(kind);
+  model.factoryName = toFactoryName(kind);
+}
+
+function nameField(field: FieldModel): void {
+  field.propertyName = snakeToCamel(field.name);
 }

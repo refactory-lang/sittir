@@ -1,75 +1,130 @@
 #!/usr/bin/env node
 /**
- * CLI entry point for ir-codegen.
+ * CLI entry point for sittir codegen.
  *
  * Usage:
- *   ir-codegen --grammar rust --nodes struct_item,function_item --output src/generated/
- *   ir-codegen --config ir-codegen.json
+ *   sittir --grammar rust --all --output src/
+ *   sittir --grammar rust --nodes struct_item,function_item --output src/
  */
 
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 import { generate } from './index.ts';
 import type { CodegenConfig } from './index.ts';
 
-function parseArgs(args: string[]): CodegenConfig {
-	const config: Partial<CodegenConfig> = {};
-
-	for (let i = 0; i < args.length; i++) {
-		const arg = args[i];
-		const next = args[i + 1];
-
-		switch (arg) {
-			case '--grammar':
-				config.grammar = next;
-				i++;
-				break;
-			case '--nodes':
-				config.nodes = next?.split(',') ?? [];
-				i++;
-				break;
-			case '--output':
-				config.outputDir = next;
-				i++;
-				break;
-			case '--config': {
-				// TODO: Read config from JSON file
-				console.error('--config not yet implemented');
-				process.exit(1);
-				break;
-			}
-			case '--help':
-				console.log(`
-ir-codegen — Generate typed IR builders from tree-sitter grammars
-
-Usage:
-  ir-codegen --grammar <lang> --nodes <kind1,kind2,...> --output <dir>
-  ir-codegen --config <path>
-
-Options:
-  --grammar    Grammar language (e.g., rust, typescript, python)
-  --nodes      Comma-separated list of node kinds to generate builders for
-  --output     Output directory for generated files
-  --config     Path to JSON config file
-  --help       Show this help message
-`);
-				process.exit(0);
-				break;
-			default:
-				console.error(`Unknown argument: ${arg}`);
-				process.exit(1);
-		}
-	}
-
-	if (!config.grammar || !config.nodes || !config.outputDir) {
-		console.error('Missing required arguments. Use --help for usage.');
-		process.exit(1);
-	}
-
-	return config as CodegenConfig;
+interface CliArgs {
+	grammar?: string;
+	nodes?: string[];
+	outputDir?: string;
+	all?: boolean;
+	testsDir?: string;
+	help?: boolean;
 }
 
-const config = parseArgs(process.argv.slice(2));
+function parseArgs(argv: string[]): CliArgs {
+	const args: CliArgs = {};
+	for (let i = 2; i < argv.length; i++) {
+		const arg = argv[i];
+		switch (arg) {
+			case '--grammar':
+			case '-g':
+				args.grammar = argv[++i];
+				break;
+			case '--nodes':
+			case '-n':
+				args.nodes = argv[++i]?.split(',');
+				break;
+			case '--output':
+			case '-o':
+				args.outputDir = argv[++i];
+				break;
+			case '--all':
+			case '-a':
+				args.all = true;
+				break;
+			case '--tests-dir':
+				args.testsDir = argv[++i];
+				break;
+			case '--help':
+			case '-h':
+				args.help = true;
+				break;
+		}
+	}
+	return args;
+}
+
+function writeFile(path: string, content: string): void {
+	mkdirSync(dirname(path), { recursive: true });
+	writeFileSync(path, content, 'utf8');
+}
+
+const cliArgs = parseArgs(process.argv);
+
+if (cliArgs.help) {
+	console.log(`
+Usage: sittir --grammar <name> [--all | --nodes <kinds>] --output <dir>
+
+Options:
+  --grammar, -g    Grammar name (rust, typescript, python)
+  --nodes, -n      Comma-separated node kinds to generate
+  --all, -a        Generate for all branch node kinds
+  --output, -o     Output directory for generated files
+  --tests-dir      Output directory for test files (default: ../tests)
+  --help, -h       Show this help
+`);
+	process.exit(0);
+}
+
+if (!cliArgs.grammar || !cliArgs.outputDir) {
+	console.error('Missing required arguments: --grammar and --output. Use --help for usage.');
+	process.exit(1);
+}
+
+if (!cliArgs.all && (!cliArgs.nodes || cliArgs.nodes.length === 0)) {
+	console.error('Must provide --nodes or --all. Use --help for usage.');
+	process.exit(1);
+}
+
+const config: CodegenConfig = {
+	grammar: cliArgs.grammar!,
+	nodes: cliArgs.all ? undefined : cliArgs.nodes,
+	outputDir: cliArgs.outputDir!,
+};
+
+console.log(`Generating ${config.grammar} IR...`);
 const result = generate(config);
 
-console.log(`Generated ${result.builders.size} builders`);
-console.log(`Generated renderer with ${result.builders.size} cases`);
-console.log(`Generated ${result.tests.size} test files`);
+const outDir = cliArgs.outputDir;
+
+// Write source files
+writeFile(join(outDir, 'grammar.ts'), result.grammar);
+writeFile(join(outDir, 'types.ts'), result.types);
+writeFile(join(outDir, 'rules.ts'), result.rules);
+writeFile(join(outDir, 'factories.ts'), result.factories);
+writeFile(join(outDir, 'assign.ts'), result.assign);
+writeFile(join(outDir, 'utils.ts'), result.utils);
+writeFile(join(outDir, 'from.ts'), result.from);
+writeFile(join(outDir, 'ir.ts'), result.irNamespace);
+writeFile(join(outDir, 'joinby.ts'), result.joinBy);
+writeFile(join(outDir, 'consts.ts'), result.consts);
+writeFile(join(outDir, 'index.ts'), result.index);
+
+// Write node model
+writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+
+// Write tests
+const testsDir = cliArgs.testsDir ?? join(dirname(outDir), 'tests');
+writeFile(join(testsDir, 'nodes.test.ts'), result.tests);
+
+// Write type-level tests
+writeFile(join(outDir, 'type-test.ts'), result.typeTests);
+
+// Write vitest config
+writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
+
+console.log(`
+Done! Generated:
+  grammar.ts, types.ts, rules.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+`);

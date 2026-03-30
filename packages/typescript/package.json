@@ -1,0 +1,54 @@
+{
+  "name": "@sittir/typescript",
+  "version": "0.1.0",
+  "description": "Typed TypeScript IR builder — node kinds from tree-sitter-typescript grammar",
+  "license": "MIT",
+  "homepage": "https://github.com/refactory-lang/sittir#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/refactory-lang/sittir.git",
+    "directory": "packages/typescript"
+  },
+  "keywords": [
+    "typescript",
+    "tree-sitter",
+    "ir",
+    "codegen",
+    "ast"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tsx": {
+      "types": "./dist/tsx/index.d.ts",
+      "import": "./dist/tsx/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "generate": "rm -rf src/factories.ts src/from.ts src/ir.ts src/utils.ts src/rules.ts src/joinby.ts src/types.ts src/consts.ts src/index.ts tests && node ../codegen/dist/cli.js --grammar typescript --all --output src/",
+    "generate:tsx": "node ../codegen/dist/cli.js --grammar tsx --all --output src/tsx/ --tests-dir tests/tsx --tests-import-path '../../src/tsx/builder.js'",
+    "regenerate": "pnpm generate && pnpm build && pnpm test",
+    "build": "tsgo -p tsconfig.build.json",
+    "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+    "dev": "tsgo -p tsconfig.build.json --watch",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@sittir/core": "workspace:*",
+    "@sittir/types": "workspace:*"
+  },
+  "devDependencies": {
+    "tree-sitter-typescript": "^0.23.2",
+    "type-fest": "^5.5.0"
+  }
+}

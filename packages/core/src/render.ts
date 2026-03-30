@@ -1,0 +1,133 @@
+// @generated-header: false (hand-written core — preserved across regeneration)
+import type { AnyNodeData, Edit, ByteRange, RenderRule, ParsedTemplate, TemplateElement, RulesRegistry, JoinByMap } from './types.ts';
+import { parseTemplate } from './sexpr.ts';
+
+export type { RulesRegistry, JoinByMap };
+
+// ---------------------------------------------------------------------------
+// Template cache
+// ---------------------------------------------------------------------------
+
+const templateCache = new Map<string, ParsedTemplate>();
+
+function getParsed(template: RenderRule): ParsedTemplate {
+	let parsed = templateCache.get(template);
+	if (!parsed) {
+		parsed = parseTemplate(template);
+		templateCache.set(template, parsed);
+	}
+	return parsed;
+}
+
+// ---------------------------------------------------------------------------
+// Render engine
+// ---------------------------------------------------------------------------
+
+export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: JoinByMap): string {
+	if (node.text !== undefined) return node.text;
+
+	if (!node.fields) {
+		throw new Error(`Branch node '${node.type}' has no 'fields' — did you mean to set 'text' for a leaf node?`);
+	}
+
+	const template = registry[node.type];
+	if (!template) throw new Error(`No render rules for '${node.type}'`);
+
+	const parsed = getParsed(template);
+	const sep = joinBy?.[node.type] ?? ' ';
+	const parts: string[] = [];
+
+	for (const el of parsed.elements) {
+		switch (el.type) {
+			case 'token':
+				parts.push(el.value);
+				break;
+
+			case 'field': {
+				const value = node.fields?.[el.name] as AnyNodeData | AnyNodeData[] | string | number | undefined;
+
+				if (value === undefined) {
+					if (!el.quantifier) {
+						throw new Error(`Required field '${el.name}' missing on '${node.type}'`);
+					}
+					break;
+				}
+
+				if ((el.quantifier === '*' || el.quantifier === '+') && Array.isArray(value)) {
+					parts.push(value.map(c => renderValue(c, registry, joinBy)).join(sep));
+				} else if (Array.isArray(value)) {
+					// Array value for non-multiple field — error
+					throw new Error(`Field '${el.name}' on '${node.type}' received array but is not multiple (* or +)`);
+				} else {
+					parts.push(renderValue(value, registry, joinBy));
+				}
+				break;
+			}
+
+			case 'children': {
+				const children = node.children;
+				if (!children || children.length === 0) break;
+				parts.push(children.map(c => renderValue(c, registry, joinBy)).join(sep));
+				break;
+			}
+
+			default: {
+				const _exhaustive: never = el;
+				throw new Error(`Unknown template element type: ${(_exhaustive as TemplateElement).type}`);
+			}
+		}
+	}
+
+	// Filter empty parts and join — avoids collapsing whitespace inside text values
+	return parts.filter(p => p !== '').join(' ');
+}
+
+/** Render a field value — handles AnyNodeData, string, and number. */
+function renderValue(value: AnyNodeData | string | number, registry: RulesRegistry, joinBy?: JoinByMap): string {
+	if (typeof value === 'string') return value;
+	if (typeof value === 'number') return String(value);
+	return render(value, registry, joinBy);
+}
+
+// ---------------------------------------------------------------------------
+// createRenderer — close over rules + joinBy once, return bound helpers
+// ---------------------------------------------------------------------------
+
+export interface BoundRenderer {
+	render(node: AnyNodeData): string;
+	toEdit(node: AnyNodeData, start: number, end: number): Edit;
+	toEdit(node: AnyNodeData, range: ByteRange): Edit;
+}
+
+/**
+ * Create a renderer bound to a specific rules registry and joinBy map.
+ * Generated packages call this once at module level — no need to pass
+ * rules/joinBy on every render() or toEdit() call.
+ */
+export function createRenderer(registry: RulesRegistry, joinBy?: JoinByMap): BoundRenderer {
+	function boundRender(node: AnyNodeData): string {
+		return render(node, registry, joinBy);
+	}
+
+	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
+		if (typeof startOrRange === 'number') {
+			if (typeof end !== 'number') {
+				throw new Error('endPos is required when startPos is a number');
+			}
+			if (startOrRange < 0 || end < 0) {
+				throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+			}
+			if (startOrRange > end) {
+				throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
+			}
+			return { startPos: startOrRange, endPos: end, insertedText: boundRender(node) };
+		}
+		return {
+			startPos: startOrRange.start.index,
+			endPos: startOrRange.end.index,
+			insertedText: boundRender(node),
+		};
+	}
+
+	return { render: boundRender, toEdit: boundToEdit as BoundRenderer['toEdit'] };
+}

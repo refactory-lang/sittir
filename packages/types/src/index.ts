@@ -1,31 +1,60 @@
 /**
- * Language-agnostic type projection from tree-sitter grammars to typed IR builders.
+ * Language-agnostic type projection from tree-sitter grammars.
  *
- * This module extracts the generic type machinery that was originally developed
- * in rust-ir and parameterizes it over an arbitrary Grammar type `G`.  Any
- * object that structurally matches the tree-sitter node-types.json shape
- * can be plugged in as `G` to derive fully typed IR node shapes, builder
- * inputs, and builder configs — zero hand-rolled field definitions.
- *
- * Structurally compatible with @codemod.com/jssg-types grammar types.
+ * Pure type-level module — zero runtime code. The grammar type `G`
+ * (matching tree-sitter node-types.json shape) is the single source
+ * of truth for all derived types.
  *
  * @example
  * ```ts
+ * import type { NodeData } from '@sittir/types';
  * import type { RustGrammar } from '@sittir/rust';
- * import type { NodeType } from '@sittir/types';
  *
- * type StructItem = NodeType<RustGrammar, 'struct_item'>;
+ * type FunctionItem = NodeData<RustGrammar, 'function_item'>;
+ * type FunctionItemFields = NodeFields<RustGrammar, 'function_item'>;
+ * type FunctionItemTree = TreeNode<RustGrammar, 'function_item'>;
  * ```
  */
 
 import type {
 	CamelCase,
-	OptionalKeysOf,
-	RequiredKeysOf,
-	SetOptional,
-	Simplify,
 	SimplifyDeep,
 } from 'type-fest';
+
+// ---------------------------------------------------------------------------
+// Runtime types — re-exported from core-types (zero runtime in this package)
+// ---------------------------------------------------------------------------
+
+export type {
+	AnyNodeData,
+	AnyTreeNode,
+	RenderTemplate,
+	RenderRule,
+	TemplateElement,
+	ParsedTemplate,
+	Edit,
+	ByteRange,
+	Position,
+	CSTNode,
+	RenderContext,
+	RulesRegistry,
+	JoinByMap,
+	ReplaceTarget,
+	Renderable,
+} from './core-types.ts';
+
+// ---------------------------------------------------------------------------
+// .from() resolution types
+// ---------------------------------------------------------------------------
+
+export type { FromValue, FromObject, FromFieldInfo, FromContext } from './from.ts';
+
+// ---------------------------------------------------------------------------
+// Type utilities
+// ---------------------------------------------------------------------------
+
+/** Flatten an intersection into a single object type (shallow). From type-fest. */
+export type Simplify<T> = { [K in keyof T]: T[K] } & {};
 
 // ---------------------------------------------------------------------------
 // Grammar primitives
@@ -48,12 +77,7 @@ type ResolveType<G, K> = K extends keyof G
 export type NodeKind<G> = keyof G & string;
 
 /** Named (non-anonymous, subtype-resolved) node kinds for grammar `G`. */
-export type NamedKind<G> = ResolveType<G, keyof G> | (string & {});
-
-/** Branded string carrying its originating node kind(s). */
-export type TextBrand<K extends string> = string & {
-	readonly __grammarKinds: K;
-};
+export type NamedKind<G> = ResolveType<G, keyof G>;
 
 /** A reference to a grammar type by name. */
 export type GrammarTypeRef = {
@@ -86,23 +110,29 @@ export type Contains<Visited extends string[], T extends string> = Visited exten
 		: Contains<Rest, T>
 	: false;
 
-/** Branded-string leaf for a single kind. */
-type LeafBrand<K extends string> = TextBrand<K>;
+/** Max recursion depth for type expansion. Beyond this, branches become opaque. */
+type MaxDepth = 3;
 
 /**
- * Expand a single child kind into a structured node or a branded-string leaf.
- * Uses the visited set for cycle detection.
+ * Expand a single child kind into NodeData.
+ * Stops expansion when: depth >= MaxDepth OR kind already visited (direct cycle).
+ * Supertypes are expanded into unions of their concrete kinds.
+ * Leaf kinds (no fields, no subtypes) produce NodeData with just type + text.
  */
 export type ExpandOneKind<G, K extends string, Visited extends string[]> = K extends NodeKind<G>
 	? G[K] extends { fields: object }
-		? Contains<Visited, K> extends true
-			? LeafBrand<K>
-			: ExpandNode<G, K, Visited>
-		: LeafBrand<K>
-	: LeafBrand<K>;
+		? Visited['length'] extends MaxDepth
+			? Readonly<{ type: K; fields: Readonly<Record<string, unknown>> }>
+			: Contains<Visited, K> extends true
+				? Readonly<{ type: K; fields: Readonly<Record<string, unknown>> }>
+				: ExpandNode<G, K, Visited>
+		: G[K] extends { subtypes: readonly NodeBasicInfo[] }
+			? ExpandOneKind<G, ResolveType<G, K>, Visited>
+			: Readonly<{ type: K; text: string }>
+	: Readonly<{ type: K; text: string }>;
 
 /**
- * Expand a grammar slot into structured nodes, stopping at cycles.
+ * Expand a grammar slot into NodeData, stopping at cycles.
  */
 export type ExpandSlot<G, Info, Visited extends string[]> = Info extends { multiple: true }
 	? ExpandOneKind<G, SlotKinds<Info>, Visited>[]
@@ -138,7 +168,7 @@ export type OptionalFieldName<G, K extends NodeKind<G>> = Exclude<
 >;
 
 /** Extract the kind strings from a field's slot types. */
-type FieldKinds<G, K extends NodeKind<G>, F extends FieldName<G, K>> = SlotKinds<
+export type FieldKinds<G, K extends NodeKind<G>, F extends FieldName<G, K>> = SlotKinds<
 	FieldInfo<G, K, F>
 >;
 
@@ -148,214 +178,364 @@ type ChildrenInfo<G, K extends NodeKind<G>> = G[K] extends { children: infer Chi
 	: never;
 
 // ---------------------------------------------------------------------------
-// Ergonomic alias map
-// ---------------------------------------------------------------------------
-
-/** Type constraint for a valid alias map over grammar G. */
-export type AliasMap<G> = {
-	[K in NodeKind<G>]?: Partial<Record<FieldName<G, K>, string>>;
-};
-
-/**
- * Resolve the output key for a given (kind, field_name) pair.
- * If the alias map has an entry, use the alias; otherwise CamelCase.
- */
-type ResolveFieldKey<
-	K extends string,
-	F extends string,
-	Aliases = {},
-> = K extends keyof Aliases
-	? F extends keyof Aliases[K]
-		? Aliases[K][F] & string
-		: CamelCase<F>
-	: CamelCase<F>;
-
-// ---------------------------------------------------------------------------
-// Grammar-derived node shapes (CamelCase keys + alias map)
+// Grammar-derived fields (internal projection)
 // ---------------------------------------------------------------------------
 
 /** Derived fields for a node kind, with cycle-aware recursive expansion. */
-export type DerivedNodeFields<
+type DerivedFields<
 	G,
 	K extends NodeKind<G>,
 	Visited extends string[],
-	Aliases = {},
 > = {
-	[F in RequiredFieldName<G, K> as ResolveFieldKey<K, F, Aliases>]: ExpandSlot<
-		G,
-		FieldInfo<G, K, F>,
-		Visited
-	>;
+	readonly [F in RequiredFieldName<G, K>]: ExpandSlot<G, FieldInfo<G, K, F>, Visited>;
 } & {
-	[F in OptionalFieldName<G, K> as ResolveFieldKey<K, F, Aliases>]?: ExpandSlot<
-		G,
-		FieldInfo<G, K, F>,
-		Visited
-	>;
+	readonly [F in OptionalFieldName<G, K>]?: ExpandSlot<G, FieldInfo<G, K, F>, Visited>;
 };
 
 /** Derived children slot for a node kind. */
-export type DerivedNodeChildren<G, K extends NodeKind<G>, Visited extends string[]> = [
+type DerivedChildren<G, K extends NodeKind<G>, Visited extends string[]> = [
 	ChildrenInfo<G, K>,
 ] extends [never]
 	? {}
 	: ChildrenInfo<G, K>['required'] extends true
-		? { children: ExpandSlot<G, ChildrenInfo<G, K>, Visited> }
-		: { children?: ExpandSlot<G, ChildrenInfo<G, K>, Visited> };
+		? { readonly children: ExpandSlot<G, ChildrenInfo<G, K>, Visited> }
+		: { readonly children?: ExpandSlot<G, ChildrenInfo<G, K>, Visited> };
 
-/** Full derived shape: fields + children. */
-export type DerivedNodeShape<
+/** Full derived fields shape: named fields + children. */
+type DerivedFieldsShape<
 	G,
 	K extends NodeKind<G>,
 	Visited extends string[] = [],
-	Aliases = {},
-> = DerivedNodeFields<G, K, [...Visited, K], Aliases> &
-	DerivedNodeChildren<G, K, [...Visited, K]>;
+> = DerivedFields<G, K, [...Visited, K]> &
+	DerivedChildren<G, K, [...Visited, K]>;
 
 /**
- * Recursively expanded grammar node. Used by ExpandSlot to build
- * child structures — carries `kind` + all grammar-derived fields.
+ * Recursively expanded grammar node — used by ExpandSlot.
+ * Carries type + fields in the NodeData shape.
  */
-type ExpandNode<G, K extends NodeKind<G>, Visited extends string[]> = Readonly<{ kind: K }> &
-	DerivedNodeShape<G, K, Visited>;
+type ExpandNode<G, K extends NodeKind<G>, Visited extends string[]> = Readonly<{
+	type: K;
+	fields: DerivedFieldsShape<G, K, Visited>;
+}>;
 
 // ---------------------------------------------------------------------------
-// Main export: NodeType
+// NodeData<G, K> — the primary type. Grammar-derived, always.
 // ---------------------------------------------------------------------------
 
 /**
- * The primary type projection. Given a grammar `G` and a node kind `K`,
- * produces the fully expanded, deeply simplified IR node type.
+ * A grammar-derived AST node. The single type for both construction
+ * (factory output) and type-level projection.
+ *
+ * Branch nodes (have fields in grammar): `{ type, fields, text? }`
+ * Leaf nodes (no fields): `{ type, text? }`
  *
  * @example
  * ```ts
- * type StructItem = NodeType<RustGrammar, 'struct_item'>;
- * type GoStructType = NodeType<GoGrammar, 'struct_type'>;
+ * type FunctionItem = NodeData<RustGrammar, 'function_item'>;
+ * // { readonly type: 'function_item', readonly fields: { name: ..., body?: ... } }
+ *
+ * type Identifier = NodeData<RustGrammar, 'identifier'>;
+ * // { readonly type: 'identifier', readonly text: string }
  * ```
  */
-export type NodeType<
+export type NodeData<
 	G,
 	K extends NodeKind<G>,
-	Visited extends string[] = [],
-	Aliases = {},
-> = SimplifyDeep<Readonly<{ kind: K }> & DerivedNodeShape<G, K, Visited, Aliases>>;
+> = G[K] extends { fields: object }
+	? Simplify<Readonly<{
+		type: K;
+		fields: DerivedFieldsShape<G, K>;
+	}>>
+	: Readonly<{
+		type: K;
+		text: string;
+	}>;
 
 // ---------------------------------------------------------------------------
-// Builder input helpers
+// NodeConfig<G, K> — the full input shape for factories (fields + children)
 // ---------------------------------------------------------------------------
 
 /**
- * Recursively loosen an IR node type for builder input:
- * branded strings -> plain string, nodes -> node | string, arrays -> loosened element arrays.
+ * The full config shape for a branch node — named fields + children.
+ * Used as the factory input and the base for FromInput widening.
+ * Only meaningful for branch nodes.
  */
-export type BuilderInputValue<G, T> = T extends { kind: NodeKind<G> }
-	? T | string
-	: T extends readonly (infer U)[]
-		? BuilderInputValue<G, U>[]
-		: T extends TextBrand<string>
-			? string
-			: T extends string
-				? string extends T
-					? string
-					: T
-				: T extends object
-					? { [K in keyof T]: BuilderInputValue<G, T[K]> }
-					: T;
+export type NodeConfig<G, K extends NodeKind<G>> = NodeData<G, K> extends { fields: infer F } ? F : never;
 
-/** Branded text type for a node kind. */
-export type NodeText<G, K extends NodeKind<G>> = TextBrand<K>;
+/** @deprecated Use NodeConfig instead */
+export type NodeFields<G, K extends NodeKind<G>> = NodeConfig<G, K>;
 
-/** Branded text type for a field's child kinds. */
-export type FieldText<G, K extends NodeKind<G>, F extends FieldName<G, K>> = TextBrand<
-	FieldKinds<G, K, F>
->;
-
-/** Strip `kind` and apply BuilderInputValue loosening to produce a builder's raw input shape. */
-export type NodeBuilderInput<G, T extends { kind: NodeKind<G> }> = Simplify<
-	{
-		[K in Exclude<Extract<RequiredKeysOf<T>, keyof T>, 'kind'>]: BuilderInputValue<G, T[K]>;
-	} & {
-		[K in Exclude<Extract<OptionalKeysOf<T>, keyof T>, 'kind'>]?: BuilderInputValue<G, T[K]>;
-	}
->;
+// ---------------------------------------------------------------------------
+// NodeFromInput<G, K> — widened fields for .from() ergonomic input
+// ---------------------------------------------------------------------------
 
 /**
- * Grammar-derived field names that become optional in `BuilderConfig<T>`.
- * Callers may omit these fields; they're passed through as-is.
+ * Extract branch kinds from a kind union, resolving supertypes.
+ * Used to detect single-branch vs multi-branch fields.
  */
-export type DefaultableBuilderFieldName =
-	| 'body'
-	| 'typeParameters'
-	| 'children'
-	| 'returnType'
-	| 'parameters'
-	| 'trait'
-	| 'alternative';
+type BranchKindsOf<G, K extends string> = K extends NodeKind<G>
+	? G[K] extends { fields: object }
+		? K
+		: G[K] extends { subtypes: readonly NodeBasicInfo[] }
+			? BranchKindsOf<G, ResolveType<G, K>>
+			: never
+	: never;
 
-/** Extract keys from a builder input that match DefaultableBuilderFieldName. */
-type DefaultableKeys<G, T extends { kind: NodeKind<G> }> = Extract<
-	keyof NodeBuilderInput<G, T>,
-	DefaultableBuilderFieldName
->;
-
-/** Builder configuration type with specified optional keys. */
-export type BuilderConfig<
+/**
+ * Widen a single kind for FromInput context.
+ * Distributes over K when K is a union.
+ *
+ * @param AllBranches — pre-computed union of all branch kinds in the slot,
+ *   used to detect single-branch fields: `[AllBranches] extends [K]` is true
+ *   only when K is the sole branch kind, allowing omission of the `{ kind }` wrapper.
+ *
+ * - Leaf kinds → NodeData | string | scalar widening (from LeafScalars)
+ * - Branch kinds (single) → NodeData | BranchFromInput (no kind wrapper)
+ * - Branch kinds (multi) → NodeData | { kind: K } & BranchFromInput (discriminated)
+ * - Supertypes → resolved to concrete subtypes
+ */
+type FromInputKindExpand<
 	G,
-	T extends { kind: NodeKind<G> },
-	OptionalKeys extends keyof NodeBuilderInput<G, T> = DefaultableKeys<G, T>,
-> = Simplify<
-	SetOptional<
-		NodeBuilderInput<G, T>,
-		Extract<
-			OptionalKeys | Extract<OptionalKeysOf<NodeBuilderInput<G, T>>, keyof NodeBuilderInput<G, T>>,
-			keyof NodeBuilderInput<G, T>
-		>
-	>
->;
+	K extends string,
+	AllBranches extends string,
+	LeafScalars extends Record<string, unknown>,
+	Visited extends string[],
+> = K extends NodeKind<G>
+	? G[K] extends { fields: object }
+		? Visited['length'] extends MaxDepth
+			? ExpandOneKind<G, K, Visited>
+			: Contains<Visited, K> extends true
+				? ExpandOneKind<G, K, Visited>
+				: ExpandOneKind<G, K, Visited>
+					| ([AllBranches] extends [K]
+						? FromInputFieldsShape<G, K & NodeKind<G>, LeafScalars, [...Visited, K]>
+						: { kind: K } & FromInputFieldsShape<G, K & NodeKind<G>, LeafScalars, [...Visited, K]>)
+		: G[K] extends { subtypes: readonly NodeBasicInfo[] }
+			? FromInputKindExpand<G, ResolveType<G, K>, AllBranches, LeafScalars, Visited>
+			: ExpandOneKind<G, K, Visited> | string
+				| (K extends keyof LeafScalars ? LeafScalars[K] : never)
+	: string;
+
+/**
+ * Expand a grammar slot for FromInput.
+ * - Multiple → `Element[] | Element` (accept array or single)
+ * - Single → `Element` (no `unknown[]`)
+ */
+type FromInputExpandSlot<
+	G,
+	Info,
+	LeafScalars extends Record<string, unknown>,
+	Visited extends string[],
+> = Info extends { multiple: true }
+	? FromInputKindExpand<G, SlotKinds<Info>, BranchKindsOf<G, SlotKinds<Info>>, LeafScalars, Visited>[]
+		| FromInputKindExpand<G, SlotKinds<Info>, BranchKindsOf<G, SlotKinds<Info>>, LeafScalars, Visited>
+	: FromInputKindExpand<G, SlotKinds<Info>, BranchKindsOf<G, SlotKinds<Info>>, LeafScalars, Visited>;
+
+/** Derived FromInput named fields for a node kind. */
+type DerivedFromInputFields<
+	G,
+	K extends NodeKind<G>,
+	LeafScalars extends Record<string, unknown>,
+	Visited extends string[],
+> = {
+	[F in RequiredFieldName<G, K>]: FromInputExpandSlot<G, FieldInfo<G, K, F>, LeafScalars, Visited>;
+} & {
+	[F in OptionalFieldName<G, K>]?: FromInputExpandSlot<G, FieldInfo<G, K, F>, LeafScalars, Visited>;
+};
+
+/** Derived FromInput children slot — always optional, always array. */
+type DerivedFromInputChildren<
+	G,
+	K extends NodeKind<G>,
+	LeafScalars extends Record<string, unknown>,
+	Visited extends string[],
+> = [ChildrenInfo<G, K>] extends [never]
+	? {}
+	: {
+		children?: FromInputKindExpand<
+			G,
+			SlotKinds<ChildrenInfo<G, K>>,
+			BranchKindsOf<G, SlotKinds<ChildrenInfo<G, K>>>,
+			LeafScalars,
+			Visited
+		>[];
+	};
+
+/** Full FromInput fields shape: named fields + children. */
+type FromInputFieldsShape<
+	G,
+	K extends NodeKind<G>,
+	LeafScalars extends Record<string, unknown>,
+	Visited extends string[] = [],
+> = DerivedFromInputFields<G, K, LeafScalars, Visited> &
+	DerivedFromInputChildren<G, K, LeafScalars, Visited>;
+
+/**
+ * Widened input fields for `.from()` ergonomic resolution.
+ * Accepts strict NodeData passthroughs, strings for leaf kinds,
+ * recursive objects for branch kinds (single-branch: bare fields,
+ * multi-branch: `{ kind, ...fields }` discriminated), and scalar
+ * widenings (number, boolean) via `LeafScalars`.
+ *
+ * @example
+ * ```ts
+ * type RustScalars = { integer_literal: number; float_literal: number; boolean_literal: boolean };
+ * type FnFromInput = NodeFromInput<RustGrammar, 'function_item', RustScalars>;
+ * ```
+ */
+export type NodeFromInput<
+	G,
+	K extends NodeKind<G>,
+	LeafScalars extends Record<string, unknown> = {},
+> = FromInputFieldsShape<G, K, LeafScalars>;
 
 // ---------------------------------------------------------------------------
-// Validation
-// ---------------------------------------------------------------------------
-
-export type ValidationResult =
-	| { ok: true }
-	| { ok: false; errors: Array<{ offset: number; kind: 'ERROR' }> };
-
-// ---------------------------------------------------------------------------
-// Builder & Render pipeline interfaces
+// TreeNode<G, K> — a parsed tree node with navigation accessors
 // ---------------------------------------------------------------------------
 
 /**
- * Terminal operations on a fluent IR builder.
- * Every language-specific builder (e.g., Rust's `fn()`, `struct()`) must
- * implement this interface so consumers have a uniform way to extract the
- * built node or render it to source.
+ * A parsed tree node — structurally compatible with ast-grep SgNode
+ * and tree-sitter Node. Grammar-derived field access via field().
  *
- * @typeParam N - The IR node type produced by this builder.
+ * @example
+ * ```ts
+ * type FnTree = TreeNode<RustGrammar, 'function_item'>;
+ * const name = fnNode.field('name'); // TreeNode<RustGrammar, 'identifier' | 'metavariable'>
+ * ```
  */
-export interface BuilderTerminal<N extends { kind: string }> {
-	/** Return the raw IR node without rendering. */
-	build(): N;
-	/** Render to source string with validation (throws on error). */
+export type TreeNode<G, K extends NodeKind<G>> = {
+	readonly type: K;
+	field<F extends FieldName<G, K>>(name: F): TreeNode<G, FieldKinds<G, K, F> & NodeKind<G>> | null;
+	text(): string;
+	children(): TreeNode<G, NodeKind<G>>[];
+	range(): ByteRange;
+};
+
+import type { ByteRange } from './core-types.ts';
+
+// ---------------------------------------------------------------------------
+// KindOf<T> — extract type string from a typed node
+// ---------------------------------------------------------------------------
+
+/** Extract the kind string(s) from a node type's `type` property. */
+export type KindOf<T> = T extends { readonly type: infer K extends string } ? K : never;
+
+// ---------------------------------------------------------------------------
+// FluentNode<G, K> — generic fluent builder type for factory outputs
+// ---------------------------------------------------------------------------
+
+import type { Edit, ReplaceTarget } from './core-types.ts';
+
+/** Rename 'type' → 'typeField' to avoid collision with the `type` discriminant. */
+export type SetterKey<K extends string> = K extends 'type' ? 'typeField' : CamelCase<K>;
+
+/** Common render/edit methods attached to every fluent node. */
+export type NodeMethods<K extends string> = {
 	render(): string;
-	/** Render to source string without validation. */
-	renderSilent(): string;
-}
+	toEdit(start: number, end: number): Edit;
+	toEdit(range: { start: { index: number }; end: { index: number } }): Edit;
+	replace(target: ReplaceTarget<K>): Edit;
+};
 
 /**
- * The render + validate pipeline for a grammar's IR nodes.
- * Language-specific packages implement this to provide rendering and
- * validation for their node types.
+ * Compute fluent setters from a pre-resolved fields shape.
  *
- * @typeParam N - The IR node union type (discriminated by `kind`).
+ * Takes Fields directly (not G+K) to avoid deep recursive expansion
+ * at the definition site. Generated code instantiates with concrete fields.
+ *
+ * @example
+ * ```ts
+ * type FnSetters = FluentSetters<FunctionItemFields, 'name', FunctionItemNode>;
+ * ```
  */
-export interface RenderPipeline<N extends { kind: string }> {
-	/** Render a node to source with validation (throws on error). */
-	render(node: N): string;
-	/** Render a node to source without validation. */
-	renderSilent(node: N): string;
-	/** Assert rendered source has no errors; returns source on success, throws on failure. */
-	assertValid(source: string): string;
-	/** Lightweight validation without throwing. */
-	validateFast(source: string): ValidationResult;
+export type FluentSetters<
+	Fields,
+	Excluded extends string = never,
+	Self = unknown,
+> = {
+	[P in keyof Omit<Fields, Excluded> & string as SetterKey<P>]:
+		NonNullable<Omit<Fields, Excluded>[P]> extends readonly (infer E)[]
+			? (...value: E[] | [E[]]) => Self
+			: (value: NonNullable<Omit<Fields, Excluded>[P]>) => Self;
+};
+
+/**
+ * Full fluent node type — NodeData + typed setters + render/edit methods.
+ *
+ * Generated packages alias this per-kind:
+ * ```ts
+ * export type FunctionItemNode = FluentNode<FunctionItem, FunctionItemFields, 'name'>;
+ * ```
+ */
+export type FluentNode<
+	N extends { readonly type: string },
+	Fields = {},
+	Excluded extends string = never,
+> = N &
+	FluentSetters<Fields, Excluded, N & FluentSetters<Fields, Excluded> & NodeMethods<N['type']>> &
+	NodeMethods<N['type']>;
+
+// ---------------------------------------------------------------------------
+// Concrete interface transformations
+// ---------------------------------------------------------------------------
+
+/** Extract the fields record from a concrete node interface, or `{}` if none. */
+type FieldsOf<T> = T extends { readonly fields: infer F } ? F : {};
+
+/** Extract child slot properties (everything except `type` and `fields`). */
+type ChildSlotsOf<T> = Omit<T, 'type' | 'fields' | 'text'>;
+
+/**
+ * ConfigOf<T> — factory input shape derived from a concrete node interface.
+ * Hoists fields to top level and removes `type`. Preserves required/optional.
+ */
+export type ConfigOf<T> = FieldsOf<T> & ChildSlotsOf<T>;
+
+/**
+ * TreeNodeOf<T> — parsed tree node derived from a concrete node interface.
+ * Provides typed `.field()` access matching the concrete interface's fields.
+ */
+/** A tree node with no typed field access — returned by `.children()`. */
+export interface AnyTreeNodeOf {
+	readonly type: string;
+	field(name: string): AnyTreeNodeOf | null;
+	text(): string;
+	children(): AnyTreeNodeOf[];
+	range(): ByteRange;
 }
+
+export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
+	? {
+		readonly type: K;
+		field<F extends keyof FieldsOf<T> & string>(name: F): TreeNodeOf<
+			FieldsOf<T>[F] extends readonly (infer E)[] ? E : NonNullable<FieldsOf<T>[F]>
+		> | null;
+		text(): string;
+		children(): AnyTreeNodeOf[];
+		range(): ByteRange;
+	}
+	: never;
+
+/**
+ * FromInputOf<T> — widened input type derived from a concrete node interface.
+ * Accepts NodeData passthroughs, strings for leaves, objects for branches.
+ * Required fields stay required; optional fields stay optional.
+ */
+export type FromInputOf<T> = {
+	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? K : never]: WidenValue<FieldsOf<T>[K]>;
+} & {
+	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : K]?: WidenValue<FieldsOf<T>[K]>;
+} & {
+	readonly [K in keyof ChildSlotsOf<T>]?: ChildSlotsOf<T>[K];
+};
+
+/** Keys of T that are required (not optional). */
+type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
+
+/** Widen a value type for FromInput: nodes pass through, leaf text becomes `string | NodeData`. */
+type WidenValue<T> =
+	T extends readonly (infer E)[] ? (WidenValue<E>)[] | WidenValue<E>
+	: T extends { readonly type: string; readonly text: string } ? T | string
+	: T extends { readonly type: string } ? T | FromInputOf<T>
+	: T;
+

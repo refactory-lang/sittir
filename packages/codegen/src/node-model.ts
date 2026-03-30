@@ -1,0 +1,640 @@
+/**
+ * Layer 4: Node Model — types, type guards, construction, and transformations
+ *
+ * NodeModel is the central data type of the pipeline. Seven variants,
+ * discriminated by `modelType`. Pre-hydration models are mutable;
+ * post-hydration models are frozen via `Hydrate<T>`.
+ */
+
+import type { EnrichedRule, BranchRule, ContainerRule, LeafRule, KeywordRule, EnumRule as EnumEnrichedRule, SupertypeRule, EnrichedFieldInfo, EnrichedChildInfo } from './enriched-grammar.ts';
+import type { NodeTypes, NodeTypeEntry } from './node-types.ts';
+import { listLeafValues } from './grammar-reader.ts';
+
+// ---------------------------------------------------------------------------
+// Signature types (added by optimization step)
+// ---------------------------------------------------------------------------
+
+export interface FieldSignature {
+	id: string;
+	kinds: string[];
+}
+
+export interface ChildSignature {
+	id: string;
+	kinds: string[];
+}
+
+export interface SignaturePool {
+	readonly field: Map<string, FieldSignature>;
+	readonly child: Map<string, ChildSignature>;
+}
+
+// ---------------------------------------------------------------------------
+// NodeModelBase — common base for all model variants
+// ---------------------------------------------------------------------------
+
+export interface NodeModelBase {
+	modelType: string;
+	kind: string;
+	typeName?: string;
+	factoryName?: string;
+}
+
+// ---------------------------------------------------------------------------
+// FieldModel — discriminated by `multiple`
+// ---------------------------------------------------------------------------
+
+export interface SingleFieldModel {
+	name: string;
+	required: boolean;
+	multiple: false;
+	kinds: string[];
+	propertyName?: string;
+	fieldSignature?: FieldSignature;
+}
+
+export interface ListFieldModel {
+	name: string;
+	required: boolean;
+	multiple: true;
+	kinds: string[];
+	separator: string | null;
+	propertyName?: string;
+	fieldSignature?: FieldSignature;
+}
+
+export type FieldModel = SingleFieldModel | ListFieldModel;
+
+// ---------------------------------------------------------------------------
+// ChildModel — discriminated by `multiple`
+// ---------------------------------------------------------------------------
+
+export interface SingleChildModel {
+	required: boolean;
+	multiple: false;
+	kinds: string[];
+	childSignature?: ChildSignature;
+}
+
+export interface ListChildModel {
+	required: boolean;
+	multiple: true;
+	kinds: string[];
+	separator: string | null;
+	childSignature?: ChildSignature;
+}
+
+export type ChildModel = SingleChildModel | ListChildModel;
+
+// ---------------------------------------------------------------------------
+// ChildrenModel — single slot, or positional tuple of slots
+// ---------------------------------------------------------------------------
+
+/**
+ * A single child slot (single or list) — no array wrapper.
+ * A positional tuple of child slots — ChildModel[] with length > 1.
+ * Each tuple element represents a distinct ordered position in the grammar.
+ *
+ * Examples:
+ *   SingleChildModel                          → parenthesized_expression: '(' expr ')'
+ *   ListChildModel                            → declaration_list: '{' stmt* '}'
+ *   [SingleChildModel, SingleChildModel]      → index_expression: expr '[' expr ']'
+ *   [SingleChild, ListChild, SingleChild]     → block: label? '{' stmt* expr? '}'
+ */
+export type ChildrenModel = ChildModel | ChildModel[];
+
+// ---------------------------------------------------------------------------
+// ChildrenModel helpers
+// ---------------------------------------------------------------------------
+
+// Helpers accept both pre-hydration (ChildrenModel) and post-hydration (HydratedChildrenModel)
+// via a generic `T extends { multiple: boolean }` constraint that matches both.
+
+type AnyChildSlot = { multiple: boolean; kinds: unknown[] };
+type AnyChildrenModel = AnyChildSlot | AnyChildSlot[];
+
+/** Iterate over all child slots regardless of shape. */
+export function eachChildSlot<T extends AnyChildSlot>(children: T | T[], fn: (child: T, index: number) => void): void {
+	if (Array.isArray(children)) {
+		for (let i = 0; i < children.length; i++) fn(children[i]!, i);
+	} else {
+		fn(children, 0);
+	}
+}
+
+/** Return the number of positional child slots. */
+export function childSlotCount(children: AnyChildrenModel): number {
+	return Array.isArray(children) ? children.length : 1;
+}
+
+/** Return true if children is a positional tuple (2+ slots). */
+export function isTupleChildren(children: AnyChildrenModel): children is AnyChildSlot[] {
+	return Array.isArray(children);
+}
+
+// ---------------------------------------------------------------------------
+// NodeModel variants (7 types)
+// ---------------------------------------------------------------------------
+
+export interface BranchModel extends NodeModelBase {
+	modelType: 'branch';
+	kind: string;
+	fields: FieldModel[];
+	children?: ChildrenModel;
+	rule: EnrichedRule;
+}
+
+export interface ContainerModel extends NodeModelBase {
+	modelType: 'container';
+	kind: string;
+	children: ChildrenModel;
+	rule: EnrichedRule;
+}
+
+export interface LeafModel extends NodeModelBase {
+	modelType: 'leaf';
+	kind: string;
+	pattern: string | null;
+	rule: EnrichedRule | null;
+}
+
+export interface EnumModel extends NodeModelBase {
+	modelType: 'enum';
+	kind: string;
+	values: string[];
+	rule: EnrichedRule | null;
+}
+
+export interface KeywordModel extends NodeModelBase {
+	modelType: 'keyword';
+	kind: string;
+	text: string;
+	rule: EnrichedRule | null;
+}
+
+export interface TokenModel extends NodeModelBase {
+	modelType: 'token';
+	kind: string;
+	rule: EnrichedRule | null;
+}
+
+export interface SupertypeModel extends NodeModelBase {
+	modelType: 'supertype';
+	kind: string;
+	subtypes: string[];
+	rule: EnrichedRule | null;
+}
+
+export type NodeModel =
+	| BranchModel
+	| ContainerModel
+	| LeafModel
+	| EnumModel
+	| KeywordModel
+	| TokenModel
+	| SupertypeModel;
+
+// ---------------------------------------------------------------------------
+// Type Guards
+// ---------------------------------------------------------------------------
+
+export function isBranch(n: NodeModel): n is BranchModel { return n.modelType === 'branch'; }
+export function isContainer(n: NodeModel): n is ContainerModel { return n.modelType === 'container'; }
+export function isLeaf(n: NodeModel): n is LeafModel { return n.modelType === 'leaf'; }
+export function isEnum(n: NodeModel): n is EnumModel { return n.modelType === 'enum'; }
+export function isKeyword(n: NodeModel): n is KeywordModel { return n.modelType === 'keyword'; }
+export function isToken(n: NodeModel): n is TokenModel { return n.modelType === 'token'; }
+export function isSupertype(n: NodeModel): n is SupertypeModel { return n.modelType === 'supertype'; }
+
+/** Branch or Container — nodes with rules */
+export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
+	return n.modelType === 'branch' || n.modelType === 'container';
+}
+
+// ---------------------------------------------------------------------------
+// Hydrate<T> — post-hydration frozen types
+// ---------------------------------------------------------------------------
+
+/**
+ * Recursively replaces `kinds: string[]` with `kinds: HydratedNodeModel[]`
+ * and makes all properties `readonly`.
+ */
+export type HydrateChildrenModel<C extends ChildrenModel> =
+	C extends ChildModel[] ? Hydrate<ChildModel>[] : Hydrate<ChildModel>;
+
+export type Hydrate<T> =
+	T extends { kinds: string[] }
+		? Readonly<Omit<T, 'kinds'> & { kinds: HydratedNodeModel[] }>
+		: T extends { fields: FieldModel[]; children?: ChildrenModel }
+			? Readonly<Omit<T, 'fields' | 'children'> & {
+				fields: Hydrate<FieldModel>[];
+				children?: HydratedChildrenModel;
+			}>
+			: T extends { children: ChildrenModel }
+				? Readonly<Omit<T, 'children'> & { children: HydratedChildrenModel }>
+				: Readonly<T>;
+
+export type HydratedChildrenModel = Hydrate<ChildModel> | Hydrate<ChildModel>[];
+export type HydratedFieldModel = Hydrate<FieldModel>;
+export type HydratedChildModel = Hydrate<ChildModel>;
+export type HydratedBranchModel = Hydrate<BranchModel>;
+export type HydratedContainerModel = Hydrate<ContainerModel>;
+export type HydratedLeafModel = Hydrate<LeafModel>;
+export type HydratedEnumModel = Hydrate<EnumModel>;
+export type HydratedKeywordModel = Hydrate<KeywordModel>;
+export type HydratedTokenModel = Hydrate<TokenModel>;
+export type HydratedSupertypeModel = Hydrate<SupertypeModel>;
+
+export type HydratedNodeModel =
+	| HydratedBranchModel
+	| HydratedContainerModel
+	| HydratedLeafModel
+	| HydratedEnumModel
+	| HydratedKeywordModel
+	| HydratedTokenModel
+	| HydratedSupertypeModel;
+
+// ---------------------------------------------------------------------------
+// GrammarModel — pipeline output
+// ---------------------------------------------------------------------------
+
+export interface GrammarModel {
+	readonly name: string;
+	readonly models: ReadonlyMap<string, HydratedNodeModel>;
+	readonly signatures: SignaturePool;
+}
+
+// ---------------------------------------------------------------------------
+// Step 4: Initialize from NodeTypes
+// ---------------------------------------------------------------------------
+
+function initializeBranch(kind: string, entry: NodeTypeEntry): BranchModel {
+	const fields: FieldModel[] = [];
+	if (entry.fields) {
+		for (const [name, ntField] of Object.entries(entry.fields)) {
+			const kinds = ntField.types.map(t => t.type);
+			if (ntField.multiple) {
+				fields.push({ name, required: ntField.required, multiple: true, kinds, separator: null });
+			} else {
+				fields.push({ name, required: ntField.required, multiple: false, kinds });
+			}
+		}
+	}
+
+	let children: ChildrenModel | undefined;
+	if (entry.children) {
+		const kinds = entry.children.types.map(t => t.type);
+		if (entry.children.multiple) {
+			children = { required: entry.children.required, multiple: true, kinds, separator: null } as ListChildModel;
+		} else {
+			children = { required: entry.children.required, multiple: false, kinds } as SingleChildModel;
+		}
+	}
+
+	return {
+		modelType: 'branch',
+		kind,
+		fields,
+		children,
+		rule: null as unknown as EnrichedRule, // populated during reconcile
+	};
+}
+
+function initializeContainer(kind: string, entry: NodeTypeEntry): ContainerModel {
+	let children: ChildrenModel;
+	if (entry.children) {
+		const kinds = entry.children.types.map(t => t.type);
+		if (entry.children.multiple) {
+			children = { required: entry.children.required, multiple: true, kinds, separator: null } as ListChildModel;
+		} else {
+			children = { required: entry.children.required, multiple: false, kinds } as SingleChildModel;
+		}
+	} else {
+		children = { required: false, multiple: false, kinds: [] } as SingleChildModel;
+	}
+
+	return {
+		modelType: 'container',
+		kind,
+		children,
+		rule: null as unknown as EnrichedRule, // populated during reconcile
+	};
+}
+
+function initializeLeaf(kind: string): LeafModel {
+	return { modelType: 'leaf', kind, pattern: null, rule: null };
+}
+
+function initializeToken(kind: string): TokenModel {
+	return { modelType: 'token', kind, rule: null };
+}
+
+function initializeSupertype(kind: string, entry: NodeTypeEntry): SupertypeModel {
+	const subtypes = (entry.subtypes ?? []).filter(s => s.named).map(s => s.type);
+	return { modelType: 'supertype', kind, subtypes, rule: null };
+}
+
+/**
+ * Create initial NodeModel shells from NodeTypes.
+ * NodeTypes is authoritative for what kinds exist.
+ */
+export function initializeModels(nodeTypes: NodeTypes): Map<string, NodeModel> {
+	const models = new Map<string, NodeModel>();
+
+	for (const [kind, entry] of nodeTypes.entries) {
+		// Has subtypes → SupertypeModel
+		if (entry.subtypes && entry.subtypes.length > 0) {
+			models.set(kind, initializeSupertype(kind, entry));
+			continue;
+		}
+
+		// Not named → TokenModel (skip bare quote chars — not real tokens)
+		if (!entry.named) {
+			if (kind === '"' || kind === "'") continue;
+			models.set(kind, initializeToken(kind));
+			continue;
+		}
+
+		// Has fields → BranchModel
+		const hasFields = entry.fields != null && Object.keys(entry.fields).length > 0;
+		if (hasFields) {
+			models.set(kind, initializeBranch(kind, entry));
+			continue;
+		}
+
+		// Has children but no fields → ContainerModel
+		if (entry.children != null) {
+			models.set(kind, initializeContainer(kind, entry));
+			continue;
+		}
+
+		// Otherwise → LeafModel (refined during reconcile)
+		models.set(kind, initializeLeaf(kind));
+	}
+
+	return models;
+}
+
+// ---------------------------------------------------------------------------
+// Step 5: Reconcile — merge grammar-derived data into NT-derived models
+// ---------------------------------------------------------------------------
+
+function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]): void {
+	// Merge field kinds: grammar order first, then NT supplements
+	const grammarFieldMap = new Map(rule.fields.map(f => [f.name, f]));
+	const modelFieldSet = new Set(model.fields.map(f => f.name));
+
+	for (const field of model.fields) {
+		const gField = grammarFieldMap.get(field.name);
+		if (gField) {
+			// Grammar kinds first (preserves grammar rule ordering for operators etc.)
+			// then NT kinds that weren't in grammar
+			const grammarSet = new Set(gField.kinds);
+			const ntOnly = field.kinds.filter(k => !grammarSet.has(k));
+			field.kinds = [...gField.kinds, ...ntOnly];
+		} else {
+			warnings.push(`  '${model.kind}': model field '${field.name}' not in grammar`);
+		}
+		// Apply separators
+		const sep = rule.separators.get(field.name);
+		if (sep && field.multiple) {
+			(field as ListFieldModel).separator = sep;
+		}
+	}
+
+	for (const gField of rule.fields) {
+		if (!modelFieldSet.has(gField.name)) {
+			warnings.push(`  '${model.kind}': grammar field '${gField.name}' not in node-types`);
+		}
+	}
+
+	// Children consistency
+	const modelHasChildren = model.children != null;
+	const grammarHasChildren = rule.children != null && rule.children.length > 0;
+	if (modelHasChildren && !grammarHasChildren) {
+		warnings.push(`  '${model.kind}': node-types has children but grammar rule does not`);
+	} else if (!modelHasChildren && grammarHasChildren) {
+		warnings.push(`  '${model.kind}': grammar rule has children but node-types does not`);
+	}
+
+	// Build children from grammar positions, supplemented by NT kinds
+	if (grammarHasChildren && modelHasChildren) {
+		model.children = buildChildrenFromGrammar(model.children!, rule.children!);
+	}
+
+	model.rule = rule;
+}
+
+function enrichContainer(model: ContainerModel, rule: ContainerRule, warnings: string[]): void {
+	if (rule.children.length === 0) {
+		warnings.push(`  '${model.kind}': container has no grammar children`);
+	} else {
+		model.children = buildChildrenFromGrammar(model.children, rule.children);
+	}
+
+	model.rule = rule;
+}
+
+/**
+ * Build ChildrenModel from grammar-derived positional children,
+ * supplementing with NT kinds not already covered by grammar positions.
+ *
+ * Grammar is authoritative for structure (positions, cardinality).
+ * NT is authoritative for which kinds exist.
+ */
+function buildChildrenFromGrammar(
+	existing: ChildrenModel,
+	ruleChildren: EnrichedChildInfo[],
+): ChildrenModel {
+	if (ruleChildren.length === 0) return existing;
+
+	// Collect all NT kinds as a supplement pool
+	const ntKinds = new Set<string>();
+	eachChildSlot(existing, (slot) => {
+		for (const k of slot.kinds) ntKinds.add(k);
+	});
+
+	// Find NT kinds not in any grammar position
+	const allGrammarKinds = new Set<string>();
+	for (const rc of ruleChildren) {
+		for (const k of rc.kinds) allGrammarKinds.add(k);
+	}
+	const ntOnlyKinds = [...ntKinds].filter(k => !allGrammarKinds.has(k));
+
+	function buildSlot(rc: EnrichedChildInfo): ChildModel {
+		// Grammar kinds first, then NT-only supplements
+		const kinds = [...rc.kinds, ...ntOnlyKinds];
+		if (rc.multiple) {
+			return { required: rc.required, multiple: true, kinds, separator: null } as ListChildModel;
+		}
+		return { required: rc.required, multiple: false, kinds } as SingleChildModel;
+	}
+
+	if (ruleChildren.length === 1) {
+		return buildSlot(ruleChildren[0]!);
+	}
+	return ruleChildren.map(buildSlot);
+}
+
+function enrichLeaf(model: LeafModel, rule: LeafRule): void {
+	model.pattern = rule.pattern;
+	model.rule = rule;
+}
+
+function enrichKeyword(model: KeywordModel, rule: KeywordRule): void {
+	model.text = rule.text;
+	model.rule = rule;
+}
+
+function enrichEnum(model: EnumModel, rule: EnumEnrichedRule): void {
+	model.values = rule.values;
+	model.rule = rule;
+}
+
+function enrichSupertype(model: SupertypeModel, rule: SupertypeRule): void {
+	// Keep NT subtypes as authoritative — don't merge grammar subtypes
+	// (grammar may list expanded concrete descendants that NT only references
+	// via sub-supertype, e.g. grammar has string_literal under _expression
+	// but NT only has _literal)
+	model.rule = rule;
+}
+
+/**
+ * Merge grammar-derived data (EnrichedRule map) with NT-derived models.
+ */
+export function reconcile(
+	models: Map<string, NodeModel>,
+	enrichedRules: Map<string, EnrichedRule>,
+	grammarName?: string,
+): void {
+	const inconsistencies: { kind: string; model: NodeModel; rule: EnrichedRule }[] = [];
+	const warnings: string[] = [];
+
+	for (const [kind, model] of models) {
+		const rule = enrichedRules.get(kind);
+		if (!rule) {
+			// No direct grammar rule — check for ALIAS-derived enum values (e.g., primitive_type in Rust)
+			if (model.modelType === 'leaf' && grammarName) {
+				const values = listLeafValues(grammarName, kind);
+				if (values.length > 0) {
+					const promoted: EnumModel = {
+						modelType: 'enum',
+						kind,
+						values,
+						rule: null,
+					};
+					models.set(kind, promoted);
+				}
+			}
+			continue;
+		}
+
+		if (model.modelType === rule.modelType) {
+			// Same classification — enrich
+			switch (model.modelType) {
+				case 'branch': enrichBranch(model, rule as BranchRule, warnings); break;
+				case 'container': enrichContainer(model as ContainerModel, rule as ContainerRule, warnings); break;
+				case 'leaf': enrichLeaf(model, rule as LeafRule); break;
+				case 'keyword': enrichKeyword(model as KeywordModel, rule as KeywordRule); break;
+				case 'enum': enrichEnum(model as EnumModel, rule as EnumEnrichedRule); break;
+				case 'supertype': enrichSupertype(model as SupertypeModel, rule as SupertypeRule); break;
+			}
+			continue;
+		}
+
+		// Grammar narrows: leaf → keyword, leaf → enum
+		if (model.modelType === 'leaf' && rule.modelType === 'keyword') {
+			const promoted: KeywordModel = {
+				modelType: 'keyword',
+				kind,
+				text: (rule as KeywordRule).text,
+				rule,
+			};
+			models.set(kind, promoted);
+			continue;
+		}
+
+		if (model.modelType === 'leaf' && rule.modelType === 'enum') {
+			const promoted: EnumModel = {
+				modelType: 'enum',
+				kind,
+				values: (rule as EnumEnrichedRule).values,
+				rule,
+			};
+			models.set(kind, promoted);
+			continue;
+		}
+
+		// branch → container narrowing (grammar found no FIELDs)
+		if (model.modelType === 'branch' && rule.modelType === 'container') {
+			const branch = model as BranchModel;
+			const promoted: ContainerModel = {
+				modelType: 'container',
+				kind,
+				children: branch.children ?? { required: false, multiple: false, kinds: [] } as SingleChildModel,
+				rule,
+			};
+			enrichContainer(promoted, rule as ContainerRule, warnings);
+			models.set(kind, promoted);
+			continue;
+		}
+
+		inconsistencies.push({ kind, model, rule });
+	}
+
+	if (inconsistencies.length > 0) {
+		const summary = inconsistencies.map(({ kind, model, rule }) =>
+			`  '${kind}': node-types=${model.modelType}, grammar=${rule.modelType}`,
+		).join('\n');
+		console.warn(
+			`Reconcile: ${inconsistencies.length} model type inconsistencies (NT wins, grammar rule attached):\n${summary}`,
+		);
+		// Attach rule to mismatched models so rendering still works
+		for (const { kind, model, rule } of inconsistencies) {
+			if ('rule' in model && model.rule === null) {
+				(model as any).rule = rule;
+			}
+		}
+	}
+
+	if (warnings.length > 0) {
+		console.warn(
+			`Reconcile: ${warnings.length} field/children mismatches:\n${warnings.join('\n')}`,
+		);
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Step 7: Refine Model Type
+// ---------------------------------------------------------------------------
+
+/**
+ * Reclassify models if needed after all data is available.
+ * BranchModel with no fields and only children → ContainerModel.
+ */
+export function refineModelType(model: NodeModel): NodeModel {
+	if (model.modelType === 'branch') {
+		const branch = model as BranchModel;
+		if (branch.fields.length === 0 && branch.children) {
+			return {
+				modelType: 'container',
+				kind: branch.kind,
+				children: branch.children,
+				rule: branch.rule,
+			} satisfies ContainerModel;
+		}
+	}
+	return model;
+}
+
+/**
+ * Apply model type refinement to all models.
+ */
+export function refineAllModelTypes(models: Map<string, NodeModel>): void {
+	for (const [kind, model] of models) {
+		const refined = refineModelType(model);
+		if (refined !== model) {
+			models.set(kind, refined);
+		}
+	}
+}

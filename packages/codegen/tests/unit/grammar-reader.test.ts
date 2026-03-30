@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
-	readGrammarNode,
-	listNodeKinds,
+	readGrammarKind,
+	listBranchKinds,
 	type FieldMeta,
-	type NodeMeta,
+	type KindMeta,
 } from '../../src/grammar-reader.ts';
 
-describe('readGrammarNode', () => {
+describe('readGrammarKind', () => {
 	it('reads struct_item from rust grammar', () => {
-		const meta = readGrammarNode('rust', 'struct_item');
+		const meta = readGrammarKind('rust', 'struct_item');
 
 		expect(meta.kind).toBe('struct_item');
 
@@ -38,7 +38,7 @@ describe('readGrammarNode', () => {
 	});
 
 	it('reads function_item from rust grammar', () => {
-		const meta = readGrammarNode('rust', 'function_item');
+		const meta = readGrammarKind('rust', 'function_item');
 
 		expect(meta.kind).toBe('function_item');
 
@@ -64,7 +64,7 @@ describe('readGrammarNode', () => {
 	});
 
 	it('reads attribute_item from rust grammar (no fields, has children)', () => {
-		const meta = readGrammarNode('rust', 'attribute_item');
+		const meta = readGrammarKind('rust', 'attribute_item');
 
 		expect(meta.kind).toBe('attribute_item');
 		expect(meta.fields).toHaveLength(0);
@@ -74,7 +74,7 @@ describe('readGrammarNode', () => {
 	});
 
 	it('reads function_declaration from go grammar', () => {
-		const meta = readGrammarNode('go', 'function_declaration');
+		const meta = readGrammarKind('go', 'function_declaration');
 
 		expect(meta.kind).toBe('function_declaration');
 
@@ -84,13 +84,13 @@ describe('readGrammarNode', () => {
 	});
 
 	it('throws for unknown node kind', () => {
-		expect(() => readGrammarNode('rust', 'nonexistent_node')).toThrow();
+		expect(() => readGrammarKind('rust', 'nonexistent_node')).toThrow();
 	});
 });
 
-describe('listNodeKinds', () => {
+describe('listBranchKinds', () => {
 	it('returns node kinds from rust grammar', () => {
-		const kinds = listNodeKinds('rust');
+		const kinds = listBranchKinds('rust');
 
 		expect(kinds).toContain('struct_item');
 		expect(kinds).toContain('function_item');
@@ -100,7 +100,7 @@ describe('listNodeKinds', () => {
 	});
 
 	it('filters out abstract types prefixed with _', () => {
-		const kinds = listNodeKinds('rust');
+		const kinds = listBranchKinds('rust');
 
 		for (const kind of kinds) {
 			expect(kind).not.toMatch(/^_/);
@@ -108,11 +108,11 @@ describe('listNodeKinds', () => {
 	});
 
 	it('filters out subtypes-only entries (no fields and no children)', () => {
-		const kinds = listNodeKinds('rust');
+		const kinds = listBranchKinds('rust');
 
 		// Each returned kind should have fields or children
 		for (const kind of kinds) {
-			const meta = readGrammarNode('rust', kind);
+			const meta = readGrammarKind('rust', kind);
 			const hasFieldsOrChildren =
 				meta.fields.length > 0 || meta.hasChildren;
 			expect(hasFieldsOrChildren).toBe(true);
