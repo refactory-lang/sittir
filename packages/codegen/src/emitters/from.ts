@@ -216,21 +216,50 @@ function emitFromFunction(
 
 	// Function overloads
 	const exportName = `${camelFactoryName}From`;
-	if (compression?.scalar) {
-		lines.push(`export function ${exportName}(input: string): any;`);
+	const isSpread = compression?.multiple === true;
+
+	if (isSpread) {
+		// Spread overload typed from the slot's accepted kinds.
+		// For slots with supertypes (large unions), use NodeData + string fallback
+		// to keep the overload readable. For small unions, list concrete FromInput types.
+		const slotProj = projectKinds(compression.kinds, ctx);
+		let elemType: string;
+		if (slotProj.supertypeKinds.length === 0 && slotProj.branchTypes.length <= 10) {
+			const parts: string[] = [];
+			for (const kind of slotProj.branchTypes) parts.push(`${toTypeName(kind)}FromInput`);
+			if (slotProj.leafTypes.length > 0) parts.push('string');
+			parts.push('{ readonly type: string }');
+			elemType = parts.join(' | ');
+		} else {
+			// Large union — use broad type for readability
+			elemType = slotProj.leafTypes.length > 0
+				? '{ readonly type: string } | string'
+				: '{ readonly type: string }';
+		}
+
+		lines.push(`export function ${exportName}(...items: (${elemType})[]): any;`);
+		lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
+		lines.push(`export function ${exportName}(input: ${typeName}): any;`);
+		lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): any;`);
+		lines.push(`export function ${exportName}(...args: any[]): any {`);
+		// Multiple args → all are list items
+		lines.push(`  if (args.length !== 1) return ${exportName}({ ${compression.propName}: args });`);
+		lines.push(`  const input = args[0];`);
+	} else {
+		if (compression?.scalar) {
+			lines.push(`export function ${exportName}(input: string): any;`);
+		}
+		lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
+		lines.push(`export function ${exportName}(input: ${typeName}): any;`);
+		lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): any;`);
+		lines.push(`export function ${exportName}(input: any): any {`);
 	}
-	lines.push(`export function ${exportName}(input: ${typeName}Tree): any;`);
-	lines.push(`export function ${exportName}(input: ${typeName}): any;`);
-	lines.push(`export function ${exportName}(input: ${typeName}FromInput & {readonly kind?: '${node.kind}'}): any;`);
-	lines.push(`export function ${exportName}(input: any): any {`);
 
 	// --- Path 1: TreeNode → assign ---
 	lines.push(`  if (isTreeNode(input)) return assign${typeName}(input);`);
 
 	// --- Path 2: NodeData of same kind → pass through ---
 	if (compression) {
-		// With compression, we must check kind to distinguish "passthrough self"
-		// from "direct value that happens to be a NodeData of the target kind"
 		lines.push(`  if (isNodeData(input) && input.type === '${node.kind}') return ${factoryName}((input as any).fields);`);
 		// --- Path 0: Single-slot compression → wrap direct value into config ---
 		// Anything that isn't a config object for THIS node is a direct value.

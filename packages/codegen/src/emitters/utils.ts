@@ -131,28 +131,33 @@ export interface CompressionInfo {
 	propName: string;
 	/** Whether all accepted kinds are leaf types (enables string/scalar shorthand) */
 	scalar: boolean;
+	/** Whether the slot is a list (multiple: true) — enables spread/variadic syntax */
+	multiple: boolean;
+	/** The accepted kinds for the slot — used to generate typed spread overloads */
+	kinds: readonly HydratedNodeModel[];
 }
 
 /**
  * Detect single-slot compression eligibility for .from() API.
  *
- * A node qualifies when it has exactly 1 required non-multiple slot total
+ * A node qualifies when it has exactly 1 required slot total
  * (either a field or a child). Compressibility (drop field name) and
  * scalarness (drop kind wrapper) are orthogonal:
  *
  *   - Compressible: `ir.constBlock.from(block)` instead of `{ body: block }`
  *   - Scalar: `ir.modItem.from('main')` instead of `{ name: 'main' }`
+ *   - Spread: `ir.block.from(stmt1, stmt2)` instead of `{ children: [stmt1, stmt2] }`
  *   - Both: `ir.modItem.from('main')` resolves string → identifier → name field
  *
  * Compression chains recursively through .from() — if `block` is itself
- * compressible, `ir.constBlock.from([stmt1, stmt2])` works because:
+ * compressible, `ir.constBlock.from(stmt1, stmt2)` works because:
  *   1. constBlock wraps as `{ body: [stmt1, stmt2] }`
  *   2. body resolver calls `blockFrom([stmt1, stmt2])`
  *   3. blockFrom handles the array
  */
 export function singleSlotCompression(node: StructuralNode, ctx: ProjectionContext): CompressionInfo | null {
 	const fields = fieldsOf(node);
-	const requiredFields = fields.filter(f => f.required && !f.multiple);
+	const requiredFields = fields.filter(f => f.required);
 
 	// Count required children
 	let requiredChildCount = 0;
@@ -160,7 +165,7 @@ export function singleSlotCompression(node: StructuralNode, ctx: ProjectionConte
 	if (node.children != null) {
 		const slotNames = childSlotNames(node.children, ctx);
 		eachChildSlot(node.children, (slot, i) => {
-			if (slot.required && !slot.multiple) {
+			if (slot.required) {
 				requiredChildCount++;
 				requiredChild = { slot, name: slotNames[i]! };
 			}
@@ -175,14 +180,14 @@ export function singleSlotCompression(node: StructuralNode, ctx: ProjectionConte
 		const field = requiredFields[0]!;
 		const propName = field.propertyName ?? toFieldName(field.name);
 		const scalar = field.kinds.every(k => ctx.leafKinds.has(k.kind));
-		return { propName, scalar };
+		return { propName, scalar, multiple: field.multiple, kinds: field.kinds };
 	}
 
 	// Single required child, no required fields
 	if (requiredChild) {
 		const { slot, name } = requiredChild;
 		const scalar = slot.kinds.every((k: HydratedNodeModel) => ctx.leafKinds.has(k.kind));
-		return { propName: name, scalar };
+		return { propName: name, scalar, multiple: slot.multiple, kinds: slot.kinds };
 	}
 
 	return null;

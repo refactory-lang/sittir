@@ -1520,12 +1520,18 @@ export function implItemFrom(input: any): any {
   return impl_item_(resolved);
 }
 
+export function indexExpressionFrom(...items: ({ readonly type: string })[]): any;
 export function indexExpressionFrom(input: IndexExpressionTree): any;
 export function indexExpressionFrom(input: IndexExpression): any;
 export function indexExpressionFrom(input: IndexExpressionFromInput & {readonly kind?: 'index_expression'}): any;
-export function indexExpressionFrom(input: any): any {
+export function indexExpressionFrom(...args: any[]): any {
+  if (args.length !== 1) return indexExpressionFrom({ children: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignIndexExpression(input);
-  if (isNodeData(input)) return index_expression_((input as any).fields);
+  if (isNodeData(input) && input.type === 'index_expression') return index_expression_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return indexExpressionFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1572,12 +1578,18 @@ export function labelFrom(input: any): any {
   return label_(resolved);
 }
 
+export function letChainFrom(...items: ({ readonly type: string })[]): any;
 export function letChainFrom(input: LetChainTree): any;
 export function letChainFrom(input: LetChain): any;
 export function letChainFrom(input: LetChainFromInput & {readonly kind?: 'let_chain'}): any;
-export function letChainFrom(input: any): any {
+export function letChainFrom(...args: any[]): any {
+  if (args.length !== 1) return letChainFrom({ children: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignLetChain(input);
-  if (isNodeData(input)) return let_chain_((input as any).fields);
+  if (isNodeData(input) && input.type === 'let_chain') return let_chain_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return letChainFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1907,12 +1919,18 @@ export function negativeLiteralFrom(input: any): any {
   return negative_literal_(resolved);
 }
 
+export function orPatternFrom(...items: ({ readonly type: string })[]): any;
 export function orPatternFrom(input: OrPatternTree): any;
 export function orPatternFrom(input: OrPattern): any;
 export function orPatternFrom(input: OrPatternFromInput & {readonly kind?: 'or_pattern'}): any;
-export function orPatternFrom(input: any): any {
+export function orPatternFrom(...args: any[]): any {
+  if (args.length !== 1) return orPatternFrom({ children: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignOrPattern(input);
-  if (isNodeData(input)) return or_pattern_((input as any).fields);
+  if (isNodeData(input) && input.type === 'or_pattern') return or_pattern_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return orPatternFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -2691,12 +2709,18 @@ export function tupleStructPatternFrom(input: any): any {
   return tuple_struct_pattern_(resolved);
 }
 
+export function tupleTypeFrom(...items: ({ readonly type: string })[]): any;
 export function tupleTypeFrom(input: TupleTypeTree): any;
 export function tupleTypeFrom(input: TupleType): any;
 export function tupleTypeFrom(input: TupleTypeFromInput & {readonly kind?: 'tuple_type'}): any;
-export function tupleTypeFrom(input: any): any {
+export function tupleTypeFrom(...args: any[]): any {
+  if (args.length !== 1) return tupleTypeFrom({ children: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignTupleType(input);
-  if (isNodeData(input)) return tuple_type_((input as any).fields);
+  if (isNodeData(input) && input.type === 'tuple_type') return tuple_type_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return tupleTypeFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {

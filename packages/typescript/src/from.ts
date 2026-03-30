@@ -1296,12 +1296,18 @@ export function expressionStatementFrom(input: any): any {
   return expression_statement_(resolved);
 }
 
+export function extendsClauseFrom(...items: ({ readonly type: string })[]): any;
 export function extendsClauseFrom(input: ExtendsClauseTree): any;
 export function extendsClauseFrom(input: ExtendsClause): any;
 export function extendsClauseFrom(input: ExtendsClauseFromInput & {readonly kind?: 'extends_clause'}): any;
-export function extendsClauseFrom(input: any): any {
+export function extendsClauseFrom(...args: any[]): any {
+  if (args.length !== 1) return extendsClauseFrom({ value: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignExtendsClause(input);
-  if (isNodeData(input)) return extends_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'extends_clause') return extends_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('value' in input)) {
+    return extendsClauseFrom({ value: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.typeArguments !== undefined) {
@@ -1319,12 +1325,18 @@ export function extendsClauseFrom(input: any): any {
   return extends_clause_(resolved);
 }
 
+export function extendsTypeClauseFrom(...items: (GenericTypeFromInput | NestedTypeIdentifierFromInput | string | { readonly type: string })[]): any;
 export function extendsTypeClauseFrom(input: ExtendsTypeClauseTree): any;
 export function extendsTypeClauseFrom(input: ExtendsTypeClause): any;
 export function extendsTypeClauseFrom(input: ExtendsTypeClauseFromInput & {readonly kind?: 'extends_type_clause'}): any;
-export function extendsTypeClauseFrom(input: any): any {
+export function extendsTypeClauseFrom(...args: any[]): any {
+  if (args.length !== 1) return extendsTypeClauseFrom({ type: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignExtendsTypeClause(input);
-  if (isNodeData(input)) return extends_type_clause_((input as any).fields);
+  if (isNodeData(input) && input.type === 'extends_type_clause') return extends_type_clause_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('type' in input)) {
+    return extendsTypeClauseFrom({ type: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.type !== undefined) {

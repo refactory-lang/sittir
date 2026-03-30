@@ -628,10 +628,7 @@ export function comparisonOperatorFrom(input: ComparisonOperator): any;
 export function comparisonOperatorFrom(input: ComparisonOperatorFromInput & {readonly kind?: 'comparison_operator'}): any;
 export function comparisonOperatorFrom(input: any): any {
   if (isTreeNode(input)) return assignComparisonOperator(input);
-  if (isNodeData(input) && input.type === 'comparison_operator') return comparison_operator_((input as any).fields);
-  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('primaryExpression1' in input)) {
-    return comparisonOperatorFrom({ primaryExpression1: input });
-  }
+  if (isNodeData(input)) return comparison_operator_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.operators !== undefined) {
@@ -675,10 +672,7 @@ export function concatenatedStringFrom(input: ConcatenatedString): any;
 export function concatenatedStringFrom(input: ConcatenatedStringFromInput & {readonly kind?: 'concatenated_string'}): any;
 export function concatenatedStringFrom(input: any): any {
   if (isTreeNode(input)) return assignConcatenatedString(input);
-  if (isNodeData(input) && input.type === 'concatenated_string') return concatenated_string_((input as any).fields);
-  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('string1' in input)) {
-    return concatenatedStringFrom({ string1: input });
-  }
+  if (isNodeData(input)) return concatenated_string_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.string1 !== undefined) {
@@ -735,10 +729,7 @@ export function decoratedDefinitionFrom(input: DecoratedDefinition): any;
 export function decoratedDefinitionFrom(input: DecoratedDefinitionFromInput & {readonly kind?: 'decorated_definition'}): any;
 export function decoratedDefinitionFrom(input: any): any {
   if (isTreeNode(input)) return assignDecoratedDefinition(input);
-  if (isNodeData(input) && input.type === 'decorated_definition') return decorated_definition_((input as any).fields);
-  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('definition' in input)) {
-    return decoratedDefinitionFrom({ definition: input });
-  }
+  if (isNodeData(input)) return decorated_definition_((input as any).fields);
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.definition !== undefined) {
@@ -1064,10 +1055,7 @@ export function forInClauseFrom(input: ForInClause): any;
 export function forInClauseFrom(input: ForInClauseFromInput & {readonly kind?: 'for_in_clause'}): any;
 export function forInClauseFrom(input: any): any {
   if (isTreeNode(input)) return assignForInClause(input);
-  if (isNodeData(input) && input.type === 'for_in_clause') return for_in_clause_((input as any).fields);
-  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('left' in input)) {
-    return forInClauseFrom({ left: input });
-  }
+  if (isNodeData(input)) return for_in_clause_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.left !== undefined) {
@@ -1170,12 +1158,18 @@ export function functionDefinitionFrom(input: any): any {
   return function_definition_(resolved);
 }
 
+export function futureImportStatementFrom(...items: (AliasedImportFromInput | DottedNameFromInput | { readonly type: string })[]): any;
 export function futureImportStatementFrom(input: FutureImportStatementTree): any;
 export function futureImportStatementFrom(input: FutureImportStatement): any;
 export function futureImportStatementFrom(input: FutureImportStatementFromInput & {readonly kind?: 'future_import_statement'}): any;
-export function futureImportStatementFrom(input: any): any {
+export function futureImportStatementFrom(...args: any[]): any {
+  if (args.length !== 1) return futureImportStatementFrom({ name: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignFutureImportStatement(input);
-  if (isNodeData(input)) return future_import_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'future_import_statement') return future_import_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
+    return futureImportStatementFrom({ name: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
@@ -1312,12 +1306,18 @@ export function importFromStatementFrom(input: any): any {
   return import_from_statement_(resolved);
 }
 
+export function importStatementFrom(...items: (AliasedImportFromInput | DottedNameFromInput | { readonly type: string })[]): any;
 export function importStatementFrom(input: ImportStatementTree): any;
 export function importStatementFrom(input: ImportStatement): any;
 export function importStatementFrom(input: ImportStatementFromInput & {readonly kind?: 'import_statement'}): any;
-export function importStatementFrom(input: any): any {
+export function importStatementFrom(...args: any[]): any {
+  if (args.length !== 1) return importStatementFrom({ name: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignImportStatement(input);
-  if (isNodeData(input)) return import_statement_((input as any).fields);
+  if (isNodeData(input) && input.type === 'import_statement') return import_statement_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('name' in input)) {
+    return importStatementFrom({ name: input });
+  }
   const obj = input;
   const resolved: any = {};
   if (obj.name !== undefined) {
@@ -1411,12 +1411,18 @@ export function lambdaFrom(input: any): any {
   return lambda_(resolved);
 }
 
+export function lambdaParametersFrom(...items: ({ readonly type: string })[]): any;
 export function lambdaParametersFrom(input: LambdaParametersTree): any;
 export function lambdaParametersFrom(input: LambdaParameters): any;
 export function lambdaParametersFrom(input: LambdaParametersFromInput & {readonly kind?: 'lambda_parameters'}): any;
-export function lambdaParametersFrom(input: any): any {
+export function lambdaParametersFrom(...args: any[]): any {
+  if (args.length !== 1) return lambdaParametersFrom({ children: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignLambdaParameters(input);
-  if (isNodeData(input)) return lambda_parameters_((input as any).fields);
+  if (isNodeData(input) && input.type === 'lambda_parameters') return lambda_parameters_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return lambdaParametersFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1518,10 +1524,7 @@ export function matchStatementFrom(input: MatchStatement): any;
 export function matchStatementFrom(input: MatchStatementFromInput & {readonly kind?: 'match_statement'}): any;
 export function matchStatementFrom(input: any): any {
   if (isTreeNode(input)) return assignMatchStatement(input);
-  if (isNodeData(input) && input.type === 'match_statement') return match_statement_((input as any).fields);
-  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('body' in input)) {
-    return matchStatementFrom({ body: input });
-  }
+  if (isNodeData(input)) return match_statement_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.body !== undefined) {
@@ -1783,12 +1786,18 @@ export function returnStatementFrom(input: any): any {
   return return_statement_(resolved);
 }
 
+export function setFrom(...items: ({ readonly type: string })[]): any;
 export function setFrom(input: SetTree): any;
 export function setFrom(input: Set): any;
 export function setFrom(input: SetFromInput & {readonly kind?: 'set'}): any;
-export function setFrom(input: any): any {
+export function setFrom(...args: any[]): any {
+  if (args.length !== 1) return setFrom({ children: args });
+  const input = args[0];
   if (isTreeNode(input)) return assignSet(input);
-  if (isNodeData(input)) return set_((input as any).fields);
+  if (isNodeData(input) && input.type === 'set') return set_((input as any).fields);
+  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('children' in input)) {
+    return setFrom({ children: input });
+  }
   const obj = Array.isArray(input) ? { children: input } : input;
   const resolved: any = {};
   if (obj.children !== undefined) {
@@ -1914,10 +1923,7 @@ export function subscriptFrom(input: Subscript): any;
 export function subscriptFrom(input: SubscriptFromInput & {readonly kind?: 'subscript'}): any;
 export function subscriptFrom(input: any): any {
   if (isTreeNode(input)) return assignSubscript(input);
-  if (isNodeData(input) && input.type === 'subscript') return subscript_((input as any).fields);
-  if (typeof input !== 'object' || input === null || isNodeData(input) || Array.isArray(input) || !('value' in input)) {
-    return subscriptFrom({ value: input });
-  }
+  if (isNodeData(input)) return subscript_((input as any).fields);
   const obj = input;
   const resolved: any = {};
   if (obj.subscript !== undefined) {
