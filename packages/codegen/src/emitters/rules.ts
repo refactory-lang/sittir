@@ -9,8 +9,10 @@
 import { stringify as yamlStringify } from 'yaml';
 import type { GrammarRule } from '../grammar.ts';
 import { loadGrammar } from '../grammar.ts';
-import type { HydratedNodeModel } from '../node-model.ts';
-import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
+import type { HydratedNodeModel, HydratedChildrenModel } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
+import { type StructuralNode, structuralNodes, fieldsOf, childSlotNames } from './utils.ts';
+import { buildProjectionContext, projectKinds } from './kind-projections.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
 
 // ---------------------------------------------------------------------------
@@ -43,8 +45,9 @@ export function emitTemplatesYaml(config: EmitRulesYamlConfig): string {
 		rules: {},
 	};
 
+	const ctx = buildProjectionContext(new Map(nodes.map(n => [n.kind, n])));
 	for (const node of structuralNodes(nodes)) {
-		const rule = emitRuleForNode(node, grammarRules);
+		const rule = emitRuleForNode(node, grammarRules, ctx);
 		rulesConfig.rules[node.kind] = rule;
 	}
 
@@ -60,7 +63,7 @@ interface ClauseEntry {
 	template: string;   // e.g. "-> $RETURN_TYPE "
 }
 
-function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, GrammarRule>): TemplateRule {
+function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, GrammarRule>, ctx: ReturnType<typeof buildProjectionContext>): TemplateRule {
 	const nodeFields = fieldsOf(node);
 
 	// Build field metadata maps
@@ -86,27 +89,42 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 		}
 	}
 
+	// Build child slot mapping: grammar kind → { varName, multiple }
+	// For tuple children, each slot has specific kinds. For single children, all kinds map to CHILDREN.
+	const childSlotMap = buildChildSlotMap(node, ctx);
+
 	// Walk the grammar rule tree
 	const rawRule = node.rule?.rule;
 	const seen = new Set<string>();
 	const clauses: ClauseEntry[] = [];
 	const parts = rawRule
-		? ruleToTemplate(rawRule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false)
+		? ruleToTemplate(rawRule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap)
 		: [];
 
 	// Append missing fields the walker didn't reach
 	for (const f of nodeFields) {
 		if (!seen.has(f.name)) {
 			const varName = f.name.toUpperCase();
-			parts.push(f.multiple ? `$$$${varName}` : `$${varName}`);
+			parts.push(f.multiple ? ` $$$${varName}` : ` $${varName}`);
 			seen.add(f.name);
 		}
 	}
 
-	// Append $$$CHILDREN if node has children but template doesn't reference them
+	// Append missing child slots the walker didn't reach
 	const hasChildren = node.children != null;
-	if (hasChildren && !seen.has('children')) {
-		parts.push('$$$CHILDREN');
+	if (hasChildren) {
+		const slotNames = childSlotNames(node.children!, ctx);
+		if (isTupleChildren(node.children!)) {
+			eachChildSlot(node.children!, (slot, i) => {
+				const slotName = slotNames[i]!;
+				if (!seen.has(`child:${slotName}`)) {
+					const varName = slotName.toUpperCase().replace(/[a-z]/g, (c) => c.toUpperCase());
+					parts.push(slot.multiple ? ` $$$${toSnakeUpper(slotName)}` : ` $${toSnakeUpper(slotName)}`);
+				}
+			});
+		} else if (!seen.has('children')) {
+			parts.push(' $$$CHILDREN');
+		}
 	}
 
 	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
@@ -130,6 +148,43 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	return ruleObj as unknown as TemplateRule;
 }
 
+/** Convert camelCase to UPPER_SNAKE for template variable names. */
+function toSnakeUpper(camel: string): string {
+	return camel.replace(/[A-Z]/g, c => `_${c}`).toUpperCase();
+}
+
+interface ChildSlotInfo {
+	varName: string;  // UPPER_SNAKE variable name
+	multiple: boolean;
+	slotName: string; // camelCase slot name (for tracking in seen set)
+}
+
+/** Build a mapping from grammar kind → child slot variable info. */
+function buildChildSlotMap(node: StructuralNode, ctx: ReturnType<typeof buildProjectionContext>): Map<string, ChildSlotInfo> {
+	const map = new Map<string, ChildSlotInfo>();
+	if (!node.children) return map;
+
+	const slotNames = childSlotNames(node.children, ctx);
+
+	if (isTupleChildren(node.children)) {
+		eachChildSlot(node.children, (slot, i) => {
+			const slotName = slotNames[i]!;
+			const varName = toSnakeUpper(slotName);
+			for (const k of slot.kinds) {
+				map.set(k.kind, { varName, multiple: slot.multiple, slotName });
+			}
+		});
+	} else {
+		// Single children slot — all kinds map to CHILDREN
+		const slot = Array.isArray(node.children) ? node.children[0]! : node.children;
+		for (const k of slot.kinds) {
+			map.set(k.kind, { varName: 'CHILDREN', multiple: slot.multiple, slotName: 'children' });
+		}
+	}
+
+	return map;
+}
+
 // ---------------------------------------------------------------------------
 // Grammar rule tree walker
 // ---------------------------------------------------------------------------
@@ -143,6 +198,7 @@ function ruleToTemplate(
 	gr: Record<string, GrammarRule>,
 	clauses: ClauseEntry[],
 	immediate: boolean,
+	childSlotMap: Map<string, ChildSlotInfo>,
 ): string[] {
 	switch (rule.type) {
 		case 'SEQ': {
@@ -150,7 +206,7 @@ function ruleToTemplate(
 			for (let i = 0; i < rule.members.length; i++) {
 				const member = rule.members[i]!;
 				const isFirst = i === 0;
-				const memberParts = ruleToTemplate(member, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate);
+				const memberParts = ruleToTemplate(member, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
 				if (!isFirst && memberParts.length > 0 && parts.length > 0) {
 					// Add space between parts unless immediate
 					const lastPart = parts[parts.length - 1]!;
@@ -180,7 +236,7 @@ function ruleToTemplate(
 			// Inline _-prefixed (hidden/abstract) rules that contain fields
 			if (rule.name.startsWith('_') && gr[rule.name]) {
 				const inlineSeen = new Set(seen);
-				const inlined = ruleToTemplate(gr[rule.name]!, optional, inlineSeen, fieldRequired, fieldMultiple, gr, clauses, immediate);
+				const inlined = ruleToTemplate(gr[rule.name]!, optional, inlineSeen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
 				// Filter to only parts with fields that belong to this node
 				const hasRelevantFields = [...inlineSeen].some(f => !seen.has(f) && fieldRequired.has(f));
 				if (hasRelevantFields) {
@@ -190,6 +246,16 @@ function ruleToTemplate(
 					return inlined;
 				}
 			}
+			// Check if this symbol maps to a named child slot
+			const childSlot = childSlotMap.get(rule.name);
+			if (childSlot) {
+				if (seen.has(`child:${childSlot.slotName}`)) return [];
+				seen.add(`child:${childSlot.slotName}`);
+				return [childSlot.multiple ? `$$$${childSlot.varName}` : `$${childSlot.varName}`];
+			}
+			// Unknown symbol — generic children
+			if (seen.has('children')) return [];
+			seen.add('children');
 			return ['$$$CHILDREN'];
 		}
 
@@ -208,7 +274,7 @@ function ruleToTemplate(
 				const parts: string[] = [];
 				for (const m of rule.members) {
 					if (m.type === 'BLANK') continue;
-					parts.push(...ruleToTemplate(m, true, seen, fieldRequired, fieldMultiple, gr, clauses, immediate));
+					parts.push(...ruleToTemplate(m, true, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap));
 				}
 				return parts;
 			}
@@ -220,7 +286,7 @@ function ruleToTemplate(
 			for (const m of rule.members) {
 				const branchSeen = new Set(seen);
 				const branchClauses: ClauseEntry[] = [];
-				const branchParts = ruleToTemplate(m, optional, branchSeen, fieldRequired, fieldMultiple, gr, branchClauses, immediate);
+				const branchParts = ruleToTemplate(m, optional, branchSeen, fieldRequired, fieldMultiple, gr, branchClauses, immediate, childSlotMap);
 				const fieldCount = [...branchSeen].filter(f => !seen.has(f)).length;
 				if (fieldCount > bestCount) {
 					bestCount = fieldCount;
@@ -235,16 +301,16 @@ function ruleToTemplate(
 
 		case 'REPEAT':
 		case 'REPEAT1':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
 
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
 
 		case 'TOKEN':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, false);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, false, childSlotMap);
 
 		case 'IMMEDIATE_TOKEN': {
 			let inner: GrammarRule = rule.content;
@@ -255,16 +321,27 @@ function ruleToTemplate(
 				if (optional) return [];
 				return [inner.value]; // no leading space — immediate
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, true);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, true, childSlotMap);
 		}
 
 		case 'ALIAS':
-			if (rule.named) return ['$$$CHILDREN'];
+			if (rule.named) {
+				// Named alias — treat like a symbol
+				const aliasSlot = childSlotMap.get(rule.value ?? '');
+				if (aliasSlot) {
+					if (seen.has(`child:${aliasSlot.slotName}`)) return [];
+					seen.add(`child:${aliasSlot.slotName}`);
+					return [aliasSlot.multiple ? `$$$${aliasSlot.varName}` : `$${aliasSlot.varName}`];
+				}
+				if (seen.has('children')) return [];
+				seen.add('children');
+				return ['$$$CHILDREN'];
+			}
 			if (rule.value) {
 				if (optional) return [];
 				return [rule.value];
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
 
 		case 'BLANK':
 		case 'PATTERN':

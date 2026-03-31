@@ -52,10 +52,19 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 			return renderClause(clauseTemplate, node, config, varPattern);
 		}
 
-		// For CHILDREN, check node.children (unnamed children array) in addition to fields
-		const value = fieldKey === 'children'
-			? (node.fields?.[fieldKey] ?? node.children)
-			: node.fields?.[fieldKey];
+		// Resolution order:
+		// 1. fields[name] — named fields (raw snake_case)
+		// 2. children array — for 'children' key, use the full array
+		// 3. children by type — find child whose type matches the variable name (for positional children)
+		let value: unknown;
+		if (node.fields?.[fieldKey] !== undefined) {
+			value = node.fields[fieldKey];
+		} else if (fieldKey === 'children') {
+			value = node.children;
+		} else if (node.children) {
+			// Search children by type match (for named child slot variables like $VISIBILITY_MODIFIER)
+			value = findChildByType(node.children, fieldKey);
+		}
 
 		// $$$ — multi (zero or more)
 		if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
@@ -126,6 +135,16 @@ function renderValue(value: AnyNodeData | string | number, config: RulesConfig):
 	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return String(value);
 	return render(value, config);
+}
+
+/** Find a child node whose type matches the given snake_case key. */
+function findChildByType(children: readonly unknown[], fieldKey: string): unknown {
+	for (const child of children) {
+		if (typeof child === 'object' && child !== null && 'type' in child) {
+			if ((child as { type: string }).type === fieldKey) return child;
+		}
+	}
+	return undefined;
 }
 
 /** Escape a string for use in a RegExp. */
