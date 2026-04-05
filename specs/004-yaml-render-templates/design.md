@@ -295,8 +295,9 @@ The render engine walks the template left-to-right. For each variable:
 
 1. **`$FIELD_NAME`** — look up `node.fields[name]` (tree-sitter FIELDs AND override fields)
 2. **`$$$CHILDREN`** — render all unconsumed children (the truly unnamed remainder) joined by separator
-3. **`$KIND_NAME`** — consume first unconsumed child matching that kind (for nodes without overrides)
-4. **Clause** — render sub-template if underlying field present
+3. **Clause** — render sub-template if underlying field present
+
+No runtime kind-matching — `$NAME` is always a field lookup. Kind-specific child consumption is handled by `wrap.ts` promoting children to fields before render.
 
 `$$$CHILDREN` is only for truly unnamed groups — REPEAT nodes like `declaration_list`, `arguments`, `string_literal`. Named positions always get template variables.
 

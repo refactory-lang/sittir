@@ -163,7 +163,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **FR-023**: Codegen MUST detect and log override candidates automatically: same-kind positional children (`SEQ(X, X)`) and discriminator tokens (CHOICE branches identical after token removal)
 - **FR-024**: `wrap.ts` MUST implement 5 field promotion heuristics: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value, (4) same-kind positional by token, (5) top-level CHOICE branch by token
 - **FR-025**: After `wrap.ts` promotion, all named positions MUST be in `fields` regardless of origin; `children` MUST contain only the truly unnamed remainder
-- **FR-026**: The render engine MUST resolve variables in priority order: `$FIELD_NAME` from `node.fields`, `$$$CHILDREN` from unconsumed children, `$KIND_NAME` from first unconsumed child matching kind, then clause sub-templates
+- **FR-026**: The render engine MUST resolve variables only via field lookup (`$FIELD_NAME` from `node.fields`, `$$$CHILDREN` from children array) and clause sub-templates — no runtime kind-matching; kind-specific child consumption is handled by `wrap.ts` field promotion before render
 - **FR-027**: Codegen MUST classify each node's unnamed children by simplifying the grammar rule (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine the appropriate template pattern
 
 ### Key Entities
@@ -196,6 +196,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 ### Session 2026-04-05
 
 - Q: How should the render engine handle whitespace adjacent to absent variables? → A: Absent variables collapse exactly one adjacent space (ast-grep fix behavior). Present variables preserve literal formatting.
+- Q: How does the render engine distinguish `$FIELD_NAME` from `$KIND_NAME`? → A: No kind matching at runtime. `$NAME` is always a field lookup. Kind-specific child consumption is handled by `wrap.ts` promoting children to fields before render.
 
 ## Assumptions
 
