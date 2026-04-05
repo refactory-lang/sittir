@@ -141,7 +141,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **FR-001**: Codegen MUST emit a single `templates.yaml` file per grammar package, replacing `rules.ts` and `joinby.ts`
 - **FR-002**: Each `templates.yaml` MUST contain top-level keys: `language`, `extensions`, `expandoChar`, `metadata`, and `rules`
 - **FR-003**: Rules MUST support two forms: string (simple template) and object (template + clauses + joinBy)
-- **FR-004**: Template syntax MUST use ast-grep meta variable conventions: `$NAME` (single), `$$NAME` (unnamed), `$$$NAME` (multi), `$_NAME` (non-capturing)
+- **FR-004**: Template syntax MUST use ast-grep meta variable conventions: `$NAME` (single), `$$NAME` (unnamed — implemented for ast-grep compatibility but unused in current grammar templates), `$$$NAME` (multi), `$_NAME` (non-capturing)
 - **FR-005**: Codegen MUST synthesize clauses for anonymous tokens adjacent to non-required fields in grammar `CHOICE([SEQ(STRING, FIELD), BLANK])` patterns
 - **FR-006**: Clauses MUST be nested YAML keys under the parent rule, named `{field_name}_clause` in snake_case
 - **FR-007**: Render engine MUST resolve clause variables against `node.fields` and omit the entire clause when any variable is absent
@@ -197,6 +197,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 
 - Q: How should the render engine handle whitespace adjacent to absent variables? → A: Absent variables collapse exactly one adjacent space (ast-grep fix behavior). Present variables preserve literal formatting.
 - Q: How does the render engine distinguish `$FIELD_NAME` from `$KIND_NAME`? → A: No kind matching at runtime. `$NAME` is always a field lookup. Kind-specific child consumption is handled by `wrap.ts` promoting children to fields before render.
+- Q: Is `$$NAME` (double-dollar unnamed) needed for current grammars? → A: Implemented for ast-grep compatibility but unused in current grammar templates. No templates will reference `$$NAME` initially.
 
 ## Assumptions
 
