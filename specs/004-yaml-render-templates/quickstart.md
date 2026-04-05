@@ -38,6 +38,19 @@ function_item:
 
 **Clauses** bundle optional tokens with fields. When the field is absent, the entire clause (including its tokens) is omitted.
 
+## Override fields (`overrides.json`)
+
+Some tree-sitter grammars lack explicit FIELDs for certain nodes (e.g., Rust `index_expression` has two `_expression` children with no field names). Each grammar package can include an `overrides.json` that provides supplemental field names:
+
+```json
+{
+  "index_expression": { "fields": { "value": {}, "index": {} } },
+  "unary_expression": { "fields": { "operator": { "anonymous": true }, "argument": {} } }
+}
+```
+
+The codegen merges these with node-types.json during enrichment. At runtime, `wrap.ts` promotes override-named children from `children` into `fields` using 5 heuristics (by field name, unique kind, anonymous token, token position, CHOICE branch). After wrapping, templates can reference override fields as `$VALUE`, `$INDEX`, etc.
+
 ## Regenerating templates
 
 ```bash
@@ -64,8 +77,8 @@ Existing factory→render tests validate the new engine without changes.
 The render engine lives in `packages/core/src/render.ts`. It:
 1. Returns `node.text` for leaf nodes
 2. Looks up `config.rules[node.type]`
-3. Scans template string for `$` variables
-4. Resolves `$NAME` → `fields[name]`, `$$$NAME` → array join, `$CLAUSE` → sub-template
+3. Scans template string left-to-right for `$` variables
+4. Resolves in priority order: `$FIELD_NAME` → `fields[name]` (tree-sitter + override fields), `$$$CHILDREN` → unconsumed children joined by separator, `$KIND_NAME` → first unconsumed child matching kind, `$CLAUSE` → sub-template
 5. Concatenates — no whitespace collapsing
 
 See [design.md](design.md) for the full render engine pseudocode.

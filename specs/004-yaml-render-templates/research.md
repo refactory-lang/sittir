@@ -57,3 +57,39 @@
 - **Pass RulesConfig from generated package to core**: Still requires generated packages to parse YAML or hold template data. Core should own the entire template lifecycle.
 
 **Implementation**: `createRenderer(yamlPath: string)` loads and parses the YAML file, closes over the `RulesConfig`. Returns bound `render`/`toEdit` functions. Generated `factories.ts` calls `createRenderer` with the path to `templates.yaml` (resolved relative to the package). The `JoinByMap` and `RulesRegistry` types are removed from the public API.
+
+## Decision 6: Override fields via `overrides.json`
+
+**Decision**: Per-grammar `overrides.json` files provide supplemental field names for nodes where the tree-sitter grammar lacks explicit FIELDs. The codegen merges overrides during enrichment and validates against grammar rule structure.
+
+**Rationale**: Tree-sitter grammars vary in their use of FIELDs. Rust's grammar leaves ~10-15 nodes without field names for positional children (e.g., `index_expression` has two `_expression` children). Without overrides, templates would be forced to use positional `$$$CHILDREN` for these nodes, losing semantic clarity.
+
+**Alternatives considered**:
+- **Fully automatic naming**: The codegen can detect candidates (same-kind positional, discriminator tokens) but can't assign semantically meaningful names. "child_0" / "child_1" are worse than nothing.
+- **Inline in YAML templates**: Mixing structural metadata with render templates muddies the template format.
+- **Patch tree-sitter grammars upstream**: Impractical — grammar repos are maintained by different communities with different goals.
+
+**Implementation**: `overrides.json` at each grammar package root, loaded by codegen during NodeModel enrichment. Schema mirrors `node-types.json` fields block. `anonymous: true` marks anonymous tokens. Codegen validates entries against grammar rule structure and reports errors for mismatches.
+
+## Decision 7: wrap.ts field promotion heuristics
+
+**Decision**: Five heuristics for promoting unnamed children into `fields`, ordered by specificity: (1) tree-sitter FIELD by name, (2) unique kind, (3) anonymous token as value, (4) token-positional, (5) CHOICE branch by token.
+
+**Rationale**: Each heuristic covers a distinct grammar pattern. Heuristics 1-2 are fully automatic (no overrides needed). Heuristics 3-5 require override names but the promotion logic is still generated automatically by the codegen.
+
+**Alternatives considered**:
+- **Single generic wrap function**: Too slow at runtime — per-kind functions inline the known field structure.
+- **No heuristics, manual wrap**: Defeats the purpose of codegen — would require hand-writing wrap functions for every node kind.
+- **Fewer heuristics**: Leaving out heuristic 4 or 5 would fail for `index_expression`, `range_expression`, and similar nodes that are common in Rust.
+
+**Implementation**: Codegen walks the enriched rule for each node kind and selects the appropriate heuristic per child. Generated `wrap.ts` functions inline the promotion logic. After wrapping, `children` contains only truly unnamed remainder.
+
+## Decision 8: Children classification for template generation
+
+**Decision**: Codegen classifies each node's unnamed children by simplifying the grammar rule: strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact. The simplified root determines the template pattern.
+
+**Rationale**: Different grammar rule shapes produce different template patterns. A REPEAT produces `$$$CHILDREN` + `joinBy`. A SEQ with mixed fields and children produces field variables + `$$$CHILDREN` for the unnamed portion. Classification drives correct template generation.
+
+**Alternatives considered**:
+- **No classification, uniform `$$$CHILDREN`**: Loses the ability to generate field-specific templates for SEQ-based nodes.
+- **Deep rule analysis**: Diminishing returns — the 5 simplified roots cover all observed patterns across Rust, TypeScript, and Python grammars.

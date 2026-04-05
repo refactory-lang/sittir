@@ -125,7 +125,56 @@
 
 ---
 
-## Phase 7: Polish & Cross-Cutting Concerns
+## Phase 7: User Story 6 — Override Fields (`overrides.json`) (P2)
+
+**Goal**: Create `overrides.json` files per grammar that provide supplemental field names for under-fielded nodes. Codegen merges overrides during enrichment and validates against grammar structure.
+
+**Independent Test**: Run codegen for Rust with `overrides.json` and verify templates for `index_expression`, `unary_expression`, `range_expression` use `$FIELD_NAME` variables instead of positional `$$$CHILDREN`.
+
+### Overrides infrastructure
+
+- [ ] T038 [US6] Add `overrides.json` schema and loading to codegen — merge override fields with node-types.json fields during enrichment in the NodeModel pipeline
+- [ ] T039 [US6] Add validation: overrides MUST NOT shadow existing tree-sitter FIELDs; entries MUST match grammar rule structure
+- [ ] T040 [US6] Add automatic detection logging: same-kind positional (`SEQ(X, X)`) logs "needs synthetic names"; discriminator tokens log "discriminator token at position N"
+
+### Per-grammar overrides
+
+- [ ] T041 [P] [US6] Create `packages/rust/overrides.json` — ~10-15 entries including `index_expression` (value/index), `unary_expression` (operator/argument), `range_expression` (start/operator/end), `macro_definition` (delimiter)
+- [ ] T042 [P] [US6] Create `packages/typescript/overrides.json` — minimal or empty (TypeScript wraps operators in FIELDs)
+- [ ] T043 [P] [US6] Create `packages/python/overrides.json` — minimal or empty (Python wraps operators in FIELDs)
+
+**Checkpoint**: Codegen loads and validates overrides.json for all 3 grammars. Override fields appear in enriched NodeModel.
+
+---
+
+## Phase 8: User Story 7 — wrap.ts Field Promotion Heuristics (P2)
+
+**Goal**: Codegen generates per-kind wrap functions implementing 5 heuristics for field promotion. After wrapping, all named positions are in `fields`; `children` contains only truly unnamed remainder.
+
+**Independent Test**: Create a `NodeData` for `index_expression` via assign, verify after wrapping that `fields.value` and `fields.index` are populated.
+
+### Children classification
+
+- [ ] T044 [US7] Implement children classification in codegen — simplify grammar rules (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine template pattern per node kind
+
+### Wrap emitter updates
+
+- [ ] T045 [US7] Update wrap emitter to generate heuristic 2 (unique kind promotion) — move unnamed child with unique kind from `children` to `fields`
+- [ ] T046 [US7] Update wrap emitter to generate heuristic 3 (anonymous token promotion) — promote anonymous token to `fields` using override name, match by text
+- [ ] T047 [US7] Update wrap emitter to generate heuristic 4 (token-positional promotion) — split same-kind children at token boundary using override names
+- [ ] T048 [US7] Update wrap emitter to generate heuristic 5 (CHOICE branch promotion) — use token position to determine field assignment in top-level CHOICE variants
+
+### Integration
+
+- [ ] T049 [US7] Regenerate all 3 grammar packages with override fields and updated wrap functions
+- [ ] T050 [US7] Run `pnpm test` — verify all existing tests pass with updated wrap functions
+- [ ] T051 [US7] Validate templates for override-field nodes use `$FIELD_NAME` variables (spot-check `index_expression`, `unary_expression`, `range_expression` in Rust)
+
+**Checkpoint**: wrap.ts correctly promotes override fields. Templates reference named fields. All tests pass.
+
+---
+
+## Phase 9: Polish & Cross-Cutting Concerns
 
 **Purpose**: Final cleanup and validation
 
@@ -133,6 +182,9 @@
 - [x] T035 [P] Verify render engine line count is ~50 lines (SC-005)
 - [x] T036 [P] Verify `templates.yaml` determinism — regenerate Rust twice, diff output, confirm byte-identical
 - [x] T037 Verify `expandoChar` works end-to-end — create a manual test with a mock grammar where `expandoChar` is non-null (e.g., `%`), confirm variable scanner uses `%NAME` instead of `$NAME`
+- [ ] T052 Verify SC-009: `overrides.json` for Rust provides field names for ~10-15 under-fielded nodes
+- [ ] T053 [P] Verify SC-010: `wrap.ts` promotes override fields correctly for all 5 heuristic categories
+- [ ] T054 [P] Verify SC-011: templates for override-field nodes use `$FIELD_NAME` variables instead of `$$$CHILDREN`
 
 ---
 
@@ -146,7 +198,9 @@
 - **US5 Regression (Phase 4)**: Depends on US1 (needs regenerated packages)
 - **US3 Cleanup (Phase 5)**: Depends on US5 passing (safe to delete after regression passes)
 - **US4 Multi-lang (Phase 6)**: Depends on US5 (needs all 3 grammars regenerated)
-- **Polish (Phase 7)**: Depends on all prior phases
+- **US6 Overrides (Phase 7)**: Depends on US1 (needs codegen infrastructure to merge overrides)
+- **US7 Wrap Heuristics (Phase 8)**: Depends on US6 (needs overrides.json to drive promotion)
+- **Polish (Phase 9)**: Depends on all prior phases
 
 ### User Story Dependencies
 
@@ -155,6 +209,8 @@
 - **US5 (Regression)**: Depends on US1 (needs regenerated packages)
 - **US3 (Cleanup)**: Depends on US5 (safe to remove old files after tests pass)
 - **US4 (Multi-lang)**: Depends on US5 (all grammars must be regenerated)
+- **US6 (Overrides)**: Depends on US1 (codegen infrastructure needed to merge overrides into enrichment)
+- **US7 (Wrap Heuristics)**: Depends on US6 (override field names drive wrap promotion logic)
 
 ### Within Each Phase
 
@@ -168,6 +224,7 @@
 - T020, T021, T022 (regenerate grammars) — T020 first, T021/T022 in parallel after
 - T026, T027, T028 (delete old files) can run in parallel
 - T031, T032, T033 (validate templates) can run in parallel
+- T041, T042, T043 (create per-grammar overrides.json) can run in parallel
 
 ---
 
