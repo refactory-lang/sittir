@@ -3,7 +3,7 @@
 **Input**: Design documents from `specs/004-yaml-render-templates/`
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, design.md
 
-**Tests**: Existing generated tests serve as the regression gate (constitution IV). No new test tasks — the existing factory→render test suite validates the new engine.
+**Tests**: Existing generated tests serve as the regression gate (constitution IV). New tests added only for wrap heuristic validation (T056) — override field promotion is new behavior not covered by existing factory→render tests.
 
 **Organization**: Tasks grouped by user story. US2 (render engine) is foundational since all other stories depend on a working render engine.
 
@@ -47,6 +47,10 @@
 - [x] T010 Add YAML loading to `packages/core/src/render.ts` — `createRenderer(yamlPath: string)` loads and parses YAML, closes over `RulesConfig`, returns bound `render`/`toEdit`
 - [x] T011 Update `packages/core/src/types.ts` — re-export `TemplateRule`, `RulesConfig` from `@sittir/types`; remove re-exports of `RenderTemplate`, `RenderRule`, `TemplateElement`, `ParsedTemplate`, `RulesRegistry`, `JoinByMap`
 - [x] T012 Update `packages/core/src/index.ts` — ensure new types and updated `createRenderer` are exported
+
+### Post-clarification render engine update
+
+- [ ] T055 [US2] Update render engine in `packages/core/src/render.ts` for post-clarification requirements: (a) implement absent-field adjacent space absorption per FR-017, (b) verify no runtime kind-matching exists per FR-026 — only field lookup and clause resolution
 
 **Checkpoint**: Core render engine works with hand-crafted RulesConfig. `createRenderer` accepts a YAML path. Old S-expr types removed.
 
@@ -166,6 +170,7 @@
 
 ### Integration
 
+- [ ] T056 [US7] Add assign round-trip tests for wrap heuristic validation — create tests for `index_expression` (heuristic 4), `unary_expression` (heuristic 3), and `range_expression` (heuristic 5) verifying that after assign+wrap, `fields` contains promoted children
 - [ ] T049 [US7] Regenerate all 3 grammar packages with override fields and updated wrap functions
 - [ ] T050 [US7] Run `pnpm test` — verify all existing tests pass with updated wrap functions
 - [ ] T051 [US7] Validate templates for override-field nodes use `$FIELD_NAME` variables (spot-check `index_expression`, `unary_expression`, `range_expression` in Rust)
@@ -266,7 +271,9 @@ Task: T028 "Delete packages/python/src/rules.ts and joinby.ts"
 3. Full test suite (T023, T024)
 4. Cleanup old files (Phase 5)
 5. Multi-language validation (Phase 6)
-6. Polish (Phase 7)
+6. Override fields — create overrides.json per grammar (Phase 7)
+7. Wrap heuristics — field promotion for override nodes (Phase 8)
+8. Polish & cross-cutting verification (Phase 9)
 
 ---
 
@@ -275,6 +282,6 @@ Task: T028 "Delete packages/python/src/rules.ts and joinby.ts"
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
 - US2 is placed in Foundational phase because the render engine must exist before any other story can be validated
-- No new test files needed — existing generated tests are the regression gate (constitution IV)
+- Existing generated tests are the primary regression gate (constitution IV); new tests added only for wrap heuristic validation (T056)
 - Commit after each phase checkpoint
 - Stop at any checkpoint to validate independently

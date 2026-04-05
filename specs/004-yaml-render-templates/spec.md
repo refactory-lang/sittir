@@ -10,7 +10,7 @@
 
 ### User Story 1 - Codegen produces YAML templates from grammar (Priority: P1)
 
-A developer runs the sittir codegen CLI against a tree-sitter grammar (e.g., Rust). The codegen walks the grammar's enriched rule tree and emits a single `templates.yaml` file per language containing render templates in ast-grep meta variable syntax, with synthesized clauses for optional token+field groups and per-rule `joinBy` separators.+
+A developer runs the sittir codegen CLI against a tree-sitter grammar (e.g., Rust). The codegen walks the grammar's enriched rule tree and emits a single `templates.yaml` file per language containing render templates in ast-grep meta variable syntax, with synthesized clauses for optional token+field groups and per-rule `joinBy` separators.
 
 **Why this priority**: This is the core pipeline change. Without YAML template emission, nothing else works. It replaces the current S-expression `rules.ts` + `joinby.ts` generation.
 
@@ -147,19 +147,19 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **FR-007**: Render engine MUST resolve clause variables against `node.fields` and omit the entire clause when any variable is absent
 - **FR-008**: `joinBy` MUST support string form (applies to all `$$$` variables) and object form (keyed by variable name)
 - **FR-009**: Default separator for `$$$` variables without explicit `joinBy` MUST be a single space
-- **FR-010**: Formatting MUST be literal in templates — the render engine MUST concatenate without whitespace collapsing or `parts.join(' ')`
+- **FR-010**: Formatting MUST be literal in templates — the render engine MUST concatenate without general whitespace collapsing or `parts.join(' ')`. The sole exception is absent-field space absorption per FR-017.
 - **FR-011**: Render engine MUST return `node.text` directly for leaf nodes (no template lookup)
 - **FR-012**: The S-expression parser (`sexpr.ts`) MUST be removed
 - **FR-013**: Generated `rules.ts` and `joinby.ts` files MUST be removed from all language packages
 - **FR-014**: Type system MUST replace `TemplateElement`/`ParsedTemplate` with `TemplateRule` and `RulesConfig` types
 - **FR-015**: Casing convention MUST follow: camelCase for config/structural keys (ast-grep origin), snake_case for rule/clause/field names (tree-sitter origin), UPPER_SNAKE for template variables (ast-grep patterns)
 - **FR-016**: Variable resolution MUST map by lowercasing: `$NAME` to `fields.name`, `$RETURN_TYPE` to `fields.return_type`
-- **FR-017**: Absent fields MUST render as empty string and collapse exactly one adjacent space (consistent with ast-grep fix behavior) — e.g., `"$$$CHILDREN struct $NAME"` with absent `$$$CHILDREN` renders `"struct Foo"`, not `" struct Foo"`
+- **FR-017**: Absent fields MUST render as empty string and absorb exactly one adjacent space (consistent with ast-grep fix behavior). Each absent variable absorbs independently, so cascading absent variables collapse all intermediate spaces — e.g., `"$A $B $C"` all absent → `""`. Example: `"$$$CHILDREN struct $NAME"` with absent `$$$CHILDREN` renders `"struct Foo"`, not `" struct Foo"`
 - **FR-018**: Codegen MUST derive formatting signals from grammar structure: `IMMEDIATE_TOKEN` for no-space-before, delimiter pairs for attached tokens, block delimiters for multiline with indentation
 - **FR-019**: Each grammar package MAY include an `overrides.json` file that provides supplemental field names for nodes lacking explicit tree-sitter FIELDs, mirroring the shape of `node-types.json`
 - **FR-020**: Override entries with `"anonymous": true` MUST mark fields that map to anonymous tokens (operators, delimiters)
 - **FR-021**: Codegen MUST merge override fields with node-types.json fields during enrichment; overrides MUST NOT shadow existing tree-sitter FIELDs
-- **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure: (a) node kind must exist in grammar, (b) field count must be plausible for the rule's positional children, (c) `anonymous: true` fields must correspond to actual anonymous tokens in the grammar rule, (d) override fields must not shadow existing tree-sitter FIELDs. Report descriptive errors for each violation.
+- **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure: (a) node kind must exist in grammar, (b) field count must be plausible for the rule's positional children, (c) `anonymous: true` fields must correspond to actual anonymous tokens in the grammar rule, (d) per FR-021. Report descriptive errors for each violation.
 - **FR-023**: Codegen MUST detect and log override candidates automatically: same-kind positional children (`SEQ(X, X)`) and discriminator tokens (CHOICE branches identical after token removal)
 - **FR-024**: `wrap.ts` MUST implement 5 field promotion heuristics: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value, (4) same-kind positional by token, (5) top-level CHOICE branch by token. `overrides.json` entries take precedence over automatic heuristics (2) — if an override exists for a child position, the automatic heuristic does not fire.
 - **FR-025**: After `wrap.ts` promotion, all named positions MUST be in `fields` regardless of origin; `children` MUST contain only the truly unnamed remainder
@@ -184,7 +184,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **SC-003**: 100% of existing tests pass after migration without changes to factory/from/assign APIs
 - **SC-004**: Render engine produces correctly formatted output for representative node types (functions, declarations, control flow, containers) across all 3 grammars
 - **SC-005**: Render engine code is reduced from ~133 lines + 119 lines (sexpr parser) to ~50 lines total
-- **SC-006**: Template files are human-readable — a developer can look at a template and immediately understand what code it produces
+- **SC-006**: Template files use literal code syntax with `$VARIABLE` slots — no escaping or encoded format required to read templates
 - **SC-007**: Per-rule `joinBy` correctly produces distinct separators for different `$$$` variables within the same rule (e.g., `, ` for params, `\n` for body)
 - **SC-008**: Clauses correctly omit paired tokens when optional fields are absent (e.g., `-> ` omitted when no `return_type`)
 - **SC-009**: `overrides.json` for Rust correctly provides field names for ~10-15 under-fielded nodes (e.g., `index_expression`, `unary_expression`, `range_expression`)
