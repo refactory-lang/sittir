@@ -1,0 +1,60 @@
+{
+  "index_expression": {
+    "fields": {
+      "object": {},
+      "index": {}
+    }
+  },
+  "unary_expression": {
+    "fields": {
+      "operator": { "anonymous": true },
+      "operand": {}
+    }
+  },
+  "range_expression": {
+    "fields": {
+      "start": {},
+      "operator": { "anonymous": true },
+      "end": {}
+    }
+  },
+  "negative_literal": {
+    "fields": {
+      "operator": { "anonymous": true },
+      "value": {}
+    }
+  },
+  "return_expression": {
+    "fields": {
+      "value": {}
+    }
+  },
+  "try_expression": {
+    "fields": {
+      "value": {},
+      "operator": { "anonymous": true }
+    }
+  },
+  "or_pattern": {
+    "fields": {
+      "left": {},
+      "operator": { "anonymous": true },
+      "right": {}
+    }
+  },
+  "reference_expression": {
+    "fields": {
+      "mutable_specifier": {}
+    }
+  },
+  "pointer_type": {
+    "fields": {
+      "mutable_specifier": {}
+    }
+  },
+  "let_chain": {
+    "fields": {
+      "conditions": {}
+    }
+  }
+}

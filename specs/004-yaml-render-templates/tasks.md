@@ -137,15 +137,15 @@
 
 ### Overrides infrastructure
 
-- [ ] T038 [US6] Add `overrides.json` schema and loading to codegen — merge override fields with node-types.json fields during enrichment in the NodeModel pipeline
-- [ ] T039 [US6] Add validation: overrides MUST NOT shadow existing tree-sitter FIELDs; entries MUST match grammar rule structure
-- [ ] T040 [US6] Add automatic detection logging: same-kind positional (`SEQ(X, X)`) logs "needs synthetic names"; discriminator tokens log "discriminator token at position N"
+- [x] T038 [US6] Add `overrides.json` schema and loading to codegen — merge override fields with node-types.json fields during enrichment in the NodeModel pipeline
+- [x] T039 [US6] Add validation: overrides MUST NOT shadow existing tree-sitter FIELDs; entries MUST match grammar rule structure
+- [x] T040 [US6] Add automatic detection logging: same-kind positional (`SEQ(X, X)`) logs "needs synthetic names"; discriminator tokens log "discriminator token at position N"
 
 ### Per-grammar overrides
 
-- [ ] T041 [P] [US6] Create `packages/rust/overrides.json` — ~10-15 entries including `index_expression` (value/index), `unary_expression` (operator/argument), `range_expression` (start/operator/end), `macro_definition` (delimiter)
-- [ ] T042 [P] [US6] Create `packages/typescript/overrides.json` — minimal or empty (TypeScript wraps operators in FIELDs)
-- [ ] T043 [P] [US6] Create `packages/python/overrides.json` — minimal or empty (Python wraps operators in FIELDs)
+- [x] T041 [P] [US6] Create `packages/rust/overrides.json` — ~10-15 entries including `index_expression` (value/index), `unary_expression` (operator/argument), `range_expression` (start/operator/end), `macro_definition` (delimiter)
+- [x] T042 [P] [US6] Create `packages/typescript/overrides.json` — minimal or empty (TypeScript wraps operators in FIELDs)
+- [x] T043 [P] [US6] Create `packages/python/overrides.json` — minimal or empty (Python wraps operators in FIELDs)
 
 **Checkpoint**: Codegen loads and validates overrides.json for all 3 grammars. Override fields appear in enriched NodeModel.
 

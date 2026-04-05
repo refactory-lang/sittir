@@ -18,6 +18,7 @@ import { inferTokenAliases, applyTokenAliases } from './semantic-aliases.ts';
 import { applyNaming } from './naming.ts';
 import { optimize } from './optimization.ts';
 import { hydrate } from './hydration.ts';
+import { loadOverrides, validateOverrides, mergeOverrides, detectOverrideCandidates } from './overrides.ts';
 
 function stripChildSignatures(children: any): any {
 	if (Array.isArray(children)) {
@@ -115,6 +116,19 @@ export function buildModel(grammarName: string): { grammarModel: GrammarModel; s
 
 	// Step 4: Initialize from NodeTypes
 	const models = initializeModels(nodeTypes);
+
+	// Step 4b: Load and merge overrides (FR-022)
+	const overrides = loadOverrides(grammarName);
+	if (Object.keys(overrides).length > 0) {
+		const overrideErrors = validateOverrides(overrides, models, grammar);
+		if (overrideErrors.length > 0) {
+			for (const err of overrideErrors) {
+				console.warn(`[overrides] ${err.kind}${err.field ? `.${err.field}` : ''}: ${err.message}`);
+			}
+		}
+		mergeOverrides(models, overrides);
+		detectOverrideCandidates(models, grammar);
+	}
 
 	// Step 5: Reconcile
 	reconcile(models, enrichedRules, grammarName);
