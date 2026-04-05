@@ -50,7 +50,7 @@
 
 ### Post-clarification render engine update
 
-- [ ] T055 [US2] Update render engine in `packages/core/src/render.ts` for post-clarification requirements: (a) implement absent-field adjacent space absorption per FR-017, (b) verify no runtime kind-matching exists per FR-026 — only field lookup and clause resolution
+- [x] T055 [US2] Update render engine in `packages/core/src/render.ts` for post-clarification requirements: (a) implement absent-field adjacent space absorption per FR-017, (b) verify no runtime kind-matching exists per FR-026 — only field lookup and clause resolution
 
 **Checkpoint**: Core render engine works with hand-crafted RulesConfig. `createRenderer` accepts a YAML path. Old S-expr types removed.
 
