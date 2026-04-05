@@ -161,7 +161,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **FR-021**: Codegen MUST merge override fields with node-types.json fields during enrichment; overrides MUST NOT shadow existing tree-sitter FIELDs
 - **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure: (a) node kind must exist in grammar, (b) field count must be plausible for the rule's positional children, (c) `anonymous: true` fields must correspond to actual anonymous tokens in the grammar rule, (d) override fields must not shadow existing tree-sitter FIELDs. Report descriptive errors for each violation.
 - **FR-023**: Codegen MUST detect and log override candidates automatically: same-kind positional children (`SEQ(X, X)`) and discriminator tokens (CHOICE branches identical after token removal)
-- **FR-024**: `wrap.ts` MUST implement 5 field promotion heuristics: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value, (4) same-kind positional by token, (5) top-level CHOICE branch by token
+- **FR-024**: `wrap.ts` MUST implement 5 field promotion heuristics: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value, (4) same-kind positional by token, (5) top-level CHOICE branch by token. `overrides.json` entries take precedence over automatic heuristics (2) — if an override exists for a child position, the automatic heuristic does not fire.
 - **FR-025**: After `wrap.ts` promotion, all named positions MUST be in `fields` regardless of origin; `children` MUST contain only the truly unnamed remainder
 - **FR-026**: The render engine MUST resolve variables only via field lookup (`$FIELD_NAME` from `node.fields`, `$$$CHILDREN` from children array) and clause sub-templates — no runtime kind-matching; kind-specific child consumption is handled by `wrap.ts` field promotion before render
 - **FR-027**: Codegen MUST classify each node's unnamed children by simplifying the grammar rule (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine the appropriate template pattern
@@ -199,6 +199,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - Q: How does the render engine distinguish `$FIELD_NAME` from `$KIND_NAME`? → A: No kind matching at runtime. `$NAME` is always a field lookup. Kind-specific child consumption is handled by `wrap.ts` promoting children to fields before render.
 - Q: Is `$$NAME` (double-dollar unnamed) needed for current grammars? → A: Implemented for ast-grep compatibility but unused in current grammar templates. No templates will reference `$$NAME` initially.
 - Q: What should `overrides.json` validation check? → A: Full validation: (a) node kind exists in grammar, (b) field count plausible, (c) anonymous fields match grammar tokens, (d) no shadowing of existing FIELDs.
+- Q: When overrides.json and automatic heuristic 2 (unique kind) both apply to the same child, which wins? → A: Overrides take precedence — explicit human intent overrides automatic heuristics.
 
 ## Assumptions
 
@@ -208,4 +209,3 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - The `expandoChar` mechanism for languages using `$` literally (PHP, shell) is specified but not immediately needed — Rust, TypeScript, and Python do not use `$` in their syntax
 - Indentation is universally 4 spaces, baked into templates by the codegen — no per-language indent configuration. Style-conformant indentation (e.g., 2 spaces for TypeScript) is the external formatter's job (`prettier`, `rustfmt`, `black`)
 - The existing test infrastructure exercises factories + render in a way that validates correctness of the new engine without test rewrites
-/sp
