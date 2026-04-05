@@ -176,6 +176,8 @@ export function mergeOverrides(
 				required: false,
 				multiple: false,
 				kinds: fieldDef.anonymous ? [] : ['_'], // placeholder kinds — refined during reconcile
+				override: true,
+				overrideAnonymous: fieldDef.anonymous ?? false,
 			});
 		}
 

@@ -51,6 +51,10 @@ export interface SingleFieldModel {
 	kinds: string[];
 	propertyName?: string;
 	fieldSignature?: FieldSignature;
+	/** True if this field comes from overrides.json (not a tree-sitter FIELD). */
+	override?: boolean;
+	/** True if this override field maps to an anonymous token (operator, delimiter). */
+	overrideAnonymous?: boolean;
 }
 
 export interface ListFieldModel {
@@ -61,6 +65,10 @@ export interface ListFieldModel {
 	separator: string | null;
 	propertyName?: string;
 	fieldSignature?: FieldSignature;
+	/** True if this field comes from overrides.json (not a tree-sitter FIELD). */
+	override?: boolean;
+	/** True if this override field maps to an anonymous token (operator, delimiter). */
+	overrideAnonymous?: boolean;
 }
 
 export type FieldModel = SingleFieldModel | ListFieldModel;

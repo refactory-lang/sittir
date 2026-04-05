@@ -8,7 +8,7 @@
  *   - edit(): universal entry point for in-place editing
  */
 
-import type { HydratedNodeModel } from '../node-model.ts';
+import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { toTypeName, toFactoryName, toRawFactoryName, toFieldName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, childSlotNames } from './utils.ts';
@@ -107,7 +107,11 @@ export function emitAssign(config: EmitAssignConfig): string {
 		lines.push(`export function assign${typeName}(target: ${typeName}Tree) {`);
 		lines.push(`  const config: Record<string, unknown> = {};`);
 
-		for (const f of fields) {
+		// Separate tree-sitter fields from override fields
+		const tsFields = fields.filter(f => !f.override);
+		const overrideFields = fields.filter(f => f.override);
+
+		for (const f of tsFields) {
 			const camel = f.propertyName ?? toFieldName(f.name);
 			const proj = projectKinds(f.kinds, ctx);
 			const named = expandForRuntime(proj.expandedAll, ctx);
@@ -121,6 +125,11 @@ export function emitAssign(config: EmitAssignConfig): string {
 				continue;
 			}
 			emitAssignField(lines, f, camel, named, leafSet, node.kind);
+		}
+
+		// Override fields: promote from children array (wrap heuristics)
+		if (overrideFields.length > 0) {
+			emitOverrideFieldPromotion(lines, overrideFields, ctx, leafSet, node.kind);
 		}
 
 		// Hydrate children field if present
@@ -227,6 +236,72 @@ function emitAssignChildren(
 			lines.push(`    if (!_child) return undefined;`);
 		}
 		lines.push(`    return assignByKind(_child.type, _child);`);
+		lines.push(`  })();`);
+	}
+}
+
+/**
+ * Emit override field promotion — wrap heuristics for children→fields promotion.
+ *
+ * Heuristic 2: Unique kind → find child by kind, promote to fields
+ * Heuristic 3: Anonymous token → find unnamed child by text, promote to fields
+ * Heuristic 4: Token-positional → split same-kind children at token boundary
+ * Heuristic 5: CHOICE branch → token position determines field assignment
+ *
+ * For simplicity in the initial implementation, we use a general approach:
+ * - Anonymous override fields: find non-named child by matching anonymous tokens
+ * - Named override fields: find named child by kind (unique) or position
+ */
+function emitOverrideFieldPromotion(
+	lines: string[],
+	overrideFields: readonly HydratedFieldModel[],
+	ctx: ProjectionContext,
+	leafSet: Set<string>,
+	nodeKind: string,
+): void {
+	// Collect all children once for override field promotion
+	lines.push(`  // Override field promotion (wrap heuristics)`);
+	lines.push(`  const _allChildren = target.children();`);
+
+	// Track which children indices have been consumed
+	lines.push(`  const _consumed = new Set<number>();`);
+
+	// First pass: anonymous override fields (heuristic 3 — token as value)
+	const anonFields = overrideFields.filter(f => f.overrideAnonymous);
+	for (const f of anonFields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		lines.push(`  config['${camel}'] = (() => {`);
+		lines.push(`    for (let i = 0; i < _allChildren.length; i++) {`);
+		lines.push(`      if (_consumed.has(i)) continue;`);
+		lines.push(`      const c = _allChildren[i]!;`);
+		lines.push(`      if (!c.isNamed()) { _consumed.add(i); return c.text(); }`);
+		lines.push(`    }`);
+		lines.push(`    return undefined;`);
+		lines.push(`  })();`);
+	}
+
+	// Second pass: named override fields (heuristic 2 — unique kind, or heuristic 4 — positional)
+	const namedFields = overrideFields.filter(f => !f.overrideAnonymous);
+	for (const f of namedFields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		const proj = projectKinds(f.kinds, ctx);
+		const named = expandForRuntime(proj.expandedAll, ctx);
+
+		if (named.length === 0) {
+			// No kinds known — skip (shouldn't happen for named override fields)
+			lines.push(`  config['${camel}'] = undefined;`);
+			continue;
+		}
+
+		const kindSet = JSON.stringify(named);
+		lines.push(`  config['${camel}'] = (() => {`);
+		lines.push(`    const _kinds = new Set(${kindSet});`);
+		lines.push(`    for (let i = 0; i < _allChildren.length; i++) {`);
+		lines.push(`      if (_consumed.has(i)) continue;`);
+		lines.push(`      const c = _allChildren[i]!;`);
+		lines.push(`      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }`);
+		lines.push(`    }`);
+		lines.push(`    return undefined;`);
 		lines.push(`  })();`);
 	}
 }
