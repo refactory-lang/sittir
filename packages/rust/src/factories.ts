@@ -1320,10 +1320,17 @@ export function impl_item_(
 export function index_expression_(
   config: IndexExpressionConfig,
 ) {
+  const fields = {
+    object: config.object,
+    index: config.index,
+  };
   const children = config.children ?? [];
   return {
     type: 'index_expression' as const,
+    fields,
     children,
+    object(object?: string) { return object !== undefined ? index_expression_({ ...config, object: object }) : fields.object; },
+    index(index?: string) { return index !== undefined ? index_expression_({ ...config, index: index }) : fields.index; },
     getChildren() { return children; },
     setChildren(...children: (Expression)[]) { return index_expression_({ ...config, children }); },
     render() { return render(this); },
@@ -1375,10 +1382,15 @@ export function label_(
 export function let_chain_(
   config: LetChainConfig,
 ) {
+  const fields = {
+    conditions: config.conditions,
+  };
   const children = config.children ?? [];
   return {
     type: 'let_chain' as const,
+    fields,
     children,
+    conditions(conditions?: string) { return conditions !== undefined ? let_chain_({ ...config, conditions: conditions }) : fields.conditions; },
     getChildren() { return children; },
     setChildren(...children: (Expression | LetCondition)[]) { return let_chain_({ ...config, children }); },
     render() { return render(this); },
@@ -1753,10 +1765,19 @@ export function negative_literal_(
 export function or_pattern_(
   config: OrPatternConfig,
 ) {
+  const fields = {
+    left: config.left,
+    operator: config.operator,
+    right: config.right,
+  };
   const children = config.children ?? [];
   return {
     type: 'or_pattern' as const,
+    fields,
     children,
+    left(left?: string) { return left !== undefined ? or_pattern_({ ...config, left: left }) : fields.left; },
+    operator(operator?: string) { return operator !== undefined ? or_pattern_({ ...config, operator: operator }) : fields.operator; },
+    right(right?: string) { return right !== undefined ? or_pattern_({ ...config, right: right }) : fields.right; },
     getChildren() { return children; },
     setChildren(...children: (Pattern)[]) { return or_pattern_({ ...config, children }); },
     render() { return render(this); },
@@ -1862,6 +1883,7 @@ export function pointer_type_(
 ) {
   const fields = {
     type: config.type,
+    mutable_specifier: config.mutableSpecifier,
   };
   const children = config.children ? [config.children] : [];
   return {
@@ -1869,6 +1891,7 @@ export function pointer_type_(
     fields,
     children,
     typeField(type_?: Type) { return type_ !== undefined ? pointer_type_({ ...config, type: type_ }) : fields.type; },
+    mutableSpecifier(mutableSpecifier?: string) { return mutableSpecifier !== undefined ? pointer_type_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
     child(child?: MutableSpecifier) { return child !== undefined ? pointer_type_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1905,10 +1928,19 @@ export function qualified_type_(
 export function range_expression_(
   config?: RangeExpressionConfig,
 ) {
+  const fields = {
+    start: config?.start,
+    operator: config?.operator,
+    end: config?.end,
+  };
   const children = config?.children ?? [];
   return {
     type: 'range_expression' as const,
+    fields,
     children,
+    start(start?: string) { return start !== undefined ? range_expression_({ ...config, start: start }) : fields.start; },
+    operator(operator?: string) { return operator !== undefined ? range_expression_({ ...config, operator: operator }) : fields.operator; },
+    end(end?: string) { return end !== undefined ? range_expression_({ ...config, end: end }) : fields.end; },
     getChildren() { return children; },
     setChildren(...children: (Expression)[]) { return range_expression_({ ...config, children }); },
     render() { return render(this); },
@@ -1984,6 +2016,7 @@ export function reference_expression_(
 ) {
   const fields = {
     value: config.value,
+    mutable_specifier: config.mutableSpecifier,
   };
   const children = config.children ? [config.children] : [];
   return {
@@ -1991,6 +2024,7 @@ export function reference_expression_(
     fields,
     children,
     value(value?: Expression) { return value !== undefined ? reference_expression_({ ...config, value: value }) : fields.value; },
+    mutableSpecifier(mutableSpecifier?: string) { return mutableSpecifier !== undefined ? reference_expression_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
     child(child?: MutableSpecifier) { return child !== undefined ? reference_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2066,10 +2100,15 @@ export function removed_trait_bound_(
 export function return_expression_(
   config?: ReturnExpressionConfig,
 ) {
+  const fields = {
+    value: config?.value,
+  };
   const children = config?.children ? [config?.children] : [];
   return {
     type: 'return_expression' as const,
+    fields,
     children,
+    value(value?: string) { return value !== undefined ? return_expression_({ ...config, value: value }) : fields.value; },
     child(child?: Expression) { return child !== undefined ? return_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2513,10 +2552,17 @@ export function try_block_(
 export function try_expression_(
   config: TryExpressionConfig,
 ) {
+  const fields = {
+    value: config.value,
+    operator: config.operator,
+  };
   const children = config.children ? [config.children] : [];
   return {
     type: 'try_expression' as const,
+    fields,
     children,
+    value(value?: string) { return value !== undefined ? try_expression_({ ...config, value: value }) : fields.value; },
+    operator(operator?: string) { return operator !== undefined ? try_expression_({ ...config, operator: operator }) : fields.operator; },
     child(child?: Expression) { return child !== undefined ? try_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2753,10 +2799,17 @@ export function type_parameters_(
 export function unary_expression_(
   config: UnaryExpressionConfig,
 ) {
+  const fields = {
+    operator: config.operator,
+    operand: config.operand,
+  };
   const children = config.children ? [config.children] : [];
   return {
     type: 'unary_expression' as const,
+    fields,
     children,
+    operator(operator?: string) { return operator !== undefined ? unary_expression_({ ...config, operator: operator }) : fields.operator; },
+    operand(operand?: string) { return operand !== undefined ? unary_expression_({ ...config, operand: operand }) : fields.operand; },
     child(child?: Expression) { return child !== undefined ? unary_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

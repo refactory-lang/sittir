@@ -924,6 +924,11 @@ export function assignImplItem(target: ImplItemTree) {
 
 export function assignIndexExpression(target: IndexExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['object'] = undefined;
+  config['index'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -957,6 +962,10 @@ export function assignLabel(target: LabelTree) {
 
 export function assignLetChain(target: LetChainTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['conditions'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","let_condition","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -1152,6 +1161,19 @@ export function assignNegativeLiteral(target: NegativeLiteralTree) {
 
 export function assignOrPattern(target: OrPatternTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['operator'] = (() => {
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+    }
+    return undefined;
+  })();
+  config['left'] = undefined;
+  config['right'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -1236,6 +1258,10 @@ export function assignParenthesizedExpression(target: ParenthesizedExpressionTre
 export function assignPointerType(target: PointerTypeTree) {
   const config: Record<string, unknown> = {};
   config['type'] = assignByKind(target.field('type')!.type, target.field('type')!);
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['mutableSpecifier'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["mutable_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1254,6 +1280,19 @@ export function assignQualifiedType(target: QualifiedTypeTree) {
 
 export function assignRangeExpression(target: RangeExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['operator'] = (() => {
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+    }
+    return undefined;
+  })();
+  config['start'] = undefined;
+  config['end'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -1294,6 +1333,10 @@ export function assignRefPattern(target: RefPatternTree) {
 export function assignReferenceExpression(target: ReferenceExpressionTree) {
   const config: Record<string, unknown> = {};
   config['value'] = assignByKind(target.field('value')!.type, target.field('value')!);
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['mutableSpecifier'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["mutable_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1351,6 +1394,10 @@ export function assignRemovedTraitBound(target: RemovedTraitBoundTree) {
 
 export function assignReturnExpression(target: ReturnExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['value'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1617,6 +1664,18 @@ export function assignTryBlock(target: TryBlockTree) {
 
 export function assignTryExpression(target: TryExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['operator'] = (() => {
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+    }
+    return undefined;
+  })();
+  config['value'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1791,6 +1850,18 @@ export function assignTypeParameters(target: TypeParametersTree) {
 
 export function assignUnaryExpression(target: UnaryExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
+  config['operator'] = (() => {
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+    }
+    return undefined;
+  })();
+  config['operand'] = undefined;
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));

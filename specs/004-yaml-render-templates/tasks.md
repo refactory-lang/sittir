@@ -159,21 +159,21 @@
 
 ### Children classification
 
-- [ ] T044 [US7] Implement children classification in codegen — simplify grammar rules (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine template pattern per node kind
+- [x] T044 [US7] Implement children classification in codegen — simplify grammar rules (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine template pattern per node kind
 
 ### Wrap emitter updates
 
-- [ ] T045 [US7] Update wrap emitter to generate heuristic 2 (unique kind promotion) — move unnamed child with unique kind from `children` to `fields`
-- [ ] T046 [US7] Update wrap emitter to generate heuristic 3 (anonymous token promotion) — promote anonymous token to `fields` using override name, match by text
-- [ ] T047 [US7] Update wrap emitter to generate heuristic 4 (token-positional promotion) — split same-kind children at token boundary using override names
-- [ ] T048 [US7] Update wrap emitter to generate heuristic 5 (CHOICE branch promotion) — use token position to determine field assignment in top-level CHOICE variants
+- [x] T045 [US7] Update wrap emitter to generate heuristic 2 (unique kind promotion) — move unnamed child with unique kind from `children` to `fields`
+- [x] T046 [US7] Update wrap emitter to generate heuristic 3 (anonymous token promotion) — promote anonymous token to `fields` using override name, match by text
+- [x] T047 [US7] Update wrap emitter to generate heuristic 4 (token-positional promotion) — split same-kind children at token boundary using override names
+- [x] T048 [US7] Update wrap emitter to generate heuristic 5 (CHOICE branch promotion) — use token position to determine field assignment in top-level CHOICE variants
 
 ### Integration
 
-- [ ] T056 [US7] Add assign round-trip tests for wrap heuristic validation — create tests for `index_expression` (heuristic 4), `unary_expression` (heuristic 3), and `range_expression` (heuristic 5) verifying that after assign+wrap, `fields` contains promoted children
-- [ ] T049 [US7] Regenerate all 3 grammar packages with override fields and updated wrap functions
-- [ ] T050 [US7] Run `pnpm test` — verify all existing tests pass with updated wrap functions
-- [ ] T051 [US7] Validate templates for override-field nodes use `$FIELD_NAME` variables (spot-check `index_expression`, `unary_expression`, `range_expression` in Rust)
+- [x] T056 [US7] Add assign round-trip tests for wrap heuristic validation — create tests for `index_expression` (heuristic 4), `unary_expression` (heuristic 3), and `range_expression` (heuristic 5) verifying that after assign+wrap, `fields` contains promoted children
+- [x] T049 [US7] Regenerate all 3 grammar packages with override fields and updated wrap functions
+- [x] T050 [US7] Run `pnpm test` — verify all existing tests pass with updated wrap functions
+- [x] T051 [US7] Validate templates for override-field nodes use `$FIELD_NAME` variables (spot-check `index_expression`, `unary_expression`, `range_expression` in Rust)
 
 **Checkpoint**: wrap.ts correctly promotes override fields. Templates reference named fields. All tests pass.
 
@@ -187,9 +187,9 @@
 - [x] T035 [P] Verify render engine line count is ~50 lines (SC-005)
 - [x] T036 [P] Verify `templates.yaml` determinism — regenerate Rust twice, diff output, confirm byte-identical
 - [x] T037 Verify `expandoChar` works end-to-end — create a manual test with a mock grammar where `expandoChar` is non-null (e.g., `%`), confirm variable scanner uses `%NAME` instead of `$NAME`
-- [ ] T052 Verify SC-009: `overrides.json` for Rust provides field names for ~10-15 under-fielded nodes
-- [ ] T053 [P] Verify SC-010: `wrap.ts` promotes override fields correctly for all 5 heuristic categories
-- [ ] T054 [P] Verify SC-011: templates for override-field nodes use `$FIELD_NAME` variables instead of `$$$CHILDREN`
+- [x] T052 Verify SC-009: `overrides.json` for Rust provides field names for ~10-15 under-fielded nodes
+- [x] T053 [P] Verify SC-010: `wrap.ts` promotes override fields correctly for all 5 heuristic categories
+- [x] T054 [P] Verify SC-011: templates for override-field nodes use `$FIELD_NAME` variables instead of `$$$CHILDREN`
 
 ---
 

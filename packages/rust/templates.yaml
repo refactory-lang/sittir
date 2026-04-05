@@ -36,7 +36,7 @@ rules:
     return_type_clause: -> $RETURN_TYPE
   closure_parameters: "| $$$PARAMETER_OR_PATTERN2 | $PARAMETER_OR_PATTERN1"
   compound_assignment_expr: $LEFT $OPERATOR $RIGHT
-  const_block: const $BODYn
+  const_block: const $BODY
   const_item:
     template: "$CHILDREN const $NAME : $TYPE $VALUE_CLAUSE ; $$$CHILDREN"
     value_clause: = $VALUE
@@ -86,10 +86,10 @@ rules:
   higher_ranked_trait_bound: for $TYPE_PARAMETERS $TYPE
   if_expression: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   impl_item: impl $TYPE_PARAMETERS $TRAIT $TYPE $CHILDREN $BODY $$$CHILDREN
-  index_expression: $$$CHILDREN[] $$$CHILDREN
+  index_expression: $$$CHILDREN[] $OBJECT $INDEX $$$CHILDREN
   inner_attribute_item: "# ![$CHILDREN] $$$CHILDREN"
   label: "' $CHILDREN $$$CHILDREN"
-  let_chain: $$$CHILDREN
+  let_chain: $CONDITIONS $$$CHILDREN
   let_condition: let $PATTERN = $VALUE
   let_declaration:
     template: let $CHILDREN $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE ; $$$CHILDREN
@@ -114,22 +114,22 @@ rules:
   mod_item: $CHILDREN mod $NAME $BODY $$$CHILDREN
   mut_pattern: $MUTABLE_SPECIFIER $PATTERN
   negative_literal: "- $CHILDREN $$$CHILDREN"
-  or_pattern: $$$CHILDREN | $$$CHILDREN
+  or_pattern: $$$CHILDREN | $LEFT $OPERATOR $RIGHT $$$CHILDREN
   ordered_field_declaration_list: ($$$ATTRIBUTE_ITEM_OR_VISIBILITY_MODIFIER $$$TYPE) $$$ATTRIBUTE_ITEM $VISIBILITY_MODIFIER
   parameter: "$CHILDREN $PATTERN : $TYPE $$$CHILDREN"
   parameters: ($$$CHILDREN3) $ATTRIBUTE_ITEM $CHILDREN2
   parenthesized_expression: ($CHILDREN) $$$CHILDREN
-  pointer_type: "* $CHILDREN $TYPE $$$CHILDREN"
+  pointer_type: "* $CHILDREN $TYPE $MUTABLE_SPECIFIER $$$CHILDREN"
   qualified_type: $TYPE as $ALIAS
-  range_expression: $$$CHILDREN .. $$$CHILDREN
+  range_expression: $$$CHILDREN .. $START $OPERATOR $END $$$CHILDREN
   range_pattern: $LEFT ... $RIGHT
   raw_string_literal: $$$CHILDREN $CHILDREN
   ref_pattern: ref $CHILDREN $$$CHILDREN
-  reference_expression: "& raw $CHILDREN $VALUE $$$CHILDREN"
+  reference_expression: "& raw $CHILDREN $VALUE $MUTABLE_SPECIFIER $$$CHILDREN"
   reference_pattern: "& $MUTABLE_SPECIFIER $PATTERN"
   reference_type: "& $LIFETIME $MUTABLE_SPECIFIER $TYPE"
   removed_trait_bound: "? $CHILDREN $$$CHILDREN"
-  return_expression: return $CHILDREN $$$CHILDREN
+  return_expression: return $CHILDREN $VALUE $$$CHILDREN
   scoped_identifier: $PATH::$NAME
   scoped_type_identifier: $PATH::$NAME
   scoped_use_list: $PATH::$LIST
@@ -152,7 +152,7 @@ rules:
   trait_bounds: ": $$$HIGHER_RANKED_TRAIT_BOUND_OR_LIFETIME_OR_TYPE2 + $HIGHER_RANKED_TRAIT_BOUND_OR_LIFETIME_OR_TYPE1"
   trait_item: $VISIBILITY_MODIFIER trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
   try_block: try $CHILDREN $$$CHILDREN
-  try_expression: $CHILDREN ? $$$CHILDREN
+  try_expression: $CHILDREN ? $VALUE $OPERATOR $$$CHILDREN
   tuple_expression: ($$$ATTRIBUTE_ITEM $EXPRESSION3 , ,) $EXPRESSION1 $$$EXPRESSION2
   tuple_pattern: ($$$CLOSURE_EXPRESSION_OR_PATTERN2) $CLOSURE_EXPRESSION_OR_PATTERN1
   tuple_struct_pattern: $TYPE($$$PATTERN2) $PATTERN1
@@ -165,7 +165,7 @@ rules:
     template: $NAME $BOUNDS $DEFAULT_TYPE_CLAUSE
     default_type_clause: = $DEFAULT_TYPE
   type_parameters: <$$$CHILDREN3 ,> $$$ATTRIBUTE_ITEM $CHILDREN2
-  unary_expression: "- $CHILDREN $$$CHILDREN"
+  unary_expression: "- $CHILDREN $OPERATOR $OPERAND $$$CHILDREN"
   union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   unsafe_block: unsafe $CHILDREN $$$CHILDREN
   use_as_clause: $PATH as $ALIAS
