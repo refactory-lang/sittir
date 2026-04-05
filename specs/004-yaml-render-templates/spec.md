@@ -154,7 +154,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **FR-014**: Type system MUST replace `TemplateElement`/`ParsedTemplate` with `TemplateRule` and `RulesConfig` types
 - **FR-015**: Casing convention MUST follow: camelCase for config/structural keys (ast-grep origin), snake_case for rule/clause/field names (tree-sitter origin), UPPER_SNAKE for template variables (ast-grep patterns)
 - **FR-016**: Variable resolution MUST map by lowercasing: `$NAME` to `fields.name`, `$RETURN_TYPE` to `fields.return_type`
-- **FR-017**: Absent fields MUST render as empty string (consistent with ast-grep fix behavior)
+- **FR-017**: Absent fields MUST render as empty string and collapse exactly one adjacent space (consistent with ast-grep fix behavior) — e.g., `"$$$CHILDREN struct $NAME"` with absent `$$$CHILDREN` renders `"struct Foo"`, not `" struct Foo"`
 - **FR-018**: Codegen MUST derive formatting signals from grammar structure: `IMMEDIATE_TOKEN` for no-space-before, delimiter pairs for attached tokens, block delimiters for multiline with indentation
 - **FR-019**: Each grammar package MAY include an `overrides.json` file that provides supplemental field names for nodes lacking explicit tree-sitter FIELDs, mirroring the shape of `node-types.json`
 - **FR-020**: Override entries with `"anonymous": true` MUST mark fields that map to anonymous tokens (operators, delimiters)
@@ -190,6 +190,12 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **SC-009**: `overrides.json` for Rust correctly provides field names for ~10-15 under-fielded nodes (e.g., `index_expression`, `unary_expression`, `range_expression`)
 - **SC-010**: `wrap.ts` correctly promotes override fields into `fields` for all 5 heuristic categories, verified by assign round-trip tests
 - **SC-011**: Templates for nodes with override fields use `$FIELD_NAME` variables instead of positional `$$$CHILDREN`
+
+## Clarifications
+
+### Session 2026-04-05
+
+- Q: How should the render engine handle whitespace adjacent to absent variables? → A: Absent variables collapse exactly one adjacent space (ast-grep fix behavior). Present variables preserve literal formatting.
 
 ## Assumptions
 
