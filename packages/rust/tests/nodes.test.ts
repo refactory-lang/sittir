@@ -1385,7 +1385,7 @@ describe('index_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.indexExpression({ object: '_' as any, index: '_' as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.indexExpression({ object: ir.identifier('test_object') as any, index: ir.identifier('test_index') as any, children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1454,7 +1454,7 @@ describe('let_chain', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.letChain({ conditions: '_' as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.letChain({ conditions: ir.identifier('test_conditions') as any, children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1994,7 +1994,7 @@ describe('pointer_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.pointerType({ type: ir.typeIdentifier('TestType') as any, mutableSpecifier: '_' as any, children: ir.mutableSpecifier() as any });
+    const node = ir.pointerType({ type: ir.typeIdentifier('TestType') as any, mutableSpecifier: ir.mutableSpecifier() as any, children: ir.mutableSpecifier() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2111,7 +2111,7 @@ describe('reference_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.referenceExpression({ value: ir.identifier('test_value') as any, mutableSpecifier: '_' as any, children: ir.mutableSpecifier() as any });
+    const node = ir.referenceExpression({ value: ir.identifier('test_value') as any, mutableSpecifier: ir.mutableSpecifier() as any, children: ir.mutableSpecifier() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2214,7 +2214,7 @@ describe('return_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.returnExpression({ value: '_' as any, children: ir.identifier('test_children') as any });
+    const node = ir.returnExpression({ value: ir.identifier('test_value') as any, children: ir.identifier('test_children') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

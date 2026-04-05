@@ -274,7 +274,7 @@ function emitOverrideFieldPromotion(
 		lines.push(`    for (let i = 0; i < _allChildren.length; i++) {`);
 		lines.push(`      if (_consumed.has(i)) continue;`);
 		lines.push(`      const c = _allChildren[i]!;`);
-		lines.push(`      if (!c.isNamed()) { _consumed.add(i); return c.text(); }`);
+		lines.push(`      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }`);
 		lines.push(`    }`);
 		lines.push(`    return undefined;`);
 		lines.push(`  })();`);

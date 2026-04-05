@@ -697,8 +697,8 @@ export interface ImplItem {
 export interface IndexExpression {
   readonly type: 'index_expression';
   readonly fields: {
-    readonly object?: string;
-    readonly index?: string;
+    readonly object?: Expression;
+    readonly index?: Expression;
   };
   readonly children: readonly (Expression)[];
 }
@@ -713,7 +713,7 @@ export interface Label {
 export interface LetChain {
   readonly type: 'let_chain';
   readonly fields: {
-    readonly conditions?: string;
+    readonly conditions?: Expression | LetCondition;
   };
   readonly children: readonly (Expression | LetCondition)[];
 }
@@ -829,9 +829,9 @@ export interface NegativeLiteral {
 export interface OrPattern {
   readonly type: 'or_pattern';
   readonly fields: {
-    readonly left?: string;
+    readonly left?: Pattern;
     readonly operator?: string;
-    readonly right?: string;
+    readonly right?: Pattern;
   };
   readonly children: readonly (Pattern)[];
 }
@@ -866,7 +866,7 @@ export interface PointerType {
   readonly type: 'pointer_type';
   readonly fields: {
     readonly type: Type;
-    readonly mutableSpecifier?: string;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
   readonly children?: MutableSpecifier;
 }
@@ -880,9 +880,9 @@ export interface QualifiedType {
 export interface RangeExpression {
   readonly type: 'range_expression';
   readonly fields: {
-    readonly start?: string;
+    readonly start?: Expression;
     readonly operator?: string;
-    readonly end?: string;
+    readonly end?: Expression;
   };
   readonly children?: readonly (Expression)[];
 }
@@ -905,7 +905,7 @@ export interface ReferenceExpression {
   readonly type: 'reference_expression';
   readonly fields: {
     readonly value: Expression;
-    readonly mutableSpecifier?: string;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
   readonly children?: MutableSpecifier;
 }
@@ -929,7 +929,7 @@ export interface RemovedTraitBound {
 export interface ReturnExpression {
   readonly type: 'return_expression';
   readonly fields: {
-    readonly value?: string;
+    readonly value?: Expression;
   };
   readonly children?: Expression;
 }
@@ -1059,7 +1059,7 @@ export interface TryBlock {
 export interface TryExpression {
   readonly type: 'try_expression';
   readonly fields: {
-    readonly value?: string;
+    readonly value?: Expression;
     readonly operator?: string;
   };
   readonly children: Expression;
@@ -1138,7 +1138,7 @@ export interface UnaryExpression {
   readonly type: 'unary_expression';
   readonly fields: {
     readonly operator?: string;
-    readonly operand?: string;
+    readonly operand?: Expression;
   };
   readonly children: Expression;
 }

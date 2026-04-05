@@ -87,6 +87,8 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 
 	// FR-017: Absent-field space absorption — collapse runs of spaces left by
 	// empty variable interpolations into single spaces, and trim edges.
+	// Safe because codegen templates use single-space separation only;
+	// multi-space indentation is not embedded in templates.
 	return result.replace(/ {2,}/g, ' ').trim();
 }
 

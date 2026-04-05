@@ -927,8 +927,24 @@ export function assignIndexExpression(target: IndexExpressionTree) {
   // Override field promotion (wrap heuristics)
   const _allChildren = target.children();
   const _consumed = new Set<number>();
-  config['object'] = undefined;
-  config['index'] = undefined;
+  config['object'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
+  config['index'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -965,7 +981,15 @@ export function assignLetChain(target: LetChainTree) {
   // Override field promotion (wrap heuristics)
   const _allChildren = target.children();
   const _consumed = new Set<number>();
-  config['conditions'] = undefined;
+  config['conditions'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","let_condition","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","let_condition","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -1168,12 +1192,28 @@ export function assignOrPattern(target: OrPatternTree) {
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
-  config['left'] = undefined;
-  config['right'] = undefined;
+  config['left'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
+  config['right'] = (() => {
+    const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -1261,7 +1301,15 @@ export function assignPointerType(target: PointerTypeTree) {
   // Override field promotion (wrap heuristics)
   const _allChildren = target.children();
   const _consumed = new Set<number>();
-  config['mutableSpecifier'] = undefined;
+  config['mutableSpecifier'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["mutable_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1287,12 +1335,28 @@ export function assignRangeExpression(target: RangeExpressionTree) {
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
-  config['start'] = undefined;
-  config['end'] = undefined;
+  config['start'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
+  config['end'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _items = target.children().filter((c) => _kinds.has(c.type));
@@ -1336,7 +1400,15 @@ export function assignReferenceExpression(target: ReferenceExpressionTree) {
   // Override field promotion (wrap heuristics)
   const _allChildren = target.children();
   const _consumed = new Set<number>();
-  config['mutableSpecifier'] = undefined;
+  config['mutableSpecifier'] = (() => {
+    const _kinds = new Set(["mutable_specifier"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["mutable_specifier"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1397,7 +1469,15 @@ export function assignReturnExpression(target: ReturnExpressionTree) {
   // Override field promotion (wrap heuristics)
   const _allChildren = target.children();
   const _consumed = new Set<number>();
-  config['value'] = undefined;
+  config['value'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1671,11 +1751,19 @@ export function assignTryExpression(target: TryExpressionTree) {
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
-  config['value'] = undefined;
+  config['value'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));
@@ -1857,11 +1945,19 @@ export function assignUnaryExpression(target: UnaryExpressionTree) {
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!c.isNamed()) { _consumed.add(i); return c.text(); }
+      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
-  config['operand'] = undefined;
+  config['operand'] = (() => {
+    const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return assignByKind(c.type, c); }
+    }
+    return undefined;
+  })();
   config['children'] = (() => {
     const _kinds = new Set(["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
     const _child = target.children().find((c) => _kinds.has(c.type));

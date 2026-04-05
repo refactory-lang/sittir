@@ -46,7 +46,7 @@ export function loadOverrides(grammarName: string): OverridesConfig {
 	const explicit = overridePaths.get(grammarName);
 	if (explicit) {
 		if (!existsSync(explicit)) return {};
-		return JSON.parse(readFileSync(explicit, 'utf-8')) as OverridesConfig;
+		return parseOverridesFile(explicit);
 	}
 
 	// Resolve relative to this package's location in the monorepo
@@ -56,7 +56,16 @@ export function loadOverrides(grammarName: string): OverridesConfig {
 	const overridesPath = join(packagesDir, grammarName, 'overrides.json');
 
 	if (!existsSync(overridesPath)) return {};
-	return JSON.parse(readFileSync(overridesPath, 'utf-8')) as OverridesConfig;
+	return parseOverridesFile(overridesPath);
+}
+
+function parseOverridesFile(path: string): OverridesConfig {
+	try {
+		return JSON.parse(readFileSync(path, 'utf-8')) as OverridesConfig;
+	} catch (e) {
+		console.warn(`[overrides] Failed to parse ${path}: ${e instanceof Error ? e.message : e}`);
+		return {};
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -158,6 +167,9 @@ function walkRule(rule: GrammarRule, fn: (r: GrammarRule) => void): void {
  * Merge override fields into NodeModels.
  * For branch models: appends override fields to the existing fields array.
  * For container models: promotes to branch model with the override fields.
+ *
+ * Named override fields inherit their kinds from the model's children
+ * (since they promote children into fields).
  */
 export function mergeOverrides(
 	models: Map<string, NodeModel>,
@@ -167,15 +179,18 @@ export function mergeOverrides(
 		const model = models.get(kind);
 		if (!model) continue;
 
+		// Collect all children kinds from the model to assign to named override fields
+		const childrenKinds = collectChildrenKinds(model);
+
 		const overrideFields: FieldModel[] = [];
 		for (const [fieldName, fieldDef] of Object.entries(entry.fields)) {
-			// Anonymous fields are single, non-required tokens
-			// Named fields are single, non-required nodes
 			overrideFields.push({
 				name: fieldName,
 				required: false,
 				multiple: false,
-				kinds: fieldDef.anonymous ? [] : ['_'], // placeholder kinds — refined during reconcile
+				// Anonymous fields have no kinds (they match by token text).
+				// Named fields inherit from the model's children kinds.
+				kinds: fieldDef.anonymous ? [] : [...childrenKinds],
 				override: true,
 				overrideAnonymous: fieldDef.anonymous ?? false,
 			});
@@ -203,6 +218,26 @@ export function mergeOverrides(
 			models.set(kind, branch);
 		}
 	}
+}
+
+/** Collect all kinds from a model's children slots. */
+function collectChildrenKinds(model: NodeModel): string[] {
+	let children: import('./node-model.ts').ChildrenModel | undefined;
+	if (model.modelType === 'branch') children = model.children;
+	else if (model.modelType === 'container') children = model.children;
+	else return [];
+
+	if (!children) return [];
+
+	const kinds = new Set<string>();
+	if (Array.isArray(children)) {
+		for (const slot of children) {
+			for (const k of slot.kinds) kinds.add(k);
+		}
+	} else {
+		for (const k of children.kinds) kinds.add(k);
+	}
+	return [...kinds];
 }
 
 // ---------------------------------------------------------------------------
@@ -268,7 +303,7 @@ function stripTokens(rule: GrammarRule): unknown {
 		return members.length === 1 ? members[0] : { type: 'SEQ', members };
 	}
 	if (rule.type === 'CHOICE') {
-		return { type: 'CHOICE', members: rule.members.map(m => stripTokens(m)) };
+		return { type: 'CHOICE', members: rule.members.map(m => stripTokens(m)).filter(m => m !== null) };
 	}
 	return rule;
 }

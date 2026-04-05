@@ -287,10 +287,6 @@ function _r7mn61b(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){return type_identifier_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'generic_type':return genericTypeFrom(rest);case 'scoped_type_identifier':return scopedTypeIdentifierFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["generic_type","scoped_type_identifier"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: generic_type, scoped_type_identifier. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
-function _r6w28an(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){if(['_'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
-}
-
 function _ry62g3e(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'let_condition':return letConditionFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["let_condition","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: let_condition, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -1866,10 +1862,10 @@ export function indexExpressionFrom(input: unknown): unknown {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['object'] !== undefined) {
-    resolved['object'] = _r6w28an(obj['object']);
+    resolved['object'] = _resolveExpression(obj['object']);
   }
   if (obj['index'] !== undefined) {
-    resolved['index'] = _r6w28an(obj['index']);
+    resolved['index'] = _resolveExpression(obj['index']);
   }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
@@ -1936,7 +1932,7 @@ export function letChainFrom(input: unknown): unknown {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['conditions'] !== undefined) {
-    resolved['conditions'] = _r6w28an(obj['conditions']);
+    resolved['conditions'] = _ry62g3e(obj['conditions']);
   }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
@@ -2366,13 +2362,13 @@ export function orPatternFrom(input: unknown): unknown {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['left'] !== undefined) {
-    resolved['left'] = _r6w28an(obj['left']);
+    resolved['left'] = _resolvePattern(obj['left']);
   }
   if (obj['operator'] !== undefined) {
     resolved['operator'] = _rd4g2sg(obj['operator']);
   }
   if (obj['right'] !== undefined) {
-    resolved['right'] = _r6w28an(obj['right']);
+    resolved['right'] = _resolvePattern(obj['right']);
   }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
@@ -2510,7 +2506,7 @@ export function pointerTypeFrom(input: unknown): unknown {
     resolved['type'] = _resolveType(obj['type']);
   }
   if (obj['mutableSpecifier'] !== undefined) {
-    resolved['mutableSpecifier'] = _r6w28an(obj['mutableSpecifier']);
+    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'mut' ? mutable_specifier_() : obj.children);
@@ -2560,13 +2556,13 @@ export function rangeExpressionFrom(input: unknown): unknown {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['start'] !== undefined) {
-    resolved['start'] = _r6w28an(obj['start']);
+    resolved['start'] = _resolveExpression(obj['start']);
   }
   if (obj['operator'] !== undefined) {
     resolved['operator'] = _rd4g2sg(obj['operator']);
   }
   if (obj['end'] !== undefined) {
-    resolved['end'] = _r6w28an(obj['end']);
+    resolved['end'] = _resolveExpression(obj['end']);
   }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
@@ -2659,7 +2655,7 @@ export function referenceExpressionFrom(input: unknown): unknown {
     resolved['value'] = _resolveExpression(obj['value']);
   }
   if (obj['mutableSpecifier'] !== undefined) {
-    resolved['mutableSpecifier'] = _r6w28an(obj['mutableSpecifier']);
+    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'mut' ? mutable_specifier_() : obj.children);
@@ -2751,7 +2747,7 @@ export function returnExpressionFrom(input: unknown): unknown {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['value'] !== undefined) {
-    resolved['value'] = _r6w28an(obj['value']);
+    resolved['value'] = _resolveExpression(obj['value']);
   }
   if (obj.children !== undefined) {
     resolved.children = _resolveExpression(obj.children);
@@ -3269,7 +3265,7 @@ export function tryExpressionFrom(input: unknown): unknown {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['value'] !== undefined) {
-    resolved['value'] = _r6w28an(obj['value']);
+    resolved['value'] = _resolveExpression(obj['value']);
   }
   if (obj['operator'] !== undefined) {
     resolved['operator'] = _rd4g2sg(obj['operator']);
@@ -3573,7 +3569,7 @@ export function unaryExpressionFrom(input: unknown): unknown {
     resolved['operator'] = _rd4g2sg(obj['operator']);
   }
   if (obj['operand'] !== undefined) {
-    resolved['operand'] = _r6w28an(obj['operand']);
+    resolved['operand'] = _resolveExpression(obj['operand']);
   }
   if (obj.children !== undefined) {
     resolved.children = _resolveExpression(obj.children);
