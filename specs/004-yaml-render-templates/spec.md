@@ -159,7 +159,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **FR-019**: Each grammar package MAY include an `overrides.json` file that provides supplemental field names for nodes lacking explicit tree-sitter FIELDs, mirroring the shape of `node-types.json`
 - **FR-020**: Override entries with `"anonymous": true` MUST mark fields that map to anonymous tokens (operators, delimiters)
 - **FR-021**: Codegen MUST merge override fields with node-types.json fields during enrichment; overrides MUST NOT shadow existing tree-sitter FIELDs
-- **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure and report errors for invalid entries
+- **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure: (a) node kind must exist in grammar, (b) field count must be plausible for the rule's positional children, (c) `anonymous: true` fields must correspond to actual anonymous tokens in the grammar rule, (d) override fields must not shadow existing tree-sitter FIELDs. Report descriptive errors for each violation.
 - **FR-023**: Codegen MUST detect and log override candidates automatically: same-kind positional children (`SEQ(X, X)`) and discriminator tokens (CHOICE branches identical after token removal)
 - **FR-024**: `wrap.ts` MUST implement 5 field promotion heuristics: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value, (4) same-kind positional by token, (5) top-level CHOICE branch by token
 - **FR-025**: After `wrap.ts` promotion, all named positions MUST be in `fields` regardless of origin; `children` MUST contain only the truly unnamed remainder
@@ -198,6 +198,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - Q: How should the render engine handle whitespace adjacent to absent variables? → A: Absent variables collapse exactly one adjacent space (ast-grep fix behavior). Present variables preserve literal formatting.
 - Q: How does the render engine distinguish `$FIELD_NAME` from `$KIND_NAME`? → A: No kind matching at runtime. `$NAME` is always a field lookup. Kind-specific child consumption is handled by `wrap.ts` promoting children to fields before render.
 - Q: Is `$$NAME` (double-dollar unnamed) needed for current grammars? → A: Implemented for ast-grep compatibility but unused in current grammar templates. No templates will reference `$$NAME` initially.
+- Q: What should `overrides.json` validation check? → A: Full validation: (a) node kind exists in grammar, (b) field count plausible, (c) anonymous fields match grammar tokens, (d) no shadowing of existing FIELDs.
 
 ## Assumptions
 
