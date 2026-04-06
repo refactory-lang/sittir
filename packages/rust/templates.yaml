@@ -11,10 +11,10 @@ rules:
     type_parameters_clause: for
   arguments:
     template: ($$$ATTRIBUTE_ITEM_OR_EXPRESSION) $$$ATTRIBUTE_ITEM $EXPRESSION
-    joinBy: ", "
+    joinBy: ","
   array_expression:
     template: "[$$$ATTRIBUTE_ITEM_OR_EXPRESSION2 ; $LENGTH] $$$ATTRIBUTE_ITEM $$$ATTRIBUTE_ITEM_OR_EXPRESSION1 $EXPRESSION"
-    joinBy: ", "
+    joinBy: ","
   array_type:
     template: "[$ELEMENT $LENGTH_CLAUSE]"
     length_clause: ; $LENGTH
@@ -40,7 +40,7 @@ rules:
     return_type_clause: -> $RETURN_TYPE
   closure_parameters:
     template: "| $$$PARAMETER_OR_PATTERN2 | $PARAMETER_OR_PATTERN1"
-    joinBy: ", "
+    joinBy: ","
   compound_assignment_expr: $LEFT $OPERATOR $RIGHT
   const_block: const $BODY
   const_item:
@@ -59,7 +59,7 @@ rules:
     value_clause: = $VALUE
   enum_variant_list:
     template: "{$$$ATTRIBUTE_ITEM_OR_ENUM_VARIANT} $$$ATTRIBUTE_ITEM $ENUM_VARIANT"
-    joinBy: ", "
+    joinBy: ","
   expression_statement: $CHILDREN ; $$$CHILDREN
   extern_crate_declaration:
     template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE ;
@@ -68,19 +68,19 @@ rules:
   field_declaration: "$CHILDREN $NAME : $TYPE $$$CHILDREN"
   field_declaration_list:
     template: "{$$$ATTRIBUTE_ITEM_OR_FIELD_DECLARATION} $$$ATTRIBUTE_ITEM $FIELD_DECLARATION"
-    joinBy: ", "
+    joinBy: ","
   field_expression: $VALUE.$FIELD
   field_initializer: "$$$CHILDREN $FIELD : $VALUE $$$CHILDREN"
   field_initializer_list:
     template: "{$$$CHILDREN2} $CHILDREN1"
-    joinBy: ", "
+    joinBy: ","
   field_pattern: "$CHILDREN $NAME : $PATTERN $$$CHILDREN"
   for_expression:
     template: $LABEL_CLAUSE for $PATTERN in $VALUE $BODY $$$CHILDREN
     label_clause: ":"
   for_lifetimes:
     template: for<$$$LIFETIME2 ,> $LIFETIME1
-    joinBy: ", "
+    joinBy: ","
   foreign_mod_item: $VISIBILITY_MODIFIER $EXTERN_MODIFIER $BODY
   function_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
@@ -118,7 +118,7 @@ rules:
     label_clause: ":"
   macro_definition:
     template: macro_rules! $NAME($MACRO_RULE2 ;) ; $$$MACRO_RULE1
-    joinBy: "; "
+    joinBy: ;
   macro_invocation: $MACRO ! $CHILDREN $$$CHILDREN
   macro_rule: $LEFT => $RIGHT
   match_arm: $$$CHILDREN $PATTERN => $VALUE , $$$CHILDREN
@@ -133,11 +133,11 @@ rules:
   or_pattern: $$$CHILDREN | $LEFT $OPERATOR $RIGHT $$$CHILDREN
   ordered_field_declaration_list:
     template: ($$$ATTRIBUTE_ITEM_OR_VISIBILITY_MODIFIER $$$TYPE) $$$ATTRIBUTE_ITEM $VISIBILITY_MODIFIER
-    joinBy: ", "
+    joinBy: ","
   parameter: "$CHILDREN $PATTERN : $TYPE $$$CHILDREN"
   parameters:
     template: ($$$CHILDREN3) $ATTRIBUTE_ITEM $CHILDREN2
-    joinBy: ", "
+    joinBy: ","
   parenthesized_expression: ($CHILDREN) $$$CHILDREN
   pointer_type: "* $CHILDREN $TYPE $MUTABLE_SPECIFIER $$$CHILDREN"
   qualified_type: $TYPE as $ALIAS
@@ -165,7 +165,7 @@ rules:
   struct_item: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   struct_pattern:
     template: $TYPE{$$$FIELD_PATTERN_OR_REMAINING_FIELD_PATTERN2} $FIELD_PATTERN_OR_REMAINING_FIELD_PATTERN1
-    joinBy: ", "
+    joinBy: ","
   token_binding_pattern: "$NAME : $TYPE"
   token_repetition: $($$$CHILDREN) +
   token_repetition_pattern: $($$$CHILDREN) +
@@ -177,17 +177,17 @@ rules:
   try_expression: $CHILDREN ? $VALUE $OPERATOR $$$CHILDREN
   tuple_expression:
     template: ($$$ATTRIBUTE_ITEM $EXPRESSION3 , ,) $EXPRESSION1 $$$EXPRESSION2
-    joinBy: ", "
+    joinBy: ","
   tuple_pattern:
     template: ($$$CLOSURE_EXPRESSION_OR_PATTERN2) $CLOSURE_EXPRESSION_OR_PATTERN1
-    joinBy: ", "
+    joinBy: ","
   tuple_struct_pattern:
     template: $TYPE($$$PATTERN2) $PATTERN1
-    joinBy: ", "
+    joinBy: ","
   tuple_type: ($$$CHILDREN ,) $$$CHILDREN
   type_arguments:
     template: <$$$CHILDREN3 ,> $CHILDREN1 $TRAIT_BOUNDS
-    joinBy: ", "
+    joinBy: ","
   type_binding: $NAME $TYPE_ARGUMENTS = $TYPE
   type_cast_expression: $VALUE as $TYPE
   type_item: $VISIBILITY_MODIFIER type $NAME $TYPE_PARAMETERS $WHERE_CLAUSE2 = $TYPE ; $WHERE_CLAUSE1
@@ -196,14 +196,14 @@ rules:
     default_type_clause: = $DEFAULT_TYPE
   type_parameters:
     template: <$$$CHILDREN3 ,> $$$ATTRIBUTE_ITEM $CHILDREN2
-    joinBy: ", "
+    joinBy: ","
   unary_expression: "- $CHILDREN $OPERATOR $OPERAND $$$CHILDREN"
   union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   unsafe_block: unsafe $CHILDREN $$$CHILDREN
   use_as_clause: $PATH as $ALIAS
   use_bounds:
     template: use<$$$LIFETIME_OR_TYPE_IDENTIFIER2 $$$CHILDREN> $LIFETIME_OR_TYPE_IDENTIFIER1
-    joinBy: ", "
+    joinBy: ","
   use_declaration: $CHILDREN use $ARGUMENT ; $$$CHILDREN
   use_list: "{$$$CHILDREN}"
   use_wildcard: $$$CHILDREN *
@@ -213,7 +213,7 @@ rules:
   visibility_modifier: $CHILDREN $$$CHILDREN
   where_clause:
     template: where $$$WHERE_PREDICATE2 $WHERE_PREDICATE1
-    joinBy: ", "
+    joinBy: ","
   where_predicate: $LEFT $BOUNDS
   while_expression:
     template: $LABEL_CLAUSE while $CONDITION $BODY $$$CHILDREN
