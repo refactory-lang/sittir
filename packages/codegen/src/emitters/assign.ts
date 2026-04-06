@@ -270,12 +270,25 @@ function emitOverrideFieldPromotion(
 	const anonFields = overrideFields.filter(f => f.overrideAnonymous);
 	for (const f of anonFields) {
 		const camel = f.propertyName ?? toFieldName(f.name);
+		const values = f.overrideValues;
 		lines.push(`  config['${camel}'] = (() => {`);
-		lines.push(`    for (let i = 0; i < _allChildren.length; i++) {`);
-		lines.push(`      if (_consumed.has(i)) continue;`);
-		lines.push(`      const c = _allChildren[i]!;`);
-		lines.push(`      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }`);
-		lines.push(`    }`);
+		if (values && values.length > 0) {
+			// Match specific token values (per-token matching)
+			const valuesSet = JSON.stringify(values);
+			lines.push(`    const _vals = new Set(${valuesSet});`);
+			lines.push(`    for (let i = 0; i < _allChildren.length; i++) {`);
+			lines.push(`      if (_consumed.has(i)) continue;`);
+			lines.push(`      const c = _allChildren[i]!;`);
+			lines.push(`      if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }`);
+			lines.push(`    }`);
+		} else {
+			// Greedy match: first unnamed child
+			lines.push(`    for (let i = 0; i < _allChildren.length; i++) {`);
+			lines.push(`      if (_consumed.has(i)) continue;`);
+			lines.push(`      const c = _allChildren[i]!;`);
+			lines.push(`      if (!c.isNamed()) { _consumed.add(i); return c.text(); }`);
+			lines.push(`    }`);
+		}
 		lines.push(`    return undefined;`);
 		lines.push(`  })();`);
 	}

@@ -17,6 +17,8 @@ import type { Grammar, GrammarRule } from './grammar.ts';
 export interface OverrideFieldDef {
 	/** True if this field maps to an anonymous token (operator, delimiter). */
 	anonymous?: boolean;
+	/** Token values to match for anonymous fields (e.g., ["-", "*", "!"] for operator). */
+	values?: string[];
 }
 
 export interface OverrideEntry {
@@ -121,6 +123,39 @@ export function validateOverrides(
 			}
 		}
 
+		// (b) field count must be plausible for the rule's positional children
+		if (model) {
+			const namedOverrideCount = Object.values(entry.fields).filter(f => !f.anonymous).length;
+			const anonOverrideCount = Object.values(entry.fields).filter(f => f.anonymous).length;
+			let childKindCount = 0;
+			let anonTokenCount = 0;
+			if (model.modelType === 'container' || model.modelType === 'branch') {
+				const children = model.modelType === 'container' ? model.children : model.children;
+				if (children) {
+					if (Array.isArray(children)) {
+						childKindCount = children.reduce((sum, slot) => sum + slot.kinds.length, 0);
+					} else {
+						childKindCount = children.kinds.length;
+					}
+				}
+			}
+			const rule = grammar.rules[kind];
+			if (rule) anonTokenCount = collectAnonymousTokens(rule).size;
+
+			if (namedOverrideCount > childKindCount && childKindCount > 0) {
+				errors.push({
+					kind,
+					message: `Override defines ${namedOverrideCount} named fields but '${kind}' has only ${childKindCount} children kind(s) — field count may be implausible`,
+				});
+			}
+			if (anonOverrideCount > anonTokenCount && anonTokenCount > 0) {
+				errors.push({
+					kind,
+					message: `Override defines ${anonOverrideCount} anonymous fields but '${kind}' has only ${anonTokenCount} anonymous token(s) in grammar rule`,
+				});
+			}
+		}
+
 		// (c) anonymous: true fields should map to actual anonymous tokens
 		const grammarRule = grammar.rules[kind];
 		if (grammarRule) {
@@ -193,6 +228,7 @@ export function mergeOverrides(
 				kinds: fieldDef.anonymous ? [] : [...childrenKinds],
 				override: true,
 				overrideAnonymous: fieldDef.anonymous ?? false,
+				overrideValues: fieldDef.values,
 			});
 		}
 

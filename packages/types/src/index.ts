@@ -406,6 +406,7 @@ export type TreeNode<G, K extends NodeKind<G>> = {
 	text(): string;
 	children(): TreeNode<G, NodeKind<G>>[];
 	range(): ByteRange;
+	isNamed(): boolean;
 };
 
 import type { ByteRange } from './core-types.ts';
@@ -499,6 +500,7 @@ export interface AnyTreeNodeOf {
 	text(): string;
 	children(): AnyTreeNodeOf[];
 	range(): ByteRange;
+	isNamed(): boolean;
 }
 
 export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
@@ -510,6 +512,7 @@ export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
 		text(): string;
 		children(): AnyTreeNodeOf[];
 		range(): ByteRange;
+		isNamed(): boolean;
 	}
 	: never;
 

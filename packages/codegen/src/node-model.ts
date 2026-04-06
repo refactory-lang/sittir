@@ -55,6 +55,8 @@ export interface SingleFieldModel {
 	override?: boolean;
 	/** True if this override field maps to an anonymous token (operator, delimiter). */
 	overrideAnonymous?: boolean;
+	/** Specific token values to match for anonymous override fields. */
+	overrideValues?: string[];
 }
 
 export interface ListFieldModel {
@@ -69,6 +71,8 @@ export interface ListFieldModel {
 	override?: boolean;
 	/** True if this override field maps to an anonymous token (operator, delimiter). */
 	overrideAnonymous?: boolean;
+	/** Specific token values to match for anonymous override fields. */
+	overrideValues?: string[];
 }
 
 export type FieldModel = SingleFieldModel | ListFieldModel;

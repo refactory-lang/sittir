@@ -52,12 +52,19 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 			return renderClause(clauseTemplate, node, config, varPattern);
 		}
 
-		// Resolution: fields[name] or children array — no runtime kind-matching (FR-026)
+		// Resolution: fields[name] first, then children array, then children-by-kind fallback
 		let value: unknown;
 		if (node.fields?.[fieldKey] !== undefined) {
 			value = node.fields[fieldKey];
-		} else if (fieldKey === 'children') {
+		} else if (fieldKey === 'children' && node.children) {
+			// For $CHILDREN (single), use first child; for $$$CHILDREN (multi), use full array.
+			// Multi is handled below; here we assign the array and let each prefix branch decide.
 			value = node.children;
+		} else if (node.children && Array.isArray(node.children)) {
+			// Fallback: named children are stored in children array with matching type.
+			// Matches children whose type equals the field key (e.g., $VISIBILITY_MODIFIER → type 'visibility_modifier').
+			const child = node.children.find((c: any) => c?.type === fieldKey);
+			if (child) value = child;
 		}
 
 		// $$$ — multi (zero or more)
@@ -71,17 +78,24 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 		// $$ — unnamed single
 		if (pfx.length === 2 && !pfx.endsWith('_')) {
 			if (value === undefined) return '';
+			if (Array.isArray(value)) return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
 			return renderValue(value as AnyNodeData | string | number, config);
 		}
 
 		// $_ — non-capturing wildcard (renders the value but doesn't capture)
 		if (pfx.endsWith('_')) {
 			if (value === undefined) return '';
+			if (Array.isArray(value)) return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
 			return renderValue(value as AnyNodeData | string | number, config);
 		}
 
 		// $ — single named field
 		if (value === undefined) return '';
+		// If value is an array (e.g., $CHILDREN resolving to node.children),
+		// render the first element for single-dollar, empty string if empty array.
+		if (Array.isArray(value)) {
+			return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
+		}
 		return renderValue(value as AnyNodeData | string | number, config);
 	});
 

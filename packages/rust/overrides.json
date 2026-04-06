@@ -7,20 +7,20 @@
   },
   "unary_expression": {
     "fields": {
-      "operator": { "anonymous": true },
+      "operator": { "anonymous": true, "values": ["-", "*", "!", "&"] },
       "operand": {}
     }
   },
   "range_expression": {
     "fields": {
       "start": {},
-      "operator": { "anonymous": true },
+      "operator": { "anonymous": true, "values": ["..", "..="] },
       "end": {}
     }
   },
   "negative_literal": {
     "fields": {
-      "operator": { "anonymous": true },
+      "operator": { "anonymous": true, "values": ["-"] },
       "value": {}
     }
   },
@@ -32,13 +32,13 @@
   "try_expression": {
     "fields": {
       "value": {},
-      "operator": { "anonymous": true }
+      "operator": { "anonymous": true, "values": ["?"] }
     }
   },
   "or_pattern": {
     "fields": {
       "left": {},
-      "operator": { "anonymous": true },
+      "operator": { "anonymous": true, "values": ["|"] },
       "right": {}
     }
   },

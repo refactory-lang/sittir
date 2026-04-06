@@ -1439,6 +1439,7 @@
         kinds: ["_expression"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
       {
         name: "index",
@@ -1447,6 +1448,7 @@
         kinds: ["_expression"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {
@@ -1490,6 +1492,7 @@
         kinds: ["_expression", "let_condition"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {
@@ -1825,6 +1828,7 @@
         kinds: ["_pattern"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
       {
         name: "operator",
@@ -1833,6 +1837,7 @@
         kinds: [],
         override: true,
         overrideAnonymous: true,
+        overrideValues: ["|"],
       },
       {
         name: "right",
@@ -1841,6 +1846,7 @@
         kinds: ["_pattern"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {
@@ -1958,6 +1964,7 @@
         kinds: ["mutable_specifier"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {
@@ -1996,6 +2003,7 @@
         kinds: ["_expression"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
       {
         name: "operator",
@@ -2004,6 +2012,7 @@
         kinds: [],
         override: true,
         overrideAnonymous: true,
+        overrideValues: ["..", "..="],
       },
       {
         name: "end",
@@ -2012,6 +2021,7 @@
         kinds: ["_expression"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {
@@ -2093,6 +2103,7 @@
         kinds: ["mutable_specifier"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {
@@ -2166,6 +2177,7 @@
         kinds: ["_expression"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {
@@ -2639,6 +2651,7 @@
         kinds: ["_expression"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
       {
         name: "operator",
@@ -2647,6 +2660,7 @@
         kinds: [],
         override: true,
         overrideAnonymous: true,
+        overrideValues: ["?"],
       },
     ],
     children: {
@@ -2907,6 +2921,7 @@
         kinds: [],
         override: true,
         overrideAnonymous: true,
+        overrideValues: ["-", "*", "!", "&"],
       },
       {
         name: "operand",
@@ -2915,6 +2930,7 @@
         kinds: ["_expression"],
         override: true,
         overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: {

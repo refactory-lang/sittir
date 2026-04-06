@@ -1189,10 +1189,11 @@ export function assignOrPattern(target: OrPatternTree) {
   const _allChildren = target.children();
   const _consumed = new Set<number>();
   config['operator'] = (() => {
+    const _vals = new Set(["|"]);
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
+      if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
@@ -1332,10 +1333,11 @@ export function assignRangeExpression(target: RangeExpressionTree) {
   const _allChildren = target.children();
   const _consumed = new Set<number>();
   config['operator'] = (() => {
+    const _vals = new Set(["..","..="]);
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
+      if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
@@ -1748,10 +1750,11 @@ export function assignTryExpression(target: TryExpressionTree) {
   const _allChildren = target.children();
   const _consumed = new Set<number>();
   config['operator'] = (() => {
+    const _vals = new Set(["?"]);
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
+      if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
@@ -1942,10 +1945,11 @@ export function assignUnaryExpression(target: UnaryExpressionTree) {
   const _allChildren = target.children();
   const _consumed = new Set<number>();
   config['operator'] = (() => {
+    const _vals = new Set(["-","*","!","&"]);
     for (let i = 0; i < _allChildren.length; i++) {
       if (_consumed.has(i)) continue;
       const c = _allChildren[i]!;
-      if (!(c as any).isNamed()) { _consumed.add(i); return c.text(); }
+      if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }
     }
     return undefined;
   })();
