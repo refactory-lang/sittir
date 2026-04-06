@@ -1,59 +1,101 @@
 /**
  * Emits a test file for a single IR node kind.
+ * Tests use the builder-only API and verify:
+ * 1. build() produces the correct kind
+ * 2. renderImpl() contains required grammar tokens
+ * 3. toCST() produces a valid CST node
+ * 4. render('fast') passes brace/paren/bracket validation
  */
 
 import type { NodeMeta } from '../grammar-reader.ts';
-import { toFactoryName, toShortName, toFileName } from '../naming.ts';
+import { collectRequiredTokens } from '../grammar-reader.ts';
+import { toShortName } from '../naming.ts';
 
 export interface EmitTestConfig {
   grammar: string;
   node: NodeMeta;
+  fileName?: string;
+  irPropertyKey?: string;
+}
+
+function needsConstructorArg(node: NodeMeta): 'single' | 'multiple' | null {
+  const requiredFields = node.fields.filter((f) => f.required);
+  const nameField = requiredFields.find((f) => f.name === 'name');
+  if (nameField) return nameField.multiple ? 'multiple' : 'single';
+  const argField = requiredFields.find((f) => f.name === 'argument');
+  if (argField) return argField.multiple ? 'multiple' : 'single';
+  if (requiredFields.length > 0) {
+    const f = requiredFields[0]!;
+    return f.multiple ? 'multiple' : 'single';
+  }
+  if (node.hasChildren && node.children?.required) {
+    return node.children.multiple ? 'multiple' : 'single';
+  }
+  return null;
+}
+
+function escapeString(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
 export function emitTest(config: EmitTestConfig): string {
   const { grammar, node } = config;
-  const factoryName = toFactoryName(node.kind);
   const shortName = toShortName(node.kind);
-  const fileName = toFileName(node.kind);
 
-  // Build minimal config placeholder from required fields
-  const requiredFields = node.fields.filter((f) => f.required);
-  const minimalConfig = requiredFields.length > 0
-    ? requiredFields.map((f) => `\t\t\t${f.name}: '' /* TODO */,`).join('\n')
-    : `\t\t\t/* TODO: add required fields */`;
+  const irKey = config.irPropertyKey ?? (shortName.endsWith('_') ? shortName.slice(0, -1) : shortName);
+
+  const ctorKind = needsConstructorArg(node);
+  const ctorArg = ctorKind === 'multiple'
+    ? '[ir.identifier(\'test\')]'
+    : ctorKind === 'single'
+      ? 'ir.identifier(\'test\')'
+      : '';
+
+  const requiredTokens = collectRequiredTokens(grammar, node.kind);
 
   const lines: string[] = [];
 
   lines.push(`import { describe, it, expect } from 'vitest';`);
-  lines.push(`import { ${factoryName} } from '../src/nodes/${fileName}.js';`);
-  lines.push(`import { ir } from '../src/fluent.js';`);
+  lines.push(`import { ir } from '../src/builder.js';`);
   lines.push('');
 
   lines.push(`describe('${node.kind}', () => {`);
 
-  // Build test (factory)
-  lines.push(`  it('should create a ${node.kind} node via factory', () => {`);
-  lines.push(`    const node = ${factoryName}({`);
-  lines.push(minimalConfig);
-  lines.push('    });');
-  lines.push(`    expect(node.kind).toBe('${node.kind}');`);
-  lines.push('  });');
-  lines.push('');
-
-  // Fluent API build test
-  lines.push(`  it('should create a ${node.kind} node via fluent API', () => {`);
-  lines.push(`    const builder = ir.${shortName}(/* TODO: args */);`);
+  // Build test
+  lines.push(`  it('should build with correct kind', () => {`);
+  lines.push(`    const builder = ir.${irKey}(${ctorArg});`);
   lines.push(`    const node = builder.build();`);
   lines.push(`    expect(node.kind).toBe('${node.kind}');`);
   lines.push('  });');
   lines.push('');
 
-  // Kind check
-  lines.push(`  it('should have the correct kind', () => {`);
-  lines.push(`    const node = ${factoryName}({`);
-  lines.push(minimalConfig);
-  lines.push('    });');
-  lines.push(`    expect(node.kind).toBe('${node.kind}');`);
+  // Token assertion test
+  if (requiredTokens.length > 0) {
+    lines.push(`  it('should render required grammar tokens', () => {`);
+    lines.push(`    const builder = ir.${irKey}(${ctorArg});`);
+    lines.push(`    const source = builder.renderImpl();`);
+    for (const token of requiredTokens) {
+      lines.push(`    expect(source).toContain('${escapeString(token)}');`);
+    }
+    lines.push('  });');
+    lines.push('');
+  }
+
+  // CST test
+  lines.push(`  it('should produce a valid CST node', () => {`);
+  lines.push(`    const builder = ir.${irKey}(${ctorArg});`);
+  lines.push(`    const cst = builder.toCST();`);
+  lines.push(`    expect(cst.type).toBe('${node.kind}');`);
+  lines.push(`    expect(cst.isNamed).toBe(true);`);
+  lines.push(`    expect(cst.startIndex).toBe(0);`);
+  lines.push(`    expect(cst.endIndex).toBe(cst.text.length);`);
+  lines.push('  });');
+  lines.push('');
+
+  // Fast validation test
+  lines.push(`  it('should pass fast validation', () => {`);
+  lines.push(`    const builder = ir.${irKey}(${ctorArg});`);
+  lines.push(`    expect(() => builder.render('fast')).not.toThrow();`);
   lines.push('  });');
 
   lines.push('});');

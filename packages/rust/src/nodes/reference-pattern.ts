@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ReferencePattern, ReferencePatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ReferencePattern } from '../types.js';
 
-export function referencePattern(config: ReferencePatternConfig): ReferencePattern {
-  return {
-    kind: 'reference_pattern',
-    ...config,
-  } as ReferencePattern;
-}
 
-class ReferencePatternBuilder implements BuilderTerminal<ReferencePattern> {
-  private _children: string[] = [];
+class ReferencePatternBuilder extends BaseBuilder<ReferencePattern> {
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: BaseBuilder[]) {
+    super();
     this._children = children;
   }
 
-  build(): ReferencePattern {
-    return referencePattern({
-      children: this._children,
-    } as ReferencePatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('&');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ReferencePattern {
+    return {
+      kind: 'reference_pattern',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ReferencePattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'reference_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '&', type: '&' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
   }
 }
 
-export function reference_pattern(children: string[]): ReferencePatternBuilder {
+export function reference_pattern(children: BaseBuilder[]): ReferencePatternBuilder {
   return new ReferencePatternBuilder(children);
 }

@@ -1,44 +1,60 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { OrderedFieldDeclarationList, OrderedFieldDeclarationListConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { OrderedFieldDeclarationList } from '../types.js';
 
-export function orderedFieldDeclarationList(config: OrderedFieldDeclarationListConfig): OrderedFieldDeclarationList {
-  return {
-    kind: 'ordered_field_declaration_list',
-    ...config,
-  } as OrderedFieldDeclarationList;
-}
 
-class OrderedFieldDeclarationListBuilder implements BuilderTerminal<OrderedFieldDeclarationList> {
-  private _type: string[] = [];
-  private _children: string[] = [];
+class OrderedFieldDeclarationListBuilder extends BaseBuilder<OrderedFieldDeclarationList> {
+  private _type: BaseBuilder[] = [];
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  type(value: string[]): this {
+  type(value: BaseBuilder[]): this {
     this._type = value;
     return this;
   }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): OrderedFieldDeclarationList {
-    return orderedFieldDeclarationList({
-      type: this._type,
-      children: this._children,
-    } as OrderedFieldDeclarationListConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('(');
+    if (this._type.length > 0) {
+      if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+      if (this._type.length > 0) parts.push(this.renderChildren(this._type, ', ', ctx));
+      parts.push(',');
+    }
+    parts.push(')');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): OrderedFieldDeclarationList {
+    return {
+      kind: 'ordered_field_declaration_list',
+      type: this._type.map(c => this.renderChild(c, ctx)),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as OrderedFieldDeclarationList;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'ordered_field_declaration_list'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '(', type: '(' });
+    if (this._type.length > 0) {
+      for (const child of this._children) {
+        parts.push({ kind: 'builder', builder: child });
+      }
+      for (const child of this._type) {
+        parts.push({ kind: 'builder', builder: child, fieldName: 'type' });
+      }
+      parts.push({ kind: 'token', text: ',', type: ',' });
+    }
+    parts.push({ kind: 'token', text: ')', type: ')' });
+    return parts;
   }
 }
 

@@ -322,40 +322,284 @@ export type ValidationResult =
 	| { ok: false; errors: Array<{ offset: number; kind: 'ERROR' }> };
 
 // ---------------------------------------------------------------------------
-// Builder & Render pipeline interfaces
+// Render context
 // ---------------------------------------------------------------------------
 
-/**
- * Terminal operations on a fluent IR builder.
- * Every language-specific builder (e.g., Rust's `fn()`, `struct()`) must
- * implement this interface so consumers have a uniform way to extract the
- * built node or render it to source.
- *
- * @typeParam N - The IR node type produced by this builder.
- */
-export interface BuilderTerminal<N extends { kind: string }> {
-	/** Return the raw IR node without rendering. */
-	build(): N;
-	/** Render to source string with validation (throws on error). */
-	render(): string;
-	/** Render to source string without validation. */
-	renderSilent(): string;
+/** Context threaded through render/build calls. */
+export interface RenderContext {
+	/** Tree-sitter parser instance for full validation. Optional. */
+	parser?: unknown;
+	/** Indentation unit. Default: two spaces. */
+	indent?: string;
+}
+
+// ---------------------------------------------------------------------------
+// CST node types
+// ---------------------------------------------------------------------------
+
+/** Position in source text. */
+export interface Position {
+	row: number;
+	column: number;
+}
+
+/** A lightweight CST node produced by toCST() — no parsing required. */
+export interface CSTNode {
+	/** Node kind (e.g., 'function_item', 'identifier', '{') */
+	type: string;
+	/** The rendered text for this node and all its children. */
+	text: string;
+	/** Child CST nodes (named + anonymous). */
+	children: CSTNode[];
+	/** Whether this is a named node (vs anonymous keyword/punctuation). */
+	isNamed: boolean;
+	/** Byte offset of start in the rendered source. */
+	startIndex: number;
+	/** Byte offset of end in the rendered source. */
+	endIndex: number;
+	/** Start position (row/column). */
+	startPosition: Position;
+	/** End position (row/column). */
+	endPosition: Position;
+	/** Field name in parent node, if any. */
+	fieldName?: string;
 }
 
 /**
- * The render + validate pipeline for a grammar's IR nodes.
- * Language-specific packages implement this to provide rendering and
- * validation for their node types.
- *
- * @typeParam N - The IR node union type (discriminated by `kind`).
+ * A child entry returned by toCSTChildren(). Either a builder reference
+ * (named node) or an anonymous token (keyword/punctuation/separator).
  */
+export type CSTChild =
+	| { kind: 'builder'; builder: BaseBuilder; fieldName?: string }
+	| { kind: 'token'; text: string; type?: string }
+	| { kind: 'sep'; text: string };
+
+// ---------------------------------------------------------------------------
+// Base builder
+// ---------------------------------------------------------------------------
+
+/** Convert a byte offset to a row/column position given full source text. */
+function offsetToPosition(offset: number, fullText: string, baseOffset: number): Position {
+	const textUpTo = fullText.slice(0, offset - baseOffset);
+	const lines = textUpTo.split('\n');
+	return {
+		row: lines.length - 1,
+		column: lines[lines.length - 1]?.length ?? 0,
+	};
+}
+
+/**
+ * Abstract base for all IR builders. Provides render, validation, and
+ * child-rendering infrastructure. Generated per-node builders extend this
+ * with their own `renderImpl()` and `build()` implementations.
+ *
+ * @typeParam N - The IR node type produced by this builder.
+ */
+export abstract class BaseBuilder<N extends { kind: string } = { kind: string }> {
+	/** Render this node to source text (no validation). Override in subclasses. */
+	abstract renderImpl(ctx?: RenderContext): string;
+
+	/** Build the plain-object IR node (recursive). */
+	abstract build(ctx?: RenderContext): N;
+
+	/** Render with optional validation. */
+	render(
+		validate: 'full' | 'fast' | 'skip' = 'fast',
+		ctx?: RenderContext,
+	): string | Promise<string> {
+		const source = this.renderImpl(ctx);
+		if (validate === 'skip') return source;
+		if (validate === 'fast') return this.validateFast(source);
+		return this.validateFull(source, ctx);
+	}
+
+	/** Render a single child builder. */
+	protected renderChild(child: BaseBuilder, ctx?: RenderContext): string {
+		return child.renderImpl(ctx);
+	}
+
+	/** Render an array of child builders, joined by separator. */
+	protected renderChildren(
+		children: BaseBuilder[],
+		sep: string,
+		ctx?: RenderContext,
+	): string {
+		return children.map((c) => c.renderImpl(ctx)).join(sep);
+	}
+
+	/**
+	 * Return the structured children for CST construction.
+	 * Override in generated builders to provide keyword/punctuation tokens
+	 * interleaved with child builders. Default: single text node from renderImpl.
+	 */
+	toCSTChildren(ctx?: RenderContext): CSTChild[] {
+		return [{ kind: 'token', text: this.renderImpl(ctx) }];
+	}
+
+	/** The node kind string. Override in generated builders. */
+	get nodeKind(): string {
+		return 'unknown';
+	}
+
+	/**
+	 * Build a lightweight CST node tree with positions — no parsing required.
+	 * Walks toCSTChildren() recursively, tracking byte offsets and row/col.
+	 */
+	toCST(offset = 0, ctx?: RenderContext): CSTNode {
+		const children: CSTNode[] = [];
+		let cursor = offset;
+
+		const parts = this.toCSTChildren(ctx);
+
+		for (let i = 0; i < parts.length; i++) {
+			const part = parts[i]!;
+
+			// Add separator space between parts (except first)
+			if (i > 0 && part.kind !== 'sep') {
+				cursor++; // space
+			}
+
+			if (part.kind === 'sep') {
+				cursor += part.text.length;
+			} else if (part.kind === 'token') {
+				const text = part.text;
+				const start = cursor;
+				const end = start + text.length;
+				children.push({
+					type: part.type ?? text,
+					text,
+					children: [],
+					isNamed: false,
+					startIndex: start,
+					endIndex: end,
+					startPosition: offsetToPosition(start, this.renderImpl(ctx), offset),
+					endPosition: offsetToPosition(end, this.renderImpl(ctx), offset),
+				});
+				cursor = end;
+			} else {
+				// builder child
+				const childCST = part.builder.toCST(cursor, ctx);
+				if (part.fieldName) childCST.fieldName = part.fieldName;
+				children.push(childCST);
+				cursor = childCST.endIndex;
+			}
+		}
+
+		const text = this.renderImpl(ctx);
+		return {
+			type: this.nodeKind,
+			text,
+			children,
+			isNamed: true,
+			startIndex: offset,
+			endIndex: offset + text.length,
+			startPosition: offsetToPosition(offset, text, offset),
+			endPosition: offsetToPosition(offset + text.length, text, offset),
+		};
+	}
+
+	/** Fast sync validation (brace/paren/bracket matching). Override per grammar. */
+	protected validateFast(source: string): string {
+		const opens = (source.match(/\{/g) ?? []).length;
+		const closes = (source.match(/\}/g) ?? []).length;
+		if (opens !== closes) {
+			throw new Error(`Mismatched braces in rendered source:\n${source}`);
+		}
+		const parenOpens = (source.match(/\(/g) ?? []).length;
+		const parenCloses = (source.match(/\)/g) ?? []).length;
+		if (parenOpens !== parenCloses) {
+			throw new Error(`Mismatched parentheses in rendered source:\n${source}`);
+		}
+		const bracketOpens = (source.match(/\[/g) ?? []).length;
+		const bracketCloses = (source.match(/\]/g) ?? []).length;
+		if (bracketOpens !== bracketCloses) {
+			throw new Error(`Mismatched brackets in rendered source:\n${source}`);
+		}
+		return source;
+	}
+
+	/** Full async validation via tree-sitter. Requires ctx.parser. */
+	protected async validateFull(
+		source: string,
+		ctx?: RenderContext,
+	): Promise<string> {
+		const parser = ctx?.parser as
+			| { parse(source: string): { rootNode: { hasError: boolean } } | null }
+			| undefined;
+		if (!parser) {
+			throw new Error(
+				'Full validation requires ctx.parser — pass a tree-sitter Parser instance',
+			);
+		}
+		const tree = parser.parse(source);
+		if (!tree) throw new Error('tree-sitter parse returned null');
+		if (tree.rootNode.hasError) {
+			throw new Error(`Invalid source (tree-sitter):\n${source}`);
+		}
+		return source;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Leaf builder — the only way to introduce text
+// ---------------------------------------------------------------------------
+
+/**
+ * Builder for terminal/leaf nodes (identifiers, literals, keywords).
+ * Wraps a raw text string in a typed builder.
+ */
+export class LeafBuilder<K extends string = string> extends BaseBuilder<{
+	kind: K;
+}> {
+	constructor(
+		readonly kind: K,
+		private readonly text: string,
+	) {
+		super();
+	}
+
+	override get nodeKind(): string {
+		return this.kind;
+	}
+
+	renderImpl(): string {
+		return this.text;
+	}
+
+	build(): { kind: K } {
+		return { kind: this.kind };
+	}
+
+	override toCST(offset = 0): CSTNode {
+		const text = this.text;
+		return {
+			type: this.kind,
+			text,
+			children: [],
+			isNamed: true,
+			startIndex: offset,
+			endIndex: offset + text.length,
+			startPosition: { row: 0, column: offset },
+			endPosition: { row: 0, column: offset + text.length },
+		};
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Legacy interfaces (deprecated — use BaseBuilder instead)
+// ---------------------------------------------------------------------------
+
+/** @deprecated Use BaseBuilder instead. */
+export interface BuilderTerminal<N extends { kind: string }> {
+	build(): N;
+	render(): string;
+	renderImpl(): string;
+}
+
+/** @deprecated Use BaseBuilder instead. */
 export interface RenderPipeline<N extends { kind: string }> {
-	/** Render a node to source with validation (throws on error). */
 	render(node: N): string;
-	/** Render a node to source without validation. */
-	renderSilent(node: N): string;
-	/** Assert rendered source has no errors; returns source on success, throws on failure. */
+	renderImpl(node: N): string;
 	assertValid(source: string): string;
-	/** Lightweight validation without throwing. */
 	validateFast(source: string): ValidationResult;
 }

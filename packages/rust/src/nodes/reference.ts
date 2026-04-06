@@ -1,44 +1,51 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ReferenceExpression, ReferenceExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ReferenceExpression } from '../types.js';
 
-export function referenceExpression(config: ReferenceExpressionConfig): ReferenceExpression {
-  return {
-    kind: 'reference_expression',
-    ...config,
-  } as ReferenceExpression;
-}
 
-class ReferenceBuilder implements BuilderTerminal<ReferenceExpression> {
-  private _value: string = '';
-  private _children?: string;
+class ReferenceBuilder extends BaseBuilder<ReferenceExpression> {
+  private _value: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(value: string) {
+  constructor(value: BaseBuilder) {
+    super();
     this._value = value;
   }
 
-  children(value: string): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): ReferenceExpression {
-    return referenceExpression({
-      value: this._value,
-      children: this._children,
-    } as ReferenceExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('&');
+    parts.push('raw');
+    parts.push('const');
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ReferenceExpression {
+    return {
+      kind: 'reference_expression',
+      value: this.renderChild(this._value, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ReferenceExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'reference_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '&', type: '&' });
+    parts.push({ kind: 'token', text: 'raw', type: 'raw' });
+    parts.push({ kind: 'token', text: 'const', type: 'const' });
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    return parts;
   }
 }
 
-export function reference(value: string): ReferenceBuilder {
+export function reference(value: BaseBuilder): ReferenceBuilder {
   return new ReferenceBuilder(value);
 }

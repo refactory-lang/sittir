@@ -3,26 +3,36 @@
  *
  * Reads tree-sitter grammar definitions from node-types.json
  * and generates:
- * 1. Builder factory functions (structItem(), functionItem(), etc.)
- * 2. Render switch cases
- * 3. Test scaffolding (vitest fixtures)
+ * 1. Grammar type literal (grammar.ts)
+ * 2. Type projections (types.ts)
+ * 3. Self-contained builder classes (nodes/*.ts)
+ * 4. Builder namespace with leaf helpers (builder.ts)
+ * 5. Barrel re-exports (index.ts)
+ * 6. Test scaffolding (*.test.ts)
+ * 7. Vitest config (vitest.config.ts)
  *
  * Usage:
- *   ir-codegen --grammar rust --nodes struct_item,function_item --output src/generated/
+ *   sittir --grammar rust --all --output src/
  */
 
-import { readGrammarNode } from './grammar-reader.ts';
+import { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, listSupertypes } from './grammar-reader.ts';
+import { resolveFileNames, toShortName, toFactoryName } from './naming.ts';
+import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
 import { emitBuilder } from './emitters/builder.ts';
 import { emitFluent } from './emitters/fluent.ts';
-import { emitRenderScaffold } from './emitters/render-scaffold.ts';
+import { emitConsts } from './emitters/consts.ts';
 import { emitTest } from './emitters/test.ts';
+import { emitConfig } from './emitters/config.ts';
+import { emitIndex } from './emitters/index-file.ts';
+
+export { readGrammarNode, listNodeKinds, listLeafKinds, listOperatorContexts, listKeywords, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes } from './grammar-reader.ts';
 
 export interface CodegenConfig {
 	/** Grammar language (e.g., 'rust', 'typescript', 'python') */
 	grammar: string;
-	/** Node kinds to generate builders for */
-	nodes: string[];
+	/** Node kinds to generate builders for. If empty, uses listNodeKinds() to auto-discover. */
+	nodes?: string[];
 	/** Output directory */
 	outputDir: string;
 	/** Alias map for field renames */
@@ -32,42 +42,81 @@ export interface CodegenConfig {
 }
 
 export interface GeneratedFiles {
-	/** node kind -> builder .ts source */
+	/** grammar.ts — TypeScript type literal from node-types.json */
+	grammar: string;
+	/** types.ts — NodeType/BuilderConfig projections + discriminated union */
+	types: string;
+	/** node kind -> nodes/*.ts builder source */
 	builders: Map<string, string>;
-	/** render.ts source with all cases */
-	renderer: string;
+	/** builder.ts — ir namespace re-exporting all builders + leaf helpers */
+	builder: string;
 	/** node kind -> test .ts source */
 	tests: Map<string, string>;
-	/** re-exports from grammar-types */
-	types: string;
-	/** fluent builder classes + ir namespace */
-	fluent: string;
+	/** vitest.config.ts source */
+	config: string;
+	/** consts.ts — discoverable arrays and maps */
+	consts: string;
+	/** index.ts barrel re-exports */
+	index: string;
 }
 
 /**
  * Generate IR builder code from a tree-sitter grammar definition.
- *
- * @param config - Code generation configuration
- * @returns Generated file contents
  */
 export function generate(config: CodegenConfig): GeneratedFiles {
-	const nodes = config.nodes.map((kind) =>
+	const nodeKinds = config.nodes && config.nodes.length > 0
+		? config.nodes
+		: listNodeKinds(config.grammar);
+
+	const leafKinds = listLeafKinds(config.grammar);
+	const operatorContexts = listOperatorContexts(config.grammar);
+	const keywords = listKeywords(config.grammar);
+	const operatorTokens = listOperatorTokens(config.grammar);
+	const supertypes = listSupertypes(config.grammar);
+
+	const nodes = nodeKinds.map((kind) =>
 		readGrammarNode(config.grammar, kind),
 	);
+
+	const fileNames = resolveFileNames(nodeKinds);
+
+	// Compute ir namespace property keys (mirrors fluent emitter logic)
+	const shortNameCounts = new Map<string, number>();
+	for (const kind of nodeKinds) {
+		const short = toShortName(kind);
+		shortNameCounts.set(short, (shortNameCounts.get(short) ?? 0) + 1);
+	}
+	const irPropertyKeys = new Map<string, string>();
+	for (const kind of nodeKinds) {
+		const short = toShortName(kind);
+		const isDuplicate = (shortNameCounts.get(short) ?? 0) > 1;
+		const key = isDuplicate
+			? toFactoryName(kind)
+			: short.endsWith('_') ? short.slice(0, -1) : short;
+		irPropertyKeys.set(kind, key);
+	}
 
 	const builders = new Map<string, string>();
 	const tests = new Map<string, string>();
 
 	for (const node of nodes) {
 		builders.set(node.kind, emitBuilder({ grammar: config.grammar, node }));
-		tests.set(node.kind, emitTest({ grammar: config.grammar, node }));
+		tests.set(node.kind, emitTest({
+			grammar: config.grammar,
+			node,
+			fileName: fileNames.get(node.kind),
+			irPropertyKey: irPropertyKeys.get(node.kind),
+		}));
 	}
 
 	return {
+		grammar: emitGrammar({ grammar: config.grammar }),
+		types: emitTypes({ grammar: config.grammar, nodeKinds }),
 		builders,
-		renderer: emitRenderScaffold({ grammar: config.grammar, nodes }),
+		builder: emitFluent({ grammar: config.grammar, nodeKinds, leafKinds, operatorContexts, nodes, supertypes }),
+		consts: emitConsts({ grammar: config.grammar, nodeKinds, leafKinds, keywords, operators: operatorTokens, nodes }),
 		tests,
-		types: emitTypes({ grammar: config.grammar, nodeKinds: config.nodes }),
-		fluent: emitFluent({ grammar: config.grammar, nodeKinds: config.nodes }),
+		config: emitConfig({ grammar: config.grammar }),
+		index: emitIndex({ grammar: config.grammar, nodeKinds }),
 	};
 }

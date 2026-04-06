@@ -1,37 +1,44 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { WhereClause, WhereClauseConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { WhereClause } from '../types.js';
 
-export function whereClause(config: WhereClauseConfig): WhereClause {
-  return {
-    kind: 'where_clause',
-    ...config,
-  } as WhereClause;
+
+class WhereClauseBuilder extends BaseBuilder<WhereClause> {
+  private _children: BaseBuilder[] = [];
+
+  constructor() { super(); }
+
+  children(value: BaseBuilder[]): this {
+    this._children = value;
+    return this;
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('where');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): WhereClause {
+    return {
+      kind: 'where_clause',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as WhereClause;
+  }
+
+  override get nodeKind(): string { return 'where_clause'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'where', type: 'where' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class WhereClauseBuilder implements BuilderTerminal<WhereClause> {
-  private _children: string[] = [];
-
-  constructor(children: string[]) {
-    this._children = children;
-  }
-
-  build(): WhereClause {
-    return whereClause({
-      children: this._children,
-    } as WhereClauseConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function where_clause(children: string[]): WhereClauseBuilder {
-  return new WhereClauseBuilder(children);
+export function where_clause(): WhereClauseBuilder {
+  return new WhereClauseBuilder();
 }

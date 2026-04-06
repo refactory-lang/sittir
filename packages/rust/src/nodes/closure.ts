@@ -1,51 +1,62 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ClosureExpression, ClosureExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ClosureExpression } from '../types.js';
 
-export function closureExpression(config: ClosureExpressionConfig): ClosureExpression {
-  return {
-    kind: 'closure_expression',
-    ...config,
-  } as ClosureExpression;
-}
 
-class ClosureBuilder implements BuilderTerminal<ClosureExpression> {
-  private _body: string = '';
-  private _parameters: string = '';
-  private _returnType?: string;
+class ClosureBuilder extends BaseBuilder<ClosureExpression> {
+  private _body: BaseBuilder;
+  private _parameters!: BaseBuilder;
+  private _returnType?: BaseBuilder;
 
-  constructor(body: string) {
+  constructor(body: BaseBuilder) {
+    super();
     this._body = body;
   }
 
-  parameters(value: string): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: string): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
 
-  build(): ClosureExpression {
-    return closureExpression({
-      body: this._body,
-      parameters: this._parameters,
-      returnType: this._returnType,
-    } as ClosureExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._parameters) parts.push(this.renderChild(this._parameters, ctx));
+    if (this._returnType) {
+      parts.push('->');
+      if (this._returnType) parts.push(this.renderChild(this._returnType, ctx));
+    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ClosureExpression {
+    return {
+      kind: 'closure_expression',
+      body: this.renderChild(this._body, ctx),
+      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
+      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
+    } as unknown as ClosureExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'closure_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
+    if (this._returnType) {
+      parts.push({ kind: 'token', text: '->', type: '->' });
+      if (this._returnType) parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
+    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+    return parts;
   }
 }
 
-export function closure(body: string): ClosureBuilder {
+export function closure(body: BaseBuilder): ClosureBuilder {
   return new ClosureBuilder(body);
 }

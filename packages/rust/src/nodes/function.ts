@@ -1,72 +1,93 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { FunctionItem, FunctionItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { FunctionItem } from '../types.js';
 
-export function functionItem(config: FunctionItemConfig): FunctionItem {
-  return {
-    kind: 'function_item',
-    ...config,
-  } as FunctionItem;
-}
 
-class FunctionBuilder implements BuilderTerminal<FunctionItem> {
-  private _body: string = '';
-  private _name: string = '';
-  private _parameters: string = '';
-  private _returnType?: string;
-  private _typeParameters?: string;
-  private _children: string[] = [];
+class FunctionBuilder extends BaseBuilder<FunctionItem> {
+  private _body!: BaseBuilder;
+  private _name: BaseBuilder;
+  private _parameters!: BaseBuilder;
+  private _returnType?: BaseBuilder;
+  private _typeParameters?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: string) {
+  constructor(name: BaseBuilder) {
+    super();
     this._name = name;
   }
 
-  body(value: string): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  parameters(value: string): this {
+  parameters(value: BaseBuilder): this {
     this._parameters = value;
     return this;
   }
 
-  returnType(value: string): this {
+  returnType(value: BaseBuilder): this {
     this._returnType = value;
     return this;
   }
 
-  typeParameters(value: string): this {
+  typeParameters(value: BaseBuilder): this {
     this._typeParameters = value;
     return this;
   }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): FunctionItem {
-    return functionItem({
-      body: this._body,
-      name: this._name,
-      parameters: this._parameters,
-      returnType: this._returnType,
-      typeParameters: this._typeParameters,
-      children: this._children,
-    } as FunctionItemConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('fn');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    if (this._typeParameters) parts.push(this.renderChild(this._typeParameters, ctx));
+    if (this._parameters) parts.push(this.renderChild(this._parameters, ctx));
+    if (this._returnType) {
+      parts.push('->');
+      if (this._returnType) parts.push(this.renderChild(this._returnType, ctx));
+    }
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): FunctionItem {
+    return {
+      kind: 'function_item',
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      name: this.renderChild(this._name, ctx),
+      parameters: this._parameters ? this.renderChild(this._parameters, ctx) : undefined,
+      returnType: this._returnType ? this.renderChild(this._returnType, ctx) : undefined,
+      typeParameters: this._typeParameters ? this.renderChild(this._typeParameters, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as FunctionItem;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'function_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'fn', type: 'fn' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    if (this._typeParameters) parts.push({ kind: 'builder', builder: this._typeParameters, fieldName: 'typeParameters' });
+    if (this._parameters) parts.push({ kind: 'builder', builder: this._parameters, fieldName: 'parameters' });
+    if (this._returnType) {
+      parts.push({ kind: 'token', text: '->', type: '->' });
+      if (this._returnType) parts.push({ kind: 'builder', builder: this._returnType, fieldName: 'returnType' });
+    }
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+    return parts;
   }
 }
 
-export function fn(name: string): FunctionBuilder {
+export function fn(name: BaseBuilder): FunctionBuilder {
   return new FunctionBuilder(name);
 }

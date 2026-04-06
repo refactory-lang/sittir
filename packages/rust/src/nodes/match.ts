@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { MatchExpression, MatchExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { MatchExpression } from '../types.js';
 
-export function matchExpression(config: MatchExpressionConfig): MatchExpression {
-  return {
-    kind: 'match_expression',
-    ...config,
-  } as MatchExpression;
-}
 
-class MatchBuilder implements BuilderTerminal<MatchExpression> {
-  private _body: string = '';
-  private _value: string = '';
+class MatchBuilder extends BaseBuilder<MatchExpression> {
+  private _body: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(body: string) {
+  constructor(body: BaseBuilder) {
+    super();
     this._body = body;
   }
 
-  value(value: string): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  build(): MatchExpression {
-    return matchExpression({
-      body: this._body,
-      value: this._value,
-    } as MatchExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('match');
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    if (this._body) parts.push(this.renderChild(this._body, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): MatchExpression {
+    return {
+      kind: 'match_expression',
+      body: this.renderChild(this._body, ctx),
+      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+    } as unknown as MatchExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'match_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'match', type: 'match' });
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    if (this._body) parts.push({ kind: 'builder', builder: this._body, fieldName: 'body' });
+    return parts;
   }
 }
 
-export function match(body: string): MatchBuilder {
+export function match(body: BaseBuilder): MatchBuilder {
   return new MatchBuilder(body);
 }

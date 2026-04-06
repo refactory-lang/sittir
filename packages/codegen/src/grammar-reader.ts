@@ -40,20 +40,172 @@ interface RawNodeEntry {
 
 type GrammarMap = Record<string, RawNodeEntry>;
 
+// --- grammar.json rule types ---
+
+export type GrammarRule =
+	| { type: 'SEQ'; members: GrammarRule[] }
+	| { type: 'CHOICE'; members: GrammarRule[] }
+	| { type: 'STRING'; value: string }
+	| { type: 'FIELD'; name: string; content: GrammarRule }
+	| { type: 'SYMBOL'; name: string }
+	| { type: 'BLANK' }
+	| { type: 'REPEAT'; content: GrammarRule }
+	| { type: 'REPEAT1'; content: GrammarRule }
+	| { type: 'PREC'; value: number; content: GrammarRule }
+	| { type: 'PREC_LEFT'; value: number; content: GrammarRule }
+	| { type: 'PREC_RIGHT'; value: number; content: GrammarRule }
+	| { type: 'ALIAS'; content: GrammarRule; named: boolean; value: string }
+	| { type: 'TOKEN'; content: GrammarRule }
+	| { type: 'IMMEDIATE_TOKEN'; content: GrammarRule }
+	| { type: 'PATTERN'; value: string };
+
+interface GrammarJson {
+	name: string;
+	rules: Record<string, GrammarRule>;
+}
+
 // --- Cache ---
 
 const require = createRequire(import.meta.url);
 const grammarCache = new Map<string, GrammarMap>();
+const grammarJsonCache = new Map<string, GrammarJson>();
+
+/**
+ * Well-known node-types.json paths for grammars with non-standard layouts.
+ * Most grammars use `tree-sitter-{grammar}/src/node-types.json`.
+ */
+const GRAMMAR_PATHS: Record<string, string> = {
+	typescript: `tree-sitter-typescript/typescript/src/node-types.json`,
+	tsx: `tree-sitter-typescript/tsx/src/node-types.json`,
+};
+
+/** Registry of explicit node-types.json paths (set via registerGrammarPath). */
+const explicitPaths = new Map<string, string>();
+
+/** Register an explicit file path for a grammar's node-types.json. */
+export function registerGrammarPath(grammar: string, nodeTypesPath: string): void {
+	explicitPaths.set(grammar, nodeTypesPath);
+	grammarCache.delete(grammar); // invalidate cache
+}
+
+/** Resolve the src/ directory for a grammar. */
+function resolveGrammarSrcDir(grammar: string): string {
+	const explicitPath = explicitPaths.get(grammar);
+	if (explicitPath) {
+		const { dirname } = require('node:path') as typeof import('node:path');
+		return dirname(explicitPath);
+	}
+	const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
+	const nodeTypesPath = require.resolve(modulePath);
+	const { dirname } = require('node:path') as typeof import('node:path');
+	return dirname(nodeTypesPath);
+}
+
+/** Load the compiled grammar.json for rule-driven rendering. */
+function loadGrammarJson(grammar: string): GrammarJson {
+	const cached = grammarJsonCache.get(grammar);
+	if (cached) return cached;
+
+	const { join } = require('node:path') as typeof import('node:path');
+	const srcDir = resolveGrammarSrcDir(grammar);
+	const grammarJson: GrammarJson = require(join(srcDir, 'grammar.json'));
+
+	grammarJsonCache.set(grammar, grammarJson);
+	return grammarJson;
+}
+
+/**
+ * Read the grammar.json rule for a specific node kind.
+ * Returns null if the kind has no rule (rare — e.g., implicit nodes).
+ */
+export function readGrammarRule(grammar: string, nodeKind: string): GrammarRule | null {
+	const gj = loadGrammarJson(grammar);
+	return gj.rules[nodeKind] ?? null;
+}
+
+/**
+ * Collect non-optional STRING tokens from a grammar rule.
+ * These are the fixed keywords/punctuation that always appear in the rendered output.
+ */
+export function collectRequiredTokens(grammar: string, nodeKind: string): string[] {
+	const rule = readGrammarRule(grammar, nodeKind);
+	if (!rule) return [];
+	const tokens: string[] = [];
+	walkForTokens(rule, false, tokens);
+	return tokens;
+}
+
+function walkForTokens(rule: GrammarRule, optional: boolean, tokens: string[]): void {
+	switch (rule.type) {
+		case 'SEQ':
+			for (const member of rule.members) {
+				walkForTokens(member, optional, tokens);
+			}
+			break;
+		case 'STRING':
+			if (!optional) tokens.push(rule.value);
+			break;
+		case 'CHOICE': {
+			const hasBlank = rule.members.some(m => m.type === 'BLANK');
+			if (hasBlank) {
+				// Everything inside is optional
+				for (const member of rule.members) {
+					walkForTokens(member, true, tokens);
+				}
+			} else {
+				// Non-optional CHOICE — use first variant
+				walkForTokens(rule.members[0]!, optional, tokens);
+			}
+			break;
+		}
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		case 'REPEAT':
+			walkForTokens(rule.content, true, tokens);
+			break;
+		case 'REPEAT1':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		case 'ALIAS':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN':
+			walkForTokens(rule.content, optional, tokens);
+			break;
+		default:
+			break;
+	}
+}
+
+/** Load raw node-types.json entries for the grammar emitter. */
+export function loadRawEntries(grammar: string): RawNodeEntry[] {
+	const explicitPath = explicitPaths.get(grammar);
+	if (explicitPath) {
+		return require(explicitPath);
+	}
+	const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
+	const nodeTypesPath = require.resolve(modulePath);
+	return require(nodeTypesPath);
+}
 
 function loadGrammar(grammar: string): GrammarMap {
 	const cached = grammarCache.get(grammar);
 	if (cached) return cached;
 
-	// Resolve node-types.json directly from tree-sitter-{grammar}
-	const nodeTypesPath = require.resolve(
-		`tree-sitter-${grammar}/src/node-types.json`,
-	);
-	const entries: RawNodeEntry[] = require(nodeTypesPath);
+	let entries: RawNodeEntry[];
+
+	const explicitPath = explicitPaths.get(grammar);
+	if (explicitPath) {
+		entries = require(explicitPath);
+	} else {
+		const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
+		const nodeTypesPath = require.resolve(modulePath);
+		entries = require(nodeTypesPath);
+	}
 
 	// Convert array to map keyed by type name
 	const parsed: GrammarMap = {};
@@ -118,7 +270,7 @@ export function listNodeKinds(grammar: string): string[] {
 		// Skip abstract types prefixed with _
 		if (key.startsWith('_')) return false;
 
-		const entry = grammarMap[key];
+		const entry = grammarMap[key]!;
 
 		// Skip entries that only have subtypes (no fields, no children)
 		const hasFields =
@@ -127,4 +279,121 @@ export function listNodeKinds(grammar: string): string[] {
 
 		return hasFields || hasChildren;
 	});
+}
+
+/**
+ * List all named leaf node kinds — no fields, no children, not abstract.
+ * These become LeafBuilder entries in the ir namespace.
+ */
+export function listLeafKinds(grammar: string): string[] {
+	const grammarMap = loadGrammar(grammar);
+
+	return Object.keys(grammarMap).filter((key) => {
+		if (key.startsWith('_')) return false;
+
+		const entry = grammarMap[key]!;
+		if (!entry.named) return false;
+		if (entry.subtypes) return false;
+
+		const hasFields =
+			entry.fields != null && Object.keys(entry.fields).length > 0;
+		const hasChildren = entry.children != null;
+
+		return !hasFields && !hasChildren;
+	});
+}
+
+export interface OperatorContext {
+	parentKind: string;
+	field: string;
+	tokens: string[];
+}
+
+/**
+ * Discover anonymous tokens that appear as field values in named nodes.
+ * Returns per-(parentKind, field) groupings of operator tokens.
+ */
+export function listOperatorContexts(grammar: string): OperatorContext[] {
+	const grammarMap = loadGrammar(grammar);
+	const results: OperatorContext[] = [];
+
+	for (const [kind, entry] of Object.entries(grammarMap)) {
+		if (!entry.named || kind.startsWith('_')) continue;
+		if (!entry.fields) continue;
+
+		for (const [fieldName, fieldInfo] of Object.entries(entry.fields)) {
+			const anonTokens = fieldInfo.types
+				.filter((t) => !t.named)
+				.map((t) => t.type);
+
+			if (anonTokens.length > 0) {
+				results.push({ parentKind: kind, field: fieldName, tokens: anonTokens });
+			}
+		}
+	}
+
+	return results;
+}
+
+/**
+ * List all keywords (anonymous tokens that are alphabetic) from the grammar.
+ */
+export function listKeywords(grammar: string): string[] {
+	const grammarMap = loadGrammar(grammar);
+	const keywords = new Set<string>();
+
+	for (const entry of Object.values(grammarMap)) {
+		if (!entry.named) {
+			if (/^[a-z_]+$/i.test(entry.type)) {
+				keywords.add(entry.type);
+			}
+		}
+	}
+
+	return [...keywords].sort();
+}
+
+/**
+ * List all operator tokens (non-alphabetic anonymous tokens) from the grammar.
+ */
+export function listOperatorTokens(grammar: string): string[] {
+	const grammarMap = loadGrammar(grammar);
+	const ops = new Set<string>();
+
+	for (const entry of Object.values(grammarMap)) {
+		if (!entry.named) {
+			if (!/^[a-z_]+$/i.test(entry.type) && entry.type !== '"' && entry.type !== "'") {
+				ops.add(entry.type);
+			}
+		}
+	}
+
+	return [...ops].sort();
+}
+
+export interface SupertypeInfo {
+	/** Supertype name (e.g. '_expression', 'declaration') */
+	name: string;
+	/** Named subtypes (concrete node kinds) */
+	subtypes: string[];
+}
+
+/**
+ * List supertype nodes and their subtypes.
+ * Supertypes are grammar entries that have a `subtypes` array — they define
+ * abstract groupings like _expression, _statement, _type.
+ */
+export function listSupertypes(grammar: string): SupertypeInfo[] {
+	const grammarMap = loadGrammar(grammar);
+	const results: SupertypeInfo[] = [];
+
+	for (const [kind, entry] of Object.entries(grammarMap)) {
+		if (!entry.subtypes || entry.subtypes.length === 0) continue;
+		const named = entry.subtypes.filter(s => s.named).map(s => s.type);
+		if (named.length > 0) {
+			results.push({ name: kind, subtypes: named });
+		}
+	}
+
+	return results;
 }

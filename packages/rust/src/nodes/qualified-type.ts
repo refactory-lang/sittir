@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { QualifiedType, QualifiedTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { QualifiedType } from '../types.js';
 
-export function qualifiedType(config: QualifiedTypeConfig): QualifiedType {
-  return {
-    kind: 'qualified_type',
-    ...config,
-  } as QualifiedType;
-}
 
-class QualifiedTypeBuilder implements BuilderTerminal<QualifiedType> {
-  private _alias: string = '';
-  private _type: string = '';
+class QualifiedTypeBuilder extends BaseBuilder<QualifiedType> {
+  private _alias: BaseBuilder;
+  private _type!: BaseBuilder;
 
-  constructor(alias: string) {
+  constructor(alias: BaseBuilder) {
+    super();
     this._alias = alias;
   }
 
-  type(value: string): this {
+  type(value: BaseBuilder): this {
     this._type = value;
     return this;
   }
 
-  build(): QualifiedType {
-    return qualifiedType({
-      alias: this._alias,
-      type: this._type,
-    } as QualifiedTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._type) parts.push(this.renderChild(this._type, ctx));
+    parts.push('as');
+    if (this._alias) parts.push(this.renderChild(this._alias, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): QualifiedType {
+    return {
+      kind: 'qualified_type',
+      alias: this.renderChild(this._alias, ctx),
+      type: this._type ? this.renderChild(this._type, ctx) : undefined,
+    } as unknown as QualifiedType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'qualified_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._type) parts.push({ kind: 'builder', builder: this._type, fieldName: 'type' });
+    parts.push({ kind: 'token', text: 'as', type: 'as' });
+    if (this._alias) parts.push({ kind: 'builder', builder: this._alias, fieldName: 'alias' });
+    return parts;
   }
 }
 
-export function qualified_type(alias: string): QualifiedTypeBuilder {
+export function qualified_type(alias: BaseBuilder): QualifiedTypeBuilder {
   return new QualifiedTypeBuilder(alias);
 }

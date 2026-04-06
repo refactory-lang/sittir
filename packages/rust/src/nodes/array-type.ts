@@ -1,44 +1,57 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ArrayType, ArrayTypeConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ArrayType } from '../types.js';
 
-export function arrayType(config: ArrayTypeConfig): ArrayType {
-  return {
-    kind: 'array_type',
-    ...config,
-  } as ArrayType;
-}
 
-class ArrayTypeBuilder implements BuilderTerminal<ArrayType> {
-  private _element: string = '';
-  private _length?: string;
+class ArrayTypeBuilder extends BaseBuilder<ArrayType> {
+  private _element: BaseBuilder;
+  private _length?: BaseBuilder;
 
-  constructor(element: string) {
+  constructor(element: BaseBuilder) {
+    super();
     this._element = element;
   }
 
-  length(value: string): this {
+  length(value: BaseBuilder): this {
     this._length = value;
     return this;
   }
 
-  build(): ArrayType {
-    return arrayType({
-      element: this._element,
-      length: this._length,
-    } as ArrayTypeConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('[');
+    if (this._element) parts.push(this.renderChild(this._element, ctx));
+    if (this._length) {
+      parts.push(';');
+      if (this._length) parts.push(this.renderChild(this._length, ctx));
+    }
+    parts.push(']');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ArrayType {
+    return {
+      kind: 'array_type',
+      element: this.renderChild(this._element, ctx),
+      length: this._length ? this.renderChild(this._length, ctx) : undefined,
+    } as unknown as ArrayType;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'array_type'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '[', type: '[' });
+    if (this._element) parts.push({ kind: 'builder', builder: this._element, fieldName: 'element' });
+    if (this._length) {
+      parts.push({ kind: 'token', text: ';', type: ';' });
+      if (this._length) parts.push({ kind: 'builder', builder: this._length, fieldName: 'length' });
+    }
+    parts.push({ kind: 'token', text: ']', type: ']' });
+    return parts;
   }
 }
 
-export function array_type(element: string): ArrayTypeBuilder {
+export function array_type(element: BaseBuilder): ArrayTypeBuilder {
   return new ArrayTypeBuilder(element);
 }

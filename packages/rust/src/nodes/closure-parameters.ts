@@ -1,37 +1,43 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ClosureParameters, ClosureParametersConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ClosureParameters } from '../types.js';
 
-export function closureParameters(config: ClosureParametersConfig): ClosureParameters {
-  return {
-    kind: 'closure_parameters',
-    ...config,
-  } as ClosureParameters;
-}
 
-class ClosureParametersBuilder implements BuilderTerminal<ClosureParameters> {
-  private _children: string[] = [];
+class ClosureParametersBuilder extends BaseBuilder<ClosureParameters> {
+  private _children: BaseBuilder[] = [];
 
-  constructor() {}
+  constructor() { super(); }
 
-  children(value: string[]): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): ClosureParameters {
-    return closureParameters({
-      children: this._children,
-    } as ClosureParametersConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('|');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('|');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ClosureParameters {
+    return {
+      kind: 'closure_parameters',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ClosureParameters;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'closure_parameters'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: '|', type: '|' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: '|', type: '|' });
+    return parts;
   }
 }
 

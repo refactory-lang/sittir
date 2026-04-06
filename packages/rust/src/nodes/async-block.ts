@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { AsyncBlock, AsyncBlockConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { AsyncBlock } from '../types.js';
 
-export function asyncBlock(config: AsyncBlockConfig): AsyncBlock {
-  return {
-    kind: 'async_block',
-    ...config,
-  } as AsyncBlock;
+
+class AsyncBlockBuilder extends BaseBuilder<AsyncBlock> {
+  private _children: BaseBuilder[] = [];
+
+  constructor(children: BaseBuilder) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    parts.push('async');
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): AsyncBlock {
+    return {
+      kind: 'async_block',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as AsyncBlock;
+  }
+
+  override get nodeKind(): string { return 'async_block'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    parts.push({ kind: 'token', text: 'async', type: 'async' });
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class AsyncBlockBuilder implements BuilderTerminal<AsyncBlock> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): AsyncBlock {
-    return asyncBlock({
-      children: this._children,
-    } as AsyncBlockConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function async_block(children: string): AsyncBlockBuilder {
+export function async_block(children: BaseBuilder): AsyncBlockBuilder {
   return new AsyncBlockBuilder(children);
 }

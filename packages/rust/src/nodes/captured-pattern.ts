@@ -1,37 +1,42 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { CapturedPattern, CapturedPatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { CapturedPattern } from '../types.js';
 
-export function capturedPattern(config: CapturedPatternConfig): CapturedPattern {
-  return {
-    kind: 'captured_pattern',
-    ...config,
-  } as CapturedPattern;
-}
 
-class CapturedPatternBuilder implements BuilderTerminal<CapturedPattern> {
-  private _children: string[] = [];
+class CapturedPatternBuilder extends BaseBuilder<CapturedPattern> {
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: BaseBuilder[]) {
+    super();
     this._children = children;
   }
 
-  build(): CapturedPattern {
-    return capturedPattern({
-      children: this._children,
-    } as CapturedPatternConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('@');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): CapturedPattern {
+    return {
+      kind: 'captured_pattern',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as CapturedPattern;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'captured_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: '@', type: '@' });
+    return parts;
   }
 }
 
-export function captured_pattern(children: string[]): CapturedPatternBuilder {
+export function captured_pattern(children: BaseBuilder[]): CapturedPatternBuilder {
   return new CapturedPatternBuilder(children);
 }

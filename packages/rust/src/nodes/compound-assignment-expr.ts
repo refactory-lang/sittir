@@ -1,51 +1,56 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { CompoundAssignmentExpr, CompoundAssignmentExprConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { CompoundAssignmentExpr } from '../types.js';
 
-export function compoundAssignmentExpr(config: CompoundAssignmentExprConfig): CompoundAssignmentExpr {
-  return {
-    kind: 'compound_assignment_expr',
-    ...config,
-  } as CompoundAssignmentExpr;
-}
 
-class CompoundAssignmentExprBuilder implements BuilderTerminal<CompoundAssignmentExpr> {
-  private _left: string = '';
-  private _operator: string = '';
-  private _right: string = '';
+class CompoundAssignmentExprBuilder extends BaseBuilder<CompoundAssignmentExpr> {
+  private _left: BaseBuilder;
+  private _operator!: BaseBuilder;
+  private _right!: BaseBuilder;
 
-  constructor(left: string) {
+  constructor(left: BaseBuilder) {
+    super();
     this._left = left;
   }
 
-  operator(value: string): this {
+  operator(value: BaseBuilder): this {
     this._operator = value;
     return this;
   }
 
-  right(value: string): this {
+  right(value: BaseBuilder): this {
     this._right = value;
     return this;
   }
 
-  build(): CompoundAssignmentExpr {
-    return compoundAssignmentExpr({
-      left: this._left,
-      operator: this._operator,
-      right: this._right,
-    } as CompoundAssignmentExprConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._left) parts.push(this.renderChild(this._left, ctx));
+    if (this._operator) parts.push(this.renderChild(this._operator, ctx));
+    if (this._right) parts.push(this.renderChild(this._right, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): CompoundAssignmentExpr {
+    return {
+      kind: 'compound_assignment_expr',
+      left: this.renderChild(this._left, ctx),
+      operator: this._operator ? this.renderChild(this._operator, ctx) : undefined,
+      right: this._right ? this.renderChild(this._right, ctx) : undefined,
+    } as unknown as CompoundAssignmentExpr;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'compound_assignment_expr'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
+    if (this._operator) parts.push({ kind: 'builder', builder: this._operator, fieldName: 'operator' });
+    if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
+    return parts;
   }
 }
 
-export function compound_assignment_expr(left: string): CompoundAssignmentExprBuilder {
+export function compound_assignment_expr(left: BaseBuilder): CompoundAssignmentExprBuilder {
   return new CompoundAssignmentExprBuilder(left);
 }

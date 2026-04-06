@@ -1,37 +1,51 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { RangePattern, RangePatternConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { RangePattern } from '../types.js';
 
-export function rangePattern(config: RangePatternConfig): RangePattern {
-  return {
-    kind: 'range_pattern',
-    ...config,
-  } as RangePattern;
+
+class RangePatternBuilder extends BaseBuilder<RangePattern> {
+  private _left?: BaseBuilder;
+  private _right?: BaseBuilder;
+
+  constructor() { super(); }
+
+  left(value: BaseBuilder): this {
+    this._left = value;
+    return this;
+  }
+
+  right(value: BaseBuilder): this {
+    this._right = value;
+    return this;
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._left) parts.push(this.renderChild(this._left, ctx));
+    parts.push('...');
+    if (this._right) parts.push(this.renderChild(this._right, ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): RangePattern {
+    return {
+      kind: 'range_pattern',
+      left: this._left ? this.renderChild(this._left, ctx) : undefined,
+      right: this._right ? this.renderChild(this._right, ctx) : undefined,
+    } as unknown as RangePattern;
+  }
+
+  override get nodeKind(): string { return 'range_pattern'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._left) parts.push({ kind: 'builder', builder: this._left, fieldName: 'left' });
+    parts.push({ kind: 'token', text: '...', type: '...' });
+    if (this._right) parts.push({ kind: 'builder', builder: this._right, fieldName: 'right' });
+    return parts;
+  }
 }
 
-class RangePatternBuilder implements BuilderTerminal<RangePattern> {
-  private _children: string[] = [];
-
-  constructor(children: string[]) {
-    this._children = children;
-  }
-
-  build(): RangePattern {
-    return rangePattern({
-      children: this._children,
-    } as RangePatternConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function range_pattern(children: string[]): RangePatternBuilder {
-  return new RangePatternBuilder(children);
+export function range_pattern(): RangePatternBuilder {
+  return new RangePatternBuilder();
 }

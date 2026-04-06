@@ -1,37 +1,40 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { RawStringLiteral, RawStringLiteralConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { RawStringLiteral } from '../types.js';
 
-export function rawStringLiteral(config: RawStringLiteralConfig): RawStringLiteral {
-  return {
-    kind: 'raw_string_literal',
-    ...config,
-  } as RawStringLiteral;
+
+class RawStringLiteralBuilder extends BaseBuilder<RawStringLiteral> {
+  private _children: BaseBuilder[] = [];
+
+  constructor(children: BaseBuilder) {
+    super();
+    this._children = [children];
+  }
+
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    return parts.join(' ');
+  }
+
+  build(ctx?: RenderContext): RawStringLiteral {
+    return {
+      kind: 'raw_string_literal',
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as RawStringLiteral;
+  }
+
+  override get nodeKind(): string { return 'raw_string_literal'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    return parts;
+  }
 }
 
-class RawStringLiteralBuilder implements BuilderTerminal<RawStringLiteral> {
-  private _children: string;
-
-  constructor(children: string) {
-    this._children = children;
-  }
-
-  build(): RawStringLiteral {
-    return rawStringLiteral({
-      children: this._children,
-    } as RawStringLiteralConfig);
-  }
-
-  render(): string {
-    return assertValid(renderSilent(this.build()));
-  }
-
-  renderSilent(): string {
-    return renderSilent(this.build());
-  }
-}
-
-export function raw_string_literal(children: string): RawStringLiteralBuilder {
+export function raw_string_literal(children: BaseBuilder): RawStringLiteralBuilder {
   return new RawStringLiteralBuilder(children);
 }

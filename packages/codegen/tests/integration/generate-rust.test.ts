@@ -14,19 +14,39 @@ describe('generate() for Rust', () => {
 		expect(result.builders.has('attribute_item')).toBe(true);
 	});
 
+	it('should generate self-contained builders extending BaseBuilder', () => {
+		const structBuilder = result.builders.get('struct_item')!;
+		expect(structBuilder).toContain('extends BaseBuilder');
+		expect(structBuilder).toContain('renderImpl(ctx');
+		expect(structBuilder).toContain("parts.push('struct')");
+	});
+
 	it('should generate types with all node kinds', () => {
 		expect(result.types).toContain('StructItem');
 		expect(result.types).toContain('AttributeItem');
 		expect(result.types).toContain('RustIrNode');
 	});
 
-	it('should generate fluent namespace', () => {
-		expect(result.fluent).toContain('export const ir');
+	it('should generate builder namespace with leaf helpers', () => {
+		expect(result.builder).toContain('export const ir');
+		expect(result.builder).toContain('LeafBuilder');
+		expect(result.builder).toContain('identifier');
 	});
 
-	it('should generate render scaffold', () => {
-		expect(result.renderer).toContain("case 'struct_item':");
-		expect(result.renderer).toContain("case 'attribute_item':");
+	it('should generate grammar type', () => {
+		expect(result.grammar).toContain('RustGrammar');
+	});
+
+	it('should generate index barrel with BaseBuilder re-export', () => {
+		expect(result.index).toContain("from './builder.js'");
+		expect(result.index).toContain('BaseBuilder');
+	});
+
+	it('should NOT generate render.ts, validate.ts, etc.', () => {
+		expect(result).not.toHaveProperty('renderer');
+		expect(result).not.toHaveProperty('renderValid');
+		expect(result).not.toHaveProperty('validate');
+		expect(result).not.toHaveProperty('validateFast');
 	});
 
 	it('should generate tests for each node kind', () => {

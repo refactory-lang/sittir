@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ForeignModItem, ForeignModItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ForeignModItem } from '../types.js';
 
-export function foreignModItem(config: ForeignModItemConfig): ForeignModItem {
-  return {
-    kind: 'foreign_mod_item',
-    ...config,
-  } as ForeignModItem;
-}
 
-class ForeignModBuilder implements BuilderTerminal<ForeignModItem> {
-  private _body?: string;
-  private _children: string[] = [];
+class ForeignModBuilder extends BaseBuilder<ForeignModItem> {
+  private _body?: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(children: string[]) {
+  constructor(children: BaseBuilder[]) {
+    super();
     this._children = children;
   }
 
-  body(value: string): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  build(): ForeignModItem {
-    return foreignModItem({
-      body: this._body,
-      children: this._children,
-    } as ForeignModItemConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push(';');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ForeignModItem {
+    return {
+      kind: 'foreign_mod_item',
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ForeignModItem;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'foreign_mod_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: ';', type: ';' });
+    return parts;
   }
 }
 
-export function foreign_mod(children: string[]): ForeignModBuilder {
+export function foreign_mod(children: BaseBuilder[]): ForeignModBuilder {
   return new ForeignModBuilder(children);
 }

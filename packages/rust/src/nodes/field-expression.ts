@@ -1,44 +1,49 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { FieldExpression, FieldExpressionConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { FieldExpression } from '../types.js';
 
-export function fieldExpression(config: FieldExpressionConfig): FieldExpression {
-  return {
-    kind: 'field_expression',
-    ...config,
-  } as FieldExpression;
-}
 
-class FieldBuilder implements BuilderTerminal<FieldExpression> {
-  private _field: string = '';
-  private _value: string = '';
+class FieldBuilder extends BaseBuilder<FieldExpression> {
+  private _field: BaseBuilder;
+  private _value!: BaseBuilder;
 
-  constructor(field: string) {
+  constructor(field: BaseBuilder) {
+    super();
     this._field = field;
   }
 
-  value(value: string): this {
+  value(value: BaseBuilder): this {
     this._value = value;
     return this;
   }
 
-  build(): FieldExpression {
-    return fieldExpression({
-      field: this._field,
-      value: this._value,
-    } as FieldExpressionConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._value) parts.push(this.renderChild(this._value, ctx));
+    parts.push('.');
+    if (this._field) parts.push(this.renderChild(this._field, ctx));
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): FieldExpression {
+    return {
+      kind: 'field_expression',
+      field: this.renderChild(this._field, ctx),
+      value: this._value ? this.renderChild(this._value, ctx) : undefined,
+    } as unknown as FieldExpression;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'field_expression'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    if (this._value) parts.push({ kind: 'builder', builder: this._value, fieldName: 'value' });
+    parts.push({ kind: 'token', text: '.', type: '.' });
+    if (this._field) parts.push({ kind: 'builder', builder: this._field, fieldName: 'field' });
+    return parts;
   }
 }
 
-export function field(field: string): FieldBuilder {
+export function field(field: BaseBuilder): FieldBuilder {
   return new FieldBuilder(field);
 }

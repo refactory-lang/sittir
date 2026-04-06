@@ -1,51 +1,60 @@
-import type { BuilderTerminal } from '@sittir/types';
-import type { ModItem, ModItemConfig } from '../types.js';
-import { renderSilent } from '../render.js';
-import { assertValid } from '../validate-fast.js';
+import { BaseBuilder } from '@sittir/types';
+import type { RenderContext, CSTChild } from '@sittir/types';
+import type { ModItem } from '../types.js';
 
-export function modItem(config: ModItemConfig): ModItem {
-  return {
-    kind: 'mod_item',
-    ...config,
-  } as ModItem;
-}
 
-class ModBuilder implements BuilderTerminal<ModItem> {
-  private _body?: string;
-  private _name: string = '';
-  private _children?: string;
+class ModBuilder extends BaseBuilder<ModItem> {
+  private _body?: BaseBuilder;
+  private _name: BaseBuilder;
+  private _children: BaseBuilder[] = [];
 
-  constructor(name: string) {
+  constructor(name: BaseBuilder) {
+    super();
     this._name = name;
   }
 
-  body(value: string): this {
+  body(value: BaseBuilder): this {
     this._body = value;
     return this;
   }
 
-  children(value: string): this {
+  children(value: BaseBuilder[]): this {
     this._children = value;
     return this;
   }
 
-  build(): ModItem {
-    return modItem({
-      body: this._body,
-      name: this._name,
-      children: this._children,
-    } as ModItemConfig);
+  renderImpl(ctx?: RenderContext): string {
+    const parts: string[] = [];
+    if (this._children.length > 0) parts.push(this.renderChildren(this._children, ' ', ctx));
+    parts.push('mod');
+    if (this._name) parts.push(this.renderChild(this._name, ctx));
+    parts.push(';');
+    return parts.join(' ');
   }
 
-  render(): string {
-    return assertValid(renderSilent(this.build()));
+  build(ctx?: RenderContext): ModItem {
+    return {
+      kind: 'mod_item',
+      body: this._body ? this.renderChild(this._body, ctx) : undefined,
+      name: this.renderChild(this._name, ctx),
+      children: this._children.map(c => this.renderChild(c, ctx)),
+    } as unknown as ModItem;
   }
 
-  renderSilent(): string {
-    return renderSilent(this.build());
+  override get nodeKind(): string { return 'mod_item'; }
+
+  override toCSTChildren(ctx?: RenderContext): CSTChild[] {
+    const parts: CSTChild[] = [];
+    for (const child of this._children) {
+      parts.push({ kind: 'builder', builder: child });
+    }
+    parts.push({ kind: 'token', text: 'mod', type: 'mod' });
+    if (this._name) parts.push({ kind: 'builder', builder: this._name, fieldName: 'name' });
+    parts.push({ kind: 'token', text: ';', type: ';' });
+    return parts;
   }
 }
 
-export function mod(name: string): ModBuilder {
+export function mod(name: BaseBuilder): ModBuilder {
   return new ModBuilder(name);
 }
