@@ -10,7 +10,7 @@ export { ir } from './ir.js';
 export * from './utils.js';
 
 // Tree node hydration and in-place editing
-export { assignByKind, edit } from './assign.js';
+export { readNode, edit } from './wrap.js';
 
 // .from() resolution (tree-shakeable, separate from factories)
 export * from './from.js';

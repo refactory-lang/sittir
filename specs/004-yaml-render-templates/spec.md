@@ -107,9 +107,9 @@ A developer maintains an `overrides.json` file per grammar that provides synthet
 
 ---
 
-### User Story 7 - Assign emitter field promotion heuristics (Priority: P2)
+### User Story 7 - Wrap emitter field promotion heuristics (Priority: P2)
 
-The codegen inlines per-kind override field promotion code into generated `assignXxx()` functions using 5 heuristics (tree-sitter FIELD, unique kind, anonymous token with per-token matching, positional consumption, CHOICE branch). The render engine also provides a children-by-kind fallback for named children stored in the `children` array. Together, all named positions are resolvable via template variables.
+The codegen inlines per-kind override field promotion code into generated `wrapXxx()` functions using 5 heuristics (tree-sitter FIELD, unique kind, anonymous token with per-token matching, positional consumption, CHOICE branch). The render engine also provides a children-by-kind fallback for named children stored in the `children` array. Together, all named positions are resolvable via template variables.
 
 **Why this priority**: Makes render templates work correctly for nodes with override fields — without promotion and fallback, `$FIELD_NAME` variables in templates would have nothing to resolve against.
 
@@ -118,9 +118,9 @@ The codegen inlines per-kind override field promotion code into generated `assig
 **Acceptance Scenarios**:
 
 1. **Given** a `function_item` with an unnamed `visibility_modifier` child (Heuristic 2), **When** the template renders, **Then** `$VISIBILITY_MODIFIER` resolves via children-by-kind fallback.
-2. **Given** a `unary_expression` with an anonymous `-` token (Heuristic 3), **When** assign runs with overrides, **Then** `fields.operator` contains the `-` token (matched via `values: ["-", "*", "!", "&"]`).
-3. **Given** an `index_expression` with two `_expression` children (Heuristic 4), **When** assign runs with overrides, **Then** `fields.object` and `fields.index` are correctly assigned by consumption order.
-4. **Given** a `range_expression` with multiple CHOICE branches (Heuristic 5), **When** assign runs with overrides, **Then** `fields.start`, `fields.operator` (matched via `values: ["..", "..="]`), and `fields.end` are correctly assigned.
+2. **Given** a `unary_expression` with an anonymous `-` token (Heuristic 3), **When** `readNode` runs with overrides, **Then** `fields.operator` contains the `-` token (matched via `values: ["-", "*", "!", "&"]`).
+3. **Given** an `index_expression` with two `_expression` children (Heuristic 4), **When** `readNode` runs with overrides, **Then** `fields.object` and `fields.index` are correctly assigned by consumption order.
+4. **Given** a `range_expression` with multiple CHOICE branches (Heuristic 5), **When** `readNode` runs with overrides, **Then** `fields.start`, `fields.operator` (matched via `values: ["..", "..="]`), and `fields.end` are correctly assigned.
 
 ---
 
@@ -161,9 +161,9 @@ The codegen inlines per-kind override field promotion code into generated `assig
 - **FR-021**: Codegen MUST merge override fields with node-types.json fields during enrichment; overrides MUST NOT shadow existing tree-sitter FIELDs
 - **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure: (a) node kind must exist in grammar, (b) field count must be plausible for the rule's positional children, (c) `anonymous: true` fields must correspond to actual anonymous tokens in the grammar rule, (d) per FR-021. Report descriptive errors for each violation.
 - **FR-023**: Codegen MUST detect and log override candidates automatically: same-kind positional children (`SEQ(X, X)`) and discriminator tokens (CHOICE branches identical after token removal)
-- **FR-024**: The assign emitter MUST implement 5 field promotion heuristics inlined into generated `assignXxx()` functions: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value with per-token matching via `values` array in `overrides.json`, (4) same-kind positional by consumption order, (5) top-level CHOICE branch by token. `overrides.json` entries take precedence over automatic heuristics (2).
-- **FR-025**: After assign promotion and render-time children-by-kind fallback, all named positions MUST be resolvable via template variables; `$$$CHILDREN` renders the remaining children array
-- **FR-026**: The render engine MUST resolve variables primarily via field lookup (`$FIELD_NAME` from `node.fields`), with a children-by-kind fallback (`node.children` searched by `type === fieldKey`) for named children not stored in `fields`. `$$$CHILDREN` resolves from the children array. Clause sub-templates render conditionally. Override field promotion in the assign emitter handles the primary field promotion path.
+- **FR-024**: The wrap emitter MUST implement 5 field promotion heuristics inlined into generated `wrapXxx()` functions: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value with per-token matching via `values` array in `overrides.json`, (4) same-kind positional by consumption order, (5) top-level CHOICE branch by token. `overrides.json` entries take precedence over automatic heuristics (2).
+- **FR-025**: After wrap promotion and render-time children-by-kind fallback, all named positions MUST be resolvable via template variables; `$$$CHILDREN` renders the remaining children array
+- **FR-026**: The render engine MUST resolve variables primarily via field lookup (`$FIELD_NAME` from `node.fields`), with a children-by-kind fallback (`node.children` searched by `type === fieldKey`) for named children not stored in `fields`. `$$$CHILDREN` resolves from the children array. Clause sub-templates render conditionally. Override field promotion in the wrap emitter handles the primary field promotion path.
 - **FR-027**: Codegen MUST classify each node's unnamed children by simplifying the grammar rule (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine the appropriate template pattern
 
 ### Key Entities
@@ -173,7 +173,7 @@ The codegen inlines per-kind override field promotion code into generated `assig
 - **Clause**: A synthesized sub-template that bundles anonymous tokens with non-required fields; present as a YAML key under the parent rule, not a grammar node
 - **joinBy**: A separator specification — string (all `$$$` vars) or object (per-variable) — that controls how multi-variable arrays are joined during rendering
 - **overrides.json**: A per-grammar supplemental field definition file that provides synthetic field names (and optional `values` arrays for token matching) for nodes where the tree-sitter grammar lacks explicit FIELDs; codegen-time only, not shipped at runtime
-- **Override field promotion**: Per-kind logic inlined into generated `assignXxx()` functions that promotes override-named children from `children` into `fields`, making render templates and factory output symmetric. Complements the render engine's children-by-kind fallback.
+- **Override field promotion**: Per-kind logic inlined into generated `wrapXxx()` functions that promotes override-named children from `children` into `fields`, making render templates and factory output symmetric. Complements the render engine's children-by-kind fallback.
 
 ## Success Criteria *(mandatory)*
 
@@ -181,14 +181,14 @@ The codegen inlines per-kind override field promotion code into generated `assig
 
 - **SC-001**: All 5 known open issues (#1, #5, #7, #8, #9) are resolved by the migration
 - **SC-002**: Codegen produces valid `templates.yaml` for all 3 supported grammars (Rust, TypeScript, Python)
-- **SC-003**: 100% of existing tests pass after migration without changes to factory/from/assign APIs
+- **SC-003**: 100% of existing tests pass after migration without changes to factory/from/wrap APIs
 - **SC-004**: Render engine produces correctly formatted output for representative node types (functions, declarations, control flow, containers) across all 3 grammars
 - **SC-005**: Render engine code is reduced from ~133 lines + 119 lines (sexpr parser) to ~50 lines total
 - **SC-006**: Template files use literal code syntax with `$VARIABLE` slots — no escaping or encoded format required to read templates
 - **SC-007**: Per-rule `joinBy` correctly produces distinct separators for different `$$$` variables within the same rule (e.g., `, ` for params, `\n` for body)
 - **SC-008**: Clauses correctly omit paired tokens when optional fields are absent (e.g., `-> ` omitted when no `return_type`)
 - **SC-009**: `overrides.json` for Rust correctly provides field names for ~10-15 under-fielded nodes (e.g., `index_expression`, `unary_expression`, `range_expression`)
-- **SC-010**: Assign emitter correctly promotes override fields into `fields` for all 5 heuristic categories; render engine children-by-kind fallback handles named children; verified by factory→render round-trip tests (Rust 624/624, TS 654/655, Python 438/442)
+- **SC-010**: Wrap emitter correctly promotes override fields into `fields` for all 5 heuristic categories via `readNode()`; render engine children-by-kind fallback handles named children; verified by factory→render round-trip tests (Rust 624/624, TS 654/655, Python 438/442)
 - **SC-011**: Templates for nodes with override fields use `$FIELD_NAME` variables instead of positional `$$$CHILDREN`
 
 ## Clarifications

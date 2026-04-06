@@ -83,7 +83,7 @@ Per-grammar supplemental field definitions for nodes where the tree-sitter gramm
 
 ### PromotionHeuristic (conceptual, not a runtime type)
 
-Classification of how a field is promoted from unnamed children into `fields` during assign-time promotion.
+Classification of how a field is promoted from unnamed children into `fields` during wrap-time promotion.
 
 | Heuristic | Trigger | Automatic? |
 |---|---|---|

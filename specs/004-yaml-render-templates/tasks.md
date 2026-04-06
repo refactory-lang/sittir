@@ -72,13 +72,13 @@
 ### Factories emitter update
 
 - [x] T017 [US1] Update factories emitter in `packages/codegen/src/emitters/factories.ts` — generated `factories.ts` calls `createRenderer(yamlPath)` with path to `templates.yaml` instead of importing `rules`/`joinBy` from separate files
-- [x] T018 [US1] Update assign emitter in `packages/codegen/src/emitters/assign.ts` — use the bound renderer from `createRenderer(yamlPath)` instead of importing `rules`/`joinBy`
+- [x] T018 [US1] Update wrap emitter in `packages/codegen/src/emitters/wrap.ts` — use the bound renderer from `createRenderer(yamlPath)` instead of importing `rules`/`joinBy`
 
 ### CLI update
 
 - [x] T019 [US1] Update `packages/codegen/src/cli.ts` — emit `templates.yaml` to the package root (resolve one level up from `--output` path, e.g., `--output packages/rust/src` → `packages/rust/templates.yaml`), remove `rules.ts` and `joinby.ts` from output file list
 
-**Checkpoint**: Codegen CLI produces `templates.yaml` for a grammar. Generated `factories.ts` and `assign.ts` use `createRenderer(yamlPath)`.
+**Checkpoint**: Codegen CLI produces `templates.yaml` for a grammar. Generated `factories.ts` and `wrap.ts` use `createRenderer(yamlPath)`.
 
 ---
 
@@ -153,9 +153,9 @@
 
 ## Phase 8: User Story 7 — Assign Emitter Field Promotion Heuristics (P2)
 
-**Goal**: Codegen generates per-kind override field promotion code inlined into `assignXxx()` functions, implementing 5 heuristics. After assign + render-time children-by-kind fallback, all named positions are resolvable via template variables.
+**Goal**: Codegen generates per-kind override field promotion code inlined into `wrapXxx()` functions, implementing 5 heuristics. After wrap + render-time children-by-kind fallback, all named positions are resolvable via template variables.
 
-**Implementation note**: Originally planned as a separate `wrap.ts` file, the heuristics were inlined into the assign emitter for simplicity. The render engine also contributes a children-by-kind fallback for named children stored in `children` array.
+**Implementation note**: The heuristics are inlined into the wrap emitter. The render engine also contributes a children-by-kind fallback for named children stored in `children` array.
 
 **Independent Test**: Create a `NodeData` for `index_expression` via factory, render it, verify template resolves `$OBJECT` and `$INDEX`.
 
@@ -163,21 +163,21 @@
 
 - [x] T044 [US7] Implement children classification in codegen — simplify grammar rules (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine template pattern per node kind
 
-### Assign emitter updates (originally "wrap emitter")
+### Wrap emitter updates
 
-- [x] T045 [US7] Update assign emitter to generate heuristic 2 (unique kind promotion) — find unnamed child by kind set from `target.children()`
-- [x] T046 [US7] Update assign emitter to generate heuristic 3 (anonymous token promotion) — match by specific token `values` from overrides.json
-- [x] T047 [US7] Update assign emitter to generate heuristic 4 (token-positional promotion) — consume same-kind children in order using override names
-- [x] T048 [US7] Update assign emitter to generate heuristic 5 (CHOICE branch promotion) — token position determines field assignment
+- [x] T045 [US7] Update wrap emitter to generate heuristic 2 (unique kind promotion) — find unnamed child by kind set from `target.children()`
+- [x] T046 [US7] Update wrap emitter to generate heuristic 3 (anonymous token promotion) — match by specific token `values` from overrides.json
+- [x] T047 [US7] Update wrap emitter to generate heuristic 4 (token-positional promotion) — consume same-kind children in order using override names
+- [x] T048 [US7] Update wrap emitter to generate heuristic 5 (CHOICE branch promotion) — token position determines field assignment
 
 ### Integration
 
 - [x] T056 [US7] Add factory→render round-trip tests for override field validation — generated tests cover `index_expression`, `unary_expression`, `range_expression`
-- [x] T049 [US7] Regenerate all 3 grammar packages with override fields and updated assign functions
+- [x] T049 [US7] Regenerate all 3 grammar packages with override fields and updated wrap functions
 - [x] T050 [US7] Run `pnpm test` — verify all existing tests pass (Rust 624/624, TS 654/655, Python 438/442)
 - [x] T051 [US7] Validate templates for override-field nodes use `$FIELD_NAME` variables (spot-check `index_expression`, `unary_expression`, `range_expression` in Rust)
 
-**Checkpoint**: wrap.ts correctly promotes override fields. Templates reference named fields. All tests pass.
+**Checkpoint**: `wrap.ts` correctly promotes override fields via `readNode()`. Templates reference named fields. All tests pass.
 
 ---
 

@@ -148,9 +148,9 @@ export function emitFrom(config: EmitFromConfig): string {
 		lines.push(`import { ${imports} } from './factories.js';`);
 	}
 
-	// Import assign functions for SgNode dispatch
-	const assignImports = nodes.map(n => `assign${toTypeName(n.kind)}`).sort().join(', ');
-	lines.push(`import { ${assignImports} } from './assign.js';`);
+	// Import wrap functions for SgNode dispatch
+	const wrapImports = nodes.map(n => `wrap${toTypeName(n.kind)}`).sort().join(', ');
+	lines.push(`import { ${wrapImports} } from './wrap.js';`);
 
 	// Import FromInput types from types.ts
 	const fromInputImports = nodes.map(n => `${toTypeName(n.kind)}FromInput`);
@@ -218,8 +218,8 @@ function emitFromFunction(
 	lines.push(`export function ${exportName}(input: unknown): unknown;`);
 	lines.push(`export function ${exportName}(input: unknown): unknown {`);
 
-	// --- Path 1: TreeNode → assign ---
-	lines.push(`  if (isTreeNode(input)) return assign${typeName}(input as ${typeName}Tree);`);
+	// --- Path 1: TreeNode → wrap ---
+	lines.push(`  if (isTreeNode(input)) return wrap${typeName}(input as ${typeName}Tree);`);
 
 	// --- Path 2: NodeData → reconstruct with fluent API ---
 	// NodeData has raw snake_case fields; remap to camelCase config and re-call factory

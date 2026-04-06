@@ -21,7 +21,7 @@ import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
 import { emitTemplatesYaml } from './emitters/rules.ts';
 import { emitFactories } from './emitters/factories.ts';
-import { emitAssign } from './emitters/assign.ts';
+import { emitWrap } from './emitters/wrap.ts';
 import { emitFrom } from './emitters/from.ts';
 import { emitClientUtils } from './emitters/client-utils.ts';
 import { emitConsts } from './emitters/consts.ts';
@@ -55,8 +55,8 @@ export interface GeneratedFiles {
 	templatesYaml: string;
 	/** factories.ts — pure factory functions (typed fields in → typed node out) */
 	factories: string;
-	/** assign.ts — assignByKind table, per-kind assign functions, edit() */
-	assign: string;
+	/** wrap.ts — readNode entry point, per-kind wrap functions, edit() */
+	wrap: string;
 	/** utils.ts — shared client-side resolution utilities (isNodeData, _inferBranch, types) */
 	utils: string;
 	/** from.ts — .from() resolution functions (tree-shakeable, separate from factories) */
@@ -94,7 +94,7 @@ export function generate(cfg: CodegenConfig): GeneratedFiles {
 		types: emitTypes({ grammar: cfg.grammar, nodes }),
 		templatesYaml: emitTemplatesYaml({ grammar: cfg.grammar, nodes, grammarSha: '' }),
 		factories: emitFactories({ grammar: cfg.grammar, nodes }),
-		assign: emitAssign({ grammar: cfg.grammar, nodes }),
+		wrap: emitWrap({ grammar: cfg.grammar, nodes }),
 		utils: emitClientUtils({ nodes }),
 		from: emitFrom({ grammar: cfg.grammar, nodes }),
 		irNamespace: emitIrNamespace({ grammar: cfg.grammar, nodes }),

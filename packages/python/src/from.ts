@@ -5,7 +5,7 @@ import type { AliasedImport, ArgumentList, AsPattern, AssertStatement, Assignmen
 import { isNodeData, isTreeNode, _inferBranch } from './utils.js';
 
 import { aliased_import_, argument_list_, as_pattern_, assert_statement_, assignment_, attribute_, augmented_assignment_, await_, binary_operator_, block_, boolean_operator_, break_statement_, call_, case_clause_, case_pattern_, chevron_, class_definition_, class_pattern_, comparison_operator_, complex_pattern_, concatenated_string_, conditional_expression_, constrained_type_, continue_statement_, decorated_definition_, decorator_, default_parameter_, delete_statement_, dict_pattern_, dictionary_, dictionary_comprehension_, dictionary_splat_, dictionary_splat_pattern_, dotted_name_, elif_clause_, ellipsis_, else_clause_, escape_interpolation_, escape_sequence_, except_clause_, exec_statement_, expression_list_, expression_statement_, false_, finally_clause_, float_, for_in_clause_, for_statement_, format_expression_, format_specifier_, function_definition_, future_import_statement_, generator_expression_, generic_type_, global_statement_, identifier_, if_clause_, if_statement_, import_from_statement_, import_prefix_, import_statement_, integer_, interpolation_, keyword_argument_, keyword_pattern_, keyword_separator_, lambda_, lambda_parameters_, list_, list_comprehension_, list_pattern_, list_splat_, list_splat_pattern_, match_statement_, member_type_, module_, named_expression_, none_, nonlocal_statement_, not_operator_, pair_, parameters_, parenthesized_expression_, parenthesized_list_splat_, pass_statement_, pattern_list_, positional_separator_, print_statement_, raise_statement_, relative_import_, return_statement_, set_, set_comprehension_, slice_, splat_pattern_, splat_type_, string_, string_content_, string_end_, string_start_, subscript_, true_, try_statement_, tuple_, tuple_pattern_, type_, type_alias_statement_, type_conversion_, type_parameter_, typed_default_parameter_, typed_parameter_, unary_operator_, union_pattern_, union_type_, while_statement_, wildcard_import_, with_clause_, with_item_, with_statement_, yield_ } from './factories.js';
-import { assignAliasedImport, assignArgumentList, assignAsPattern, assignAssertStatement, assignAssignment, assignAttribute, assignAugmentedAssignment, assignAwait, assignBinaryOperator, assignBlock, assignBooleanOperator, assignCall, assignCaseClause, assignCasePattern, assignChevron, assignClassDefinition, assignClassPattern, assignComparisonOperator, assignComplexPattern, assignConcatenatedString, assignConditionalExpression, assignConstrainedType, assignDecoratedDefinition, assignDecorator, assignDefaultParameter, assignDeleteStatement, assignDictPattern, assignDictionary, assignDictionaryComprehension, assignDictionarySplat, assignDictionarySplatPattern, assignDottedName, assignElifClause, assignElseClause, assignExceptClause, assignExecStatement, assignExpressionList, assignExpressionStatement, assignFinallyClause, assignForInClause, assignForStatement, assignFormatExpression, assignFormatSpecifier, assignFunctionDefinition, assignFutureImportStatement, assignGeneratorExpression, assignGenericType, assignGlobalStatement, assignIfClause, assignIfStatement, assignImportFromStatement, assignImportStatement, assignInterpolation, assignKeywordArgument, assignKeywordPattern, assignLambda, assignLambdaParameters, assignList, assignListComprehension, assignListPattern, assignListSplat, assignListSplatPattern, assignMatchStatement, assignMemberType, assignModule, assignNamedExpression, assignNonlocalStatement, assignNotOperator, assignPair, assignParameters, assignParenthesizedExpression, assignParenthesizedListSplat, assignPatternList, assignPrintStatement, assignRaiseStatement, assignRelativeImport, assignReturnStatement, assignSet, assignSetComprehension, assignSlice, assignSplatPattern, assignSplatType, assignString, assignStringContent, assignSubscript, assignTryStatement, assignTuple, assignTuplePattern, assignType, assignTypeAliasStatement, assignTypeParameter, assignTypedDefaultParameter, assignTypedParameter, assignUnaryOperator, assignUnionPattern, assignUnionType, assignWhileStatement, assignWithClause, assignWithItem, assignWithStatement, assignYield } from './assign.js';
+import { wrapAliasedImport, wrapArgumentList, wrapAsPattern, wrapAssertStatement, wrapAssignment, wrapAttribute, wrapAugmentedAssignment, wrapAwait, wrapBinaryOperator, wrapBlock, wrapBooleanOperator, wrapCall, wrapCaseClause, wrapCasePattern, wrapChevron, wrapClassDefinition, wrapClassPattern, wrapComparisonOperator, wrapComplexPattern, wrapConcatenatedString, wrapConditionalExpression, wrapConstrainedType, wrapDecoratedDefinition, wrapDecorator, wrapDefaultParameter, wrapDeleteStatement, wrapDictPattern, wrapDictionary, wrapDictionaryComprehension, wrapDictionarySplat, wrapDictionarySplatPattern, wrapDottedName, wrapElifClause, wrapElseClause, wrapExceptClause, wrapExecStatement, wrapExpressionList, wrapExpressionStatement, wrapFinallyClause, wrapForInClause, wrapForStatement, wrapFormatExpression, wrapFormatSpecifier, wrapFunctionDefinition, wrapFutureImportStatement, wrapGeneratorExpression, wrapGenericType, wrapGlobalStatement, wrapIfClause, wrapIfStatement, wrapImportFromStatement, wrapImportStatement, wrapInterpolation, wrapKeywordArgument, wrapKeywordPattern, wrapLambda, wrapLambdaParameters, wrapList, wrapListComprehension, wrapListPattern, wrapListSplat, wrapListSplatPattern, wrapMatchStatement, wrapMemberType, wrapModule, wrapNamedExpression, wrapNonlocalStatement, wrapNotOperator, wrapPair, wrapParameters, wrapParenthesizedExpression, wrapParenthesizedListSplat, wrapPatternList, wrapPrintStatement, wrapRaiseStatement, wrapRelativeImport, wrapReturnStatement, wrapSet, wrapSetComprehension, wrapSlice, wrapSplatPattern, wrapSplatType, wrapString, wrapStringContent, wrapSubscript, wrapTryStatement, wrapTuple, wrapTuplePattern, wrapType, wrapTypeAliasStatement, wrapTypeParameter, wrapTypedDefaultParameter, wrapTypedParameter, wrapUnaryOperator, wrapUnionPattern, wrapUnionType, wrapWhileStatement, wrapWithClause, wrapWithItem, wrapWithStatement, wrapYield } from './wrap.js';
 import type { AliasedImportFromInput, ArgumentListFromInput, AsPatternFromInput, AssertStatementFromInput, AssignmentFromInput, AttributeFromInput, AugmentedAssignmentFromInput, AwaitFromInput, BinaryOperatorFromInput, BlockFromInput, BooleanOperatorFromInput, CallFromInput, CaseClauseFromInput, CasePatternFromInput, ChevronFromInput, ClassDefinitionFromInput, ClassPatternFromInput, ComparisonOperatorFromInput, ComplexPatternFromInput, ConcatenatedStringFromInput, ConditionalExpressionFromInput, ConstrainedTypeFromInput, DecoratedDefinitionFromInput, DecoratorFromInput, DefaultParameterFromInput, DeleteStatementFromInput, DictPatternFromInput, DictionaryFromInput, DictionaryComprehensionFromInput, DictionarySplatFromInput, DictionarySplatPatternFromInput, DottedNameFromInput, ElifClauseFromInput, ElseClauseFromInput, ExceptClauseFromInput, ExecStatementFromInput, ExpressionListFromInput, ExpressionStatementFromInput, FinallyClauseFromInput, ForInClauseFromInput, ForStatementFromInput, FormatExpressionFromInput, FormatSpecifierFromInput, FunctionDefinitionFromInput, FutureImportStatementFromInput, GeneratorExpressionFromInput, GenericTypeFromInput, GlobalStatementFromInput, IfClauseFromInput, IfStatementFromInput, ImportFromStatementFromInput, ImportStatementFromInput, InterpolationFromInput, KeywordArgumentFromInput, KeywordPatternFromInput, LambdaFromInput, LambdaParametersFromInput, ListFromInput, ListComprehensionFromInput, ListPatternFromInput, ListSplatFromInput, ListSplatPatternFromInput, MatchStatementFromInput, MemberTypeFromInput, ModuleFromInput, NamedExpressionFromInput, NonlocalStatementFromInput, NotOperatorFromInput, PairFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, ParenthesizedListSplatFromInput, PatternListFromInput, PrintStatementFromInput, RaiseStatementFromInput, RelativeImportFromInput, ReturnStatementFromInput, SetFromInput, SetComprehensionFromInput, SliceFromInput, SplatPatternFromInput, SplatTypeFromInput, StringFromInput, StringContentFromInput, SubscriptFromInput, TryStatementFromInput, TupleFromInput, TuplePatternFromInput, TypeFromInput, TypeAliasStatementFromInput, TypeParameterFromInput, TypedDefaultParameterFromInput, TypedParameterFromInput, UnaryOperatorFromInput, UnionPatternFromInput, UnionTypeFromInput, WhileStatementFromInput, WithClauseFromInput, WithItemFromInput, WithStatementFromInput, YieldFromInput } from './types.js';
 
 function _resolveByKind(kind: string, rest: unknown): unknown {
@@ -294,7 +294,7 @@ function _r12do1e6(v: unknown): unknown {
 export function aliasedImportFrom(input: AliasedImportTree | AliasedImport | AliasedImportFromInput): AliasedImport;
 export function aliasedImportFrom(input: unknown): unknown;
 export function aliasedImportFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignAliasedImport(input as AliasedImportTree);
+  if (isTreeNode(input)) return wrapAliasedImport(input as AliasedImportTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -318,7 +318,7 @@ export function aliasedImportFrom(input: unknown): unknown {
 export function argumentListFrom(input: ArgumentListTree | ArgumentList | ArgumentListFromInput): ArgumentList;
 export function argumentListFrom(input: unknown): unknown;
 export function argumentListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignArgumentList(input as ArgumentListTree);
+  if (isTreeNode(input)) return wrapArgumentList(input as ArgumentListTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -341,7 +341,7 @@ export function argumentListFrom(input: unknown): unknown {
 export function asPatternFrom(input: AsPatternTree | AsPattern | AsPatternFromInput): AsPattern;
 export function asPatternFrom(input: unknown): unknown;
 export function asPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignAsPattern(input as AsPatternTree);
+  if (isTreeNode(input)) return wrapAsPattern(input as AsPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -365,7 +365,7 @@ export function asPatternFrom(input: unknown): unknown {
 export function assertStatementFrom(input: AssertStatementTree | AssertStatement | AssertStatementFromInput): AssertStatement;
 export function assertStatementFrom(input: unknown): unknown;
 export function assertStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignAssertStatement(input as AssertStatementTree);
+  if (isTreeNode(input)) return wrapAssertStatement(input as AssertStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -388,7 +388,7 @@ export function assertStatementFrom(input: unknown): unknown {
 export function assignmentFrom(input: AssignmentTree | Assignment | AssignmentFromInput): Assignment;
 export function assignmentFrom(input: unknown): unknown;
 export function assignmentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignAssignment(input as AssignmentTree);
+  if (isTreeNode(input)) return wrapAssignment(input as AssignmentTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -416,7 +416,7 @@ export function assignmentFrom(input: unknown): unknown {
 export function attributeFrom(input: AttributeTree | Attribute | AttributeFromInput): Attribute;
 export function attributeFrom(input: unknown): unknown;
 export function attributeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignAttribute(input as AttributeTree);
+  if (isTreeNode(input)) return wrapAttribute(input as AttributeTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -440,7 +440,7 @@ export function attributeFrom(input: unknown): unknown {
 export function augmentedAssignmentFrom(input: AugmentedAssignmentTree | AugmentedAssignment | AugmentedAssignmentFromInput): AugmentedAssignment;
 export function augmentedAssignmentFrom(input: unknown): unknown;
 export function augmentedAssignmentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignAugmentedAssignment(input as AugmentedAssignmentTree);
+  if (isTreeNode(input)) return wrapAugmentedAssignment(input as AugmentedAssignmentTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -468,7 +468,7 @@ export function augmentedAssignmentFrom(input: unknown): unknown {
 export function await_From(input: AwaitTree | Await | AwaitFromInput): Await;
 export function await_From(input: unknown): unknown;
 export function await_From(input: unknown): unknown {
-  if (isTreeNode(input)) return assignAwait(input as AwaitTree);
+  if (isTreeNode(input)) return wrapAwait(input as AwaitTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -488,7 +488,7 @@ export function await_From(input: unknown): unknown {
 export function binaryOperatorFrom(input: BinaryOperatorTree | BinaryOperator | BinaryOperatorFromInput): BinaryOperator;
 export function binaryOperatorFrom(input: unknown): unknown;
 export function binaryOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignBinaryOperator(input as BinaryOperatorTree);
+  if (isTreeNode(input)) return wrapBinaryOperator(input as BinaryOperatorTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -516,7 +516,7 @@ export function binaryOperatorFrom(input: unknown): unknown {
 export function blockFrom(input: BlockTree | Block | BlockFromInput): Block;
 export function blockFrom(input: unknown): unknown;
 export function blockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignBlock(input as BlockTree);
+  if (isTreeNode(input)) return wrapBlock(input as BlockTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -543,7 +543,7 @@ export function blockFrom(input: unknown): unknown {
 export function booleanOperatorFrom(input: BooleanOperatorTree | BooleanOperator | BooleanOperatorFromInput): BooleanOperator;
 export function booleanOperatorFrom(input: unknown): unknown;
 export function booleanOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignBooleanOperator(input as BooleanOperatorTree);
+  if (isTreeNode(input)) return wrapBooleanOperator(input as BooleanOperatorTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -571,7 +571,7 @@ export function booleanOperatorFrom(input: unknown): unknown {
 export function callFrom(input: CallTree | Call | CallFromInput): Call;
 export function callFrom(input: unknown): unknown;
 export function callFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignCall(input as CallTree);
+  if (isTreeNode(input)) return wrapCall(input as CallTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -595,7 +595,7 @@ export function callFrom(input: unknown): unknown {
 export function caseClauseFrom(input: CaseClauseTree | CaseClause | CaseClauseFromInput): CaseClause;
 export function caseClauseFrom(input: unknown): unknown;
 export function caseClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignCaseClause(input as CaseClauseTree);
+  if (isTreeNode(input)) return wrapCaseClause(input as CaseClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -626,7 +626,7 @@ export function caseClauseFrom(input: unknown): unknown {
 export function casePatternFrom(input: CasePatternTree | CasePattern | CasePatternFromInput): CasePattern;
 export function casePatternFrom(input: unknown): unknown;
 export function casePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignCasePattern(input as CasePatternTree);
+  if (isTreeNode(input)) return wrapCasePattern(input as CasePatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -646,7 +646,7 @@ export function casePatternFrom(input: unknown): unknown {
 export function chevronFrom(input: ChevronTree | Chevron | ChevronFromInput): Chevron;
 export function chevronFrom(input: unknown): unknown;
 export function chevronFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignChevron(input as ChevronTree);
+  if (isTreeNode(input)) return wrapChevron(input as ChevronTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -666,7 +666,7 @@ export function chevronFrom(input: unknown): unknown {
 export function classDefinitionFrom(input: ClassDefinitionTree | ClassDefinition | ClassDefinitionFromInput): ClassDefinition;
 export function classDefinitionFrom(input: unknown): unknown;
 export function classDefinitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignClassDefinition(input as ClassDefinitionTree);
+  if (isTreeNode(input)) return wrapClassDefinition(input as ClassDefinitionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -698,7 +698,7 @@ export function classDefinitionFrom(input: unknown): unknown {
 export function classPatternFrom(input: ClassPatternTree | ClassPattern | ClassPatternFromInput): ClassPattern;
 export function classPatternFrom(input: unknown): unknown;
 export function classPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignClassPattern(input as ClassPatternTree);
+  if (isTreeNode(input)) return wrapClassPattern(input as ClassPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -724,7 +724,7 @@ export function classPatternFrom(input: unknown): unknown {
 export function comparisonOperatorFrom(input: ComparisonOperatorTree | ComparisonOperator | ComparisonOperatorFromInput): ComparisonOperator;
 export function comparisonOperatorFrom(input: unknown): unknown;
 export function comparisonOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignComparisonOperator(input as ComparisonOperatorTree);
+  if (isTreeNode(input)) return wrapComparisonOperator(input as ComparisonOperatorTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -757,7 +757,7 @@ export function comparisonOperatorFrom(input: unknown): unknown {
 export function complexPatternFrom(input: ComplexPatternTree | ComplexPattern | ComplexPatternFromInput): ComplexPattern;
 export function complexPatternFrom(input: unknown): unknown;
 export function complexPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignComplexPattern(input as ComplexPatternTree);
+  if (isTreeNode(input)) return wrapComplexPattern(input as ComplexPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -779,7 +779,7 @@ export function complexPatternFrom(input: unknown): unknown {
 export function concatenatedStringFrom(input: ConcatenatedStringTree | ConcatenatedString | ConcatenatedStringFromInput): ConcatenatedString;
 export function concatenatedStringFrom(input: unknown): unknown;
 export function concatenatedStringFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignConcatenatedString(input as ConcatenatedStringTree);
+  if (isTreeNode(input)) return wrapConcatenatedString(input as ConcatenatedStringTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -804,7 +804,7 @@ export function concatenatedStringFrom(input: unknown): unknown {
 export function conditionalExpressionFrom(input: ConditionalExpressionTree | ConditionalExpression | ConditionalExpressionFromInput): ConditionalExpression;
 export function conditionalExpressionFrom(input: unknown): unknown;
 export function conditionalExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignConditionalExpression(input as ConditionalExpressionTree);
+  if (isTreeNode(input)) return wrapConditionalExpression(input as ConditionalExpressionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -829,7 +829,7 @@ export function conditionalExpressionFrom(input: unknown): unknown {
 export function constrainedTypeFrom(input: ConstrainedTypeTree | ConstrainedType | ConstrainedTypeFromInput): ConstrainedType;
 export function constrainedTypeFrom(input: unknown): unknown;
 export function constrainedTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignConstrainedType(input as ConstrainedTypeTree);
+  if (isTreeNode(input)) return wrapConstrainedType(input as ConstrainedTypeTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -851,7 +851,7 @@ export function constrainedTypeFrom(input: unknown): unknown {
 export function decoratedDefinitionFrom(input: DecoratedDefinitionTree | DecoratedDefinition | DecoratedDefinitionFromInput): DecoratedDefinition;
 export function decoratedDefinitionFrom(input: unknown): unknown;
 export function decoratedDefinitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDecoratedDefinition(input as DecoratedDefinitionTree);
+  if (isTreeNode(input)) return wrapDecoratedDefinition(input as DecoratedDefinitionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -878,7 +878,7 @@ export function decoratedDefinitionFrom(input: unknown): unknown {
 export function decoratorFrom(input: DecoratorTree | Decorator | DecoratorFromInput): Decorator;
 export function decoratorFrom(input: unknown): unknown;
 export function decoratorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDecorator(input as DecoratorTree);
+  if (isTreeNode(input)) return wrapDecorator(input as DecoratorTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -898,7 +898,7 @@ export function decoratorFrom(input: unknown): unknown {
 export function defaultParameterFrom(input: DefaultParameterTree | DefaultParameter | DefaultParameterFromInput): DefaultParameter;
 export function defaultParameterFrom(input: unknown): unknown;
 export function defaultParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDefaultParameter(input as DefaultParameterTree);
+  if (isTreeNode(input)) return wrapDefaultParameter(input as DefaultParameterTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -922,7 +922,7 @@ export function defaultParameterFrom(input: unknown): unknown {
 export function deleteStatementFrom(input: DeleteStatementTree | DeleteStatement | DeleteStatementFromInput): DeleteStatement;
 export function deleteStatementFrom(input: unknown): unknown;
 export function deleteStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDeleteStatement(input as DeleteStatementTree);
+  if (isTreeNode(input)) return wrapDeleteStatement(input as DeleteStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -942,7 +942,7 @@ export function deleteStatementFrom(input: unknown): unknown {
 export function dictPatternFrom(input: DictPatternTree | DictPattern | DictPatternFromInput): DictPattern;
 export function dictPatternFrom(input: unknown): unknown;
 export function dictPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDictPattern(input as DictPatternTree);
+  if (isTreeNode(input)) return wrapDictPattern(input as DictPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -965,7 +965,7 @@ export function dictPatternFrom(input: unknown): unknown {
 export function dictionaryFrom(input: DictionaryTree | Dictionary | DictionaryFromInput): Dictionary;
 export function dictionaryFrom(input: unknown): unknown;
 export function dictionaryFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDictionary(input as DictionaryTree);
+  if (isTreeNode(input)) return wrapDictionary(input as DictionaryTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -988,7 +988,7 @@ export function dictionaryFrom(input: unknown): unknown {
 export function dictionaryComprehensionFrom(input: DictionaryComprehensionTree | DictionaryComprehension | DictionaryComprehensionFromInput): DictionaryComprehension;
 export function dictionaryComprehensionFrom(input: unknown): unknown;
 export function dictionaryComprehensionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDictionaryComprehension(input as DictionaryComprehensionTree);
+  if (isTreeNode(input)) return wrapDictionaryComprehension(input as DictionaryComprehensionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1015,7 +1015,7 @@ export function dictionaryComprehensionFrom(input: unknown): unknown {
 export function dictionarySplatFrom(input: DictionarySplatTree | DictionarySplat | DictionarySplatFromInput): DictionarySplat;
 export function dictionarySplatFrom(input: unknown): unknown;
 export function dictionarySplatFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDictionarySplat(input as DictionarySplatTree);
+  if (isTreeNode(input)) return wrapDictionarySplat(input as DictionarySplatTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1035,7 +1035,7 @@ export function dictionarySplatFrom(input: unknown): unknown {
 export function dictionarySplatPatternFrom(input: DictionarySplatPatternTree | DictionarySplatPattern | DictionarySplatPatternFromInput): DictionarySplatPattern;
 export function dictionarySplatPatternFrom(input: unknown): unknown;
 export function dictionarySplatPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDictionarySplatPattern(input as DictionarySplatPatternTree);
+  if (isTreeNode(input)) return wrapDictionarySplatPattern(input as DictionarySplatPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1055,7 +1055,7 @@ export function dictionarySplatPatternFrom(input: unknown): unknown {
 export function dottedNameFrom(input: DottedNameTree | DottedName | DottedNameFromInput): DottedName;
 export function dottedNameFrom(input: unknown): unknown;
 export function dottedNameFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignDottedName(input as DottedNameTree);
+  if (isTreeNode(input)) return wrapDottedName(input as DottedNameTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1078,7 +1078,7 @@ export function dottedNameFrom(input: unknown): unknown {
 export function elifClauseFrom(input: ElifClauseTree | ElifClause | ElifClauseFromInput): ElifClause;
 export function elifClauseFrom(input: unknown): unknown;
 export function elifClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignElifClause(input as ElifClauseTree);
+  if (isTreeNode(input)) return wrapElifClause(input as ElifClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1102,7 +1102,7 @@ export function elifClauseFrom(input: unknown): unknown {
 export function elseClauseFrom(input: ElseClauseTree | ElseClause | ElseClauseFromInput): ElseClause;
 export function elseClauseFrom(input: unknown): unknown;
 export function elseClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignElseClause(input as ElseClauseTree);
+  if (isTreeNode(input)) return wrapElseClause(input as ElseClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1122,7 +1122,7 @@ export function elseClauseFrom(input: unknown): unknown {
 export function exceptClauseFrom(input: ExceptClauseTree | ExceptClause | ExceptClauseFromInput): ExceptClause;
 export function exceptClauseFrom(input: unknown): unknown;
 export function exceptClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignExceptClause(input as ExceptClauseTree);
+  if (isTreeNode(input)) return wrapExceptClause(input as ExceptClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1152,7 +1152,7 @@ export function exceptClauseFrom(input: unknown): unknown {
 export function execStatementFrom(input: ExecStatementTree | ExecStatement | ExecStatementFromInput): ExecStatement;
 export function execStatementFrom(input: unknown): unknown;
 export function execStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignExecStatement(input as ExecStatementTree);
+  if (isTreeNode(input)) return wrapExecStatement(input as ExecStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1179,7 +1179,7 @@ export function execStatementFrom(input: unknown): unknown {
 export function expressionListFrom(input: ExpressionListTree | ExpressionList | ExpressionListFromInput): ExpressionList;
 export function expressionListFrom(input: unknown): unknown;
 export function expressionListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignExpressionList(input as ExpressionListTree);
+  if (isTreeNode(input)) return wrapExpressionList(input as ExpressionListTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1202,7 +1202,7 @@ export function expressionListFrom(input: unknown): unknown {
 export function expressionStatementFrom(input: ExpressionStatementTree | ExpressionStatement | ExpressionStatementFromInput): ExpressionStatement;
 export function expressionStatementFrom(input: unknown): unknown;
 export function expressionStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignExpressionStatement(input as ExpressionStatementTree);
+  if (isTreeNode(input)) return wrapExpressionStatement(input as ExpressionStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1225,7 +1225,7 @@ export function expressionStatementFrom(input: unknown): unknown {
 export function finallyClauseFrom(input: FinallyClauseTree | FinallyClause | FinallyClauseFromInput): FinallyClause;
 export function finallyClauseFrom(input: unknown): unknown;
 export function finallyClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignFinallyClause(input as FinallyClauseTree);
+  if (isTreeNode(input)) return wrapFinallyClause(input as FinallyClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1245,7 +1245,7 @@ export function finallyClauseFrom(input: unknown): unknown {
 export function forInClauseFrom(input: ForInClauseTree | ForInClause | ForInClauseFromInput): ForInClause;
 export function forInClauseFrom(input: unknown): unknown;
 export function forInClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignForInClause(input as ForInClauseTree);
+  if (isTreeNode(input)) return wrapForInClause(input as ForInClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1273,7 +1273,7 @@ export function forInClauseFrom(input: unknown): unknown {
 export function forStatementFrom(input: ForStatementTree | ForStatement | ForStatementFromInput): ForStatement;
 export function forStatementFrom(input: unknown): unknown;
 export function forStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignForStatement(input as ForStatementTree);
+  if (isTreeNode(input)) return wrapForStatement(input as ForStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1305,7 +1305,7 @@ export function forStatementFrom(input: unknown): unknown {
 export function formatExpressionFrom(input: FormatExpressionTree | FormatExpression | FormatExpressionFromInput): FormatExpression;
 export function formatExpressionFrom(input: unknown): unknown;
 export function formatExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignFormatExpression(input as FormatExpressionTree);
+  if (isTreeNode(input)) return wrapFormatExpression(input as FormatExpressionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1333,7 +1333,7 @@ export function formatExpressionFrom(input: unknown): unknown {
 export function formatSpecifierFrom(input: FormatSpecifierTree | FormatSpecifier | FormatSpecifierFromInput): FormatSpecifier;
 export function formatSpecifierFrom(input: unknown): unknown;
 export function formatSpecifierFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignFormatSpecifier(input as FormatSpecifierTree);
+  if (isTreeNode(input)) return wrapFormatSpecifier(input as FormatSpecifierTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1354,7 +1354,7 @@ export function formatSpecifierFrom(input: unknown): unknown {
 export function functionDefinitionFrom(input: FunctionDefinitionTree | FunctionDefinition | FunctionDefinitionFromInput): FunctionDefinition;
 export function functionDefinitionFrom(input: unknown): unknown;
 export function functionDefinitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignFunctionDefinition(input as FunctionDefinitionTree);
+  if (isTreeNode(input)) return wrapFunctionDefinition(input as FunctionDefinitionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1390,7 +1390,7 @@ export function functionDefinitionFrom(input: unknown): unknown {
 export function futureImportStatementFrom(input: FutureImportStatementTree | FutureImportStatement | FutureImportStatementFromInput): FutureImportStatement;
 export function futureImportStatementFrom(input: unknown): unknown;
 export function futureImportStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignFutureImportStatement(input as FutureImportStatementTree);
+  if (isTreeNode(input)) return wrapFutureImportStatement(input as FutureImportStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1414,7 +1414,7 @@ export function futureImportStatementFrom(input: unknown): unknown {
 export function generatorExpressionFrom(input: GeneratorExpressionTree | GeneratorExpression | GeneratorExpressionFromInput): GeneratorExpression;
 export function generatorExpressionFrom(input: unknown): unknown;
 export function generatorExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignGeneratorExpression(input as GeneratorExpressionTree);
+  if (isTreeNode(input)) return wrapGeneratorExpression(input as GeneratorExpressionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1441,7 +1441,7 @@ export function generatorExpressionFrom(input: unknown): unknown {
 export function genericTypeFrom(input: GenericTypeTree | GenericType | GenericTypeFromInput): GenericType;
 export function genericTypeFrom(input: unknown): unknown;
 export function genericTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignGenericType(input as GenericTypeTree);
+  if (isTreeNode(input)) return wrapGenericType(input as GenericTypeTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1463,7 +1463,7 @@ export function genericTypeFrom(input: unknown): unknown {
 export function globalStatementFrom(input: GlobalStatementTree | GlobalStatement | GlobalStatementFromInput): GlobalStatement;
 export function globalStatementFrom(input: unknown): unknown;
 export function globalStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignGlobalStatement(input as GlobalStatementTree);
+  if (isTreeNode(input)) return wrapGlobalStatement(input as GlobalStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1486,7 +1486,7 @@ export function globalStatementFrom(input: unknown): unknown {
 export function ifClauseFrom(input: IfClauseTree | IfClause | IfClauseFromInput): IfClause;
 export function ifClauseFrom(input: unknown): unknown;
 export function ifClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignIfClause(input as IfClauseTree);
+  if (isTreeNode(input)) return wrapIfClause(input as IfClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1506,7 +1506,7 @@ export function ifClauseFrom(input: unknown): unknown {
 export function ifStatementFrom(input: IfStatementTree | IfStatement | IfStatementFromInput): IfStatement;
 export function ifStatementFrom(input: unknown): unknown;
 export function ifStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignIfStatement(input as IfStatementTree);
+  if (isTreeNode(input)) return wrapIfStatement(input as IfStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1536,7 +1536,7 @@ export function ifStatementFrom(input: unknown): unknown {
 export function importFromStatementFrom(input: ImportFromStatementTree | ImportFromStatement | ImportFromStatementFromInput): ImportFromStatement;
 export function importFromStatementFrom(input: unknown): unknown;
 export function importFromStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignImportFromStatement(input as ImportFromStatementTree);
+  if (isTreeNode(input)) return wrapImportFromStatement(input as ImportFromStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1566,7 +1566,7 @@ export function importFromStatementFrom(input: unknown): unknown {
 export function importStatementFrom(input: ImportStatementTree | ImportStatement | ImportStatementFromInput): ImportStatement;
 export function importStatementFrom(input: unknown): unknown;
 export function importStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignImportStatement(input as ImportStatementTree);
+  if (isTreeNode(input)) return wrapImportStatement(input as ImportStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1590,7 +1590,7 @@ export function importStatementFrom(input: unknown): unknown {
 export function interpolationFrom(input: InterpolationTree | Interpolation | InterpolationFromInput): Interpolation;
 export function interpolationFrom(input: unknown): unknown;
 export function interpolationFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignInterpolation(input as InterpolationTree);
+  if (isTreeNode(input)) return wrapInterpolation(input as InterpolationTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1618,7 +1618,7 @@ export function interpolationFrom(input: unknown): unknown {
 export function keywordArgumentFrom(input: KeywordArgumentTree | KeywordArgument | KeywordArgumentFromInput): KeywordArgument;
 export function keywordArgumentFrom(input: unknown): unknown;
 export function keywordArgumentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignKeywordArgument(input as KeywordArgumentTree);
+  if (isTreeNode(input)) return wrapKeywordArgument(input as KeywordArgumentTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1642,7 +1642,7 @@ export function keywordArgumentFrom(input: unknown): unknown {
 export function keywordPatternFrom(input: KeywordPatternTree | KeywordPattern | KeywordPatternFromInput): KeywordPattern;
 export function keywordPatternFrom(input: unknown): unknown;
 export function keywordPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignKeywordPattern(input as KeywordPatternTree);
+  if (isTreeNode(input)) return wrapKeywordPattern(input as KeywordPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1664,7 +1664,7 @@ export function keywordPatternFrom(input: unknown): unknown {
 export function lambdaFrom(input: LambdaTree | Lambda | LambdaFromInput): Lambda;
 export function lambdaFrom(input: unknown): unknown;
 export function lambdaFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignLambda(input as LambdaTree);
+  if (isTreeNode(input)) return wrapLambda(input as LambdaTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1688,7 +1688,7 @@ export function lambdaFrom(input: unknown): unknown {
 export function lambdaParametersFrom(input: LambdaParametersTree | LambdaParameters | LambdaParametersFromInput): LambdaParameters;
 export function lambdaParametersFrom(input: unknown): unknown;
 export function lambdaParametersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignLambdaParameters(input as LambdaParametersTree);
+  if (isTreeNode(input)) return wrapLambdaParameters(input as LambdaParametersTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1711,7 +1711,7 @@ export function lambdaParametersFrom(input: unknown): unknown {
 export function listFrom(input: ListTree | List | ListFromInput): List;
 export function listFrom(input: unknown): unknown;
 export function listFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignList(input as ListTree);
+  if (isTreeNode(input)) return wrapList(input as ListTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1732,7 +1732,7 @@ export function listFrom(input: unknown): unknown {
 export function listComprehensionFrom(input: ListComprehensionTree | ListComprehension | ListComprehensionFromInput): ListComprehension;
 export function listComprehensionFrom(input: unknown): unknown;
 export function listComprehensionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignListComprehension(input as ListComprehensionTree);
+  if (isTreeNode(input)) return wrapListComprehension(input as ListComprehensionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1759,7 +1759,7 @@ export function listComprehensionFrom(input: unknown): unknown {
 export function listPatternFrom(input: ListPatternTree | ListPattern | ListPatternFromInput): ListPattern;
 export function listPatternFrom(input: unknown): unknown;
 export function listPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignListPattern(input as ListPatternTree);
+  if (isTreeNode(input)) return wrapListPattern(input as ListPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1780,7 +1780,7 @@ export function listPatternFrom(input: unknown): unknown {
 export function listSplatFrom(input: ListSplatTree | ListSplat | ListSplatFromInput): ListSplat;
 export function listSplatFrom(input: unknown): unknown;
 export function listSplatFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignListSplat(input as ListSplatTree);
+  if (isTreeNode(input)) return wrapListSplat(input as ListSplatTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1800,7 +1800,7 @@ export function listSplatFrom(input: unknown): unknown {
 export function listSplatPatternFrom(input: ListSplatPatternTree | ListSplatPattern | ListSplatPatternFromInput): ListSplatPattern;
 export function listSplatPatternFrom(input: unknown): unknown;
 export function listSplatPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignListSplatPattern(input as ListSplatPatternTree);
+  if (isTreeNode(input)) return wrapListSplatPattern(input as ListSplatPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1820,7 +1820,7 @@ export function listSplatPatternFrom(input: unknown): unknown {
 export function matchStatementFrom(input: MatchStatementTree | MatchStatement | MatchStatementFromInput): MatchStatement;
 export function matchStatementFrom(input: unknown): unknown;
 export function matchStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignMatchStatement(input as MatchStatementTree);
+  if (isTreeNode(input)) return wrapMatchStatement(input as MatchStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1848,7 +1848,7 @@ export function matchStatementFrom(input: unknown): unknown {
 export function memberTypeFrom(input: MemberTypeTree | MemberType | MemberTypeFromInput): MemberType;
 export function memberTypeFrom(input: unknown): unknown;
 export function memberTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignMemberType(input as MemberTypeTree);
+  if (isTreeNode(input)) return wrapMemberType(input as MemberTypeTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1870,7 +1870,7 @@ export function memberTypeFrom(input: unknown): unknown {
 export function moduleFrom(input: ModuleTree | Module | ModuleFromInput): Module;
 export function moduleFrom(input: unknown): unknown;
 export function moduleFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignModule(input as ModuleTree);
+  if (isTreeNode(input)) return wrapModule(input as ModuleTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1891,7 +1891,7 @@ export function moduleFrom(input: unknown): unknown {
 export function namedExpressionFrom(input: NamedExpressionTree | NamedExpression | NamedExpressionFromInput): NamedExpression;
 export function namedExpressionFrom(input: unknown): unknown;
 export function namedExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignNamedExpression(input as NamedExpressionTree);
+  if (isTreeNode(input)) return wrapNamedExpression(input as NamedExpressionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1915,7 +1915,7 @@ export function namedExpressionFrom(input: unknown): unknown {
 export function nonlocalStatementFrom(input: NonlocalStatementTree | NonlocalStatement | NonlocalStatementFromInput): NonlocalStatement;
 export function nonlocalStatementFrom(input: unknown): unknown;
 export function nonlocalStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignNonlocalStatement(input as NonlocalStatementTree);
+  if (isTreeNode(input)) return wrapNonlocalStatement(input as NonlocalStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1938,7 +1938,7 @@ export function nonlocalStatementFrom(input: unknown): unknown {
 export function notOperatorFrom(input: NotOperatorTree | NotOperator | NotOperatorFromInput): NotOperator;
 export function notOperatorFrom(input: unknown): unknown;
 export function notOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignNotOperator(input as NotOperatorTree);
+  if (isTreeNode(input)) return wrapNotOperator(input as NotOperatorTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1958,7 +1958,7 @@ export function notOperatorFrom(input: unknown): unknown {
 export function pairFrom(input: PairTree | Pair | PairFromInput): Pair;
 export function pairFrom(input: unknown): unknown;
 export function pairFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignPair(input as PairTree);
+  if (isTreeNode(input)) return wrapPair(input as PairTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1982,7 +1982,7 @@ export function pairFrom(input: unknown): unknown {
 export function parametersFrom(input: ParametersTree | Parameters | ParametersFromInput): Parameters;
 export function parametersFrom(input: unknown): unknown;
 export function parametersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignParameters(input as ParametersTree);
+  if (isTreeNode(input)) return wrapParameters(input as ParametersTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2003,7 +2003,7 @@ export function parametersFrom(input: unknown): unknown {
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionTree | ParenthesizedExpression | ParenthesizedExpressionFromInput): ParenthesizedExpression;
 export function parenthesizedExpressionFrom(input: unknown): unknown;
 export function parenthesizedExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignParenthesizedExpression(input as ParenthesizedExpressionTree);
+  if (isTreeNode(input)) return wrapParenthesizedExpression(input as ParenthesizedExpressionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2023,7 +2023,7 @@ export function parenthesizedExpressionFrom(input: unknown): unknown {
 export function parenthesizedListSplatFrom(input: ParenthesizedListSplatTree | ParenthesizedListSplat | ParenthesizedListSplatFromInput): ParenthesizedListSplat;
 export function parenthesizedListSplatFrom(input: unknown): unknown;
 export function parenthesizedListSplatFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignParenthesizedListSplat(input as ParenthesizedListSplatTree);
+  if (isTreeNode(input)) return wrapParenthesizedListSplat(input as ParenthesizedListSplatTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2043,7 +2043,7 @@ export function parenthesizedListSplatFrom(input: unknown): unknown {
 export function patternListFrom(input: PatternListTree | PatternList | PatternListFromInput): PatternList;
 export function patternListFrom(input: unknown): unknown;
 export function patternListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignPatternList(input as PatternListTree);
+  if (isTreeNode(input)) return wrapPatternList(input as PatternListTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2066,7 +2066,7 @@ export function patternListFrom(input: unknown): unknown {
 export function printStatementFrom(input: PrintStatementTree | PrintStatement | PrintStatementFromInput): PrintStatement;
 export function printStatementFrom(input: unknown): unknown;
 export function printStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignPrintStatement(input as PrintStatementTree);
+  if (isTreeNode(input)) return wrapPrintStatement(input as PrintStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2092,7 +2092,7 @@ export function printStatementFrom(input: unknown): unknown {
 export function raiseStatementFrom(input: RaiseStatementTree | RaiseStatement | RaiseStatementFromInput): RaiseStatement;
 export function raiseStatementFrom(input: unknown): unknown;
 export function raiseStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignRaiseStatement(input as RaiseStatementTree);
+  if (isTreeNode(input)) return wrapRaiseStatement(input as RaiseStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2116,7 +2116,7 @@ export function raiseStatementFrom(input: unknown): unknown {
 export function relativeImportFrom(input: RelativeImportTree | RelativeImport | RelativeImportFromInput): RelativeImport;
 export function relativeImportFrom(input: unknown): unknown;
 export function relativeImportFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignRelativeImport(input as RelativeImportTree);
+  if (isTreeNode(input)) return wrapRelativeImport(input as RelativeImportTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2138,7 +2138,7 @@ export function relativeImportFrom(input: unknown): unknown {
 export function returnStatementFrom(input: ReturnStatementTree | ReturnStatement | ReturnStatementFromInput): ReturnStatement;
 export function returnStatementFrom(input: unknown): unknown;
 export function returnStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignReturnStatement(input as ReturnStatementTree);
+  if (isTreeNode(input)) return wrapReturnStatement(input as ReturnStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2158,7 +2158,7 @@ export function returnStatementFrom(input: unknown): unknown {
 export function setFrom(input: SetTree | Set | SetFromInput): Set;
 export function setFrom(input: unknown): unknown;
 export function setFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignSet(input as SetTree);
+  if (isTreeNode(input)) return wrapSet(input as SetTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2181,7 +2181,7 @@ export function setFrom(input: unknown): unknown {
 export function setComprehensionFrom(input: SetComprehensionTree | SetComprehension | SetComprehensionFromInput): SetComprehension;
 export function setComprehensionFrom(input: unknown): unknown;
 export function setComprehensionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignSetComprehension(input as SetComprehensionTree);
+  if (isTreeNode(input)) return wrapSetComprehension(input as SetComprehensionTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2208,7 +2208,7 @@ export function setComprehensionFrom(input: unknown): unknown {
 export function sliceFrom(input: SliceTree | Slice | SliceFromInput): Slice;
 export function sliceFrom(input: unknown): unknown;
 export function sliceFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignSlice(input as SliceTree);
+  if (isTreeNode(input)) return wrapSlice(input as SliceTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2233,7 +2233,7 @@ export function sliceFrom(input: unknown): unknown {
 export function splatPatternFrom(input: SplatPatternTree | SplatPattern | SplatPatternFromInput): SplatPattern;
 export function splatPatternFrom(input: unknown): unknown;
 export function splatPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignSplatPattern(input as SplatPatternTree);
+  if (isTreeNode(input)) return wrapSplatPattern(input as SplatPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2253,7 +2253,7 @@ export function splatPatternFrom(input: unknown): unknown {
 export function splatTypeFrom(input: SplatTypeTree | SplatType | SplatTypeFromInput): SplatType;
 export function splatTypeFrom(input: unknown): unknown;
 export function splatTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignSplatType(input as SplatTypeTree);
+  if (isTreeNode(input)) return wrapSplatType(input as SplatTypeTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2273,7 +2273,7 @@ export function splatTypeFrom(input: unknown): unknown {
 export function stringFrom(input: StringTree | String | StringFromInput): String;
 export function stringFrom(input: unknown): unknown;
 export function stringFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignString(input as StringTree);
+  if (isTreeNode(input)) return wrapString(input as StringTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2299,7 +2299,7 @@ export function stringFrom(input: unknown): unknown {
 export function stringContentFrom(input: StringContentTree | StringContent | StringContentFromInput): StringContent;
 export function stringContentFrom(input: unknown): unknown;
 export function stringContentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignStringContent(input as StringContentTree);
+  if (isTreeNode(input)) return wrapStringContent(input as StringContentTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2320,7 +2320,7 @@ export function stringContentFrom(input: unknown): unknown {
 export function subscriptFrom(input: SubscriptTree | Subscript | SubscriptFromInput): Subscript;
 export function subscriptFrom(input: unknown): unknown;
 export function subscriptFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignSubscript(input as SubscriptTree);
+  if (isTreeNode(input)) return wrapSubscript(input as SubscriptTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2348,7 +2348,7 @@ export function subscriptFrom(input: unknown): unknown {
 export function tryStatementFrom(input: TryStatementTree | TryStatement | TryStatementFromInput): TryStatement;
 export function tryStatementFrom(input: unknown): unknown;
 export function tryStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignTryStatement(input as TryStatementTree);
+  if (isTreeNode(input)) return wrapTryStatement(input as TryStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2378,7 +2378,7 @@ export function tryStatementFrom(input: unknown): unknown {
 export function tupleFrom(input: TupleTree | Tuple | TupleFromInput): Tuple;
 export function tupleFrom(input: unknown): unknown;
 export function tupleFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignTuple(input as TupleTree);
+  if (isTreeNode(input)) return wrapTuple(input as TupleTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2399,7 +2399,7 @@ export function tupleFrom(input: unknown): unknown {
 export function tuplePatternFrom(input: TuplePatternTree | TuplePattern | TuplePatternFromInput): TuplePattern;
 export function tuplePatternFrom(input: unknown): unknown;
 export function tuplePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignTuplePattern(input as TuplePatternTree);
+  if (isTreeNode(input)) return wrapTuplePattern(input as TuplePatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2420,7 +2420,7 @@ export function tuplePatternFrom(input: unknown): unknown {
 export function type_From(input: TypeTree | Type | TypeFromInput): Type;
 export function type_From(input: unknown): unknown;
 export function type_From(input: unknown): unknown {
-  if (isTreeNode(input)) return assignType(input as TypeTree);
+  if (isTreeNode(input)) return wrapType(input as TypeTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2440,7 +2440,7 @@ export function type_From(input: unknown): unknown {
 export function typeAliasStatementFrom(input: TypeAliasStatementTree | TypeAliasStatement | TypeAliasStatementFromInput): TypeAliasStatement;
 export function typeAliasStatementFrom(input: unknown): unknown;
 export function typeAliasStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignTypeAliasStatement(input as TypeAliasStatementTree);
+  if (isTreeNode(input)) return wrapTypeAliasStatement(input as TypeAliasStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2464,7 +2464,7 @@ export function typeAliasStatementFrom(input: unknown): unknown {
 export function typeParameterFrom(input: TypeParameterTree | TypeParameter | TypeParameterFromInput): TypeParameter;
 export function typeParameterFrom(input: unknown): unknown;
 export function typeParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignTypeParameter(input as TypeParameterTree);
+  if (isTreeNode(input)) return wrapTypeParameter(input as TypeParameterTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2487,7 +2487,7 @@ export function typeParameterFrom(input: unknown): unknown {
 export function typedDefaultParameterFrom(input: TypedDefaultParameterTree | TypedDefaultParameter | TypedDefaultParameterFromInput): TypedDefaultParameter;
 export function typedDefaultParameterFrom(input: unknown): unknown;
 export function typedDefaultParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignTypedDefaultParameter(input as TypedDefaultParameterTree);
+  if (isTreeNode(input)) return wrapTypedDefaultParameter(input as TypedDefaultParameterTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2515,7 +2515,7 @@ export function typedDefaultParameterFrom(input: unknown): unknown {
 export function typedParameterFrom(input: TypedParameterTree | TypedParameter | TypedParameterFromInput): TypedParameter;
 export function typedParameterFrom(input: unknown): unknown;
 export function typedParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignTypedParameter(input as TypedParameterTree);
+  if (isTreeNode(input)) return wrapTypedParameter(input as TypedParameterTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2539,7 +2539,7 @@ export function typedParameterFrom(input: unknown): unknown {
 export function unaryOperatorFrom(input: UnaryOperatorTree | UnaryOperator | UnaryOperatorFromInput): UnaryOperator;
 export function unaryOperatorFrom(input: unknown): unknown;
 export function unaryOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignUnaryOperator(input as UnaryOperatorTree);
+  if (isTreeNode(input)) return wrapUnaryOperator(input as UnaryOperatorTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2563,7 +2563,7 @@ export function unaryOperatorFrom(input: unknown): unknown {
 export function unionPatternFrom(input: UnionPatternTree | UnionPattern | UnionPatternFromInput): UnionPattern;
 export function unionPatternFrom(input: unknown): unknown;
 export function unionPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignUnionPattern(input as UnionPatternTree);
+  if (isTreeNode(input)) return wrapUnionPattern(input as UnionPatternTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2584,7 +2584,7 @@ export function unionPatternFrom(input: unknown): unknown {
 export function unionTypeFrom(input: UnionTypeTree | UnionType | UnionTypeFromInput): UnionType;
 export function unionTypeFrom(input: unknown): unknown;
 export function unionTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignUnionType(input as UnionTypeTree);
+  if (isTreeNode(input)) return wrapUnionType(input as UnionTypeTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2606,7 +2606,7 @@ export function unionTypeFrom(input: unknown): unknown {
 export function whileStatementFrom(input: WhileStatementTree | WhileStatement | WhileStatementFromInput): WhileStatement;
 export function whileStatementFrom(input: unknown): unknown;
 export function whileStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignWhileStatement(input as WhileStatementTree);
+  if (isTreeNode(input)) return wrapWhileStatement(input as WhileStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2634,7 +2634,7 @@ export function whileStatementFrom(input: unknown): unknown {
 export function withClauseFrom(input: WithClauseTree | WithClause | WithClauseFromInput): WithClause;
 export function withClauseFrom(input: unknown): unknown;
 export function withClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignWithClause(input as WithClauseTree);
+  if (isTreeNode(input)) return wrapWithClause(input as WithClauseTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2657,7 +2657,7 @@ export function withClauseFrom(input: unknown): unknown {
 export function withItemFrom(input: WithItemTree | WithItem | WithItemFromInput): WithItem;
 export function withItemFrom(input: unknown): unknown;
 export function withItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignWithItem(input as WithItemTree);
+  if (isTreeNode(input)) return wrapWithItem(input as WithItemTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2677,7 +2677,7 @@ export function withItemFrom(input: unknown): unknown {
 export function withStatementFrom(input: WithStatementTree | WithStatement | WithStatementFromInput): WithStatement;
 export function withStatementFrom(input: unknown): unknown;
 export function withStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return assignWithStatement(input as WithStatementTree);
+  if (isTreeNode(input)) return wrapWithStatement(input as WithStatementTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2701,7 +2701,7 @@ export function withStatementFrom(input: unknown): unknown {
 export function yield_From(input: YieldTree | Yield | YieldFromInput): Yield;
 export function yield_From(input: unknown): unknown;
 export function yield_From(input: unknown): unknown {
-  if (isTreeNode(input)) return assignYield(input as YieldTree);
+  if (isTreeNode(input)) return wrapYield(input as YieldTree);
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
