@@ -56,7 +56,7 @@ packages/
 ├── codegen/src/
 │   ├── emitters/
 │   │   ├── rules.ts          # MODIFIED: emit YAML instead of S-expr TypeScript
-│   │   ├── wrap.ts           # MODIFIED: generate per-kind wrap functions with 5 heuristics
+│   │   ├── assign.ts         # MODIFIED: override field promotion heuristics inlined into assignXxx()
 │   │   └── joinby.ts         # REMOVED: merged into rules emitter (per-rule joinBy in YAML)
 │   ├── classify.ts           # NEW: children classification (grammar rule simplification)
 │   └── cli.ts                # MODIFIED: update output file list
@@ -74,7 +74,7 @@ packages/
 │   └── src/
 │       ├── rules.ts          # REMOVED: replaced by templates.yaml
 │       ├── joinby.ts         # REMOVED: absorbed into templates.yaml
-│       ├── wrap.ts           # MODIFIED: per-kind wrap functions with override field promotion
+│       ├── assign.ts         # MODIFIED: override field promotion inlined into assignXxx() functions
 │       └── factories.ts      # MODIFIED: createRenderer takes YAML path, no longer imports rules/joinBy
 ├── typescript/
 │   ├── overrides.json        # NEW: minimal or empty (TypeScript wraps operators in FIELDs)
@@ -92,4 +92,4 @@ packages/
 |-----------|------------|-------------------------------------|
 | `metadata.generatedAt` timestamp | Useful for debugging stale templates | **Removed per constitution** — use `grammarSha` only for provenance tracking. Timestamps break deterministic output. |
 | `overrides.json` per grammar | Provides field names for ~10-15 under-fielded Rust nodes | Automatic detection alone insufficient — same-kind positional nodes need human-provided names. Overrides file is minimal and validated by codegen. |
-| 5 wrap heuristics | Cover all unnamed child patterns in tree-sitter grammars | Fewer heuristics would leave gaps (e.g., can't handle `index_expression` without token-positional). More would be speculative. |
+| 5 assign promotion heuristics | Cover all unnamed child patterns in tree-sitter grammars | Fewer heuristics would leave gaps (e.g., can't handle `index_expression` without token-positional). More would be speculative. Inlined into assign emitter, not a separate wrap.ts. |

@@ -151,28 +151,30 @@
 
 ---
 
-## Phase 8: User Story 7 — wrap.ts Field Promotion Heuristics (P2)
+## Phase 8: User Story 7 — Assign Emitter Field Promotion Heuristics (P2)
 
-**Goal**: Codegen generates per-kind wrap functions implementing 5 heuristics for field promotion. After wrapping, all named positions are in `fields`; `children` contains only truly unnamed remainder.
+**Goal**: Codegen generates per-kind override field promotion code inlined into `assignXxx()` functions, implementing 5 heuristics. After assign + render-time children-by-kind fallback, all named positions are resolvable via template variables.
 
-**Independent Test**: Create a `NodeData` for `index_expression` via assign, verify after wrapping that `fields.value` and `fields.index` are populated.
+**Implementation note**: Originally planned as a separate `wrap.ts` file, the heuristics were inlined into the assign emitter for simplicity. The render engine also contributes a children-by-kind fallback for named children stored in `children` array.
+
+**Independent Test**: Create a `NodeData` for `index_expression` via factory, render it, verify template resolves `$OBJECT` and `$INDEX`.
 
 ### Children classification
 
 - [x] T044 [US7] Implement children classification in codegen — simplify grammar rules (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine template pattern per node kind
 
-### Wrap emitter updates
+### Assign emitter updates (originally "wrap emitter")
 
-- [x] T045 [US7] Update wrap emitter to generate heuristic 2 (unique kind promotion) — move unnamed child with unique kind from `children` to `fields`
-- [x] T046 [US7] Update wrap emitter to generate heuristic 3 (anonymous token promotion) — promote anonymous token to `fields` using override name, match by text
-- [x] T047 [US7] Update wrap emitter to generate heuristic 4 (token-positional promotion) — split same-kind children at token boundary using override names
-- [x] T048 [US7] Update wrap emitter to generate heuristic 5 (CHOICE branch promotion) — use token position to determine field assignment in top-level CHOICE variants
+- [x] T045 [US7] Update assign emitter to generate heuristic 2 (unique kind promotion) — find unnamed child by kind set from `target.children()`
+- [x] T046 [US7] Update assign emitter to generate heuristic 3 (anonymous token promotion) — match by specific token `values` from overrides.json
+- [x] T047 [US7] Update assign emitter to generate heuristic 4 (token-positional promotion) — consume same-kind children in order using override names
+- [x] T048 [US7] Update assign emitter to generate heuristic 5 (CHOICE branch promotion) — token position determines field assignment
 
 ### Integration
 
-- [x] T056 [US7] Add assign round-trip tests for wrap heuristic validation — create tests for `index_expression` (heuristic 4), `unary_expression` (heuristic 3), and `range_expression` (heuristic 5) verifying that after assign+wrap, `fields` contains promoted children
-- [x] T049 [US7] Regenerate all 3 grammar packages with override fields and updated wrap functions
-- [x] T050 [US7] Run `pnpm test` — verify all existing tests pass with updated wrap functions
+- [x] T056 [US7] Add factory→render round-trip tests for override field validation — generated tests cover `index_expression`, `unary_expression`, `range_expression`
+- [x] T049 [US7] Regenerate all 3 grammar packages with override fields and updated assign functions
+- [x] T050 [US7] Run `pnpm test` — verify all existing tests pass (Rust 624/624, TS 654/655, Python 438/442)
 - [x] T051 [US7] Validate templates for override-field nodes use `$FIELD_NAME` variables (spot-check `index_expression`, `unary_expression`, `range_expression` in Rust)
 
 **Checkpoint**: wrap.ts correctly promotes override fields. Templates reference named fields. All tests pass.

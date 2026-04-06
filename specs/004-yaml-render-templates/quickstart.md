@@ -49,7 +49,7 @@ Some tree-sitter grammars lack explicit FIELDs for certain nodes (e.g., Rust `in
 }
 ```
 
-The codegen merges these with node-types.json during enrichment. At runtime, `wrap.ts` promotes override-named children from `children` into `fields` using 5 heuristics (by field name, unique kind, anonymous token, token position, CHOICE branch). After wrapping, templates can reference override fields as `$VALUE`, `$INDEX`, etc.
+The codegen merges these with node-types.json during enrichment. Generated `assignXxx()` functions promote override-named children from `children` into `fields` using 5 heuristics (by field name, unique kind, anonymous token with per-token matching, positional consumption, CHOICE branch). The render engine also provides a children-by-kind fallback for named children. Templates can reference override fields as `$VALUE`, `$INDEX`, etc.
 
 ## Regenerating templates
 

@@ -17,7 +17,7 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 - `joinby.ts` — separator map for list children (ast-grep `joinBy` convention)
 - `factories.ts` — unified factories: config input (camelCase) → NodeData output (raw fields) + fluent getters/setters + methods
 - `from.ts` — `.from()` ergonomic resolution with inlined per-field logic (tree-shakeable)
-- `assign.ts` — generic tree node → NodeData hydration driven by field metadata + `edit()` entry point
+- `assign.ts` — generic tree node → NodeData hydration driven by field metadata + `edit()` entry point + override field promotion heuristics (inlined wrap logic)
 - `utils.ts` — shared client-side utilities (`isNodeData`, `_inferBranch`, `_BRANCH_FIELDS`)
 - `ir.ts` — developer-facing namespace with short names
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators

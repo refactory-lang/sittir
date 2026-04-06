@@ -289,25 +289,26 @@ function_item:
 
 ### Unnamed children resolution — consumption model
 
-`wrap.ts` promotes override-named children from the raw children array into `fields`. From the render template's perspective, override fields are indistinguishable from tree-sitter fields — both are resolved via `$FIELD_NAME` from `data.fields`.
+The assign emitter promotes override-named children from the raw children array into `fields` during tree node hydration. From the render template's perspective, override fields are indistinguishable from tree-sitter fields — both are resolved via `$FIELD_NAME` from `node.fields`.
 
 The render engine walks the template left-to-right. For each variable:
 
-1. **`$FIELD_NAME`** — look up `node.fields[name]` (tree-sitter FIELDs AND override fields)
-2. **`$$$CHILDREN`** — render all unconsumed children (the truly unnamed remainder) joined by separator
-3. **Clause** — render sub-template if underlying field present
+1. **`$FIELD_NAME`** — look up `node.fields[name]` (tree-sitter FIELDs AND override fields promoted by assign)
+2. **Children-by-kind fallback** — if not in `fields`, search `node.children` for a child whose `type` matches the field key
+3. **`$$$CHILDREN`** — render all children joined by separator
+4. **Clause** — render sub-template if underlying field present
 
-No runtime kind-matching — `$NAME` is always a field lookup. Kind-specific child consumption is handled by `wrap.ts` promoting children to fields before render.
+The children-by-kind fallback handles named children (from node-types.json) that the factory stores in the `children` array but the template references as `$FIELD_NAME` variables.
 
 `$$$CHILDREN` is only for truly unnamed groups — REPEAT nodes like `declaration_list`, `arguments`, `string_literal`. Named positions always get template variables.
 
 ```yaml
-# Override fields — template treats them like tree-sitter fields
+# Override fields — promoted to fields by assign emitter
 unary_expression: "$OPERATOR$ARGUMENT"
-# wrap.ts promoted operator (anon token) and argument (named child) into fields
+# assign promoted operator (anon token) and argument (named child) into fields
 
 index_expression: "$VALUE[$INDEX]"
-# wrap.ts promoted value and index into fields; "[" and "]" stay as template literals
+# assign promoted value and index into fields; "[" and "]" stay as template literals
 
 range_expression: "$START$OPERATOR$END"
 
@@ -381,74 +382,53 @@ The codegen detects overrides.json candidates automatically:
 
 TypeScript and Python grammars barely need overrides.json (their grammars wrap operators in FIELDs). Rust needs it for ~10-15 nodes. The overrides.json is validated by the codegen against the grammar rule structure.
 
-### `wrap.ts` — codegen heuristics and field promotion
+### Override field promotion — assign emitter heuristics
 
-The codegen generates a `wrapXxx` function per node kind. `wrap.ts` does two things:
+> **Implementation note:** The original design proposed a separate `wrap.ts` file with per-kind `wrapXxx` functions. The actual implementation inlines field promotion heuristics directly into the **assign emitter** (`packages/codegen/src/emitters/assign.ts`). Each generated `assignXxx()` function includes override field promotion code that runs before the factory call. There is no separate `wrap.ts` file.
 
-1. **Promotes** override-named children from `children` into `fields` — so render and factory output are symmetric
-2. **Attaches** typed getters for lazy drill-in via `readNode`
+The assign emitter generates per-kind functions that promote override-named children from the `children` array into `fields`. After promotion, all named positions are in `fields` regardless of whether they came from tree-sitter FIELDs or overrides.json.
 
-After wrapping, the data has all named positions in `fields` regardless of whether they came from tree-sitter FIELDs or overrides.json. The `children` array contains only the truly unnamed remainder.
+Additionally, the render engine provides a **children-by-kind fallback**: when a template variable like `$VISIBILITY_MODIFIER` is not found in `fields`, the render engine searches the `children` array for a child whose `type` matches the field key (e.g., `visibility_modifier`). This handles named children that the factory stores in `children` but the template references as field variables.
 
-The getter strategy for each field is determined by the simplified grammar rule:
+**Heuristic 1: Tree-sitter FIELD → read via `target.field(name)`.**
+The grammar has `field('name', ...)`. The assign function reads it directly via the tree-sitter field accessor.
 
-**Heuristic 1: Tree-sitter FIELD → getter by field name.**
-The grammar has `field('name', ...)`. readNode already put it in `fields`. Getter reads directly.
+**Heuristic 2: Unnamed child with unique kind → promote to fields by kind.**
+One `visibility_modifier` appears as an unnamed child. The assign function finds it in `target.children()` by kind and promotes to `config[name]`.
 
-```ts
-// function_item has field('name', identifier) — already in fields from readNode
-name: () => drillIn(data.fields?.name, treeHandle)
-```
-
-**Heuristic 2: Unnamed child with unique kind → promote to fields, getter by kind.**
-One `visibility_modifier` appears as an unnamed child. `wrap.ts` moves it to `fields` and removes it from `children`.
+**Heuristic 3: Anonymous token as value → promote to fields, match by text.**
+The grammar has `CHOICE("-", "*", "!")` — an anonymous token. The assign function finds the first unnamed child matching specific token values (from `overrides.json` `values` array) and promotes to `config.operator`.
 
 ```ts
-// function_item has optional($.visibility_modifier) — unique kind, not a FIELD
-// wrap.ts: data.fields.visibility_modifier = children.splice(found, 1)
-visibilityModifier: () => drillIn(data.fields?.visibility_modifier, treeHandle)
+// Generated assign code for unary_expression (heuristic 3 with per-token matching):
+config['operator'] = (() => {
+  const _vals = new Set(["-", "*", "!", "&"]);
+  for (let i = 0; i < _allChildren.length; i++) {
+    if (_consumed.has(i)) continue;
+    const c = _allChildren[i]!;
+    if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }
+  }
+  return undefined;
+})();
 ```
 
-**Heuristic 3: Anonymous token as value → promote to fields.**
-The grammar has `CHOICE("-", "*", "!")` — an anonymous token. `wrap.ts` finds it in children, promotes to `fields.operator`.
-
-```ts
-// unary_expression: SEQ(CHOICE("-", "*", "!"), _expression)
-// wrap.ts: data.fields.operator = children.find(c => !c.named && ["-", "*", "!"].includes(c.text))
-operator: () => data.fields?.operator?.text
-```
-
-**Heuristic 4: Same-kind positional → promote using token position.**
-Two `_expression` children, disambiguated by the token between them. `wrap.ts` uses the anonymous token's position to assign names.
-
-```ts
-// index_expression: SEQ(_expression, "[", _expression, "]")
-// wrap.ts finds "[" token, assigns children before it as 'value', after as 'index'
-value: () => drillIn(data.fields?.value, treeHandle),
-index: () => drillIn(data.fields?.index, treeHandle),
-```
+**Heuristic 4: Same-kind positional → promote by consumption order.**
+Two `_expression` children disambiguated by their position. The assign function consumes them in order: first match → `object`, second → `index`.
 
 **Heuristic 5: Top-level CHOICE with structural variants → token position determines names.**
-
-```ts
-// range_expression: CHOICE(SEQ(expr, "..", expr), SEQ(expr, ".."), SEQ("..", expr), "..")
-// wrap.ts finds ".." token position, assigns start (before) and end (after)
-operator: () => data.fields?.operator?.text,
-start: () => drillIn(data.fields?.start, treeHandle),
-end: () => drillIn(data.fields?.end, treeHandle),
-```
+The assign function uses the consumed-index tracking to assign children to the correct override field names.
 
 **Summary of heuristics:**
 
 | Heuristic | Trigger | Promotion logic | Overrides needed? |
 |---|---|---|---|
-| 1. Field by name | tree-sitter FIELD | Already in fields | No |
-| 2. Child by kind | Unnamed, unique kind | Move from children to fields by kind | No |
-| 3. Token as value | Anonymous token | Move from children to fields, match by text | Yes — for the name |
-| 4. Position by token | Same kind, token between | Split children at token boundary | Yes — for the names |
+| 1. Field by name | tree-sitter FIELD | `target.field(name)` | No |
+| 2. Child by kind | Unnamed, unique kind | Find in children by kind set | Yes — for the field name |
+| 3. Token as value | Anonymous token | Match by `values` from overrides | Yes — name + values |
+| 4. Position by token | Same kind, positional | Consume in order from children | Yes — for the names |
 | 5. Branch by token | Top-level CHOICE | Token position determines assignment | Yes — for the names |
 
-Heuristics 1-2 are fully automatic. 3-5 need overrides.json for the field names.
+Heuristic 1 is fully automatic (tree-sitter FIELD). Heuristics 2-5 need `overrides.json` entries.
 
 ### Children classification
 

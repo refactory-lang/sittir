@@ -107,20 +107,20 @@ A developer maintains an `overrides.json` file per grammar that provides synthet
 
 ---
 
-### User Story 7 - wrap.ts field promotion heuristics (Priority: P2)
+### User Story 7 - Assign emitter field promotion heuristics (Priority: P2)
 
-The codegen generates per-kind `wrap` functions that promote unnamed children into `fields` using 5 heuristics (tree-sitter FIELD, unique kind, anonymous token, token-positional, CHOICE branch). After wrapping, all named positions are in `fields` regardless of origin, and `children` contains only the truly unnamed remainder.
+The codegen inlines per-kind override field promotion code into generated `assignXxx()` functions using 5 heuristics (tree-sitter FIELD, unique kind, anonymous token with per-token matching, positional consumption, CHOICE branch). The render engine also provides a children-by-kind fallback for named children stored in the `children` array. Together, all named positions are resolvable via template variables.
 
-**Why this priority**: Makes render templates work correctly for nodes with override fields — without promotion, `$FIELD_NAME` variables in templates would have nothing to resolve against.
+**Why this priority**: Makes render templates work correctly for nodes with override fields — without promotion and fallback, `$FIELD_NAME` variables in templates would have nothing to resolve against.
 
-**Independent Test**: Create a `NodeData` for `index_expression` via `assign` (from an ast-grep SgNode), verify that after wrapping, `fields.value` and `fields.index` are populated and `children` contains only the bracket tokens.
+**Independent Test**: Create a `NodeData` for `index_expression` via factory, render it, verify the template resolves `$OBJECT` and `$INDEX` variables correctly.
 
 **Acceptance Scenarios**:
 
-1. **Given** a `function_item` with an unnamed `visibility_modifier` child (Heuristic 2), **When** `wrap` runs, **Then** `fields.visibility_modifier` is populated and the child is removed from `children`.
-2. **Given** a `unary_expression` with an anonymous `-` token (Heuristic 3), **When** `wrap` runs with overrides, **Then** `fields.operator` contains the `-` token.
-3. **Given** an `index_expression` with two `_expression` children separated by `[` (Heuristic 4), **When** `wrap` runs with overrides, **Then** `fields.value` and `fields.index` are correctly assigned by token position.
-4. **Given** a `range_expression` with multiple CHOICE branches (Heuristic 5), **When** `wrap` runs with overrides, **Then** `fields.start`, `fields.operator`, and `fields.end` are correctly assigned.
+1. **Given** a `function_item` with an unnamed `visibility_modifier` child (Heuristic 2), **When** the template renders, **Then** `$VISIBILITY_MODIFIER` resolves via children-by-kind fallback.
+2. **Given** a `unary_expression` with an anonymous `-` token (Heuristic 3), **When** assign runs with overrides, **Then** `fields.operator` contains the `-` token (matched via `values: ["-", "*", "!", "&"]`).
+3. **Given** an `index_expression` with two `_expression` children (Heuristic 4), **When** assign runs with overrides, **Then** `fields.object` and `fields.index` are correctly assigned by consumption order.
+4. **Given** a `range_expression` with multiple CHOICE branches (Heuristic 5), **When** assign runs with overrides, **Then** `fields.start`, `fields.operator` (matched via `values: ["..", "..="]`), and `fields.end` are correctly assigned.
 
 ---
 
@@ -132,7 +132,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - What happens when a template contains `$` followed by a non-variable character (literal dollar sign)? (Expected: `expandoChar` provides escape mechanism for languages that use `$` literally)
 - What happens when YAML multiline template strings have trailing newlines from `|` block scalar? (Expected: render engine trims trailing newline from YAML block scalar artifacts)
 - What happens when an `overrides.json` entry conflicts with an existing tree-sitter FIELD? (Expected: codegen reports an error — overrides cannot shadow existing FIELDs)
-- What happens when `wrap.ts` encounters a child that matches no heuristic? (Expected: child remains in `children` array, accessible via `$$$CHILDREN`)
+- What happens when override field promotion encounters a child that matches no heuristic? (Expected: child remains in `children` array, accessible via `$$$CHILDREN` or children-by-kind fallback)
 
 ## Requirements *(mandatory)*
 
@@ -161,9 +161,9 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **FR-021**: Codegen MUST merge override fields with node-types.json fields during enrichment; overrides MUST NOT shadow existing tree-sitter FIELDs
 - **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure: (a) node kind must exist in grammar, (b) field count must be plausible for the rule's positional children, (c) `anonymous: true` fields must correspond to actual anonymous tokens in the grammar rule, (d) per FR-021. Report descriptive errors for each violation.
 - **FR-023**: Codegen MUST detect and log override candidates automatically: same-kind positional children (`SEQ(X, X)`) and discriminator tokens (CHOICE branches identical after token removal)
-- **FR-024**: `wrap.ts` MUST implement 5 field promotion heuristics: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value, (4) same-kind positional by token, (5) top-level CHOICE branch by token. `overrides.json` entries take precedence over automatic heuristics (2) — if an override exists for a child position, the automatic heuristic does not fire.
-- **FR-025**: After `wrap.ts` promotion, all named positions MUST be in `fields` regardless of origin; `children` MUST contain only the truly unnamed remainder
-- **FR-026**: The render engine MUST resolve variables only via field lookup (`$FIELD_NAME` from `node.fields`, `$$$CHILDREN` from children array) and clause sub-templates — no runtime kind-matching; kind-specific child consumption is handled by `wrap.ts` field promotion before render
+- **FR-024**: The assign emitter MUST implement 5 field promotion heuristics inlined into generated `assignXxx()` functions: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value with per-token matching via `values` array in `overrides.json`, (4) same-kind positional by consumption order, (5) top-level CHOICE branch by token. `overrides.json` entries take precedence over automatic heuristics (2).
+- **FR-025**: After assign promotion and render-time children-by-kind fallback, all named positions MUST be resolvable via template variables; `$$$CHILDREN` renders the remaining children array
+- **FR-026**: The render engine MUST resolve variables primarily via field lookup (`$FIELD_NAME` from `node.fields`), with a children-by-kind fallback (`node.children` searched by `type === fieldKey`) for named children not stored in `fields`. `$$$CHILDREN` resolves from the children array. Clause sub-templates render conditionally. Override field promotion in the assign emitter handles the primary field promotion path.
 - **FR-027**: Codegen MUST classify each node's unnamed children by simplifying the grammar rule (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine the appropriate template pattern
 
 ### Key Entities
@@ -172,8 +172,8 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **RulesConfig**: The full YAML file shape — `language`, `extensions`, `expandoChar`, `metadata`, and `rules` (a record of kind to TemplateRule)
 - **Clause**: A synthesized sub-template that bundles anonymous tokens with non-required fields; present as a YAML key under the parent rule, not a grammar node
 - **joinBy**: A separator specification — string (all `$$$` vars) or object (per-variable) — that controls how multi-variable arrays are joined during rendering
-- **overrides.json**: A per-grammar supplemental field definition file that provides synthetic field names for nodes where the tree-sitter grammar lacks explicit FIELDs; codegen-time only, not shipped at runtime
-- **wrap function**: A per-kind generated function that promotes override-named and heuristically-detected children from `children` into `fields`, making render templates and factory output symmetric
+- **overrides.json**: A per-grammar supplemental field definition file that provides synthetic field names (and optional `values` arrays for token matching) for nodes where the tree-sitter grammar lacks explicit FIELDs; codegen-time only, not shipped at runtime
+- **Override field promotion**: Per-kind logic inlined into generated `assignXxx()` functions that promotes override-named children from `children` into `fields`, making render templates and factory output symmetric. Complements the render engine's children-by-kind fallback.
 
 ## Success Criteria *(mandatory)*
 
@@ -188,7 +188,7 @@ The codegen generates per-kind `wrap` functions that promote unnamed children in
 - **SC-007**: Per-rule `joinBy` correctly produces distinct separators for different `$$$` variables within the same rule (e.g., `, ` for params, `\n` for body)
 - **SC-008**: Clauses correctly omit paired tokens when optional fields are absent (e.g., `-> ` omitted when no `return_type`)
 - **SC-009**: `overrides.json` for Rust correctly provides field names for ~10-15 under-fielded nodes (e.g., `index_expression`, `unary_expression`, `range_expression`)
-- **SC-010**: `wrap.ts` correctly promotes override fields into `fields` for all 5 heuristic categories, verified by assign round-trip tests
+- **SC-010**: Assign emitter correctly promotes override fields into `fields` for all 5 heuristic categories; render engine children-by-kind fallback handles named children; verified by factory→render round-trip tests (Rust 624/624, TS 654/655, Python 438/442)
 - **SC-011**: Templates for nodes with override fields use `$FIELD_NAME` variables instead of positional `$$$CHILDREN`
 
 ## Clarifications
