@@ -1,5 +1,14 @@
 # Render Templates — Specification
 
+> **Implementation status (2026-04-06):** This document was the original design proposal.
+> The implementation is complete and diverges from the proposal in several areas:
+>
+> - **Render engine size**: Proposed ~50 lines; actual is ~150 substantive lines (214 total with comments/blanks). The increase comes from clause resolution, joinBy dispatch, children-by-kind fallback, and error guards. The S-expression parser (119 lines) was still eliminated.
+> - **Metadata keys**: Only `grammarSha` is emitted. `treeSitterVersion` and `generatedAt` were dropped as unnecessary.
+> - **overrides.json**: Field entries include `"values": [...]` for anonymous tokens (e.g., `"operator": { "anonymous": true, "values": ["-", "*", "!"] }`). Field naming may differ from examples below (e.g., `"object"` instead of `"value"` for `index_expression`).
+> - **Template formatting**: Auto-generated templates are single-line where possible rather than multiline YAML blocks. Hand-crafted examples in this doc use idealized formatting that differs from codegen output.
+> - **joinBy emission**: The codegen now emits per-rule `joinBy` for container nodes (parameters, arguments, type_arguments, etc.) using separator detection from grammar REPEAT patterns.
+
 ## Current state (branch `001-codegen-grammarjs-rewrite`)
 
 ### Template format: S-expressions in TypeScript

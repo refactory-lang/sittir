@@ -183,7 +183,7 @@ The codegen inlines per-kind override field promotion code into generated `wrapX
 - **SC-002**: Codegen produces valid `templates.yaml` for all 3 supported grammars (Rust, TypeScript, Python)
 - **SC-003**: 100% of existing tests pass after migration without changes to factory/from/wrap APIs
 - **SC-004**: Render engine produces correctly formatted output for representative node types (functions, declarations, control flow, containers) across all 3 grammars
-- **SC-005**: Render engine code is reduced from ~133 lines + 119 lines (sexpr parser) to ~50 lines total
+- **SC-005**: Render engine code is reduced from ~133 lines + 119 lines (sexpr parser) to ~150 substantive lines total (214 with comments/blanks), eliminating the S-expression parser entirely
 - **SC-006**: Template files use literal code syntax with `$VARIABLE` slots — no escaping or encoded format required to read templates
 - **SC-007**: Per-rule `joinBy` correctly produces distinct separators for different `$$$` variables within the same rule (e.g., `, ` for params, `\n` for body)
 - **SC-008**: Clauses correctly omit paired tokens when optional fields are absent (e.g., `-> ` omitted when no `return_type`)

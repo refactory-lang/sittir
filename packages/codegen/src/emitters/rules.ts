@@ -429,6 +429,14 @@ function unwrapPrec(rule: GrammarRule): GrammarRule {
 // joinBy construction
 // ---------------------------------------------------------------------------
 
+/** Format raw separator token with conventional spacing. */
+function formatSeparator(sep: string): string {
+	// Comma and semicolon conventionally have a trailing space
+	if (sep === ',') return ', ';
+	if (sep === ';') return '; ';
+	return sep;
+}
+
 function buildJoinBy(
 	fieldMultiple: Map<string, boolean>,
 	fieldSeparators: Map<string, string>,
@@ -440,7 +448,7 @@ function buildJoinBy(
 
 	for (const [fieldName, sep] of fieldSeparators) {
 		if (fieldMultiple.get(fieldName)) {
-			seps[fieldName.toUpperCase()] = sep;
+			seps[fieldName.toUpperCase()] = formatSeparator(sep);
 			count++;
 		}
 	}
@@ -450,7 +458,7 @@ function buildJoinBy(
 		const childArr = Array.isArray(node.children) ? node.children : [node.children];
 		for (const child of childArr) {
 			if (child.multiple && 'separator' in child && child.separator) {
-				seps['CHILDREN'] = child.separator;
+				seps['CHILDREN'] = formatSeparator(child.separator);
 				count++;
 			}
 		}

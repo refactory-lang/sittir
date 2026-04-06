@@ -431,7 +431,7 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 
 	// Build children from grammar positions, supplemented by NT kinds
 	if (grammarHasChildren && modelHasChildren) {
-		model.children = buildChildrenFromGrammar(model.children!, rule.children!);
+		model.children = buildChildrenFromGrammar(model.children!, rule.children!, rule.separators);
 	}
 
 	model.rule = rule;
@@ -441,7 +441,7 @@ function enrichContainer(model: ContainerModel, rule: ContainerRule, warnings: s
 	if (rule.children.length === 0) {
 		warnings.push(`  '${model.kind}': container has no grammar children`);
 	} else {
-		model.children = buildChildrenFromGrammar(model.children, rule.children);
+		model.children = buildChildrenFromGrammar(model.children, rule.children, rule.separators);
 	}
 
 	model.rule = rule;
@@ -457,6 +457,7 @@ function enrichContainer(model: ContainerModel, rule: ContainerRule, warnings: s
 function buildChildrenFromGrammar(
 	existing: ChildrenModel,
 	ruleChildren: EnrichedChildInfo[],
+	separators?: Map<string, string>,
 ): ChildrenModel {
 	if (ruleChildren.length === 0) return existing;
 
@@ -473,11 +474,14 @@ function buildChildrenFromGrammar(
 	}
 	const ntOnlyKinds = [...ntKinds].filter(k => !allGrammarKinds.has(k));
 
+	// Children separator from grammar rule (REPEAT(SEQ(STRING, non-FIELD)))
+	const childSep = separators?.get('__children__') ?? null;
+
 	function buildSlot(rc: EnrichedChildInfo): ChildModel {
 		// Grammar kinds first, then NT-only supplements
 		const kinds = [...rc.kinds, ...ntOnlyKinds];
 		if (rc.multiple) {
-			return { required: rc.required, multiple: true, kinds, separator: null } as ListChildModel;
+			return { required: rc.required, multiple: true, kinds, separator: childSep } as ListChildModel;
 		}
 		return { required: rc.required, multiple: false, kinds } as SingleChildModel;
 	}

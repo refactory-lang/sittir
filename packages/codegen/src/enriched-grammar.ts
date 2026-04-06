@@ -624,8 +624,13 @@ function extractSeparators(rule: GrammarRule): Map<string, string> {
 			if (r.content.type === 'SEQ') {
 				const sep = seqToSeparator(r.content);
 				if (sep) {
+					let hasField = false;
 					for (const m of r.content.members) {
-						if (m.type === 'FIELD') out.set(m.name, sep);
+						if (m.type === 'FIELD') { out.set(m.name, sep); hasField = true; }
+					}
+					// Children separator: REPEAT(SEQ(STRING, non-FIELD)) → unnamed children
+					if (!hasField && !out.has('__children__')) {
+						out.set('__children__', sep);
 					}
 				}
 			}

@@ -151,7 +151,7 @@
 
 ---
 
-## Phase 8: User Story 7 — Assign Emitter Field Promotion Heuristics (P2)
+## Phase 8: User Story 7 — Wrap Emitter Field Promotion Heuristics (P2)
 
 **Goal**: Codegen generates per-kind override field promotion code inlined into `wrapXxx()` functions, implementing 5 heuristics. After wrap + render-time children-by-kind fallback, all named positions are resolvable via template variables.
 
