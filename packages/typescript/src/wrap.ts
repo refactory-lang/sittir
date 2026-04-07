@@ -784,7 +784,7 @@ export function wrapImportAlias(data: AnyNodeData, tree: TreeHandle): unknown {
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get identifierOrNestedIdentifier() { return drillIn(data.fields?.['identifierOrNestedIdentifier'], tree); },
+    get importIdentifierOrNestedIdentifier() { return drillIn(data.fields?.['importIdentifierOrNestedIdentifier'], tree); },
     get children3() { return drillIn(data.fields?.['children3'], tree); },
   };
 }
@@ -865,7 +865,7 @@ export function wrapInferType(data: AnyNodeData, tree: TreeHandle): unknown {
     ...data,
     get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get typeIdentifier() { return drillIn(data.fields?.['typeIdentifier'], tree); },
+    get typeIdentifierOrTypeIdentifier() { return drillIn(data.fields?.['typeIdentifierOrTypeIdentifier'], tree); },
     get typeOrTypeIdentifier() { return drillIn(data.fields?.['typeOrTypeIdentifier'], tree); },
   };
 }
@@ -1127,8 +1127,8 @@ export function wrapOptionalParameter(data: AnyNodeData, tree: TreeHandle): unkn
     get value() { return drillIn(data.fields?.['value'], tree); },
     get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get accessibilityModifierOrOverrideModifier1() { return drillIn(data.fields?.['accessibilityModifierOrOverrideModifier1'], tree); },
-    get accessibilityModifierOrOverrideModifier2() { return drillIn(data.fields?.['accessibilityModifierOrOverrideModifier2'], tree); },
+    get parameterNameOrParameterName() { return drillIn(data.fields?.['parameterNameOrParameterName'], tree); },
+    get parameterName() { return drillIn(data.fields?.['parameterName'], tree); },
   };
 }
 
@@ -1235,8 +1235,8 @@ export function wrapRequiredParameter(data: AnyNodeData, tree: TreeHandle): unkn
     get value() { return drillIn(data.fields?.['value'], tree); },
     get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get accessibilityModifierOrOverrideModifier1() { return drillIn(data.fields?.['accessibilityModifierOrOverrideModifier1'], tree); },
-    get accessibilityModifierOrOverrideModifier2() { return drillIn(data.fields?.['accessibilityModifierOrOverrideModifier2'], tree); },
+    get parameterNameOrParameterName() { return drillIn(data.fields?.['parameterNameOrParameterName'], tree); },
+    get parameterName() { return drillIn(data.fields?.['parameterName'], tree); },
   };
 }
 

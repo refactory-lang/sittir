@@ -652,8 +652,8 @@ export function wrapKeywordPattern(data: AnyNodeData, tree: TreeHandle): unknown
     ...data,
     get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get children1() { return drillIn(data.fields?.['children1'], tree); },
-    get children2() { return drillIn(data.fields?.['children2'], tree); },
+    get namedExpressionLhsOrSimplePattern() { return drillIn(data.fields?.['namedExpressionLhsOrSimplePattern'], tree); },
+    get simplePatternOrSimplePattern() { return drillIn(data.fields?.['simplePatternOrSimplePattern'], tree); },
   };
 }
 

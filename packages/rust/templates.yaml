@@ -21,13 +21,13 @@ rules:
   assignment_expression: $LEFT = $RIGHT
   associated_type: type $NAME $TYPE_PARAMETERS $BOUNDS $CHILDREN ;
   async_block: async $CHILDREN
-  attribute: $$$CHILDREN $VALUE $ARGUMENTS
+  attribute: $CHILDREN $VALUE $ARGUMENTS
   attribute_item: "#[$CHILDREN]"
   await_expression: $CHILDREN.await
   base_field_initializer: .. $CHILDREN
   binary_expression: $LEFT $OPERATOR $RIGHT
   block:
-    template: $LABEL_CLAUSE{$$$CHILDREN} $NEEDS_NAME_0 $$$NEEDS_NAME_1 $NEEDS_NAME_2
+    template: $LABEL_CLAUSE{$$$STATEMENT $$$CHILDREN} $NEEDS_NAME_0 $$$NEEDS_NAME_1 $NEEDS_NAME_2
     label_clause: ":"
   block_comment: /* $OUTER $DOC */ $INNER
   bounded_type: $$$LIFETIME + $$$CHILDREN $NEEDS_NAME_0 $NEEDS_NAME_1
@@ -158,7 +158,7 @@ rules:
   slice_pattern:
     template: "[$$$CHILDREN]"
     joinBy: ","
-  source_file: $SHEBANG $$$CHILDREN $NEEDS_NAME_0 $$$NEEDS_NAME_1
+  source_file: $SHEBANG $$$STATEMENT $NEEDS_NAME_0 $$$NEEDS_NAME_1 $$$CHILDREN
   static_item:
     template: "$VISIBILITY_MODIFIER static $MUTABLE_SPECIFIER $NAME : $TYPE $VALUE_CLAUSE ; $VISIBILITY_MODIFIER $NEEDS_NAME_1 $$$CHILDREN"
     value_clause: = $VALUE

@@ -15,7 +15,7 @@
 import type { HydratedNodeModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { toTypeName, toFieldName, toGrammarTypeName } from '../naming.ts';
-import { structuralNodes, fieldsOf, leafKindsOf, supertypeEntriesOf, childSlotNames } from './utils.ts';
+import { structuralNodes, fieldsOf, leafKindsOf, supertypeEntriesOf, hiddenEntriesOf, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
 
 export interface EmitTypesConfig {
@@ -218,6 +218,31 @@ export function emitTypes(config: EmitTypesConfig): string {
 			if (branchMembers.length > 0) {
 				lines.push(`export type ${fromInputName} =`);
 				for (const m of branchMembers) lines.push(`  | ${m}`);
+				lines.push(';');
+				lines.push('');
+			}
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// 5b. Hidden rule unions (non-supertype hidden rules used as child slot kinds)
+	// -----------------------------------------------------------------------
+	const hiddenEntries = hiddenEntriesOf(config.nodes);
+	if (hiddenEntries.length > 0) {
+		lines.push('// Hidden rule unions (grammar-internal groupings)');
+		for (const h of hiddenEntries) {
+			const cleanName = h.name.replace(/^_/, '');
+			const typeName = toTypeName(cleanName);
+			if (generatedTypes.has(typeName)) continue;
+			generatedTypes.add(typeName);
+
+			const members = h.subtypes
+				.map(sub => toTypeName(sub))
+				.filter(t => generatedTypes.has(t));
+
+			if (members.length > 0) {
+				lines.push(`export type ${typeName} =`);
+				for (const m of members) lines.push(`  | ${m}`);
 				lines.push(';');
 				lines.push('');
 			}

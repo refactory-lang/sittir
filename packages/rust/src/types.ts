@@ -315,7 +315,7 @@ export const enum TypeKind {
 export interface AbstractType {
   readonly type: 'abstract_type';
   readonly fields: {
-    readonly trait: BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier;
+    readonly trait: BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier | TypeIdentifier;
   };
   readonly children?: TypeParameters;
 }
@@ -351,7 +351,7 @@ export interface AssociatedType {
   readonly type: 'associated_type';
   readonly fields: {
     readonly bounds?: TraitBounds;
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
     readonly typeParameters?: TypeParameters;
   };
   readonly children?: WhereClause;
@@ -366,7 +366,7 @@ export interface Attribute {
     readonly arguments?: TokenTree;
     readonly value?: Expression;
   };
-  readonly children: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+  readonly children: Path | Path;
 }
 export interface AttributeItem {
   readonly type: 'attribute_item';
@@ -392,11 +392,11 @@ export interface Block {
   readonly type: 'block';
   readonly fields: {
     readonly NEEDS_NAME_0?: DeclarationStatement | ExpressionStatement | Label;
-    readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement)[];
+    readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
     readonly NEEDS_NAME_2?: DeclarationStatement | Expression | ExpressionStatement;
   };
   readonly children1?: DeclarationStatement | ExpressionStatement | Label;
-  readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
+  readonly children2?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
   readonly children3?: DeclarationStatement | Expression | ExpressionStatement;
 }
 export interface BlockComment {
@@ -432,13 +432,13 @@ export interface CallExpression {
   readonly type: 'call_expression';
   readonly fields: {
     readonly arguments: Arguments;
-    readonly function: ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | Block | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | Literal | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression;
+    readonly function: ArrayExpression | AssignmentExpression | AwaitExpression | BinaryExpression | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ContinueExpression | ExpressionEndingWithBlock | ExpressionExceptRange | FieldExpression | GenericFunction | IndexExpression | Literal | MacroInvocation | Metavariable | ParenthesizedExpression | ReferenceExpression | ReservedIdentifier | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | YieldExpression;
   };
 }
 export interface CapturedPattern {
   readonly type: 'captured_pattern';
   readonly fields: {
-    readonly identifier?: Identifier;
+    readonly identifier?: ReservedIdentifier;
     readonly Pattern?: Pattern;
   };
   readonly pattern: Pattern;
@@ -472,7 +472,7 @@ export interface ConstBlock {
 export interface ConstItem {
   readonly type: 'const_item';
   readonly fields: {
-    readonly name: Identifier;
+    readonly name: ReservedIdentifier;
     readonly type: Type;
     readonly value?: Expression;
   };
@@ -481,9 +481,9 @@ export interface ConstItem {
 export interface ConstParameter {
   readonly type: 'const_parameter';
   readonly fields: {
-    readonly name: Identifier;
+    readonly name: ReservedIdentifier;
     readonly type: Type;
-    readonly value?: Block | Identifier | Literal | NegativeLiteral;
+    readonly value?: Block | Literal | NegativeLiteral | ReservedIdentifier;
   };
 }
 export interface ContinueExpression {
@@ -497,7 +497,7 @@ export interface DeclarationList {
 export interface DynamicType {
   readonly type: 'dynamic_type';
   readonly fields: {
-    readonly trait: FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier;
+    readonly trait: FunctionType | GenericType | HigherRankedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier | TypeIdentifier;
   };
 }
 export interface ElseClause {
@@ -508,7 +508,7 @@ export interface EnumItem {
   readonly type: 'enum_item';
   readonly fields: {
     readonly body: EnumVariantList;
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
     readonly typeParameters?: TypeParameters;
     readonly visibilityModifier?: VisibilityModifier;
     readonly whereClause?: WhereClause;
@@ -518,7 +518,7 @@ export interface EnumVariant {
   readonly type: 'enum_variant';
   readonly fields: {
     readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
-    readonly name: Identifier;
+    readonly name: ReservedIdentifier;
     readonly value?: Expression;
   };
   readonly children?: VisibilityModifier;
@@ -529,13 +529,13 @@ export interface EnumVariantList {
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
-  readonly children: Expression;
+  readonly children: Expression | ExpressionEndingWithBlock;
 }
 export interface ExternCrateDeclaration {
   readonly type: 'extern_crate_declaration';
   readonly fields: {
-    readonly alias?: Identifier;
-    readonly name: Identifier;
+    readonly alias?: ReservedIdentifier;
+    readonly name: ReservedIdentifier;
     readonly visibilityModifier?: VisibilityModifier;
     readonly NEEDS_NAME_1?: Crate;
   };
@@ -548,7 +548,7 @@ export interface ExternModifier {
 export interface FieldDeclaration {
   readonly type: 'field_declaration';
   readonly fields: {
-    readonly name: FieldIdentifier;
+    readonly name: FieldIdentifier | FieldIdentifier;
     readonly type: Type;
   };
   readonly children?: VisibilityModifier;
@@ -560,14 +560,14 @@ export interface FieldDeclarationList {
 export interface FieldExpression {
   readonly type: 'field_expression';
   readonly fields: {
-    readonly field: FieldIdentifier | IntegerLiteral;
+    readonly field: FieldIdentifier | FieldIdentifier | IntegerLiteral;
     readonly value: Expression;
   };
 }
 export interface FieldInitializer {
   readonly type: 'field_initializer';
   readonly fields: {
-    readonly field: FieldIdentifier | IntegerLiteral;
+    readonly field: FieldIdentifier | FieldIdentifier | IntegerLiteral;
     readonly value: Expression;
   };
   readonly children?: readonly (AttributeItem)[];
@@ -579,7 +579,7 @@ export interface FieldInitializerList {
 export interface FieldPattern {
   readonly type: 'field_pattern';
   readonly fields: {
-    readonly name: FieldIdentifier | ShorthandFieldIdentifier;
+    readonly name: FieldIdentifier | FieldIdentifier | ShorthandFieldIdentifier;
     readonly pattern?: Pattern;
   };
   readonly children?: MutableSpecifier;
@@ -609,7 +609,7 @@ export interface FunctionItem {
   readonly type: 'function_item';
   readonly fields: {
     readonly body: Block;
-    readonly name: Identifier | Metavariable;
+    readonly name: Metavariable | ReservedIdentifier;
     readonly parameters: Parameters;
     readonly returnType?: Type;
     readonly typeParameters?: TypeParameters;
@@ -625,7 +625,7 @@ export interface FunctionModifiers {
 export interface FunctionSignatureItem {
   readonly type: 'function_signature_item';
   readonly fields: {
-    readonly name: Identifier | Metavariable;
+    readonly name: Metavariable | ReservedIdentifier;
     readonly parameters: Parameters;
     readonly returnType?: Type;
     readonly typeParameters?: TypeParameters;
@@ -639,7 +639,7 @@ export interface FunctionType {
   readonly fields: {
     readonly parameters: Parameters;
     readonly returnType?: Type;
-    readonly trait?: ScopedTypeIdentifier | TypeIdentifier;
+    readonly trait?: ScopedTypeIdentifier | TypeIdentifier | TypeIdentifier;
     readonly forLifetimes?: ForLifetimes;
     readonly functionModifiers?: FunctionModifiers;
   };
@@ -651,7 +651,7 @@ export interface GenBlock {
 export interface GenericFunction {
   readonly type: 'generic_function';
   readonly fields: {
-    readonly function: FieldExpression | Identifier | ScopedIdentifier;
+    readonly function: FieldExpression | ReservedIdentifier | ScopedIdentifier;
     readonly typeArguments: TypeArguments;
   };
 }
@@ -660,19 +660,19 @@ export interface GenericPattern {
   readonly fields: {
     readonly typeArguments: TypeArguments;
   };
-  readonly children: Identifier | ScopedIdentifier;
+  readonly children: ReservedIdentifier | ScopedIdentifier;
 }
 export interface GenericType {
   readonly type: 'generic_type';
   readonly fields: {
-    readonly type: Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier;
+    readonly type: ReservedIdentifier | ReservedIdentifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier | TypeIdentifier;
     readonly typeArguments: TypeArguments;
   };
 }
 export interface GenericTypeWithTurbofish {
   readonly type: 'generic_type_with_turbofish';
   readonly fields: {
-    readonly type: ScopedIdentifier | TypeIdentifier;
+    readonly type: ScopedIdentifier | TypeIdentifier | TypeIdentifier;
     readonly typeArguments: TypeArguments;
   };
 }
@@ -687,7 +687,7 @@ export interface IfExpression {
   readonly type: 'if_expression';
   readonly fields: {
     readonly alternative?: ElseClause;
-    readonly condition: Expression | LetChain | LetCondition;
+    readonly condition: Condition | Expression | LetChain | LetCondition;
     readonly consequence: Block;
   };
 }
@@ -695,7 +695,7 @@ export interface ImplItem {
   readonly type: 'impl_item';
   readonly fields: {
     readonly body?: DeclarationList;
-    readonly trait?: GenericType | ScopedTypeIdentifier | TypeIdentifier;
+    readonly trait?: GenericType | ScopedTypeIdentifier | TypeIdentifier | TypeIdentifier;
     readonly type: Type;
     readonly typeParameters?: TypeParameters;
   };
@@ -716,7 +716,7 @@ export interface InnerAttributeItem {
 }
 export interface Label {
   readonly type: 'label';
-  readonly children: Identifier;
+  readonly children: ReservedIdentifier;
 }
 export interface LetChain {
   readonly type: 'let_chain';
@@ -741,7 +741,7 @@ export interface LetDeclaration {
 }
 export interface Lifetime {
   readonly type: 'lifetime';
-  readonly children: Identifier;
+  readonly children: ReservedIdentifier;
 }
 export interface LifetimeParameter {
   readonly type: 'lifetime_parameter';
@@ -768,7 +768,7 @@ export interface LoopExpression {
 export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
-    readonly name: Identifier;
+    readonly name: ReservedIdentifier | ReservedIdentifier;
     readonly NEEDS_NAME_0?: readonly (MacroRule)[];
     readonly NEEDS_NAME_1?: MacroRule;
   };
@@ -778,7 +778,7 @@ export interface MacroDefinition {
 export interface MacroInvocation {
   readonly type: 'macro_invocation';
   readonly fields: {
-    readonly macro: Identifier | ScopedIdentifier;
+    readonly macro: ReservedIdentifier | ReservedIdentifier | ScopedIdentifier;
   };
   readonly children: TokenTree;
 }
@@ -793,7 +793,7 @@ export interface MatchArm {
   readonly type: 'match_arm';
   readonly fields: {
     readonly pattern: MatchPattern;
-    readonly value: Expression;
+    readonly value: Expression | ExpressionEndingWithBlock;
   };
   readonly children?: readonly (AttributeItem | InnerAttributeItem)[];
 }
@@ -811,7 +811,7 @@ export interface MatchExpression {
 export interface MatchPattern {
   readonly type: 'match_pattern';
   readonly fields: {
-    readonly condition?: Expression | LetChain | LetCondition;
+    readonly condition?: Condition | Expression | LetChain | LetCondition;
   };
   readonly children: Pattern;
 }
@@ -819,7 +819,7 @@ export interface ModItem {
   readonly type: 'mod_item';
   readonly fields: {
     readonly body?: DeclarationList;
-    readonly name: Identifier;
+    readonly name: ReservedIdentifier;
   };
   readonly children?: VisibilityModifier;
 }
@@ -899,8 +899,8 @@ export interface RangeExpression {
 export interface RangePattern {
   readonly type: 'range_pattern';
   readonly fields: {
-    readonly left?: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super;
-    readonly right?: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super;
+    readonly left?: LiteralPattern | Path | Path;
+    readonly right?: LiteralPattern | Path | Path;
   };
 }
 export interface RawStringLiteral {
@@ -951,22 +951,22 @@ export interface ReturnExpression {
 export interface ScopedIdentifier {
   readonly type: 'scoped_identifier';
   readonly fields: {
-    readonly name: Identifier | Super;
-    readonly path?: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly name: ReservedIdentifier | Super;
+    readonly path?: BracketedType | GenericType | Path | Path;
   };
 }
 export interface ScopedTypeIdentifier {
   readonly type: 'scoped_type_identifier';
   readonly fields: {
-    readonly name: TypeIdentifier;
-    readonly path?: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly name: TypeIdentifier | TypeIdentifier;
+    readonly path?: BracketedType | GenericType | Path | Path;
   };
 }
 export interface ScopedUseList {
   readonly type: 'scoped_use_list';
   readonly fields: {
     readonly list: UseList;
-    readonly path?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly path?: Path | Path;
   };
 }
 export interface SelfParameter {
@@ -983,7 +983,7 @@ export interface ShorthandFieldInitializer {
   readonly type: 'shorthand_field_initializer';
   readonly fields: {
     readonly attributeItem?: readonly (AttributeItem)[];
-    readonly identifier?: Identifier;
+    readonly identifier?: ReservedIdentifier;
   };
 }
 export interface SlicePattern {
@@ -994,15 +994,15 @@ export interface SourceFile {
   readonly type: 'source_file';
   readonly fields: {
     readonly NEEDS_NAME_0?: DeclarationStatement | ExpressionStatement | Shebang;
-    readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement)[];
+    readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
   };
   readonly children1?: DeclarationStatement | ExpressionStatement | Shebang;
-  readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
+  readonly children2?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
 }
 export interface StaticItem {
   readonly type: 'static_item';
   readonly fields: {
-    readonly name: Identifier;
+    readonly name: ReservedIdentifier;
     readonly type: Type;
     readonly value?: Expression;
     readonly visibilityModifier?: VisibilityModifier;
@@ -1018,14 +1018,14 @@ export interface StructExpression {
   readonly type: 'struct_expression';
   readonly fields: {
     readonly body: FieldInitializerList;
-    readonly name: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier;
+    readonly name: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier | TypeIdentifier;
   };
 }
 export interface StructItem {
   readonly type: 'struct_item';
   readonly fields: {
     readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
     readonly typeParameters?: TypeParameters;
     readonly visibilityModifier?: VisibilityModifier;
     readonly whereClause?: WhereClause;
@@ -1034,7 +1034,7 @@ export interface StructItem {
 export interface StructPattern {
   readonly type: 'struct_pattern';
   readonly fields: {
-    readonly type: ScopedTypeIdentifier | TypeIdentifier;
+    readonly type: ScopedTypeIdentifier | TypeIdentifier | TypeIdentifier;
   };
   readonly children?: readonly (FieldPattern | RemainingFieldPattern)[];
 }
@@ -1047,19 +1047,19 @@ export interface TokenBindingPattern {
 }
 export interface TokenRepetition {
   readonly type: 'token_repetition';
-  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
+  readonly children?: readonly (Crate | Literal | Metavariable | MutableSpecifier | PrimitiveType | ReservedIdentifier | Self | Super | TokenRepetition | TokenTree)[];
 }
 export interface TokenRepetitionPattern {
   readonly type: 'token_repetition_pattern';
-  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
+  readonly children?: readonly (Crate | Literal | Metavariable | MutableSpecifier | PrimitiveType | ReservedIdentifier | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
 }
 export interface TokenTree {
   readonly type: 'token_tree';
-  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
+  readonly children?: readonly (Crate | Literal | Metavariable | MutableSpecifier | PrimitiveType | ReservedIdentifier | Self | Super | TokenRepetition | TokenTree)[];
 }
 export interface TokenTreePattern {
   readonly type: 'token_tree_pattern';
-  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
+  readonly children?: readonly (Crate | Literal | Metavariable | MutableSpecifier | PrimitiveType | ReservedIdentifier | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
 }
 export interface TraitBounds {
   readonly type: 'trait_bounds';
@@ -1070,7 +1070,7 @@ export interface TraitItem {
   readonly fields: {
     readonly body: DeclarationList;
     readonly bounds?: TraitBounds;
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
     readonly typeParameters?: TypeParameters;
     readonly visibilityModifier?: VisibilityModifier;
     readonly whereClause?: WhereClause;
@@ -1103,7 +1103,7 @@ export interface TuplePattern {
 export interface TupleStructPattern {
   readonly type: 'tuple_struct_pattern';
   readonly fields: {
-    readonly type: GenericType | Identifier | ScopedIdentifier;
+    readonly type: GenericType | ReservedIdentifier | ScopedIdentifier;
   };
   readonly children?: readonly (Pattern)[];
 }
@@ -1118,7 +1118,7 @@ export interface TypeArguments {
 export interface TypeBinding {
   readonly type: 'type_binding';
   readonly fields: {
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
     readonly type: Type;
     readonly typeArguments?: TypeArguments;
   };
@@ -1133,7 +1133,7 @@ export interface TypeCastExpression {
 export interface TypeItem {
   readonly type: 'type_item';
   readonly fields: {
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
     readonly type: Type;
     readonly typeParameters?: TypeParameters;
     readonly visibilityModifier?: VisibilityModifier;
@@ -1148,7 +1148,7 @@ export interface TypeParameter {
   readonly fields: {
     readonly bounds?: TraitBounds;
     readonly defaultType?: Type;
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
   };
 }
 export interface TypeParameters {
@@ -1163,7 +1163,7 @@ export interface UnionItem {
   readonly type: 'union_item';
   readonly fields: {
     readonly body: FieldDeclarationList;
-    readonly name: TypeIdentifier;
+    readonly name: TypeIdentifier | TypeIdentifier;
     readonly typeParameters?: TypeParameters;
     readonly visibilityModifier?: VisibilityModifier;
     readonly whereClause?: WhereClause;
@@ -1176,28 +1176,28 @@ export interface UnsafeBlock {
 export interface UseAsClause {
   readonly type: 'use_as_clause';
   readonly fields: {
-    readonly alias: Identifier;
-    readonly path: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly alias: ReservedIdentifier;
+    readonly path: Path | Path;
   };
 }
 export interface UseBounds {
   readonly type: 'use_bounds';
-  readonly children?: readonly (Lifetime | TypeIdentifier)[];
+  readonly children?: readonly (Lifetime | TypeIdentifier | TypeIdentifier)[];
 }
 export interface UseDeclaration {
   readonly type: 'use_declaration';
   readonly fields: {
-    readonly argument: Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard;
+    readonly argument: UseClause | UseClause;
   };
   readonly children?: VisibilityModifier;
 }
 export interface UseList {
   readonly type: 'use_list';
-  readonly children?: readonly (Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard)[];
+  readonly children?: readonly (UseClause)[];
 }
 export interface UseWildcard {
   readonly type: 'use_wildcard';
-  readonly children?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+  readonly children?: Path;
 }
 export interface VariadicParameter {
   readonly type: 'variadic_parameter';
@@ -1208,7 +1208,7 @@ export interface VariadicParameter {
 }
 export interface VisibilityModifier {
   readonly type: 'visibility_modifier';
-  readonly children?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+  readonly children?: Path | Path;
 }
 export interface WhereClause {
   readonly type: 'where_clause';
@@ -1218,14 +1218,14 @@ export interface WherePredicate {
   readonly type: 'where_predicate';
   readonly fields: {
     readonly bounds: TraitBounds;
-    readonly left: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier;
+    readonly left: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier | TypeIdentifier;
   };
 }
 export interface WhileExpression {
   readonly type: 'while_expression';
   readonly fields: {
     readonly body: Block;
-    readonly condition: Expression | LetChain | LetCondition;
+    readonly condition: Condition | Expression | LetChain | LetCondition;
   };
   readonly children?: Label;
 }
@@ -2246,6 +2246,177 @@ export type TypeFromInput =
   | RemovedTraitBoundFromInput
   | ScopedTypeIdentifierFromInput
   | TupleTypeFromInput
+;
+
+// Hidden rule unions (grammar-internal groupings)
+export type Path =
+  | Self
+  | Identifier
+  | Metavariable
+  | Super
+  | Crate
+  | Identifier
+  | ScopedIdentifier
+  | Identifier
+;
+
+export type Statement =
+  | ExpressionStatement
+  | ConstItem
+  | MacroInvocation
+  | MacroDefinition
+  | EmptyStatement
+  | AttributeItem
+  | InnerAttributeItem
+  | ModItem
+  | ForeignModItem
+  | StructItem
+  | UnionItem
+  | EnumItem
+  | TypeItem
+  | FunctionItem
+  | FunctionSignatureItem
+  | ImplItem
+  | TraitItem
+  | AssociatedType
+  | LetDeclaration
+  | UseDeclaration
+  | ExternCrateDeclaration
+  | StaticItem
+;
+
+export type ExpressionEndingWithBlock =
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
+;
+
+export type ExpressionExceptRange =
+  | UnaryExpression
+  | ReferenceExpression
+  | TryExpression
+  | BinaryExpression
+  | AssignmentExpression
+  | CompoundAssignmentExpr
+  | TypeCastExpression
+  | CallExpression
+  | ReturnExpression
+  | YieldExpression
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | Identifier
+  | Identifier
+  | Self
+  | ScopedIdentifier
+  | GenericFunction
+  | AwaitExpression
+  | FieldExpression
+  | ArrayExpression
+  | TupleExpression
+  | MacroInvocation
+  | UnitExpression
+  | BreakExpression
+  | ContinueExpression
+  | IndexExpression
+  | Metavariable
+  | ClosureExpression
+  | ParenthesizedExpression
+  | StructExpression
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
+;
+
+export type ReservedIdentifier =
+  | Identifier
+;
+
+export type Condition =
+  | UnaryExpression
+  | ReferenceExpression
+  | TryExpression
+  | BinaryExpression
+  | AssignmentExpression
+  | CompoundAssignmentExpr
+  | TypeCastExpression
+  | CallExpression
+  | ReturnExpression
+  | YieldExpression
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | Identifier
+  | Identifier
+  | Self
+  | ScopedIdentifier
+  | GenericFunction
+  | AwaitExpression
+  | FieldExpression
+  | ArrayExpression
+  | TupleExpression
+  | MacroInvocation
+  | UnitExpression
+  | BreakExpression
+  | ContinueExpression
+  | IndexExpression
+  | Metavariable
+  | ClosureExpression
+  | ParenthesizedExpression
+  | StructExpression
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
+  | RangeExpression
+  | LetCondition
+  | LetChain
+;
+
+export type UseClause =
+  | Self
+  | Identifier
+  | Metavariable
+  | Super
+  | Crate
+  | Identifier
+  | ScopedIdentifier
+  | Identifier
+  | UseAsClause
+  | UseList
+  | ScopedUseList
+  | UseWildcard
 ;
 
 export type RustNode =

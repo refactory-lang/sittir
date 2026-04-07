@@ -101,6 +101,16 @@ export function supertypeEntriesOf(nodes: HydratedNodeModel[]): { name: string; 
 	return supertypeModels(nodes).map(s => ({ name: s.kind, subtypes: [...s.subtypes] }));
 }
 
+export function hiddenEntriesOf(nodes: HydratedNodeModel[]): { name: string; subtypes: string[] }[] {
+	const result: { name: string; subtypes: string[] }[] = [];
+	for (const n of nodes) {
+		if (n.modelType === 'hidden') {
+			result.push({ name: n.kind, subtypes: n.subtypes.map(s => s.kind) });
+		}
+	}
+	return result;
+}
+
 export function enumKindsOf(nodes: HydratedNodeModel[]): { kind: string; values: string[] }[] {
 	const result: { kind: string; values: string[] }[] = [];
 	for (const n of nodes) {

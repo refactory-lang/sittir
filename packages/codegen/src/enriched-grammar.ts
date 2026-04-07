@@ -130,7 +130,7 @@ function extractSubtypes(rule: GrammarRule, grammar: Grammar): SupertypeRule {
 	return { modelType: 'supertype', subtypes, rule };
 }
 
-function collectConcreteTypes(rule: GrammarRule, grammar: Grammar, types: string[], visited: Set<string>): void {
+export function collectConcreteTypes(rule: GrammarRule, grammar: Grammar, types: string[], visited: Set<string>): void {
 	switch (rule.type) {
 		case 'SYMBOL': {
 			if (visited.has(rule.name)) return;

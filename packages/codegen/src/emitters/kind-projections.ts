@@ -6,7 +6,7 @@
  * HydratedNodeModel references on field/child kinds.
  */
 
-import type { HydratedNodeModel } from '../node-model.ts';
+import type { HydratedNodeModel, HydratedHiddenModel } from '../node-model.ts';
 import { toTypeName } from '../naming.ts';
 
 // ---------------------------------------------------------------------------
@@ -27,10 +27,14 @@ export function buildProjectionContext(models: ReadonlyMap<string, HydratedNodeM
 		}
 	}
 
-	// Build recursively expanded supertypes
+	// Build recursively expanded supertypes (including hidden models)
 	const raw = new Map<string, string[]>();
 	for (const m of models.values()) {
 		if (m.modelType === 'supertype') raw.set(m.kind, [...m.subtypes]);
+		if (m.modelType === 'hidden') {
+			const hidden = m as HydratedHiddenModel;
+			raw.set(m.kind, hidden.subtypes.map(s => s.kind));
+		}
 	}
 
 	const expanded = new Map<string, Set<string>>();
@@ -81,15 +85,18 @@ export function projectKinds(
 	for (const k of kinds) {
 		if (k.modelType === 'token') {
 			anonTokens.push(k.kind);
+		} else if (k.modelType === 'hidden') {
+			// Hidden models are treated as named union types (like supertypes)
+			namedKinds.push(k.kind);
 		} else {
 			namedKinds.push(k.kind);
 		}
 	}
 
-	// Detect supertypes from model metadata, not naming convention
+	// Detect supertypes and hidden models — both produce named union types
 	const supertypeKinds = new Set<string>();
 	for (const k of kinds) {
-		if (k.modelType === 'supertype') supertypeKinds.add(k.kind);
+		if (k.modelType === 'supertype' || k.modelType === 'hidden') supertypeKinds.add(k.kind);
 	}
 
 	const leafTypes = namedKinds.filter(t => ctx.leafKinds.has(t)).sort();
@@ -146,7 +153,7 @@ function typesToCollapsed(
 	const matched: { name: string; subtypes: Set<string> }[] = [];
 
 	for (const [stName, subtypes] of supertypeMap) {
-		if (subtypes.size === 0) continue;
+		if (subtypes.size <= 1) continue; // Skip single-subtype entries — renaming one type to an alias is not a useful collapse
 		let allPresent = true;
 		for (const sub of subtypes) {
 			if (!inputSet.has(sub)) { allPresent = false; break; }

@@ -84,7 +84,7 @@ rules:
     joinBy: ","
   import_alias: import $$$IDENTIFIER = $NESTED_IDENTIFIER $$$CHILDREN $NEEDS_NAME_0 $NEEDS_NAME_1 $NEEDS_NAME_2
   import_attribute: with $CHILDREN
-  import_clause: $$$CHILDREN $$$NAMESPACE_IMPORT $NEEDS_NAME_0 $NEEDS_NAME_1
+  import_clause: $IMPORT_IDENTIFIER $$$NAMESPACE_IMPORT $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN
   import_require_clause: $CHILDREN = require($SOURCE)
   import_specifier: $NAME as $ALIAS
   import_statement: import $IMPORT_CLAUSE from $SOURCE $IMPORT_ATTRIBUTE $$$CHILDREN $NEEDS_NAME_0 $NEEDS_NAME_1 $IMPORT_ATTRIBUTE $NEEDS_NAME_3
@@ -93,7 +93,7 @@ rules:
     sign_clause: $SIGN readonly
   index_type_query: keyof $CHILDREN
   infer_type:
-    template: infer $$$CHILDREN $TYPE_CLAUSE $NEEDS_NAME_0 $NEEDS_NAME_1
+    template: infer $TYPE_IDENTIFIER $TYPE_CLAUSE $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN
     type_clause: extends
   instantiation_expression: $CHILDREN $TYPE_ARGUMENTS $FUNCTION
   interface_body: $$$CHILDREN

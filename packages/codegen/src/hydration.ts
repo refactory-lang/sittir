@@ -10,7 +10,7 @@ import type {
 	ChildModel,
 	HydratedNodeModel,
 } from './node-model.ts';
-import { isBranch, isContainer, eachChildSlot } from './node-model.ts';
+import { isBranch, isContainer, isHidden, eachChildSlot } from './node-model.ts';
 
 // ---------------------------------------------------------------------------
 // Hydration
@@ -51,6 +51,14 @@ export function hydrate(models: Map<string, NodeModel>): ReadonlyMap<string, Hyd
 		}
 		if (isContainer(model)) {
 			eachChildSlot(model.children, (child) => hydrateChild(child, models));
+		}
+		if (isHidden(model)) {
+			const resolved: NodeModel[] = [];
+			for (const kind of model.subtypes) {
+				const sub = models.get(kind);
+				if (sub) resolved.push(sub);
+			}
+			(model as any).subtypes = resolved;
 		}
 	}
 

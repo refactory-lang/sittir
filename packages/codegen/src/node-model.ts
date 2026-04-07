@@ -197,6 +197,14 @@ export interface SupertypeModel extends NodeModelBase {
 	rule: EnrichedRule | null;
 }
 
+export interface HiddenModel extends NodeModelBase {
+	modelType: 'hidden';
+	kind: string;
+	/** Concrete types this hidden rule expands to (resolved from grammar). */
+	subtypes: string[];
+	rule: EnrichedRule | null;
+}
+
 export type NodeModel =
 	| BranchModel
 	| ContainerModel
@@ -204,7 +212,8 @@ export type NodeModel =
 	| EnumModel
 	| KeywordModel
 	| TokenModel
-	| SupertypeModel;
+	| SupertypeModel
+	| HiddenModel;
 
 // ---------------------------------------------------------------------------
 // Type Guards
@@ -217,6 +226,7 @@ export function isEnum(n: NodeModel): n is EnumModel { return n.modelType === 'e
 export function isKeyword(n: NodeModel): n is KeywordModel { return n.modelType === 'keyword'; }
 export function isToken(n: NodeModel): n is TokenModel { return n.modelType === 'token'; }
 export function isSupertype(n: NodeModel): n is SupertypeModel { return n.modelType === 'supertype'; }
+export function isHidden(n: NodeModel): n is HiddenModel { return n.modelType === 'hidden'; }
 
 /** Branch or Container — nodes with rules */
 export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
@@ -256,6 +266,7 @@ export type HydratedEnumModel = Hydrate<EnumModel>;
 export type HydratedKeywordModel = Hydrate<KeywordModel>;
 export type HydratedTokenModel = Hydrate<TokenModel>;
 export type HydratedSupertypeModel = Hydrate<SupertypeModel>;
+export type HydratedHiddenModel = Readonly<Omit<HiddenModel, 'subtypes'> & { subtypes: HydratedNodeModel[] }>;
 
 export type HydratedNodeModel =
 	| HydratedBranchModel
@@ -264,7 +275,8 @@ export type HydratedNodeModel =
 	| HydratedEnumModel
 	| HydratedKeywordModel
 	| HydratedTokenModel
-	| HydratedSupertypeModel;
+	| HydratedSupertypeModel
+	| HydratedHiddenModel;
 
 // ---------------------------------------------------------------------------
 // GrammarModel — pipeline output
