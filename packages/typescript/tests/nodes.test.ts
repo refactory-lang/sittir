@@ -106,7 +106,7 @@ describe('ambient_declaration', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.ambientDeclaration({ children1: ir.propertyIdentifier('test') as any, childType: ir.typeIdentifier('TestChildType') as any });
+    const node = ir.ambientDeclaration({ children1: ir.propertyIdentifier('test') as any, childType: ir.typeIdentifier('TestChild_type') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -134,7 +134,7 @@ describe('arguments', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.arguments({ expressionOrSpreadElement1: ir.identifier('test_expressionOrSpreadElement1') as any, expressionOrSpreadElement2: [ir.identifier('test_expressionOrSpreadElement2') as any] });
+    const node = ir.arguments({ expressionOrSpreadElement1: ir.identifier('test_expression_or_spread_element1') as any, expressionOrSpreadElement2: [ir.identifier('test_expression_or_spread_element2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -162,7 +162,7 @@ describe('array', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.array({ expressionOrSpreadElement1: ir.identifier('test_expressionOrSpreadElement1') as any, expressionOrSpreadElement2: [ir.identifier('test_expressionOrSpreadElement2') as any] });
+    const node = ir.array({ expressionOrSpreadElement1: ir.identifier('test_expression_or_spread_element1') as any, expressionOrSpreadElement2: [ir.identifier('test_expression_or_spread_element2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -190,7 +190,7 @@ describe('array_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.arrayPattern({ assignmentPatternOrPattern1: ir.identifier('test_assignmentPatternOrPattern1') as any, assignmentPatternOrPattern2: [ir.identifier('test_assignmentPatternOrPattern2') as any] });
+    const node = ir.arrayPattern({ assignmentPatternOrPattern1: ir.identifier('test_assignment_pattern_or_pattern1') as any, assignmentPatternOrPattern2: [ir.identifier('test_assignment_pattern_or_pattern2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -267,7 +267,7 @@ describe('as_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.asExpression({ expression: ir.identifier('test_expression') as any, childType: ir.typeIdentifier('TestChildType') as any });
+    const node = ir.asExpression({ expression: ir.identifier('test_expression') as any, childType: ir.typeIdentifier('TestChild_type') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1443,7 +1443,7 @@ describe('implements_clause', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.implementsClause({ childType1: ir.typeIdentifier('TestChildType1') as any, childType2: [ir.typeIdentifier('TestChildType2') as any] });
+    const node = ir.implementsClause({ childType1: ir.typeIdentifier('TestChild_type1') as any, childType2: [ir.typeIdentifier('TestChild_type2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1469,6 +1469,11 @@ describe('import_alias', () => {
     const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifier_or_nested_identifier') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1656,7 +1661,7 @@ describe('infer_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.inferType({ typeIdentifier: ir.typeIdentifier('TestTypeIdentifier') as any, childType: ir.typeIdentifier('TestChildType') as any });
+    const node = ir.inferType({ typeIdentifier: ir.typeIdentifier('TestType_identifier') as any, childType: ir.typeIdentifier('TestChild_type') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1771,7 +1776,7 @@ describe('intersection_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.intersectionType({ childType1: ir.typeIdentifier('TestChildType1') as any, childType2: ir.typeIdentifier('TestChildType2') as any });
+    const node = ir.intersectionType({ childType1: ir.typeIdentifier('TestChild_type1') as any, childType2: ir.typeIdentifier('TestChild_type2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1858,6 +1863,11 @@ describe('lookup_type', () => {
     const node = ir.lookupType({ primaryType: ir.typeIdentifier('TestPrimaryType') as any, childType: ir.typeIdentifier('TestChildType') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.lookupType({ primaryType: ir.typeIdentifier('TestPrimary_type') as any, childType: ir.typeIdentifier('TestChild_type') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2650,6 +2660,11 @@ describe('satisfies_expression', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.satisfiesExpression({ expression: ir.identifier('test_expression') as any, childType: ir.typeIdentifier('TestChild_type') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('sequence_expression', () => {
@@ -3143,7 +3158,7 @@ describe('type_arguments', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.typeArguments({ childType1: ir.typeIdentifier('TestChildType1') as any, childType2: [ir.typeIdentifier('TestChildType2') as any] });
+    const node = ir.typeArguments({ childType1: ir.typeIdentifier('TestChild_type1') as any, childType2: [ir.typeIdentifier('TestChild_type2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -3163,6 +3178,11 @@ describe('type_assertion', () => {
     const node = ir.typeAssertion({ typeArguments: ir.typeArguments({ childType1: ir.typeIdentifier('TestChildType1') as any }) as any, expression: ir.identifier('test_expression') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.typeAssertion({ typeArguments: ir.typeArguments({ childType1: ir.typeIdentifier('TestChildType1') as any }) as any, expression: ir.identifier('test_expression') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -3320,7 +3340,7 @@ describe('union_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.unionType({ childType1: ir.typeIdentifier('TestChildType1') as any, childType2: ir.typeIdentifier('TestChildType2') as any });
+    const node = ir.unionType({ childType1: ir.typeIdentifier('TestChild_type1') as any, childType2: ir.typeIdentifier('TestChild_type2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

@@ -57,7 +57,7 @@ describe('arguments', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.arguments({ attributeItem: [], expression: ir.identifier('test_expression') as any, attributeItemOrExpression: [ir.identifier('test_attributeItemOrExpression') as any] });
+    const node = ir.arguments({ attributeItem: [], expression: ir.identifier('test_expression') as any, attributeItemOrExpression: [ir.identifier('test_attribute_item_or_expression') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -85,7 +85,7 @@ describe('array_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.arrayExpression({ length: ir.identifier('test_length') as any, attributeItem: [], attributeItemOrExpression1: [ir.identifier('test_attributeItemOrExpression1') as any], expression: ir.identifier('test_expression') as any, attributeItemOrExpression2: [ir.identifier('test_attributeItemOrExpression2') as any] });
+    const node = ir.arrayExpression({ length: ir.identifier('test_length') as any, attributeItem: [], attributeItemOrExpression1: [ir.identifier('test_attribute_item_or_expression1') as any], expression: ir.identifier('test_expression') as any, attributeItemOrExpression2: [ir.identifier('test_attribute_item_or_expression2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -375,6 +375,11 @@ describe('bounded_type', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.boundedType({ lifetimeOrTypeOrUseBounds1: ir.typeIdentifier('TestLifetime_or_type_or_use_bounds1') as any, lifetimeOrTypeOrUseBounds2: ir.typeIdentifier('TestLifetime_or_type_or_use_bounds2') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('bracketed_type', () => {
@@ -464,6 +469,11 @@ describe('captured_pattern', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.capturedPattern({ identifier: ir.identifier('test_identifier') as any, pattern: ir.identifier('test_pattern') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('closure_expression', () => {
@@ -510,7 +520,7 @@ describe('closure_parameters', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.closureParameters({ parameterOrPattern1: ir.identifier('test_parameterOrPattern1') as any, parameterOrPattern2: [ir.identifier('test_parameterOrPattern2') as any] });
+    const node = ir.closureParameters({ parameterOrPattern1: ir.identifier('test_parameter_or_pattern1') as any, parameterOrPattern2: [ir.identifier('test_parameter_or_pattern2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1821,6 +1831,11 @@ describe('mut_pattern', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.mutPattern({ mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('negative_literal', () => {
@@ -2643,7 +2658,7 @@ describe('trait_bounds', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.traitBounds({ higherRankedTraitBoundOrLifetimeOrType1: ir.typeIdentifier('TestHigherRankedTraitBoundOrLifetimeOrType1') as any, higherRankedTraitBoundOrLifetimeOrType2: [ir.typeIdentifier('TestHigherRankedTraitBoundOrLifetimeOrType2') as any] });
+    const node = ir.traitBounds({ higherRankedTraitBoundOrLifetimeOrType1: ir.typeIdentifier('TestHigher_ranked_trait_bound_or_lifetime_or_type1') as any, higherRankedTraitBoundOrLifetimeOrType2: [ir.typeIdentifier('TestHigher_ranked_trait_bound_or_lifetime_or_type2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2771,7 +2786,7 @@ describe('tuple_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.tuplePattern({ closureExpressionOrPattern1: ir.identifier('test_closureExpressionOrPattern1') as any, closureExpressionOrPattern2: [ir.identifier('test_closureExpressionOrPattern2') as any] });
+    const node = ir.tuplePattern({ closureExpressionOrPattern1: ir.identifier('test_closure_expression_or_pattern1') as any, closureExpressionOrPattern2: [ir.identifier('test_closure_expression_or_pattern2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -3095,7 +3110,7 @@ describe('use_bounds', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.useBounds({ lifetimeOrTypeIdentifier1: ir.typeIdentifier('TestLifetimeOrTypeIdentifier1') as any, lifetimeOrTypeIdentifier2: [ir.typeIdentifier('TestLifetimeOrTypeIdentifier2') as any] });
+    const node = ir.useBounds({ lifetimeOrTypeIdentifier1: ir.typeIdentifier('TestLifetime_or_type_identifier1') as any, lifetimeOrTypeIdentifier2: [ir.typeIdentifier('TestLifetime_or_type_identifier2') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

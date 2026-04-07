@@ -225,17 +225,26 @@ export function wrapAbstractMethodSignature(target: AbstractMethodSignatureTree)
   config['parameters'] = wrapFormalParameters(target.field('parameters')! as FormalParametersTree);
   config['returnType'] = target.field('return_type') ? _wrapByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
   config['typeParameters'] = target.field('type_parameters') ? wrapTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['accessibilityModifier'] = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['overrideModifier'] = (() => {
     const _kinds = new Set(["override_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, abstract_method_signature_(config as AbstractMethodSignatureConfig));
 }
@@ -253,65 +262,104 @@ export function wrapAddingTypeAnnotation(target: AddingTypeAnnotationTree) {
 
 export function wrapAmbientDeclaration(target: AmbientDeclarationTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['children1'] = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","class_declaration","enum_declaration","function_declaration","function_signature","generator_function_declaration","import_alias","interface_declaration","internal_module","lexical_declaration","module","property_identifier","statement_block","type_alias_declaration","variable_declaration"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'ambient_declaration' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, ambient_declaration_(config as AmbientDeclarationConfig));
 }
 
 export function wrapArguments(target: ArgumentsTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['expressionOrSpreadElement1'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['expressionOrSpreadElement2'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, arguments_(config as ArgumentsConfig));
 }
 
 export function wrapArray(target: ArrayTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['expressionOrSpreadElement1'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['expressionOrSpreadElement2'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","spread_element","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, array_(config as ArrayConfig));
 }
 
 export function wrapArrayPattern(target: ArrayPatternTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['assignmentPatternOrPattern1'] = (() => {
     const _kinds = new Set(["array_pattern","assignment_pattern","identifier","member_expression","non_null_expression","object_pattern","rest_pattern","subscript_expression","undefined"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['assignmentPatternOrPattern2'] = (() => {
     const _kinds = new Set(["array_pattern","assignment_pattern","identifier","member_expression","non_null_expression","object_pattern","rest_pattern","subscript_expression","undefined"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, array_pattern_(config as ArrayPatternConfig));
 }
@@ -339,17 +387,26 @@ export function wrapArrowFunction(target: ArrowFunctionTree) {
 
 export function wrapAsExpression(target: AsExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['expression'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'as_expression' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, as_expression_(config as AsExpressionConfig));
 }
@@ -502,17 +559,26 @@ export function wrapClassDeclaration(target: ClassDeclarationTree) {
 
 export function wrapClassHeritage(target: ClassHeritageTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['extendsClauseOrImplementsClause'] = (() => {
     const _kinds = new Set(["extends_clause","implements_clause"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'class_heritage' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['implementsClause'] = (() => {
     const _kinds = new Set(["implements_clause"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, class_heritage_(config as ClassHeritageConfig));
 }
@@ -630,16 +696,26 @@ export function wrapEnumBody(target: EnumBodyTree) {
     const _items = target.children().filter((c) => _kinds.has(c.type));
     return _items.length > 0 ? _items.map((c) => _wrapByKind(c.type, c)) : undefined;
   })();
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['enumAssignment1'] = (() => {
     const _kinds = new Set(["enum_assignment"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['enumAssignment2'] = (() => {
     const _kinds = new Set(["enum_assignment"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, enum_body_(config as EnumBodyConfig));
 }
@@ -653,16 +729,26 @@ export function wrapEnumDeclaration(target: EnumDeclarationTree) {
 
 export function wrapExportClause(target: ExportClauseTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['exportSpecifier1'] = (() => {
     const _kinds = new Set(["export_specifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['exportSpecifier2'] = (() => {
     const _kinds = new Set(["export_specifier"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, export_clause_(config as ExportClauseConfig));
 }
@@ -857,33 +943,52 @@ export function wrapIfStatement(target: IfStatementTree) {
 
 export function wrapImplementsClause(target: ImplementsClauseTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['childType1'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'implements_clause' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType2'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, implements_clause_(config as ImplementsClauseConfig));
 }
 
 export function wrapImportAlias(target: ImportAliasTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['identifier'] = (() => {
     const _kinds = new Set(["identifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'import_alias' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['identifierOrNestedIdentifier'] = (() => {
     const _kinds = new Set(["identifier","nested_identifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'import_alias' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, import_alias_(config as ImportAliasConfig));
 }
@@ -901,17 +1006,26 @@ export function wrapImportAttribute(target: ImportAttributeTree) {
 
 export function wrapImportClause(target: ImportClauseTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['children1'] = (() => {
     const _kinds = new Set(["identifier","named_imports","namespace_import"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'import_clause' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['namedImportsOrNamespaceImport'] = (() => {
     const _kinds = new Set(["named_imports","namespace_import"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, import_clause_(config as ImportClauseConfig));
 }
@@ -938,17 +1052,26 @@ export function wrapImportSpecifier(target: ImportSpecifierTree) {
 export function wrapImportStatement(target: ImportStatementTree) {
   const config: Record<string, unknown> = {};
   config['source'] = target.field('source') ? wrapString(target.field('source')! as StringTree) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['importClauseOrImportRequireClause'] = (() => {
     const _kinds = new Set(["import_clause","import_require_clause"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['importAttribute'] = (() => {
     const _kinds = new Set(["import_attribute"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, import_statement_(config as ImportStatementConfig));
 }
@@ -981,17 +1104,26 @@ export function wrapIndexTypeQuery(target: IndexTypeQueryTree) {
 
 export function wrapInferType(target: InferTypeTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['typeIdentifier'] = (() => {
     const _kinds = new Set(["type_identifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'infer_type' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, infer_type_(config as InferTypeConfig));
 }
@@ -1042,17 +1174,26 @@ export function wrapInternalModule(target: InternalModuleTree) {
 
 export function wrapIntersectionType(target: IntersectionTypeTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['childType1'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType2'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'intersection_type' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, intersection_type_(config as IntersectionTypeConfig));
 }
@@ -1067,16 +1208,26 @@ export function wrapLabeledStatement(target: LabeledStatementTree) {
 export function wrapLexicalDeclaration(target: LexicalDeclarationTree) {
   const config: Record<string, unknown> = {};
   config['kind'] = target.field('kind')!.text();
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['variableDeclarator1'] = (() => {
     const _kinds = new Set(["variable_declarator"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'lexical_declaration' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['variableDeclarator2'] = (() => {
     const _kinds = new Set(["variable_declarator"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, lexical_declaration_(config as LexicalDeclarationConfig));
 }
@@ -1094,17 +1245,26 @@ export function wrapLiteralType(target: LiteralTypeTree) {
 
 export function wrapLookupType(target: LookupTypeTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['primaryType'] = (() => {
     const _kinds = new Set(["array_type","conditional_type","existential_type","flow_maybe_type","generic_type","index_type_query","intersection_type","literal_type","lookup_type","nested_type_identifier","object_type","parenthesized_type","predefined_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'lookup_type' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'lookup_type' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, lookup_type_(config as LookupTypeConfig));
 }
@@ -1132,17 +1292,26 @@ export function wrapMethodDefinition(target: MethodDefinitionTree) {
   config['parameters'] = wrapFormalParameters(target.field('parameters')! as FormalParametersTree);
   config['returnType'] = target.field('return_type') ? _wrapByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
   config['typeParameters'] = target.field('type_parameters') ? wrapTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['accessibilityModifier'] = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['overrideModifier'] = (() => {
     const _kinds = new Set(["override_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, method_definition_(config as MethodDefinitionConfig));
 }
@@ -1153,17 +1322,26 @@ export function wrapMethodSignature(target: MethodSignatureTree) {
   config['parameters'] = wrapFormalParameters(target.field('parameters')! as FormalParametersTree);
   config['returnType'] = target.field('return_type') ? _wrapByKind(target.field('return_type')!.type, target.field('return_type')!) : undefined;
   config['typeParameters'] = target.field('type_parameters') ? wrapTypeParameters(target.field('type_parameters')! as TypeParametersTree) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['accessibilityModifier'] = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['overrideModifier'] = (() => {
     const _kinds = new Set(["override_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, method_signature_(config as MethodSignatureConfig));
 }
@@ -1177,16 +1355,26 @@ export function wrapModule(target: ModuleTree) {
 
 export function wrapNamedImports(target: NamedImportsTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['importSpecifier1'] = (() => {
     const _kinds = new Set(["import_specifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['importSpecifier2'] = (() => {
     const _kinds = new Set(["import_specifier"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, named_imports_(config as NamedImportsConfig));
 }
@@ -1248,16 +1436,26 @@ export function wrapNonNullExpression(target: NonNullExpressionTree) {
 
 export function wrapObject(target: ObjectTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['children1'] = (() => {
     const _kinds = new Set(["method_definition","pair","shorthand_property_identifier","spread_element"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['children2'] = (() => {
     const _kinds = new Set(["method_definition","pair","shorthand_property_identifier","spread_element"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, object_(config as ObjectConfig));
 }
@@ -1271,32 +1469,52 @@ export function wrapObjectAssignmentPattern(target: ObjectAssignmentPatternTree)
 
 export function wrapObjectPattern(target: ObjectPatternTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['children1'] = (() => {
     const _kinds = new Set(["object_assignment_pattern","pair_pattern","rest_pattern","shorthand_property_identifier_pattern"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['children2'] = (() => {
     const _kinds = new Set(["object_assignment_pattern","pair_pattern","rest_pattern","shorthand_property_identifier_pattern"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, object_pattern_(config as ObjectPatternConfig));
 }
 
 export function wrapObjectType(target: ObjectTypeTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['children1'] = (() => {
     const _kinds = new Set(["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['children2'] = (() => {
     const _kinds = new Set(["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, object_type_(config as ObjectTypeConfig));
 }
@@ -1334,17 +1552,26 @@ export function wrapOptionalParameter(target: OptionalParameterTree) {
   config['pattern'] = target.field('pattern') ? _wrapByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
   config['type'] = target.field('type') ? wrapTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
   config['value'] = target.field('value') ? _wrapByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['accessibilityModifier'] = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['overrideModifier'] = (() => {
     const _kinds = new Set(["override_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, optional_parameter_(config as OptionalParameterConfig));
 }
@@ -1399,16 +1626,26 @@ export function wrapParenthesizedType(target: ParenthesizedTypeTree) {
 
 export function wrapProgram(target: ProgramTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['hashBangLine'] = (() => {
     const _kinds = new Set(["hash_bang_line"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['statement'] = (() => {
     const _kinds = new Set(["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, program_(config as ProgramConfig));
 }
@@ -1417,17 +1654,26 @@ export function wrapPropertySignature(target: PropertySignatureTree) {
   const config: Record<string, unknown> = {};
   config['name'] = _wrapByKind(target.field('name')!.type, target.field('name')!);
   config['type'] = target.field('type') ? wrapTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['accessibilityModifier'] = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['overrideModifier'] = (() => {
     const _kinds = new Set(["override_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, property_signature_(config as PropertySignatureConfig));
 }
@@ -1442,17 +1688,26 @@ export function wrapPublicFieldDefinition(target: PublicFieldDefinitionTree) {
   config['name'] = _wrapByKind(target.field('name')!.type, target.field('name')!);
   config['type'] = target.field('type') ? wrapTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
   config['value'] = target.field('value') ? _wrapByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['accessibilityModifier'] = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['overrideModifier'] = (() => {
     const _kinds = new Set(["override_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, public_field_definition_(config as PublicFieldDefinitionConfig));
 }
@@ -1486,17 +1741,26 @@ export function wrapRequiredParameter(target: RequiredParameterTree) {
   config['pattern'] = target.field('pattern') ? _wrapByKind(target.field('pattern')!.type, target.field('pattern')!) : undefined;
   config['type'] = target.field('type') ? wrapTypeAnnotation(target.field('type')! as TypeAnnotationTree) : undefined;
   config['value'] = target.field('value') ? _wrapByKind(target.field('value')!.type, target.field('value')!) : undefined;
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['accessibilityModifier'] = (() => {
     const _kinds = new Set(["accessibility_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['overrideModifier'] = (() => {
     const _kinds = new Set(["override_modifier"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, required_parameter_(config as RequiredParameterConfig));
 }
@@ -1536,33 +1800,52 @@ export function wrapReturnStatement(target: ReturnStatementTree) {
 
 export function wrapSatisfiesExpression(target: SatisfiesExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['expression'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'satisfies_expression' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'satisfies_expression' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, satisfies_expression_(config as SatisfiesExpressionConfig));
 }
 
 export function wrapSequenceExpression(target: SequenceExpressionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['expression1'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'sequence_expression' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['expression2'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, sequence_expression_(config as SequenceExpressionConfig));
 }
@@ -1744,33 +2027,52 @@ export function wrapTypeAnnotation(target: TypeAnnotationTree) {
 
 export function wrapTypeArguments(target: TypeArgumentsTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['childType1'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'type_arguments' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType2'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, type_arguments_(config as TypeArgumentsConfig));
 }
 
 export function wrapTypeAssertion(target: TypeAssertionTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['typeArguments'] = (() => {
     const _kinds = new Set(["type_arguments"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'type_assertion' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['expression'] = (() => {
     const _kinds = new Set(["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'type_assertion' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, type_assertion_(config as TypeAssertionConfig));
 }
@@ -1785,16 +2087,26 @@ export function wrapTypeParameter(target: TypeParameterTree) {
 
 export function wrapTypeParameters(target: TypeParametersTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['typeParameter1'] = (() => {
     const _kinds = new Set(["type_parameter"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'type_parameters' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['typeParameter2'] = (() => {
     const _kinds = new Set(["type_parameter"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, type_parameters_(config as TypeParametersConfig));
 }
@@ -1837,17 +2149,26 @@ export function wrapUnaryExpression(target: UnaryExpressionTree) {
 
 export function wrapUnionType(target: UnionTypeTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['childType1'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) return undefined;
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['childType2'] = (() => {
     const _kinds = new Set(["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'union_type' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, union_type_(config as UnionTypeConfig));
 }
@@ -1861,16 +2182,26 @@ export function wrapUpdateExpression(target: UpdateExpressionTree) {
 
 export function wrapVariableDeclaration(target: VariableDeclarationTree) {
   const config: Record<string, unknown> = {};
+  // Override field promotion (wrap heuristics)
+  const _allChildren = target.children();
+  const _consumed = new Set<number>();
   config['variableDeclarator1'] = (() => {
     const _kinds = new Set(["variable_declarator"]);
-    const _child = target.children().find((c) => _kinds.has(c.type));
-    if (!_child) throw new Error(`Required child missing on 'variable_declaration' tree node`);
-    return _wrapByKind(_child.type, _child);
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   config['variableDeclarator2'] = (() => {
     const _kinds = new Set(["variable_declarator"]);
-    const _items = target.children().filter((c) => _kinds.has(c.type));
-    return _items.map((c) => _wrapByKind(c.type, c));
+    for (let i = 0; i < _allChildren.length; i++) {
+      if (_consumed.has(i)) continue;
+      const c = _allChildren[i]!;
+      if (_kinds.has(c.type)) { _consumed.add(i); return _wrapByKind(c.type, c); }
+    }
+    return undefined;
   })();
   return bindRange(target, variable_declaration_(config as VariableDeclarationConfig));
 }

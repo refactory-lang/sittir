@@ -191,9 +191,11 @@ function minimalArgs(node: StructuralNode, dc: DummyCtx): string {
 		});
 	}
 
+	// Skip children whose names overlap with field property names (override-promoted fields)
+	const fieldKeys = new Set(requiredFields.map(f => f.propertyName ?? toFieldName(f.name)));
 	const allRequired = [
 		...requiredFields.map(f => ({ key: f.propertyName ?? toFieldName(f.name), field: f })),
-		...requiredChildren.map(c => ({ key: c.name, field: c })),
+		...requiredChildren.filter(c => !fieldKeys.has(c.name)).map(c => ({ key: c.name, field: c })),
 	];
 
 	if (allRequired.length === 0) return '';
@@ -217,13 +219,15 @@ function fullArgs(node: StructuralNode, dc: DummyCtx): string {
 			allChildren.push({ name: slotNames[i]!, kinds: slot.kinds, multiple: slot.multiple, required: slot.required });
 		});
 	}
-	const optionalChildren = allChildren.filter(c => !c.required);
+	// Skip children whose names overlap with field property names (override-promoted fields)
+	const fieldKeys = new Set(allFields.map(f => f.propertyName ?? toFieldName(f.name)));
+	const optionalChildren = allChildren.filter(c => !c.required && !fieldKeys.has(c.name));
 
 	if (optionalFields.length === 0 && optionalChildren.length === 0) return '';
 
 	const entries = [
 		...allFields.map(f => ({ key: f.propertyName ?? toFieldName(f.name), field: f })),
-		...allChildren.map(c => ({ key: c.name, field: c })),
+		...allChildren.filter(c => !fieldKeys.has(c.name)).map(c => ({ key: c.name, field: c })),
 	];
 
 	const parts = entries.map(({ key, field }) => `${key}: ${dummyValue(field, dc)}`);

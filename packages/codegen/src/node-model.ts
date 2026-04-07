@@ -432,6 +432,10 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 	// Build children from grammar positions, supplemented by NT kinds
 	if (grammarHasChildren && modelHasChildren) {
 		model.children = buildChildrenFromGrammar(model.children!, rule.children!, rule.separators);
+		// Refine override field kinds/multiple from their matching child slots
+		if (model.children && isTupleChildren(model.children) && model.fields.some(f => f.override)) {
+			refineOverrideFieldsFromSlots(model);
+		}
 	}
 
 	model.rule = rule;
@@ -516,6 +520,29 @@ function enrichSupertype(model: SupertypeModel, rule: SupertypeRule): void {
 }
 
 /**
+ * After enriching an override-promoted branch's children from the grammar rule,
+ * refine each override field's kinds/multiple to match its corresponding child slot.
+ *
+ * Override fields are generated in child slot order, so positional matching is
+ * used: override field i ↔ child slot i.
+ */
+function refineOverrideFieldsFromSlots(branch: BranchModel): void {
+	if (!branch.children || !isTupleChildren(branch.children)) return;
+	const slots = branch.children as ChildModel[];
+	const overrideFields = branch.fields.filter(f => f.override);
+
+	for (let i = 0; i < overrideFields.length && i < slots.length; i++) {
+		const field = overrideFields[i]!;
+		const slot = slots[i]!;
+		field.kinds = [...slot.kinds];
+		(field as any).multiple = slot.multiple;
+		if (slot.multiple) {
+			(field as any).separator = (slot as ListChildModel).separator ?? null;
+		}
+	}
+}
+
+/**
  * Merge grammar-derived data (EnrichedRule map) with NT-derived models.
  */
 export function reconcile(
@@ -584,6 +611,20 @@ export function reconcile(
 		// branch → container narrowing (grammar found no FIELDs)
 		if (model.modelType === 'branch' && rule.modelType === 'container') {
 			const branch = model as BranchModel;
+			// If overrides promoted this to branch, keep it — enrich children from the grammar rule
+			if (branch.fields.some(f => f.override)) {
+				const containerRule = rule as ContainerRule;
+				if (containerRule.children.length > 0) {
+					const existing = branch.children ?? { required: false, multiple: false, kinds: [] } as SingleChildModel;
+					branch.children = buildChildrenFromGrammar(existing, containerRule.children, containerRule.separators);
+					// Refine override field kinds/multiple from their matching child slots
+					if (isTupleChildren(branch.children)) {
+						refineOverrideFieldsFromSlots(branch);
+					}
+				}
+				branch.rule = rule;
+				continue;
+			}
 			const promoted: ContainerModel = {
 				modelType: 'container',
 				kind,
@@ -639,6 +680,7 @@ export function refineModelType(model: NodeModel): NodeModel {
 				rule: branch.rule,
 			} satisfies ContainerModel;
 		}
+		// Don't demote branches that only have override fields — they were intentionally promoted
 	}
 	return model;
 }

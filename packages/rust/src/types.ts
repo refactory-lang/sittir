@@ -321,19 +321,21 @@ export interface AbstractType {
 }
 export interface Arguments {
   readonly type: 'arguments';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly expression?: Expression;
-  readonly attributeItemOrExpression?: readonly (AttributeItem | Expression)[];
+  readonly fields: {
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly expression?: Expression;
+    readonly attributeItemOrExpression?: readonly (AttributeItem | Expression)[];
+  };
 }
 export interface ArrayExpression {
   readonly type: 'array_expression';
   readonly fields: {
     readonly length?: Expression;
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly attributeItemOrExpression1?: readonly (AttributeItem | Expression)[];
+    readonly expression?: Expression;
+    readonly attributeItemOrExpression2?: readonly (AttributeItem | Expression)[];
   };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly attributeItemOrExpression1?: readonly (AttributeItem | Expression)[];
-  readonly expression?: Expression;
-  readonly attributeItemOrExpression2?: readonly (AttributeItem | Expression)[];
 }
 export interface ArrayType {
   readonly type: 'array_type';
@@ -392,9 +394,11 @@ export interface BinaryExpression {
 }
 export interface Block {
   readonly type: 'block';
-  readonly label?: Label;
-  readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
-  readonly expression?: Expression;
+  readonly fields: {
+    readonly label?: Label;
+    readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
+    readonly expression?: Expression;
+  };
 }
 export interface BlockComment {
   readonly type: 'block_comment';
@@ -406,8 +410,10 @@ export interface BlockComment {
 }
 export interface BoundedType {
   readonly type: 'bounded_type';
-  readonly lifetimeOrTypeOrUseBounds1: Lifetime | Type | UseBounds;
-  readonly lifetimeOrTypeOrUseBounds2: Lifetime | Type | UseBounds;
+  readonly fields: {
+    readonly lifetimeOrTypeOrUseBounds1?: Lifetime | Type | UseBounds;
+    readonly lifetimeOrTypeOrUseBounds2?: Lifetime | Type | UseBounds;
+  };
 }
 export interface BracketedType {
   readonly type: 'bracketed_type';
@@ -415,8 +421,10 @@ export interface BracketedType {
 }
 export interface BreakExpression {
   readonly type: 'break_expression';
-  readonly label?: Label;
-  readonly expression?: Expression;
+  readonly fields: {
+    readonly label?: Label;
+    readonly expression?: Expression;
+  };
 }
 export interface CallExpression {
   readonly type: 'call_expression';
@@ -427,8 +435,10 @@ export interface CallExpression {
 }
 export interface CapturedPattern {
   readonly type: 'captured_pattern';
-  readonly identifier: Identifier;
-  readonly pattern: Pattern;
+  readonly fields: {
+    readonly identifier?: Identifier;
+    readonly pattern?: Pattern;
+  };
 }
 export interface ClosureExpression {
   readonly type: 'closure_expression';
@@ -440,8 +450,10 @@ export interface ClosureExpression {
 }
 export interface ClosureParameters {
   readonly type: 'closure_parameters';
-  readonly parameterOrPattern1?: Parameter | Pattern;
-  readonly parameterOrPattern2?: readonly (Parameter | Pattern)[];
+  readonly fields: {
+    readonly parameterOrPattern1?: Parameter | Pattern;
+    readonly parameterOrPattern2?: readonly (Parameter | Pattern)[];
+  };
 }
 export interface CompoundAssignmentExpr {
   readonly type: 'compound_assignment_expr';
@@ -498,9 +510,9 @@ export interface EnumItem {
     readonly body: EnumVariantList;
     readonly name: TypeIdentifier;
     readonly typeParameters?: TypeParameters;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly whereClause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
 export interface EnumVariant {
   readonly type: 'enum_variant';
@@ -513,9 +525,11 @@ export interface EnumVariant {
 }
 export interface EnumVariantList {
   readonly type: 'enum_variant_list';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly enumVariant?: EnumVariant;
-  readonly attributeItemOrEnumVariant?: readonly (AttributeItem | EnumVariant)[];
+  readonly fields: {
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly enumVariant?: EnumVariant;
+    readonly attributeItemOrEnumVariant?: readonly (AttributeItem | EnumVariant)[];
+  };
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
@@ -526,9 +540,9 @@ export interface ExternCrateDeclaration {
   readonly fields: {
     readonly alias?: Identifier;
     readonly name: Identifier;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly crate?: Crate;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly crate: Crate;
 }
 export interface ExternModifier {
   readonly type: 'extern_modifier';
@@ -544,9 +558,11 @@ export interface FieldDeclaration {
 }
 export interface FieldDeclarationList {
   readonly type: 'field_declaration_list';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly fieldDeclaration?: FieldDeclaration;
-  readonly attributeItemOrFieldDeclaration?: readonly (AttributeItem | FieldDeclaration)[];
+  readonly fields: {
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly fieldDeclaration?: FieldDeclaration;
+    readonly attributeItemOrFieldDeclaration?: readonly (AttributeItem | FieldDeclaration)[];
+  };
 }
 export interface FieldExpression {
   readonly type: 'field_expression';
@@ -565,8 +581,10 @@ export interface FieldInitializer {
 }
 export interface FieldInitializerList {
   readonly type: 'field_initializer_list';
-  readonly children1?: BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer;
-  readonly children2?: readonly (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[];
+  readonly fields: {
+    readonly children1?: BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer;
+    readonly children2?: readonly (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[];
+  };
 }
 export interface FieldPattern {
   readonly type: 'field_pattern';
@@ -587,16 +605,18 @@ export interface ForExpression {
 }
 export interface ForLifetimes {
   readonly type: 'for_lifetimes';
-  readonly lifetime1: Lifetime;
-  readonly lifetime2?: readonly (Lifetime)[];
+  readonly fields: {
+    readonly lifetime1?: Lifetime;
+    readonly lifetime2?: readonly (Lifetime)[];
+  };
 }
 export interface ForeignModItem {
   readonly type: 'foreign_mod_item';
   readonly fields: {
     readonly body?: DeclarationList;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly externModifier?: ExternModifier;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly externModifier: ExternModifier;
 }
 export interface FunctionItem {
   readonly type: 'function_item';
@@ -606,10 +626,10 @@ export interface FunctionItem {
     readonly parameters: Parameters;
     readonly returnType?: Type;
     readonly typeParameters?: TypeParameters;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly functionModifiers?: FunctionModifiers;
+    readonly whereClause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly functionModifiers?: FunctionModifiers;
-  readonly whereClause?: WhereClause;
 }
 export interface FunctionModifiers {
   readonly type: 'function_modifiers';
@@ -622,10 +642,10 @@ export interface FunctionSignatureItem {
     readonly parameters: Parameters;
     readonly returnType?: Type;
     readonly typeParameters?: TypeParameters;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly functionModifiers?: FunctionModifiers;
+    readonly whereClause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly functionModifiers?: FunctionModifiers;
-  readonly whereClause?: WhereClause;
 }
 export interface FunctionType {
   readonly type: 'function_type';
@@ -633,9 +653,9 @@ export interface FunctionType {
     readonly parameters: Parameters;
     readonly returnType?: Type;
     readonly trait?: ScopedTypeIdentifier | TypeIdentifier;
+    readonly forLifetimes?: ForLifetimes;
+    readonly functionModifiers?: FunctionModifiers;
   };
-  readonly forLifetimes?: ForLifetimes;
-  readonly functionModifiers?: FunctionModifiers;
 }
 export interface GenBlock {
   readonly type: 'gen_block';
@@ -764,9 +784,9 @@ export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
     readonly name: Identifier;
+    readonly macroRule1?: readonly (MacroRule)[];
+    readonly macroRule2?: MacroRule;
   };
-  readonly macroRule1?: readonly (MacroRule)[];
-  readonly macroRule2?: MacroRule;
 }
 export interface MacroInvocation {
   readonly type: 'macro_invocation';
@@ -792,8 +812,10 @@ export interface MatchArm {
 }
 export interface MatchBlock {
   readonly type: 'match_block';
-  readonly matchArm1?: readonly (MatchArm)[];
-  readonly matchArm2?: MatchArm;
+  readonly fields: {
+    readonly matchArm1?: readonly (MatchArm)[];
+    readonly matchArm2?: MatchArm;
+  };
 }
 export interface MatchExpression {
   readonly type: 'match_expression';
@@ -819,11 +841,17 @@ export interface ModItem {
 }
 export interface MutPattern {
   readonly type: 'mut_pattern';
-  readonly mutableSpecifier: MutableSpecifier;
-  readonly pattern: Pattern;
+  readonly fields: {
+    readonly mutableSpecifier?: MutableSpecifier;
+    readonly pattern?: Pattern;
+  };
 }
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
+  readonly fields: {
+    readonly operator?: string;
+    readonly value?: FloatLiteral | IntegerLiteral;
+  };
   readonly children: FloatLiteral | IntegerLiteral;
 }
 export interface OrPattern {
@@ -839,10 +867,10 @@ export interface OrderedFieldDeclarationList {
   readonly type: 'ordered_field_declaration_list';
   readonly fields: {
     readonly type?: readonly (Type)[];
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly attributeItemOrVisibilityModifier?: readonly (AttributeItem | VisibilityModifier)[];
   };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly attributeItemOrVisibilityModifier?: readonly (AttributeItem | VisibilityModifier)[];
 }
 export interface Parameter {
   readonly type: 'parameter';
@@ -854,9 +882,11 @@ export interface Parameter {
 }
 export interface Parameters {
   readonly type: 'parameters';
-  readonly attributeItem?: AttributeItem;
-  readonly children2?: Parameter | SelfParameter | Type | VariadicParameter;
-  readonly children3?: readonly (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[];
+  readonly fields: {
+    readonly attributeItem?: AttributeItem;
+    readonly children2?: Parameter | SelfParameter | Type | VariadicParameter;
+    readonly children3?: readonly (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[];
+  };
 }
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
@@ -911,16 +941,18 @@ export interface ReferenceExpression {
 }
 export interface ReferencePattern {
   readonly type: 'reference_pattern';
-  readonly mutableSpecifier?: MutableSpecifier;
-  readonly pattern: Pattern;
+  readonly fields: {
+    readonly mutableSpecifier?: MutableSpecifier;
+    readonly pattern?: Pattern;
+  };
 }
 export interface ReferenceType {
   readonly type: 'reference_type';
   readonly fields: {
     readonly type: Type;
+    readonly lifetime?: Lifetime;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
-  readonly lifetime?: Lifetime;
-  readonly mutableSpecifier?: MutableSpecifier;
 }
 export interface RemovedTraitBound {
   readonly type: 'removed_trait_bound';
@@ -956,14 +988,18 @@ export interface ScopedUseList {
 }
 export interface SelfParameter {
   readonly type: 'self_parameter';
-  readonly lifetime?: Lifetime;
-  readonly mutableSpecifier?: MutableSpecifier;
-  readonly self: Self;
+  readonly fields: {
+    readonly lifetime?: Lifetime;
+    readonly mutableSpecifier?: MutableSpecifier;
+    readonly self?: Self;
+  };
 }
 export interface ShorthandFieldInitializer {
   readonly type: 'shorthand_field_initializer';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly identifier: Identifier;
+  readonly fields: {
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly identifier?: Identifier;
+  };
 }
 export interface SlicePattern {
   readonly type: 'slice_pattern';
@@ -971,8 +1007,10 @@ export interface SlicePattern {
 }
 export interface SourceFile {
   readonly type: 'source_file';
-  readonly shebang?: Shebang;
-  readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
+  readonly fields: {
+    readonly shebang?: Shebang;
+    readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
+  };
 }
 export interface StaticItem {
   readonly type: 'static_item';
@@ -980,9 +1018,9 @@ export interface StaticItem {
     readonly name: Identifier;
     readonly type: Type;
     readonly value?: Expression;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly mutableSpecifier?: MutableSpecifier;
 }
 export interface StringLiteral {
   readonly type: 'string_literal';
@@ -1001,17 +1039,17 @@ export interface StructItem {
     readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
     readonly name: TypeIdentifier;
     readonly typeParameters?: TypeParameters;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly whereClause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
 export interface StructPattern {
   readonly type: 'struct_pattern';
   readonly fields: {
     readonly type: ScopedTypeIdentifier | TypeIdentifier;
+    readonly fieldPatternOrRemainingFieldPattern1?: FieldPattern | RemainingFieldPattern;
+    readonly fieldPatternOrRemainingFieldPattern2?: readonly (FieldPattern | RemainingFieldPattern)[];
   };
-  readonly fieldPatternOrRemainingFieldPattern1?: FieldPattern | RemainingFieldPattern;
-  readonly fieldPatternOrRemainingFieldPattern2?: readonly (FieldPattern | RemainingFieldPattern)[];
 }
 export interface TokenBindingPattern {
   readonly type: 'token_binding_pattern';
@@ -1038,8 +1076,10 @@ export interface TokenTreePattern {
 }
 export interface TraitBounds {
   readonly type: 'trait_bounds';
-  readonly higherRankedTraitBoundOrLifetimeOrType1: HigherRankedTraitBound | Lifetime | Type;
-  readonly higherRankedTraitBoundOrLifetimeOrType2?: readonly (HigherRankedTraitBound | Lifetime | Type)[];
+  readonly fields: {
+    readonly higherRankedTraitBoundOrLifetimeOrType1?: HigherRankedTraitBound | Lifetime | Type;
+    readonly higherRankedTraitBoundOrLifetimeOrType2?: readonly (HigherRankedTraitBound | Lifetime | Type)[];
+  };
 }
 export interface TraitItem {
   readonly type: 'trait_item';
@@ -1048,9 +1088,9 @@ export interface TraitItem {
     readonly bounds?: TraitBounds;
     readonly name: TypeIdentifier;
     readonly typeParameters?: TypeParameters;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly whereClause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
 export interface TryBlock {
   readonly type: 'try_block';
@@ -1066,23 +1106,27 @@ export interface TryExpression {
 }
 export interface TupleExpression {
   readonly type: 'tuple_expression';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly expression1: Expression;
-  readonly expression2?: readonly (Expression)[];
-  readonly expression3?: Expression;
+  readonly fields: {
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly expression1?: Expression;
+    readonly expression2?: readonly (Expression)[];
+    readonly expression3?: Expression;
+  };
 }
 export interface TuplePattern {
   readonly type: 'tuple_pattern';
-  readonly closureExpressionOrPattern1?: ClosureExpression | Pattern;
-  readonly closureExpressionOrPattern2?: readonly (ClosureExpression | Pattern)[];
+  readonly fields: {
+    readonly closureExpressionOrPattern1?: ClosureExpression | Pattern;
+    readonly closureExpressionOrPattern2?: readonly (ClosureExpression | Pattern)[];
+  };
 }
 export interface TupleStructPattern {
   readonly type: 'tuple_struct_pattern';
   readonly fields: {
     readonly type: GenericType | Identifier | ScopedIdentifier;
+    readonly pattern1?: Pattern;
+    readonly pattern2?: readonly (Pattern)[];
   };
-  readonly pattern1?: Pattern;
-  readonly pattern2?: readonly (Pattern)[];
 }
 export interface TupleType {
   readonly type: 'tuple_type';
@@ -1090,9 +1134,11 @@ export interface TupleType {
 }
 export interface TypeArguments {
   readonly type: 'type_arguments';
-  readonly children1: Block | Lifetime | Literal | Type | TypeBinding;
-  readonly traitBounds?: TraitBounds;
-  readonly children3?: readonly (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[];
+  readonly fields: {
+    readonly children1?: Block | Lifetime | Literal | Type | TypeBinding;
+    readonly traitBounds?: TraitBounds;
+    readonly children3?: readonly (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[];
+  };
 }
 export interface TypeBinding {
   readonly type: 'type_binding';
@@ -1115,10 +1161,10 @@ export interface TypeItem {
     readonly name: TypeIdentifier;
     readonly type: Type;
     readonly typeParameters?: TypeParameters;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly whereClause1?: WhereClause;
+    readonly whereClause2?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause1?: WhereClause;
-  readonly whereClause2?: WhereClause;
 }
 export interface TypeParameter {
   readonly type: 'type_parameter';
@@ -1130,9 +1176,11 @@ export interface TypeParameter {
 }
 export interface TypeParameters {
   readonly type: 'type_parameters';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly children2: ConstParameter | LifetimeParameter | Metavariable | TypeParameter;
-  readonly children3?: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
+  readonly fields: {
+    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly children2?: ConstParameter | LifetimeParameter | Metavariable | TypeParameter;
+    readonly children3?: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
+  };
 }
 export interface UnaryExpression {
   readonly type: 'unary_expression';
@@ -1148,9 +1196,9 @@ export interface UnionItem {
     readonly body: FieldDeclarationList;
     readonly name: TypeIdentifier;
     readonly typeParameters?: TypeParameters;
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly whereClause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
 export interface UnsafeBlock {
   readonly type: 'unsafe_block';
@@ -1165,8 +1213,10 @@ export interface UseAsClause {
 }
 export interface UseBounds {
   readonly type: 'use_bounds';
-  readonly lifetimeOrTypeIdentifier1?: Lifetime | TypeIdentifier;
-  readonly lifetimeOrTypeIdentifier2?: readonly (Lifetime | TypeIdentifier)[];
+  readonly fields: {
+    readonly lifetimeOrTypeIdentifier1?: Lifetime | TypeIdentifier;
+    readonly lifetimeOrTypeIdentifier2?: readonly (Lifetime | TypeIdentifier)[];
+  };
 }
 export interface UseDeclaration {
   readonly type: 'use_declaration';
@@ -1196,8 +1246,10 @@ export interface VisibilityModifier {
 }
 export interface WhereClause {
   readonly type: 'where_clause';
-  readonly wherePredicate1?: WherePredicate;
-  readonly wherePredicate2?: readonly (WherePredicate)[];
+  readonly fields: {
+    readonly wherePredicate1?: WherePredicate;
+    readonly wherePredicate2?: readonly (WherePredicate)[];
+  };
 }
 export interface WherePredicate {
   readonly type: 'where_predicate';

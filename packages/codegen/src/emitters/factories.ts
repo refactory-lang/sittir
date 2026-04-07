@@ -110,9 +110,15 @@ export function emitFactory(config: {
 		}
 	}
 	if (hasChildren) {
+		// Skip children slots that already have a field getter (override-promoted fields)
+		const fieldMethodNames = new Set(fields.map(f => {
+			const camel = f.propertyName ?? toFieldName(f.name);
+			return camel === 'type' ? 'typeField' : camel;
+		}));
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
+			if (fieldMethodNames.has(name)) return; // already emitted as field getter
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (name === 'children') {

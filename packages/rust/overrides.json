@@ -7,20 +7,39 @@
   },
   "unary_expression": {
     "fields": {
-      "operator": { "anonymous": true, "values": ["-", "*", "!", "&"] },
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "-",
+          "*",
+          "!",
+          "&"
+        ]
+      },
       "operand": {}
     }
   },
   "range_expression": {
     "fields": {
       "start": {},
-      "operator": { "anonymous": true, "values": ["..", "..="] },
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "..",
+          "..="
+        ]
+      },
       "end": {}
     }
   },
   "negative_literal": {
     "fields": {
-      "operator": { "anonymous": true, "values": ["-"] },
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "-"
+        ]
+      },
       "value": {}
     }
   },
@@ -32,13 +51,23 @@
   "try_expression": {
     "fields": {
       "value": {},
-      "operator": { "anonymous": true, "values": ["?"] }
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "?"
+        ]
+      }
     }
   },
   "or_pattern": {
     "fields": {
       "left": {},
-      "operator": { "anonymous": true, "values": ["|"] },
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "|"
+        ]
+      },
       "right": {}
     }
   },
@@ -55,6 +84,330 @@
   "let_chain": {
     "fields": {
       "conditions": {}
+    }
+  },
+  "arguments": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "expression": {},
+      "attribute_item_or_expression": {
+        "multiple": true
+      }
+    }
+  },
+  "array_expression": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "attribute_item_or_expression1": {
+        "multiple": true
+      },
+      "expression": {},
+      "attribute_item_or_expression2": {
+        "multiple": true
+      }
+    }
+  },
+  "block": {
+    "fields": {
+      "label": {},
+      "children2": {
+        "multiple": true
+      },
+      "expression": {}
+    }
+  },
+  "bounded_type": {
+    "fields": {
+      "lifetime_or_type_or_use_bounds1": {},
+      "lifetime_or_type_or_use_bounds2": {}
+    }
+  },
+  "break_expression": {
+    "fields": {
+      "label": {},
+      "expression": {}
+    }
+  },
+  "captured_pattern": {
+    "fields": {
+      "identifier": {},
+      "pattern": {}
+    }
+  },
+  "closure_parameters": {
+    "fields": {
+      "parameter_or_pattern1": {},
+      "parameter_or_pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "enum_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "where_clause": {}
+    }
+  },
+  "enum_variant_list": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "enum_variant": {},
+      "attribute_item_or_enum_variant": {
+        "multiple": true
+      }
+    }
+  },
+  "extern_crate_declaration": {
+    "fields": {
+      "visibility_modifier": {},
+      "crate": {}
+    }
+  },
+  "field_declaration_list": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "field_declaration": {},
+      "attribute_item_or_field_declaration": {
+        "multiple": true
+      }
+    }
+  },
+  "field_initializer_list": {
+    "fields": {
+      "children1": {},
+      "children2": {
+        "multiple": true
+      }
+    }
+  },
+  "for_lifetimes": {
+    "fields": {
+      "lifetime1": {},
+      "lifetime2": {
+        "multiple": true
+      }
+    }
+  },
+  "foreign_mod_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "extern_modifier": {}
+    }
+  },
+  "function_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "function_modifiers": {},
+      "where_clause": {}
+    }
+  },
+  "function_signature_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "function_modifiers": {},
+      "where_clause": {}
+    }
+  },
+  "function_type": {
+    "fields": {
+      "for_lifetimes": {},
+      "function_modifiers": {}
+    }
+  },
+  "macro_definition": {
+    "fields": {
+      "macro_rule1": {
+        "multiple": true
+      },
+      "macro_rule2": {}
+    }
+  },
+  "match_block": {
+    "fields": {
+      "match_arm1": {
+        "multiple": true
+      },
+      "match_arm2": {}
+    }
+  },
+  "mut_pattern": {
+    "fields": {
+      "mutable_specifier": {},
+      "pattern": {}
+    }
+  },
+  "ordered_field_declaration_list": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "visibility_modifier": {},
+      "attribute_item_or_visibility_modifier": {
+        "multiple": true
+      }
+    }
+  },
+  "parameters": {
+    "fields": {
+      "attribute_item": {},
+      "children2": {},
+      "children3": {
+        "multiple": true
+      }
+    }
+  },
+  "reference_pattern": {
+    "fields": {
+      "mutable_specifier": {},
+      "pattern": {}
+    }
+  },
+  "reference_type": {
+    "fields": {
+      "lifetime": {},
+      "mutable_specifier": {}
+    }
+  },
+  "self_parameter": {
+    "fields": {
+      "lifetime": {},
+      "mutable_specifier": {},
+      "self": {}
+    }
+  },
+  "shorthand_field_initializer": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "identifier": {}
+    }
+  },
+  "source_file": {
+    "fields": {
+      "shebang": {},
+      "children2": {
+        "multiple": true
+      }
+    }
+  },
+  "static_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "mutable_specifier": {}
+    }
+  },
+  "struct_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "where_clause": {}
+    }
+  },
+  "struct_pattern": {
+    "fields": {
+      "field_pattern_or_remaining_field_pattern1": {},
+      "field_pattern_or_remaining_field_pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "trait_bounds": {
+    "fields": {
+      "higher_ranked_trait_bound_or_lifetime_or_type1": {},
+      "higher_ranked_trait_bound_or_lifetime_or_type2": {
+        "multiple": true
+      }
+    }
+  },
+  "trait_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "where_clause": {}
+    }
+  },
+  "tuple_expression": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "expression1": {},
+      "expression2": {
+        "multiple": true
+      },
+      "expression3": {}
+    }
+  },
+  "tuple_pattern": {
+    "fields": {
+      "closure_expression_or_pattern1": {},
+      "closure_expression_or_pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "tuple_struct_pattern": {
+    "fields": {
+      "pattern1": {},
+      "pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "type_arguments": {
+    "fields": {
+      "children1": {},
+      "trait_bounds": {},
+      "children3": {
+        "multiple": true
+      }
+    }
+  },
+  "type_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "where_clause1": {},
+      "where_clause2": {}
+    }
+  },
+  "type_parameters": {
+    "fields": {
+      "attribute_item": {
+        "multiple": true
+      },
+      "children2": {},
+      "children3": {
+        "multiple": true
+      }
+    }
+  },
+  "union_item": {
+    "fields": {
+      "visibility_modifier": {},
+      "where_clause": {}
+    }
+  },
+  "use_bounds": {
+    "fields": {
+      "lifetime_or_type_identifier1": {},
+      "lifetime_or_type_identifier2": {
+        "multiple": true
+      }
+    }
+  },
+  "where_clause": {
+    "fields": {
+      "where_predicate1": {},
+      "where_predicate2": {
+        "multiple": true
+      }
     }
   }
 }

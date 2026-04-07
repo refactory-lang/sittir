@@ -272,9 +272,11 @@ function emitFromFunction(
 		lines.push(`  }`);
 	}
 	if (hasChildren) {
+		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const propName = slotNames[i]!;
+			if (fieldKeys.has(propName)) return; // already handled as field
 			const slotProj = projectKinds(slot.kinds, ctx);
 			lines.push(`  if (obj.${propName} !== undefined) {`);
 			if (slot.multiple) {

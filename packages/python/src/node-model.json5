@@ -129,8 +129,41 @@
     children: null,
   },
   argument_list: {
-    modelType: "container",
+    modelType: "branch",
     kind: "argument_list",
+    fields: [
+      {
+        name: "children1",
+        required: false,
+        multiple: false,
+        kinds: [
+          "expression",
+          "list_splat",
+          "dictionary_splat",
+          "parenthesized_expression",
+          "keyword_argument",
+        ],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "children2",
+        required: false,
+        multiple: true,
+        kinds: [
+          "expression",
+          "list_splat",
+          "dictionary_splat",
+          "parenthesized_expression",
+          "keyword_argument",
+        ],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: false,
@@ -175,8 +208,29 @@
     },
   },
   assert_statement: {
-    modelType: "container",
+    modelType: "branch",
     kind: "assert_statement",
+    fields: [
+      {
+        name: "expression1",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression2",
+        required: false,
+        multiple: true,
+        kinds: ["expression"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -408,6 +462,25 @@
         multiple: false,
         kinds: ["if_clause"],
       },
+      {
+        name: "case_pattern1",
+        required: false,
+        multiple: false,
+        kinds: ["case_pattern"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "case_pattern2",
+        required: false,
+        multiple: true,
+        kinds: ["case_pattern"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
     ],
     children: [
       {
@@ -491,8 +564,38 @@
     children: null,
   },
   class_pattern: {
-    modelType: "container",
+    modelType: "branch",
     kind: "class_pattern",
+    fields: [
+      {
+        name: "dotted_name",
+        required: false,
+        multiple: false,
+        kinds: ["dotted_name"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "case_pattern1",
+        required: false,
+        multiple: false,
+        kinds: ["case_pattern"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "case_pattern2",
+        required: false,
+        multiple: true,
+        kinds: ["case_pattern"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -537,6 +640,25 @@
         ],
         separator: null,
       },
+      {
+        name: "primary_expression1",
+        required: false,
+        multiple: false,
+        kinds: ["primary_expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "primary_expression2",
+        required: false,
+        multiple: true,
+        kinds: ["primary_expression"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
     ],
     children: [
       {
@@ -553,8 +675,28 @@
     ],
   },
   complex_pattern: {
-    modelType: "container",
+    modelType: "branch",
     kind: "complex_pattern",
+    fields: [
+      {
+        name: "float_or_integer1",
+        required: false,
+        multiple: false,
+        kinds: ["integer", "float"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "float_or_integer2",
+        required: false,
+        multiple: false,
+        kinds: ["integer", "float"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -569,8 +711,29 @@
     ],
   },
   concatenated_string: {
-    modelType: "container",
+    modelType: "branch",
     kind: "concatenated_string",
+    fields: [
+      {
+        name: "string1",
+        required: false,
+        multiple: false,
+        kinds: ["string"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "string2",
+        required: false,
+        multiple: true,
+        kinds: ["string"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -586,8 +749,37 @@
     ],
   },
   conditional_expression: {
-    modelType: "container",
+    modelType: "branch",
     kind: "conditional_expression",
+    fields: [
+      {
+        name: "expression1",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression2",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression3",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -607,8 +799,28 @@
     ],
   },
   constrained_type: {
-    modelType: "container",
+    modelType: "branch",
     kind: "constrained_type",
+    fields: [
+      {
+        name: "child_type1",
+        required: false,
+        multiple: false,
+        kinds: ["type"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "child_type2",
+        required: false,
+        multiple: false,
+        kinds: ["type"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -683,8 +895,61 @@
     },
   },
   dict_pattern: {
-    modelType: "container",
+    modelType: "branch",
     kind: "dict_pattern",
+    fields: [
+      {
+        name: "key",
+        required: false,
+        multiple: true,
+        kinds: [
+          "-",
+          "_",
+          "class_pattern",
+          "complex_pattern",
+          "concatenated_string",
+          "dict_pattern",
+          "dotted_name",
+          "false",
+          "float",
+          "integer",
+          "list_pattern",
+          "none",
+          "splat_pattern",
+          "string",
+          "true",
+          "tuple_pattern",
+          "union_pattern",
+        ],
+        separator: null,
+      },
+      {
+        name: "value",
+        required: false,
+        multiple: true,
+        kinds: ["case_pattern"],
+        separator: null,
+      },
+      {
+        name: "splat_pattern1",
+        required: false,
+        multiple: false,
+        kinds: ["splat_pattern"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "splat_pattern2",
+        required: false,
+        multiple: true,
+        kinds: ["splat_pattern"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: false,
@@ -700,8 +965,29 @@
     ],
   },
   dictionary: {
-    modelType: "container",
+    modelType: "branch",
     kind: "dictionary",
+    fields: [
+      {
+        name: "dictionary_splat_or_pair1",
+        required: false,
+        multiple: false,
+        kinds: ["pair", "dictionary_splat"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "dictionary_splat_or_pair2",
+        required: false,
+        multiple: true,
+        kinds: ["pair", "dictionary_splat"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: false,
@@ -725,6 +1011,25 @@
         required: true,
         multiple: false,
         kinds: ["pair"],
+      },
+      {
+        name: "for_in_clause",
+        required: false,
+        multiple: false,
+        kinds: ["for_in_clause"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "for_in_clause_or_if_clause",
+        required: false,
+        multiple: true,
+        kinds: ["for_in_clause", "if_clause"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: [
@@ -760,8 +1065,29 @@
     },
   },
   dotted_name: {
-    modelType: "container",
+    modelType: "branch",
     kind: "dotted_name",
+    fields: [
+      {
+        name: "identifier1",
+        required: false,
+        multiple: false,
+        kinds: ["identifier"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "identifier2",
+        required: false,
+        multiple: true,
+        kinds: ["identifier"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -842,6 +1168,25 @@
         multiple: false,
         kinds: ["string", "identifier"],
       },
+      {
+        name: "expression1",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression2",
+        required: false,
+        multiple: true,
+        kinds: ["expression"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
     ],
     children: [
       {
@@ -858,8 +1203,29 @@
     ],
   },
   expression_list: {
-    modelType: "container",
+    modelType: "branch",
     kind: "expression_list",
+    fields: [
+      {
+        name: "expression1",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression2",
+        required: false,
+        multiple: true,
+        kinds: ["expression"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -875,8 +1241,29 @@
     ],
   },
   expression_statement: {
-    modelType: "container",
+    modelType: "branch",
     kind: "expression_statement",
+    fields: [
+      {
+        name: "children1",
+        required: false,
+        multiple: false,
+        kinds: ["expression", "assignment", "augmented_assignment", "yield"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression",
+        required: false,
+        multiple: true,
+        kinds: ["expression"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1047,6 +1434,25 @@
         multiple: false,
         kinds: ["expression"],
       },
+      {
+        name: "for_in_clause",
+        required: false,
+        multiple: false,
+        kinds: ["for_in_clause"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "for_in_clause_or_if_clause",
+        required: false,
+        multiple: true,
+        kinds: ["for_in_clause", "if_clause"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
     ],
     children: [
       {
@@ -1063,8 +1469,28 @@
     ],
   },
   generic_type: {
-    modelType: "container",
+    modelType: "branch",
     kind: "generic_type",
+    fields: [
+      {
+        name: "identifier",
+        required: false,
+        multiple: false,
+        kinds: ["identifier"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "type_parameter",
+        required: false,
+        multiple: false,
+        kinds: ["type_parameter"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1079,8 +1505,29 @@
     ],
   },
   global_statement: {
-    modelType: "container",
+    modelType: "branch",
     kind: "global_statement",
+    fields: [
+      {
+        name: "identifier1",
+        required: false,
+        multiple: false,
+        kinds: ["identifier"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "identifier2",
+        required: false,
+        multiple: true,
+        kinds: ["identifier"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1223,8 +1670,44 @@
     children: null,
   },
   keyword_pattern: {
-    modelType: "container",
+    modelType: "branch",
     kind: "keyword_pattern",
+    fields: [
+      {
+        name: "identifier",
+        required: false,
+        multiple: false,
+        kinds: ["identifier"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "children2",
+        required: false,
+        multiple: false,
+        kinds: [
+          "class_pattern",
+          "splat_pattern",
+          "union_pattern",
+          "list_pattern",
+          "tuple_pattern",
+          "dict_pattern",
+          "string",
+          "concatenated_string",
+          "true",
+          "false",
+          "none",
+          "integer",
+          "float",
+          "complex_pattern",
+          "dotted_name",
+        ],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1308,6 +1791,25 @@
         multiple: false,
         kinds: ["expression"],
       },
+      {
+        name: "for_in_clause",
+        required: false,
+        multiple: false,
+        kinds: ["for_in_clause"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "for_in_clause_or_if_clause",
+        required: false,
+        multiple: true,
+        kinds: ["for_in_clause", "if_clause"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
     ],
     children: [
       {
@@ -1372,8 +1874,28 @@
     children: null,
   },
   member_type: {
-    modelType: "container",
+    modelType: "branch",
     kind: "member_type",
+    fields: [
+      {
+        name: "child_type",
+        required: false,
+        multiple: false,
+        kinds: ["type"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "identifier",
+        required: false,
+        multiple: false,
+        kinds: ["identifier"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1417,8 +1939,29 @@
     children: null,
   },
   nonlocal_statement: {
-    modelType: "container",
+    modelType: "branch",
     kind: "nonlocal_statement",
+    fields: [
+      {
+        name: "identifier1",
+        required: false,
+        multiple: false,
+        kinds: ["identifier"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "identifier2",
+        required: false,
+        multiple: true,
+        kinds: ["identifier"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1504,8 +2047,29 @@
     text: "pass",
   },
   pattern_list: {
-    modelType: "container",
+    modelType: "branch",
     kind: "pattern_list",
+    fields: [
+      {
+        name: "pattern1",
+        required: false,
+        multiple: false,
+        kinds: ["pattern"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "pattern2",
+        required: false,
+        multiple: true,
+        kinds: ["pattern"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1561,8 +2125,28 @@
     },
   },
   relative_import: {
-    modelType: "container",
+    modelType: "branch",
     kind: "relative_import",
+    fields: [
+      {
+        name: "import_prefix",
+        required: false,
+        multiple: false,
+        kinds: ["import_prefix"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "dotted_name",
+        required: false,
+        multiple: false,
+        kinds: ["dotted_name"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1605,6 +2189,25 @@
         multiple: false,
         kinds: ["expression"],
       },
+      {
+        name: "for_in_clause",
+        required: false,
+        multiple: false,
+        kinds: ["for_in_clause"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "for_in_clause_or_if_clause",
+        required: false,
+        multiple: true,
+        kinds: ["for_in_clause", "if_clause"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
     ],
     children: [
       {
@@ -1621,8 +2224,37 @@
     ],
   },
   slice: {
-    modelType: "container",
+    modelType: "branch",
     kind: "slice",
+    fields: [
+      {
+        name: "expression1",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression2",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "expression3",
+        required: false,
+        multiple: false,
+        kinds: ["expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: false,
@@ -1660,8 +2292,38 @@
     },
   },
   string: {
-    modelType: "container",
+    modelType: "branch",
     kind: "string",
+    fields: [
+      {
+        name: "string_start",
+        required: false,
+        multiple: false,
+        kinds: ["string_start"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "interpolation_or_string_content",
+        required: false,
+        multiple: true,
+        kinds: ["interpolation", "string_content"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "string_end",
+        required: false,
+        multiple: false,
+        kinds: ["string_end"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1720,6 +2382,34 @@
         required: true,
         multiple: false,
         kinds: ["_suite", "block"],
+      },
+      {
+        name: "except_clause",
+        required: false,
+        multiple: true,
+        kinds: ["except_clause"],
+        separator: null,
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "else_clause",
+        required: false,
+        multiple: false,
+        kinds: ["else_clause"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "finally_clause",
+        required: false,
+        multiple: false,
+        kinds: ["finally_clause"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
       },
     ],
     children: [
@@ -1797,8 +2487,29 @@
     children: null,
   },
   type_parameter: {
-    modelType: "container",
+    modelType: "branch",
     kind: "type_parameter",
+    fields: [
+      {
+        name: "child_type1",
+        required: false,
+        multiple: false,
+        kinds: ["type"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "child_type2",
+        required: false,
+        multiple: true,
+        kinds: ["type"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1901,8 +2612,28 @@
     },
   },
   union_type: {
-    modelType: "container",
+    modelType: "branch",
     kind: "union_type",
+    fields: [
+      {
+        name: "child_type1",
+        required: false,
+        multiple: false,
+        kinds: ["type"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "child_type2",
+        required: false,
+        multiple: false,
+        kinds: ["type"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,
@@ -1947,8 +2678,29 @@
     text: "*",
   },
   with_clause: {
-    modelType: "container",
+    modelType: "branch",
     kind: "with_clause",
+    fields: [
+      {
+        name: "with_item1",
+        required: false,
+        multiple: false,
+        kinds: ["with_item"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "with_item2",
+        required: false,
+        multiple: true,
+        kinds: ["with_item"],
+        separator: ",",
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: [
       {
         required: true,

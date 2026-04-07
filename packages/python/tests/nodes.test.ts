@@ -391,6 +391,11 @@ describe('comparison_operator', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.comparisonOperator({ operators: [], primaryExpression1: ir.identifier('test_primary_expression1') as any, primaryExpression2: [ir.identifier('test_primary_expression2') as any] });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('complex_pattern', () => {
@@ -408,6 +413,11 @@ describe('complex_pattern', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.complexPattern({ floatOrInteger1: ir.float('3.14e0') as any, floatOrInteger2: ir.float('3.14e0') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('concatenated_string', () => {
@@ -424,6 +434,11 @@ describe('concatenated_string', () => {
     const node = ir.concatenatedString({ string1: ir.string({ stringStart: ir.stringStart('test') as any, stringEnd: ir.stringEnd('test') as any }) as any, string2: [] });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.concatenatedString({ string1: ir.string({ stringStart: ir.stringStart('test') as any, stringEnd: ir.stringEnd('test') as any }) as any, string2: [] });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -448,6 +463,11 @@ describe('conditional_expression', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.conditionalExpression({ expression1: ir.identifier('test_expression1') as any, expression2: ir.identifier('test_expression2') as any, expression3: ir.identifier('test_expression3') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('constrained_type', () => {
@@ -469,6 +489,11 @@ describe('constrained_type', () => {
     const node = ir.constrainedType({ childType1: ir.type({ children: ir.identifier('test_children') as any }) as any, childType2: ir.type({ children: ir.identifier('test_children') as any }) as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.constrainedType({ childType1: ir.type({ children: ir.identifier('test_children') as any }) as any, childType2: ir.type({ children: ir.identifier('test_children') as any }) as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -577,7 +602,7 @@ describe('dict_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.dictPattern({ splatPattern1: ir.splatPattern() as any, splatPattern2: [] });
+    const node = ir.dictPattern({ key: [], value: [], splatPattern1: ir.splatPattern() as any, splatPattern2: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1074,6 +1099,11 @@ describe('generic_type', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.genericType({ identifier: ir.identifier('test_identifier') as any, typeParameter: ir.typeParameter({ childType1: ir.type({ children: ir.identifier('test_children') as any }) as any }) as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('global_statement', () => {
@@ -1495,6 +1525,11 @@ describe('member_type', () => {
     const node = ir.memberType({ childType: ir.type({ children: ir.identifier('test_children') as any }) as any, identifier: ir.identifier('test_identifier') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.memberType({ childType: ir.type({ children: ir.identifier('test_children') as any }) as any, identifier: ir.identifier('test_identifier') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2236,6 +2271,11 @@ describe('union_type', () => {
     const node = ir.unionType({ childType1: ir.type({ children: ir.identifier('test_children') as any }) as any, childType2: ir.type({ children: ir.identifier('test_children') as any }) as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.unionType({ childType1: ir.type({ children: ir.identifier('test_children') as any }) as any, childType2: ir.type({ children: ir.identifier('test_children') as any }) as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 

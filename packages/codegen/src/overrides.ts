@@ -19,6 +19,8 @@ export interface OverrideFieldDef {
 	anonymous?: boolean;
 	/** Token values to match for anonymous fields (e.g., ["-", "*", "!"] for operator). */
 	values?: string[];
+	/** True if this field is a list (multiple children). */
+	multiple?: boolean;
 }
 
 export interface OverrideEntry {
@@ -219,17 +221,19 @@ export function mergeOverrides(
 
 		const overrideFields: FieldModel[] = [];
 		for (const [fieldName, fieldDef] of Object.entries(entry.fields)) {
+			const isMultiple = fieldDef.multiple ?? false;
 			overrideFields.push({
 				name: fieldName,
 				required: false,
-				multiple: false,
+				multiple: isMultiple,
 				// Anonymous fields have no kinds (they match by token text).
 				// Named fields inherit from the model's children kinds.
 				kinds: fieldDef.anonymous ? [] : [...childrenKinds],
+				...(isMultiple ? { separator: null } : {}),
 				override: true,
 				overrideAnonymous: fieldDef.anonymous ?? false,
 				overrideValues: fieldDef.values,
-			});
+			} as FieldModel);
 		}
 
 		if (model.modelType === 'branch') {

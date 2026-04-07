@@ -133,12 +133,15 @@ export function emitWrap(config: EmitWrapConfig): string {
 			emitOverrideFieldPromotion(lines, overrideFields, ctx, leafSet, node.kind);
 		}
 
-		// Hydrate children field if present
+		// Hydrate children field if present (skip slots already handled as override fields)
 		if (node.children != null) {
+			const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
 			const slotNames = childSlotNames(node.children, ctx);
 			eachChildSlot(node.children, (slot, i) => {
+				const name = slotNames[i]!;
+				if (fieldKeys.has(name)) return; // already handled as override field
 				const slotProj = projectKinds(slot.kinds, ctx);
-				emitWrapChildren(lines, slot, expandForRuntime(slotProj.expandedAll, ctx), node.kind, slotNames[i]!);
+				emitWrapChildren(lines, slot, expandForRuntime(slotProj.expandedAll, ctx), node.kind, name);
 			});
 		}
 

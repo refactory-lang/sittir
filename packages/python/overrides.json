@@ -1,1 +1,245 @@
-{}
+{
+  "argument_list": {
+    "fields": {
+      "children1": {},
+      "children2": {
+        "multiple": true
+      }
+    }
+  },
+  "assert_statement": {
+    "fields": {
+      "expression1": {},
+      "expression2": {
+        "multiple": true
+      }
+    }
+  },
+  "case_clause": {
+    "fields": {
+      "case_pattern1": {},
+      "case_pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "class_pattern": {
+    "fields": {
+      "dotted_name": {},
+      "case_pattern1": {},
+      "case_pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "comparison_operator": {
+    "fields": {
+      "primary_expression1": {},
+      "primary_expression2": {
+        "multiple": true
+      }
+    }
+  },
+  "complex_pattern": {
+    "fields": {
+      "float_or_integer1": {},
+      "float_or_integer2": {}
+    }
+  },
+  "concatenated_string": {
+    "fields": {
+      "string1": {},
+      "string2": {
+        "multiple": true
+      }
+    }
+  },
+  "conditional_expression": {
+    "fields": {
+      "expression1": {},
+      "expression2": {},
+      "expression3": {}
+    }
+  },
+  "constrained_type": {
+    "fields": {
+      "child_type1": {},
+      "child_type2": {}
+    }
+  },
+  "dict_pattern": {
+    "fields": {
+      "splat_pattern1": {},
+      "splat_pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "dictionary": {
+    "fields": {
+      "dictionary_splat_or_pair1": {},
+      "dictionary_splat_or_pair2": {
+        "multiple": true
+      }
+    }
+  },
+  "dictionary_comprehension": {
+    "fields": {
+      "for_in_clause": {},
+      "for_in_clause_or_if_clause": {
+        "multiple": true
+      }
+    }
+  },
+  "dotted_name": {
+    "fields": {
+      "identifier1": {},
+      "identifier2": {
+        "multiple": true
+      }
+    }
+  },
+  "exec_statement": {
+    "fields": {
+      "expression1": {},
+      "expression2": {
+        "multiple": true
+      }
+    }
+  },
+  "expression_list": {
+    "fields": {
+      "expression1": {},
+      "expression2": {
+        "multiple": true
+      }
+    }
+  },
+  "expression_statement": {
+    "fields": {
+      "children1": {},
+      "expression": {
+        "multiple": true
+      }
+    }
+  },
+  "generator_expression": {
+    "fields": {
+      "for_in_clause": {},
+      "for_in_clause_or_if_clause": {
+        "multiple": true
+      }
+    }
+  },
+  "generic_type": {
+    "fields": {
+      "identifier": {},
+      "type_parameter": {}
+    }
+  },
+  "global_statement": {
+    "fields": {
+      "identifier1": {},
+      "identifier2": {
+        "multiple": true
+      }
+    }
+  },
+  "keyword_pattern": {
+    "fields": {
+      "identifier": {},
+      "children2": {}
+    }
+  },
+  "list_comprehension": {
+    "fields": {
+      "for_in_clause": {},
+      "for_in_clause_or_if_clause": {
+        "multiple": true
+      }
+    }
+  },
+  "member_type": {
+    "fields": {
+      "child_type": {},
+      "identifier": {}
+    }
+  },
+  "nonlocal_statement": {
+    "fields": {
+      "identifier1": {},
+      "identifier2": {
+        "multiple": true
+      }
+    }
+  },
+  "pattern_list": {
+    "fields": {
+      "pattern1": {},
+      "pattern2": {
+        "multiple": true
+      }
+    }
+  },
+  "relative_import": {
+    "fields": {
+      "import_prefix": {},
+      "dotted_name": {}
+    }
+  },
+  "set_comprehension": {
+    "fields": {
+      "for_in_clause": {},
+      "for_in_clause_or_if_clause": {
+        "multiple": true
+      }
+    }
+  },
+  "slice": {
+    "fields": {
+      "expression1": {},
+      "expression2": {},
+      "expression3": {}
+    }
+  },
+  "string": {
+    "fields": {
+      "string_start": {},
+      "interpolation_or_string_content": {
+        "multiple": true
+      },
+      "string_end": {}
+    }
+  },
+  "try_statement": {
+    "fields": {
+      "except_clause": {
+        "multiple": true
+      },
+      "else_clause": {},
+      "finally_clause": {}
+    }
+  },
+  "type_parameter": {
+    "fields": {
+      "child_type1": {},
+      "child_type2": {
+        "multiple": true
+      }
+    }
+  },
+  "union_type": {
+    "fields": {
+      "child_type1": {},
+      "child_type2": {}
+    }
+  },
+  "with_clause": {
+    "fields": {
+      "with_item1": {},
+      "with_item2": {
+        "multiple": true
+      }
+    }
+  }
+}

@@ -299,11 +299,13 @@ function emitConcreteInterface(
 		lines.push('  };');
 	}
 
-	// Hoisted child slots
+	// Hoisted child slots (skip slots already covered by override fields)
 	if (hasChildren) {
+		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
+			if (fieldKeys.has(name)) return; // already emitted as field
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (slotType === '') return; // skip empty projections
