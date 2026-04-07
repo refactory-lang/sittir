@@ -466,6 +466,12 @@ function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: Read
  * - Single-kind supertype → skip (supertypes are fields, not children)
  * - Same kind in multiple slots or multi-kind slot → NEEDS_NAME_N placeholder (Tier 2)
  * - Single pure REPEAT slot → null (uses $$CHILDREN)
+ *
+ * TODO: Hidden rule names (e.g. _call_signature, _from_clause, _parameter_name,
+ * _destructuring_pattern, _string_content, _comprehension_clauses) are useful
+ * candidates for auto-inferring field names — strip `_` prefix and use as name
+ * when the hidden rule is unique across slots. Currently these produce NEEDS_NAME
+ * placeholders because the kinds don't resolve to named types.
  */
 function nameChildSlots(children: EnrichedChildInfo[]): void {
 	// Pure REPEAT (single slot, multiple) → no name needed, uses $$CHILDREN
