@@ -40,7 +40,7 @@ export const _BRANCH_FIELDS: Record<string, string[]> = {
   'case_clause': ["consequence","guard"],
   'class_definition': ["body","name","superclasses","typeParameters"],
   'class_pattern': ["dottedName","casePattern"],
-  'comparison_operator': ["operators"],
+  'comparison_operator': ["operators","NEEDS_NAME_0","NEEDS_NAME_1"],
   'complex_pattern': ["NEEDS_NAME_0","NEEDS_NAME_1"],
   'conditional_expression': ["NEEDS_NAME_0","NEEDS_NAME_1","NEEDS_NAME_2"],
   'constrained_type': ["NEEDS_NAME_0","NEEDS_NAME_1"],

@@ -25,6 +25,12 @@
       "NEEDS_NAME_1": {}
     }
   },
+  "enum_body": {
+    "fields": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
+    }
+  },
   "import_alias": {
     "fields": {
       "NEEDS_NAME_0": {},
@@ -74,6 +80,14 @@
       "accessibility_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
+      }
+    }
+  },
+  "object_type": {
+    "fields": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
+        "multiple": true
       }
     }
   },

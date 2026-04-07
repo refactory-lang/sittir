@@ -10,10 +10,10 @@ rules:
     template: impl $TYPE_PARAMETERS_CLAUSE $TRAIT $$$CHILDREN
     type_parameters_clause: for
   arguments:
-    template: ($$$ATTRIBUTE_ITEM $$$CHILDREN) $$$NEEDS_NAME_0 $NEEDS_NAME_1 $$$NEEDS_NAME_2
+    template: ($$$CHILDREN)
     joinBy: ","
   array_expression:
-    template: "[$$$ATTRIBUTE_ITEM $$$CHILDREN ; $LENGTH] $$$NEEDS_NAME_0 $$$NEEDS_NAME_1 $NEEDS_NAME_2 $$$NEEDS_NAME_3"
+    template: "[$$$ATTRIBUTE_ITEM $$$CHILDREN ; $LENGTH] $$$NEEDS_NAME_0 $$$NEEDS_NAME_1"
     joinBy: ","
   array_type:
     template: "[$ELEMENT $LENGTH_CLAUSE]"
@@ -58,7 +58,7 @@ rules:
     template: $CHILDREN $NAME $BODY $VALUE_CLAUSE
     value_clause: = $VALUE
   enum_variant_list:
-    template: "{$$$ATTRIBUTE_ITEM $$$ENUM_VARIANT} $$$NEEDS_NAME_0 $NEEDS_NAME_1 $$$NEEDS_NAME_2 $$$CHILDREN"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   expression_statement: $CHILDREN ;
   extern_crate_declaration:
@@ -67,7 +67,7 @@ rules:
   extern_modifier: extern $CHILDREN
   field_declaration: "$CHILDREN $NAME : $TYPE"
   field_declaration_list:
-    template: "{$$$ATTRIBUTE_ITEM $$$FIELD_DECLARATION} $$$NEEDS_NAME_0 $NEEDS_NAME_1 $$$NEEDS_NAME_2 $$$CHILDREN"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   field_expression: $VALUE.$FIELD
   field_initializer: "$$$CHILDREN $FIELD : $VALUE"
@@ -117,7 +117,7 @@ rules:
     template: $LABEL_CLAUSE loop $BODY $$$CHILDREN
     label_clause: ":"
   macro_definition:
-    template: macro_rules! $NAME($$$CHILDREN ;) ;
+    template: macro_rules! $NAME($$$MACRO_RULE ;) ; $$$NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN
     joinBy: ;
   macro_invocation: $MACRO ! $CHILDREN $$$CHILDREN
   macro_rule: $LEFT => $RIGHT
@@ -136,7 +136,7 @@ rules:
     joinBy: ","
   parameter: "$CHILDREN $PATTERN : $TYPE"
   parameters:
-    template: ($$$ATTRIBUTE_ITEM $$$PARAMETER $$$SELF_PARAMETER) $NEEDS_NAME_0 $NEEDS_NAME_1 $$$NEEDS_NAME_2 $$$CHILDREN
+    template: ($$$CHILDREN)
     joinBy: ","
   parenthesized_expression: ($CHILDREN)
   pointer_type: "* $CHILDREN $TYPE"
@@ -190,7 +190,7 @@ rules:
     template: ($$$CHILDREN ,)
     joinBy: ","
   type_arguments:
-    template: <$$$CHILDREN $$$TRAIT_BOUNDS , $$$TYPE_BINDING> $NEEDS_NAME_0 $NEEDS_NAME_1 $$$NEEDS_NAME_2
+    template: <$$$CHILDREN ,>
     joinBy: ","
   type_binding: $NAME $TYPE_ARGUMENTS = $TYPE
   type_cast_expression: $VALUE as $TYPE
@@ -199,7 +199,7 @@ rules:
     template: $NAME $BOUNDS $DEFAULT_TYPE_CLAUSE
     default_type_clause: = $DEFAULT_TYPE
   type_parameters:
-    template: <$$$ATTRIBUTE_ITEM $$$METAVARIABLE , $$$TYPE_PARAMETER> $$$NEEDS_NAME_0 $NEEDS_NAME_1 $$$NEEDS_NAME_2 $$$CHILDREN
+    template: <$$$CHILDREN ,>
     joinBy: ","
   unary_expression: "- $CHILDREN"
   union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY $VISIBILITY_MODIFIER $WHERE_CLAUSE $$$CHILDREN

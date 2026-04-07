@@ -7,6 +7,12 @@
       }
     }
   },
+  "comparison_operator": {
+    "fields": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
+    }
+  },
   "complex_pattern": {
     "fields": {
       "NEEDS_NAME_0": {},

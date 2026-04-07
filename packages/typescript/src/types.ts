@@ -575,8 +575,11 @@ export interface EnumBody {
   readonly type: 'enum_body';
   readonly fields: {
     readonly name?: readonly (ComputedPropertyName | Number | PrivatePropertyIdentifier | PropertyIdentifier | String)[];
+    readonly NEEDS_NAME_0?: EnumAssignment;
+    readonly NEEDS_NAME_1?: readonly (EnumAssignment)[];
   };
-  readonly children?: readonly (EnumAssignment)[];
+  readonly enumAssignment1?: EnumAssignment;
+  readonly enumAssignment2?: readonly (EnumAssignment)[];
 }
 export interface EnumDeclaration {
   readonly type: 'enum_declaration';
@@ -731,7 +734,7 @@ export interface IfStatement {
 }
 export interface ImplementsClause {
   readonly type: 'implements_clause';
-  readonly children?: readonly (Type)[];
+  readonly children: readonly (Type)[];
 }
 export interface ImportAlias {
   readonly type: 'import_alias';
@@ -849,7 +852,7 @@ export interface LexicalDeclaration {
   readonly fields: {
     readonly kind: 'let' | 'const';
   };
-  readonly children?: readonly (VariableDeclarator)[];
+  readonly children: readonly (VariableDeclarator)[];
 }
 export interface LiteralType {
   readonly type: 'literal_type';
@@ -966,7 +969,12 @@ export interface ObjectPattern {
 }
 export interface ObjectType {
   readonly type: 'object_type';
-  readonly children?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
+  readonly fields: {
+    readonly NEEDS_NAME_0?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature;
+    readonly NEEDS_NAME_1?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
+  };
+  readonly children1?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature;
+  readonly children2?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
 }
 export interface OmittingTypeAnnotation {
   readonly type: 'omitting_type_annotation';
@@ -1093,7 +1101,7 @@ export interface SatisfiesExpression {
 }
 export interface SequenceExpression {
   readonly type: 'sequence_expression';
-  readonly children?: readonly (Expression)[];
+  readonly children: readonly (Expression)[];
 }
 export interface SpreadElement {
   readonly type: 'spread_element';
@@ -1193,7 +1201,7 @@ export interface TypeAnnotation {
 }
 export interface TypeArguments {
   readonly type: 'type_arguments';
-  readonly children?: readonly (Type)[];
+  readonly children: readonly (Type)[];
 }
 export interface TypeAssertion {
   readonly type: 'type_assertion';
@@ -1212,7 +1220,7 @@ export interface TypeParameter {
 }
 export interface TypeParameters {
   readonly type: 'type_parameters';
-  readonly children?: readonly (TypeParameter)[];
+  readonly children: readonly (TypeParameter)[];
 }
 export interface TypePredicate {
   readonly type: 'type_predicate';
@@ -1254,7 +1262,7 @@ export interface UpdateExpression {
 }
 export interface VariableDeclaration {
   readonly type: 'variable_declaration';
-  readonly children?: readonly (VariableDeclarator)[];
+  readonly children: readonly (VariableDeclarator)[];
 }
 export interface VariableDeclarator {
   readonly type: 'variable_declarator';

@@ -92,23 +92,13 @@ export function abstract_type_(
 export function arguments_(
   config?: ArgumentsConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-    NEEDS_NAME_2: config?.NEEDS_NAME_2,
-  };
-  const children = [...(config?.attributeItem ?? []), ...(config?.expression ? [config?.expression] : []), ...(config?.attributeItemOrExpression ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'arguments' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(...NEEDS_NAME_0: (AttributeItem)[]) { return NEEDS_NAME_0.length ? arguments_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? arguments_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(...NEEDS_NAME_2: (AttributeItem | Expression)[]) { return NEEDS_NAME_2.length ? arguments_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? arguments_({ ...config, attributeItem }) : config?.attributeItem; },
-    expression(expression?: Expression) { return expression !== undefined ? arguments_({ ...config, expression }) : config?.expression; },
-    attributeItemOrExpression(...attributeItemOrExpression: (AttributeItem | Expression)[]) { return attributeItemOrExpression.length ? arguments_({ ...config, attributeItemOrExpression }) : config?.attributeItemOrExpression; },
+    getChildren() { return children; },
+    setChildren(...children: (AttributeItem | Expression)[]) { return arguments_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -126,10 +116,8 @@ export function array_expression_(
     length: config?.length,
     NEEDS_NAME_0: config?.NEEDS_NAME_0,
     NEEDS_NAME_1: config?.NEEDS_NAME_1,
-    NEEDS_NAME_2: config?.NEEDS_NAME_2,
-    NEEDS_NAME_3: config?.NEEDS_NAME_3,
   };
-  const children = [...(config?.attributeItem ?? []), ...(config?.attributeItemOrExpression1 ?? []), ...(config?.expression ? [config?.expression] : []), ...(config?.attributeItemOrExpression2 ?? [])];
+  const children = [...(config?.attributeItem ?? []), ...(config?.attributeItemOrExpression ?? [])];
   return {
     type: 'array_expression' as const,
     named: true as const,
@@ -138,12 +126,8 @@ export function array_expression_(
     length(length?: Expression) { return length !== undefined ? array_expression_({ ...config, length: length }) : fields.length; },
     NEEDS_NAME_0(...NEEDS_NAME_0: (AttributeItem)[]) { return NEEDS_NAME_0.length ? array_expression_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     NEEDS_NAME_1(...NEEDS_NAME_1: (AttributeItem | Expression)[]) { return NEEDS_NAME_1.length ? array_expression_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(NEEDS_NAME_2?: Expression) { return NEEDS_NAME_2 !== undefined ? array_expression_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    NEEDS_NAME_3(...NEEDS_NAME_3: (AttributeItem | Expression)[]) { return NEEDS_NAME_3.length ? array_expression_({ ...config, NEEDS_NAME_3: NEEDS_NAME_3 }) : fields.NEEDS_NAME_3; },
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? array_expression_({ ...config, attributeItem }) : config?.attributeItem; },
-    attributeItemOrExpression1(...attributeItemOrExpression1: (AttributeItem | Expression)[]) { return attributeItemOrExpression1.length ? array_expression_({ ...config, attributeItemOrExpression1 }) : config?.attributeItemOrExpression1; },
-    expression(expression?: Expression) { return expression !== undefined ? array_expression_({ ...config, expression }) : config?.expression; },
-    attributeItemOrExpression2(...attributeItemOrExpression2: (AttributeItem | Expression)[]) { return attributeItemOrExpression2.length ? array_expression_({ ...config, attributeItemOrExpression2 }) : config?.attributeItemOrExpression2; },
+    attributeItemOrExpression(...attributeItemOrExpression: (AttributeItem | Expression)[]) { return attributeItemOrExpression.length ? array_expression_({ ...config, attributeItemOrExpression }) : config?.attributeItemOrExpression; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -815,23 +799,13 @@ export function enum_variant_(
 export function enum_variant_list_(
   config?: EnumVariantListConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-    NEEDS_NAME_2: config?.NEEDS_NAME_2,
-  };
-  const children = [...(config?.attributeItem ?? []), ...(config?.enumVariant ? [config?.enumVariant] : []), ...(config?.attributeItemOrEnumVariant ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'enum_variant_list' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(...NEEDS_NAME_0: (AttributeItem)[]) { return NEEDS_NAME_0.length ? enum_variant_list_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: EnumVariant) { return NEEDS_NAME_1 !== undefined ? enum_variant_list_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(...NEEDS_NAME_2: (AttributeItem | EnumVariant)[]) { return NEEDS_NAME_2.length ? enum_variant_list_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? enum_variant_list_({ ...config, attributeItem }) : config?.attributeItem; },
-    enumVariant(enumVariant?: EnumVariant) { return enumVariant !== undefined ? enum_variant_list_({ ...config, enumVariant }) : config?.enumVariant; },
-    attributeItemOrEnumVariant(...attributeItemOrEnumVariant: (AttributeItem | EnumVariant)[]) { return attributeItemOrEnumVariant.length ? enum_variant_list_({ ...config, attributeItemOrEnumVariant }) : config?.attributeItemOrEnumVariant; },
+    getChildren() { return children; },
+    setChildren(...children: (AttributeItem | EnumVariant)[]) { return enum_variant_list_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -939,23 +913,13 @@ export function field_declaration_(
 export function field_declaration_list_(
   config?: FieldDeclarationListConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-    NEEDS_NAME_2: config?.NEEDS_NAME_2,
-  };
-  const children = [...(config?.attributeItem ?? []), ...(config?.fieldDeclaration ? [config?.fieldDeclaration] : []), ...(config?.attributeItemOrFieldDeclaration ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'field_declaration_list' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(...NEEDS_NAME_0: (AttributeItem)[]) { return NEEDS_NAME_0.length ? field_declaration_list_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: FieldDeclaration) { return NEEDS_NAME_1 !== undefined ? field_declaration_list_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(...NEEDS_NAME_2: (AttributeItem | FieldDeclaration)[]) { return NEEDS_NAME_2.length ? field_declaration_list_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? field_declaration_list_({ ...config, attributeItem }) : config?.attributeItem; },
-    fieldDeclaration(fieldDeclaration?: FieldDeclaration) { return fieldDeclaration !== undefined ? field_declaration_list_({ ...config, fieldDeclaration }) : config?.fieldDeclaration; },
-    attributeItemOrFieldDeclaration(...attributeItemOrFieldDeclaration: (AttributeItem | FieldDeclaration)[]) { return attributeItemOrFieldDeclaration.length ? field_declaration_list_({ ...config, attributeItemOrFieldDeclaration }) : config?.attributeItemOrFieldDeclaration; },
+    getChildren() { return children; },
+    setChildren(...children: (AttributeItem | FieldDeclaration)[]) { return field_declaration_list_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1091,9 +1055,9 @@ export function for_expression_(
 
 
 export function for_lifetimes_(
-  config?: ForLifetimesConfig,
+  config: ForLifetimesConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'for_lifetimes' as const,
     named: true as const,
@@ -1684,16 +1648,20 @@ export function macro_definition_(
 ) {
   const fields = {
     name: config.name,
+    NEEDS_NAME_0: config.NEEDS_NAME_0,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = config.children ?? [];
+  const children = [...(config.macroRule1 ?? []), ...(config.macroRule2 ? [config.macroRule2] : [])];
   return {
     type: 'macro_definition' as const,
     named: true as const,
     fields,
     children,
     name(name?: Identifier) { return name !== undefined ? macro_definition_({ ...config, name: name }) : fields.name; },
-    getChildren() { return children; },
-    setChildren(...children: (MacroRule)[]) { return macro_definition_({ ...config, children }); },
+    NEEDS_NAME_0(...NEEDS_NAME_0: (MacroRule)[]) { return NEEDS_NAME_0.length ? macro_definition_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: MacroRule) { return NEEDS_NAME_1 !== undefined ? macro_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    macroRule1(...macroRule1: (MacroRule)[]) { return macroRule1.length ? macro_definition_({ ...config, macroRule1 }) : config?.macroRule1; },
+    macroRule2(macroRule2?: MacroRule) { return macroRule2 !== undefined ? macro_definition_({ ...config, macroRule2 }) : config?.macroRule2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2005,23 +1973,13 @@ export function parameter_(
 export function parameters_(
   config?: ParametersConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-    NEEDS_NAME_2: config?.NEEDS_NAME_2,
-  };
-  const children = [...(config?.attributeItem ? [config?.attributeItem] : []), ...(config?.children2 ? [config?.children2] : []), ...(config?.children3 ?? [])];
+  const children = config?.children ?? [];
   return {
     type: 'parameters' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: AttributeItem) { return NEEDS_NAME_0 !== undefined ? parameters_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Parameter | SelfParameter | Type | VariadicParameter) { return NEEDS_NAME_1 !== undefined ? parameters_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(...NEEDS_NAME_2: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]) { return NEEDS_NAME_2.length ? parameters_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    attributeItem(attributeItem?: AttributeItem) { return attributeItem !== undefined ? parameters_({ ...config, attributeItem }) : config?.attributeItem; },
-    children2(children2?: Parameter | SelfParameter | Type | VariadicParameter) { return children2 !== undefined ? parameters_({ ...config, children2 }) : config?.children2; },
-    children3(...children3: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]) { return children3.length ? parameters_({ ...config, children3 }) : config?.children3; },
+    getChildren() { return children; },
+    setChildren(...children: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]) { return parameters_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2707,9 +2665,9 @@ export function token_tree_pattern_(
 
 
 export function trait_bounds_(
-  config?: TraitBoundsConfig,
+  config: TraitBoundsConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'trait_bounds' as const,
     named: true as const,
@@ -2875,9 +2833,9 @@ export function tuple_struct_pattern_(
 
 
 export function tuple_type_(
-  config?: TupleTypeConfig,
+  config: TupleTypeConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'tuple_type' as const,
     named: true as const,
@@ -2897,23 +2855,13 @@ export function tuple_type_(
 export function type_arguments_(
   config: TypeArgumentsConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
-    NEEDS_NAME_2: config.NEEDS_NAME_2,
-  };
-  const children = [...(config.children1 ? [config.children1] : []), ...(config.traitBounds ? [config.traitBounds] : []), ...(config.children3 ?? [])];
+  const children = config.children ?? [];
   return {
     type: 'type_arguments' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Block | Lifetime | Literal | Type | TypeBinding) { return NEEDS_NAME_0 !== undefined ? type_arguments_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: TraitBounds) { return NEEDS_NAME_1 !== undefined ? type_arguments_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(...NEEDS_NAME_2: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]) { return NEEDS_NAME_2.length ? type_arguments_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    children1(children1?: Block | Lifetime | Literal | Type | TypeBinding) { return children1 !== undefined ? type_arguments_({ ...config, children1 }) : config?.children1; },
-    traitBounds(traitBounds?: TraitBounds) { return traitBounds !== undefined ? type_arguments_({ ...config, traitBounds }) : config?.traitBounds; },
-    children3(...children3: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]) { return children3.length ? type_arguments_({ ...config, children3 }) : config?.children3; },
+    getChildren() { return children; },
+    setChildren(...children: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]) { return type_arguments_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3035,23 +2983,13 @@ export function type_parameter_(
 export function type_parameters_(
   config: TypeParametersConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
-    NEEDS_NAME_2: config.NEEDS_NAME_2,
-  };
-  const children = [...(config.attributeItem ?? []), ...(config.children2 ? [config.children2] : []), ...(config.children3 ?? [])];
+  const children = config.children ?? [];
   return {
     type: 'type_parameters' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(...NEEDS_NAME_0: (AttributeItem)[]) { return NEEDS_NAME_0.length ? type_parameters_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: ConstParameter | LifetimeParameter | Metavariable | TypeParameter) { return NEEDS_NAME_1 !== undefined ? type_parameters_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(...NEEDS_NAME_2: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) { return NEEDS_NAME_2.length ? type_parameters_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? type_parameters_({ ...config, attributeItem }) : config?.attributeItem; },
-    children2(children2?: ConstParameter | LifetimeParameter | Metavariable | TypeParameter) { return children2 !== undefined ? type_parameters_({ ...config, children2 }) : config?.children2; },
-    children3(...children3: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) { return children3.length ? type_parameters_({ ...config, children3 }) : config?.children3; },
+    getChildren() { return children; },
+    setChildren(...children: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) { return type_parameters_({ ...config, children }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

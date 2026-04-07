@@ -31,7 +31,7 @@ rules:
   class_pattern:
     template: $DOTTED_NAME($$$CASE_PATTERN) $DOTTED_NAME $$$CASE_PATTERN $$$CHILDREN
     joinBy: ","
-  comparison_operator: $$$CHILDREN $$$OPERATORS
+  comparison_operator: $$$CHILDREN $$$OPERATORS $NEEDS_NAME_0 $$$NEEDS_NAME_1
   complex_pattern: $$$INTEGER + $$$FLOAT $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN
   concatenated_string: $$$CHILDREN
   conditional_expression: $$$CHILDREN if else $NEEDS_NAME_0 $NEEDS_NAME_1 $NEEDS_NAME_2

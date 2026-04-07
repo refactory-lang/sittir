@@ -253,7 +253,7 @@ export interface AsPattern {
 }
 export interface AssertStatement {
   readonly type: 'assert_statement';
-  readonly children?: readonly (Expression)[];
+  readonly children: readonly (Expression)[];
 }
 export interface Assignment {
   readonly type: 'assignment';
@@ -318,7 +318,7 @@ export interface CaseClause {
     readonly consequence: Block;
     readonly guard?: IfClause;
   };
-  readonly children?: readonly (CasePattern)[];
+  readonly children: readonly (CasePattern)[];
 }
 export interface CasePattern {
   readonly type: 'case_pattern';
@@ -348,8 +348,11 @@ export interface ComparisonOperator {
   readonly type: 'comparison_operator';
   readonly fields: {
     readonly operators: readonly ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[];
+    readonly NEEDS_NAME_0?: PrimaryExpression;
+    readonly NEEDS_NAME_1?: readonly (PrimaryExpression)[];
   };
-  readonly children: readonly (PrimaryExpression)[];
+  readonly primaryExpression1: PrimaryExpression;
+  readonly primaryExpression2: readonly (PrimaryExpression)[];
 }
 export interface ComplexPattern {
   readonly type: 'complex_pattern';
@@ -434,7 +437,7 @@ export interface DictionarySplatPattern {
 }
 export interface DottedName {
   readonly type: 'dotted_name';
-  readonly children?: readonly (Identifier)[];
+  readonly children: readonly (Identifier)[];
 }
 export interface ElifClause {
   readonly type: 'elif_clause';
@@ -466,11 +469,11 @@ export interface ExecStatement {
 }
 export interface ExpressionList {
   readonly type: 'expression_list';
-  readonly children?: readonly (Expression)[];
+  readonly children: readonly (Expression)[];
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
-  readonly children?: readonly (Assignment | AugmentedAssignment | Expression | Yield)[];
+  readonly children: readonly (Assignment | AugmentedAssignment | Expression | Yield)[];
 }
 export interface FinallyClause {
   readonly type: 'finally_clause';
@@ -539,7 +542,7 @@ export interface GenericType {
 }
 export interface GlobalStatement {
   readonly type: 'global_statement';
-  readonly children?: readonly (Identifier)[];
+  readonly children: readonly (Identifier)[];
 }
 export interface IfClause {
   readonly type: 'if_clause';
@@ -655,7 +658,7 @@ export interface NamedExpression {
 }
 export interface NonlocalStatement {
   readonly type: 'nonlocal_statement';
-  readonly children?: readonly (Identifier)[];
+  readonly children: readonly (Identifier)[];
 }
 export interface NotOperator {
   readonly type: 'not_operator';
@@ -684,7 +687,7 @@ export interface ParenthesizedListSplat {
 }
 export interface PatternList {
   readonly type: 'pattern_list';
-  readonly children?: readonly (Pattern)[];
+  readonly children: readonly (Pattern)[];
 }
 export interface PrintStatement {
   readonly type: 'print_statement';
@@ -794,7 +797,7 @@ export interface TypeAliasStatement {
 }
 export interface TypeParameter {
   readonly type: 'type_parameter';
-  readonly children?: readonly (Type)[];
+  readonly children: readonly (Type)[];
 }
 export interface TypedDefaultParameter {
   readonly type: 'typed_default_parameter';
@@ -841,7 +844,7 @@ export interface WhileStatement {
 }
 export interface WithClause {
   readonly type: 'with_clause';
-  readonly children?: readonly (WithItem)[];
+  readonly children: readonly (WithItem)[];
 }
 export interface WithItem {
   readonly type: 'with_item';

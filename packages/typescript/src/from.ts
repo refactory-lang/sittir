@@ -1402,7 +1402,8 @@ export function enumBodyFrom(input: unknown): unknown {
     const c = nd.children;
     return enum_body_({
       name: f?.['name'],
-      children: c,
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as EnumBodyConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1412,9 +1413,20 @@ export function enumBodyFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['name'] = arr.map((v: unknown) => _r2w984x(v));
   }
-  if (obj.children !== undefined) {
-    const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
-    resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? enumAssignmentFrom(v) : typeof v === 'object' ? enumAssignmentFrom(v) : v));
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? enumAssignmentFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? enumAssignmentFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
+    const arr = Array.isArray(raw) ? raw : [raw];
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? enumAssignmentFrom(v) : typeof v === 'object' ? enumAssignmentFrom(v) : v));
+  }
+  if (obj.enumAssignment1 !== undefined) {
+    resolved.enumAssignment1 = (isNodeData(obj.enumAssignment1) ? obj.enumAssignment1 : Array.isArray(obj.enumAssignment1) ? enumAssignmentFrom(obj.enumAssignment1) : typeof obj.enumAssignment1 === 'object' ? enumAssignmentFrom(obj.enumAssignment1) : obj.enumAssignment1);
+  }
+  if (obj.enumAssignment2 !== undefined) {
+    const arr = Array.isArray(obj.enumAssignment2) ? obj.enumAssignment2 : [obj.enumAssignment2];
+    resolved.enumAssignment2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? enumAssignmentFrom(v) : typeof v === 'object' ? enumAssignmentFrom(v) : v));
   }
   return enum_body_(resolved as EnumBodyConfig);
 }
@@ -2010,6 +2022,8 @@ export function implementsClauseFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveType(v));
+  } else {
+    resolved.children = [];
   }
   return implements_clause_(resolved as ImplementsClauseConfig);
 }
@@ -2436,6 +2450,8 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+  } else {
+    resolved.children = [];
   }
   return lexical_declaration_(resolved as LexicalDeclarationConfig);
 }
@@ -2889,14 +2905,26 @@ export function objectTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return object_type_({
-      children: c,
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ObjectTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
-    resolved.children = arr.map((v: unknown) => _r1rfp6fa(v));
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1rfp6fa(obj['NEEDS_NAME_0']);
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
+    const arr = Array.isArray(raw) ? raw : [raw];
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1rfp6fa(v));
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _r1rfp6fa(obj.children1);
+  }
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _r1rfp6fa(v));
   }
   return object_type_(resolved as ObjectTypeConfig);
 }
@@ -3405,6 +3433,8 @@ export function sequenceExpressionFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveExpression(v));
+  } else {
+    resolved.children = [];
   }
   return sequence_expression_(resolved as SequenceExpressionConfig);
 }
@@ -3836,6 +3866,8 @@ export function typeArgumentsFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveType(v));
+  } else {
+    resolved.children = [];
   }
   return type_arguments_(resolved as TypeArgumentsConfig);
 }
@@ -3909,6 +3941,8 @@ export function typeParametersFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? typeParameterFrom(v) : typeof v === 'object' ? typeParameterFrom(v) : v));
+  } else {
+    resolved.children = [];
   }
   return type_parameters_(resolved as TypeParametersConfig);
 }
@@ -4072,6 +4106,8 @@ export function variableDeclarationFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+  } else {
+    resolved.children = [];
   }
   return variable_declaration_(resolved as VariableDeclarationConfig);
 }

@@ -51,7 +51,7 @@ rules:
   else_clause: else $CHILDREN
   enum_assignment: $NAME = $VALUE
   enum_body:
-    template: "{$$$CHILDREN $$$NAME}"
+    template: "{$$$NAME $$$ENUM_ASSIGNMENT} $NEEDS_NAME_0 $$$NEEDS_NAME_1 $$$CHILDREN"
     joinBy: ","
   enum_declaration: enum $NAME $BODY
   export_clause:
@@ -129,7 +129,7 @@ rules:
   object_pattern:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  object_type: "{$$$CHILDREN}"
+  object_type: "{$$$EXPORT_STATEMENT $$$CHILDREN $$$PROPERTY_SIGNATURE} $NEEDS_NAME_0 $$$NEEDS_NAME_1"
   omitting_type_annotation: "-?: $CHILDREN"
   opting_type_annotation: "?: $CHILDREN"
   optional_parameter: $$$DECORATOR $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $PATTERN ? $TYPE $VALUE $NAME $ACCESSIBILITY_MODIFIER $NEEDS_NAME_1 $$$CHILDREN

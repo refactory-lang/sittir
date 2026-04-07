@@ -165,7 +165,7 @@
     modelType: "container",
     kind: "assert_statement",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["expression"],
       separator: ",",
@@ -390,7 +390,7 @@
       },
     ],
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["case_pattern"],
       separator: ",",
@@ -526,13 +526,39 @@
         ],
         separator: null,
       },
+      {
+        name: "NEEDS_NAME_0",
+        required: false,
+        multiple: false,
+        kinds: ["primary_expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "NEEDS_NAME_1",
+        required: false,
+        multiple: true,
+        kinds: ["primary_expression"],
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+        separator: null,
+      },
     ],
-    children: {
-      required: true,
-      multiple: true,
-      kinds: ["primary_expression"],
-      separator: null,
-    },
+    children: [
+      {
+        required: true,
+        multiple: false,
+        kinds: ["primary_expression"],
+      },
+      {
+        required: true,
+        multiple: true,
+        kinds: ["primary_expression"],
+        separator: null,
+      },
+    ],
   },
   complex_pattern: {
     modelType: "branch",
@@ -812,7 +838,7 @@
     modelType: "container",
     kind: "dotted_name",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["identifier"],
       separator: null,
@@ -896,7 +922,7 @@
     modelType: "container",
     kind: "expression_list",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["expression"],
       separator: ",",
@@ -906,7 +932,7 @@
     modelType: "container",
     kind: "expression_statement",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["expression", "assignment", "augmented_assignment", "yield"],
       separator: ",",
@@ -1142,7 +1168,7 @@
     modelType: "container",
     kind: "global_statement",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["identifier"],
       separator: ",",
@@ -1548,7 +1574,7 @@
     modelType: "container",
     kind: "nonlocal_statement",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["identifier"],
       separator: ",",
@@ -1628,7 +1654,7 @@
     modelType: "container",
     kind: "pattern_list",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["pattern"],
       separator: ",",
@@ -2040,7 +2066,7 @@
     modelType: "container",
     kind: "type_parameter",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["type"],
       separator: ",",
@@ -2203,7 +2229,7 @@
     modelType: "container",
     kind: "with_clause",
     children: {
-      required: false,
+      required: true,
       multiple: true,
       kinds: ["with_item"],
       separator: ",",

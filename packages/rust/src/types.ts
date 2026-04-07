@@ -321,14 +321,7 @@ export interface AbstractType {
 }
 export interface Arguments {
   readonly type: 'arguments';
-  readonly fields: {
-    readonly NEEDS_NAME_0?: readonly (AttributeItem)[];
-    readonly NEEDS_NAME_1?: Expression;
-    readonly NEEDS_NAME_2?: readonly (AttributeItem | Expression)[];
-  };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly expression?: Expression;
-  readonly attributeItemOrExpression?: readonly (AttributeItem | Expression)[];
+  readonly children?: readonly (AttributeItem | Expression)[];
 }
 export interface ArrayExpression {
   readonly type: 'array_expression';
@@ -336,13 +329,9 @@ export interface ArrayExpression {
     readonly length?: Expression;
     readonly NEEDS_NAME_0?: readonly (AttributeItem)[];
     readonly NEEDS_NAME_1?: readonly (AttributeItem | Expression)[];
-    readonly NEEDS_NAME_2?: Expression;
-    readonly NEEDS_NAME_3?: readonly (AttributeItem | Expression)[];
   };
   readonly attributeItem?: readonly (AttributeItem)[];
-  readonly attributeItemOrExpression1?: readonly (AttributeItem | Expression)[];
-  readonly expression?: Expression;
-  readonly attributeItemOrExpression2?: readonly (AttributeItem | Expression)[];
+  readonly attributeItemOrExpression?: readonly (AttributeItem | Expression)[];
 }
 export interface ArrayType {
   readonly type: 'array_type';
@@ -535,14 +524,7 @@ export interface EnumVariant {
 }
 export interface EnumVariantList {
   readonly type: 'enum_variant_list';
-  readonly fields: {
-    readonly NEEDS_NAME_0?: readonly (AttributeItem)[];
-    readonly NEEDS_NAME_1?: EnumVariant;
-    readonly NEEDS_NAME_2?: readonly (AttributeItem | EnumVariant)[];
-  };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly enumVariant?: EnumVariant;
-  readonly attributeItemOrEnumVariant?: readonly (AttributeItem | EnumVariant)[];
+  readonly children?: readonly (AttributeItem | EnumVariant)[];
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
@@ -572,14 +554,7 @@ export interface FieldDeclaration {
 }
 export interface FieldDeclarationList {
   readonly type: 'field_declaration_list';
-  readonly fields: {
-    readonly NEEDS_NAME_0?: readonly (AttributeItem)[];
-    readonly NEEDS_NAME_1?: FieldDeclaration;
-    readonly NEEDS_NAME_2?: readonly (AttributeItem | FieldDeclaration)[];
-  };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly fieldDeclaration?: FieldDeclaration;
-  readonly attributeItemOrFieldDeclaration?: readonly (AttributeItem | FieldDeclaration)[];
+  readonly children?: readonly (AttributeItem | FieldDeclaration)[];
 }
 export interface FieldExpression {
   readonly type: 'field_expression';
@@ -619,7 +594,7 @@ export interface ForExpression {
 }
 export interface ForLifetimes {
   readonly type: 'for_lifetimes';
-  readonly children?: readonly (Lifetime)[];
+  readonly children: readonly (Lifetime)[];
 }
 export interface ForeignModItem {
   readonly type: 'foreign_mod_item';
@@ -793,8 +768,11 @@ export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
     readonly name: Identifier;
+    readonly NEEDS_NAME_0?: readonly (MacroRule)[];
+    readonly NEEDS_NAME_1?: MacroRule;
   };
-  readonly children?: readonly (MacroRule)[];
+  readonly macroRule1?: readonly (MacroRule)[];
+  readonly macroRule2?: MacroRule;
 }
 export interface MacroInvocation {
   readonly type: 'macro_invocation';
@@ -888,14 +866,7 @@ export interface Parameter {
 }
 export interface Parameters {
   readonly type: 'parameters';
-  readonly fields: {
-    readonly NEEDS_NAME_0?: AttributeItem;
-    readonly NEEDS_NAME_1?: Parameter | SelfParameter | Type | VariadicParameter;
-    readonly NEEDS_NAME_2?: readonly (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[];
-  };
-  readonly attributeItem?: AttributeItem;
-  readonly children2?: Parameter | SelfParameter | Type | VariadicParameter;
-  readonly children3?: readonly (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[];
+  readonly children?: readonly (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[];
 }
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
@@ -1086,7 +1057,7 @@ export interface TokenTreePattern {
 }
 export interface TraitBounds {
   readonly type: 'trait_bounds';
-  readonly children?: readonly (HigherRankedTraitBound | Lifetime | Type)[];
+  readonly children: readonly (HigherRankedTraitBound | Lifetime | Type)[];
 }
 export interface TraitItem {
   readonly type: 'trait_item';
@@ -1132,18 +1103,11 @@ export interface TupleStructPattern {
 }
 export interface TupleType {
   readonly type: 'tuple_type';
-  readonly children?: readonly (Type)[];
+  readonly children: readonly (Type)[];
 }
 export interface TypeArguments {
   readonly type: 'type_arguments';
-  readonly fields: {
-    readonly NEEDS_NAME_0?: Block | Lifetime | Literal | Type | TypeBinding;
-    readonly NEEDS_NAME_1?: TraitBounds;
-    readonly NEEDS_NAME_2?: readonly (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[];
-  };
-  readonly children1: Block | Lifetime | Literal | Type | TypeBinding;
-  readonly traitBounds?: TraitBounds;
-  readonly children3?: readonly (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[];
+  readonly children: readonly (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[];
 }
 export interface TypeBinding {
   readonly type: 'type_binding';
@@ -1183,14 +1147,7 @@ export interface TypeParameter {
 }
 export interface TypeParameters {
   readonly type: 'type_parameters';
-  readonly fields: {
-    readonly NEEDS_NAME_0?: readonly (AttributeItem)[];
-    readonly NEEDS_NAME_1?: ConstParameter | LifetimeParameter | Metavariable | TypeParameter;
-    readonly NEEDS_NAME_2?: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
-  };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly children2: ConstParameter | LifetimeParameter | Metavariable | TypeParameter;
-  readonly children3?: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
+  readonly children: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
 }
 export interface UnaryExpression {
   readonly type: 'unary_expression';

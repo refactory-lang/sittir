@@ -564,10 +564,15 @@ export function wrapEnumAssignment(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapEnumBody(data: AnyNodeData, tree: TreeHandle): unknown {
+  promoteNamed(data, 'NEEDS_NAME_0', ["enum_assignment"]);
+  promoteNamed(data, 'NEEDS_NAME_1', ["enum_assignment"]);
   return {
     ...data,
     get name() { return drillInAll(data.fields?.['name'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
+    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
+    get enumAssignment1() { return drillIn(data.fields?.['enumAssignment1'], tree); },
+    get enumAssignment2() { return drillInAll(data.fields?.['enumAssignment2'], tree); },
   };
 }
 
@@ -1056,9 +1061,14 @@ export function wrapObjectPattern(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapObjectType(data: AnyNodeData, tree: TreeHandle): unknown {
+  promoteNamed(data, 'NEEDS_NAME_0', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
+  promoteNamed(data, 'NEEDS_NAME_1', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
+    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
+    get children1() { return drillIn(data.fields?.['children1'], tree); },
+    get children2() { return drillInAll(data.fields?.['children2'], tree); },
   };
 }
 

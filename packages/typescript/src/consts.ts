@@ -480,6 +480,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'enum_body': [
     { name: 'name', required: false, multiple: true },
+    { name: 'NEEDS_NAME_0', required: false, multiple: false },
+    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'enum_declaration': [
     { name: 'body', required: true, multiple: false },
@@ -704,6 +706,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'object_pattern': [
   ],
   'object_type': [
+    { name: 'NEEDS_NAME_0', required: false, multiple: false },
+    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'omitting_type_annotation': [
   ],

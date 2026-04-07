@@ -116,9 +116,9 @@ export function as_pattern_(
 
 
 export function assert_statement_(
-  config?: AssertStatementConfig,
+  config: AssertStatementConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'assert_statement' as const,
     named: true as const,
@@ -447,16 +447,20 @@ export function comparison_operator_(
 ) {
   const fields = {
     operators: config.operators,
+    NEEDS_NAME_0: config.NEEDS_NAME_0,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = config.children ?? [];
+  const children = [...(config.primaryExpression1 ? [config.primaryExpression1] : []), ...(config.primaryExpression2 ?? [])];
   return {
     type: 'comparison_operator' as const,
     named: true as const,
     fields,
     children,
     operators(...operators: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[]) { return operators.length ? comparison_operator_({ ...config, operators: operators }) : fields.operators; },
-    getChildren() { return children; },
-    setChildren(...children: (PrimaryExpression)[]) { return comparison_operator_({ ...config, children }); },
+    NEEDS_NAME_0(NEEDS_NAME_0?: PrimaryExpression) { return NEEDS_NAME_0 !== undefined ? comparison_operator_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(...NEEDS_NAME_1: (PrimaryExpression)[]) { return NEEDS_NAME_1.length ? comparison_operator_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    primaryExpression1(primaryExpression1?: PrimaryExpression) { return primaryExpression1 !== undefined ? comparison_operator_({ ...config, primaryExpression1 }) : config?.primaryExpression1; },
+    primaryExpression2(...primaryExpression2: (PrimaryExpression)[]) { return primaryExpression2.length ? comparison_operator_({ ...config, primaryExpression2 }) : config?.primaryExpression2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -765,9 +769,9 @@ export function dictionary_splat_pattern_(
 
 
 export function dotted_name_(
-  config?: DottedNameConfig,
+  config: DottedNameConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'dotted_name' as const,
     named: true as const,
@@ -880,9 +884,9 @@ export function exec_statement_(
 
 
 export function expression_list_(
-  config?: ExpressionListConfig,
+  config: ExpressionListConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'expression_list' as const,
     named: true as const,
@@ -900,9 +904,9 @@ export function expression_list_(
 
 
 export function expression_statement_(
-  config?: ExpressionStatementConfig,
+  config: ExpressionStatementConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'expression_statement' as const,
     named: true as const,
@@ -1138,9 +1142,9 @@ export function generic_type_(
 
 
 export function global_statement_(
-  config?: GlobalStatementConfig,
+  config: GlobalStatementConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'global_statement' as const,
     named: true as const,
@@ -1565,9 +1569,9 @@ export function named_expression_(
 
 
 export function nonlocal_statement_(
-  config?: NonlocalStatementConfig,
+  config: NonlocalStatementConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'nonlocal_statement' as const,
     named: true as const,
@@ -1687,9 +1691,9 @@ export function parenthesized_list_splat_(
 
 
 export function pattern_list_(
-  config?: PatternListConfig,
+  config: PatternListConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'pattern_list' as const,
     named: true as const,
@@ -2098,9 +2102,9 @@ export function type_alias_statement_(
 
 
 export function type_parameter_(
-  config?: TypeParameterConfig,
+  config: TypeParameterConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'type_parameter' as const,
     named: true as const,
@@ -2262,9 +2266,9 @@ export function while_statement_(
 
 
 export function with_clause_(
-  config?: WithClauseConfig,
+  config: WithClauseConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'with_clause' as const,
     named: true as const,

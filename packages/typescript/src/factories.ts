@@ -948,16 +948,20 @@ export function enum_body_(
 ) {
   const fields = {
     name: config?.name,
+    NEEDS_NAME_0: config?.NEEDS_NAME_0,
+    NEEDS_NAME_1: config?.NEEDS_NAME_1,
   };
-  const children = config?.children ?? [];
+  const children = [...(config?.enumAssignment1 ? [config?.enumAssignment1] : []), ...(config?.enumAssignment2 ?? [])];
   return {
     type: 'enum_body' as const,
     named: true as const,
     fields,
     children,
     name(...name: (ComputedPropertyName | Number | PrivatePropertyIdentifier | PropertyIdentifier | String)[]) { return name.length ? enum_body_({ ...config, name: name }) : fields.name; },
-    getChildren() { return children; },
-    setChildren(...children: (EnumAssignment)[]) { return enum_body_({ ...config, children }); },
+    NEEDS_NAME_0(NEEDS_NAME_0?: EnumAssignment) { return NEEDS_NAME_0 !== undefined ? enum_body_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(...NEEDS_NAME_1: (EnumAssignment)[]) { return NEEDS_NAME_1.length ? enum_body_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    enumAssignment1(enumAssignment1?: EnumAssignment) { return enumAssignment1 !== undefined ? enum_body_({ ...config, enumAssignment1 }) : config?.enumAssignment1; },
+    enumAssignment2(...enumAssignment2: (EnumAssignment)[]) { return enumAssignment2.length ? enum_body_({ ...config, enumAssignment2 }) : config?.enumAssignment2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1462,9 +1466,9 @@ export function if_statement_(
 
 
 export function implements_clause_(
-  config?: ImplementsClauseConfig,
+  config: ImplementsClauseConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'implements_clause' as const,
     named: true as const,
@@ -2278,13 +2282,20 @@ export function object_pattern_(
 export function object_type_(
   config?: ObjectTypeConfig,
 ) {
-  const children = config?.children ?? [];
+  const fields = {
+    NEEDS_NAME_0: config?.NEEDS_NAME_0,
+    NEEDS_NAME_1: config?.NEEDS_NAME_1,
+  };
+  const children = [...(config?.children1 ? [config?.children1] : []), ...(config?.children2 ?? [])];
   return {
     type: 'object_type' as const,
     named: true as const,
+    fields,
     children,
-    getChildren() { return children; },
-    setChildren(...children: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return object_type_({ ...config, children }); },
+    NEEDS_NAME_0(NEEDS_NAME_0?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature) { return NEEDS_NAME_0 !== undefined ? object_type_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(...NEEDS_NAME_1: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return NEEDS_NAME_1.length ? object_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    children1(children1?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature) { return children1 !== undefined ? object_type_({ ...config, children1 }) : config?.children1; },
+    children2(...children2: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return children2.length ? object_type_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2728,9 +2739,9 @@ export function satisfies_expression_(
 
 
 export function sequence_expression_(
-  config?: SequenceExpressionConfig,
+  config: SequenceExpressionConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'sequence_expression' as const,
     named: true as const,
@@ -3130,9 +3141,9 @@ export function type_annotation_(
 
 
 export function type_arguments_(
-  config?: TypeArgumentsConfig,
+  config: TypeArgumentsConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'type_arguments' as const,
     named: true as const,
@@ -3200,9 +3211,9 @@ export function type_parameter_(
 
 
 export function type_parameters_(
-  config?: TypeParametersConfig,
+  config: TypeParametersConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'type_parameters' as const,
     named: true as const,
@@ -3354,9 +3365,9 @@ export function update_expression_(
 
 
 export function variable_declaration_(
-  config?: VariableDeclarationConfig,
+  config: VariableDeclarationConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'variable_declaration' as const,
     named: true as const,

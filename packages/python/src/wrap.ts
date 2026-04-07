@@ -332,10 +332,15 @@ export function wrapClassPattern(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapComparisonOperator(data: AnyNodeData, tree: TreeHandle): unknown {
+  promoteNamed(data, 'NEEDS_NAME_0', ["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","list","list_comprehension","list_splat","none","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
+  promoteNamed(data, 'NEEDS_NAME_1', ["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","list","list_comprehension","list_splat","none","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
   return {
     ...data,
     get operators() { return drillInAll(data.fields?.['operators'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
+    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
+    get primaryExpression1() { return drillIn(data.fields?.['primaryExpression1'], tree); },
+    get primaryExpression2() { return drillInAll(data.fields?.['primaryExpression2'], tree); },
   };
 }
 

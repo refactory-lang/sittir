@@ -302,6 +302,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'comparison_operator': [
     { name: 'operators', required: true, multiple: true },
+    { name: 'NEEDS_NAME_0', required: false, multiple: false },
+    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'complex_pattern': [
     { name: 'NEEDS_NAME_0', required: false, multiple: false },

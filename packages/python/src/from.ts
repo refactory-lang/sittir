@@ -376,6 +376,8 @@ export function assertStatementFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveExpression(v));
+  } else {
+    resolved.children = [];
   }
   return assert_statement_(resolved as AssertStatementConfig);
 }
@@ -612,6 +614,8 @@ export function caseClauseFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
+  } else {
+    resolved.children = [];
   }
   return case_clause_(resolved as CaseClauseConfig);
 }
@@ -724,7 +728,8 @@ export function comparisonOperatorFrom(input: unknown): unknown {
     const c = nd.children;
     return comparison_operator_({
       operators: f?.['operators'],
-      children: c,
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ComparisonOperatorConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -736,11 +741,22 @@ export function comparisonOperatorFrom(input: unknown): unknown {
   } else {
     resolved['operators'] = [];
   }
-  if (obj.children !== undefined) {
-    const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
-    resolved.children = arr.map((v: unknown) => _resolvePrimaryExpression(v));
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolvePrimaryExpression(obj['NEEDS_NAME_0']);
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
+    const arr = Array.isArray(raw) ? raw : [raw];
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolvePrimaryExpression(v));
+  }
+  if (obj.primaryExpression1 !== undefined) {
+    resolved.primaryExpression1 = _resolvePrimaryExpression(obj.primaryExpression1);
+  }
+  if (obj.primaryExpression2 !== undefined) {
+    const arr = Array.isArray(obj.primaryExpression2) ? obj.primaryExpression2 : [obj.primaryExpression2];
+    resolved.primaryExpression2 = arr.map((v: unknown) => _resolvePrimaryExpression(v));
   } else {
-    resolved.children = [];
+    resolved.primaryExpression2 = [];
   }
   return comparison_operator_(resolved as ComparisonOperatorConfig);
 }
@@ -1092,6 +1108,8 @@ export function dottedNameFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+  } else {
+    resolved.children = [];
   }
   return dotted_name_(resolved as DottedNameConfig);
 }
@@ -1212,6 +1230,8 @@ export function expressionListFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveExpression(v));
+  } else {
+    resolved.children = [];
   }
   return expression_list_(resolved as ExpressionListConfig);
 }
@@ -1233,6 +1253,8 @@ export function expressionStatementFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _rldymh6(v));
+  } else {
+    resolved.children = [];
   }
   return expression_statement_(resolved as ExpressionStatementConfig);
 }
@@ -1504,6 +1526,8 @@ export function globalStatementFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+  } else {
+    resolved.children = [];
   }
   return global_statement_(resolved as GlobalStatementConfig);
 }
@@ -1974,6 +1998,8 @@ export function nonlocalStatementFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+  } else {
+    resolved.children = [];
   }
   return nonlocal_statement_(resolved as NonlocalStatementConfig);
 }
@@ -2100,6 +2126,8 @@ export function patternListFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolvePattern(v));
+  } else {
+    resolved.children = [];
   }
   return pattern_list_(resolved as PatternListConfig);
 }
@@ -2555,6 +2583,8 @@ export function typeParameterFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v) : typeof v === 'object' ? type_From(v) : v));
+  } else {
+    resolved.children = [];
   }
   return type_parameter_(resolved as TypeParameterConfig);
 }
@@ -2731,6 +2761,8 @@ export function withClauseFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? withItemFrom(v) : typeof v === 'object' ? withItemFrom(v) : v));
+  } else {
+    resolved.children = [];
   }
   return with_clause_(resolved as WithClauseConfig);
 }

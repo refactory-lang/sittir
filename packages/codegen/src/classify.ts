@@ -38,10 +38,15 @@ export function simplifyRule(rule: GrammarRule): GrammarRule {
 			return rule;
 
 		case 'FIELD':
-			return simplifyRule(rule.content);
+			// Preserve FIELD wrappers — downstream can use them to distinguish
+			// field-owned children from positional children
+			return { type: 'FIELD', name: rule.name, content: simplifyRule(rule.content) };
 
 		case 'ALIAS':
-			return simplifyRule(rule.content);
+			// Named aliases produce a named child node with the alias value as kind
+			if (rule.named) return { type: 'SYMBOL', name: rule.value };
+			// Unnamed aliases are just tokens
+			return { type: 'BLANK' };
 
 		case 'PREC':
 		case 'PREC_LEFT':
@@ -62,13 +67,13 @@ export function simplifyRule(rule: GrammarRule): GrammarRule {
 			if (members.length === 0) return { type: 'BLANK' };
 			if (members.length === 1) return members[0]!;
 
-			// SEQ(X, REPEAT(X)) → REPEAT1(X) and SEQ(REPEAT(X), X) → REPEAT1(X)
+			// Collapse SEQ(X, REPEAT/REPEAT1(X)) and SEQ(REPEAT/REPEAT1(X), X) → REPEAT1(X)
 			if (members.length === 2) {
 				const [a, b] = members;
-				if (a!.type === 'SYMBOL' && b!.type === 'REPEAT' && grammarRulesEqual(a!, b!.content)) {
+				if ((b!.type === 'REPEAT' || b!.type === 'REPEAT1') && grammarRulesEqual(a!, b!.content)) {
 					return { type: 'REPEAT1', content: a! };
 				}
-				if (b!.type === 'SYMBOL' && a!.type === 'REPEAT' && grammarRulesEqual(b!, a!.content)) {
+				if ((a!.type === 'REPEAT' || a!.type === 'REPEAT1') && grammarRulesEqual(b!, a!.content)) {
 					return { type: 'REPEAT1', content: b! };
 				}
 			}
@@ -78,7 +83,35 @@ export function simplifyRule(rule: GrammarRule): GrammarRule {
 
 		case 'CHOICE': {
 			const members = rule.members.map(m => simplifyRule(m));
-			return { type: 'CHOICE', members };
+			// Filter duplicates and collapse all-blank choices
+			const nonBlank = members.filter(m => m.type !== 'BLANK');
+			if (nonBlank.length === 0) return { type: 'BLANK' };
+			const hasBlank = members.length > nonBlank.length;
+			if (nonBlank.length === 1) {
+				if (hasBlank) {
+					// CHOICE(BLANK, REPEAT1(X)) → REPEAT(X)
+					if (nonBlank[0]!.type === 'REPEAT1') {
+						return { type: 'REPEAT', content: nonBlank[0]!.content };
+					}
+					// CHOICE(BLANK, X) — X is optional, keep as CHOICE for optionality tracking
+					return { type: 'CHOICE', members: [{ type: 'BLANK' }, nonBlank[0]!] };
+				}
+				return nonBlank[0]!;
+			}
+			// Deduplicate structurally identical members
+			const unique: GrammarRule[] = [];
+			for (const m of members) {
+				if (!unique.some(u => grammarRulesEqual(u, m))) unique.push(m);
+			}
+			if (unique.length === 1) return unique[0]!;
+			const uniqueNonBlank = unique.filter(m => m.type !== 'BLANK');
+			if (uniqueNonBlank.length === 1 && unique.length > uniqueNonBlank.length) {
+				if (uniqueNonBlank[0]!.type === 'REPEAT1') {
+					return { type: 'REPEAT', content: uniqueNonBlank[0]!.content };
+				}
+				return { type: 'CHOICE', members: [{ type: 'BLANK' }, uniqueNonBlank[0]!] };
+			}
+			return { type: 'CHOICE', members: unique };
 		}
 
 		default:
