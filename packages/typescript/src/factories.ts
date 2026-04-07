@@ -134,7 +134,7 @@ export function abstract_method_signature_(
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? abstract_method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? abstract_method_signature_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? abstract_method_signature_({ ...config, overrideModifier }) : config?.overrideModifier; },
-    children3(children3?: ) { return children3 !== undefined ? abstract_method_signature_({ ...config, children3 }) : config?.children3; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? abstract_method_signature_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -183,7 +183,7 @@ export function ambient_declaration_(
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? ambient_declaration_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     children1(children1?: Declaration | PropertyIdentifier | StatementBlock) { return children1 !== undefined ? ambient_declaration_({ ...config, children1 }) : config?.children1; },
     childType(childType?: Type) { return childType !== undefined ? ambient_declaration_({ ...config, childType }) : config?.childType; },
-    children3(children3?: ) { return children3 !== undefined ? ambient_declaration_({ ...config, children3 }) : config?.children3; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? ambient_declaration_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -655,7 +655,7 @@ export function class_declaration_(
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? class_declaration_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     classHeritage(classHeritage?: ClassHeritage) { return classHeritage !== undefined ? class_declaration_({ ...config, classHeritage: classHeritage }) : fields.class_heritage; },
     NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? class_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    children2(children2?: ) { return children2 !== undefined ? class_declaration_({ ...config, children2 }) : config?.children2; },
+    children2(children2?: AnyNodeData) { return children2 !== undefined ? class_declaration_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1074,8 +1074,8 @@ export function export_statement_(
     NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? export_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? export_statement_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     children1(children1?: ExportClause | Expression | Identifier | NamespaceExport) { return children1 !== undefined ? export_statement_({ ...config, children1 }) : config?.children1; },
-    children2(children2?: ) { return children2 !== undefined ? export_statement_({ ...config, children2 }) : config?.children2; },
-    children3(children3?: ) { return children3 !== undefined ? export_statement_({ ...config, children3 }) : config?.children3; },
+    children2(children2?: AnyNodeData) { return children2 !== undefined ? export_statement_({ ...config, children2 }) : config?.children2; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? export_statement_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1522,7 +1522,7 @@ export function import_alias_(
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? import_alias_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     identifier(identifier?: Identifier) { return identifier !== undefined ? import_alias_({ ...config, identifier }) : config?.identifier; },
     identifierOrNestedIdentifier(identifierOrNestedIdentifier?: Identifier | NestedIdentifier) { return identifierOrNestedIdentifier !== undefined ? import_alias_({ ...config, identifierOrNestedIdentifier }) : config?.identifierOrNestedIdentifier; },
-    children3(children3?: ) { return children3 !== undefined ? import_alias_({ ...config, children3 }) : config?.children3; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? import_alias_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1648,8 +1648,8 @@ export function import_statement_(
     importAttribute(importAttribute?: ImportAttribute) { return importAttribute !== undefined ? import_statement_({ ...config, importAttribute: importAttribute }) : fields.import_attribute; },
     NEEDS_NAME_3(NEEDS_NAME_3?: string) { return NEEDS_NAME_3 !== undefined ? import_statement_({ ...config, NEEDS_NAME_3: NEEDS_NAME_3 }) : fields.NEEDS_NAME_3; },
     importClauseOrImportRequireClause(importClauseOrImportRequireClause?: ImportClause | ImportRequireClause) { return importClauseOrImportRequireClause !== undefined ? import_statement_({ ...config, importClauseOrImportRequireClause }) : config?.importClauseOrImportRequireClause; },
-    children2(children2?: ) { return children2 !== undefined ? import_statement_({ ...config, children2 }) : config?.children2; },
-    children4(children4?: ) { return children4 !== undefined ? import_statement_({ ...config, children4 }) : config?.children4; },
+    children2(children2?: AnyNodeData) { return children2 !== undefined ? import_statement_({ ...config, children2 }) : config?.children2; },
+    children4(children4?: AnyNodeData) { return children4 !== undefined ? import_statement_({ ...config, children4 }) : config?.children4; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1900,7 +1900,7 @@ export function lexical_declaration_(
     kind(kind?: 'let' | 'const') { return kind !== undefined ? lexical_declaration_({ ...config, kind: kind }) : fields.kind; },
     variableDeclarator(...variableDeclarator: (VariableDeclarator)[]) { return variableDeclarator.length ? lexical_declaration_({ ...config, variableDeclarator: variableDeclarator }) : fields.variable_declarator; },
     NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? lexical_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    children2(children2?: ) { return children2 !== undefined ? lexical_declaration_({ ...config, children2 }) : config?.children2; },
+    children2(children2?: AnyNodeData) { return children2 !== undefined ? lexical_declaration_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2034,7 +2034,7 @@ export function method_definition_(
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? method_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? method_definition_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_definition_({ ...config, overrideModifier }) : config?.overrideModifier; },
-    children3(children3?: ) { return children3 !== undefined ? method_definition_({ ...config, children3 }) : config?.children3; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? method_definition_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2071,7 +2071,7 @@ export function method_signature_(
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? method_signature_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_signature_({ ...config, overrideModifier }) : config?.overrideModifier; },
-    children3(children3?: ) { return children3 !== undefined ? method_signature_({ ...config, children3 }) : config?.children3; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? method_signature_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2335,7 +2335,7 @@ export function object_type_(
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? object_type_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     children1(children1?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature) { return children1 !== undefined ? object_type_({ ...config, children1 }) : config?.children1; },
     children2(...children2: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return children2.length ? object_type_({ ...config, children2 }) : config?.children2; },
-    children3(children3?: ) { return children3 !== undefined ? object_type_({ ...config, children3 }) : config?.children3; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? object_type_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2610,7 +2610,7 @@ export function public_field_definition_(
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? public_field_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? public_field_definition_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? public_field_definition_({ ...config, overrideModifier }) : config?.overrideModifier; },
-    children3(children3?: ) { return children3 !== undefined ? public_field_definition_({ ...config, children3 }) : config?.children3; },
+    children3(children3?: AnyNodeData) { return children3 !== undefined ? public_field_definition_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2837,7 +2837,7 @@ export function statement_block_(
     children,
     statement(...statement: (Statement)[]) { return statement.length ? statement_block_({ ...config, statement: statement }) : fields.statement; },
     NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? statement_block_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    children2(children2?: ) { return children2 !== undefined ? statement_block_({ ...config, children2 }) : config?.children2; },
+    children2(children2?: AnyNodeData) { return children2 !== undefined ? statement_block_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3430,7 +3430,7 @@ export function variable_declaration_(
     children,
     variableDeclarator(...variableDeclarator: (VariableDeclarator)[]) { return variableDeclarator.length ? variable_declaration_({ ...config, variableDeclarator: variableDeclarator }) : fields.variable_declarator; },
     NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? variable_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    children2(children2?: ) { return children2 !== undefined ? variable_declaration_({ ...config, children2 }) : config?.children2; },
+    children2(children2?: AnyNodeData) { return children2 !== undefined ? variable_declaration_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

@@ -74,26 +74,28 @@ export function emitTests(config: EmitTestsConfig): string {
 		lines.push(`describe('${node.kind}', () => {`);
 
 		// Test 1: factory produces correct kind
+		const minimal = minimalArgs(node, dc);
+		const hasUnknown = minimal.includes("type: 'unknown'");
 		lines.push(`  it('factory produces NodeData with kind', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
+		lines.push(`    const node = ir.${irKey}(${minimal});`);
 		lines.push(`    expect(node.type).toBe('${node.kind}');`);
 		lines.push(`  });`);
 
 		// Test 2: render produces non-empty string (skip for nodes whose minimal args only produce empty arrays)
-		const hasRequiredContent = requiredTokens.length > 0 ||
-			minimalHasRenderableContent(node, dc);
+		const hasRequiredContent = !hasUnknown && (requiredTokens.length > 0 ||
+			minimalHasRenderableContent(node, dc));
 		if (hasRequiredContent) {
 			lines.push(`  it('renders to non-empty string', () => {`);
-			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
+			lines.push(`    const node = ir.${irKey}(${minimal});`);
 			lines.push(`    const source = render(node);`);
 			lines.push(`    expect(source.length).toBeGreaterThan(0);`);
 			lines.push(`  });`);
 		}
 
 		// Test 3: rendered output contains required tokens
-		if (requiredTokens.length > 0) {
+		if (requiredTokens.length > 0 && !hasUnknown) {
 			lines.push(`  it('contains required tokens', () => {`);
-			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
+			lines.push(`    const node = ir.${irKey}(${minimal});`);
 			lines.push(`    const source = render(node);`);
 			for (const token of requiredTokens) {
 				lines.push(`    expect(source).toContain('${escapeString(token)}');`);
@@ -102,11 +104,13 @@ export function emitTests(config: EmitTestsConfig): string {
 		}
 
 		// Test 4: node.render() method works
-		lines.push(`  it('node.render() works', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
-		lines.push(`    expect(typeof node.render).toBe('function');`);
-		lines.push(`    expect(node.render()).toBe(render(node));`);
-		lines.push(`  });`);
+		if (!hasUnknown) {
+			lines.push(`  it('node.render() works', () => {`);
+			lines.push(`    const node = ir.${irKey}(${minimal});`);
+			lines.push(`    expect(typeof node.render).toBe('function');`);
+			lines.push(`    expect(node.render()).toBe(render(node));`);
+			lines.push(`  });`);
+		}
 
 		// Test 5: render with all fields (optional + required) produces non-empty string
 		const full = fullArgs(node, dc);

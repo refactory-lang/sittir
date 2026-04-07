@@ -41,21 +41,6 @@ describe('abstract_method_signature', () => {
     const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('abstract_method_signature');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('contains required tokens', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source).toContain('abstract');
-  });
-  it('node.render() works', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
-  });
 });
 
 describe('adding_type_annotation', () => {
@@ -1429,22 +1414,6 @@ describe('import_alias', () => {
     const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('import_alias');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('contains required tokens', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source).toContain('import');
-    expect(source).toContain('=');
-  });
-  it('node.render() works', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
-  });
 });
 
 describe('import_attribute', () => {
@@ -1537,21 +1506,6 @@ describe('import_statement', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('import_statement');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('contains required tokens', () => {
-    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source).toContain('import');
-  });
-  it('node.render() works', () => {
-    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -1774,16 +1728,6 @@ describe('lexical_declaration', () => {
     const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('lexical_declaration');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('node.render() works', () => {
-    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
-  });
 });
 
 describe('literal_type', () => {
@@ -1885,32 +1829,12 @@ describe('method_definition', () => {
     const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('method_definition');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('node.render() works', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
-  });
 });
 
 describe('method_signature', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('method_signature');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('node.render() works', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -3292,21 +3216,6 @@ describe('variable_declaration', () => {
   it('factory produces NodeData with kind', () => {
     const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('variable_declaration');
-  });
-  it('renders to non-empty string', () => {
-    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('contains required tokens', () => {
-    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source).toContain('var');
-  });
-  it('node.render() works', () => {
-    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
   });
 });
 

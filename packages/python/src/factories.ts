@@ -615,7 +615,7 @@ export function decorator_(
     children,
     expression(expression?: Expression) { return expression !== undefined ? decorator_({ ...config, expression: expression }) : fields.expression; },
     NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? decorator_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    children2(children2?: ) { return children2 !== undefined ? decorator_({ ...config, children2 }) : config?.children2; },
+    children2(children2?: AnyNodeData) { return children2 !== undefined ? decorator_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

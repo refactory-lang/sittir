@@ -121,7 +121,7 @@ export function emitFactory(config: {
 			const name = slotNames[i]!;
 			if (fieldMethodNames.has(name)) return; // already emitted as field getter
 			const slotProj = projectKinds(slot.kinds, ctx);
-			const slotType = slotProj.collapsedTypes.join(' | ');
+			const slotType = slotProj.collapsedTypes.join(' | ') || 'AnyNodeData';
 			if (name === 'children') {
 				// Single children slot — use child/getChildren/setChildren to avoid name collision
 				if (slot.multiple) {

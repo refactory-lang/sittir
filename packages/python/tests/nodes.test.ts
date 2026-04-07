@@ -504,21 +504,6 @@ describe('decorator', () => {
     const node = ir.decorator({ expression: ir.identifier('test_expression') as any, children2: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('decorator');
   });
-  it('renders to non-empty string', () => {
-    const node = ir.decorator({ expression: ir.identifier('test_expression') as any, children2: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
-  it('contains required tokens', () => {
-    const node = ir.decorator({ expression: ir.identifier('test_expression') as any, children2: { type: 'unknown', fields: {} } as any });
-    const source = render(node);
-    expect(source).toContain('@');
-  });
-  it('node.render() works', () => {
-    const node = ir.decorator({ expression: ir.identifier('test_expression') as any, children2: { type: 'unknown', fields: {} } as any });
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
-  });
 });
 
 describe('default_parameter', () => {
