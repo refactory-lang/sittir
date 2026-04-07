@@ -8,11 +8,11 @@ metadata:
 rules:
   aliased_import: $NAME as $ALIAS
   argument_list:
-    template: ($$$CHILDREN2) $CHILDREN1
+    template: ($$$CHILDREN) $$$CHILDREN
     joinBy: ","
   as_pattern: $CHILDREN as $ALIAS $$$CHILDREN
   assert_statement:
-    template: assert $$$EXPRESSION2 , $EXPRESSION1
+    template: assert $$$CHILDREN , $$$CHILDREN
     joinBy: ","
   assignment: "$LEFT : $TYPE = $RIGHT"
   attribute: $OBJECT.$ATTRIBUTE
@@ -23,33 +23,33 @@ rules:
   boolean_operator: $LEFT $OPERATOR $RIGHT
   call: $FUNCTION $ARGUMENTS
   case_clause:
-    template: "case $$$CASE_PATTERN2 , $GUARD : $CONSEQUENCE $CASE_PATTERN1"
+    template: "case $$$CHILDREN , $GUARD : $CONSEQUENCE $$$CHILDREN"
     joinBy: ","
   case_pattern: $CHILDREN $$$CHILDREN
   chevron: ">> $CHILDREN $$$CHILDREN"
   class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES : $BODY"
   class_pattern:
-    template: $DOTTED_NAME($$$CASE_PATTERN2) $CASE_PATTERN1
+    template: $$$CHILDREN() $$$CHILDREN
     joinBy: ","
-  comparison_operator: $$$PRIMARY_EXPRESSION2 $$$OPERATORS $PRIMARY_EXPRESSION1
-  complex_pattern: $FLOAT_OR_INTEGER2 + $FLOAT_OR_INTEGER1
-  concatenated_string: $$$STRING2 $STRING1
-  conditional_expression: $EXPRESSION3 if else $EXPRESSION1 $EXPRESSION2
-  constrained_type: "$CHILD_TYPE2 : $CHILD_TYPE1"
+  comparison_operator: $$$CHILDREN $$$OPERATORS $$$CHILDREN
+  complex_pattern: $$$CHILDREN + $$$CHILDREN
+  concatenated_string: $$$CHILDREN $$$CHILDREN
+  conditional_expression: $$$CHILDREN if else $$$CHILDREN
+  constrained_type: "$$$CHILDREN : $$$CHILDREN"
   decorated_definition: $$$CHILDREN $DEFINITION $$$CHILDREN
   decorator: "@ $CHILDREN $$$CHILDREN"
   default_parameter: $NAME = $VALUE
   delete_statement: del $$$CHILDREN
   dict_pattern:
-    template: "{$$$CHILDREN $$$SPLAT_PATTERN2} $SPLAT_PATTERN1"
+    template: "{$$$CHILDREN $$$CHILDREN}"
     joinBy: ","
   dictionary:
-    template: "{$$$DICTIONARY_SPLAT_OR_PAIR2} $DICTIONARY_SPLAT_OR_PAIR1"
+    template: "{$$$CHILDREN} $$$CHILDREN"
     joinBy: ","
-  dictionary_comprehension: "{$BODY $$$CHILDREN} $FOR_IN_CLAUSE $$$FOR_IN_CLAUSE_OR_IF_CLAUSE"
+  dictionary_comprehension: "{$BODY $$$CHILDREN}"
   dictionary_splat: "** $CHILDREN $$$CHILDREN"
   dictionary_splat_pattern: "** $CHILDREN $$$CHILDREN"
-  dotted_name: $$$IDENTIFIER2. $IDENTIFIER1
+  dotted_name: $$$CHILDREN. $$$CHILDREN
   elif_clause: "elif $CONDITION : $CONSEQUENCE"
   else_clause: "else : $BODY"
   except_clause:
@@ -57,13 +57,13 @@ rules:
     alias_clause: as $ALIAS
     joinBy: ","
   exec_statement:
-    template: exec $CODE $$$EXPRESSION2 $EXPRESSION1
+    template: exec $CODE $$$CHILDREN $$$CHILDREN
     joinBy: ","
   expression_list:
-    template: $$$EXPRESSION2 , $EXPRESSION1
+    template: $$$CHILDREN , $$$CHILDREN
     joinBy: ","
   expression_statement:
-    template: $$$EXPRESSION $CHILDREN1
+    template: $$$CHILDREN $$$CHILDREN
     joinBy: ","
   finally_clause: "finally : $$$CHILDREN"
   for_in_clause: for $LEFT in $$$RIGHT
@@ -74,10 +74,10 @@ rules:
     template: "def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE : $BODY"
     return_type_clause: -> $RETURN_TYPE
   future_import_statement: from __future__ import $$$NAME ,
-  generator_expression: ($BODY $$$CHILDREN) $FOR_IN_CLAUSE $$$FOR_IN_CLAUSE_OR_IF_CLAUSE
-  generic_type: $IDENTIFIER $TYPE_PARAMETER
+  generator_expression: ($BODY $$$CHILDREN)
+  generic_type: $$$CHILDREN $$$CHILDREN
   global_statement:
-    template: global $$$IDENTIFIER2 , $IDENTIFIER1
+    template: global $$$CHILDREN , $$$CHILDREN
     joinBy: ","
   if_clause: if $CHILDREN $$$CHILDREN
   if_statement: "if $CONDITION : $CONSEQUENCE $$$ALTERNATIVE"
@@ -85,22 +85,22 @@ rules:
   import_statement: import $$$NAME ,
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME = $VALUE
-  keyword_pattern: $IDENTIFIER = $$$CHILDREN $CHILDREN2
+  keyword_pattern: $$$CHILDREN = $$$CHILDREN
   lambda: "lambda $PARAMETERS : $BODY"
   lambda_parameters: $$$CHILDREN
   list: "[$$$CHILDREN]"
-  list_comprehension: "[$BODY $$$CHILDREN] $FOR_IN_CLAUSE $$$FOR_IN_CLAUSE_OR_IF_CLAUSE"
+  list_comprehension: "[$BODY $$$CHILDREN]"
   list_pattern: "[$$$CHILDREN]"
   list_splat: "* $CHILDREN $$$CHILDREN"
   list_splat_pattern: "* $CHILDREN $$$CHILDREN"
   match_statement:
     template: "match $$$SUBJECT , : $BODY"
     joinBy: ","
-  member_type: $CHILD_TYPE.$IDENTIFIER
+  member_type: $$$CHILDREN. $$$CHILDREN
   module: $$$CHILDREN
   named_expression: $NAME := $VALUE
   nonlocal_statement:
-    template: nonlocal $$$IDENTIFIER2 , $IDENTIFIER1
+    template: nonlocal $$$CHILDREN , $$$CHILDREN
     joinBy: ","
   not_operator: not $ARGUMENT
   pair: "$KEY : $VALUE"
@@ -108,7 +108,7 @@ rules:
   parenthesized_expression: ($CHILDREN) $$$CHILDREN
   parenthesized_list_splat: ($CHILDREN) $$$CHILDREN
   pattern_list:
-    template: $$$PATTERN2 , $PATTERN1
+    template: $$$CHILDREN , $$$CHILDREN
     joinBy: ","
   print_statement:
     template: print $CHILDREN , $$$ARGUMENT $$$CHILDREN
@@ -116,34 +116,34 @@ rules:
   raise_statement:
     template: raise $$$CHILDREN $CAUSE_CLAUSE
     cause_clause: from $CAUSE
-  relative_import: $IMPORT_PREFIX $DOTTED_NAME
+  relative_import: $$$CHILDREN $$$CHILDREN
   return_statement: return $$$CHILDREN
   set: "{$$$CHILDREN}"
-  set_comprehension: "{$BODY $$$CHILDREN} $FOR_IN_CLAUSE $$$FOR_IN_CLAUSE_OR_IF_CLAUSE"
-  slice: "$EXPRESSION3 : $EXPRESSION1 $EXPRESSION2"
+  set_comprehension: "{$BODY $$$CHILDREN}"
+  slice: "$$$CHILDREN : $$$CHILDREN"
   splat_pattern: "* $CHILDREN $$$CHILDREN"
   splat_type: "* $CHILDREN $$$CHILDREN"
-  string: $STRING_START $$$INTERPOLATION_OR_STRING_CONTENT $STRING_END
+  string: $$$CHILDREN $$$CHILDREN
   string_content: $$$CHILDREN $$$CHILDREN
   subscript:
     template: $VALUE[$$$SUBSCRIPT ,]
     joinBy: ","
-  try_statement: "try : $BODY $$$EXCEPT_CLAUSE $ELSE_CLAUSE $FINALLY_CLAUSE"
+  try_statement: "try : $BODY $$$CHILDREN $$$CHILDREN"
   tuple: ($$$CHILDREN)
   tuple_pattern: ($$$CHILDREN)
   type: $CHILDREN $$$CHILDREN
   type_alias_statement: type $LEFT = $RIGHT
   type_parameter:
-    template: "[$$$CHILD_TYPE2 ,] $CHILD_TYPE1"
+    template: "[$$$CHILDREN ,] $$$CHILDREN"
     joinBy: ","
   typed_default_parameter: "$NAME : $TYPE = $VALUE"
   typed_parameter: "$CHILDREN : $TYPE $$$CHILDREN"
   unary_operator: $OPERATOR $ARGUMENT
   union_pattern: $$$CHILDREN |
-  union_type: $CHILD_TYPE2 | $CHILD_TYPE1
+  union_type: $$$CHILDREN | $$$CHILDREN
   while_statement: "while $CONDITION : $BODY $ALTERNATIVE"
   with_clause:
-    template: $$$WITH_ITEM2 , $WITH_ITEM1
+    template: $$$CHILDREN , $$$CHILDREN
     joinBy: ","
   with_item: $VALUE
   with_statement: "with $CHILDREN : $BODY $$$CHILDREN"
