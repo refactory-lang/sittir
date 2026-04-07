@@ -709,7 +709,7 @@ export function enrichedToNodeModel(
 		const childTypeClass = typesToFieldTypeClass(namedArr, anonArr, ctx.leafKinds, ctx.expandedSupertypes);
 		const childSep = separators.get('__children__') ?? undefined;
 		if (entry.children.multiple) {
-			children = { required: entry.children.required, multiple: true, types: childTypeClass, separator: childSep ?? null };
+			children = { required: entry.children.required, multiple: true, types: childTypeClass, separator: childSep };
 		} else {
 			children = { required: entry.children.required, multiple: entry.children.multiple, types: childTypeClass };
 		}
