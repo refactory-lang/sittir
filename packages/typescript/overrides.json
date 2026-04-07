@@ -2,7 +2,10 @@
   "abstract_method_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {}
+      "override_modifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "ambient_declaration": {
@@ -110,13 +113,19 @@
   "method_definition": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {}
+      "override_modifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "method_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {}
+      "override_modifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "named_imports": {
@@ -152,7 +161,10 @@
   "optional_parameter": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {}
+      "override_modifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "program": {
@@ -166,19 +178,28 @@
   "property_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {}
+      "override_modifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "public_field_definition": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {}
+      "override_modifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "required_parameter": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {}
+      "override_modifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "satisfies_expression": {

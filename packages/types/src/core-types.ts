@@ -58,7 +58,7 @@ export type TemplateRule =
 
 export interface TemplateRuleObject {
 	template: string;
-	joinBy?: string | Record<string, string>;
+	joinBy?: string;
 	[clauseKey: `${string}_clause`]: string;
 }
 

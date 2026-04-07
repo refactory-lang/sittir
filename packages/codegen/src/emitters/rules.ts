@@ -256,6 +256,8 @@ function ruleToTemplate(
 			if (childSlot) {
 				if (seen.has(`child:${childSlot.slotName}`)) return [];
 				seen.add(`child:${childSlot.slotName}`);
+				// If this slot resolves to CHILDREN, also mark 'children' to prevent fallback duplication
+				if (childSlot.slotName === 'children') seen.add('children');
 				return [childSlot.multiple ? `$$$${childSlot.varName}` : `$${childSlot.varName}`];
 			}
 			// Unknown symbol — generic children
@@ -439,15 +441,13 @@ function buildJoinBy(
 	fieldMultiple: Map<string, boolean>,
 	fieldSeparators: Map<string, string>,
 	node: StructuralNode,
-): string | Record<string, string> | undefined {
-	// Collect all multi-fields that have separators
-	const seps: Record<string, string> = {};
-	let count = 0;
+): string | undefined {
+	// Collect all separators from multi-fields and children
+	const seps = new Set<string>();
 
 	for (const [fieldName, sep] of fieldSeparators) {
 		if (fieldMultiple.get(fieldName)) {
-			seps[fieldName.toUpperCase()] = sep;
-			count++;
+			seps.add(sep);
 		}
 	}
 
@@ -456,20 +456,17 @@ function buildJoinBy(
 		const childArr = Array.isArray(node.children) ? node.children : [node.children];
 		for (const child of childArr) {
 			if (child.multiple && 'separator' in child && child.separator) {
-				seps['CHILDREN'] = child.separator;
-				count++;
+				seps.add(child.separator);
 			}
 		}
 	}
 
-	if (count === 0) return undefined;
+	if (seps.size === 0) return undefined;
+	if (seps.size > 1) {
+		throw new Error(`'${node.kind}' has multiple different separators (${[...seps].join(', ')}); joinBy must be a single string`);
+	}
 
-	// If all separators are the same, use string form
-	const values = Object.values(seps);
-	const allSame = values.every(v => v === values[0]);
-	if (allSame && count > 0) return values[0];
-
-	return seps;
+	return [...seps][0];
 }
 
 // ---------------------------------------------------------------------------

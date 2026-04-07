@@ -32,7 +32,8 @@
       },
       "NEEDS_NAME_2": {
         "anonymous": true
-      }
+      },
+      "_expression": {}
     }
   },
   "bounded_type": {
@@ -46,7 +47,8 @@
       "label": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "_expression": {}
     }
   },
   "captured_pattern": {
@@ -54,7 +56,8 @@
       "identifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "_pattern": {}
     }
   },
   "closure_parameters": {
@@ -83,7 +86,10 @@
   "extern_crate_declaration": {
     "fields": {
       "visibility_modifier": {},
-      "crate": {}
+      "crate": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "field_declaration_list": {
@@ -138,7 +144,9 @@
   "index_expression": {
     "fields": {
       "object": {},
-      "index": {}
+      "index": {},
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "macro_definition": {
@@ -158,7 +166,11 @@
       "mutable_specifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "NEEDS_NAME_0": {
+        "anonymous": true
+      },
+      "_pattern": {}
     }
   },
   "negative_literal": {
@@ -181,7 +193,9 @@
           "|"
         ]
       },
-      "right": {}
+      "right": {},
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "ordered_field_declaration_list": {
@@ -212,7 +226,9 @@
           "..="
         ]
       },
-      "end": {}
+      "end": {},
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "reference_pattern": {
@@ -220,20 +236,33 @@
       "mutable_specifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "NEEDS_NAME_0": {
+        "anonymous": true
+      },
+      "_pattern": {}
     }
   },
   "reference_type": {
     "fields": {
       "lifetime": {},
-      "mutable_specifier": {}
+      "mutable_specifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "self_parameter": {
     "fields": {
       "lifetime": {},
       "mutable_specifier": {},
-      "self": {}
+      "self": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      },
+      "NEEDS_NAME_2": {
+        "anonymous": true
+      }
     }
   },
   "shorthand_field_initializer": {
@@ -255,7 +284,10 @@
   "static_item": {
     "fields": {
       "visibility_modifier": {},
-      "mutable_specifier": {}
+      "mutable_specifier": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "struct_item": {

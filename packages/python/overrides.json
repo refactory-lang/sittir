@@ -23,7 +23,10 @@
     "fields": {
       "dotted_name": {},
       "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {}
+      "NEEDS_NAME_2": {},
+      "case_pattern": {
+        "multiple": true
+      }
     }
   },
   "comparison_operator": {

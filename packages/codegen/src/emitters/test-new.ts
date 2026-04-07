@@ -79,9 +79,9 @@ export function emitTests(config: EmitTestsConfig): string {
 		lines.push(`    expect(node.type).toBe('${node.kind}');`);
 		lines.push(`  });`);
 
-		// Test 2: render produces non-empty string (skip for all-optional nodes with no tokens)
+		// Test 2: render produces non-empty string (skip for nodes whose minimal args only produce empty arrays)
 		const hasRequiredContent = requiredTokens.length > 0 ||
-			minimalArgs(node, dc) !== '';
+			minimalHasRenderableContent(node, dc);
 		if (hasRequiredContent) {
 			lines.push(`  it('renders to non-empty string', () => {`);
 			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
@@ -235,19 +235,50 @@ function fullArgs(node: StructuralNode, dc: DummyCtx): string {
 }
 
 /**
- * Check if fullArgs would produce at least one scalar (non-empty-array) value.
- * Nodes with only optional multiple children produce only `[]` entries, which render to nothing.
+ * Check if fullArgs would produce at least one scalar (non-empty-array) value
+ * that is actually renderable (not a NEEDS_NAME placeholder).
  */
 function fullHasScalarValues(node: StructuralNode, dc: DummyCtx): boolean {
 	const allFields = fieldsOf(node);
-	if (allFields.some(f => !f.required && !f.multiple)) return true; // optional scalar fields produce values
+	// Optional scalar fields produce values — but skip NEEDS_NAME placeholders (unreferenceable in templates)
+	if (allFields.some(f => !f.required && !f.multiple && !f.name.startsWith('NEEDS_NAME'))) return true;
 	if (node.children != null) {
+		const slotNames = childSlotNames(node.children, dc.ctx);
 		let hasNonMultipleOptional = false;
-		eachChildSlot(node.children, (slot) => {
-			if (!slot.required && !slot.multiple) hasNonMultipleOptional = true;
+		eachChildSlot(node.children, (slot, i) => {
+			if (!slot.required && !slot.multiple && !slotNames[i]!.startsWith('NEEDS_NAME')) hasNonMultipleOptional = true;
 		});
 		if (hasNonMultipleOptional) return true;
 	}
+	return false;
+}
+
+/**
+ * Check if minimalArgs would produce renderable (non-empty) output.
+ * Returns false when minimal args are empty or consist entirely of empty-array children.
+ */
+function minimalHasRenderableContent(node: StructuralNode, dc: DummyCtx): boolean {
+	const requiredFields = fieldsOf(node).filter(f => f.required);
+	// Any required scalar field → definitely renderable
+	if (requiredFields.some(f => !f.multiple)) return true;
+	// Required multiple fields with concrete leaf kinds → might be renderable
+	if (requiredFields.some(f => f.multiple && dummyValue(f, dc) !== '[]')) return true;
+
+	if (node.children != null) {
+		const fieldKeys = new Set(requiredFields.map(f => f.propertyName ?? toFieldName(f.name)));
+		const slotNames = childSlotNames(node.children, dc.ctx);
+		let hasContent = false;
+		eachChildSlot(node.children, (slot, i) => {
+			if (!slot.required) return;
+			if (fieldKeys.has(slotNames[i]!)) return; // already counted as field
+			if (!slot.multiple) { hasContent = true; return; }
+			// Required multiple child — check if dummyValue produces non-empty
+			const dummy = dummyValue({ name: slotNames[i]!, kinds: slot.kinds, multiple: true }, dc);
+			if (dummy !== '[]') hasContent = true;
+		});
+		if (hasContent) return true;
+	}
+
 	return false;
 }
 

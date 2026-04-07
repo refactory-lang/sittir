@@ -1,12 +1,108 @@
 /**
  * Children classification — simplify grammar rules to determine template patterns.
  *
- * Strips anonymous tokens from SEQs, unwraps single-member SEQs, and leaves
- * CHOICEs intact. Used by the template emitter and wrap heuristics to decide
- * which template pattern each node kind gets.
+ * Two representations:
+ *   simplifyRule()  — GrammarRule → GrammarRule (same AST type, stored on BranchRule/ContainerRule)
+ *   classifyRule()  — GrammarRule → ClassifiedPattern (lightweight union for template decisions)
+ *
+ * simplifyRule strips tokens from SEQs, unwraps single-member SEQs,
+ * collapses SEQ(X, X*) → REPEAT1(X), and leaves CHOICEs intact.
  */
 
 import type { GrammarRule, Grammar } from './grammar.ts';
+
+// ---------------------------------------------------------------------------
+// simplifyRule — GrammarRule → GrammarRule (stored on enriched rules)
+// ---------------------------------------------------------------------------
+
+/**
+ * Simplify a grammar rule in-place (returns new tree):
+ * 1. Strip STRING/PATTERN/TOKEN/IMMEDIATE_TOKEN from SEQs
+ * 2. Unwrap single-member SEQs
+ * 3. Strip PREC/FIELD/ALIAS wrappers (keep content)
+ * 4. Collapse SEQ(X, REPEAT(X)) → REPEAT1(X) and SEQ(REPEAT(X), X) → REPEAT1(X)
+ * 5. Leave CHOICEs intact
+ */
+export function simplifyRule(rule: GrammarRule): GrammarRule {
+	switch (rule.type) {
+		case 'SYMBOL':
+			return rule;
+
+		case 'STRING':
+		case 'PATTERN':
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN':
+			return { type: 'BLANK' };
+
+		case 'BLANK':
+			return rule;
+
+		case 'FIELD':
+			return simplifyRule(rule.content);
+
+		case 'ALIAS':
+			return simplifyRule(rule.content);
+
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+			return simplifyRule(rule.content);
+
+		case 'REPEAT':
+			return { type: 'REPEAT', content: simplifyRule(rule.content) };
+
+		case 'REPEAT1':
+			return { type: 'REPEAT1', content: simplifyRule(rule.content) };
+
+		case 'SEQ': {
+			const members = rule.members
+				.map(m => simplifyRule(m))
+				.filter(m => m.type !== 'BLANK');
+			if (members.length === 0) return { type: 'BLANK' };
+			if (members.length === 1) return members[0]!;
+
+			// SEQ(X, REPEAT(X)) → REPEAT1(X) and SEQ(REPEAT(X), X) → REPEAT1(X)
+			if (members.length === 2) {
+				const [a, b] = members;
+				if (a!.type === 'SYMBOL' && b!.type === 'REPEAT' && grammarRulesEqual(a!, b!.content)) {
+					return { type: 'REPEAT1', content: a! };
+				}
+				if (b!.type === 'SYMBOL' && a!.type === 'REPEAT' && grammarRulesEqual(b!, a!.content)) {
+					return { type: 'REPEAT1', content: b! };
+				}
+			}
+
+			return { type: 'SEQ', members };
+		}
+
+		case 'CHOICE': {
+			const members = rule.members.map(m => simplifyRule(m));
+			return { type: 'CHOICE', members };
+		}
+
+		default:
+			return { type: 'BLANK' };
+	}
+}
+
+/** Check if two grammar rules are structurally equal (post-simplification). */
+function grammarRulesEqual(a: GrammarRule, b: GrammarRule): boolean {
+	if (a.type !== b.type) return false;
+	if (a.type === 'SYMBOL' && b.type === 'SYMBOL') return a.name === b.name;
+	if (a.type === 'BLANK' && b.type === 'BLANK') return true;
+	if (a.type === 'REPEAT' && b.type === 'REPEAT') return grammarRulesEqual(a.content, b.content);
+	if (a.type === 'REPEAT1' && b.type === 'REPEAT1') return grammarRulesEqual(a.content, b.content);
+	if (a.type === 'SEQ' && b.type === 'SEQ') {
+		if (a.members.length !== b.members.length) return false;
+		return a.members.every((m, i) => grammarRulesEqual(m, b.members[i]!));
+	}
+	if (a.type === 'CHOICE' && b.type === 'CHOICE') {
+		if (a.members.length !== b.members.length) return false;
+		return a.members.every((m, i) => grammarRulesEqual(m, b.members[i]!));
+	}
+	return false;
+}
 
 // ---------------------------------------------------------------------------
 // Classification result
@@ -67,6 +163,20 @@ export function classifyRule(rule: GrammarRule): ClassifiedPattern {
 				.filter(m => m.type !== 'empty');
 			if (members.length === 0) return { type: 'empty' };
 			if (members.length === 1) return members[0]!;
+
+			// SEQ(X, X*) → X+ and SEQ(X*, X) → X+
+			if (members.length === 2) {
+				const [a, b] = members;
+				// SEQ(X, REPEAT(X)) → REPEAT(X)
+				if (a!.type === 'symbol' && b!.type === 'repeat' && patternsEqual(a!, b!.content)) {
+					return { type: 'repeat', content: a! };
+				}
+				// SEQ(REPEAT(X), X) → REPEAT(X)
+				if (b!.type === 'symbol' && a!.type === 'repeat' && patternsEqual(b!, a!.content)) {
+					return { type: 'repeat', content: b! };
+				}
+			}
+
 			return { type: 'seq', members };
 		}
 
@@ -79,6 +189,23 @@ export function classifyRule(rule: GrammarRule): ClassifiedPattern {
 		default:
 			return { type: 'empty' };
 	}
+}
+
+/** Check if two classified patterns are structurally equal. */
+function patternsEqual(a: ClassifiedPattern, b: ClassifiedPattern): boolean {
+	if (a.type !== b.type) return false;
+	if (a.type === 'symbol' && b.type === 'symbol') return a.name === b.name;
+	if (a.type === 'repeat' && b.type === 'repeat') return patternsEqual(a.content, b.content);
+	if (a.type === 'empty' && b.type === 'empty') return true;
+	if (a.type === 'seq' && b.type === 'seq') {
+		if (a.members.length !== b.members.length) return false;
+		return a.members.every((m, i) => patternsEqual(m, b.members[i]!));
+	}
+	if (a.type === 'choice' && b.type === 'choice') {
+		if (a.members.length !== b.members.length) return false;
+		return a.members.every((m, i) => patternsEqual(m, b.members[i]!));
+	}
+	return false;
 }
 
 /**

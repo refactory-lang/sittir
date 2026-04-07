@@ -117,7 +117,8 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 			// Determine field name
 			if (slot.kinds.length === 1) {
 				const k = slot.kinds[0]!;
-				const isAnon = k.kind.startsWith('_') || (k as any).modelType === 'token';
+				const mt = (k as any).modelType;
+				const isAnon = mt === 'token' || mt === 'keyword';
 
 				if (isAnon) {
 					// Anonymous token — needs human naming
@@ -174,15 +175,8 @@ function mergeAutoOverridesToDisk(grammar: string, autoOverrides: OverridesConfi
 		if (!disk[kind]) {
 			disk[kind] = entry;
 			changed = true;
-		} else {
-			// Merge fields — disk fields take priority
-			for (const [fieldName, fieldDef] of Object.entries(entry.fields)) {
-				if (!disk[kind]!.fields[fieldName]) {
-					disk[kind]!.fields[fieldName] = fieldDef;
-					changed = true;
-				}
-			}
 		}
+		// If kind already exists on disk, human has taken ownership — don't merge auto-generated fields
 	}
 
 	if (changed) {

@@ -7,6 +7,7 @@
  */
 
 import type { Grammar, GrammarRule } from './grammar.ts';
+import { simplifyRule } from './classify.ts';
 
 // ---------------------------------------------------------------------------
 // EnrichedRule — 6-variant discriminated union
@@ -26,6 +27,10 @@ export interface EnrichedFieldInfo {
 }
 
 export interface EnrichedChildInfo {
+	/** Positional index in the simplified rule (0-based). */
+	position: number;
+	/** Field name — auto-assigned from kind (unique) or NEEDS_NAME placeholder. */
+	name: string | null;
 	kinds: string[];
 	required: boolean;
 	multiple: boolean;
@@ -37,6 +42,7 @@ export interface BranchRule {
 	children?: EnrichedChildInfo[];
 	separators: Map<string, string>;
 	rule: GrammarRule;
+	simplifiedRule: GrammarRule;
 }
 
 export interface ContainerRule {
@@ -44,6 +50,7 @@ export interface ContainerRule {
 	children: EnrichedChildInfo[];
 	separators: Map<string, string>;
 	rule: GrammarRule;
+	simplifiedRule: GrammarRule;
 }
 
 export interface KeywordRule {
@@ -88,19 +95,26 @@ export function hasFields(rule: GrammarRule): boolean {
 	}
 }
 
-/** Check if a rule contains non-FIELD SYMBOL references. */
-export function hasChildren(rule: GrammarRule): boolean {
-	return walkHasChildren(rule, false);
+/**
+ * Check if a rule contains non-FIELD SYMBOL references that produce named children.
+ * Uses the supertype set from node-types.json to correctly identify supertypes
+ * (which start with `_` but still produce named children).
+ */
+export function hasChildren(rule: GrammarRule, supertypeSet: ReadonlySet<string>): boolean {
+	return walkHasChildren(rule, false, supertypeSet);
 }
 
-function walkHasChildren(rule: GrammarRule, insideField: boolean): boolean {
+function walkHasChildren(rule: GrammarRule, insideField: boolean, supertypeSet: ReadonlySet<string>): boolean {
 	switch (rule.type) {
-		case 'SYMBOL': return !insideField && !rule.name.startsWith('_');
-		case 'FIELD': return walkHasChildren(rule.content, true);
-		case 'SEQ': case 'CHOICE': return rule.members.some(m => walkHasChildren(m, insideField));
+		case 'SYMBOL':
+			// Named symbols (no `_` prefix) and supertypes produce children.
+			// Hidden non-supertype symbols are inlined by tree-sitter.
+			return !insideField && (!rule.name.startsWith('_') || supertypeSet.has(rule.name));
+		case 'FIELD': return walkHasChildren(rule.content, true, supertypeSet);
+		case 'SEQ': case 'CHOICE': return rule.members.some(m => walkHasChildren(m, insideField, supertypeSet));
 		case 'REPEAT': case 'REPEAT1': case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
-			return walkHasChildren(rule.content, insideField);
+			return walkHasChildren(rule.content, insideField, supertypeSet);
 		case 'ALIAS': return !insideField && rule.named;
 		default: return false;
 	}
@@ -176,10 +190,11 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 	const children: EnrichedChildInfo[] | undefined = childSlots.length > 0
 		? slotsToChildren(childSlots)
 		: undefined;
+	if (children) nameChildSlots(children, supertypeSet);
 
 	const separators = extractSeparators(rule);
 
-	return { modelType: 'branch', fields, children, separators, rule };
+	return { modelType: 'branch', fields, children, separators, rule, simplifiedRule: simplifyRule(rule) };
 }
 
 function walkForFields(
@@ -356,6 +371,16 @@ function collectChildSlots(
 			for (const m of rule.members) {
 				slots.push(...collectChildSlots(m, optional, repeated, insideField, grammar, supertypeSet, visited));
 			}
+			// SEQ(X, X*) and SEQ(X*, X) collapse to X+ (single repeated slot)
+			if (slots.length === 2) {
+				const [a, b] = slots;
+				if (a!.repeated && !b!.repeated && sameKindSets(a!.kinds, b!.kinds)) {
+					return [{ kinds: a!.kinds, optional: optional || a!.optional, repeated: true }];
+				}
+				if (b!.repeated && !a!.repeated && sameKindSets(a!.kinds, b!.kinds)) {
+					return [{ kinds: b!.kinds, optional: optional || b!.optional, repeated: true }];
+				}
+			}
 			return slots;
 		}
 
@@ -447,6 +472,13 @@ function collectChildSlots(
 	}
 }
 
+/** Check if two kind sets contain the same elements. */
+function sameKindSets(a: Set<string>, b: Set<string>): boolean {
+	if (a.size !== b.size) return false;
+	for (const k of a) if (!b.has(k)) return false;
+	return true;
+}
+
 /** Collapse multiple slots into one merged slot. */
 function collapseSlots(slots: ChildSlot[], optional: boolean, repeated: boolean): ChildSlot[] {
 	if (slots.length === 0) return [];
@@ -459,13 +491,53 @@ function collapseSlots(slots: ChildSlot[], optional: boolean, repeated: boolean)
 }
 
 function slotsToChildren(slots: ChildSlot[]): EnrichedChildInfo[] {
-	return slots.map(s => ({ kinds: [...s.kinds], required: !s.optional, multiple: s.repeated }));
+	return slots.map((s, i) => ({ position: i, name: null, kinds: [...s.kinds], required: !s.optional, multiple: s.repeated }));
 }
 
 function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: ReadonlySet<string>): ContainerRule {
 	const children = slotsToChildren(collectChildSlots(rule, false, false, false, grammar, supertypeSet));
+	nameChildSlots(children, supertypeSet);
 	const separators = extractSeparators(rule);
-	return { modelType: 'container', children, separators, rule };
+	return { modelType: 'container', children, separators, rule, simplifiedRule: simplifyRule(rule) };
+}
+
+/**
+ * Assign names to child slots based on kind uniqueness:
+ * - Single-kind, unique across all slots → kind-as-name (Tier 1)
+ * - Single-kind supertype → skip (supertypes are fields, not children)
+ * - Same kind in multiple slots or multi-kind slot → NEEDS_NAME_N placeholder (Tier 2)
+ * - Single pure REPEAT slot → null (uses $$CHILDREN)
+ */
+function nameChildSlots(children: EnrichedChildInfo[], supertypeSet: ReadonlySet<string>): void {
+	// Pure REPEAT (single slot, multiple) → no name needed, uses $$CHILDREN
+	if (children.length === 1 && children[0]!.multiple) return;
+
+	// Count how many slots each kind appears in
+	const kindSlotCount = new Map<string, number>();
+	for (const child of children) {
+		for (const kind of child.kinds) {
+			kindSlotCount.set(kind, (kindSlotCount.get(kind) ?? 0) + 1);
+		}
+	}
+
+	for (const child of children) {
+		if (child.kinds.length === 1) {
+			const kind = child.kinds[0]!;
+			if (supertypeSet.has(kind)) {
+				// Supertypes are referenced by field name, not child slot name
+				child.name = `NEEDS_NAME_${child.position}`;
+			} else if ((kindSlotCount.get(kind) ?? 0) > 1) {
+				// Same kind in multiple positions → needs human naming
+				child.name = `NEEDS_NAME_${child.position}`;
+			} else {
+				// Unique kind → kind-as-name
+				child.name = kind;
+			}
+		} else {
+			// Multiple kinds → needs human naming
+			child.name = `NEEDS_NAME_${child.position}`;
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -673,7 +745,7 @@ export function classifyRules(grammar: Grammar): Map<string, EnrichedRule> {
 		}
 
 		// 3. Has children?
-		if (hasChildren(rule)) {
+		if (hasChildren(rule, supertypeSet)) {
 			result.set(kind, extractChildren(rule, grammar, supertypeSet));
 			continue;
 		}

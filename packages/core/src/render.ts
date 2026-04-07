@@ -169,12 +169,10 @@ function renderClause(
 }
 
 /** Resolve joinBy for a $$$ variable. */
-function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {
+function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, _varName: string): string {
 	if (!ruleObj) return ' ';
-	const joinBy = ruleObj['joinBy'] as string | Record<string, string> | undefined;
-	if (joinBy === undefined) return ' ';
-	if (typeof joinBy === 'string') return joinBy;
-	return joinBy[varName] ?? ' ';
+	const joinBy = ruleObj['joinBy'] as string | undefined;
+	return joinBy ?? ' ';
 }
 
 /** Render a field value — handles AnyNodeData, string, and number. */

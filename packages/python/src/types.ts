@@ -246,8 +246,7 @@ export interface ArgumentList {
     readonly NEEDS_NAME_0?: DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression;
     readonly NEEDS_NAME_1?: readonly (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[];
   };
-  readonly children1?: DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression;
-  readonly children2?: readonly (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[];
+  readonly children?: readonly (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[];
 }
 export interface AsPattern {
   readonly type: 'as_pattern';
@@ -260,10 +259,9 @@ export interface AssertStatement {
   readonly type: 'assert_statement';
   readonly fields: {
     readonly NEEDS_NAME_0?: Expression;
-    readonly NEEDS_NAME_1?: readonly (Expression)[];
+    readonly NEEDS_NAME_1?: Expression;
   };
-  readonly expression1: Expression;
-  readonly expression2?: readonly (Expression)[];
+  readonly children?: readonly (Expression)[];
 }
 export interface Assignment {
   readonly type: 'assignment';
@@ -328,10 +326,9 @@ export interface CaseClause {
     readonly consequence: Block;
     readonly guard?: IfClause;
     readonly NEEDS_NAME_0?: CasePattern;
-    readonly NEEDS_NAME_1?: readonly (CasePattern)[];
+    readonly NEEDS_NAME_1?: CasePattern;
   };
-  readonly casePattern1: CasePattern;
-  readonly casePattern2?: readonly (CasePattern)[];
+  readonly children?: readonly (CasePattern)[];
 }
 export interface CasePattern {
   readonly type: 'case_pattern';
@@ -354,21 +351,19 @@ export interface ClassPattern {
   readonly type: 'class_pattern';
   readonly fields: {
     readonly dottedName?: DottedName;
-    readonly NEEDS_NAME_1?: CasePattern;
-    readonly NEEDS_NAME_2?: readonly (CasePattern)[];
+    readonly NEEDS_NAME_1?: readonly (CasePattern)[];
+    readonly NEEDS_NAME_2?: CasePattern | DottedName;
+    readonly casePattern?: readonly (CasePattern | DottedName)[];
   };
-  readonly casePattern1?: CasePattern;
-  readonly casePattern2?: readonly (CasePattern)[];
 }
 export interface ComparisonOperator {
   readonly type: 'comparison_operator';
   readonly fields: {
     readonly operators: readonly ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[];
     readonly NEEDS_NAME_0?: PrimaryExpression;
-    readonly NEEDS_NAME_1?: readonly (PrimaryExpression)[];
+    readonly NEEDS_NAME_1?: PrimaryExpression;
   };
-  readonly primaryExpression1: PrimaryExpression;
-  readonly primaryExpression2: readonly (PrimaryExpression)[];
+  readonly children: readonly (PrimaryExpression)[];
 }
 export interface ComplexPattern {
   readonly type: 'complex_pattern';
@@ -383,10 +378,9 @@ export interface ConcatenatedString {
   readonly type: 'concatenated_string';
   readonly fields: {
     readonly NEEDS_NAME_0?: String;
-    readonly NEEDS_NAME_1?: readonly (String)[];
+    readonly NEEDS_NAME_1?: String;
   };
-  readonly string1: String;
-  readonly string2: readonly (String)[];
+  readonly children: readonly (String)[];
 }
 export interface ConditionalExpression {
   readonly type: 'conditional_expression';
@@ -436,10 +430,9 @@ export interface DictPattern {
     readonly key?: readonly (ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern)[];
     readonly value?: readonly (CasePattern)[];
     readonly NEEDS_NAME_0?: SplatPattern;
-    readonly NEEDS_NAME_1?: readonly (SplatPattern)[];
+    readonly NEEDS_NAME_1?: SplatPattern;
   };
-  readonly splatPattern1?: SplatPattern;
-  readonly splatPattern2?: readonly (SplatPattern)[];
+  readonly children?: readonly (SplatPattern)[];
 }
 export interface Dictionary {
   readonly type: 'dictionary';
@@ -447,8 +440,7 @@ export interface Dictionary {
     readonly NEEDS_NAME_0?: DictionarySplat | Pair;
     readonly NEEDS_NAME_1?: readonly (DictionarySplat | Pair)[];
   };
-  readonly dictionarySplatOrPair1?: DictionarySplat | Pair;
-  readonly dictionarySplatOrPair2?: readonly (DictionarySplat | Pair)[];
+  readonly children?: readonly (DictionarySplat | Pair)[];
 }
 export interface DictionaryComprehension {
   readonly type: 'dictionary_comprehension';
@@ -472,10 +464,9 @@ export interface DottedName {
   readonly type: 'dotted_name';
   readonly fields: {
     readonly NEEDS_NAME_0?: Identifier;
-    readonly NEEDS_NAME_1?: readonly (Identifier)[];
+    readonly NEEDS_NAME_1?: Identifier;
   };
-  readonly identifier1: Identifier;
-  readonly identifier2?: readonly (Identifier)[];
+  readonly children?: readonly (Identifier)[];
 }
 export interface ElifClause {
   readonly type: 'elif_clause';
@@ -503,28 +494,25 @@ export interface ExecStatement {
   readonly fields: {
     readonly code: Identifier | String;
     readonly NEEDS_NAME_0?: Expression;
-    readonly NEEDS_NAME_1?: readonly (Expression)[];
+    readonly NEEDS_NAME_1?: Expression;
   };
-  readonly expression1?: Expression;
-  readonly expression2?: readonly (Expression)[];
+  readonly children?: readonly (Expression)[];
 }
 export interface ExpressionList {
   readonly type: 'expression_list';
   readonly fields: {
     readonly NEEDS_NAME_0?: Expression;
-    readonly NEEDS_NAME_1?: readonly (Expression)[];
+    readonly NEEDS_NAME_1?: Expression;
   };
-  readonly expression1: Expression;
-  readonly expression2?: readonly (Expression)[];
+  readonly children?: readonly (Expression)[];
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
   readonly fields: {
     readonly NEEDS_NAME_0?: Assignment | AugmentedAssignment | Expression | Yield;
-    readonly NEEDS_NAME_1?: readonly (Expression)[];
+    readonly NEEDS_NAME_1?: Assignment | AugmentedAssignment | Expression | Yield;
   };
-  readonly children1: Assignment | AugmentedAssignment | Expression | Yield;
-  readonly expression?: readonly (Expression)[];
+  readonly children?: readonly (Assignment | AugmentedAssignment | Expression | Yield)[];
 }
 export interface FinallyClause {
   readonly type: 'finally_clause';
@@ -595,10 +583,9 @@ export interface GlobalStatement {
   readonly type: 'global_statement';
   readonly fields: {
     readonly NEEDS_NAME_0?: Identifier;
-    readonly NEEDS_NAME_1?: readonly (Identifier)[];
+    readonly NEEDS_NAME_1?: Identifier;
   };
-  readonly identifier1: Identifier;
-  readonly identifier2?: readonly (Identifier)[];
+  readonly children?: readonly (Identifier)[];
 }
 export interface IfClause {
   readonly type: 'if_clause';
@@ -716,10 +703,9 @@ export interface NonlocalStatement {
   readonly type: 'nonlocal_statement';
   readonly fields: {
     readonly NEEDS_NAME_0?: Identifier;
-    readonly NEEDS_NAME_1?: readonly (Identifier)[];
+    readonly NEEDS_NAME_1?: Identifier;
   };
-  readonly identifier1: Identifier;
-  readonly identifier2?: readonly (Identifier)[];
+  readonly children?: readonly (Identifier)[];
 }
 export interface NotOperator {
   readonly type: 'not_operator';
@@ -750,10 +736,9 @@ export interface PatternList {
   readonly type: 'pattern_list';
   readonly fields: {
     readonly NEEDS_NAME_0?: Pattern;
-    readonly NEEDS_NAME_1?: readonly (Pattern)[];
+    readonly NEEDS_NAME_1?: Pattern;
   };
-  readonly pattern1: Pattern;
-  readonly pattern2?: readonly (Pattern)[];
+  readonly children?: readonly (Pattern)[];
 }
 export interface PrintStatement {
   readonly type: 'print_statement';
@@ -865,10 +850,9 @@ export interface TypeParameter {
   readonly type: 'type_parameter';
   readonly fields: {
     readonly NEEDS_NAME_0?: Type;
-    readonly NEEDS_NAME_1?: readonly (Type)[];
+    readonly NEEDS_NAME_1?: Type;
   };
-  readonly childType1: Type;
-  readonly childType2?: readonly (Type)[];
+  readonly children?: readonly (Type)[];
 }
 export interface TypedDefaultParameter {
   readonly type: 'typed_default_parameter';
@@ -917,10 +901,9 @@ export interface WithClause {
   readonly type: 'with_clause';
   readonly fields: {
     readonly NEEDS_NAME_0?: WithItem;
-    readonly NEEDS_NAME_1?: readonly (WithItem)[];
+    readonly NEEDS_NAME_1?: WithItem;
   };
-  readonly withItem1: WithItem;
-  readonly withItem2?: readonly (WithItem)[];
+  readonly children?: readonly (WithItem)[];
 }
 export interface WithItem {
   readonly type: 'with_item';
