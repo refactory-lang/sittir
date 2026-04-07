@@ -242,11 +242,12 @@ export function wrapAbstractType(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapArguments(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'NEEDS_NAME_0', ["attribute_item"]);
+  promoteNamed(data, 'NEEDS_NAME_1', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   promoteNamed(data, 'NEEDS_NAME_2', ["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
     get NEEDS_NAME_0() { return drillInAll(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
+    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get NEEDS_NAME_2() { return drillInAll(data.fields?.['NEEDS_NAME_2'], tree); },
     get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
     get expression() { return drillIn(data.fields?.['expression'], tree); },
@@ -257,13 +258,14 @@ export function wrapArguments(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapArrayExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'NEEDS_NAME_0', ["attribute_item"]);
   promoteNamed(data, 'NEEDS_NAME_1', ["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'NEEDS_NAME_2', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   promoteNamed(data, 'NEEDS_NAME_3', ["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
     get length() { return drillIn(data.fields?.['length'], tree); },
     get NEEDS_NAME_0() { return drillInAll(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return (data.fields?.['NEEDS_NAME_2'] as AnyNodeData | undefined)?.text; },
+    get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
     get NEEDS_NAME_3() { return drillInAll(data.fields?.['NEEDS_NAME_3'], tree); },
     get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
     get attributeItemOrExpression1() { return drillInAll(data.fields?.['attributeItemOrExpression1'], tree); },
@@ -347,12 +349,11 @@ export function wrapBinaryExpression(data: AnyNodeData, tree: TreeHandle): unkno
 export function wrapBlock(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'label');
   promoteNamed(data, 'NEEDS_NAME_1', ["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
-  promoteNamed(data, '_expression', ["array_expression","assignment_expression","associated_type","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","const_item","continue_expression","empty_statement","enum_item","expression_statement","extern_crate_declaration","field_expression","float_literal","for_expression","foreign_mod_item","function_item","function_signature_item","gen_block","generic_function","identifier","if_expression","impl_item","index_expression","inner_attribute_item","integer_literal","label","let_declaration","loop_expression","macro_definition","macro_invocation","match_expression","metavariable","mod_item","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","static_item","string_literal","struct_expression","struct_item","trait_item","try_block","try_expression","tuple_expression","type_cast_expression","type_item","unary_expression","union_item","unit_expression","unsafe_block","use_declaration","while_expression","yield_expression"]);
+  promoteNamed(data, '_expression', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
     get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return (data.fields?.['NEEDS_NAME_2'] as AnyNodeData | undefined)?.text; },
     get Expression() { return drillIn(data.fields?.['_expression'], tree); },
     get children2() { return drillInAll(data.fields?.['children2'], tree); },
     get expression() { return drillIn(data.fields?.['expression'], tree); },
@@ -389,11 +390,10 @@ export function wrapBracketedType(data: AnyNodeData, tree: TreeHandle): unknown 
 
 export function wrapBreakExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'label');
-  promoteNamed(data, '_expression', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","label","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, '_expression', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
-    get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
     get Expression() { return drillIn(data.fields?.['_expression'], tree); },
     get expression() { return drillIn(data.fields?.['expression'], tree); },
   };
@@ -413,7 +413,6 @@ export function wrapCapturedPattern(data: AnyNodeData, tree: TreeHandle): unknow
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
     get Pattern() { return drillIn(data.fields?.['_pattern'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
   };
@@ -429,12 +428,8 @@ export function wrapClosureExpression(data: AnyNodeData, tree: TreeHandle): unkn
 }
 
 export function wrapClosureParameters(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","parameter","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","parameter","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -549,14 +544,13 @@ export function wrapExpressionStatement(data: AnyNodeData, tree: TreeHandle): un
 
 export function wrapExternCrateDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
-  promote(data, 'crate');
   return {
     ...data,
     get alias() { return drillIn(data.fields?.['alias'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
-    get crate() { return drillIn(data.fields?.['crate'], tree); },
     get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
+    get crate() { return drillIn(data.fields?.['crate'], tree); },
   };
 }
 
@@ -609,12 +603,8 @@ export function wrapFieldInitializer(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapFieldInitializerList(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["base_field_initializer","field_initializer","shorthand_field_initializer"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["base_field_initializer","field_initializer","shorthand_field_initializer"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -639,12 +629,8 @@ export function wrapForExpression(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapForLifetimes(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["lifetime"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["lifetime"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -781,14 +767,10 @@ export function wrapImplItem(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapIndexExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'object', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteNamed(data, 'index', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   promoteNamed(data, 'NEEDS_NAME_0', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   promoteNamed(data, 'NEEDS_NAME_1', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
-    get object() { return drillIn(data.fields?.['object'], tree); },
-    get index() { return drillIn(data.fields?.['index'], tree); },
     get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get expression1() { return drillIn(data.fields?.['expression1'], tree); },
@@ -869,13 +851,9 @@ export function wrapLoopExpression(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapMacroDefinition(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["macro_rule"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["macro_rule"]);
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -906,12 +884,8 @@ export function wrapMatchArm(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapMatchBlock(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["match_arm"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["match_arm"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -942,40 +916,28 @@ export function wrapModItem(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapMutPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'mutable_specifier');
-  promoteNamed(data, '_pattern', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","mutable_specifier","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+  promoteNamed(data, '_pattern', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
   return {
     ...data,
-    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
-    get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
     get NEEDS_NAME_0() { return (data.fields?.['NEEDS_NAME_0'] as AnyNodeData | undefined)?.text; },
     get Pattern() { return drillIn(data.fields?.['_pattern'], tree); },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutableSpecifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
   };
 }
 
 export function wrapNegativeLiteral(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteAnon(data, 'operator', ["-"]);
-  promoteNamed(data, 'value', ["float_literal","integer_literal"]);
   return {
     ...data,
-    get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
-    get value() { return drillIn(data.fields?.['value'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapOrPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'left', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
-  promoteAnon(data, 'operator', ["|"]);
-  promoteNamed(data, 'right', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
   promoteNamed(data, 'NEEDS_NAME_0', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
   promoteNamed(data, 'NEEDS_NAME_1', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
-    get right() { return drillIn(data.fields?.['right'], tree); },
     get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get pattern1() { return drillIn(data.fields?.['pattern1'], tree); },
@@ -1047,16 +1009,10 @@ export function wrapQualifiedType(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapRangeExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'start', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteAnon(data, 'operator', ["..","..="]);
-  promoteNamed(data, 'end', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   promoteNamed(data, 'NEEDS_NAME_0', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   promoteNamed(data, 'NEEDS_NAME_1', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
-    get start() { return drillIn(data.fields?.['start'], tree); },
-    get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
-    get end() { return drillIn(data.fields?.['end'], tree); },
     get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get expression1() { return drillIn(data.fields?.['expression1'], tree); },
@@ -1095,27 +1051,24 @@ export function wrapReferenceExpression(data: AnyNodeData, tree: TreeHandle): un
 }
 
 export function wrapReferencePattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'mutable_specifier');
-  promoteNamed(data, '_pattern', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","mutable_specifier","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+  promoteNamed(data, '_pattern', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
   return {
     ...data,
-    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
-    get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
     get NEEDS_NAME_0() { return (data.fields?.['NEEDS_NAME_0'] as AnyNodeData | undefined)?.text; },
     get Pattern() { return drillIn(data.fields?.['_pattern'], tree); },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutableSpecifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
   };
 }
 
 export function wrapReferenceType(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'lifetime');
-  promote(data, 'mutable_specifier');
   return {
     ...data,
     get type() { return drillIn(data.fields?.['type'], tree); },
     get lifetime() { return drillIn(data.fields?.['lifetime'], tree); },
-    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutableSpecifier'], tree); },
   };
 }
 
@@ -1159,15 +1112,13 @@ export function wrapScopedUseList(data: AnyNodeData, tree: TreeHandle): unknown 
 
 export function wrapSelfParameter(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'lifetime');
-  promote(data, 'mutable_specifier');
-  promote(data, 'self');
   return {
     ...data,
     get lifetime() { return drillIn(data.fields?.['lifetime'], tree); },
-    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
-    get self() { return drillIn(data.fields?.['self'], tree); },
     get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
     get NEEDS_NAME_2() { return (data.fields?.['NEEDS_NAME_2'] as AnyNodeData | undefined)?.text; },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutableSpecifier'], tree); },
+    get self() { return drillIn(data.fields?.['self'], tree); },
   };
 }
 
@@ -1201,15 +1152,14 @@ export function wrapSourceFile(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapStaticItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
-  promote(data, 'mutable_specifier');
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
-    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutableSpecifier'], tree); },
   };
 }
 
@@ -1242,13 +1192,9 @@ export function wrapStructItem(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapStructPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["field_pattern","remaining_field_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["field_pattern","remaining_field_pattern"]);
   return {
     ...data,
     get type() { return drillIn(data.fields?.['type'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1290,12 +1236,8 @@ export function wrapTokenTreePattern(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapTraitBounds(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","higher_ranked_trait_bound","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","higher_ranked_trait_bound","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1322,24 +1264,23 @@ export function wrapTryBlock(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapTryExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'value', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteAnon(data, 'operator', ["?"]);
   return {
     ...data,
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapTupleExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'attribute_item');
+  promoteNamed(data, 'NEEDS_NAME_1', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'NEEDS_NAME_2', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'NEEDS_NAME_3', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
     get attributeItem() { return drillInAll(data.fields?.['attribute_item'], tree); },
-    get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
-    get NEEDS_NAME_2() { return (data.fields?.['NEEDS_NAME_2'] as AnyNodeData | undefined)?.text; },
-    get NEEDS_NAME_3() { return (data.fields?.['NEEDS_NAME_3'] as AnyNodeData | undefined)?.text; },
+    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get NEEDS_NAME_2() { return drillInAll(data.fields?.['NEEDS_NAME_2'], tree); },
+    get NEEDS_NAME_3() { return drillIn(data.fields?.['NEEDS_NAME_3'], tree); },
     get expression1() { return drillIn(data.fields?.['expression1'], tree); },
     get expression2() { return drillInAll(data.fields?.['expression2'], tree); },
     get expression3() { return drillIn(data.fields?.['expression3'], tree); },
@@ -1347,12 +1288,8 @@ export function wrapTupleExpression(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapTuplePattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["boolean_literal","captured_pattern","char_literal","closure_expression","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["boolean_literal","captured_pattern","char_literal","closure_expression","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1361,8 +1298,6 @@ export function wrapTupleStructPattern(data: AnyNodeData, tree: TreeHandle): unk
   return {
     ...data,
     get type() { return drillIn(data.fields?.['type'], tree); },
-    get NEEDS_NAME_0() { return (data.fields?.['NEEDS_NAME_0'] as AnyNodeData | undefined)?.text; },
-    get NEEDS_NAME_1() { return (data.fields?.['NEEDS_NAME_1'] as AnyNodeData | undefined)?.text; },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1448,12 +1383,8 @@ export function wrapTypeParameters(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapUnaryExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteAnon(data, 'operator', ["-","*","!","&"]);
-  promoteNamed(data, 'operand', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
-    get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
-    get operand() { return drillIn(data.fields?.['operand'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }
@@ -1487,12 +1418,8 @@ export function wrapUseAsClause(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapUseBounds(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["lifetime","type_identifier"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["lifetime","type_identifier"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1535,12 +1462,8 @@ export function wrapVisibilityModifier(data: AnyNodeData, tree: TreeHandle): unk
 }
 
 export function wrapWhereClause(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["where_predicate"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["where_predicate"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }

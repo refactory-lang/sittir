@@ -2,9 +2,7 @@
   "arguments": {
     "fields": {
       "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
+      "NEEDS_NAME_1": {},
       "NEEDS_NAME_2": {
         "multiple": true
       }
@@ -16,9 +14,7 @@
       "NEEDS_NAME_1": {
         "multiple": true
       },
-      "NEEDS_NAME_2": {
-        "anonymous": true
-      },
+      "NEEDS_NAME_2": {},
       "NEEDS_NAME_3": {
         "multiple": true
       }
@@ -29,9 +25,6 @@
       "label": {},
       "NEEDS_NAME_1": {
         "multiple": true
-      },
-      "NEEDS_NAME_2": {
-        "anonymous": true
       },
       "_expression": {}
     }
@@ -45,27 +38,13 @@
   "break_expression": {
     "fields": {
       "label": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
       "_expression": {}
     }
   },
   "captured_pattern": {
     "fields": {
       "identifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
       "_pattern": {}
-    }
-  },
-  "closure_parameters": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
     }
   },
   "enum_item": {
@@ -86,7 +65,6 @@
   "extern_crate_declaration": {
     "fields": {
       "visibility_modifier": {},
-      "crate": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -99,20 +77,6 @@
       "NEEDS_NAME_2": {
         "multiple": true
       }
-    }
-  },
-  "field_initializer_list": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "for_lifetimes": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
     }
   },
   "foreign_mod_item": {
@@ -143,57 +107,20 @@
   },
   "index_expression": {
     "fields": {
-      "object": {},
-      "index": {},
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "macro_definition": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "match_block": {
-    "fields": {
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {}
     }
   },
   "mut_pattern": {
     "fields": {
-      "mutable_specifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
       "NEEDS_NAME_0": {
         "anonymous": true
       },
       "_pattern": {}
     }
   },
-  "negative_literal": {
-    "fields": {
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "-"
-        ]
-      },
-      "value": {}
-    }
-  },
   "or_pattern": {
     "fields": {
-      "left": {},
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "|"
-        ]
-      },
-      "right": {},
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {}
     }
@@ -218,25 +145,12 @@
   },
   "range_expression": {
     "fields": {
-      "start": {},
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "..",
-          "..="
-        ]
-      },
-      "end": {},
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {}
     }
   },
   "reference_pattern": {
     "fields": {
-      "mutable_specifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
       "NEEDS_NAME_0": {
         "anonymous": true
       },
@@ -246,7 +160,6 @@
   "reference_type": {
     "fields": {
       "lifetime": {},
-      "mutable_specifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -255,8 +168,6 @@
   "self_parameter": {
     "fields": {
       "lifetime": {},
-      "mutable_specifier": {},
-      "self": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       },
@@ -284,7 +195,6 @@
   "static_item": {
     "fields": {
       "visibility_modifier": {},
-      "mutable_specifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -296,37 +206,10 @@
       "where_clause": {}
     }
   },
-  "struct_pattern": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "trait_bounds": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
   "trait_item": {
     "fields": {
       "visibility_modifier": {},
       "where_clause": {}
-    }
-  },
-  "try_expression": {
-    "fields": {
-      "value": {},
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "?"
-        ]
-      }
     }
   },
   "tuple_expression": {
@@ -334,33 +217,9 @@
       "attribute_item": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_2": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_3": {
-        "anonymous": true
-      }
-    }
-  },
-  "tuple_pattern": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "tuple_struct_pattern": {
-    "fields": {
-      "NEEDS_NAME_0": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      }
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {},
+      "NEEDS_NAME_3": {}
     }
   },
   "type_arguments": {
@@ -388,38 +247,10 @@
       }
     }
   },
-  "unary_expression": {
-    "fields": {
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "-",
-          "*",
-          "!",
-          "&"
-        ]
-      },
-      "operand": {}
-    }
-  },
   "union_item": {
     "fields": {
       "visibility_modifier": {},
       "where_clause": {}
-    }
-  },
-  "use_bounds": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "where_clause": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
     }
   }
 }

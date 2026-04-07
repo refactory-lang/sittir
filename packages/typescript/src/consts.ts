@@ -350,7 +350,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
-    { name: 'overrideModifier', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'adding_type_annotation': [
@@ -360,16 +359,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
   ],
   'arguments': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'array': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'array_pattern': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'array_type': [
   ],
@@ -487,16 +480,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'enum_body': [
     { name: 'name', required: false, multiple: true },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'enum_declaration': [
     { name: 'body', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
   ],
   'export_clause': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'export_specifier': [
     { name: 'alias', required: false, multiple: false },
@@ -587,8 +576,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'consequence', required: true, multiple: false },
   ],
   'implements_clause': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'import_alias': [
     { name: 'NEEDS_NAME_0', required: false, multiple: false },
@@ -649,8 +636,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'lexical_declaration': [
     { name: 'kind', required: true, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'literal_type': [
   ],
@@ -675,7 +660,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
-    { name: 'overrideModifier', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'method_signature': [
@@ -684,7 +668,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
-    { name: 'overrideModifier', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'module': [
@@ -692,8 +675,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   'named_imports': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'namespace_export': [
   ],
@@ -715,20 +696,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'non_null_expression': [
   ],
   'object': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'object_assignment_pattern': [
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
   ],
   'object_pattern': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'object_type': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'omitting_type_annotation': [
   ],
@@ -741,7 +716,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
-    { name: 'overrideModifier', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'optional_type': [
@@ -767,7 +741,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
-    { name: 'overrideModifier', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'public_field_definition': [
@@ -776,7 +749,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
-    { name: 'overrideModifier', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'readonly_type': [
@@ -792,7 +764,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
-    { name: 'overrideModifier', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'rest_pattern': [
@@ -806,8 +777,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
   ],
   'sequence_expression': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'spread_element': [
   ],
@@ -863,8 +832,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'type_annotation': [
   ],
   'type_arguments': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'type_assertion': [
     { name: 'typeArguments', required: false, multiple: false },
@@ -876,8 +843,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'type_parameters': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'type_predicate': [
     { name: 'name', required: true, multiple: false },
@@ -900,8 +865,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'operator', required: true, multiple: false },
   ],
   'variable_declaration': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'variable_declarator': [
     { name: 'name', required: true, multiple: false },

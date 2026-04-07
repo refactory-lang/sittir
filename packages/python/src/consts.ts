@@ -243,15 +243,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   'argument_list': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'as_pattern': [
     { name: 'alias', required: false, multiple: false },
   ],
   'assert_statement': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'assignment': [
     { name: 'left', required: true, multiple: false },
@@ -289,8 +285,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'case_clause': [
     { name: 'consequence', required: true, multiple: false },
     { name: 'guard', required: false, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'case_pattern': [
   ],
@@ -304,22 +298,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_pattern': [
     { name: 'dottedName', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
-    { name: 'NEEDS_NAME_2', required: false, multiple: false },
     { name: 'casePattern', required: false, multiple: true },
   ],
   'comparison_operator': [
     { name: 'operators', required: true, multiple: true },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'complex_pattern': [
     { name: 'NEEDS_NAME_0', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'concatenated_string': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'conditional_expression': [
     { name: 'NEEDS_NAME_0', required: false, multiple: false },
@@ -342,14 +330,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'delete_statement': [
   ],
   'dict_pattern': [
-    { name: 'key', required: false, multiple: true },
-    { name: 'value', required: false, multiple: true },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'dictionary': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'dictionary_comprehension': [
     { name: 'body', required: true, multiple: false },
@@ -361,8 +343,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'dictionary_splat_pattern': [
   ],
   'dotted_name': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'elif_clause': [
     { name: 'condition', required: true, multiple: false },
@@ -377,16 +357,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'expression_list': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'expression_statement': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'finally_clause': [
   ],
@@ -427,8 +401,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameter', required: false, multiple: false },
   ],
   'global_statement': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'if_clause': [
   ],
@@ -491,8 +463,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'nonlocal_statement': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'not_operator': [
     { name: 'argument', required: true, multiple: false },
@@ -508,8 +478,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'parenthesized_list_splat': [
   ],
   'pattern_list': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'print_statement': [
     { name: 'argument', required: false, multiple: true },
@@ -567,8 +535,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'type_parameter': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'typed_default_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -594,8 +560,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'condition', required: true, multiple: false },
   ],
   'with_clause': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'with_item': [
     { name: 'value', required: true, multiple: false },

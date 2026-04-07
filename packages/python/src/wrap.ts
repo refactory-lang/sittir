@@ -200,12 +200,8 @@ export function wrapAliasedImport(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapArgumentList(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","dictionary_splat","ellipsis","false","float","generator_expression","identifier","integer","keyword_argument","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","dictionary_splat","ellipsis","false","float","generator_expression","identifier","integer","keyword_argument","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -219,12 +215,8 @@ export function wrapAsPattern(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapAssertStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -297,14 +289,10 @@ export function wrapCall(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapCaseClause(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["case_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["case_pattern"]);
   return {
     ...data,
     get consequence() { return drillIn(data.fields?.['consequence'], tree); },
     get guard() { return drillIn(data.fields?.['guard'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -335,26 +323,18 @@ export function wrapClassDefinition(data: AnyNodeData, tree: TreeHandle): unknow
 
 export function wrapClassPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'dotted_name');
-  promoteNamed(data, 'NEEDS_NAME_1', ["case_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_2', ["case_pattern","dotted_name"]);
-  promoteNamed(data, 'case_pattern', ["case_pattern","dotted_name"]);
+  promote(data, 'case_pattern');
   return {
     ...data,
     get dottedName() { return drillIn(data.fields?.['dotted_name'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
     get casePattern() { return drillInAll(data.fields?.['case_pattern'], tree); },
   };
 }
 
 export function wrapComparisonOperator(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","list","list_comprehension","list_splat","none","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","list","list_comprehension","list_splat","none","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
   return {
     ...data,
     get operators() { return drillInAll(data.fields?.['operators'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -372,12 +352,8 @@ export function wrapComplexPattern(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapConcatenatedString(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["string"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["string"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -440,25 +416,15 @@ export function wrapDeleteStatement(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapDictPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["splat_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["splat_pattern"]);
   return {
     ...data,
-    get key() { return drillInAll(data.fields?.['key'], tree); },
-    get value() { return drillInAll(data.fields?.['value'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
 export function wrapDictionary(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["dictionary_splat","pair"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["dictionary_splat","pair"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -491,12 +457,8 @@ export function wrapDictionarySplatPattern(data: AnyNodeData, tree: TreeHandle):
 }
 
 export function wrapDottedName(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["identifier"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["identifier"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -526,35 +488,23 @@ export function wrapExceptClause(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapExecStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
   return {
     ...data,
     get code() { return drillIn(data.fields?.['code'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
 export function wrapExpressionList(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
 export function wrapExpressionStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["as_pattern","assignment","attribute","augmented_assignment","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator","yield"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["as_pattern","assignment","attribute","augmented_assignment","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator","yield"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -642,12 +592,8 @@ export function wrapGenericType(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapGlobalStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["identifier"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["identifier"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -803,12 +749,8 @@ export function wrapNamedExpression(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapNonlocalStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["identifier"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["identifier"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -850,12 +792,8 @@ export function wrapParenthesizedListSplat(data: AnyNodeData, tree: TreeHandle):
 }
 
 export function wrapPatternList(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["attribute","identifier","list_pattern","list_splat_pattern","subscript","tuple_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["attribute","identifier","list_pattern","list_splat_pattern","subscript","tuple_pattern"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1013,12 +951,8 @@ export function wrapTypeAliasStatement(data: AnyNodeData, tree: TreeHandle): unk
 }
 
 export function wrapTypeParameter(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["type"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["type"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1077,12 +1011,8 @@ export function wrapWhileStatement(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapWithClause(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["with_item"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["with_item"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }

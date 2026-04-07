@@ -74,18 +74,11 @@ export function aliased_import_(
 export function argument_list_(
   config?: ArgumentListConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'argument_list' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression) { return NEEDS_NAME_0 !== undefined ? argument_list_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]) { return NEEDS_NAME_1.length ? argument_list_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]) { return argument_list_({ ...config, children }); },
     render() { return render(this); },
@@ -125,18 +118,11 @@ export function as_pattern_(
 export function assert_statement_(
   config?: AssertStatementConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'assert_statement' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? assert_statement_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? assert_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Expression)[]) { return assert_statement_({ ...config, children }); },
     render() { return render(this); },
@@ -345,8 +331,6 @@ export function case_clause_(
   const fields = {
     consequence: config.consequence,
     guard: config.guard,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = config.children ?? [];
   return {
@@ -356,8 +340,6 @@ export function case_clause_(
     children,
     consequence(consequence?: Block) { return consequence !== undefined ? case_clause_({ ...config, consequence: consequence }) : fields.consequence; },
     guard(guard?: IfClause) { return guard !== undefined ? case_clause_({ ...config, guard: guard }) : fields.guard; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: CasePattern) { return NEEDS_NAME_0 !== undefined ? case_clause_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: CasePattern) { return NEEDS_NAME_1 !== undefined ? case_clause_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (CasePattern)[]) { return case_clause_({ ...config, children }); },
     render() { return render(this); },
@@ -440,8 +422,6 @@ export function class_pattern_(
 ) {
   const fields = {
     dotted_name: config.dottedName,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
-    NEEDS_NAME_2: config.NEEDS_NAME_2,
     case_pattern: config.casePattern,
   };
   const children = [...(config.dottedName ? [config.dottedName] : []), ...(config.casePattern ?? [])];
@@ -451,9 +431,7 @@ export function class_pattern_(
     fields,
     children,
     dottedName(dottedName?: DottedName) { return dottedName !== undefined ? class_pattern_({ ...config, dottedName: dottedName }) : fields.dotted_name; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (CasePattern)[]) { return NEEDS_NAME_1.length ? class_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(NEEDS_NAME_2?: CasePattern | DottedName) { return NEEDS_NAME_2 !== undefined ? class_pattern_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    casePattern(...casePattern: (CasePattern | DottedName)[]) { return casePattern.length ? class_pattern_({ ...config, casePattern: casePattern }) : fields.case_pattern; },
+    casePattern(...casePattern: (CasePattern)[]) { return casePattern.length ? class_pattern_({ ...config, casePattern: casePattern }) : fields.case_pattern; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -469,8 +447,6 @@ export function comparison_operator_(
 ) {
   const fields = {
     operators: config.operators,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = config.children ?? [];
   return {
@@ -479,8 +455,6 @@ export function comparison_operator_(
     fields,
     children,
     operators(...operators: ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[]) { return operators.length ? comparison_operator_({ ...config, operators: operators }) : fields.operators; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: PrimaryExpression) { return NEEDS_NAME_0 !== undefined ? comparison_operator_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: PrimaryExpression) { return NEEDS_NAME_1 !== undefined ? comparison_operator_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (PrimaryExpression)[]) { return comparison_operator_({ ...config, children }); },
     render() { return render(this); },
@@ -523,18 +497,11 @@ export function complex_pattern_(
 export function concatenated_string_(
   config: ConcatenatedStringConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
-  };
   const children = config.children ?? [];
   return {
     type: 'concatenated_string' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: String) { return NEEDS_NAME_0 !== undefined ? concatenated_string_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: String) { return NEEDS_NAME_1 !== undefined ? concatenated_string_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (String)[]) { return concatenated_string_({ ...config, children }); },
     render() { return render(this); },
@@ -693,22 +660,11 @@ export function delete_statement_(
 export function dict_pattern_(
   config?: DictPatternConfig,
 ) {
-  const fields = {
-    key: config?.key,
-    value: config?.value,
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'dict_pattern' as const,
     named: true as const,
-    fields,
     children,
-    key(...key: (ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern)[]) { return key.length ? dict_pattern_({ ...config, key: key }) : fields.key; },
-    value(...value: (CasePattern)[]) { return value.length ? dict_pattern_({ ...config, value: value }) : fields.value; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: SplatPattern) { return NEEDS_NAME_0 !== undefined ? dict_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: SplatPattern) { return NEEDS_NAME_1 !== undefined ? dict_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (SplatPattern)[]) { return dict_pattern_({ ...config, children }); },
     render() { return render(this); },
@@ -724,18 +680,11 @@ export function dict_pattern_(
 export function dictionary_(
   config?: DictionaryConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'dictionary' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: DictionarySplat | Pair) { return NEEDS_NAME_0 !== undefined ? dictionary_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (DictionarySplat | Pair)[]) { return NEEDS_NAME_1.length ? dictionary_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (DictionarySplat | Pair)[]) { return dictionary_({ ...config, children }); },
     render() { return render(this); },
@@ -818,18 +767,11 @@ export function dictionary_splat_pattern_(
 export function dotted_name_(
   config?: DottedNameConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'dotted_name' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Identifier) { return NEEDS_NAME_0 !== undefined ? dotted_name_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Identifier) { return NEEDS_NAME_1 !== undefined ? dotted_name_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Identifier)[]) { return dotted_name_({ ...config, children }); },
     render() { return render(this); },
@@ -917,8 +859,6 @@ export function exec_statement_(
 ) {
   const fields = {
     code: config.code,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = config.children ?? [];
   return {
@@ -927,8 +867,6 @@ export function exec_statement_(
     fields,
     children,
     code(code?: Identifier | String) { return code !== undefined ? exec_statement_({ ...config, code: code }) : fields.code; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? exec_statement_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? exec_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Expression)[]) { return exec_statement_({ ...config, children }); },
     render() { return render(this); },
@@ -944,18 +882,11 @@ export function exec_statement_(
 export function expression_list_(
   config?: ExpressionListConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'expression_list' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? expression_list_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? expression_list_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Expression)[]) { return expression_list_({ ...config, children }); },
     render() { return render(this); },
@@ -971,18 +902,11 @@ export function expression_list_(
 export function expression_statement_(
   config?: ExpressionStatementConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'expression_statement' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Assignment | AugmentedAssignment | Expression | Yield) { return NEEDS_NAME_0 !== undefined ? expression_statement_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Assignment | AugmentedAssignment | Expression | Yield) { return NEEDS_NAME_1 !== undefined ? expression_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Assignment | AugmentedAssignment | Expression | Yield)[]) { return expression_statement_({ ...config, children }); },
     render() { return render(this); },
@@ -1216,18 +1140,11 @@ export function generic_type_(
 export function global_statement_(
   config?: GlobalStatementConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'global_statement' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Identifier) { return NEEDS_NAME_0 !== undefined ? global_statement_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Identifier) { return NEEDS_NAME_1 !== undefined ? global_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Identifier)[]) { return global_statement_({ ...config, children }); },
     render() { return render(this); },
@@ -1650,18 +1567,11 @@ export function named_expression_(
 export function nonlocal_statement_(
   config?: NonlocalStatementConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'nonlocal_statement' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Identifier) { return NEEDS_NAME_0 !== undefined ? nonlocal_statement_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Identifier) { return NEEDS_NAME_1 !== undefined ? nonlocal_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Identifier)[]) { return nonlocal_statement_({ ...config, children }); },
     render() { return render(this); },
@@ -1779,18 +1689,11 @@ export function parenthesized_list_splat_(
 export function pattern_list_(
   config?: PatternListConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'pattern_list' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Pattern) { return NEEDS_NAME_0 !== undefined ? pattern_list_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Pattern) { return NEEDS_NAME_1 !== undefined ? pattern_list_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Pattern)[]) { return pattern_list_({ ...config, children }); },
     render() { return render(this); },
@@ -2197,18 +2100,11 @@ export function type_alias_statement_(
 export function type_parameter_(
   config?: TypeParameterConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'type_parameter' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Type) { return NEEDS_NAME_0 !== undefined ? type_parameter_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Type) { return NEEDS_NAME_1 !== undefined ? type_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Type)[]) { return type_parameter_({ ...config, children }); },
     render() { return render(this); },
@@ -2368,18 +2264,11 @@ export function while_statement_(
 export function with_clause_(
   config?: WithClauseConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'with_clause' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: WithItem) { return NEEDS_NAME_0 !== undefined ? with_clause_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: WithItem) { return NEEDS_NAME_1 !== undefined ? with_clause_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (WithItem)[]) { return with_clause_({ ...config, children }); },
     render() { return render(this); },

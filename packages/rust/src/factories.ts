@@ -361,7 +361,6 @@ export function block_(
   const fields = {
     label: config?.label,
     NEEDS_NAME_1: config?.NEEDS_NAME_1,
-    NEEDS_NAME_2: config?.NEEDS_NAME_2,
     _expression: config?.Expression,
   };
   const children = [...(config?.label ? [config?.label] : []), ...(config?.children2 ?? []), ...(config?.expression ? [config?.expression] : [])];
@@ -372,8 +371,7 @@ export function block_(
     children,
     label(label?: Label) { return label !== undefined ? block_({ ...config, label: label }) : fields.label; },
     NEEDS_NAME_1(...NEEDS_NAME_1: (DeclarationStatement | ExpressionStatement)[]) { return NEEDS_NAME_1.length ? block_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(NEEDS_NAME_2?: Expression) { return NEEDS_NAME_2 !== undefined ? block_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    Expression(Expression?: DeclarationStatement | Expression | ExpressionStatement | Label) { return Expression !== undefined ? block_({ ...config, Expression: Expression }) : fields._expression; },
+    Expression(Expression?: Expression) { return Expression !== undefined ? block_({ ...config, Expression: Expression }) : fields._expression; },
     children2(...children2: (DeclarationStatement | ExpressionStatement)[]) { return children2.length ? block_({ ...config, children2 }) : config?.children2; },
     expression(expression?: Expression) { return expression !== undefined ? block_({ ...config, expression }) : config?.expression; },
     render() { return render(this); },
@@ -462,7 +460,6 @@ export function break_expression_(
 ) {
   const fields = {
     label: config?.label,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
     _expression: config?.Expression,
   };
   const children = [...(config?.label ? [config?.label] : []), ...(config?.expression ? [config?.expression] : [])];
@@ -472,8 +469,7 @@ export function break_expression_(
     fields,
     children,
     label(label?: Label) { return label !== undefined ? break_expression_({ ...config, label: label }) : fields.label; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? break_expression_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    Expression(Expression?: Expression | Label) { return Expression !== undefined ? break_expression_({ ...config, Expression: Expression }) : fields._expression; },
+    Expression(Expression?: Expression) { return Expression !== undefined ? break_expression_({ ...config, Expression: Expression }) : fields._expression; },
     expression(expression?: Expression) { return expression !== undefined ? break_expression_({ ...config, expression }) : config?.expression; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -513,7 +509,6 @@ export function captured_pattern_(
 ) {
   const fields = {
     identifier: config.identifier,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
     _pattern: config.Pattern,
   };
   const children = [...(config.identifier ? [config.identifier] : []), ...(config.pattern ? [config.pattern] : [])];
@@ -523,7 +518,6 @@ export function captured_pattern_(
     fields,
     children,
     identifier(identifier?: Identifier) { return identifier !== undefined ? captured_pattern_({ ...config, identifier: identifier }) : fields.identifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Pattern) { return NEEDS_NAME_1 !== undefined ? captured_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     Pattern(Pattern?: Pattern) { return Pattern !== undefined ? captured_pattern_({ ...config, Pattern: Pattern }) : fields._pattern; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? captured_pattern_({ ...config, pattern }) : config?.pattern; },
     render() { return render(this); },
@@ -564,18 +558,11 @@ export function closure_expression_(
 export function closure_parameters_(
   config?: ClosureParametersConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'closure_parameters' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Parameter | Pattern) { return NEEDS_NAME_0 !== undefined ? closure_parameters_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (Parameter | Pattern)[]) { return NEEDS_NAME_1.length ? closure_parameters_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Parameter | Pattern)[]) { return closure_parameters_({ ...config, children }); },
     render() { return render(this); },
@@ -881,7 +868,6 @@ export function extern_crate_declaration_(
     alias: config.alias,
     name: config.name,
     visibility_modifier: config.visibilityModifier,
-    crate: config.crate,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.crate ? [config.crate] : [])];
@@ -893,8 +879,8 @@ export function extern_crate_declaration_(
     alias(alias?: Identifier) { return alias !== undefined ? extern_crate_declaration_({ ...config, alias: alias }) : fields.alias; },
     name(name?: Identifier) { return name !== undefined ? extern_crate_declaration_({ ...config, name: name }) : fields.name; },
     visibilityModifier(visibilityModifier?: VisibilityModifier) { return visibilityModifier !== undefined ? extern_crate_declaration_({ ...config, visibilityModifier: visibilityModifier }) : fields.visibility_modifier; },
-    crate(crate?: Crate) { return crate !== undefined ? extern_crate_declaration_({ ...config, crate: crate }) : fields.crate; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? extern_crate_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: Crate) { return NEEDS_NAME_1 !== undefined ? extern_crate_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    crate(crate?: Crate) { return crate !== undefined ? extern_crate_declaration_({ ...config, crate }) : config?.crate; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1033,18 +1019,11 @@ export function field_initializer_(
 export function field_initializer_list_(
   config?: FieldInitializerListConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'field_initializer_list' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer) { return NEEDS_NAME_0 !== undefined ? field_initializer_list_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]) { return NEEDS_NAME_1.length ? field_initializer_list_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]) { return field_initializer_list_({ ...config, children }); },
     render() { return render(this); },
@@ -1114,18 +1093,11 @@ export function for_expression_(
 export function for_lifetimes_(
   config?: ForLifetimesConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'for_lifetimes' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Lifetime) { return NEEDS_NAME_0 !== undefined ? for_lifetimes_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Lifetime) { return NEEDS_NAME_1 !== undefined ? for_lifetimes_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Lifetime)[]) { return for_lifetimes_({ ...config, children }); },
     render() { return render(this); },
@@ -1482,8 +1454,6 @@ export function index_expression_(
   config: IndexExpressionConfig,
 ) {
   const fields = {
-    object: config.object,
-    index: config.index,
     NEEDS_NAME_0: config.NEEDS_NAME_0,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
@@ -1493,8 +1463,6 @@ export function index_expression_(
     named: true as const,
     fields,
     children,
-    object(object?: Expression) { return object !== undefined ? index_expression_({ ...config, object: object }) : fields.object; },
-    index(index?: Expression) { return index !== undefined ? index_expression_({ ...config, index: index }) : fields.index; },
     NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? index_expression_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? index_expression_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     expression1(expression1?: Expression) { return expression1 !== undefined ? index_expression_({ ...config, expression1 }) : config?.expression1; },
@@ -1716,8 +1684,6 @@ export function macro_definition_(
 ) {
   const fields = {
     name: config.name,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = config.children ?? [];
   return {
@@ -1726,8 +1692,6 @@ export function macro_definition_(
     fields,
     children,
     name(name?: Identifier) { return name !== undefined ? macro_definition_({ ...config, name: name }) : fields.name; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: MacroRule) { return NEEDS_NAME_0 !== undefined ? macro_definition_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: MacroRule) { return NEEDS_NAME_1 !== undefined ? macro_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (MacroRule)[]) { return macro_definition_({ ...config, children }); },
     render() { return render(this); },
@@ -1817,18 +1781,11 @@ export function match_arm_(
 export function match_block_(
   config?: MatchBlockConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'match_block' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: MatchArm) { return NEEDS_NAME_0 !== undefined ? match_block_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: MatchArm) { return NEEDS_NAME_1 !== undefined ? match_block_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (MatchArm)[]) { return match_block_({ ...config, children }); },
     render() { return render(this); },
@@ -1918,8 +1875,6 @@ export function mut_pattern_(
   config: MutPatternConfig,
 ) {
   const fields = {
-    mutable_specifier: config.mutableSpecifier,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
     NEEDS_NAME_0: config.NEEDS_NAME_0,
     _pattern: config.Pattern,
   };
@@ -1929,10 +1884,9 @@ export function mut_pattern_(
     named: true as const,
     fields,
     children,
-    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? mut_pattern_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Pattern) { return NEEDS_NAME_1 !== undefined ? mut_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: string) { return NEEDS_NAME_0 !== undefined ? mut_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    Pattern(Pattern?: MutableSpecifier | Pattern) { return Pattern !== undefined ? mut_pattern_({ ...config, Pattern: Pattern }) : fields._pattern; },
+    NEEDS_NAME_0(NEEDS_NAME_0?: MutableSpecifier) { return NEEDS_NAME_0 !== undefined ? mut_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    Pattern(Pattern?: Pattern) { return Pattern !== undefined ? mut_pattern_({ ...config, Pattern: Pattern }) : fields._pattern; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? mut_pattern_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? mut_pattern_({ ...config, pattern }) : config?.pattern; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1947,18 +1901,11 @@ export function mut_pattern_(
 export function negative_literal_(
   config: NegativeLiteralConfig,
 ) {
-  const fields = {
-    operator: config.operator,
-    value: config.value,
-  };
   const children = config.children ? [config.children] : [];
   return {
     type: 'negative_literal' as const,
     named: true as const,
-    fields,
     children,
-    operator(operator?: string) { return operator !== undefined ? negative_literal_({ ...config, operator: operator }) : fields.operator; },
-    value(value?: FloatLiteral | IntegerLiteral) { return value !== undefined ? negative_literal_({ ...config, value: value }) : fields.value; },
     child(child?: FloatLiteral | IntegerLiteral) { return child !== undefined ? negative_literal_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1974,9 +1921,6 @@ export function or_pattern_(
   config: OrPatternConfig,
 ) {
   const fields = {
-    left: config.left,
-    operator: config.operator,
-    right: config.right,
     NEEDS_NAME_0: config.NEEDS_NAME_0,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
@@ -1986,9 +1930,6 @@ export function or_pattern_(
     named: true as const,
     fields,
     children,
-    left(left?: Pattern) { return left !== undefined ? or_pattern_({ ...config, left: left }) : fields.left; },
-    operator(operator?: Pattern) { return operator !== undefined ? or_pattern_({ ...config, operator: operator }) : fields.operator; },
-    right(right?: Pattern) { return right !== undefined ? or_pattern_({ ...config, right: right }) : fields.right; },
     NEEDS_NAME_0(NEEDS_NAME_0?: Pattern) { return NEEDS_NAME_0 !== undefined ? or_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     NEEDS_NAME_1(NEEDS_NAME_1?: Pattern) { return NEEDS_NAME_1 !== undefined ? or_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     pattern1(pattern1?: Pattern) { return pattern1 !== undefined ? or_pattern_({ ...config, pattern1 }) : config?.pattern1; },
@@ -2161,9 +2102,6 @@ export function range_expression_(
   config?: RangeExpressionConfig,
 ) {
   const fields = {
-    start: config?.start,
-    operator: config?.operator,
-    end: config?.end,
     NEEDS_NAME_0: config?.NEEDS_NAME_0,
     NEEDS_NAME_1: config?.NEEDS_NAME_1,
   };
@@ -2173,9 +2111,6 @@ export function range_expression_(
     named: true as const,
     fields,
     children,
-    start(start?: Expression) { return start !== undefined ? range_expression_({ ...config, start: start }) : fields.start; },
-    operator(operator?: Expression) { return operator !== undefined ? range_expression_({ ...config, operator: operator }) : fields.operator; },
-    end(end?: Expression) { return end !== undefined ? range_expression_({ ...config, end: end }) : fields.end; },
     NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? range_expression_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? range_expression_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     expression1(expression1?: Expression) { return expression1 !== undefined ? range_expression_({ ...config, expression1 }) : config?.expression1; },
@@ -2279,8 +2214,6 @@ export function reference_pattern_(
   config: ReferencePatternConfig,
 ) {
   const fields = {
-    mutable_specifier: config.mutableSpecifier,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
     NEEDS_NAME_0: config.NEEDS_NAME_0,
     _pattern: config.Pattern,
   };
@@ -2290,10 +2223,9 @@ export function reference_pattern_(
     named: true as const,
     fields,
     children,
-    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_pattern_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Pattern) { return NEEDS_NAME_1 !== undefined ? reference_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: string) { return NEEDS_NAME_0 !== undefined ? reference_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    Pattern(Pattern?: MutableSpecifier | Pattern) { return Pattern !== undefined ? reference_pattern_({ ...config, Pattern: Pattern }) : fields._pattern; },
+    NEEDS_NAME_0(NEEDS_NAME_0?: MutableSpecifier) { return NEEDS_NAME_0 !== undefined ? reference_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    Pattern(Pattern?: Pattern) { return Pattern !== undefined ? reference_pattern_({ ...config, Pattern: Pattern }) : fields._pattern; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_pattern_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? reference_pattern_({ ...config, pattern }) : config?.pattern; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2311,7 +2243,6 @@ export function reference_type_(
   const fields = {
     type: config.type,
     lifetime: config.lifetime,
-    mutable_specifier: config.mutableSpecifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.lifetime ? [config.lifetime] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : [])];
@@ -2322,8 +2253,8 @@ export function reference_type_(
     children,
     typeField(type_?: Type) { return type_ !== undefined ? reference_type_({ ...config, type: type_ }) : fields.type; },
     lifetime(lifetime?: Lifetime) { return lifetime !== undefined ? reference_type_({ ...config, lifetime: lifetime }) : fields.lifetime; },
-    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_type_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? reference_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: MutableSpecifier) { return NEEDS_NAME_1 !== undefined ? reference_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_type_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2446,8 +2377,6 @@ export function self_parameter_(
 ) {
   const fields = {
     lifetime: config.lifetime,
-    mutable_specifier: config.mutableSpecifier,
-    self: config.self,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
     NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
@@ -2458,10 +2387,10 @@ export function self_parameter_(
     fields,
     children,
     lifetime(lifetime?: Lifetime) { return lifetime !== undefined ? self_parameter_({ ...config, lifetime: lifetime }) : fields.lifetime; },
-    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? self_parameter_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    self(self?: Self) { return self !== undefined ? self_parameter_({ ...config, self: self }) : fields.self; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? self_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? self_parameter_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: MutableSpecifier) { return NEEDS_NAME_1 !== undefined ? self_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: Self) { return NEEDS_NAME_2 !== undefined ? self_parameter_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? self_parameter_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
+    self(self?: Self) { return self !== undefined ? self_parameter_({ ...config, self }) : config?.self; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2551,7 +2480,6 @@ export function static_item_(
     type: config.type,
     value: config.value,
     visibility_modifier: config.visibilityModifier,
-    mutable_specifier: config.mutableSpecifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : [])];
@@ -2564,8 +2492,8 @@ export function static_item_(
     typeField(type_?: Type) { return type_ !== undefined ? static_item_({ ...config, type: type_ }) : fields.type; },
     value(value?: Expression) { return value !== undefined ? static_item_({ ...config, value: value }) : fields.value; },
     visibilityModifier(visibilityModifier?: VisibilityModifier) { return visibilityModifier !== undefined ? static_item_({ ...config, visibilityModifier: visibilityModifier }) : fields.visibility_modifier; },
-    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? static_item_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? static_item_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: MutableSpecifier) { return NEEDS_NAME_1 !== undefined ? static_item_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? static_item_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2655,8 +2583,6 @@ export function struct_pattern_(
 ) {
   const fields = {
     type: config.type,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = config.children ?? [];
   return {
@@ -2665,8 +2591,6 @@ export function struct_pattern_(
     fields,
     children,
     typeField(type_?: ScopedTypeIdentifier | TypeIdentifier) { return type_ !== undefined ? struct_pattern_({ ...config, type: type_ }) : fields.type; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: FieldPattern | RemainingFieldPattern) { return NEEDS_NAME_0 !== undefined ? struct_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (FieldPattern | RemainingFieldPattern)[]) { return NEEDS_NAME_1.length ? struct_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (FieldPattern | RemainingFieldPattern)[]) { return struct_pattern_({ ...config, children }); },
     render() { return render(this); },
@@ -2785,18 +2709,11 @@ export function token_tree_pattern_(
 export function trait_bounds_(
   config?: TraitBoundsConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'trait_bounds' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: HigherRankedTraitBound | Lifetime | Type) { return NEEDS_NAME_0 !== undefined ? trait_bounds_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (HigherRankedTraitBound | Lifetime | Type)[]) { return NEEDS_NAME_1.length ? trait_bounds_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (HigherRankedTraitBound | Lifetime | Type)[]) { return trait_bounds_({ ...config, children }); },
     render() { return render(this); },
@@ -2864,18 +2781,11 @@ export function try_block_(
 export function try_expression_(
   config: TryExpressionConfig,
 ) {
-  const fields = {
-    value: config.value,
-    operator: config.operator,
-  };
   const children = config.children ? [config.children] : [];
   return {
     type: 'try_expression' as const,
     named: true as const,
-    fields,
     children,
-    value(value?: Expression) { return value !== undefined ? try_expression_({ ...config, value: value }) : fields.value; },
-    operator(operator?: string) { return operator !== undefined ? try_expression_({ ...config, operator: operator }) : fields.operator; },
     child(child?: Expression) { return child !== undefined ? try_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2922,18 +2832,11 @@ export function tuple_expression_(
 export function tuple_pattern_(
   config?: TuplePatternConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'tuple_pattern' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: ClosureExpression | Pattern) { return NEEDS_NAME_0 !== undefined ? tuple_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (ClosureExpression | Pattern)[]) { return NEEDS_NAME_1.length ? tuple_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (ClosureExpression | Pattern)[]) { return tuple_pattern_({ ...config, children }); },
     render() { return render(this); },
@@ -2951,8 +2854,6 @@ export function tuple_struct_pattern_(
 ) {
   const fields = {
     type: config.type,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = config.children ?? [];
   return {
@@ -2961,8 +2862,6 @@ export function tuple_struct_pattern_(
     fields,
     children,
     typeField(type_?: GenericType | Identifier | ScopedIdentifier) { return type_ !== undefined ? tuple_struct_pattern_({ ...config, type: type_ }) : fields.type; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: string) { return NEEDS_NAME_0 !== undefined ? tuple_struct_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? tuple_struct_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Pattern)[]) { return tuple_struct_pattern_({ ...config, children }); },
     render() { return render(this); },
@@ -3166,18 +3065,11 @@ export function type_parameters_(
 export function unary_expression_(
   config: UnaryExpressionConfig,
 ) {
-  const fields = {
-    operator: config.operator,
-    operand: config.operand,
-  };
   const children = config.children ? [config.children] : [];
   return {
     type: 'unary_expression' as const,
     named: true as const,
-    fields,
     children,
-    operator(operator?: string) { return operator !== undefined ? unary_expression_({ ...config, operator: operator }) : fields.operator; },
-    operand(operand?: Expression) { return operand !== undefined ? unary_expression_({ ...config, operand: operand }) : fields.operand; },
     child(child?: Expression) { return child !== undefined ? unary_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -3265,18 +3157,11 @@ export function use_as_clause_(
 export function use_bounds_(
   config?: UseBoundsConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'use_bounds' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Lifetime | TypeIdentifier) { return NEEDS_NAME_0 !== undefined ? use_bounds_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (Lifetime | TypeIdentifier)[]) { return NEEDS_NAME_1.length ? use_bounds_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Lifetime | TypeIdentifier)[]) { return use_bounds_({ ...config, children }); },
     render() { return render(this); },
@@ -3398,18 +3283,11 @@ export function visibility_modifier_(
 export function where_clause_(
   config?: WhereClauseConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'where_clause' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: WherePredicate) { return NEEDS_NAME_0 !== undefined ? where_clause_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: WherePredicate) { return NEEDS_NAME_1 !== undefined ? where_clause_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (WherePredicate)[]) { return where_clause_({ ...config, children }); },
     render() { return render(this); },

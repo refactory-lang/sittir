@@ -194,10 +194,6 @@ function _r1k9ajy7(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'asserts_annotation':return assertsAnnotationFrom(rest);case 'type_annotation':return typeAnnotationFrom(rest);case 'type_predicate_annotation':return typePredicateAnnotationFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["asserts_annotation","type_annotation","type_predicate_annotation"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: asserts_annotation, type_annotation, type_predicate_annotation. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
-function _rd4g2sg(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
-}
-
 function _r1bydq0c(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){return property_identifier_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'statement_block':return statementBlockFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["statement_block","abstract_class_declaration","ambient_declaration","class_declaration","enum_declaration","function_declaration","function_signature","generator_function_declaration","import_alias","interface_declaration","internal_module","lexical_declaration","module","type_alias_declaration","variable_declaration"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: statement_block, abstract_class_declaration, ambient_declaration, class_declaration, enum_declaration, function_declaration, function_signature, generator_function_declaration, import_alias, interface_declaration, internal_module, lexical_declaration, module, type_alias_declaration, variable_declaration. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -494,7 +490,6 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
       returnType: f?.['return_type'],
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      overrideModifier: f?.['override_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as AbstractMethodSignatureConfig);
   }
@@ -515,11 +510,11 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  }
+  if (obj.overrideModifier !== undefined) {
+    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
   return abstract_method_signature_(resolved as AbstractMethodSignatureConfig);
 }
@@ -583,21 +578,11 @@ export function arguments_From(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return arguments_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ArgumentsConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1na12w(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1na12w(v));
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _r1na12w(v));
@@ -614,21 +599,11 @@ export function arrayFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return array_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ArrayConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1na12w(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1na12w(v));
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _r1na12w(v));
@@ -645,21 +620,11 @@ export function arrayPatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return array_pattern_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ArrayPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _rhe4xzo(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _rhe4xzo(v));
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _rhe4xzo(v));
@@ -1437,8 +1402,6 @@ export function enumBodyFrom(input: unknown): unknown {
     const c = nd.children;
     return enum_body_({
       name: f?.['name'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as EnumBodyConfig);
   }
@@ -1448,12 +1411,6 @@ export function enumBodyFrom(input: unknown): unknown {
     const raw = obj['name'];
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['name'] = arr.map((v: unknown) => _r2w984x(v));
-  }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? enumAssignmentFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? enumAssignmentFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? enumAssignmentFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? enumAssignmentFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
@@ -1495,19 +1452,11 @@ export function exportClauseFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return export_clause_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ExportClauseConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? exportSpecifierFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? exportSpecifierFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? exportSpecifierFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? exportSpecifierFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? exportSpecifierFrom(v) : typeof v === 'object' ? exportSpecifierFrom(v) : v));
@@ -2053,19 +2002,11 @@ export function implementsClauseFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return implements_clause_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ImplementsClauseConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveType(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveType(obj['NEEDS_NAME_1']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveType(v));
@@ -2484,8 +2425,6 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
     const c = nd.children;
     return lexical_declaration_({
       kind: f?.['kind'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as LexicalDeclarationConfig);
   }
@@ -2493,12 +2432,6 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
   const resolved: Record<string, unknown> = {};
   if (obj['kind'] !== undefined) {
     resolved['kind'] = _ron60d4(obj['kind']);
-  }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? variableDeclaratorFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? variableDeclaratorFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? variableDeclaratorFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? variableDeclaratorFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
@@ -2625,7 +2558,6 @@ export function methodDefinitionFrom(input: unknown): unknown {
       returnType: f?.['return_type'],
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      overrideModifier: f?.['override_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as MethodDefinitionConfig);
   }
@@ -2649,11 +2581,11 @@ export function methodDefinitionFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  }
+  if (obj.overrideModifier !== undefined) {
+    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
   return method_definition_(resolved as MethodDefinitionConfig);
 }
@@ -2672,7 +2604,6 @@ export function methodSignatureFrom(input: unknown): unknown {
       returnType: f?.['return_type'],
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      overrideModifier: f?.['override_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as MethodSignatureConfig);
   }
@@ -2693,11 +2624,11 @@ export function methodSignatureFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  }
+  if (obj.overrideModifier !== undefined) {
+    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
   return method_signature_(resolved as MethodSignatureConfig);
 }
@@ -2735,19 +2666,11 @@ export function namedImportsFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return named_imports_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as NamedImportsConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? importSpecifierFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? importSpecifierFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? importSpecifierFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? importSpecifierFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? importSpecifierFrom(v) : typeof v === 'object' ? importSpecifierFrom(v) : v));
@@ -2900,21 +2823,11 @@ export function objectFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return object_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ObjectConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r102zx8m(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r102zx8m(v));
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _r102zx8m(v));
@@ -2955,21 +2868,11 @@ export function objectPatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return object_pattern_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ObjectPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1t1xv6e(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1t1xv6e(v));
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _r1t1xv6e(v));
@@ -2986,21 +2889,11 @@ export function objectTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return object_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as ObjectTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1rfp6fa(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1rfp6fa(v));
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _r1rfp6fa(v));
@@ -3063,7 +2956,6 @@ export function optionalParameterFrom(input: unknown): unknown {
       type: f?.['type'],
       value: f?.['value'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      overrideModifier: f?.['override_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as OptionalParameterConfig);
   }
@@ -3089,11 +2981,11 @@ export function optionalParameterFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  }
+  if (obj.overrideModifier !== undefined) {
+    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
   return optional_parameter_(resolved as OptionalParameterConfig);
 }
@@ -3248,7 +3140,6 @@ export function propertySignatureFrom(input: unknown): unknown {
       name: f?.['name'],
       type: f?.['type'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      overrideModifier: f?.['override_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as PropertySignatureConfig);
   }
@@ -3263,11 +3154,11 @@ export function propertySignatureFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  }
+  if (obj.overrideModifier !== undefined) {
+    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
   return property_signature_(resolved as PropertySignatureConfig);
 }
@@ -3286,7 +3177,6 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
       type: f?.['type'],
       value: f?.['value'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      overrideModifier: f?.['override_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as PublicFieldDefinitionConfig);
   }
@@ -3309,11 +3199,11 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  }
+  if (obj.overrideModifier !== undefined) {
+    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
   return public_field_definition_(resolved as PublicFieldDefinitionConfig);
 }
@@ -3377,7 +3267,6 @@ export function requiredParameterFrom(input: unknown): unknown {
       type: f?.['type'],
       value: f?.['value'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      overrideModifier: f?.['override_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as RequiredParameterConfig);
   }
@@ -3403,11 +3292,11 @@ export function requiredParameterFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  }
+  if (obj.overrideModifier !== undefined) {
+    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
   return required_parameter_(resolved as RequiredParameterConfig);
 }
@@ -3508,19 +3397,11 @@ export function sequenceExpressionFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return sequence_expression_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as SequenceExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveExpression(v));
@@ -3947,19 +3828,11 @@ export function typeArgumentsFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return type_arguments_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as TypeArgumentsConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveType(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveType(obj['NEEDS_NAME_1']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _resolveType(v));
@@ -4028,19 +3901,11 @@ export function typeParametersFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return type_parameters_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as TypeParametersConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? typeParameterFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? typeParameterFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? typeParameterFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? typeParameterFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? typeParameterFrom(v) : typeof v === 'object' ? typeParameterFrom(v) : v));
@@ -4199,19 +4064,11 @@ export function variableDeclarationFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return variable_declaration_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       children: c,
     } as unknown as VariableDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? variableDeclaratorFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? variableDeclaratorFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? variableDeclaratorFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? variableDeclaratorFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));

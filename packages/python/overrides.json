@@ -1,47 +1,13 @@
 {
-  "argument_list": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "assert_statement": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "case_clause": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
   "class_pattern": {
     "fields": {
       "dotted_name": {},
-      "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {},
       "case_pattern": {
         "multiple": true
       }
     }
   },
-  "comparison_operator": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
   "complex_pattern": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "concatenated_string": {
     "fields": {
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {}
@@ -60,50 +26,12 @@
       "NEEDS_NAME_1": {}
     }
   },
-  "dict_pattern": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "dictionary": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
   "dictionary_comprehension": {
     "fields": {
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {
         "multiple": true
       }
-    }
-  },
-  "dotted_name": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "exec_statement": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "expression_list": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "expression_statement": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
     }
   },
   "generator_expression": {
@@ -118,12 +46,6 @@
     "fields": {
       "identifier": {},
       "type_parameter": {}
-    }
-  },
-  "global_statement": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
     }
   },
   "keyword_pattern": {
@@ -144,18 +66,6 @@
     "fields": {
       "type": {},
       "identifier": {}
-    }
-  },
-  "nonlocal_statement": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "pattern_list": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
     }
   },
   "relative_import": {
@@ -197,19 +107,7 @@
       "finally_clause": {}
     }
   },
-  "type_parameter": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
   "union_type": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "with_clause": {
     "fields": {
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {}

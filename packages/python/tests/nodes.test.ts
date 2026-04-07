@@ -52,7 +52,7 @@ describe('argument_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.argumentList({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: [ir.identifier('test_NEEDS_NAME_1') as any], children: [ir.identifier('test_children') as any] });
+    const node = ir.argumentList({ children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -101,7 +101,7 @@ describe('assert_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.assertStatement({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.assertStatement({ children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -275,7 +275,7 @@ describe('case_clause', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.caseClause({ consequence: ir.block() as any, guard: ir.ifClause({ children: ir.identifier('test_children') as any }) as any, NEEDS_NAME_0: ir.casePattern() as any, NEEDS_NAME_1: ir.casePattern() as any, children: [] });
+    const node = ir.caseClause({ consequence: ir.block() as any, guard: ir.ifClause({ children: ir.identifier('test_children') as any }) as any, children: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -370,7 +370,7 @@ describe('class_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.classPattern({ dottedName: ir.dottedName() as any, NEEDS_NAME_1: [], NEEDS_NAME_2: ir.casePattern() as any, casePattern: [] });
+    const node = ir.classPattern({ dottedName: ir.dottedName() as any, casePattern: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -390,11 +390,6 @@ describe('comparison_operator', () => {
     const node = ir.comparisonOperator({ operators: [], children: [ir.identifier('test_children') as any] });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.comparisonOperator({ operators: [], NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children: [ir.identifier('test_children') as any] });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -592,7 +587,7 @@ describe('dict_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.dictPattern({ key: [], value: [], NEEDS_NAME_0: ir.splatPattern() as any, NEEDS_NAME_1: ir.splatPattern() as any, children: [] });
+    const node = ir.dictPattern({ children: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -620,7 +615,7 @@ describe('dictionary', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.dictionary({ NEEDS_NAME_0: ir.dictionarySplat({ children: ir.identifier('test_children') as any }) as any, NEEDS_NAME_1: [], children: [] });
+    const node = ir.dictionary({ children: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -805,7 +800,7 @@ describe('exec_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.execStatement({ code: ir.identifier('test_code') as any, NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.execStatement({ code: ir.identifier('test_code') as any, children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -832,7 +827,7 @@ describe('expression_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.expressionList({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.expressionList({ children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1097,7 +1092,7 @@ describe('global_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.globalStatement({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.globalStatement({ children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1558,7 +1553,7 @@ describe('nonlocal_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.nonlocalStatement({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.nonlocalStatement({ children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1703,7 +1698,7 @@ describe('pattern_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.patternList({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children: [ir.identifier('test_children') as any] });
+    const node = ir.patternList({ children: [ir.identifier('test_children') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2127,7 +2122,7 @@ describe('type_parameter', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.typeParameter({ NEEDS_NAME_0: ir.type({ children: ir.identifier('test_children') as any }) as any, NEEDS_NAME_1: ir.type({ children: ir.identifier('test_children') as any }) as any, children: [] });
+    const node = ir.typeParameter({ children: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

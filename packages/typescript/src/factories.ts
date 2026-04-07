@@ -117,7 +117,6 @@ export function abstract_method_signature_(
     return_type: config.returnType,
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
@@ -131,8 +130,8 @@ export function abstract_method_signature_(
     returnType(returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation) { return returnType !== undefined ? abstract_method_signature_({ ...config, returnType: returnType }) : fields.return_type; },
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? abstract_method_signature_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? abstract_method_signature_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? abstract_method_signature_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? abstract_method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? abstract_method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? abstract_method_signature_({ ...config, overrideModifier }) : config?.overrideModifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -192,18 +191,11 @@ export function ambient_declaration_(
 export function arguments_(
   config?: ArgumentsConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'arguments' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression | SpreadElement) { return NEEDS_NAME_0 !== undefined ? arguments_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (Expression | SpreadElement)[]) { return NEEDS_NAME_1.length ? arguments_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Expression | SpreadElement)[]) { return arguments_({ ...config, children }); },
     render() { return render(this); },
@@ -219,18 +211,11 @@ export function arguments_(
 export function array_(
   config?: ArrayConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'array' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression | SpreadElement) { return NEEDS_NAME_0 !== undefined ? array_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (Expression | SpreadElement)[]) { return NEEDS_NAME_1.length ? array_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Expression | SpreadElement)[]) { return array_({ ...config, children }); },
     render() { return render(this); },
@@ -246,18 +231,11 @@ export function array_(
 export function array_pattern_(
   config?: ArrayPatternConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'array_pattern' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: AssignmentPattern | Pattern) { return NEEDS_NAME_0 !== undefined ? array_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (AssignmentPattern | Pattern)[]) { return NEEDS_NAME_1.length ? array_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (AssignmentPattern | Pattern)[]) { return array_pattern_({ ...config, children }); },
     render() { return render(this); },
@@ -970,8 +948,6 @@ export function enum_body_(
 ) {
   const fields = {
     name: config?.name,
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
   };
   const children = config?.children ?? [];
   return {
@@ -980,8 +956,6 @@ export function enum_body_(
     fields,
     children,
     name(...name: (ComputedPropertyName | Number | PrivatePropertyIdentifier | PropertyIdentifier | String)[]) { return name.length ? enum_body_({ ...config, name: name }) : fields.name; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: EnumAssignment) { return NEEDS_NAME_0 !== undefined ? enum_body_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: EnumAssignment) { return NEEDS_NAME_1 !== undefined ? enum_body_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (EnumAssignment)[]) { return enum_body_({ ...config, children }); },
     render() { return render(this); },
@@ -1020,18 +994,11 @@ export function enum_declaration_(
 export function export_clause_(
   config?: ExportClauseConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'export_clause' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: ExportSpecifier) { return NEEDS_NAME_0 !== undefined ? export_clause_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: ExportSpecifier) { return NEEDS_NAME_1 !== undefined ? export_clause_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (ExportSpecifier)[]) { return export_clause_({ ...config, children }); },
     render() { return render(this); },
@@ -1497,18 +1464,11 @@ export function if_statement_(
 export function implements_clause_(
   config?: ImplementsClauseConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'implements_clause' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Type) { return NEEDS_NAME_0 !== undefined ? implements_clause_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Type) { return NEEDS_NAME_1 !== undefined ? implements_clause_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Type)[]) { return implements_clause_({ ...config, children }); },
     render() { return render(this); },
@@ -1896,8 +1856,6 @@ export function lexical_declaration_(
 ) {
   const fields = {
     kind: config.kind,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = config.children ?? [];
   return {
@@ -1906,8 +1864,6 @@ export function lexical_declaration_(
     fields,
     children,
     kind(kind?: 'let' | 'const') { return kind !== undefined ? lexical_declaration_({ ...config, kind: kind }) : fields.kind; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: VariableDeclarator) { return NEEDS_NAME_0 !== undefined ? lexical_declaration_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: VariableDeclarator) { return NEEDS_NAME_1 !== undefined ? lexical_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (VariableDeclarator)[]) { return lexical_declaration_({ ...config, children }); },
     render() { return render(this); },
@@ -2025,7 +1981,6 @@ export function method_definition_(
     return_type: config.returnType,
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
@@ -2040,8 +1995,8 @@ export function method_definition_(
     returnType(returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation) { return returnType !== undefined ? method_definition_({ ...config, returnType: returnType }) : fields.return_type; },
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? method_definition_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? method_definition_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_definition_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? method_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? method_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_definition_({ ...config, overrideModifier }) : config?.overrideModifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2061,7 +2016,6 @@ export function method_signature_(
     return_type: config.returnType,
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
@@ -2075,8 +2029,8 @@ export function method_signature_(
     returnType(returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation) { return returnType !== undefined ? method_signature_({ ...config, returnType: returnType }) : fields.return_type; },
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? method_signature_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? method_signature_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_signature_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_signature_({ ...config, overrideModifier }) : config?.overrideModifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2113,18 +2067,11 @@ export function module_(
 export function named_imports_(
   config?: NamedImportsConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'named_imports' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: ImportSpecifier) { return NEEDS_NAME_0 !== undefined ? named_imports_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: ImportSpecifier) { return NEEDS_NAME_1 !== undefined ? named_imports_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (ImportSpecifier)[]) { return named_imports_({ ...config, children }); },
     render() { return render(this); },
@@ -2268,18 +2215,11 @@ export function non_null_expression_(
 export function object_(
   config?: ObjectConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'object' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: MethodDefinition | Pair | ShorthandPropertyIdentifier | SpreadElement) { return NEEDS_NAME_0 !== undefined ? object_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (MethodDefinition | Pair | ShorthandPropertyIdentifier | SpreadElement)[]) { return NEEDS_NAME_1.length ? object_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (MethodDefinition | Pair | ShorthandPropertyIdentifier | SpreadElement)[]) { return object_({ ...config, children }); },
     render() { return render(this); },
@@ -2318,18 +2258,11 @@ export function object_assignment_pattern_(
 export function object_pattern_(
   config?: ObjectPatternConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'object_pattern' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern) { return NEEDS_NAME_0 !== undefined ? object_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern)[]) { return NEEDS_NAME_1.length ? object_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (ObjectAssignmentPattern | PairPattern | RestPattern | ShorthandPropertyIdentifierPattern)[]) { return object_pattern_({ ...config, children }); },
     render() { return render(this); },
@@ -2345,18 +2278,11 @@ export function object_pattern_(
 export function object_type_(
   config?: ObjectTypeConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'object_type' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature) { return NEEDS_NAME_0 !== undefined ? object_type_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return NEEDS_NAME_1.length ? object_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return object_type_({ ...config, children }); },
     render() { return render(this); },
@@ -2417,7 +2343,6 @@ export function optional_parameter_(
     type: config?.type,
     value: config?.value,
     accessibility_modifier: config?.accessibilityModifier,
-    override_modifier: config?.overrideModifier,
     NEEDS_NAME_1: config?.NEEDS_NAME_1,
   };
   const children = [...(config?.accessibilityModifier ? [config?.accessibilityModifier] : []), ...(config?.overrideModifier ? [config?.overrideModifier] : [])];
@@ -2432,8 +2357,8 @@ export function optional_parameter_(
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? optional_parameter_({ ...config, type: type_ }) : fields.type; },
     value(value?: Expression) { return value !== undefined ? optional_parameter_({ ...config, value: value }) : fields.value; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? optional_parameter_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? optional_parameter_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? optional_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? optional_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? optional_parameter_({ ...config, overrideModifier }) : config?.overrideModifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2584,7 +2509,6 @@ export function property_signature_(
     name: config.name,
     type: config.type,
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
@@ -2596,8 +2520,8 @@ export function property_signature_(
     name(name?: ComputedPropertyName | Number | PrivatePropertyIdentifier | PropertyIdentifier | String) { return name !== undefined ? property_signature_({ ...config, name: name }) : fields.name; },
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? property_signature_({ ...config, type: type_ }) : fields.type; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? property_signature_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? property_signature_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? property_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? property_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? property_signature_({ ...config, overrideModifier }) : config?.overrideModifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2617,7 +2541,6 @@ export function public_field_definition_(
     type: config.type,
     value: config.value,
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
   const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
@@ -2631,8 +2554,8 @@ export function public_field_definition_(
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? public_field_definition_({ ...config, type: type_ }) : fields.type; },
     value(value?: Expression) { return value !== undefined ? public_field_definition_({ ...config, value: value }) : fields.value; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? public_field_definition_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? public_field_definition_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? public_field_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? public_field_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? public_field_definition_({ ...config, overrideModifier }) : config?.overrideModifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2695,7 +2618,6 @@ export function required_parameter_(
     type: config?.type,
     value: config?.value,
     accessibility_modifier: config?.accessibilityModifier,
-    override_modifier: config?.overrideModifier,
     NEEDS_NAME_1: config?.NEEDS_NAME_1,
   };
   const children = [...(config?.accessibilityModifier ? [config?.accessibilityModifier] : []), ...(config?.overrideModifier ? [config?.overrideModifier] : [])];
@@ -2710,8 +2632,8 @@ export function required_parameter_(
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? required_parameter_({ ...config, type: type_ }) : fields.type; },
     value(value?: Expression) { return value !== undefined ? required_parameter_({ ...config, value: value }) : fields.value; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? required_parameter_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? required_parameter_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? required_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? required_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? required_parameter_({ ...config, overrideModifier }) : config?.overrideModifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2808,18 +2730,11 @@ export function satisfies_expression_(
 export function sequence_expression_(
   config?: SequenceExpressionConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'sequence_expression' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? sequence_expression_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? sequence_expression_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Expression)[]) { return sequence_expression_({ ...config, children }); },
     render() { return render(this); },
@@ -3217,18 +3132,11 @@ export function type_annotation_(
 export function type_arguments_(
   config?: TypeArgumentsConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'type_arguments' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Type) { return NEEDS_NAME_0 !== undefined ? type_arguments_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Type) { return NEEDS_NAME_1 !== undefined ? type_arguments_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (Type)[]) { return type_arguments_({ ...config, children }); },
     render() { return render(this); },
@@ -3294,18 +3202,11 @@ export function type_parameter_(
 export function type_parameters_(
   config?: TypeParametersConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'type_parameters' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: TypeParameter) { return NEEDS_NAME_0 !== undefined ? type_parameters_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: TypeParameter) { return NEEDS_NAME_1 !== undefined ? type_parameters_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (TypeParameter)[]) { return type_parameters_({ ...config, children }); },
     render() { return render(this); },
@@ -3455,18 +3356,11 @@ export function update_expression_(
 export function variable_declaration_(
   config?: VariableDeclarationConfig,
 ) {
-  const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-  };
   const children = config?.children ?? [];
   return {
     type: 'variable_declaration' as const,
     named: true as const,
-    fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: VariableDeclarator) { return NEEDS_NAME_0 !== undefined ? variable_declaration_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: VariableDeclarator) { return NEEDS_NAME_1 !== undefined ? variable_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     getChildren() { return children; },
     setChildren(...children: (VariableDeclarator)[]) { return variable_declaration_({ ...config, children }); },
     render() { return render(this); },

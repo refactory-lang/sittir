@@ -2,7 +2,6 @@
   "abstract_method_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -14,30 +13,6 @@
       "type": {}
     }
   },
-  "arguments": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "array": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "array_pattern": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
   "as_expression": {
     "fields": {
       "expression": {},
@@ -45,24 +20,6 @@
     }
   },
   "class_heritage": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "enum_body": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "export_clause": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "implements_clause": {
     "fields": {
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {}
@@ -98,12 +55,6 @@
       "NEEDS_NAME_1": {}
     }
   },
-  "lexical_declaration": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
   "lookup_type": {
     "fields": {
       "primary_type": {},
@@ -113,7 +64,6 @@
   "method_definition": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -122,46 +72,14 @@
   "method_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
-    }
-  },
-  "named_imports": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "object": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "object_pattern": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "object_type": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
       }
     }
   },
   "optional_parameter": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -178,7 +96,6 @@
   "property_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -187,7 +104,6 @@
   "public_field_definition": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -196,7 +112,6 @@
   "required_parameter": {
     "fields": {
       "accessibility_modifier": {},
-      "override_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
       }
@@ -208,37 +123,13 @@
       "type": {}
     }
   },
-  "sequence_expression": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "type_arguments": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
   "type_assertion": {
     "fields": {
       "type_arguments": {},
       "expression": {}
     }
   },
-  "type_parameters": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
   "union_type": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "variable_declaration": {
     "fields": {
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {}
