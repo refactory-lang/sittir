@@ -96,7 +96,7 @@ export const _BRANCH_FIELDS: Record<string, string[]> = {
   'scoped_use_list': ["list","path"],
   'self_parameter': ["lifetime","NEEDS_NAME_1","NEEDS_NAME_2"],
   'shorthand_field_initializer': ["attributeItem","identifier"],
-  'source_file': ["NEEDS_NAME_0","NEEDS_NAME_1"],
+  'source_file': ["shebang","statement"],
   'static_item': ["name","type","value","visibilityModifier","NEEDS_NAME_1"],
   'struct_expression': ["body","name"],
   'struct_item': ["body","name","typeParameters","visibilityModifier","whereClause"],

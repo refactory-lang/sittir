@@ -2399,7 +2399,7 @@ describe('source_file', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.sourceFile({ NEEDS_NAME_0: ir.emptyStatement() as any, NEEDS_NAME_1: [], children1: ir.emptyStatement() as any, children2: [] });
+    const node = ir.sourceFile({ shebang: ir.emptyStatement() as any, statement: [], children1: ir.emptyStatement() as any, children2: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

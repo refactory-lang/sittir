@@ -85,6 +85,8 @@ export interface SingleChildModel {
 	required: boolean;
 	multiple: false;
 	kinds: Set<string>;
+	/** Slot name from grammar (kind-as-name or NEEDS_NAME placeholder). */
+	name?: string | null;
 	childSignature?: ChildSignature;
 }
 
@@ -93,6 +95,8 @@ export interface ListChildModel {
 	multiple: true;
 	kinds: Set<string>;
 	separator: string | null;
+	/** Slot name from grammar (kind-as-name or NEEDS_NAME placeholder). */
+	name?: string | null;
 	childSignature?: ChildSignature;
 }
 
@@ -513,9 +517,9 @@ function buildChildrenFromGrammar(
 		// Grammar kinds + NT-only supplements
 		const kinds = new Set([...rc.kinds, ...ntOnlyKinds]);
 		if (rc.multiple) {
-			return { required: rc.required, multiple: true, kinds, separator: childSep } as ListChildModel;
+			return { required: rc.required, multiple: true, kinds, separator: childSep, name: rc.name } as ListChildModel;
 		}
-		return { required: rc.required, multiple: false, kinds } as SingleChildModel;
+		return { required: rc.required, multiple: false, kinds, name: rc.name } as SingleChildModel;
 	}
 
 	if (ruleChildren.length === 1) {

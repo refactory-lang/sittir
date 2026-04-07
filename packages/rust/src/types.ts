@@ -989,8 +989,8 @@ export interface SlicePattern {
 export interface SourceFile {
   readonly type: 'source_file';
   readonly fields: {
-    readonly NEEDS_NAME_0?: DeclarationStatement | ExpressionStatement | Shebang;
-    readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
+    readonly shebang?: DeclarationStatement | ExpressionStatement | Shebang;
+    readonly statement?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
   };
   readonly children1?: DeclarationStatement | ExpressionStatement | Shebang;
   readonly children2?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];

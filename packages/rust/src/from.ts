@@ -3015,19 +3015,19 @@ export function sourceFileFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return source_file_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      shebang: f?.['shebang'],
+      statement: f?.['statement'],
     } as unknown as SourceFileConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1b2gfqt(obj['NEEDS_NAME_0']);
+  if (obj['shebang'] !== undefined) {
+    resolved['shebang'] = _r1b2gfqt(obj['shebang']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
+  if (obj['statement'] !== undefined) {
+    const raw = obj['statement'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r18pzx6l(v));
+    resolved['statement'] = arr.map((v: unknown) => _r18pzx6l(v));
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r1b2gfqt(obj.children1);

@@ -2413,8 +2413,8 @@ export function source_file_(
   config?: SourceFileConfig,
 ) {
   const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
+    shebang: config?.shebang,
+    statement: config?.statement,
   };
   const children = [...(config?.children1 ? [config?.children1] : []), ...(config?.children2 ?? [])];
   return {
@@ -2422,8 +2422,8 @@ export function source_file_(
     named: true as const,
     fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: DeclarationStatement | ExpressionStatement | Shebang) { return NEEDS_NAME_0 !== undefined ? source_file_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (DeclarationStatement | ExpressionStatement | Statement)[]) { return NEEDS_NAME_1.length ? source_file_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    shebang(shebang?: DeclarationStatement | ExpressionStatement | Shebang) { return shebang !== undefined ? source_file_({ ...config, shebang: shebang }) : fields.shebang; },
+    statement(...statement: (DeclarationStatement | ExpressionStatement | Statement)[]) { return statement.length ? source_file_({ ...config, statement: statement }) : fields.statement; },
     children1(children1?: DeclarationStatement | ExpressionStatement | Shebang) { return children1 !== undefined ? source_file_({ ...config, children1 }) : config?.children1; },
     children2(...children2: (DeclarationStatement | ExpressionStatement | Statement)[]) { return children2.length ? source_file_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },

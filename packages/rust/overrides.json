@@ -159,8 +159,8 @@
   },
   "source_file": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
+      "shebang": {},
+      "statement": {
         "multiple": true
       }
     }

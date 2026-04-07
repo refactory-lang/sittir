@@ -668,8 +668,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'slice_pattern': [
   ],
   'source_file': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
+    { name: 'shebang', required: false, multiple: false },
+    { name: 'statement', required: false, multiple: true },
   ],
   'static_item': [
     { name: 'name', required: true, multiple: false },

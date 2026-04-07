@@ -98,15 +98,7 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 		if (!node.children || !isTupleChildren(node.children)) continue;
 
 		const fields: Record<string, OverrideFieldDef> = {};
-		const slots = node.children as readonly { multiple: boolean; kinds: readonly { kind: string; modelType?: string }[] }[];
-
-		// Count how many slots each kind appears in
-		const kindSlotCount = new Map<string, number>();
-		for (const slot of slots) {
-			for (const k of slot.kinds) {
-				kindSlotCount.set(k.kind, (kindSlotCount.get(k.kind) ?? 0) + 1);
-			}
-		}
+		const slots = node.children as readonly { multiple: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] }[];
 
 		for (let i = 0; i < slots.length; i++) {
 			const slot = slots[i]!;
@@ -114,29 +106,29 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 			// Skip pure REPEAT slots that are the only slot
 			if (slots.length === 1 && slot.multiple) continue;
 
-			// Determine field name
-			if (slot.kinds.length === 1) {
+			// Use the slot name from grammar's nameChildSlots when available
+			const slotName = slot.name;
+
+			if (slotName && !slotName.startsWith('NEEDS_NAME')) {
+				// Grammar auto-assigned a meaningful name
+				fields[slotName] = slot.multiple ? { multiple: true } : {};
+			} else if (slot.kinds.length === 1) {
 				const k = slot.kinds[0]!;
 				const mt = (k as any).modelType;
 				const isAnon = mt === 'token' || mt === 'keyword';
 
 				if (isAnon) {
-					// Anonymous token — needs human naming
-					const placeholder = `NEEDS_NAME_${i}`;
+					const placeholder = slotName ?? `NEEDS_NAME_${i}`;
 					fields[placeholder] = { anonymous: true };
 					console.warn(`[overrides] ${node.kind}: ${placeholder} — anonymous token at position ${i} needs a field name`);
-				} else if ((kindSlotCount.get(k.kind) ?? 0) > 1) {
-					// Same kind appears in multiple slots — needs human naming
-					const placeholder = `NEEDS_NAME_${i}`;
-					fields[placeholder] = {};
-					console.warn(`[overrides] ${node.kind}: ${placeholder} — ${k.kind} appears in ${kindSlotCount.get(k.kind)} positions, needs distinct names`);
 				} else {
-					// Unique kind — Tier 1: kind-as-name
-					fields[k.kind] = slot.multiple ? { multiple: true } : {};
+					const placeholder = slotName ?? `NEEDS_NAME_${i}`;
+					fields[placeholder] = slot.multiple ? { multiple: true } : {};
+					console.warn(`[overrides] ${node.kind}: ${placeholder} — needs a field name`);
 				}
 			} else {
-				// Multiple kinds in this slot — needs human naming
-				const placeholder = `NEEDS_NAME_${i}`;
+				// Multiple kinds in this slot — use grammar name or placeholder
+				const placeholder = slotName ?? `NEEDS_NAME_${i}`;
 				fields[placeholder] = slot.multiple ? { multiple: true } : {};
 				const kindList = slot.kinds.map(k => k.kind).join(', ');
 				console.warn(`[overrides] ${node.kind}: ${placeholder} — CHOICE(${kindList}) needs a field name`);
