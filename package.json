@@ -14,7 +14,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "pnpm -r --filter '!@sittir/python' --filter '!@sittir/typescript' run build",
+    "build": "pnpm -r run build",
     "clean": "pnpm -r run clean && rm -rf node_modules/.cache",
     "clean:all": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules",
     "dev": "pnpm -r --parallel run dev",
@@ -23,10 +23,10 @@
     "fresh": "pnpm clean:all && pnpm install",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
-    "test": "pnpm -r --filter '!@sittir/python' --filter '!@sittir/typescript' run test",
-    "test:coverage": "pnpm -r --filter '!@sittir/python' --filter '!@sittir/typescript' run test:coverage",
-    "test:watch": "pnpm -r --parallel --filter '!@sittir/python' --filter '!@sittir/typescript' run test -- --watch",
-    "type-check": "pnpm -r --filter '!@sittir/python' --filter '!@sittir/typescript' run type-check",
+    "test": "pnpm -r run test",
+    "test:coverage": "pnpm -r run test:coverage",
+    "test:watch": "pnpm -r --parallel run test -- --watch",
+    "type-check": "pnpm -r run type-check",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "pnpm run build && changeset publish",
