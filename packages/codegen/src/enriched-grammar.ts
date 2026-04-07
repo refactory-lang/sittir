@@ -15,13 +15,13 @@ import { simplifyRule } from './classify.ts';
 
 export interface SupertypeRule {
 	modelType: 'supertype';
-	subtypes: string[];
+	subtypes: Set<string>;
 	rule: GrammarRule;
 }
 
 export interface EnrichedFieldInfo {
 	name: string;
-	kinds: string[];
+	kinds: Set<string>;
 	required: boolean;
 	multiple: boolean;
 }
@@ -31,7 +31,7 @@ export interface EnrichedChildInfo {
 	position: number;
 	/** Field name — auto-assigned from kind (unique) or NEEDS_NAME placeholder. */
 	name: string | null;
-	kinds: string[];
+	kinds: Set<string>;
 	required: boolean;
 	multiple: boolean;
 }
@@ -127,7 +127,7 @@ function walkHasChildren(rule: GrammarRule, insideField: boolean, supertypeSet: 
 function extractSubtypes(rule: GrammarRule, grammar: Grammar): SupertypeRule {
 	const subtypes: string[] = [];
 	collectConcreteTypes(rule, grammar, subtypes, new Set());
-	return { modelType: 'supertype', subtypes, rule };
+	return { modelType: 'supertype', subtypes: new Set(subtypes), rule };
 }
 
 export function collectConcreteTypes(rule: GrammarRule, grammar: Grammar, types: string[], visited: Set<string>): void {
@@ -180,7 +180,7 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 	for (const [name, accum] of fieldAccums) {
 		fields.push({
 			name,
-			kinds: [...accum.kinds],
+			kinds: accum.kinds,
 			required: !accum.optional,
 			multiple: accum.repeated,
 		});
@@ -449,7 +449,7 @@ function collapseSlots(slots: ChildSlot[], optional: boolean, repeated: boolean)
 }
 
 function slotsToChildren(slots: ChildSlot[]): EnrichedChildInfo[] {
-	return slots.map((s, i) => ({ position: i, name: null, kinds: [...s.kinds], required: !s.optional, multiple: s.repeated }));
+	return slots.map((s, i) => ({ position: i, name: null, kinds: s.kinds, required: !s.optional, multiple: s.repeated }));
 }
 
 function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: ReadonlySet<string>): ContainerRule {
@@ -486,8 +486,8 @@ function nameChildSlots(children: EnrichedChildInfo[]): void {
 	}
 
 	for (const child of children) {
-		if (child.kinds.length === 1) {
-			const kind = child.kinds[0]!;
+		if (child.kinds.size === 1) {
+			const kind = child.kinds.values().next().value!;
 			if ((kindSlotCount.get(kind) ?? 0) > 1) {
 				// Same kind in multiple positions → needs human naming
 				child.name = `NEEDS_NAME_${child.position}`;

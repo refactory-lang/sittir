@@ -163,8 +163,8 @@ function createHiddenModels(models: Map<string, NodeModel>, grammar: Grammar): v
 		collectConcreteTypes(rule, grammar, subtypes, new Set());
 
 		// Only create HiddenModel if it resolves to concrete types that exist as models
-		const validSubtypes = subtypes.filter(s => models.has(s));
-		if (validSubtypes.length === 0) continue;
+		const validSubtypes = new Set(subtypes.filter(s => models.has(s)));
+		if (validSubtypes.size === 0) continue;
 
 		const hidden: HiddenModel = {
 			modelType: 'hidden',

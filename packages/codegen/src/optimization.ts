@@ -18,8 +18,8 @@ import { toTypeName } from './naming.ts';
 // Signature interning
 // ---------------------------------------------------------------------------
 
-function stableKey(prefix: string, kinds: string[]): string {
-	return prefix + ':' + kinds.slice().sort().join(',');
+function stableKey(prefix: string, kinds: Set<string>): string {
+	return prefix + ':' + [...kinds].sort().join(',');
 }
 
 /**
@@ -35,7 +35,7 @@ export function computeSignatures(models: Map<string, NodeModel>): SignaturePool
 			for (const field of model.fields) {
 				const key = stableKey('F', field.kinds);
 				if (!fieldPool.has(key)) {
-					fieldPool.set(key, { id: key, kinds: field.kinds.slice().sort() });
+					fieldPool.set(key, { id: key, kinds: new Set([...field.kinds].sort()) });
 				}
 				field.fieldSignature = fieldPool.get(key)!;
 			}
@@ -43,7 +43,7 @@ export function computeSignatures(models: Map<string, NodeModel>): SignaturePool
 				eachChildSlot(model.children, (child) => {
 					const key = stableKey('C', child.kinds);
 					if (!childPool.has(key)) {
-						childPool.set(key, { id: key, kinds: child.kinds.slice().sort() });
+						childPool.set(key, { id: key, kinds: new Set([...child.kinds].sort()) });
 					}
 					child.childSignature = childPool.get(key)!;
 				});
@@ -53,7 +53,7 @@ export function computeSignatures(models: Map<string, NodeModel>): SignaturePool
 			eachChildSlot(model.children, (child) => {
 				const key = stableKey('C', child.kinds);
 				if (!childPool.has(key)) {
-					childPool.set(key, { id: key, kinds: child.kinds.slice().sort() });
+					childPool.set(key, { id: key, kinds: new Set([...child.kinds].sort()) });
 				}
 				child.childSignature = childPool.get(key)!;
 			});
@@ -104,7 +104,7 @@ export function collapseKinds(
 	// Build expanded supertype map
 	const supertypeMap = new Map<string, Set<string>>();
 	for (const st of supertypeModels) {
-		supertypeMap.set(st.kind, new Set(st.subtypes));
+		supertypeMap.set(st.kind, st.subtypes);
 	}
 
 	const inputSet = new Set(concreteKinds);

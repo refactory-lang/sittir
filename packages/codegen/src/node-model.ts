@@ -16,12 +16,12 @@ import { listLeafValues } from './grammar-reader.ts';
 
 export interface FieldSignature {
 	id: string;
-	kinds: string[];
+	kinds: Set<string>;
 }
 
 export interface ChildSignature {
 	id: string;
-	kinds: string[];
+	kinds: Set<string>;
 }
 
 export interface SignaturePool {
@@ -48,7 +48,7 @@ export interface SingleFieldModel {
 	name: string;
 	required: boolean;
 	multiple: false;
-	kinds: string[];
+	kinds: Set<string>;
 	propertyName?: string;
 	fieldSignature?: FieldSignature;
 	/** True if this field comes from overrides.json (not a tree-sitter FIELD). */
@@ -63,7 +63,7 @@ export interface ListFieldModel {
 	name: string;
 	required: boolean;
 	multiple: true;
-	kinds: string[];
+	kinds: Set<string>;
 	separator: string | null;
 	propertyName?: string;
 	fieldSignature?: FieldSignature;
@@ -84,14 +84,14 @@ export type FieldModel = SingleFieldModel | ListFieldModel;
 export interface SingleChildModel {
 	required: boolean;
 	multiple: false;
-	kinds: string[];
+	kinds: Set<string>;
 	childSignature?: ChildSignature;
 }
 
 export interface ListChildModel {
 	required: boolean;
 	multiple: true;
-	kinds: string[];
+	kinds: Set<string>;
 	separator: string | null;
 	childSignature?: ChildSignature;
 }
@@ -122,7 +122,7 @@ export type ChildrenModel = ChildModel | ChildModel[];
 // Helpers accept both pre-hydration (ChildrenModel) and post-hydration (HydratedChildrenModel)
 // via a generic `T extends { multiple: boolean }` constraint that matches both.
 
-type AnyChildSlot = { multiple: boolean; kinds: unknown[] };
+type AnyChildSlot = { multiple: boolean; kinds: Iterable<unknown> };
 type AnyChildrenModel = AnyChildSlot | AnyChildSlot[];
 
 /** Iterate over all child slots regardless of shape. */
@@ -193,7 +193,7 @@ export interface TokenModel extends NodeModelBase {
 export interface SupertypeModel extends NodeModelBase {
 	modelType: 'supertype';
 	kind: string;
-	subtypes: string[];
+	subtypes: Set<string>;
 	rule: EnrichedRule | null;
 }
 
@@ -201,7 +201,7 @@ export interface HiddenModel extends NodeModelBase {
 	modelType: 'hidden';
 	kind: string;
 	/** Concrete types this hidden rule expands to (resolved from grammar). */
-	subtypes: string[];
+	subtypes: Set<string>;
 	rule: EnrichedRule | null;
 }
 
@@ -245,8 +245,8 @@ export type HydrateChildrenModel<C extends ChildrenModel> =
 	C extends ChildModel[] ? Hydrate<ChildModel>[] : Hydrate<ChildModel>;
 
 export type Hydrate<T> =
-	T extends { kinds: string[] }
-		? Readonly<Omit<T, 'kinds'> & { kinds: HydratedNodeModel[] }>
+	T extends { kinds: Set<string> }
+		? Readonly<Omit<T, 'kinds'> & { kinds: readonly HydratedNodeModel[] }>
 		: T extends { fields: FieldModel[]; children?: ChildrenModel }
 			? Readonly<Omit<T, 'fields' | 'children'> & {
 				fields: Hydrate<FieldModel>[];
@@ -296,7 +296,7 @@ function initializeBranch(kind: string, entry: NodeTypeEntry): BranchModel {
 	const fields: FieldModel[] = [];
 	if (entry.fields) {
 		for (const [name, ntField] of Object.entries(entry.fields)) {
-			const kinds = ntField.types.map(t => t.type);
+			const kinds = new Set(ntField.types.map(t => t.type));
 			if (ntField.multiple) {
 				fields.push({ name, required: ntField.required, multiple: true, kinds, separator: null });
 			} else {
@@ -307,7 +307,7 @@ function initializeBranch(kind: string, entry: NodeTypeEntry): BranchModel {
 
 	let children: ChildrenModel | undefined;
 	if (entry.children) {
-		const kinds = entry.children.types.map(t => t.type);
+		const kinds = new Set(entry.children.types.map(t => t.type));
 		if (entry.children.multiple) {
 			children = { required: entry.children.required, multiple: true, kinds, separator: null } as ListChildModel;
 		} else {
@@ -327,14 +327,14 @@ function initializeBranch(kind: string, entry: NodeTypeEntry): BranchModel {
 function initializeContainer(kind: string, entry: NodeTypeEntry): ContainerModel {
 	let children: ChildrenModel;
 	if (entry.children) {
-		const kinds = entry.children.types.map(t => t.type);
+		const kinds = new Set(entry.children.types.map(t => t.type));
 		if (entry.children.multiple) {
 			children = { required: entry.children.required, multiple: true, kinds, separator: null } as ListChildModel;
 		} else {
 			children = { required: entry.children.required, multiple: false, kinds } as SingleChildModel;
 		}
 	} else {
-		children = { required: false, multiple: false, kinds: [] } as SingleChildModel;
+		children = { required: false, multiple: false, kinds: new Set<string>() } as SingleChildModel;
 	}
 
 	return {
@@ -354,7 +354,7 @@ function initializeToken(kind: string): TokenModel {
 }
 
 function initializeSupertype(kind: string, entry: NodeTypeEntry): SupertypeModel {
-	const subtypes = (entry.subtypes ?? []).filter(s => s.named).map(s => s.type);
+	const subtypes = new Set((entry.subtypes ?? []).filter(s => s.named).map(s => s.type));
 	return { modelType: 'supertype', kind, subtypes, rule: null };
 }
 
@@ -411,11 +411,8 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 	for (const field of model.fields) {
 		const gField = grammarFieldMap.get(field.name);
 		if (gField) {
-			// Grammar kinds first (preserves grammar rule ordering for operators etc.)
-			// then NT kinds that weren't in grammar
-			const grammarSet = new Set(gField.kinds);
-			const ntOnly = field.kinds.filter(k => !grammarSet.has(k));
-			field.kinds = [...gField.kinds, ...ntOnly];
+			// Merge: grammar kinds + NT kinds not already covered
+			for (const k of gField.kinds) field.kinds.add(k);
 		} else {
 			warnings.push(`  '${model.kind}': model field '${field.name}' not in grammar`);
 		}
@@ -443,9 +440,9 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 		}
 		if (nativeFieldKinds.size > 0) {
 			for (const child of rule.children) {
-				const coveredKinds = child.kinds.filter(k => nativeFieldKinds.has(k));
+				const coveredKinds = [...child.kinds].filter(k => nativeFieldKinds.has(k));
 				if (coveredKinds.length > 0) {
-					warnings.push(`  '${model.kind}': grammar child slot [${child.kinds.join(', ')}] overlaps with native fields (field-owned kinds: ${coveredKinds.join(', ')})`);
+					warnings.push(`  '${model.kind}': grammar child slot [${[...child.kinds].join(', ')}] overlaps with native fields (field-owned kinds: ${coveredKinds.join(', ')})`);
 				}
 			}
 		}
@@ -513,8 +510,8 @@ function buildChildrenFromGrammar(
 	const childSep = separators?.get('__children__') ?? null;
 
 	function buildSlot(rc: EnrichedChildInfo): ChildModel {
-		// Grammar kinds first, then NT-only supplements
-		const kinds = [...rc.kinds, ...ntOnlyKinds];
+		// Grammar kinds + NT-only supplements
+		const kinds = new Set([...rc.kinds, ...ntOnlyKinds]);
 		if (rc.multiple) {
 			return { required: rc.required, multiple: true, kinds, separator: childSep } as ListChildModel;
 		}
@@ -565,7 +562,7 @@ function refineOverrideFieldsFromSlots(branch: BranchModel): void {
 	for (let i = 0; i < overrideFields.length && i < slots.length; i++) {
 		const field = overrideFields[i]!;
 		const slot = slots[i]!;
-		field.kinds = [...slot.kinds];
+		field.kinds = new Set(slot.kinds);
 		(field as any).multiple = slot.multiple;
 		if (slot.multiple) {
 			(field as any).separator = (slot as ListChildModel).separator ?? null;
@@ -646,7 +643,7 @@ export function reconcile(
 			if (branch.fields.some(f => f.override)) {
 				const containerRule = rule as ContainerRule;
 				if (containerRule.children.length > 0) {
-					const existing = branch.children ?? { required: false, multiple: false, kinds: [] } as SingleChildModel;
+					const existing = branch.children ?? { required: false, multiple: false, kinds: new Set<string>() } as SingleChildModel;
 					branch.children = buildChildrenFromGrammar(existing, containerRule.children, containerRule.separators);
 					// Refine override field kinds/multiple from their matching child slots
 					if (isTupleChildren(branch.children)) {
@@ -659,7 +656,7 @@ export function reconcile(
 			const promoted: ContainerModel = {
 				modelType: 'container',
 				kind,
-				children: branch.children ?? { required: false, multiple: false, kinds: [] } as SingleChildModel,
+				children: branch.children ?? { required: false, multiple: false, kinds: new Set<string>() } as SingleChildModel,
 				rule,
 			};
 			enrichContainer(promoted, rule as ContainerRule, warnings);

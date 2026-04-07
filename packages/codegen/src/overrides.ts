@@ -135,9 +135,9 @@ export function validateOverrides(
 				const children = model.modelType === 'container' ? model.children : model.children;
 				if (children) {
 					if (Array.isArray(children)) {
-						childKindCount = children.reduce((sum, slot) => sum + slot.kinds.length, 0);
+						childKindCount = children.reduce((sum, slot) => sum + slot.kinds.size, 0);
 					} else {
-						childKindCount = children.kinds.length;
+						childKindCount = children.kinds.size;
 					}
 				}
 			}
@@ -228,7 +228,7 @@ export function mergeOverrides(
 				multiple: isMultiple,
 				// Anonymous fields have no kinds (they match by token text).
 				// Named fields inherit from the model's children kinds.
-				kinds: fieldDef.anonymous ? [] : [...childrenKinds],
+				kinds: new Set(fieldDef.anonymous ? [] : childrenKinds),
 				...(isMultiple ? { separator: null } : {}),
 				override: true,
 				overrideAnonymous: fieldDef.anonymous ?? false,

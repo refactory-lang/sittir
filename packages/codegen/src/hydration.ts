@@ -1,5 +1,5 @@
 /**
- * Step 12: Hydration — resolve kinds: string[] → kinds: HydratedNodeModel[]
+ * Step 12: Hydration — resolve kinds: Set<string> → kinds: HydratedNodeModel[]
  *
  * After hydration, all model properties become readonly.
  */
@@ -22,9 +22,7 @@ function hydrateField(field: FieldModel, modelMap: Map<string, NodeModel>): void
 		const model = modelMap.get(kind);
 		if (model) resolved.push(model);
 	}
-	// Replace kinds with resolved references
-	// This is a type-level lie during mutation — runtime it's NodeModel[],
-	// but after freeze it matches HydratedNodeModel[]
+	// Replace kinds (Set<string>) with resolved references (NodeModel[])
 	(field as any).kinds = resolved;
 }
 
@@ -38,7 +36,7 @@ function hydrateChild(child: ChildModel, modelMap: Map<string, NodeModel>): void
 }
 
 /**
- * Resolve all `kinds: string[]` to `kinds: NodeModel[]` references.
+ * Resolve all `kinds: Set<string>` to `kinds: NodeModel[]` references.
  * After this step, models should be treated as frozen (HydratedNodeModel).
  */
 export function hydrate(models: Map<string, NodeModel>): ReadonlyMap<string, HydratedNodeModel> {
