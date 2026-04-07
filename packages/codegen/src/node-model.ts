@@ -425,6 +425,8 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 		if (gField) {
 			// Merge: grammar kinds + NT kinds not already covered
 			for (const k of gField.kinds) field.kinds.add(k);
+			// Assign position from grammar
+			field.position = gField.position;
 		} else {
 			warnings.push(`  '${model.kind}': model field '${field.name}' not in grammar`);
 		}

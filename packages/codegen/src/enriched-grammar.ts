@@ -24,6 +24,8 @@ export interface EnrichedFieldInfo {
 	kinds: Set<string>;
 	required: boolean;
 	multiple: boolean;
+	/** Positional index in the grammar rule (0-based, shared namespace with children). */
+	position: number;
 }
 
 export interface EnrichedChildInfo {
@@ -176,6 +178,9 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 	const fieldAccums = new Map<string, FieldAccum>();
 	walkForFields(rule, false, false, fieldAccums, grammar);
 
+	// Assign positions by walking rule structure in order
+	const fieldPositions = assignFieldPositions(rule, grammar);
+
 	const fields: EnrichedFieldInfo[] = [];
 	for (const [name, accum] of fieldAccums) {
 		fields.push({
@@ -183,6 +188,7 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 			kinds: accum.kinds,
 			required: !accum.optional,
 			multiple: accum.repeated,
+			position: fieldPositions.get(name) ?? -1,
 		});
 	}
 
@@ -196,6 +202,95 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 	const separators = extractSeparators(rule);
 
 	return { modelType: 'branch', fields, children, separators, rule, simplifiedRule: simplified };
+}
+
+/**
+ * Walk the rule structure to assign positional indices to FIELD nodes.
+ * Position counts all top-level slots (fields and children) in SEQ order.
+ * Returns a map from field name to its first (earliest) position.
+ */
+function assignFieldPositions(rule: GrammarRule, grammar: Grammar): Map<string, number> {
+	const positions = new Map<string, number>();
+	let counter = { value: 0 };
+	walkForPositions(rule, positions, counter, grammar);
+	return positions;
+}
+
+function walkForPositions(
+	rule: GrammarRule,
+	positions: Map<string, number>,
+	counter: { value: number },
+	grammar: Grammar,
+	visited?: Set<string>,
+): void {
+	switch (rule.type) {
+		case 'SEQ':
+			for (const m of rule.members) walkForPositions(m, positions, counter, grammar, visited);
+			break;
+		case 'FIELD':
+			if (!positions.has(rule.name)) {
+				positions.set(rule.name, counter.value);
+			}
+			counter.value++;
+			break;
+		case 'SYMBOL':
+			// Non-field symbols also occupy a position (they become children)
+			if (rule.name.startsWith('_') && grammar) {
+				const v = visited ?? new Set<string>();
+				if (!v.has(rule.name)) {
+					v.add(rule.name);
+					const subRule = grammar.rules[rule.name];
+					if (subRule) walkForPositions(subRule, positions, counter, grammar, v);
+				}
+			} else {
+				counter.value++;
+			}
+			break;
+		case 'STRING':
+			counter.value++;
+			break;
+		case 'CHOICE': {
+			// Use the longest branch's positions
+			const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
+			if (nonBlank.length === 0) break;
+			// Walk each branch with a snapshot of the counter, take max
+			const branchPositions: Map<string, number>[] = [];
+			const branchCounters: number[] = [];
+			for (const m of nonBlank) {
+				const bp = new Map<string, number>();
+				const bc = { value: counter.value };
+				walkForPositions(m, bp, bc, grammar, visited ? new Set(visited) : undefined);
+				branchPositions.push(bp);
+				branchCounters.push(bc.value);
+			}
+			// Merge: use minimum position for each field name
+			for (const bp of branchPositions) {
+				for (const [name, pos] of bp) {
+					const existing = positions.get(name);
+					if (existing === undefined || pos < existing) {
+						positions.set(name, pos);
+					}
+				}
+			}
+			counter.value = Math.max(...branchCounters);
+			break;
+		}
+		case 'REPEAT': case 'REPEAT1':
+			walkForPositions(rule.content, positions, counter, grammar, visited);
+			break;
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
+			walkForPositions(rule.content, positions, counter, grammar, visited);
+			break;
+		case 'ALIAS':
+			walkForPositions(rule.content, positions, counter, grammar, visited);
+			break;
+		case 'TOKEN': case 'IMMEDIATE_TOKEN':
+			// Tokens are a single position
+			counter.value++;
+			break;
+		default:
+			break;
+	}
 }
 
 function walkForFields(
