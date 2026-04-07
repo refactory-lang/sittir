@@ -29,15 +29,15 @@ rules:
   chevron: ">> $CHILDREN"
   class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES : $BODY"
   class_pattern:
-    template: $DOTTED_NAME($$$CASE_PATTERN) $DOTTED_NAME $$$ARGUMENTS $$$CHILDREN
+    template: $DOTTED_NAME($$$CASE_PATTERN) $$$CHILDREN
     joinBy: ","
-  comparison_operator: $$$CHILDREN $$$OPERATORS $LEFT $$$COMPARATORS
-  complex_pattern: $$$INTEGER + $$$FLOAT $REAL $IMAGINARY $$$CHILDREN
+  comparison_operator: $$$CHILDREN $$$OPERATORS
+  complex_pattern: $$$INTEGER + $$$FLOAT $$$CHILDREN
   concatenated_string: $$$CHILDREN
-  conditional_expression: $$$CHILDREN if else $BODY $CONDITION $ALTERNATIVE
-  constrained_type: "$$$TYPE : $TYPE $CONSTRAINT $$$CHILDREN"
+  conditional_expression: $$$CHILDREN if else
+  constrained_type: "$$$TYPE : $$$CHILDREN"
   decorated_definition: $$$CHILDREN $DEFINITION
-  decorator: "@ $$$CHILDREN $EXPRESSION $NEWLINE"
+  decorator: "@ $$$CHILDREN"
   default_parameter: $NAME = $VALUE
   delete_statement: del $$$CHILDREN
   dict_pattern:
@@ -75,7 +75,7 @@ rules:
     return_type_clause: -> $RETURN_TYPE
   future_import_statement: from __future__ import $$$NAME ,
   generator_expression: ($BODY $CHILDREN)
-  generic_type: $IDENTIFIER $TYPE_PARAMETER $IDENTIFIER $TYPE_PARAMETER $$$CHILDREN
+  generic_type: $IDENTIFIER $TYPE_PARAMETER $$$CHILDREN
   global_statement:
     template: global $$$CHILDREN ,
     joinBy: ","
@@ -85,7 +85,7 @@ rules:
   import_statement: import $$$NAME ,
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME = $VALUE
-  keyword_pattern: $IDENTIFIER = $SIMPLE_PATTERN $IDENTIFIER $SIMPLE_PATTERN $$$CHILDREN
+  keyword_pattern: $IDENTIFIER = $SIMPLE_PATTERN $$$CHILDREN
   lambda: "lambda $PARAMETERS : $BODY"
   lambda_parameters: $$$CHILDREN
   list: "[$$$CHILDREN]"
@@ -96,7 +96,7 @@ rules:
   match_statement:
     template: "match $$$SUBJECT , : $BODY"
     joinBy: ","
-  member_type: $TYPE.$IDENTIFIER $TYPE $IDENTIFIER $$$CHILDREN
+  member_type: $TYPE.$IDENTIFIER $$$CHILDREN
   module: $$$CHILDREN
   named_expression: $NAME := $VALUE
   nonlocal_statement:
@@ -116,19 +116,19 @@ rules:
   raise_statement:
     template: raise $CHILDREN $CAUSE_CLAUSE
     cause_clause: from $CAUSE
-  relative_import: $IMPORT_PREFIX $DOTTED_NAME $IMPORT_PREFIX $DOTTED_NAME $$$CHILDREN
+  relative_import: $IMPORT_PREFIX $DOTTED_NAME $$$CHILDREN
   return_statement: return $$$CHILDREN
   set: "{$$$CHILDREN}"
   set_comprehension: "{$BODY $CHILDREN}"
-  slice: "$$$CHILDREN : $START $STOP $STEP"
+  slice: "$$$CHILDREN :"
   splat_pattern: "* $CHILDREN"
   splat_type: "* $CHILDREN"
-  string: $STRING_START $$$INTERPOLATION $STRING_END $STRING_START $$$CONTENT $STRING_END $$$CHILDREN
+  string: $STRING_START $$$INTERPOLATION $STRING_END $$$CHILDREN
   string_content: $$$CHILDREN
   subscript:
     template: $VALUE[$$$SUBSCRIPT ,]
     joinBy: ","
-  try_statement: "try : $BODY $$$EXCEPT_CLAUSE $ELSE_CLAUSE $FINALLY_CLAUSE $$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE $$$CHILDREN"
+  try_statement: "try : $BODY $$$EXCEPT_CLAUSE $ELSE_CLAUSE $FINALLY_CLAUSE $$$CHILDREN"
   tuple: ($$$CHILDREN)
   tuple_pattern: ($$$CHILDREN)
   type: $CHILDREN
@@ -140,7 +140,7 @@ rules:
   typed_parameter: "$CHILDREN : $TYPE"
   unary_operator: $OPERATOR $ARGUMENT
   union_pattern: $$$CHILDREN |
-  union_type: $$$TYPE | $LEFT $RIGHT $$$CHILDREN
+  union_type: $$$TYPE | $$$CHILDREN
   while_statement: "while $CONDITION : $BODY $ALTERNATIVE"
   with_clause:
     template: $$$CHILDREN ,

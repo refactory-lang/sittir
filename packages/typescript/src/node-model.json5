@@ -100,33 +100,6 @@
         multiple: false,
         kinds: {},
       },
-      {
-        name: "accessibility_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "override_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "call_signature",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
     ],
     children: [
       {
@@ -165,37 +138,8 @@
     },
   },
   ambient_declaration: {
-    modelType: "branch",
+    modelType: "container",
     kind: "ambient_declaration",
-    fields: [
-      {
-        name: "declaration",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "type",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -298,28 +242,8 @@
     children: null,
   },
   as_expression: {
-    modelType: "branch",
+    modelType: "container",
     kind: "as_expression",
-    fields: [
-      {
-        name: "expression",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "type",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -627,24 +551,6 @@
         multiple: false,
         kinds: {},
       },
-      {
-        name: "class_heritage",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "automatic_semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
     ],
     children: [
       {
@@ -662,28 +568,8 @@
     ],
   },
   class_heritage: {
-    modelType: "branch",
+    modelType: "container",
     kind: "class_heritage",
-    fields: [
-      {
-        name: "extends_clause",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "implements_clause",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -915,25 +801,6 @@
         kinds: {},
         separator: null,
       },
-      {
-        name: "opening",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "members",
-        required: false,
-        multiple: true,
-        kinds: {},
-        separator: ",",
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
     ],
     children: [
       {
@@ -1033,15 +900,6 @@
         required: false,
         multiple: false,
         kinds: {},
-      },
-      {
-        name: "semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
       },
     ],
     children: [
@@ -1487,37 +1345,8 @@
     text: "import",
   },
   import_alias: {
-    modelType: "branch",
+    modelType: "container",
     kind: "import_alias",
-    fields: [
-      {
-        name: "name",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "value",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -1550,28 +1379,8 @@
     },
   },
   import_clause: {
-    modelType: "branch",
+    modelType: "container",
     kind: "import_clause",
-    fields: [
-      {
-        name: "default_import",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "named_imports",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -1633,42 +1442,6 @@
         required: false,
         multiple: false,
         kinds: {},
-      },
-      {
-        name: "import_clause",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "from_clause",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "import_attribute",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
       },
     ],
     children: [
@@ -1745,28 +1518,8 @@
     },
   },
   infer_type: {
-    modelType: "branch",
+    modelType: "container",
     kind: "infer_type",
-    fields: [
-      {
-        name: "type_identifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "type",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -1866,28 +1619,8 @@
     children: null,
   },
   intersection_type: {
-    modelType: "branch",
+    modelType: "container",
     kind: "intersection_type",
-    fields: [
-      {
-        name: "left",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "right",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: false,
@@ -1932,25 +1665,6 @@
         multiple: false,
         kinds: {},
       },
-      {
-        name: "declarators",
-        required: false,
-        multiple: true,
-        kinds: {},
-        separator: ",",
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
     ],
     children: [
       {
@@ -1979,28 +1693,8 @@
     },
   },
   lookup_type: {
-    modelType: "branch",
+    modelType: "container",
     kind: "lookup_type",
-    fields: [
-      {
-        name: "primary_type",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "type",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -2105,33 +1799,6 @@
         multiple: false,
         kinds: {},
       },
-      {
-        name: "accessibility_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "override_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "call_signature",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
     ],
     children: [
       {
@@ -2181,33 +1848,6 @@
         required: false,
         multiple: false,
         kinds: {},
-      },
-      {
-        name: "accessibility_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "override_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "call_signature",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
       },
     ],
     children: [
@@ -2395,38 +2035,8 @@
     },
   },
   object_type: {
-    modelType: "branch",
+    modelType: "container",
     kind: "object_type",
-    fields: [
-      {
-        name: "opening",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "members",
-        required: false,
-        multiple: true,
-        kinds: {},
-        separator: null,
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "closing",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: false,
@@ -2508,24 +2118,6 @@
         required: false,
         multiple: false,
         kinds: {},
-      },
-      {
-        name: "parameter_name",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "initializer",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
       },
     ],
     children: [
@@ -2641,29 +2233,8 @@
     ],
   },
   program: {
-    modelType: "branch",
+    modelType: "container",
     kind: "program",
-    fields: [
-      {
-        name: "hash_bang_line",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "statements",
-        required: false,
-        multiple: true,
-        kinds: {},
-        separator: null,
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: false,
@@ -2695,24 +2266,6 @@
         required: false,
         multiple: false,
         kinds: {},
-      },
-      {
-        name: "accessibility_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "override_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
       },
     ],
     children: [
@@ -2758,33 +2311,6 @@
         required: false,
         multiple: false,
         kinds: {},
-      },
-      {
-        name: "accessibility_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "override_modifier",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "initializer",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
       },
     ],
     children: [
@@ -2872,24 +2398,6 @@
         multiple: false,
         kinds: {},
       },
-      {
-        name: "parameter_name",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "initializer",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
     ],
     children: [
       {
@@ -2935,28 +2443,8 @@
     },
   },
   satisfies_expression: {
-    modelType: "branch",
+    modelType: "container",
     kind: "satisfies_expression",
-    fields: [
-      {
-        name: "expression",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "type",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -2994,29 +2482,8 @@
     },
   },
   statement_block: {
-    modelType: "branch",
+    modelType: "container",
     kind: "statement_block",
-    fields: [
-      {
-        name: "statements",
-        required: false,
-        multiple: true,
-        kinds: {},
-        separator: null,
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "automatic_semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: false,
@@ -3290,28 +2757,8 @@
     },
   },
   type_assertion: {
-    modelType: "branch",
+    modelType: "container",
     kind: "type_assertion",
-    fields: [
-      {
-        name: "type_arguments",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "expression",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
@@ -3422,28 +2869,8 @@
     children: null,
   },
   union_type: {
-    modelType: "branch",
+    modelType: "container",
     kind: "union_type",
-    fields: [
-      {
-        name: "left",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "right",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: false,
@@ -3479,29 +2906,8 @@
     children: null,
   },
   variable_declaration: {
-    modelType: "branch",
+    modelType: "container",
     kind: "variable_declaration",
-    fields: [
-      {
-        name: "declarators",
-        required: false,
-        multiple: true,
-        kinds: {},
-        separator: ",",
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "semicolon",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: [
       {
         required: true,
