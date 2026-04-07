@@ -70,7 +70,7 @@
         kinds: {},
       },
       {
-        name: "NEEDS_NAME_0",
+        name: "attributes",
         required: false,
         multiple: true,
         kinds: {},
@@ -80,7 +80,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "elements",
         required: false,
         multiple: true,
         kinds: {},
@@ -354,7 +354,7 @@
     kind: "bounded_type",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "left",
         required: false,
         multiple: false,
         kinds: {},
@@ -363,7 +363,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "right",
         required: false,
         multiple: false,
         kinds: {},
@@ -1670,7 +1670,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "rule",
         required: false,
         multiple: false,
         kinds: {},
@@ -1952,7 +1952,7 @@
         separator: null,
       },
       {
-        name: "NEEDS_NAME_0",
+        name: "attributes",
         required: false,
         multiple: true,
         kinds: {},
@@ -1962,7 +1962,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "visibility_modifier",
         required: false,
         multiple: false,
         kinds: {},
@@ -1971,7 +1971,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_2",
+        name: "declarations",
         required: false,
         multiple: true,
         kinds: {},
@@ -2885,7 +2885,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "first",
         required: false,
         multiple: false,
         kinds: {},
@@ -2894,7 +2894,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_2",
+        name: "rest",
         required: false,
         multiple: true,
         kinds: {},
@@ -2904,7 +2904,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_3",
+        name: "trailing",
         required: false,
         multiple: false,
         kinds: {},
@@ -3070,7 +3070,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "where_clause",
         required: false,
         multiple: false,
         kinds: {},
@@ -3079,7 +3079,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_2",
+        name: "trailing_where_clause",
         required: false,
         multiple: false,
         kinds: {},

@@ -85,7 +85,7 @@ describe('array_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.arrayExpression({ length: ir.identifier('test_length') as any, NEEDS_NAME_0: [], NEEDS_NAME_1: [ir.identifier('test_NEEDS_NAME_1') as any], attributeItem: [], attributeItemOrExpression: [ir.identifier('test_attributeItemOrExpression') as any] });
+    const node = ir.arrayExpression({ length: ir.identifier('test_length') as any, attributes: [], elements: [ir.identifier('test_elements') as any], attributeItem: [], attributeItemOrExpression: [ir.identifier('test_attributeItemOrExpression') as any] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -376,7 +376,7 @@ describe('bounded_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.boundedType({ NEEDS_NAME_0: ir.typeIdentifier('TestNEEDS_NAME_0') as any, NEEDS_NAME_1: ir.typeIdentifier('TestNEEDS_NAME_1') as any, lifetimeOrTypeOrUseBounds1: ir.typeIdentifier('TestLifetimeOrTypeOrUseBounds1') as any, lifetimeOrTypeOrUseBounds2: ir.typeIdentifier('TestLifetimeOrTypeOrUseBounds2') as any });
+    const node = ir.boundedType({ left: ir.typeIdentifier('TestLeft') as any, right: ir.typeIdentifier('TestRight') as any, lifetimeOrTypeOrUseBounds1: ir.typeIdentifier('TestLifetimeOrTypeOrUseBounds1') as any, lifetimeOrTypeOrUseBounds2: ir.typeIdentifier('TestLifetimeOrTypeOrUseBounds2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1630,7 +1630,7 @@ describe('macro_definition', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [], NEEDS_NAME_1: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any, macroRule1: [], macroRule2: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any });
+    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [], rule: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any, macroRule1: [], macroRule2: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1899,7 +1899,7 @@ describe('ordered_field_declaration_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.orderedFieldDeclarationList({ type: [ir.typeIdentifier('TestType') as any], NEEDS_NAME_0: [], NEEDS_NAME_1: ir.visibilityModifier() as any, NEEDS_NAME_2: [], attributeItem: [], visibilityModifier: ir.visibilityModifier() as any, attributeItemOrVisibilityModifier: [] });
+    const node = ir.orderedFieldDeclarationList({ type: [ir.typeIdentifier('TestType') as any], attributes: [], visibilityModifier: ir.visibilityModifier() as any, declarations: [], attributeItem: [], attributeItemOrVisibilityModifier: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2753,7 +2753,7 @@ describe('tuple_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.tupleExpression({ attributes: [], NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, NEEDS_NAME_2: [ir.identifier('test_NEEDS_NAME_2') as any], NEEDS_NAME_3: ir.identifier('test_NEEDS_NAME_3') as any, attributeItem: [], expression1: ir.identifier('test_expression1') as any, expression2: [ir.identifier('test_expression2') as any], expression3: ir.identifier('test_expression3') as any });
+    const node = ir.tupleExpression({ attributes: [], first: ir.identifier('test_first') as any, rest: [ir.identifier('test_rest') as any], trailing: ir.identifier('test_trailing') as any, attributeItem: [], expression1: ir.identifier('test_expression1') as any, expression2: [ir.identifier('test_expression2') as any], expression3: ir.identifier('test_expression3') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2933,7 +2933,7 @@ describe('type_item', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.type({ name: ir.typeIdentifier('TestName') as any, type: ir.typeIdentifier('TestType') as any, typeParameters: ir.typeParameters({ children: [] }) as any, visibilityModifier: ir.visibilityModifier() as any, NEEDS_NAME_1: ir.whereClause() as any, NEEDS_NAME_2: ir.whereClause() as any, whereClause1: ir.whereClause() as any, whereClause2: ir.whereClause() as any });
+    const node = ir.type({ name: ir.typeIdentifier('TestName') as any, type: ir.typeIdentifier('TestType') as any, typeParameters: ir.typeParameters({ children: [] }) as any, visibilityModifier: ir.visibilityModifier() as any, whereClause: ir.whereClause() as any, trailingWhereClause: ir.whereClause() as any, whereClause1: ir.whereClause() as any, whereClause2: ir.whereClause() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

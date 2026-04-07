@@ -327,8 +327,8 @@ export interface ArrayExpression {
   readonly type: 'array_expression';
   readonly fields: {
     readonly length?: Expression;
-    readonly NEEDS_NAME_0?: readonly (AttributeItem)[];
-    readonly NEEDS_NAME_1?: readonly (AttributeItem | Expression)[];
+    readonly attributes?: readonly (AttributeItem)[];
+    readonly elements?: readonly (AttributeItem | Expression)[];
   };
   readonly attributeItem?: readonly (AttributeItem)[];
   readonly attributeItemOrExpression?: readonly (AttributeItem | Expression)[];
@@ -410,8 +410,8 @@ export interface BlockComment {
 export interface BoundedType {
   readonly type: 'bounded_type';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Lifetime | Type | UseBounds;
-    readonly NEEDS_NAME_1?: Lifetime | Type | UseBounds;
+    readonly left?: Lifetime | Type | UseBounds;
+    readonly right?: Lifetime | Type | UseBounds;
   };
   readonly lifetimeOrTypeOrUseBounds1: Lifetime | Type | UseBounds;
   readonly lifetimeOrTypeOrUseBounds2: Lifetime | Type | UseBounds;
@@ -767,7 +767,7 @@ export interface MacroDefinition {
   readonly fields: {
     readonly name: Identifier;
     readonly rules?: readonly (MacroRule)[];
-    readonly NEEDS_NAME_1?: MacroRule;
+    readonly rule?: MacroRule;
   };
   readonly macroRule1?: readonly (MacroRule)[];
   readonly macroRule2?: MacroRule;
@@ -848,12 +848,11 @@ export interface OrderedFieldDeclarationList {
   readonly type: 'ordered_field_declaration_list';
   readonly fields: {
     readonly type?: readonly (Type)[];
-    readonly NEEDS_NAME_0?: readonly (AttributeItem)[];
-    readonly NEEDS_NAME_1?: VisibilityModifier;
-    readonly NEEDS_NAME_2?: readonly (AttributeItem | VisibilityModifier)[];
+    readonly attributes?: readonly (AttributeItem)[];
+    readonly visibilityModifier?: VisibilityModifier;
+    readonly declarations?: readonly (AttributeItem | VisibilityModifier)[];
   };
   readonly attributeItem?: readonly (AttributeItem)[];
-  readonly visibilityModifier?: VisibilityModifier;
   readonly attributeItemOrVisibilityModifier?: readonly (AttributeItem | VisibilityModifier)[];
 }
 export interface Parameter {
@@ -1086,9 +1085,9 @@ export interface TupleExpression {
   readonly type: 'tuple_expression';
   readonly fields: {
     readonly attributes?: readonly (AttributeItem)[];
-    readonly NEEDS_NAME_1?: Expression;
-    readonly NEEDS_NAME_2?: readonly (Expression)[];
-    readonly NEEDS_NAME_3?: Expression;
+    readonly first?: Expression;
+    readonly rest?: readonly (Expression)[];
+    readonly trailing?: Expression;
   };
   readonly attributeItem?: readonly (AttributeItem)[];
   readonly expression1: Expression;
@@ -1136,8 +1135,8 @@ export interface TypeItem {
     readonly type: Type;
     readonly typeParameters?: TypeParameters;
     readonly visibilityModifier?: VisibilityModifier;
-    readonly NEEDS_NAME_1?: WhereClause;
-    readonly NEEDS_NAME_2?: WhereClause;
+    readonly whereClause?: WhereClause;
+    readonly trailingWhereClause?: WhereClause;
   };
   readonly whereClause1?: WhereClause;
   readonly whereClause2?: WhereClause;

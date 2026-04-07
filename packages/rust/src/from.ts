@@ -501,8 +501,8 @@ export function arrayExpressionFrom(input: unknown): unknown {
     const c = nd.children;
     return array_expression_({
       length: f?.['length'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      attributes: f?.['attributes'],
+      elements: f?.['elements'],
     } as unknown as ArrayExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -510,15 +510,15 @@ export function arrayExpressionFrom(input: unknown): unknown {
   if (obj['length'] !== undefined) {
     resolved['length'] = _resolveExpression(obj['length']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    const raw = obj['NEEDS_NAME_0'];
+  if (obj['attributes'] !== undefined) {
+    const raw = obj['attributes'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['attributes'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
+  if (obj['elements'] !== undefined) {
+    const raw = obj['elements'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1zauz5(v));
+    resolved['elements'] = arr.map((v: unknown) => _r1zauz5(v));
   }
   if (obj.attributeItem !== undefined) {
     const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
@@ -824,17 +824,17 @@ export function boundedTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return bounded_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      left: f?.['left'],
+      right: f?.['right'],
     } as unknown as BoundedTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _rd726k3(obj['NEEDS_NAME_0']);
+  if (obj['left'] !== undefined) {
+    resolved['left'] = _rd726k3(obj['left']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd726k3(obj['NEEDS_NAME_1']);
+  if (obj['right'] !== undefined) {
+    resolved['right'] = _rd726k3(obj['right']);
   }
   if (obj.lifetimeOrTypeOrUseBounds1 !== undefined) {
     resolved.lifetimeOrTypeOrUseBounds1 = _rd726k3(obj.lifetimeOrTypeOrUseBounds1);
@@ -2183,7 +2183,7 @@ export function macroDefinitionFrom(input: unknown): unknown {
     return macro_definition_({
       name: f?.['name'],
       rules: f?.['rules'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      rule: f?.['rule'],
     } as unknown as MacroDefinitionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2196,8 +2196,8 @@ export function macroDefinitionFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['rules'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? macroRuleFrom(v) : typeof v === 'object' ? macroRuleFrom(v) : v));
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? macroRuleFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? macroRuleFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  if (obj['rule'] !== undefined) {
+    resolved['rule'] = (isNodeData(obj['rule']) ? obj['rule'] : Array.isArray(obj['rule']) ? macroRuleFrom(obj['rule']) : typeof obj['rule'] === 'object' ? macroRuleFrom(obj['rule']) : obj['rule']);
   }
   if (obj.macroRule1 !== undefined) {
     const arr = Array.isArray(obj.macroRule1) ? obj.macroRule1 : [obj.macroRule1];
@@ -2475,9 +2475,9 @@ export function orderedFieldDeclarationListFrom(input: unknown): unknown {
     const c = nd.children;
     return ordered_field_declaration_list_({
       type: f?.['type'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      attributes: f?.['attributes'],
+      visibilityModifier: f?.['visibility_modifier'],
+      declarations: f?.['declarations'],
     } as unknown as OrderedFieldDeclarationListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2487,25 +2487,22 @@ export function orderedFieldDeclarationListFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['type'] = arr.map((v: unknown) => _resolveType(v));
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    const raw = obj['NEEDS_NAME_0'];
+  if (obj['attributes'] !== undefined) {
+    const raw = obj['attributes'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['attributes'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? visibilityModifierFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? visibilityModifierFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  if (obj['visibilityModifier'] !== undefined) {
+    resolved['visibilityModifier'] = (isNodeData(obj['visibilityModifier']) ? obj['visibilityModifier'] : Array.isArray(obj['visibilityModifier']) ? visibilityModifierFrom(obj['visibilityModifier']) : typeof obj['visibilityModifier'] === 'object' ? visibilityModifierFrom(obj['visibilityModifier']) : obj['visibilityModifier']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    const raw = obj['NEEDS_NAME_2'];
+  if (obj['declarations'] !== undefined) {
+    const raw = obj['declarations'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _r1lprop0(v));
+    resolved['declarations'] = arr.map((v: unknown) => _r1lprop0(v));
   }
   if (obj.attributeItem !== undefined) {
     const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
     resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
-  }
-  if (obj.visibilityModifier !== undefined) {
-    resolved.visibilityModifier = (isNodeData(obj.visibilityModifier) ? obj.visibilityModifier : Array.isArray(obj.visibilityModifier) ? visibilityModifierFrom(obj.visibilityModifier) : typeof obj.visibilityModifier === 'object' ? visibilityModifierFrom(obj.visibilityModifier) : obj.visibilityModifier);
   }
   if (obj.attributeItemOrVisibilityModifier !== undefined) {
     const arr = Array.isArray(obj.attributeItemOrVisibilityModifier) ? obj.attributeItemOrVisibilityModifier : [obj.attributeItemOrVisibilityModifier];
@@ -3404,9 +3401,9 @@ export function tupleExpressionFrom(input: unknown): unknown {
     const c = nd.children;
     return tuple_expression_({
       attributes: f?.['attributes'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
-      NEEDS_NAME_3: f?.['NEEDS_NAME_3'],
+      first: f?.['first'],
+      rest: f?.['rest'],
+      trailing: f?.['trailing'],
     } as unknown as TupleExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3416,16 +3413,16 @@ export function tupleExpressionFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['attributes'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
+  if (obj['first'] !== undefined) {
+    resolved['first'] = _resolveExpression(obj['first']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    const raw = obj['NEEDS_NAME_2'];
+  if (obj['rest'] !== undefined) {
+    const raw = obj['rest'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _resolveExpression(v));
+    resolved['rest'] = arr.map((v: unknown) => _resolveExpression(v));
   }
-  if (obj['NEEDS_NAME_3'] !== undefined) {
-    resolved['NEEDS_NAME_3'] = _resolveExpression(obj['NEEDS_NAME_3']);
+  if (obj['trailing'] !== undefined) {
+    resolved['trailing'] = _resolveExpression(obj['trailing']);
   }
   if (obj.attributeItem !== undefined) {
     const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
@@ -3601,8 +3598,8 @@ export function typeItemFrom(input: unknown): unknown {
       type: f?.['type'],
       typeParameters: f?.['type_parameters'],
       visibilityModifier: f?.['visibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      whereClause: f?.['where_clause'],
+      trailingWhereClause: f?.['trailing_where_clause'],
     } as unknown as TypeItemConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3619,11 +3616,11 @@ export function typeItemFrom(input: unknown): unknown {
   if (obj['visibilityModifier'] !== undefined) {
     resolved['visibilityModifier'] = (isNodeData(obj['visibilityModifier']) ? obj['visibilityModifier'] : Array.isArray(obj['visibilityModifier']) ? visibilityModifierFrom(obj['visibilityModifier']) : typeof obj['visibilityModifier'] === 'object' ? visibilityModifierFrom(obj['visibilityModifier']) : obj['visibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? whereClauseFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? whereClauseFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  if (obj['whereClause'] !== undefined) {
+    resolved['whereClause'] = (isNodeData(obj['whereClause']) ? obj['whereClause'] : Array.isArray(obj['whereClause']) ? whereClauseFrom(obj['whereClause']) : typeof obj['whereClause'] === 'object' ? whereClauseFrom(obj['whereClause']) : obj['whereClause']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = (isNodeData(obj['NEEDS_NAME_2']) ? obj['NEEDS_NAME_2'] : Array.isArray(obj['NEEDS_NAME_2']) ? whereClauseFrom(obj['NEEDS_NAME_2']) : typeof obj['NEEDS_NAME_2'] === 'object' ? whereClauseFrom(obj['NEEDS_NAME_2']) : obj['NEEDS_NAME_2']);
+  if (obj['trailingWhereClause'] !== undefined) {
+    resolved['trailingWhereClause'] = (isNodeData(obj['trailingWhereClause']) ? obj['trailingWhereClause'] : Array.isArray(obj['trailingWhereClause']) ? whereClauseFrom(obj['trailingWhereClause']) : typeof obj['trailingWhereClause'] === 'object' ? whereClauseFrom(obj['trailingWhereClause']) : obj['trailingWhereClause']);
   }
   if (obj.whereClause1 !== undefined) {
     resolved.whereClause1 = (isNodeData(obj.whereClause1) ? obj.whereClause1 : Array.isArray(obj.whereClause1) ? whereClauseFrom(obj.whereClause1) : typeof obj.whereClause1 === 'object' ? whereClauseFrom(obj.whereClause1) : obj.whereClause1);

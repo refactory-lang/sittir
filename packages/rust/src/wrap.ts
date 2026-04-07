@@ -248,13 +248,13 @@ export function wrapArguments(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapArrayExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["attribute_item"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'attributes', ["attribute_item"]);
+  promoteNamed(data, 'elements', ["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
     get length() { return drillIn(data.fields?.['length'], tree); },
-    get NEEDS_NAME_0() { return drillInAll(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
+    get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
+    get elements() { return drillInAll(data.fields?.['elements'], tree); },
     get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
     get attributeItemOrExpression() { return drillInAll(data.fields?.['attributeItemOrExpression'], tree); },
   };
@@ -357,12 +357,12 @@ export function wrapBlockComment(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapBoundedType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
+  promoteNamed(data, 'left', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
+  promoteNamed(data, 'right', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get left() { return drillIn(data.fields?.['left'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
     get lifetimeOrTypeOrUseBounds1() { return drillIn(data.fields?.['lifetimeOrTypeOrUseBounds1'], tree); },
     get lifetimeOrTypeOrUseBounds2() { return drillIn(data.fields?.['lifetimeOrTypeOrUseBounds2'], tree); },
   };
@@ -821,12 +821,12 @@ export function wrapLoopExpression(data: AnyNodeData, tree: TreeHandle): unknown
 
 export function wrapMacroDefinition(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'rules', ["macro_rule"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["macro_rule"]);
+  promoteNamed(data, 'rule', ["macro_rule"]);
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get rules() { return drillInAll(data.fields?.['rules'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get rule() { return drillIn(data.fields?.['rule'], tree); },
     get macroRule1() { return drillInAll(data.fields?.['macroRule1'], tree); },
     get macroRule2() { return drillIn(data.fields?.['macroRule2'], tree); },
   };
@@ -922,17 +922,16 @@ export function wrapOrPattern(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapOrderedFieldDeclarationList(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["attribute_item"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["visibility_modifier"]);
-  promoteNamed(data, 'NEEDS_NAME_2', ["attribute_item","visibility_modifier"]);
+  promoteNamed(data, 'attributes', ["attribute_item"]);
+  promote(data, 'visibility_modifier');
+  promoteNamed(data, 'declarations', ["attribute_item","visibility_modifier"]);
   return {
     ...data,
     get type() { return drillInAll(data.fields?.['type'], tree); },
-    get NEEDS_NAME_0() { return drillInAll(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return drillInAll(data.fields?.['NEEDS_NAME_2'], tree); },
+    get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
+    get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
+    get declarations() { return drillInAll(data.fields?.['declarations'], tree); },
     get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
-    get visibilityModifier() { return drillIn(data.fields?.['visibilityModifier'], tree); },
     get attributeItemOrVisibilityModifier() { return drillInAll(data.fields?.['attributeItemOrVisibilityModifier'], tree); },
   };
 }
@@ -1249,15 +1248,15 @@ export function wrapTryExpression(data: AnyNodeData, tree: TreeHandle): unknown 
 
 export function wrapTupleExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'attributes', ["attribute_item"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteNamed(data, 'NEEDS_NAME_2', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteNamed(data, 'NEEDS_NAME_3', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'first', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'rest', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'trailing', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   return {
     ...data,
     get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return drillInAll(data.fields?.['NEEDS_NAME_2'], tree); },
-    get NEEDS_NAME_3() { return drillIn(data.fields?.['NEEDS_NAME_3'], tree); },
+    get first() { return drillIn(data.fields?.['first'], tree); },
+    get rest() { return drillInAll(data.fields?.['rest'], tree); },
+    get trailing() { return drillIn(data.fields?.['trailing'], tree); },
     get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
     get expression1() { return drillIn(data.fields?.['expression1'], tree); },
     get expression2() { return drillInAll(data.fields?.['expression2'], tree); },
@@ -1313,16 +1312,16 @@ export function wrapTypeCastExpression(data: AnyNodeData, tree: TreeHandle): unk
 
 export function wrapTypeItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
-  promoteNamed(data, 'NEEDS_NAME_1', ["where_clause"]);
-  promoteNamed(data, 'NEEDS_NAME_2', ["where_clause"]);
+  promote(data, 'where_clause');
+  promoteNamed(data, 'trailing_where_clause', ["where_clause"]);
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
+    get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
+    get trailingWhereClause() { return drillIn(data.fields?.['trailing_where_clause'], tree); },
     get whereClause1() { return drillIn(data.fields?.['whereClause1'], tree); },
     get whereClause2() { return drillIn(data.fields?.['whereClause2'], tree); },
   };

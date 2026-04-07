@@ -1,10 +1,10 @@
 {
   "array_expression": {
     "fields": {
-      "NEEDS_NAME_0": {
+      "attributes": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {
+      "elements": {
         "multiple": true
       }
     }
@@ -20,8 +20,8 @@
   },
   "bounded_type": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "left": {},
+      "right": {}
     }
   },
   "break_expression": {
@@ -85,7 +85,7 @@
       "rules": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {}
+      "rule": {}
     }
   },
   "mut_pattern": {
@@ -110,11 +110,11 @@
   },
   "ordered_field_declaration_list": {
     "fields": {
-      "NEEDS_NAME_0": {
+      "attributes": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {
+      "visibility_modifier": {},
+      "declarations": {
         "multiple": true
       }
     }
@@ -198,18 +198,18 @@
       "attributes": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {
+      "first": {},
+      "rest": {
         "multiple": true
       },
-      "NEEDS_NAME_3": {}
+      "trailing": {}
     }
   },
   "type_item": {
     "fields": {
       "visibility_modifier": {},
-      "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {}
+      "where_clause": {},
+      "trailing_where_clause": {}
     }
   },
   "unary_expression": {

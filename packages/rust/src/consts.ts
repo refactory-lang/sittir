@@ -308,8 +308,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'array_expression': [
     { name: 'length', required: false, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: true },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
+    { name: 'elements', required: false, multiple: true },
   ],
   'array_type': [
     { name: 'element', required: true, multiple: false },
@@ -352,8 +352,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'outer', required: false, multiple: false },
   ],
   'bounded_type': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'left', required: false, multiple: false },
+    { name: 'right', required: false, multiple: false },
   ],
   'bracketed_type': [
   ],
@@ -556,7 +556,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'macro_definition': [
     { name: 'name', required: true, multiple: false },
     { name: 'rules', required: false, multiple: true },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'rule', required: false, multiple: false },
   ],
   'macro_invocation': [
     { name: 'macro', required: true, multiple: false },
@@ -596,9 +596,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'ordered_field_declaration_list': [
     { name: 'type', required: false, multiple: true },
-    { name: 'NEEDS_NAME_0', required: false, multiple: true },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
-    { name: 'NEEDS_NAME_2', required: false, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
+    { name: 'visibilityModifier', required: false, multiple: false },
+    { name: 'declarations', required: false, multiple: true },
   ],
   'parameter': [
     { name: 'pattern', required: true, multiple: false },
@@ -726,9 +726,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'tuple_expression': [
     { name: 'attributes', required: false, multiple: true },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
-    { name: 'NEEDS_NAME_2', required: false, multiple: true },
-    { name: 'NEEDS_NAME_3', required: false, multiple: false },
+    { name: 'first', required: false, multiple: false },
+    { name: 'rest', required: false, multiple: true },
+    { name: 'trailing', required: false, multiple: false },
   ],
   'tuple_pattern': [
   ],
@@ -753,8 +753,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
-    { name: 'NEEDS_NAME_2', required: false, multiple: false },
+    { name: 'whereClause', required: false, multiple: false },
+    { name: 'trailingWhereClause', required: false, multiple: false },
   ],
   'type_parameter': [
     { name: 'bounds', required: false, multiple: false },
