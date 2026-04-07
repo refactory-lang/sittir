@@ -7,30 +7,30 @@
   },
   "ambient_declaration": {
     "fields": {
-      "children1": {},
-      "child_type": {}
+      "NEEDS_NAME_0": {},
+      "type": {}
     }
   },
   "arguments": {
     "fields": {
-      "expression_or_spread_element1": {},
-      "expression_or_spread_element2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "array": {
     "fields": {
-      "expression_or_spread_element1": {},
-      "expression_or_spread_element2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "array_pattern": {
     "fields": {
-      "assignment_pattern_or_pattern1": {},
-      "assignment_pattern_or_pattern2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
@@ -38,81 +38,73 @@
   "as_expression": {
     "fields": {
       "expression": {},
-      "child_type": {}
+      "type": {}
     }
   },
   "class_heritage": {
     "fields": {
-      "extends_clause_or_implements_clause": {},
-      "implements_clause": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "enum_body": {
     "fields": {
-      "enum_assignment1": {},
-      "enum_assignment2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "export_clause": {
     "fields": {
-      "export_specifier1": {},
-      "export_specifier2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "implements_clause": {
     "fields": {
-      "child_type1": {},
-      "child_type2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "import_alias": {
     "fields": {
-      "identifier": {},
-      "identifier_or_nested_identifier": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "import_clause": {
     "fields": {
-      "children1": {},
-      "named_imports_or_namespace_import": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "import_statement": {
     "fields": {
-      "import_clause_or_import_require_clause": {},
+      "NEEDS_NAME_0": {},
       "import_attribute": {}
     }
   },
   "infer_type": {
     "fields": {
       "type_identifier": {},
-      "child_type": {}
+      "type": {}
     }
   },
   "intersection_type": {
     "fields": {
-      "child_type1": {},
-      "child_type2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "lexical_declaration": {
     "fields": {
-      "variable_declarator1": {},
-      "variable_declarator2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "lookup_type": {
     "fields": {
       "primary_type": {},
-      "child_type": {}
+      "type": {}
     }
   },
   "method_definition": {
@@ -129,32 +121,30 @@
   },
   "named_imports": {
     "fields": {
-      "import_specifier1": {},
-      "import_specifier2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "object": {
     "fields": {
-      "children1": {},
-      "children2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "object_pattern": {
     "fields": {
-      "children1": {},
-      "children2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "object_type": {
     "fields": {
-      "children1": {},
-      "children2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
@@ -194,23 +184,19 @@
   "satisfies_expression": {
     "fields": {
       "expression": {},
-      "child_type": {}
+      "type": {}
     }
   },
   "sequence_expression": {
     "fields": {
-      "expression1": {},
-      "expression2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "type_arguments": {
     "fields": {
-      "child_type1": {},
-      "child_type2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "type_assertion": {
@@ -221,24 +207,20 @@
   },
   "type_parameters": {
     "fields": {
-      "type_parameter1": {},
-      "type_parameter2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "union_type": {
     "fields": {
-      "child_type1": {},
-      "child_type2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "variable_declaration": {
     "fields": {
-      "variable_declarator1": {},
-      "variable_declarator2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   }
 }

@@ -148,9 +148,7 @@ export function emitFrom(config: EmitFromConfig): string {
 		lines.push(`import { ${imports} } from './factories.js';`);
 	}
 
-	// Import wrap functions for SgNode dispatch
-	const wrapImports = nodes.map(n => `wrap${toTypeName(n.kind)}`).sort().join(', ');
-	lines.push(`import { ${wrapImports} } from './wrap.js';`);
+	// (TreeNode inputs are passed through — use readTreeNode for proper hydration)
 
 	// Import FromInput types from types.ts
 	const fromInputImports = nodes.map(n => `${toTypeName(n.kind)}FromInput`);
@@ -218,8 +216,8 @@ function emitFromFunction(
 	lines.push(`export function ${exportName}(input: unknown): unknown;`);
 	lines.push(`export function ${exportName}(input: unknown): unknown {`);
 
-	// --- Path 1: TreeNode → wrap ---
-	lines.push(`  if (isTreeNode(input)) return wrap${typeName}(input as ${typeName}Tree);`);
+	// --- Path 1: TreeNode → pass-through (use readTreeNode for proper hydration) ---
+	lines.push(`  if (isTreeNode(input)) return input as any;`);
 
 	// --- Path 2: NodeData → reconstruct with fluent API ---
 	// NodeData has raw snake_case fields; remap to camelCase config and re-call factory

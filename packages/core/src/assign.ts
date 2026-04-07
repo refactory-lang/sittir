@@ -65,7 +65,7 @@ export function assign(node: AnyTreeNode, config: RulesConfig): AnyNodeData {
 
 	// No rule → leaf node
 	if (!rule) {
-		return { type: kind, text: node.text() };
+		return { type: kind, text: node.text(), named: node.isNamed() };
 	}
 
 	const template = typeof rule === 'string' ? rule : rule.template;
@@ -112,7 +112,7 @@ export function assign(node: AnyTreeNode, config: RulesConfig): AnyNodeData {
 		}
 	}
 
-	const result: AnyNodeData = { type: kind, fields: fields as Readonly<Record<string, unknown>> };
+	const result: AnyNodeData = { type: kind, fields: fields as Readonly<Record<string, unknown>>, named: node.isNamed() };
 	if (children) (result as any).children = children;
 	return result;
 }

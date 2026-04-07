@@ -18,7 +18,7 @@ const VAR_RE = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
 // ---------------------------------------------------------------------------
 
 function render(node: AnyNodeData, config: RulesConfig): string {
-	if (node.text !== undefined) return node.text;
+	if (node.text !== undefined && !node.fields && !node.children) return node.text;
 
 	if (!node.fields && !node.children) {
 		throw new Error(`Node '${node.type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
@@ -42,67 +42,82 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 	// Trim trailing newline from YAML | block scalar
 	const tmpl = template.endsWith('\n') ? template.slice(0, -1) : template;
 
+	// Consumption model: track which children indices have been used.
+	// $$$CHILDREN renders only the unconsumed remainder.
+	const consumed = new Set<number>();
+
 	const result = tmpl.replace(varPattern, (_match: string, pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
 		const clauseKey = `${fieldKey}`;
 
-		// Check if this is a clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
+		// 1. Clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
 		if (ruleObj && clauseKey in ruleObj && clauseKey !== 'template' && clauseKey !== 'joinBy') {
 			const clauseTemplate = ruleObj[clauseKey] as string;
-			return renderClause(clauseTemplate, node, config, varPattern);
+			return renderClause(clauseTemplate, node, config, varPattern, consumed);
 		}
 
-		// Resolution: fields[name] first, then children array, then children-by-kind fallback
-		let value: unknown;
+		// 2. Fields (tree-sitter FIELDs + promoted overrides)
 		if (node.fields?.[fieldKey] !== undefined) {
-			value = node.fields[fieldKey];
-		} else if (fieldKey === 'children' && node.children) {
-			// For $CHILDREN (single), use first child; for $$$CHILDREN (multi), use full array.
-			// Multi is handled below; here we assign the array and let each prefix branch decide.
-			value = node.children;
-		} else if (node.children && Array.isArray(node.children)) {
-			// Fallback: named children are stored in children array with matching type.
-			// Matches children whose type equals the field key (e.g., $VISIBILITY_MODIFIER → type 'visibility_modifier').
-			const child = node.children.find((c: any) => c?.type === fieldKey);
-			if (child) value = child;
+			const value = node.fields[fieldKey];
+			if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
+				const items = Array.isArray(value) ? value : [value];
+				const sep = resolveJoinBy(ruleObj, name);
+				return items.map(item => renderValue(item as AnyNodeData | string | number, config)).join(sep);
+			}
+			if (Array.isArray(value)) {
+				return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
+			}
+			return renderValue(value as AnyNodeData | string | number, config);
 		}
 
-		// $$$ — multi (zero or more)
-		if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
-			if (value === undefined) return '';
-			const items = Array.isArray(value) ? value : [value];
+		// 3. $$$CHILDREN — unconsumed remainder
+		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === 'children') {
+			if (!node.children) return '';
+			const remaining = node.children.filter((_, i) => !consumed.has(i));
 			const sep = resolveJoinBy(ruleObj, name);
-			return items.map(item => renderValue(item as AnyNodeData | string | number, config)).join(sep);
+			return remaining.map(c => renderValue(c as AnyNodeData | string | number, config)).join(sep);
 		}
 
-		// $$ — unnamed single
-		if (pfx.length === 2 && !pfx.endsWith('_')) {
-			if (value === undefined) return '';
-			if (Array.isArray(value)) return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
-			return renderValue(value as AnyNodeData | string | number, config);
+		// 4. Named child by kind — consume first unconsumed match
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === fieldKey
+			);
+			if (idx >= 0) {
+				consumed.add(idx);
+				const child = node.children[idx];
+				if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
+					// $$$ on a single matched child — collect all unconsumed of this type
+					const items: unknown[] = [child];
+					for (let i = idx + 1; i < node.children.length; i++) {
+						if (!consumed.has(i) && (node.children[i] as any)?.type === fieldKey) {
+							consumed.add(i);
+							items.push(node.children[i]);
+						}
+					}
+					const sep = resolveJoinBy(ruleObj, name);
+					return items.map(item => renderValue(item as AnyNodeData | string | number, config)).join(sep);
+				}
+				return renderValue(child as AnyNodeData | string | number, config);
+			}
 		}
 
-		// $_ — non-capturing wildcard (renders the value but doesn't capture)
-		if (pfx.endsWith('_')) {
-			if (value === undefined) return '';
-			if (Array.isArray(value)) return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
-			return renderValue(value as AnyNodeData | string | number, config);
+		// 5. $CHILDREN (single) — first unconsumed child
+		if (fieldKey === 'children' && node.children) {
+			for (let i = 0; i < node.children.length; i++) {
+				if (!consumed.has(i)) {
+					consumed.add(i);
+					return renderValue(node.children[i] as AnyNodeData | string | number, config);
+				}
+			}
 		}
 
-		// $ — single named field
-		if (value === undefined) return '';
-		// If value is an array (e.g., $CHILDREN resolving to node.children),
-		// render the first element for single-dollar, empty string if empty array.
-		if (Array.isArray(value)) {
-			return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
-		}
-		return renderValue(value as AnyNodeData | string | number, config);
+		// 6. Absent → empty
+		return '';
 	});
 
 	// FR-017: Absent-field space absorption — collapse runs of spaces left by
 	// empty variable interpolations into single spaces, and trim edges.
-	// Safe because codegen templates use single-space separation only;
-	// multi-space indentation is not embedded in templates.
 	return result.replace(/ {2,}/g, ' ').trim();
 }
 
@@ -112,24 +127,44 @@ function renderClause(
 	node: AnyNodeData,
 	config: RulesConfig,
 	varPattern: RegExp,
+	consumed: Set<number>,
 ): string {
 	// First pass: check if all variables resolve
 	let allPresent = true;
 	clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
-		const value = node.fields?.[fieldKey];
-		if (value === undefined) allPresent = false;
+		if (node.fields?.[fieldKey] !== undefined) return '';
+		// Also check children by kind
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === fieldKey
+			);
+			if (idx >= 0) return '';
+		}
+		allPresent = false;
 		return '';
 	});
 
 	if (!allPresent) return '';
 
-	// Second pass: actually render
+	// Second pass: actually render (consuming children)
 	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
-		const value = node.fields?.[fieldKey] as AnyNodeData | string | number | undefined;
-		if (value === undefined) return '';
-		return renderValue(value, config);
+		if (node.fields?.[fieldKey] !== undefined) {
+			const value = node.fields[fieldKey] as AnyNodeData | string | number;
+			return renderValue(value, config);
+		}
+		// Children by kind fallback
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === fieldKey
+			);
+			if (idx >= 0) {
+				consumed.add(idx);
+				return renderValue(node.children[idx] as AnyNodeData | string | number, config);
+			}
+		}
+		return '';
 	});
 }
 

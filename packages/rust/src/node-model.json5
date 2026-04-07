@@ -175,26 +175,26 @@
     kind: "arguments",
     fields: [
       {
-        name: "attribute_item",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["attribute_item"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
       {
-        name: "expression",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["_expression"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
       {
-        name: "attribute_item_or_expression",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: ["attribute_item", "_expression"],
@@ -235,17 +235,17 @@
         kinds: ["_expression"],
       },
       {
-        name: "attribute_item",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["attribute_item"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
       {
-        name: "attribute_item_or_expression1",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["_expression", "attribute_item"],
@@ -255,16 +255,16 @@
         overrideValues: null,
       },
       {
-        name: "expression",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: false,
         kinds: ["_expression"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
       {
-        name: "attribute_item_or_expression2",
+        name: "NEEDS_NAME_3",
         required: false,
         multiple: true,
         kinds: ["attribute_item", "_expression"],
@@ -484,7 +484,7 @@
         overrideValues: null,
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["expression_statement", "_declaration_statement"],
@@ -494,12 +494,12 @@
         overrideValues: null,
       },
       {
-        name: "expression",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: false,
         kinds: ["_expression"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
     ],
@@ -557,7 +557,7 @@
     kind: "bounded_type",
     fields: [
       {
-        name: "lifetime_or_type_or_use_bounds1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["lifetime", "_type", "use_bounds"],
@@ -566,7 +566,7 @@
         overrideValues: null,
       },
       {
-        name: "lifetime_or_type_or_use_bounds2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["lifetime", "_type", "use_bounds"],
@@ -611,12 +611,12 @@
         overrideValues: null,
       },
       {
-        name: "expression",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["_expression"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
     ],
@@ -707,12 +707,12 @@
         overrideValues: null,
       },
       {
-        name: "pattern",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["_pattern"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
     ],
@@ -759,7 +759,7 @@
     kind: "closure_parameters",
     fields: [
       {
-        name: "parameter_or_pattern1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["_pattern", "parameter"],
@@ -768,7 +768,7 @@
         overrideValues: null,
       },
       {
-        name: "parameter_or_pattern2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["_pattern", "parameter"],
@@ -1026,17 +1026,17 @@
     kind: "enum_variant_list",
     fields: [
       {
-        name: "attribute_item",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["attribute_item"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
       {
-        name: "enum_variant",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["enum_variant"],
@@ -1045,7 +1045,7 @@
         overrideValues: null,
       },
       {
-        name: "attribute_item_or_enum_variant",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: ["attribute_item", "enum_variant"],
@@ -1169,17 +1169,17 @@
     kind: "field_declaration_list",
     fields: [
       {
-        name: "attribute_item",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["attribute_item"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
       {
-        name: "field_declaration",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["field_declaration"],
@@ -1188,7 +1188,7 @@
         overrideValues: null,
       },
       {
-        name: "attribute_item_or_field_declaration",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: ["attribute_item", "field_declaration"],
@@ -1266,7 +1266,7 @@
     kind: "field_initializer_list",
     fields: [
       {
-        name: "children1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["shorthand_field_initializer", "field_initializer", "base_field_initializer"],
@@ -1275,7 +1275,7 @@
         overrideValues: null,
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["shorthand_field_initializer", "field_initializer", "base_field_initializer"],
@@ -1356,7 +1356,7 @@
     kind: "for_lifetimes",
     fields: [
       {
-        name: "lifetime1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["lifetime"],
@@ -1365,14 +1365,14 @@
         overrideValues: null,
       },
       {
-        name: "lifetime2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["lifetime"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -1893,19 +1893,8 @@
     },
   },
   let_chain: {
-    modelType: "branch",
+    modelType: "container",
     kind: "let_chain",
-    fields: [
-      {
-        name: "conditions",
-        required: false,
-        multiple: false,
-        kinds: ["_expression", "let_condition"],
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: {
       required: true,
       multiple: true,
@@ -2048,17 +2037,17 @@
         kinds: ["identifier", "_reserved_identifier"],
       },
       {
-        name: "macro_rule1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["macro_rule"],
-        separator: ";",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ";",
       },
       {
-        name: "macro_rule2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["macro_rule"],
@@ -2146,17 +2135,17 @@
     kind: "match_block",
     fields: [
       {
-        name: "match_arm1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["match_arm"],
-        separator: null,
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: null,
       },
       {
-        name: "match_arm2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["match_arm"],
@@ -2252,12 +2241,12 @@
         overrideValues: null,
       },
       {
-        name: "pattern",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["_pattern"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
     ],
@@ -2359,17 +2348,17 @@
         separator: null,
       },
       {
-        name: "attribute_item",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["attribute_item"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
       {
-        name: "visibility_modifier",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["visibility_modifier"],
@@ -2378,7 +2367,7 @@
         overrideValues: null,
       },
       {
-        name: "attribute_item_or_visibility_modifier",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: ["attribute_item", "visibility_modifier"],
@@ -2441,7 +2430,7 @@
     kind: "parameters",
     fields: [
       {
-        name: "attribute_item",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["attribute_item"],
@@ -2450,7 +2439,7 @@
         overrideValues: null,
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["parameter", "self_parameter", "variadic_parameter", "_type"],
@@ -2459,7 +2448,7 @@
         overrideValues: null,
       },
       {
-        name: "children3",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: ["attribute_item", "parameter", "self_parameter", "variadic_parameter", "_type"],
@@ -2506,15 +2495,6 @@
         required: true,
         multiple: false,
         kinds: ["_type"],
-      },
-      {
-        name: "mutable_specifier",
-        required: false,
-        multiple: false,
-        kinds: ["mutable_specifier"],
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
       },
     ],
     children: {
@@ -2646,15 +2626,6 @@
         multiple: false,
         kinds: ["_expression"],
       },
-      {
-        name: "mutable_specifier",
-        required: false,
-        multiple: false,
-        kinds: ["mutable_specifier"],
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
     ],
     children: {
       required: false,
@@ -2676,12 +2647,12 @@
         overrideValues: null,
       },
       {
-        name: "pattern",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["_pattern"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
     ],
@@ -2755,19 +2726,8 @@
     },
   },
   return_expression: {
-    modelType: "branch",
+    modelType: "container",
     kind: "return_expression",
-    fields: [
-      {
-        name: "value",
-        required: false,
-        multiple: false,
-        kinds: ["_expression"],
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-    ],
     children: {
       required: false,
       multiple: false,
@@ -2971,7 +2931,7 @@
         overrideValues: null,
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["expression_statement", "_declaration_statement"],
@@ -3148,7 +3108,7 @@
         kinds: ["_type_identifier", "scoped_type_identifier", "type_identifier"],
       },
       {
-        name: "field_pattern_or_remaining_field_pattern1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["field_pattern", "remaining_field_pattern"],
@@ -3157,7 +3117,7 @@
         overrideValues: null,
       },
       {
-        name: "field_pattern_or_remaining_field_pattern2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["field_pattern", "remaining_field_pattern"],
@@ -3291,7 +3251,7 @@
     kind: "trait_bounds",
     fields: [
       {
-        name: "higher_ranked_trait_bound_or_lifetime_or_type1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["_type", "lifetime", "higher_ranked_trait_bound"],
@@ -3300,7 +3260,7 @@
         overrideValues: null,
       },
       {
-        name: "higher_ranked_trait_bound_or_lifetime_or_type2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["_type", "lifetime", "higher_ranked_trait_bound"],
@@ -3437,31 +3397,31 @@
         overrideValues: null,
       },
       {
-        name: "expression1",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["_expression"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
       {
-        name: "expression2",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: ["_expression"],
-        separator: ",",
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
+        separator: ",",
       },
       {
-        name: "expression3",
+        name: "NEEDS_NAME_3",
         required: false,
         multiple: false,
         kinds: ["_expression"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
     ],
@@ -3495,7 +3455,7 @@
     kind: "tuple_pattern",
     fields: [
       {
-        name: "closure_expression_or_pattern1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["_pattern", "closure_expression"],
@@ -3504,7 +3464,7 @@
         overrideValues: null,
       },
       {
-        name: "closure_expression_or_pattern2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["_pattern", "closure_expression"],
@@ -3539,23 +3499,23 @@
         kinds: ["identifier", "scoped_identifier", "generic_type"],
       },
       {
-        name: "pattern1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["_pattern"],
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
       },
       {
-        name: "pattern2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["_pattern"],
-        separator: ",",
         override: true,
-        overrideAnonymous: false,
+        overrideAnonymous: true,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -3587,7 +3547,7 @@
     kind: "type_arguments",
     fields: [
       {
-        name: "children1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["_type", "type_binding", "lifetime", "_literal", "block"],
@@ -3596,7 +3556,7 @@
         overrideValues: null,
       },
       {
-        name: "trait_bounds",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["trait_bounds"],
@@ -3605,7 +3565,7 @@
         overrideValues: null,
       },
       {
-        name: "children3",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: ["_type", "type_binding", "lifetime", "_literal", "block", "trait_bounds"],
@@ -3710,7 +3670,7 @@
         overrideValues: null,
       },
       {
-        name: "where_clause1",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["where_clause"],
@@ -3719,7 +3679,7 @@
         overrideValues: null,
       },
       {
-        name: "where_clause2",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: false,
         kinds: ["where_clause"],
@@ -3776,17 +3736,17 @@
     kind: "type_parameters",
     fields: [
       {
-        name: "attribute_item",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: true,
         kinds: ["attribute_item"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["metavariable", "type_parameter", "lifetime_parameter", "const_parameter"],
@@ -3795,7 +3755,7 @@
         overrideValues: null,
       },
       {
-        name: "children3",
+        name: "NEEDS_NAME_2",
         required: false,
         multiple: true,
         kinds: [
@@ -3971,7 +3931,7 @@
     kind: "use_bounds",
     fields: [
       {
-        name: "lifetime_or_type_identifier1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["lifetime", "type_identifier"],
@@ -3980,7 +3940,7 @@
         overrideValues: null,
       },
       {
-        name: "lifetime_or_type_identifier2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["lifetime", "type_identifier"],
@@ -4094,7 +4054,7 @@
     kind: "where_clause",
     fields: [
       {
-        name: "where_predicate1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["where_predicate"],
@@ -4103,14 +4063,14 @@
         overrideValues: null,
       },
       {
-        name: "where_predicate2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["where_predicate"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [

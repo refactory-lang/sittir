@@ -5,7 +5,6 @@ import type { AbstractType, Arguments, ArrayExpression, ArrayType, AssignmentExp
 import { isNodeData, isTreeNode, _inferBranch } from './utils.js';
 
 import { abstract_type_, arguments_, array_expression_, array_type_, assignment_expression_, associated_type_, async_block_, attribute_, attribute_item_, await_expression_, base_field_initializer_, binary_expression_, block_, block_comment_, boolean_literal_, bounded_type_, bracketed_type_, break_expression_, call_expression_, captured_pattern_, char_literal_, closure_expression_, closure_parameters_, compound_assignment_expr_, const_block_, const_item_, const_parameter_, continue_expression_, crate_, declaration_list_, doc_comment_, dynamic_type_, else_clause_, empty_statement_, enum_item_, enum_variant_, enum_variant_list_, escape_sequence_, expression_statement_, extern_crate_declaration_, extern_modifier_, field_declaration_, field_declaration_list_, field_expression_, field_identifier_, field_initializer_, field_initializer_list_, field_pattern_, float_literal_, for_expression_, for_lifetimes_, foreign_mod_item_, fragment_specifier_, function_item_, function_modifiers_, function_signature_item_, function_type_, gen_block_, generic_function_, generic_pattern_, generic_type_, generic_type_with_turbofish_, higher_ranked_trait_bound_, identifier_, if_expression_, impl_item_, index_expression_, inner_attribute_item_, inner_doc_comment_marker_, integer_literal_, label_, let_chain_, let_condition_, let_declaration_, lifetime_, lifetime_parameter_, line_comment_, loop_expression_, macro_definition_, macro_invocation_, macro_rule_, match_arm_, match_block_, match_expression_, match_pattern_, metavariable_, mod_item_, mut_pattern_, mutable_specifier_, negative_literal_, never_type_, or_pattern_, ordered_field_declaration_list_, outer_doc_comment_marker_, parameter_, parameters_, parenthesized_expression_, pointer_type_, primitive_type_, qualified_type_, range_expression_, range_pattern_, raw_string_literal_, ref_pattern_, reference_expression_, reference_pattern_, reference_type_, remaining_field_pattern_, removed_trait_bound_, return_expression_, scoped_identifier_, scoped_type_identifier_, scoped_use_list_, self_, self_parameter_, shebang_, shorthand_field_identifier_, shorthand_field_initializer_, slice_pattern_, source_file_, static_item_, string_content_, string_literal_, struct_expression_, struct_item_, struct_pattern_, super_, token_binding_pattern_, token_repetition_, token_repetition_pattern_, token_tree_, token_tree_pattern_, trait_bounds_, trait_item_, try_block_, try_expression_, tuple_expression_, tuple_pattern_, tuple_struct_pattern_, tuple_type_, type_arguments_, type_binding_, type_cast_expression_, type_identifier_, type_item_, type_parameter_, type_parameters_, unary_expression_, union_item_, unit_expression_, unit_type_, unsafe_block_, use_as_clause_, use_bounds_, use_declaration_, use_list_, use_wildcard_, variadic_parameter_, visibility_modifier_, where_clause_, where_predicate_, while_expression_, yield_expression_ } from './factories.js';
-import { wrapAbstractType, wrapArguments, wrapArrayExpression, wrapArrayType, wrapAssignmentExpression, wrapAssociatedType, wrapAsyncBlock, wrapAttribute, wrapAttributeItem, wrapAwaitExpression, wrapBaseFieldInitializer, wrapBinaryExpression, wrapBlock, wrapBlockComment, wrapBoundedType, wrapBracketedType, wrapBreakExpression, wrapCallExpression, wrapCapturedPattern, wrapClosureExpression, wrapClosureParameters, wrapCompoundAssignmentExpr, wrapConstBlock, wrapConstItem, wrapConstParameter, wrapContinueExpression, wrapDeclarationList, wrapDynamicType, wrapElseClause, wrapEnumItem, wrapEnumVariant, wrapEnumVariantList, wrapExpressionStatement, wrapExternCrateDeclaration, wrapExternModifier, wrapFieldDeclaration, wrapFieldDeclarationList, wrapFieldExpression, wrapFieldInitializer, wrapFieldInitializerList, wrapFieldPattern, wrapForExpression, wrapForLifetimes, wrapForeignModItem, wrapFunctionItem, wrapFunctionModifiers, wrapFunctionSignatureItem, wrapFunctionType, wrapGenBlock, wrapGenericFunction, wrapGenericPattern, wrapGenericType, wrapGenericTypeWithTurbofish, wrapHigherRankedTraitBound, wrapIfExpression, wrapImplItem, wrapIndexExpression, wrapInnerAttributeItem, wrapLabel, wrapLetChain, wrapLetCondition, wrapLetDeclaration, wrapLifetime, wrapLifetimeParameter, wrapLineComment, wrapLoopExpression, wrapMacroDefinition, wrapMacroInvocation, wrapMacroRule, wrapMatchArm, wrapMatchBlock, wrapMatchExpression, wrapMatchPattern, wrapModItem, wrapMutPattern, wrapNegativeLiteral, wrapOrPattern, wrapOrderedFieldDeclarationList, wrapParameter, wrapParameters, wrapParenthesizedExpression, wrapPointerType, wrapQualifiedType, wrapRangeExpression, wrapRangePattern, wrapRawStringLiteral, wrapRefPattern, wrapReferenceExpression, wrapReferencePattern, wrapReferenceType, wrapRemovedTraitBound, wrapReturnExpression, wrapScopedIdentifier, wrapScopedTypeIdentifier, wrapScopedUseList, wrapSelfParameter, wrapShorthandFieldInitializer, wrapSlicePattern, wrapSourceFile, wrapStaticItem, wrapStringLiteral, wrapStructExpression, wrapStructItem, wrapStructPattern, wrapTokenBindingPattern, wrapTokenRepetition, wrapTokenRepetitionPattern, wrapTokenTree, wrapTokenTreePattern, wrapTraitBounds, wrapTraitItem, wrapTryBlock, wrapTryExpression, wrapTupleExpression, wrapTuplePattern, wrapTupleStructPattern, wrapTupleType, wrapTypeArguments, wrapTypeBinding, wrapTypeCastExpression, wrapTypeItem, wrapTypeParameter, wrapTypeParameters, wrapUnaryExpression, wrapUnionItem, wrapUnsafeBlock, wrapUseAsClause, wrapUseBounds, wrapUseDeclaration, wrapUseList, wrapUseWildcard, wrapVariadicParameter, wrapVisibilityModifier, wrapWhereClause, wrapWherePredicate, wrapWhileExpression, wrapYieldExpression } from './wrap.js';
 import type { AbstractTypeFromInput, ArgumentsFromInput, ArrayExpressionFromInput, ArrayTypeFromInput, AssignmentExpressionFromInput, AssociatedTypeFromInput, AsyncBlockFromInput, AttributeFromInput, AttributeItemFromInput, AwaitExpressionFromInput, BaseFieldInitializerFromInput, BinaryExpressionFromInput, BlockFromInput, BlockCommentFromInput, BoundedTypeFromInput, BracketedTypeFromInput, BreakExpressionFromInput, CallExpressionFromInput, CapturedPatternFromInput, ClosureExpressionFromInput, ClosureParametersFromInput, CompoundAssignmentExprFromInput, ConstBlockFromInput, ConstItemFromInput, ConstParameterFromInput, ContinueExpressionFromInput, DeclarationListFromInput, DynamicTypeFromInput, ElseClauseFromInput, EnumItemFromInput, EnumVariantFromInput, EnumVariantListFromInput, ExpressionStatementFromInput, ExternCrateDeclarationFromInput, ExternModifierFromInput, FieldDeclarationFromInput, FieldDeclarationListFromInput, FieldExpressionFromInput, FieldInitializerFromInput, FieldInitializerListFromInput, FieldPatternFromInput, ForExpressionFromInput, ForLifetimesFromInput, ForeignModItemFromInput, FunctionItemFromInput, FunctionModifiersFromInput, FunctionSignatureItemFromInput, FunctionTypeFromInput, GenBlockFromInput, GenericFunctionFromInput, GenericPatternFromInput, GenericTypeFromInput, GenericTypeWithTurbofishFromInput, HigherRankedTraitBoundFromInput, IfExpressionFromInput, ImplItemFromInput, IndexExpressionFromInput, InnerAttributeItemFromInput, LabelFromInput, LetChainFromInput, LetConditionFromInput, LetDeclarationFromInput, LifetimeFromInput, LifetimeParameterFromInput, LineCommentFromInput, LoopExpressionFromInput, MacroDefinitionFromInput, MacroInvocationFromInput, MacroRuleFromInput, MatchArmFromInput, MatchBlockFromInput, MatchExpressionFromInput, MatchPatternFromInput, ModItemFromInput, MutPatternFromInput, NegativeLiteralFromInput, OrPatternFromInput, OrderedFieldDeclarationListFromInput, ParameterFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, PointerTypeFromInput, QualifiedTypeFromInput, RangeExpressionFromInput, RangePatternFromInput, RawStringLiteralFromInput, RefPatternFromInput, ReferenceExpressionFromInput, ReferencePatternFromInput, ReferenceTypeFromInput, RemovedTraitBoundFromInput, ReturnExpressionFromInput, ScopedIdentifierFromInput, ScopedTypeIdentifierFromInput, ScopedUseListFromInput, SelfParameterFromInput, ShorthandFieldInitializerFromInput, SlicePatternFromInput, SourceFileFromInput, StaticItemFromInput, StringLiteralFromInput, StructExpressionFromInput, StructItemFromInput, StructPatternFromInput, TokenBindingPatternFromInput, TokenRepetitionFromInput, TokenRepetitionPatternFromInput, TokenTreeFromInput, TokenTreePatternFromInput, TraitBoundsFromInput, TraitItemFromInput, TryBlockFromInput, TryExpressionFromInput, TupleExpressionFromInput, TuplePatternFromInput, TupleStructPatternFromInput, TupleTypeFromInput, TypeArgumentsFromInput, TypeBindingFromInput, TypeCastExpressionFromInput, TypeItemFromInput, TypeParameterFromInput, TypeParametersFromInput, UnaryExpressionFromInput, UnionItemFromInput, UnsafeBlockFromInput, UseAsClauseFromInput, UseBoundsFromInput, UseDeclarationFromInput, UseListFromInput, UseWildcardFromInput, VariadicParameterFromInput, VisibilityModifierFromInput, WhereClauseFromInput, WherePredicateFromInput, WhileExpressionFromInput, YieldExpressionFromInput } from './types.js';
 
 function _resolveByKind(kind: string, rest: unknown): unknown {
@@ -394,7 +393,7 @@ function _r184t66(v: unknown): unknown {
 export function abstractTypeFrom(input: AbstractTypeTree | AbstractType | AbstractTypeFromInput): AbstractType;
 export function abstractTypeFrom(input: unknown): unknown;
 export function abstractTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAbstractType(input as AbstractTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -418,31 +417,42 @@ export function abstractTypeFrom(input: unknown): unknown {
 export function arguments_From(input: ArgumentsTree | Arguments | ArgumentsFromInput): Arguments;
 export function arguments_From(input: unknown): unknown;
 export function arguments_From(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapArguments(input as ArgumentsTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return arguments_({
-      attributeItem: f?.['attribute_item'],
-      expression: f?.['expression'],
-      attributeItemOrExpression: f?.['attribute_item_or_expression'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as ArgumentsConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['attributeItem'] !== undefined) {
-    const raw = obj['attributeItem'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItem'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['expression'] !== undefined) {
-    resolved['expression'] = _resolveExpression(obj['expression']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
   }
-  if (obj['attributeItemOrExpression'] !== undefined) {
-    const raw = obj['attributeItemOrExpression'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItemOrExpression'] = arr.map((v: unknown) => _r1zauz5(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _r1zauz5(v));
+  }
+  if (obj.attributeItem !== undefined) {
+    const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
+    resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+  }
+  if (obj.expression !== undefined) {
+    resolved.expression = _resolveExpression(obj.expression);
+  }
+  if (obj.attributeItemOrExpression !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrExpression) ? obj.attributeItemOrExpression : [obj.attributeItemOrExpression];
+    resolved.attributeItemOrExpression = arr.map((v: unknown) => _r1zauz5(v));
   }
   return arguments_(resolved as ArgumentsConfig);
 }
@@ -450,17 +460,17 @@ export function arguments_From(input: unknown): unknown {
 export function arrayExpressionFrom(input: ArrayExpressionTree | ArrayExpression | ArrayExpressionFromInput): ArrayExpression;
 export function arrayExpressionFrom(input: unknown): unknown;
 export function arrayExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapArrayExpression(input as ArrayExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return array_expression_({
       length: f?.['length'],
-      attributeItem: f?.['attribute_item'],
-      attributeItemOrExpression1: f?.['attribute_item_or_expression1'],
-      expression: f?.['expression'],
-      attributeItemOrExpression2: f?.['attribute_item_or_expression2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      NEEDS_NAME_3: f?.['NEEDS_NAME_3'],
     } as unknown as ArrayExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -468,23 +478,38 @@ export function arrayExpressionFrom(input: unknown): unknown {
   if (obj['length'] !== undefined) {
     resolved['length'] = _resolveExpression(obj['length']);
   }
-  if (obj['attributeItem'] !== undefined) {
-    const raw = obj['attributeItem'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItem'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['attributeItemOrExpression1'] !== undefined) {
-    const raw = obj['attributeItemOrExpression1'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItemOrExpression1'] = arr.map((v: unknown) => _r1zauz5(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1zauz5(v));
   }
-  if (obj['expression'] !== undefined) {
-    resolved['expression'] = _resolveExpression(obj['expression']);
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _resolveExpression(obj['NEEDS_NAME_2']);
   }
-  if (obj['attributeItemOrExpression2'] !== undefined) {
-    const raw = obj['attributeItemOrExpression2'];
+  if (obj['NEEDS_NAME_3'] !== undefined) {
+    const raw = obj['NEEDS_NAME_3'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItemOrExpression2'] = arr.map((v: unknown) => _r1zauz5(v));
+    resolved['NEEDS_NAME_3'] = arr.map((v: unknown) => _r1zauz5(v));
+  }
+  if (obj.attributeItem !== undefined) {
+    const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
+    resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+  }
+  if (obj.attributeItemOrExpression1 !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrExpression1) ? obj.attributeItemOrExpression1 : [obj.attributeItemOrExpression1];
+    resolved.attributeItemOrExpression1 = arr.map((v: unknown) => _r1zauz5(v));
+  }
+  if (obj.expression !== undefined) {
+    resolved.expression = _resolveExpression(obj.expression);
+  }
+  if (obj.attributeItemOrExpression2 !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrExpression2) ? obj.attributeItemOrExpression2 : [obj.attributeItemOrExpression2];
+    resolved.attributeItemOrExpression2 = arr.map((v: unknown) => _r1zauz5(v));
   }
   return array_expression_(resolved as ArrayExpressionConfig);
 }
@@ -492,7 +517,7 @@ export function arrayExpressionFrom(input: unknown): unknown {
 export function arrayTypeFrom(input: ArrayTypeTree | ArrayType | ArrayTypeFromInput): ArrayType;
 export function arrayTypeFrom(input: unknown): unknown;
 export function arrayTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapArrayType(input as ArrayTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -516,7 +541,7 @@ export function arrayTypeFrom(input: unknown): unknown {
 export function assignmentExpressionFrom(input: AssignmentExpressionTree | AssignmentExpression | AssignmentExpressionFromInput): AssignmentExpression;
 export function assignmentExpressionFrom(input: unknown): unknown;
 export function assignmentExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAssignmentExpression(input as AssignmentExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -540,7 +565,7 @@ export function assignmentExpressionFrom(input: unknown): unknown {
 export function associatedTypeFrom(input: AssociatedTypeTree | AssociatedType | AssociatedTypeFromInput): AssociatedType;
 export function associatedTypeFrom(input: unknown): unknown;
 export function associatedTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAssociatedType(input as AssociatedTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -572,7 +597,7 @@ export function associatedTypeFrom(input: unknown): unknown {
 export function asyncBlockFrom(input: AsyncBlockTree | AsyncBlock | AsyncBlockFromInput): AsyncBlock;
 export function asyncBlockFrom(input: unknown): unknown;
 export function asyncBlockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAsyncBlock(input as AsyncBlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -592,7 +617,7 @@ export function asyncBlockFrom(input: unknown): unknown {
 export function attributeFrom(input: AttributeTree | Attribute | AttributeFromInput): Attribute;
 export function attributeFrom(input: unknown): unknown;
 export function attributeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAttribute(input as AttributeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -620,7 +645,7 @@ export function attributeFrom(input: unknown): unknown {
 export function attributeItemFrom(input: AttributeItemTree | AttributeItem | AttributeItemFromInput): AttributeItem;
 export function attributeItemFrom(input: unknown): unknown;
 export function attributeItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAttributeItem(input as AttributeItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -640,7 +665,7 @@ export function attributeItemFrom(input: unknown): unknown {
 export function awaitExpressionFrom(input: AwaitExpressionTree | AwaitExpression | AwaitExpressionFromInput): AwaitExpression;
 export function awaitExpressionFrom(input: unknown): unknown;
 export function awaitExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAwaitExpression(input as AwaitExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -660,7 +685,7 @@ export function awaitExpressionFrom(input: unknown): unknown {
 export function baseFieldInitializerFrom(input: BaseFieldInitializerTree | BaseFieldInitializer | BaseFieldInitializerFromInput): BaseFieldInitializer;
 export function baseFieldInitializerFrom(input: unknown): unknown;
 export function baseFieldInitializerFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBaseFieldInitializer(input as BaseFieldInitializerTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -680,7 +705,7 @@ export function baseFieldInitializerFrom(input: unknown): unknown {
 export function binaryExpressionFrom(input: BinaryExpressionTree | BinaryExpression | BinaryExpressionFromInput): BinaryExpression;
 export function binaryExpressionFrom(input: unknown): unknown;
 export function binaryExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBinaryExpression(input as BinaryExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -708,15 +733,15 @@ export function binaryExpressionFrom(input: unknown): unknown {
 export function blockFrom(input: BlockTree | Block | BlockFromInput): Block;
 export function blockFrom(input: unknown): unknown;
 export function blockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBlock(input as BlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return block_({
       label: f?.['label'],
-      children2: f?.['children2'],
-      expression: f?.['expression'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as BlockConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -724,13 +749,20 @@ export function blockFrom(input: unknown): unknown {
   if (obj['label'] !== undefined) {
     resolved['label'] = (isNodeData(obj['label']) ? obj['label'] : Array.isArray(obj['label']) ? labelFrom(obj['label']) : typeof obj['label'] === 'object' ? labelFrom(obj['label']) : obj['label']);
   }
-  if (obj['children2'] !== undefined) {
-    const raw = obj['children2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['children2'] = arr.map((v: unknown) => _r149dosd(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r149dosd(v));
   }
-  if (obj['expression'] !== undefined) {
-    resolved['expression'] = _resolveExpression(obj['expression']);
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _resolveExpression(obj['NEEDS_NAME_2']);
+  }
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _r149dosd(v));
+  }
+  if (obj.expression !== undefined) {
+    resolved.expression = _resolveExpression(obj.expression);
   }
   return block_(resolved as BlockConfig);
 }
@@ -738,7 +770,7 @@ export function blockFrom(input: unknown): unknown {
 export function blockCommentFrom(input: BlockCommentTree | BlockComment | BlockCommentFromInput): BlockComment;
 export function blockCommentFrom(input: unknown): unknown;
 export function blockCommentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBlockComment(input as BlockCommentTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -766,23 +798,29 @@ export function blockCommentFrom(input: unknown): unknown {
 export function boundedTypeFrom(input: BoundedTypeTree | BoundedType | BoundedTypeFromInput): BoundedType;
 export function boundedTypeFrom(input: unknown): unknown;
 export function boundedTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBoundedType(input as BoundedTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return bounded_type_({
-      lifetimeOrTypeOrUseBounds1: f?.['lifetime_or_type_or_use_bounds1'],
-      lifetimeOrTypeOrUseBounds2: f?.['lifetime_or_type_or_use_bounds2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as BoundedTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['lifetimeOrTypeOrUseBounds1'] !== undefined) {
-    resolved['lifetimeOrTypeOrUseBounds1'] = _rd726k3(obj['lifetimeOrTypeOrUseBounds1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rd726k3(obj['NEEDS_NAME_0']);
   }
-  if (obj['lifetimeOrTypeOrUseBounds2'] !== undefined) {
-    resolved['lifetimeOrTypeOrUseBounds2'] = _rd726k3(obj['lifetimeOrTypeOrUseBounds2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd726k3(obj['NEEDS_NAME_1']);
+  }
+  if (obj.lifetimeOrTypeOrUseBounds1 !== undefined) {
+    resolved.lifetimeOrTypeOrUseBounds1 = _rd726k3(obj.lifetimeOrTypeOrUseBounds1);
+  }
+  if (obj.lifetimeOrTypeOrUseBounds2 !== undefined) {
+    resolved.lifetimeOrTypeOrUseBounds2 = _rd726k3(obj.lifetimeOrTypeOrUseBounds2);
   }
   return bounded_type_(resolved as BoundedTypeConfig);
 }
@@ -790,7 +828,7 @@ export function boundedTypeFrom(input: unknown): unknown {
 export function bracketedTypeFrom(input: BracketedTypeTree | BracketedType | BracketedTypeFromInput): BracketedType;
 export function bracketedTypeFrom(input: unknown): unknown;
 export function bracketedTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBracketedType(input as BracketedTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -810,14 +848,14 @@ export function bracketedTypeFrom(input: unknown): unknown {
 export function breakExpressionFrom(input: BreakExpressionTree | BreakExpression | BreakExpressionFromInput): BreakExpression;
 export function breakExpressionFrom(input: unknown): unknown;
 export function breakExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBreakExpression(input as BreakExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return break_expression_({
       label: f?.['label'],
-      expression: f?.['expression'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as BreakExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -825,8 +863,11 @@ export function breakExpressionFrom(input: unknown): unknown {
   if (obj['label'] !== undefined) {
     resolved['label'] = (isNodeData(obj['label']) ? obj['label'] : Array.isArray(obj['label']) ? labelFrom(obj['label']) : typeof obj['label'] === 'object' ? labelFrom(obj['label']) : obj['label']);
   }
-  if (obj['expression'] !== undefined) {
-    resolved['expression'] = _resolveExpression(obj['expression']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
+  }
+  if (obj.expression !== undefined) {
+    resolved.expression = _resolveExpression(obj.expression);
   }
   return break_expression_(resolved as BreakExpressionConfig);
 }
@@ -834,7 +875,7 @@ export function breakExpressionFrom(input: unknown): unknown {
 export function callExpressionFrom(input: CallExpressionTree | CallExpression | CallExpressionFromInput): CallExpression;
 export function callExpressionFrom(input: unknown): unknown;
 export function callExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapCallExpression(input as CallExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -858,14 +899,14 @@ export function callExpressionFrom(input: unknown): unknown {
 export function capturedPatternFrom(input: CapturedPatternTree | CapturedPattern | CapturedPatternFromInput): CapturedPattern;
 export function capturedPatternFrom(input: unknown): unknown;
 export function capturedPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapCapturedPattern(input as CapturedPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return captured_pattern_({
       identifier: f?.['identifier'],
-      pattern: f?.['pattern'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as CapturedPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -873,8 +914,11 @@ export function capturedPatternFrom(input: unknown): unknown {
   if (obj['identifier'] !== undefined) {
     resolved['identifier'] = (isNodeData(obj['identifier']) ? obj['identifier'] : typeof obj['identifier'] === 'string' || typeof obj['identifier'] === 'number' || typeof obj['identifier'] === 'boolean' ? identifier_(''+obj['identifier']) : obj['identifier']);
   }
-  if (obj['pattern'] !== undefined) {
-    resolved['pattern'] = _resolvePattern(obj['pattern']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolvePattern(obj['NEEDS_NAME_1']);
+  }
+  if (obj.pattern !== undefined) {
+    resolved.pattern = _resolvePattern(obj.pattern);
   }
   return captured_pattern_(resolved as CapturedPatternConfig);
 }
@@ -882,7 +926,7 @@ export function capturedPatternFrom(input: unknown): unknown {
 export function closureExpressionFrom(input: ClosureExpressionTree | ClosureExpression | ClosureExpressionFromInput): ClosureExpression;
 export function closureExpressionFrom(input: unknown): unknown;
 export function closureExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapClosureExpression(input as ClosureExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -910,25 +954,32 @@ export function closureExpressionFrom(input: unknown): unknown {
 export function closureParametersFrom(input: ClosureParametersTree | ClosureParameters | ClosureParametersFromInput): ClosureParameters;
 export function closureParametersFrom(input: unknown): unknown;
 export function closureParametersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapClosureParameters(input as ClosureParametersTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return closure_parameters_({
-      parameterOrPattern1: f?.['parameter_or_pattern1'],
-      parameterOrPattern2: f?.['parameter_or_pattern2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ClosureParametersConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['parameterOrPattern1'] !== undefined) {
-    resolved['parameterOrPattern1'] = _rmv6nku(obj['parameterOrPattern1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rmv6nku(obj['NEEDS_NAME_0']);
   }
-  if (obj['parameterOrPattern2'] !== undefined) {
-    const raw = obj['parameterOrPattern2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['parameterOrPattern2'] = arr.map((v: unknown) => _rmv6nku(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _rmv6nku(v));
+  }
+  if (obj.parameterOrPattern1 !== undefined) {
+    resolved.parameterOrPattern1 = _rmv6nku(obj.parameterOrPattern1);
+  }
+  if (obj.parameterOrPattern2 !== undefined) {
+    const arr = Array.isArray(obj.parameterOrPattern2) ? obj.parameterOrPattern2 : [obj.parameterOrPattern2];
+    resolved.parameterOrPattern2 = arr.map((v: unknown) => _rmv6nku(v));
   }
   return closure_parameters_(resolved as ClosureParametersConfig);
 }
@@ -936,7 +987,7 @@ export function closureParametersFrom(input: unknown): unknown {
 export function compoundAssignmentExprFrom(input: CompoundAssignmentExprTree | CompoundAssignmentExpr | CompoundAssignmentExprFromInput): CompoundAssignmentExpr;
 export function compoundAssignmentExprFrom(input: unknown): unknown;
 export function compoundAssignmentExprFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapCompoundAssignmentExpr(input as CompoundAssignmentExprTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -964,7 +1015,7 @@ export function compoundAssignmentExprFrom(input: unknown): unknown {
 export function constBlockFrom(input: ConstBlockTree | ConstBlock | ConstBlockFromInput): ConstBlock;
 export function constBlockFrom(input: unknown): unknown;
 export function constBlockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapConstBlock(input as ConstBlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -984,7 +1035,7 @@ export function constBlockFrom(input: unknown): unknown {
 export function constItemFrom(input: ConstItemTree | ConstItem | ConstItemFromInput): ConstItem;
 export function constItemFrom(input: unknown): unknown;
 export function constItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapConstItem(input as ConstItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1016,7 +1067,7 @@ export function constItemFrom(input: unknown): unknown {
 export function constParameterFrom(input: ConstParameterTree | ConstParameter | ConstParameterFromInput): ConstParameter;
 export function constParameterFrom(input: unknown): unknown;
 export function constParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapConstParameter(input as ConstParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1044,7 +1095,7 @@ export function constParameterFrom(input: unknown): unknown {
 export function continueExpressionFrom(input: ContinueExpressionTree | ContinueExpression | ContinueExpressionFromInput): ContinueExpression;
 export function continueExpressionFrom(input: unknown): unknown;
 export function continueExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapContinueExpression(input as ContinueExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1064,7 +1115,7 @@ export function continueExpressionFrom(input: unknown): unknown {
 export function declarationListFrom(input: DeclarationListTree | DeclarationList | DeclarationListFromInput): DeclarationList;
 export function declarationListFrom(input: unknown): unknown;
 export function declarationListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDeclarationList(input as DeclarationListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1085,7 +1136,7 @@ export function declarationListFrom(input: unknown): unknown {
 export function dynamicTypeFrom(input: DynamicTypeTree | DynamicType | DynamicTypeFromInput): DynamicType;
 export function dynamicTypeFrom(input: unknown): unknown;
 export function dynamicTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDynamicType(input as DynamicTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1105,7 +1156,7 @@ export function dynamicTypeFrom(input: unknown): unknown {
 export function elseClauseFrom(input: ElseClauseTree | ElseClause | ElseClauseFromInput): ElseClause;
 export function elseClauseFrom(input: unknown): unknown;
 export function elseClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapElseClause(input as ElseClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1125,7 +1176,7 @@ export function elseClauseFrom(input: unknown): unknown {
 export function enumItemFrom(input: EnumItemTree | EnumItem | EnumItemFromInput): EnumItem;
 export function enumItemFrom(input: unknown): unknown;
 export function enumItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapEnumItem(input as EnumItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1161,7 +1212,7 @@ export function enumItemFrom(input: unknown): unknown {
 export function enumVariantFrom(input: EnumVariantTree | EnumVariant | EnumVariantFromInput): EnumVariant;
 export function enumVariantFrom(input: unknown): unknown;
 export function enumVariantFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapEnumVariant(input as EnumVariantTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1193,31 +1244,42 @@ export function enumVariantFrom(input: unknown): unknown {
 export function enumVariantListFrom(input: EnumVariantListTree | EnumVariantList | EnumVariantListFromInput): EnumVariantList;
 export function enumVariantListFrom(input: unknown): unknown;
 export function enumVariantListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapEnumVariantList(input as EnumVariantListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return enum_variant_list_({
-      attributeItem: f?.['attribute_item'],
-      enumVariant: f?.['enum_variant'],
-      attributeItemOrEnumVariant: f?.['attribute_item_or_enum_variant'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as EnumVariantListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['attributeItem'] !== undefined) {
-    const raw = obj['attributeItem'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItem'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['enumVariant'] !== undefined) {
-    resolved['enumVariant'] = (isNodeData(obj['enumVariant']) ? obj['enumVariant'] : Array.isArray(obj['enumVariant']) ? enumVariantFrom(obj['enumVariant']) : typeof obj['enumVariant'] === 'object' ? enumVariantFrom(obj['enumVariant']) : obj['enumVariant']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? enumVariantFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? enumVariantFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
-  if (obj['attributeItemOrEnumVariant'] !== undefined) {
-    const raw = obj['attributeItemOrEnumVariant'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItemOrEnumVariant'] = arr.map((v: unknown) => _r18tu9jr(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _r18tu9jr(v));
+  }
+  if (obj.attributeItem !== undefined) {
+    const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
+    resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+  }
+  if (obj.enumVariant !== undefined) {
+    resolved.enumVariant = (isNodeData(obj.enumVariant) ? obj.enumVariant : Array.isArray(obj.enumVariant) ? enumVariantFrom(obj.enumVariant) : typeof obj.enumVariant === 'object' ? enumVariantFrom(obj.enumVariant) : obj.enumVariant);
+  }
+  if (obj.attributeItemOrEnumVariant !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrEnumVariant) ? obj.attributeItemOrEnumVariant : [obj.attributeItemOrEnumVariant];
+    resolved.attributeItemOrEnumVariant = arr.map((v: unknown) => _r18tu9jr(v));
   }
   return enum_variant_list_(resolved as EnumVariantListConfig);
 }
@@ -1225,7 +1287,7 @@ export function enumVariantListFrom(input: unknown): unknown {
 export function expressionStatementFrom(input: ExpressionStatementTree | ExpressionStatement | ExpressionStatementFromInput): ExpressionStatement;
 export function expressionStatementFrom(input: unknown): unknown;
 export function expressionStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapExpressionStatement(input as ExpressionStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1245,7 +1307,7 @@ export function expressionStatementFrom(input: unknown): unknown {
 export function externCrateDeclarationFrom(input: ExternCrateDeclarationTree | ExternCrateDeclaration | ExternCrateDeclarationFromInput): ExternCrateDeclaration;
 export function externCrateDeclarationFrom(input: unknown): unknown;
 export function externCrateDeclarationFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapExternCrateDeclaration(input as ExternCrateDeclarationTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1277,7 +1339,7 @@ export function externCrateDeclarationFrom(input: unknown): unknown {
 export function externModifierFrom(input: ExternModifierTree | ExternModifier | ExternModifierFromInput): ExternModifier;
 export function externModifierFrom(input: unknown): unknown;
 export function externModifierFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapExternModifier(input as ExternModifierTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1297,7 +1359,7 @@ export function externModifierFrom(input: unknown): unknown {
 export function fieldDeclarationFrom(input: FieldDeclarationTree | FieldDeclaration | FieldDeclarationFromInput): FieldDeclaration;
 export function fieldDeclarationFrom(input: unknown): unknown;
 export function fieldDeclarationFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFieldDeclaration(input as FieldDeclarationTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1325,31 +1387,42 @@ export function fieldDeclarationFrom(input: unknown): unknown {
 export function fieldDeclarationListFrom(input: FieldDeclarationListTree | FieldDeclarationList | FieldDeclarationListFromInput): FieldDeclarationList;
 export function fieldDeclarationListFrom(input: unknown): unknown;
 export function fieldDeclarationListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFieldDeclarationList(input as FieldDeclarationListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return field_declaration_list_({
-      attributeItem: f?.['attribute_item'],
-      fieldDeclaration: f?.['field_declaration'],
-      attributeItemOrFieldDeclaration: f?.['attribute_item_or_field_declaration'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as FieldDeclarationListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['attributeItem'] !== undefined) {
-    const raw = obj['attributeItem'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItem'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['fieldDeclaration'] !== undefined) {
-    resolved['fieldDeclaration'] = (isNodeData(obj['fieldDeclaration']) ? obj['fieldDeclaration'] : Array.isArray(obj['fieldDeclaration']) ? fieldDeclarationFrom(obj['fieldDeclaration']) : typeof obj['fieldDeclaration'] === 'object' ? fieldDeclarationFrom(obj['fieldDeclaration']) : obj['fieldDeclaration']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? fieldDeclarationFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? fieldDeclarationFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
-  if (obj['attributeItemOrFieldDeclaration'] !== undefined) {
-    const raw = obj['attributeItemOrFieldDeclaration'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItemOrFieldDeclaration'] = arr.map((v: unknown) => _r1wxvtav(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _r1wxvtav(v));
+  }
+  if (obj.attributeItem !== undefined) {
+    const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
+    resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+  }
+  if (obj.fieldDeclaration !== undefined) {
+    resolved.fieldDeclaration = (isNodeData(obj.fieldDeclaration) ? obj.fieldDeclaration : Array.isArray(obj.fieldDeclaration) ? fieldDeclarationFrom(obj.fieldDeclaration) : typeof obj.fieldDeclaration === 'object' ? fieldDeclarationFrom(obj.fieldDeclaration) : obj.fieldDeclaration);
+  }
+  if (obj.attributeItemOrFieldDeclaration !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrFieldDeclaration) ? obj.attributeItemOrFieldDeclaration : [obj.attributeItemOrFieldDeclaration];
+    resolved.attributeItemOrFieldDeclaration = arr.map((v: unknown) => _r1wxvtav(v));
   }
   return field_declaration_list_(resolved as FieldDeclarationListConfig);
 }
@@ -1357,7 +1430,7 @@ export function fieldDeclarationListFrom(input: unknown): unknown {
 export function fieldExpressionFrom(input: FieldExpressionTree | FieldExpression | FieldExpressionFromInput): FieldExpression;
 export function fieldExpressionFrom(input: unknown): unknown;
 export function fieldExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFieldExpression(input as FieldExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1381,7 +1454,7 @@ export function fieldExpressionFrom(input: unknown): unknown {
 export function fieldInitializerFrom(input: FieldInitializerTree | FieldInitializer | FieldInitializerFromInput): FieldInitializer;
 export function fieldInitializerFrom(input: unknown): unknown;
 export function fieldInitializerFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFieldInitializer(input as FieldInitializerTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1410,25 +1483,32 @@ export function fieldInitializerFrom(input: unknown): unknown {
 export function fieldInitializerListFrom(input: FieldInitializerListTree | FieldInitializerList | FieldInitializerListFromInput): FieldInitializerList;
 export function fieldInitializerListFrom(input: unknown): unknown;
 export function fieldInitializerListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFieldInitializerList(input as FieldInitializerListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return field_initializer_list_({
-      children1: f?.['children1'],
-      children2: f?.['children2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as FieldInitializerListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['children1'] !== undefined) {
-    resolved['children1'] = _rc94c35(obj['children1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rc94c35(obj['NEEDS_NAME_0']);
   }
-  if (obj['children2'] !== undefined) {
-    const raw = obj['children2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['children2'] = arr.map((v: unknown) => _rc94c35(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _rc94c35(v));
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _rc94c35(obj.children1);
+  }
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _rc94c35(v));
   }
   return field_initializer_list_(resolved as FieldInitializerListConfig);
 }
@@ -1436,7 +1516,7 @@ export function fieldInitializerListFrom(input: unknown): unknown {
 export function fieldPatternFrom(input: FieldPatternTree | FieldPattern | FieldPatternFromInput): FieldPattern;
 export function fieldPatternFrom(input: unknown): unknown;
 export function fieldPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFieldPattern(input as FieldPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1464,7 +1544,7 @@ export function fieldPatternFrom(input: unknown): unknown {
 export function forExpressionFrom(input: ForExpressionTree | ForExpression | ForExpressionFromInput): ForExpression;
 export function forExpressionFrom(input: unknown): unknown;
 export function forExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapForExpression(input as ForExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1496,25 +1576,32 @@ export function forExpressionFrom(input: unknown): unknown {
 export function forLifetimesFrom(input: ForLifetimesTree | ForLifetimes | ForLifetimesFromInput): ForLifetimes;
 export function forLifetimesFrom(input: unknown): unknown;
 export function forLifetimesFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapForLifetimes(input as ForLifetimesTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return for_lifetimes_({
-      lifetime1: f?.['lifetime1'],
-      lifetime2: f?.['lifetime2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ForLifetimesConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['lifetime1'] !== undefined) {
-    resolved['lifetime1'] = (isNodeData(obj['lifetime1']) ? obj['lifetime1'] : Array.isArray(obj['lifetime1']) ? lifetimeFrom(obj['lifetime1']) : typeof obj['lifetime1'] === 'object' ? lifetimeFrom(obj['lifetime1']) : obj['lifetime1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? lifetimeFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? lifetimeFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['lifetime2'] !== undefined) {
-    const raw = obj['lifetime2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['lifetime2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? lifetimeFrom(v) : typeof v === 'object' ? lifetimeFrom(v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? lifetimeFrom(v) : typeof v === 'object' ? lifetimeFrom(v) : v));
+  }
+  if (obj.lifetime1 !== undefined) {
+    resolved.lifetime1 = (isNodeData(obj.lifetime1) ? obj.lifetime1 : Array.isArray(obj.lifetime1) ? lifetimeFrom(obj.lifetime1) : typeof obj.lifetime1 === 'object' ? lifetimeFrom(obj.lifetime1) : obj.lifetime1);
+  }
+  if (obj.lifetime2 !== undefined) {
+    const arr = Array.isArray(obj.lifetime2) ? obj.lifetime2 : [obj.lifetime2];
+    resolved.lifetime2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? lifetimeFrom(v) : typeof v === 'object' ? lifetimeFrom(v) : v));
   }
   return for_lifetimes_(resolved as ForLifetimesConfig);
 }
@@ -1522,7 +1609,7 @@ export function forLifetimesFrom(input: unknown): unknown {
 export function foreignModItemFrom(input: ForeignModItemTree | ForeignModItem | ForeignModItemFromInput): ForeignModItem;
 export function foreignModItemFrom(input: unknown): unknown;
 export function foreignModItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapForeignModItem(input as ForeignModItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1550,7 +1637,7 @@ export function foreignModItemFrom(input: unknown): unknown {
 export function functionItemFrom(input: FunctionItemTree | FunctionItem | FunctionItemFromInput): FunctionItem;
 export function functionItemFrom(input: unknown): unknown;
 export function functionItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFunctionItem(input as FunctionItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1598,7 +1685,7 @@ export function functionItemFrom(input: unknown): unknown {
 export function functionModifiersFrom(input: FunctionModifiersTree | FunctionModifiers | FunctionModifiersFromInput): FunctionModifiers;
 export function functionModifiersFrom(input: unknown): unknown;
 export function functionModifiersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFunctionModifiers(input as FunctionModifiersTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1619,7 +1706,7 @@ export function functionModifiersFrom(input: unknown): unknown {
 export function functionSignatureItemFrom(input: FunctionSignatureItemTree | FunctionSignatureItem | FunctionSignatureItemFromInput): FunctionSignatureItem;
 export function functionSignatureItemFrom(input: unknown): unknown;
 export function functionSignatureItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFunctionSignatureItem(input as FunctionSignatureItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1663,7 +1750,7 @@ export function functionSignatureItemFrom(input: unknown): unknown {
 export function functionTypeFrom(input: FunctionTypeTree | FunctionType | FunctionTypeFromInput): FunctionType;
 export function functionTypeFrom(input: unknown): unknown;
 export function functionTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFunctionType(input as FunctionTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1699,7 +1786,7 @@ export function functionTypeFrom(input: unknown): unknown {
 export function genBlockFrom(input: GenBlockTree | GenBlock | GenBlockFromInput): GenBlock;
 export function genBlockFrom(input: unknown): unknown;
 export function genBlockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGenBlock(input as GenBlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1719,7 +1806,7 @@ export function genBlockFrom(input: unknown): unknown {
 export function genericFunctionFrom(input: GenericFunctionTree | GenericFunction | GenericFunctionFromInput): GenericFunction;
 export function genericFunctionFrom(input: unknown): unknown;
 export function genericFunctionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGenericFunction(input as GenericFunctionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1743,7 +1830,7 @@ export function genericFunctionFrom(input: unknown): unknown {
 export function genericPatternFrom(input: GenericPatternTree | GenericPattern | GenericPatternFromInput): GenericPattern;
 export function genericPatternFrom(input: unknown): unknown;
 export function genericPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGenericPattern(input as GenericPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1767,7 +1854,7 @@ export function genericPatternFrom(input: unknown): unknown {
 export function genericTypeFrom(input: GenericTypeTree | GenericType | GenericTypeFromInput): GenericType;
 export function genericTypeFrom(input: unknown): unknown;
 export function genericTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGenericType(input as GenericTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1791,7 +1878,7 @@ export function genericTypeFrom(input: unknown): unknown {
 export function genericTypeWithTurbofishFrom(input: GenericTypeWithTurbofishTree | GenericTypeWithTurbofish | GenericTypeWithTurbofishFromInput): GenericTypeWithTurbofish;
 export function genericTypeWithTurbofishFrom(input: unknown): unknown;
 export function genericTypeWithTurbofishFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGenericTypeWithTurbofish(input as GenericTypeWithTurbofishTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1815,7 +1902,7 @@ export function genericTypeWithTurbofishFrom(input: unknown): unknown {
 export function higherRankedTraitBoundFrom(input: HigherRankedTraitBoundTree | HigherRankedTraitBound | HigherRankedTraitBoundFromInput): HigherRankedTraitBound;
 export function higherRankedTraitBoundFrom(input: unknown): unknown;
 export function higherRankedTraitBoundFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapHigherRankedTraitBound(input as HigherRankedTraitBoundTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1839,7 +1926,7 @@ export function higherRankedTraitBoundFrom(input: unknown): unknown {
 export function ifExpressionFrom(input: IfExpressionTree | IfExpression | IfExpressionFromInput): IfExpression;
 export function ifExpressionFrom(input: unknown): unknown;
 export function ifExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapIfExpression(input as IfExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1867,7 +1954,7 @@ export function ifExpressionFrom(input: unknown): unknown {
 export function implItemFrom(input: ImplItemTree | ImplItem | ImplItemFromInput): ImplItem;
 export function implItemFrom(input: unknown): unknown;
 export function implItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapImplItem(input as ImplItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1903,7 +1990,7 @@ export function implItemFrom(input: unknown): unknown {
 export function indexExpressionFrom(input: IndexExpressionTree | IndexExpression | IndexExpressionFromInput): IndexExpression;
 export function indexExpressionFrom(input: unknown): unknown;
 export function indexExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapIndexExpression(input as IndexExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1934,7 +2021,7 @@ export function indexExpressionFrom(input: unknown): unknown {
 export function innerAttributeItemFrom(input: InnerAttributeItemTree | InnerAttributeItem | InnerAttributeItemFromInput): InnerAttributeItem;
 export function innerAttributeItemFrom(input: unknown): unknown;
 export function innerAttributeItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapInnerAttributeItem(input as InnerAttributeItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1954,7 +2041,7 @@ export function innerAttributeItemFrom(input: unknown): unknown {
 export function labelFrom(input: LabelTree | Label | LabelFromInput): Label;
 export function labelFrom(input: unknown): unknown;
 export function labelFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLabel(input as LabelTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1974,21 +2061,17 @@ export function labelFrom(input: unknown): unknown {
 export function letChainFrom(input: LetChainTree | LetChain | LetChainFromInput): LetChain;
 export function letChainFrom(input: unknown): unknown;
 export function letChainFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLetChain(input as LetChainTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return let_chain_({
-      conditions: f?.['conditions'],
       children: c,
     } as unknown as LetChainConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['conditions'] !== undefined) {
-    resolved['conditions'] = _ry62g3e(obj['conditions']);
-  }
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _ry62g3e(v));
@@ -2001,7 +2084,7 @@ export function letChainFrom(input: unknown): unknown {
 export function letConditionFrom(input: LetConditionTree | LetCondition | LetConditionFromInput): LetCondition;
 export function letConditionFrom(input: unknown): unknown;
 export function letConditionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLetCondition(input as LetConditionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2025,7 +2108,7 @@ export function letConditionFrom(input: unknown): unknown {
 export function letDeclarationFrom(input: LetDeclarationTree | LetDeclaration | LetDeclarationFromInput): LetDeclaration;
 export function letDeclarationFrom(input: unknown): unknown;
 export function letDeclarationFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLetDeclaration(input as LetDeclarationTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2061,7 +2144,7 @@ export function letDeclarationFrom(input: unknown): unknown {
 export function lifetimeFrom(input: LifetimeTree | Lifetime | LifetimeFromInput): Lifetime;
 export function lifetimeFrom(input: unknown): unknown;
 export function lifetimeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLifetime(input as LifetimeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2081,7 +2164,7 @@ export function lifetimeFrom(input: unknown): unknown {
 export function lifetimeParameterFrom(input: LifetimeParameterTree | LifetimeParameter | LifetimeParameterFromInput): LifetimeParameter;
 export function lifetimeParameterFrom(input: unknown): unknown;
 export function lifetimeParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLifetimeParameter(input as LifetimeParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2105,7 +2188,7 @@ export function lifetimeParameterFrom(input: unknown): unknown {
 export function lineCommentFrom(input: LineCommentTree | LineComment | LineCommentFromInput): LineComment;
 export function lineCommentFrom(input: unknown): unknown;
 export function lineCommentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLineComment(input as LineCommentTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2133,7 +2216,7 @@ export function lineCommentFrom(input: unknown): unknown {
 export function loopExpressionFrom(input: LoopExpressionTree | LoopExpression | LoopExpressionFromInput): LoopExpression;
 export function loopExpressionFrom(input: unknown): unknown;
 export function loopExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLoopExpression(input as LoopExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2157,15 +2240,15 @@ export function loopExpressionFrom(input: unknown): unknown {
 export function macroDefinitionFrom(input: MacroDefinitionTree | MacroDefinition | MacroDefinitionFromInput): MacroDefinition;
 export function macroDefinitionFrom(input: unknown): unknown;
 export function macroDefinitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMacroDefinition(input as MacroDefinitionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return macro_definition_({
       name: f?.['name'],
-      macroRule1: f?.['macro_rule1'],
-      macroRule2: f?.['macro_rule2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as MacroDefinitionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2173,13 +2256,20 @@ export function macroDefinitionFrom(input: unknown): unknown {
   if (obj['name'] !== undefined) {
     resolved['name'] = (isNodeData(obj['name']) ? obj['name'] : typeof obj['name'] === 'string' || typeof obj['name'] === 'number' || typeof obj['name'] === 'boolean' ? identifier_(''+obj['name']) : obj['name']);
   }
-  if (obj['macroRule1'] !== undefined) {
-    const raw = obj['macroRule1'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['macroRule1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? macroRuleFrom(v) : typeof v === 'object' ? macroRuleFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? macroRuleFrom(v) : typeof v === 'object' ? macroRuleFrom(v) : v));
   }
-  if (obj['macroRule2'] !== undefined) {
-    resolved['macroRule2'] = (isNodeData(obj['macroRule2']) ? obj['macroRule2'] : Array.isArray(obj['macroRule2']) ? macroRuleFrom(obj['macroRule2']) : typeof obj['macroRule2'] === 'object' ? macroRuleFrom(obj['macroRule2']) : obj['macroRule2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? macroRuleFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? macroRuleFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  }
+  if (obj.macroRule1 !== undefined) {
+    const arr = Array.isArray(obj.macroRule1) ? obj.macroRule1 : [obj.macroRule1];
+    resolved.macroRule1 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? macroRuleFrom(v) : typeof v === 'object' ? macroRuleFrom(v) : v));
+  }
+  if (obj.macroRule2 !== undefined) {
+    resolved.macroRule2 = (isNodeData(obj.macroRule2) ? obj.macroRule2 : Array.isArray(obj.macroRule2) ? macroRuleFrom(obj.macroRule2) : typeof obj.macroRule2 === 'object' ? macroRuleFrom(obj.macroRule2) : obj.macroRule2);
   }
   return macro_definition_(resolved as MacroDefinitionConfig);
 }
@@ -2187,7 +2277,7 @@ export function macroDefinitionFrom(input: unknown): unknown {
 export function macroInvocationFrom(input: MacroInvocationTree | MacroInvocation | MacroInvocationFromInput): MacroInvocation;
 export function macroInvocationFrom(input: unknown): unknown;
 export function macroInvocationFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMacroInvocation(input as MacroInvocationTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2211,7 +2301,7 @@ export function macroInvocationFrom(input: unknown): unknown {
 export function macroRuleFrom(input: MacroRuleTree | MacroRule | MacroRuleFromInput): MacroRule;
 export function macroRuleFrom(input: unknown): unknown;
 export function macroRuleFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMacroRule(input as MacroRuleTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2235,7 +2325,7 @@ export function macroRuleFrom(input: unknown): unknown {
 export function matchArmFrom(input: MatchArmTree | MatchArm | MatchArmFromInput): MatchArm;
 export function matchArmFrom(input: unknown): unknown;
 export function matchArmFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMatchArm(input as MatchArmTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2264,25 +2354,32 @@ export function matchArmFrom(input: unknown): unknown {
 export function matchBlockFrom(input: MatchBlockTree | MatchBlock | MatchBlockFromInput): MatchBlock;
 export function matchBlockFrom(input: unknown): unknown;
 export function matchBlockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMatchBlock(input as MatchBlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return match_block_({
-      matchArm1: f?.['match_arm1'],
-      matchArm2: f?.['match_arm2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as MatchBlockConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['matchArm1'] !== undefined) {
-    const raw = obj['matchArm1'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['matchArm1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? matchArmFrom(v) : typeof v === 'object' ? matchArmFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? matchArmFrom(v) : typeof v === 'object' ? matchArmFrom(v) : v));
   }
-  if (obj['matchArm2'] !== undefined) {
-    resolved['matchArm2'] = (isNodeData(obj['matchArm2']) ? obj['matchArm2'] : Array.isArray(obj['matchArm2']) ? matchArmFrom(obj['matchArm2']) : typeof obj['matchArm2'] === 'object' ? matchArmFrom(obj['matchArm2']) : obj['matchArm2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? matchArmFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? matchArmFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  }
+  if (obj.matchArm1 !== undefined) {
+    const arr = Array.isArray(obj.matchArm1) ? obj.matchArm1 : [obj.matchArm1];
+    resolved.matchArm1 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? matchArmFrom(v) : typeof v === 'object' ? matchArmFrom(v) : v));
+  }
+  if (obj.matchArm2 !== undefined) {
+    resolved.matchArm2 = (isNodeData(obj.matchArm2) ? obj.matchArm2 : Array.isArray(obj.matchArm2) ? matchArmFrom(obj.matchArm2) : typeof obj.matchArm2 === 'object' ? matchArmFrom(obj.matchArm2) : obj.matchArm2);
   }
   return match_block_(resolved as MatchBlockConfig);
 }
@@ -2290,7 +2387,7 @@ export function matchBlockFrom(input: unknown): unknown {
 export function matchExpressionFrom(input: MatchExpressionTree | MatchExpression | MatchExpressionFromInput): MatchExpression;
 export function matchExpressionFrom(input: unknown): unknown;
 export function matchExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMatchExpression(input as MatchExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2314,7 +2411,7 @@ export function matchExpressionFrom(input: unknown): unknown {
 export function matchPatternFrom(input: MatchPatternTree | MatchPattern | MatchPatternFromInput): MatchPattern;
 export function matchPatternFrom(input: unknown): unknown;
 export function matchPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMatchPattern(input as MatchPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2338,7 +2435,7 @@ export function matchPatternFrom(input: unknown): unknown {
 export function modItemFrom(input: ModItemTree | ModItem | ModItemFromInput): ModItem;
 export function modItemFrom(input: unknown): unknown;
 export function modItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapModItem(input as ModItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2366,14 +2463,14 @@ export function modItemFrom(input: unknown): unknown {
 export function mutPatternFrom(input: MutPatternTree | MutPattern | MutPatternFromInput): MutPattern;
 export function mutPatternFrom(input: unknown): unknown;
 export function mutPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMutPattern(input as MutPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return mut_pattern_({
       mutableSpecifier: f?.['mutable_specifier'],
-      pattern: f?.['pattern'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as MutPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2381,8 +2478,11 @@ export function mutPatternFrom(input: unknown): unknown {
   if (obj['mutableSpecifier'] !== undefined) {
     resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
-  if (obj['pattern'] !== undefined) {
-    resolved['pattern'] = _resolvePattern(obj['pattern']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolvePattern(obj['NEEDS_NAME_1']);
+  }
+  if (obj.pattern !== undefined) {
+    resolved.pattern = _resolvePattern(obj.pattern);
   }
   return mut_pattern_(resolved as MutPatternConfig);
 }
@@ -2390,7 +2490,7 @@ export function mutPatternFrom(input: unknown): unknown {
 export function negativeLiteralFrom(input: NegativeLiteralTree | NegativeLiteral | NegativeLiteralFromInput): NegativeLiteral;
 export function negativeLiteralFrom(input: unknown): unknown;
 export function negativeLiteralFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapNegativeLiteral(input as NegativeLiteralTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2418,7 +2518,7 @@ export function negativeLiteralFrom(input: unknown): unknown {
 export function orPatternFrom(input: OrPatternTree | OrPattern | OrPatternFromInput): OrPattern;
 export function orPatternFrom(input: unknown): unknown;
 export function orPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapOrPattern(input as OrPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2453,16 +2553,16 @@ export function orPatternFrom(input: unknown): unknown {
 export function orderedFieldDeclarationListFrom(input: OrderedFieldDeclarationListTree | OrderedFieldDeclarationList | OrderedFieldDeclarationListFromInput): OrderedFieldDeclarationList;
 export function orderedFieldDeclarationListFrom(input: unknown): unknown;
 export function orderedFieldDeclarationListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapOrderedFieldDeclarationList(input as OrderedFieldDeclarationListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return ordered_field_declaration_list_({
       type: f?.['type'],
-      attributeItem: f?.['attribute_item'],
-      visibilityModifier: f?.['visibility_modifier'],
-      attributeItemOrVisibilityModifier: f?.['attribute_item_or_visibility_modifier'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as OrderedFieldDeclarationListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2472,18 +2572,29 @@ export function orderedFieldDeclarationListFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['type'] = arr.map((v: unknown) => _resolveType(v));
   }
-  if (obj['attributeItem'] !== undefined) {
-    const raw = obj['attributeItem'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItem'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['visibilityModifier'] !== undefined) {
-    resolved['visibilityModifier'] = (isNodeData(obj['visibilityModifier']) ? obj['visibilityModifier'] : Array.isArray(obj['visibilityModifier']) ? visibilityModifierFrom(obj['visibilityModifier']) : typeof obj['visibilityModifier'] === 'object' ? visibilityModifierFrom(obj['visibilityModifier']) : obj['visibilityModifier']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? visibilityModifierFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? visibilityModifierFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
-  if (obj['attributeItemOrVisibilityModifier'] !== undefined) {
-    const raw = obj['attributeItemOrVisibilityModifier'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItemOrVisibilityModifier'] = arr.map((v: unknown) => _r1lprop0(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _r1lprop0(v));
+  }
+  if (obj.attributeItem !== undefined) {
+    const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
+    resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+  }
+  if (obj.visibilityModifier !== undefined) {
+    resolved.visibilityModifier = (isNodeData(obj.visibilityModifier) ? obj.visibilityModifier : Array.isArray(obj.visibilityModifier) ? visibilityModifierFrom(obj.visibilityModifier) : typeof obj.visibilityModifier === 'object' ? visibilityModifierFrom(obj.visibilityModifier) : obj.visibilityModifier);
+  }
+  if (obj.attributeItemOrVisibilityModifier !== undefined) {
+    const arr = Array.isArray(obj.attributeItemOrVisibilityModifier) ? obj.attributeItemOrVisibilityModifier : [obj.attributeItemOrVisibilityModifier];
+    resolved.attributeItemOrVisibilityModifier = arr.map((v: unknown) => _r1lprop0(v));
   }
   return ordered_field_declaration_list_(resolved as OrderedFieldDeclarationListConfig);
 }
@@ -2491,7 +2602,7 @@ export function orderedFieldDeclarationListFrom(input: unknown): unknown {
 export function parameterFrom(input: ParameterTree | Parameter | ParameterFromInput): Parameter;
 export function parameterFrom(input: unknown): unknown;
 export function parameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapParameter(input as ParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2519,29 +2630,39 @@ export function parameterFrom(input: unknown): unknown {
 export function parametersFrom(input: ParametersTree | Parameters | ParametersFromInput): Parameters;
 export function parametersFrom(input: unknown): unknown;
 export function parametersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapParameters(input as ParametersTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return parameters_({
-      attributeItem: f?.['attribute_item'],
-      children2: f?.['children2'],
-      children3: f?.['children3'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as ParametersConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['attributeItem'] !== undefined) {
-    resolved['attributeItem'] = (isNodeData(obj['attributeItem']) ? obj['attributeItem'] : Array.isArray(obj['attributeItem']) ? attributeItemFrom(obj['attributeItem']) : typeof obj['attributeItem'] === 'object' ? attributeItemFrom(obj['attributeItem']) : obj['attributeItem']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? attributeItemFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? attributeItemFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['children2'] !== undefined) {
-    resolved['children2'] = _rh0gutj(obj['children2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rh0gutj(obj['NEEDS_NAME_1']);
   }
-  if (obj['children3'] !== undefined) {
-    const raw = obj['children3'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['children3'] = arr.map((v: unknown) => _ru3k3th(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _ru3k3th(v));
+  }
+  if (obj.attributeItem !== undefined) {
+    resolved.attributeItem = (isNodeData(obj.attributeItem) ? obj.attributeItem : Array.isArray(obj.attributeItem) ? attributeItemFrom(obj.attributeItem) : typeof obj.attributeItem === 'object' ? attributeItemFrom(obj.attributeItem) : obj.attributeItem);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rh0gutj(obj.children2);
+  }
+  if (obj.children3 !== undefined) {
+    const arr = Array.isArray(obj.children3) ? obj.children3 : [obj.children3];
+    resolved.children3 = arr.map((v: unknown) => _ru3k3th(v));
   }
   return parameters_(resolved as ParametersConfig);
 }
@@ -2549,7 +2670,7 @@ export function parametersFrom(input: unknown): unknown {
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionTree | ParenthesizedExpression | ParenthesizedExpressionFromInput): ParenthesizedExpression;
 export function parenthesizedExpressionFrom(input: unknown): unknown;
 export function parenthesizedExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapParenthesizedExpression(input as ParenthesizedExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2569,14 +2690,13 @@ export function parenthesizedExpressionFrom(input: unknown): unknown {
 export function pointerTypeFrom(input: PointerTypeTree | PointerType | PointerTypeFromInput): PointerType;
 export function pointerTypeFrom(input: unknown): unknown;
 export function pointerTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapPointerType(input as PointerTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return pointer_type_({
       type: f?.['type'],
-      mutableSpecifier: f?.['mutable_specifier'],
       children: c,
     } as unknown as PointerTypeConfig);
   }
@@ -2584,9 +2704,6 @@ export function pointerTypeFrom(input: unknown): unknown {
   const resolved: Record<string, unknown> = {};
   if (obj['type'] !== undefined) {
     resolved['type'] = _resolveType(obj['type']);
-  }
-  if (obj['mutableSpecifier'] !== undefined) {
-    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'mut' ? mutable_specifier_() : obj.children);
@@ -2597,7 +2714,7 @@ export function pointerTypeFrom(input: unknown): unknown {
 export function qualifiedTypeFrom(input: QualifiedTypeTree | QualifiedType | QualifiedTypeFromInput): QualifiedType;
 export function qualifiedTypeFrom(input: unknown): unknown;
 export function qualifiedTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapQualifiedType(input as QualifiedTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2621,7 +2738,7 @@ export function qualifiedTypeFrom(input: unknown): unknown {
 export function rangeExpressionFrom(input: RangeExpressionTree | RangeExpression | RangeExpressionFromInput): RangeExpression;
 export function rangeExpressionFrom(input: unknown): unknown;
 export function rangeExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapRangeExpression(input as RangeExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2654,7 +2771,7 @@ export function rangeExpressionFrom(input: unknown): unknown {
 export function rangePatternFrom(input: RangePatternTree | RangePattern | RangePatternFromInput): RangePattern;
 export function rangePatternFrom(input: unknown): unknown;
 export function rangePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapRangePattern(input as RangePatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2678,7 +2795,7 @@ export function rangePatternFrom(input: unknown): unknown {
 export function rawStringLiteralFrom(input: RawStringLiteralTree | RawStringLiteral | RawStringLiteralFromInput): RawStringLiteral;
 export function rawStringLiteralFrom(input: unknown): unknown;
 export function rawStringLiteralFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapRawStringLiteral(input as RawStringLiteralTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2698,7 +2815,7 @@ export function rawStringLiteralFrom(input: unknown): unknown {
 export function refPatternFrom(input: RefPatternTree | RefPattern | RefPatternFromInput): RefPattern;
 export function refPatternFrom(input: unknown): unknown;
 export function refPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapRefPattern(input as RefPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2718,14 +2835,13 @@ export function refPatternFrom(input: unknown): unknown {
 export function referenceExpressionFrom(input: ReferenceExpressionTree | ReferenceExpression | ReferenceExpressionFromInput): ReferenceExpression;
 export function referenceExpressionFrom(input: unknown): unknown;
 export function referenceExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapReferenceExpression(input as ReferenceExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return reference_expression_({
       value: f?.['value'],
-      mutableSpecifier: f?.['mutable_specifier'],
       children: c,
     } as unknown as ReferenceExpressionConfig);
   }
@@ -2733,9 +2849,6 @@ export function referenceExpressionFrom(input: unknown): unknown {
   const resolved: Record<string, unknown> = {};
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
-  }
-  if (obj['mutableSpecifier'] !== undefined) {
-    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   if (obj.children !== undefined) {
     resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'mut' ? mutable_specifier_() : obj.children);
@@ -2746,14 +2859,14 @@ export function referenceExpressionFrom(input: unknown): unknown {
 export function referencePatternFrom(input: ReferencePatternTree | ReferencePattern | ReferencePatternFromInput): ReferencePattern;
 export function referencePatternFrom(input: unknown): unknown;
 export function referencePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapReferencePattern(input as ReferencePatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return reference_pattern_({
       mutableSpecifier: f?.['mutable_specifier'],
-      pattern: f?.['pattern'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ReferencePatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2761,8 +2874,11 @@ export function referencePatternFrom(input: unknown): unknown {
   if (obj['mutableSpecifier'] !== undefined) {
     resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
-  if (obj['pattern'] !== undefined) {
-    resolved['pattern'] = _resolvePattern(obj['pattern']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolvePattern(obj['NEEDS_NAME_1']);
+  }
+  if (obj.pattern !== undefined) {
+    resolved.pattern = _resolvePattern(obj.pattern);
   }
   return reference_pattern_(resolved as ReferencePatternConfig);
 }
@@ -2770,7 +2886,7 @@ export function referencePatternFrom(input: unknown): unknown {
 export function referenceTypeFrom(input: ReferenceTypeTree | ReferenceType | ReferenceTypeFromInput): ReferenceType;
 export function referenceTypeFrom(input: unknown): unknown;
 export function referenceTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapReferenceType(input as ReferenceTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2798,7 +2914,7 @@ export function referenceTypeFrom(input: unknown): unknown {
 export function removedTraitBoundFrom(input: RemovedTraitBoundTree | RemovedTraitBound | RemovedTraitBoundFromInput): RemovedTraitBound;
 export function removedTraitBoundFrom(input: unknown): unknown;
 export function removedTraitBoundFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapRemovedTraitBound(input as RemovedTraitBoundTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2818,21 +2934,17 @@ export function removedTraitBoundFrom(input: unknown): unknown {
 export function returnExpressionFrom(input: ReturnExpressionTree | ReturnExpression | ReturnExpressionFromInput): ReturnExpression;
 export function returnExpressionFrom(input: unknown): unknown;
 export function returnExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapReturnExpression(input as ReturnExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return return_expression_({
-      value: f?.['value'],
       children: c,
     } as unknown as ReturnExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['value'] !== undefined) {
-    resolved['value'] = _resolveExpression(obj['value']);
-  }
   if (obj.children !== undefined) {
     resolved.children = _resolveExpression(obj.children);
   }
@@ -2842,7 +2954,7 @@ export function returnExpressionFrom(input: unknown): unknown {
 export function scopedIdentifierFrom(input: ScopedIdentifierTree | ScopedIdentifier | ScopedIdentifierFromInput): ScopedIdentifier;
 export function scopedIdentifierFrom(input: unknown): unknown;
 export function scopedIdentifierFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapScopedIdentifier(input as ScopedIdentifierTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2866,7 +2978,7 @@ export function scopedIdentifierFrom(input: unknown): unknown {
 export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifierTree | ScopedTypeIdentifier | ScopedTypeIdentifierFromInput): ScopedTypeIdentifier;
 export function scopedTypeIdentifierFrom(input: unknown): unknown;
 export function scopedTypeIdentifierFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapScopedTypeIdentifier(input as ScopedTypeIdentifierTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2890,7 +3002,7 @@ export function scopedTypeIdentifierFrom(input: unknown): unknown {
 export function scopedUseListFrom(input: ScopedUseListTree | ScopedUseList | ScopedUseListFromInput): ScopedUseList;
 export function scopedUseListFrom(input: unknown): unknown;
 export function scopedUseListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapScopedUseList(input as ScopedUseListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2914,7 +3026,7 @@ export function scopedUseListFrom(input: unknown): unknown {
 export function selfParameterFrom(input: SelfParameterTree | SelfParameter | SelfParameterFromInput): SelfParameter;
 export function selfParameterFrom(input: unknown): unknown;
 export function selfParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSelfParameter(input as SelfParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2942,7 +3054,7 @@ export function selfParameterFrom(input: unknown): unknown {
 export function shorthandFieldInitializerFrom(input: ShorthandFieldInitializerTree | ShorthandFieldInitializer | ShorthandFieldInitializerFromInput): ShorthandFieldInitializer;
 export function shorthandFieldInitializerFrom(input: unknown): unknown;
 export function shorthandFieldInitializerFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapShorthandFieldInitializer(input as ShorthandFieldInitializerTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2968,7 +3080,7 @@ export function shorthandFieldInitializerFrom(input: unknown): unknown {
 export function slicePatternFrom(input: SlicePatternTree | SlicePattern | SlicePatternFromInput): SlicePattern;
 export function slicePatternFrom(input: unknown): unknown;
 export function slicePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSlicePattern(input as SlicePatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2989,14 +3101,14 @@ export function slicePatternFrom(input: unknown): unknown {
 export function sourceFileFrom(input: SourceFileTree | SourceFile | SourceFileFromInput): SourceFile;
 export function sourceFileFrom(input: unknown): unknown;
 export function sourceFileFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSourceFile(input as SourceFileTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return source_file_({
       shebang: f?.['shebang'],
-      children2: f?.['children2'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as SourceFileConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3004,10 +3116,14 @@ export function sourceFileFrom(input: unknown): unknown {
   if (obj['shebang'] !== undefined) {
     resolved['shebang'] = (isNodeData(obj['shebang']) ? obj['shebang'] : typeof obj['shebang'] === 'string' || typeof obj['shebang'] === 'number' || typeof obj['shebang'] === 'boolean' ? shebang_(''+obj['shebang']) : obj['shebang']);
   }
-  if (obj['children2'] !== undefined) {
-    const raw = obj['children2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['children2'] = arr.map((v: unknown) => _r149dosd(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r149dosd(v));
+  }
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _r149dosd(v));
   }
   return source_file_(resolved as SourceFileConfig);
 }
@@ -3015,7 +3131,7 @@ export function sourceFileFrom(input: unknown): unknown {
 export function staticItemFrom(input: StaticItemTree | StaticItem | StaticItemFromInput): StaticItem;
 export function staticItemFrom(input: unknown): unknown;
 export function staticItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapStaticItem(input as StaticItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3051,7 +3167,7 @@ export function staticItemFrom(input: unknown): unknown {
 export function stringLiteralFrom(input: StringLiteralTree | StringLiteral | StringLiteralFromInput): StringLiteral;
 export function stringLiteralFrom(input: unknown): unknown;
 export function stringLiteralFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapStringLiteral(input as StringLiteralTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3072,7 +3188,7 @@ export function stringLiteralFrom(input: unknown): unknown {
 export function structExpressionFrom(input: StructExpressionTree | StructExpression | StructExpressionFromInput): StructExpression;
 export function structExpressionFrom(input: unknown): unknown;
 export function structExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapStructExpression(input as StructExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3096,7 +3212,7 @@ export function structExpressionFrom(input: unknown): unknown {
 export function structItemFrom(input: StructItemTree | StructItem | StructItemFromInput): StructItem;
 export function structItemFrom(input: unknown): unknown;
 export function structItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapStructItem(input as StructItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3132,15 +3248,15 @@ export function structItemFrom(input: unknown): unknown {
 export function structPatternFrom(input: StructPatternTree | StructPattern | StructPatternFromInput): StructPattern;
 export function structPatternFrom(input: unknown): unknown;
 export function structPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapStructPattern(input as StructPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return struct_pattern_({
       type: f?.['type'],
-      fieldPatternOrRemainingFieldPattern1: f?.['field_pattern_or_remaining_field_pattern1'],
-      fieldPatternOrRemainingFieldPattern2: f?.['field_pattern_or_remaining_field_pattern2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as StructPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3148,13 +3264,20 @@ export function structPatternFrom(input: unknown): unknown {
   if (obj['type'] !== undefined) {
     resolved['type'] = _r1fuyx5x(obj['type']);
   }
-  if (obj['fieldPatternOrRemainingFieldPattern1'] !== undefined) {
-    resolved['fieldPatternOrRemainingFieldPattern1'] = _r1vr38sb(obj['fieldPatternOrRemainingFieldPattern1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1vr38sb(obj['NEEDS_NAME_0']);
   }
-  if (obj['fieldPatternOrRemainingFieldPattern2'] !== undefined) {
-    const raw = obj['fieldPatternOrRemainingFieldPattern2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['fieldPatternOrRemainingFieldPattern2'] = arr.map((v: unknown) => _r1vr38sb(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1vr38sb(v));
+  }
+  if (obj.fieldPatternOrRemainingFieldPattern1 !== undefined) {
+    resolved.fieldPatternOrRemainingFieldPattern1 = _r1vr38sb(obj.fieldPatternOrRemainingFieldPattern1);
+  }
+  if (obj.fieldPatternOrRemainingFieldPattern2 !== undefined) {
+    const arr = Array.isArray(obj.fieldPatternOrRemainingFieldPattern2) ? obj.fieldPatternOrRemainingFieldPattern2 : [obj.fieldPatternOrRemainingFieldPattern2];
+    resolved.fieldPatternOrRemainingFieldPattern2 = arr.map((v: unknown) => _r1vr38sb(v));
   }
   return struct_pattern_(resolved as StructPatternConfig);
 }
@@ -3162,7 +3285,7 @@ export function structPatternFrom(input: unknown): unknown {
 export function tokenBindingPatternFrom(input: TokenBindingPatternTree | TokenBindingPattern | TokenBindingPatternFromInput): TokenBindingPattern;
 export function tokenBindingPatternFrom(input: unknown): unknown;
 export function tokenBindingPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTokenBindingPattern(input as TokenBindingPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3186,7 +3309,7 @@ export function tokenBindingPatternFrom(input: unknown): unknown {
 export function tokenRepetitionFrom(input: TokenRepetitionTree | TokenRepetition | TokenRepetitionFromInput): TokenRepetition;
 export function tokenRepetitionFrom(input: unknown): unknown;
 export function tokenRepetitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTokenRepetition(input as TokenRepetitionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3207,7 +3330,7 @@ export function tokenRepetitionFrom(input: unknown): unknown {
 export function tokenRepetitionPatternFrom(input: TokenRepetitionPatternTree | TokenRepetitionPattern | TokenRepetitionPatternFromInput): TokenRepetitionPattern;
 export function tokenRepetitionPatternFrom(input: unknown): unknown;
 export function tokenRepetitionPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTokenRepetitionPattern(input as TokenRepetitionPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3228,7 +3351,7 @@ export function tokenRepetitionPatternFrom(input: unknown): unknown {
 export function tokenTreeFrom(input: TokenTreeTree | TokenTree | TokenTreeFromInput): TokenTree;
 export function tokenTreeFrom(input: unknown): unknown;
 export function tokenTreeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTokenTree(input as TokenTreeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3249,7 +3372,7 @@ export function tokenTreeFrom(input: unknown): unknown {
 export function tokenTreePatternFrom(input: TokenTreePatternTree | TokenTreePattern | TokenTreePatternFromInput): TokenTreePattern;
 export function tokenTreePatternFrom(input: unknown): unknown;
 export function tokenTreePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTokenTreePattern(input as TokenTreePatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3270,25 +3393,32 @@ export function tokenTreePatternFrom(input: unknown): unknown {
 export function traitBoundsFrom(input: TraitBoundsTree | TraitBounds | TraitBoundsFromInput): TraitBounds;
 export function traitBoundsFrom(input: unknown): unknown;
 export function traitBoundsFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTraitBounds(input as TraitBoundsTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return trait_bounds_({
-      higherRankedTraitBoundOrLifetimeOrType1: f?.['higher_ranked_trait_bound_or_lifetime_or_type1'],
-      higherRankedTraitBoundOrLifetimeOrType2: f?.['higher_ranked_trait_bound_or_lifetime_or_type2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as TraitBoundsConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['higherRankedTraitBoundOrLifetimeOrType1'] !== undefined) {
-    resolved['higherRankedTraitBoundOrLifetimeOrType1'] = _r1nr92n5(obj['higherRankedTraitBoundOrLifetimeOrType1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1nr92n5(obj['NEEDS_NAME_0']);
   }
-  if (obj['higherRankedTraitBoundOrLifetimeOrType2'] !== undefined) {
-    const raw = obj['higherRankedTraitBoundOrLifetimeOrType2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['higherRankedTraitBoundOrLifetimeOrType2'] = arr.map((v: unknown) => _r1nr92n5(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1nr92n5(v));
+  }
+  if (obj.higherRankedTraitBoundOrLifetimeOrType1 !== undefined) {
+    resolved.higherRankedTraitBoundOrLifetimeOrType1 = _r1nr92n5(obj.higherRankedTraitBoundOrLifetimeOrType1);
+  }
+  if (obj.higherRankedTraitBoundOrLifetimeOrType2 !== undefined) {
+    const arr = Array.isArray(obj.higherRankedTraitBoundOrLifetimeOrType2) ? obj.higherRankedTraitBoundOrLifetimeOrType2 : [obj.higherRankedTraitBoundOrLifetimeOrType2];
+    resolved.higherRankedTraitBoundOrLifetimeOrType2 = arr.map((v: unknown) => _r1nr92n5(v));
   }
   return trait_bounds_(resolved as TraitBoundsConfig);
 }
@@ -3296,7 +3426,7 @@ export function traitBoundsFrom(input: unknown): unknown {
 export function traitItemFrom(input: TraitItemTree | TraitItem | TraitItemFromInput): TraitItem;
 export function traitItemFrom(input: unknown): unknown;
 export function traitItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTraitItem(input as TraitItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3336,7 +3466,7 @@ export function traitItemFrom(input: unknown): unknown {
 export function tryBlockFrom(input: TryBlockTree | TryBlock | TryBlockFromInput): TryBlock;
 export function tryBlockFrom(input: unknown): unknown;
 export function tryBlockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTryBlock(input as TryBlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3356,7 +3486,7 @@ export function tryBlockFrom(input: unknown): unknown {
 export function tryExpressionFrom(input: TryExpressionTree | TryExpression | TryExpressionFromInput): TryExpression;
 export function tryExpressionFrom(input: unknown): unknown;
 export function tryExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTryExpression(input as TryExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3384,16 +3514,16 @@ export function tryExpressionFrom(input: unknown): unknown {
 export function tupleExpressionFrom(input: TupleExpressionTree | TupleExpression | TupleExpressionFromInput): TupleExpression;
 export function tupleExpressionFrom(input: unknown): unknown;
 export function tupleExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTupleExpression(input as TupleExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return tuple_expression_({
       attributeItem: f?.['attribute_item'],
-      expression1: f?.['expression1'],
-      expression2: f?.['expression2'],
-      expression3: f?.['expression3'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      NEEDS_NAME_3: f?.['NEEDS_NAME_3'],
     } as unknown as TupleExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3403,16 +3533,26 @@ export function tupleExpressionFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['attributeItem'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['expression1'] !== undefined) {
-    resolved['expression1'] = _resolveExpression(obj['expression1']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
   }
-  if (obj['expression2'] !== undefined) {
-    const raw = obj['expression2'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['expression2'] = arr.map((v: unknown) => _resolveExpression(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _resolveExpression(v));
   }
-  if (obj['expression3'] !== undefined) {
-    resolved['expression3'] = _resolveExpression(obj['expression3']);
+  if (obj['NEEDS_NAME_3'] !== undefined) {
+    resolved['NEEDS_NAME_3'] = _resolveExpression(obj['NEEDS_NAME_3']);
+  }
+  if (obj.expression1 !== undefined) {
+    resolved.expression1 = _resolveExpression(obj.expression1);
+  }
+  if (obj.expression2 !== undefined) {
+    const arr = Array.isArray(obj.expression2) ? obj.expression2 : [obj.expression2];
+    resolved.expression2 = arr.map((v: unknown) => _resolveExpression(v));
+  }
+  if (obj.expression3 !== undefined) {
+    resolved.expression3 = _resolveExpression(obj.expression3);
   }
   return tuple_expression_(resolved as TupleExpressionConfig);
 }
@@ -3420,25 +3560,32 @@ export function tupleExpressionFrom(input: unknown): unknown {
 export function tuplePatternFrom(input: TuplePatternTree | TuplePattern | TuplePatternFromInput): TuplePattern;
 export function tuplePatternFrom(input: unknown): unknown;
 export function tuplePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTuplePattern(input as TuplePatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return tuple_pattern_({
-      closureExpressionOrPattern1: f?.['closure_expression_or_pattern1'],
-      closureExpressionOrPattern2: f?.['closure_expression_or_pattern2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as TuplePatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['closureExpressionOrPattern1'] !== undefined) {
-    resolved['closureExpressionOrPattern1'] = _r95jlc9(obj['closureExpressionOrPattern1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r95jlc9(obj['NEEDS_NAME_0']);
   }
-  if (obj['closureExpressionOrPattern2'] !== undefined) {
-    const raw = obj['closureExpressionOrPattern2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['closureExpressionOrPattern2'] = arr.map((v: unknown) => _r95jlc9(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r95jlc9(v));
+  }
+  if (obj.closureExpressionOrPattern1 !== undefined) {
+    resolved.closureExpressionOrPattern1 = _r95jlc9(obj.closureExpressionOrPattern1);
+  }
+  if (obj.closureExpressionOrPattern2 !== undefined) {
+    const arr = Array.isArray(obj.closureExpressionOrPattern2) ? obj.closureExpressionOrPattern2 : [obj.closureExpressionOrPattern2];
+    resolved.closureExpressionOrPattern2 = arr.map((v: unknown) => _r95jlc9(v));
   }
   return tuple_pattern_(resolved as TuplePatternConfig);
 }
@@ -3446,15 +3593,15 @@ export function tuplePatternFrom(input: unknown): unknown {
 export function tupleStructPatternFrom(input: TupleStructPatternTree | TupleStructPattern | TupleStructPatternFromInput): TupleStructPattern;
 export function tupleStructPatternFrom(input: unknown): unknown;
 export function tupleStructPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTupleStructPattern(input as TupleStructPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return tuple_struct_pattern_({
       type: f?.['type'],
-      pattern1: f?.['pattern1'],
-      pattern2: f?.['pattern2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as TupleStructPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3462,13 +3609,20 @@ export function tupleStructPatternFrom(input: unknown): unknown {
   if (obj['type'] !== undefined) {
     resolved['type'] = _r16d3oq5(obj['type']);
   }
-  if (obj['pattern1'] !== undefined) {
-    resolved['pattern1'] = _resolvePattern(obj['pattern1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolvePattern(obj['NEEDS_NAME_0']);
   }
-  if (obj['pattern2'] !== undefined) {
-    const raw = obj['pattern2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['pattern2'] = arr.map((v: unknown) => _resolvePattern(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolvePattern(v));
+  }
+  if (obj.pattern1 !== undefined) {
+    resolved.pattern1 = _resolvePattern(obj.pattern1);
+  }
+  if (obj.pattern2 !== undefined) {
+    const arr = Array.isArray(obj.pattern2) ? obj.pattern2 : [obj.pattern2];
+    resolved.pattern2 = arr.map((v: unknown) => _resolvePattern(v));
   }
   return tuple_struct_pattern_(resolved as TupleStructPatternConfig);
 }
@@ -3476,7 +3630,7 @@ export function tupleStructPatternFrom(input: unknown): unknown {
 export function tupleTypeFrom(input: TupleTypeTree | TupleType | TupleTypeFromInput): TupleType;
 export function tupleTypeFrom(input: unknown): unknown;
 export function tupleTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTupleType(input as TupleTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3499,29 +3653,39 @@ export function tupleTypeFrom(input: unknown): unknown {
 export function typeArgumentsFrom(input: TypeArgumentsTree | TypeArguments | TypeArgumentsFromInput): TypeArguments;
 export function typeArgumentsFrom(input: unknown): unknown;
 export function typeArgumentsFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeArguments(input as TypeArgumentsTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return type_arguments_({
-      children1: f?.['children1'],
-      traitBounds: f?.['trait_bounds'],
-      children3: f?.['children3'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as TypeArgumentsConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['children1'] !== undefined) {
-    resolved['children1'] = _r1de2jon(obj['children1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1de2jon(obj['NEEDS_NAME_0']);
   }
-  if (obj['traitBounds'] !== undefined) {
-    resolved['traitBounds'] = (isNodeData(obj['traitBounds']) ? obj['traitBounds'] : Array.isArray(obj['traitBounds']) ? traitBoundsFrom(obj['traitBounds']) : typeof obj['traitBounds'] === 'object' ? traitBoundsFrom(obj['traitBounds']) : obj['traitBounds']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? traitBoundsFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? traitBoundsFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
-  if (obj['children3'] !== undefined) {
-    const raw = obj['children3'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['children3'] = arr.map((v: unknown) => _r1co9wyp(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _r1co9wyp(v));
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _r1de2jon(obj.children1);
+  }
+  if (obj.traitBounds !== undefined) {
+    resolved.traitBounds = (isNodeData(obj.traitBounds) ? obj.traitBounds : Array.isArray(obj.traitBounds) ? traitBoundsFrom(obj.traitBounds) : typeof obj.traitBounds === 'object' ? traitBoundsFrom(obj.traitBounds) : obj.traitBounds);
+  }
+  if (obj.children3 !== undefined) {
+    const arr = Array.isArray(obj.children3) ? obj.children3 : [obj.children3];
+    resolved.children3 = arr.map((v: unknown) => _r1co9wyp(v));
   }
   return type_arguments_(resolved as TypeArgumentsConfig);
 }
@@ -3529,7 +3693,7 @@ export function typeArgumentsFrom(input: unknown): unknown {
 export function typeBindingFrom(input: TypeBindingTree | TypeBinding | TypeBindingFromInput): TypeBinding;
 export function typeBindingFrom(input: unknown): unknown;
 export function typeBindingFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeBinding(input as TypeBindingTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3557,7 +3721,7 @@ export function typeBindingFrom(input: unknown): unknown {
 export function typeCastExpressionFrom(input: TypeCastExpressionTree | TypeCastExpression | TypeCastExpressionFromInput): TypeCastExpression;
 export function typeCastExpressionFrom(input: unknown): unknown;
 export function typeCastExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeCastExpression(input as TypeCastExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3581,7 +3745,7 @@ export function typeCastExpressionFrom(input: unknown): unknown {
 export function typeItemFrom(input: TypeItemTree | TypeItem | TypeItemFromInput): TypeItem;
 export function typeItemFrom(input: unknown): unknown;
 export function typeItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeItem(input as TypeItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3591,8 +3755,8 @@ export function typeItemFrom(input: unknown): unknown {
       type: f?.['type'],
       typeParameters: f?.['type_parameters'],
       visibilityModifier: f?.['visibility_modifier'],
-      whereClause1: f?.['where_clause1'],
-      whereClause2: f?.['where_clause2'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as TypeItemConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3609,11 +3773,17 @@ export function typeItemFrom(input: unknown): unknown {
   if (obj['visibilityModifier'] !== undefined) {
     resolved['visibilityModifier'] = (isNodeData(obj['visibilityModifier']) ? obj['visibilityModifier'] : Array.isArray(obj['visibilityModifier']) ? visibilityModifierFrom(obj['visibilityModifier']) : typeof obj['visibilityModifier'] === 'object' ? visibilityModifierFrom(obj['visibilityModifier']) : obj['visibilityModifier']);
   }
-  if (obj['whereClause1'] !== undefined) {
-    resolved['whereClause1'] = (isNodeData(obj['whereClause1']) ? obj['whereClause1'] : Array.isArray(obj['whereClause1']) ? whereClauseFrom(obj['whereClause1']) : typeof obj['whereClause1'] === 'object' ? whereClauseFrom(obj['whereClause1']) : obj['whereClause1']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? whereClauseFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? whereClauseFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
-  if (obj['whereClause2'] !== undefined) {
-    resolved['whereClause2'] = (isNodeData(obj['whereClause2']) ? obj['whereClause2'] : Array.isArray(obj['whereClause2']) ? whereClauseFrom(obj['whereClause2']) : typeof obj['whereClause2'] === 'object' ? whereClauseFrom(obj['whereClause2']) : obj['whereClause2']);
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = (isNodeData(obj['NEEDS_NAME_2']) ? obj['NEEDS_NAME_2'] : Array.isArray(obj['NEEDS_NAME_2']) ? whereClauseFrom(obj['NEEDS_NAME_2']) : typeof obj['NEEDS_NAME_2'] === 'object' ? whereClauseFrom(obj['NEEDS_NAME_2']) : obj['NEEDS_NAME_2']);
+  }
+  if (obj.whereClause1 !== undefined) {
+    resolved.whereClause1 = (isNodeData(obj.whereClause1) ? obj.whereClause1 : Array.isArray(obj.whereClause1) ? whereClauseFrom(obj.whereClause1) : typeof obj.whereClause1 === 'object' ? whereClauseFrom(obj.whereClause1) : obj.whereClause1);
+  }
+  if (obj.whereClause2 !== undefined) {
+    resolved.whereClause2 = (isNodeData(obj.whereClause2) ? obj.whereClause2 : Array.isArray(obj.whereClause2) ? whereClauseFrom(obj.whereClause2) : typeof obj.whereClause2 === 'object' ? whereClauseFrom(obj.whereClause2) : obj.whereClause2);
   }
   return type_item_(resolved as TypeItemConfig);
 }
@@ -3621,7 +3791,7 @@ export function typeItemFrom(input: unknown): unknown {
 export function typeParameterFrom(input: TypeParameterTree | TypeParameter | TypeParameterFromInput): TypeParameter;
 export function typeParameterFrom(input: unknown): unknown;
 export function typeParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeParameter(input as TypeParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3649,31 +3819,42 @@ export function typeParameterFrom(input: unknown): unknown {
 export function typeParametersFrom(input: TypeParametersTree | TypeParameters | TypeParametersFromInput): TypeParameters;
 export function typeParametersFrom(input: unknown): unknown;
 export function typeParametersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeParameters(input as TypeParametersTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return type_parameters_({
-      attributeItem: f?.['attribute_item'],
-      children2: f?.['children2'],
-      children3: f?.['children3'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as TypeParametersConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['attributeItem'] !== undefined) {
-    const raw = obj['attributeItem'];
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    const raw = obj['NEEDS_NAME_0'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['attributeItem'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+    resolved['NEEDS_NAME_0'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
   }
-  if (obj['children2'] !== undefined) {
-    resolved['children2'] = _roit17h(obj['children2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _roit17h(obj['NEEDS_NAME_1']);
   }
-  if (obj['children3'] !== undefined) {
-    const raw = obj['children3'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['children3'] = arr.map((v: unknown) => _ryeauh7(v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => _ryeauh7(v));
+  }
+  if (obj.attributeItem !== undefined) {
+    const arr = Array.isArray(obj.attributeItem) ? obj.attributeItem : [obj.attributeItem];
+    resolved.attributeItem = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? attributeItemFrom(v) : typeof v === 'object' ? attributeItemFrom(v) : v));
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _roit17h(obj.children2);
+  }
+  if (obj.children3 !== undefined) {
+    const arr = Array.isArray(obj.children3) ? obj.children3 : [obj.children3];
+    resolved.children3 = arr.map((v: unknown) => _ryeauh7(v));
   }
   return type_parameters_(resolved as TypeParametersConfig);
 }
@@ -3681,7 +3862,7 @@ export function typeParametersFrom(input: unknown): unknown {
 export function unaryExpressionFrom(input: UnaryExpressionTree | UnaryExpression | UnaryExpressionFromInput): UnaryExpression;
 export function unaryExpressionFrom(input: unknown): unknown;
 export function unaryExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUnaryExpression(input as UnaryExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3709,7 +3890,7 @@ export function unaryExpressionFrom(input: unknown): unknown {
 export function unionItemFrom(input: UnionItemTree | UnionItem | UnionItemFromInput): UnionItem;
 export function unionItemFrom(input: unknown): unknown;
 export function unionItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUnionItem(input as UnionItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3745,7 +3926,7 @@ export function unionItemFrom(input: unknown): unknown {
 export function unsafeBlockFrom(input: UnsafeBlockTree | UnsafeBlock | UnsafeBlockFromInput): UnsafeBlock;
 export function unsafeBlockFrom(input: unknown): unknown;
 export function unsafeBlockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUnsafeBlock(input as UnsafeBlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3765,7 +3946,7 @@ export function unsafeBlockFrom(input: unknown): unknown {
 export function useAsClauseFrom(input: UseAsClauseTree | UseAsClause | UseAsClauseFromInput): UseAsClause;
 export function useAsClauseFrom(input: unknown): unknown;
 export function useAsClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUseAsClause(input as UseAsClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3789,25 +3970,32 @@ export function useAsClauseFrom(input: unknown): unknown {
 export function useBoundsFrom(input: UseBoundsTree | UseBounds | UseBoundsFromInput): UseBounds;
 export function useBoundsFrom(input: unknown): unknown;
 export function useBoundsFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUseBounds(input as UseBoundsTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return use_bounds_({
-      lifetimeOrTypeIdentifier1: f?.['lifetime_or_type_identifier1'],
-      lifetimeOrTypeIdentifier2: f?.['lifetime_or_type_identifier2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as UseBoundsConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['lifetimeOrTypeIdentifier1'] !== undefined) {
-    resolved['lifetimeOrTypeIdentifier1'] = _r1qwzk9f(obj['lifetimeOrTypeIdentifier1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1qwzk9f(obj['NEEDS_NAME_0']);
   }
-  if (obj['lifetimeOrTypeIdentifier2'] !== undefined) {
-    const raw = obj['lifetimeOrTypeIdentifier2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['lifetimeOrTypeIdentifier2'] = arr.map((v: unknown) => _r1qwzk9f(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1qwzk9f(v));
+  }
+  if (obj.lifetimeOrTypeIdentifier1 !== undefined) {
+    resolved.lifetimeOrTypeIdentifier1 = _r1qwzk9f(obj.lifetimeOrTypeIdentifier1);
+  }
+  if (obj.lifetimeOrTypeIdentifier2 !== undefined) {
+    const arr = Array.isArray(obj.lifetimeOrTypeIdentifier2) ? obj.lifetimeOrTypeIdentifier2 : [obj.lifetimeOrTypeIdentifier2];
+    resolved.lifetimeOrTypeIdentifier2 = arr.map((v: unknown) => _r1qwzk9f(v));
   }
   return use_bounds_(resolved as UseBoundsConfig);
 }
@@ -3815,7 +4003,7 @@ export function useBoundsFrom(input: unknown): unknown {
 export function useDeclarationFrom(input: UseDeclarationTree | UseDeclaration | UseDeclarationFromInput): UseDeclaration;
 export function useDeclarationFrom(input: unknown): unknown;
 export function useDeclarationFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUseDeclaration(input as UseDeclarationTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3839,7 +4027,7 @@ export function useDeclarationFrom(input: unknown): unknown {
 export function useListFrom(input: UseListTree | UseList | UseListFromInput): UseList;
 export function useListFrom(input: unknown): unknown;
 export function useListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUseList(input as UseListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3860,7 +4048,7 @@ export function useListFrom(input: unknown): unknown {
 export function useWildcardFrom(input: UseWildcardTree | UseWildcard | UseWildcardFromInput): UseWildcard;
 export function useWildcardFrom(input: unknown): unknown;
 export function useWildcardFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUseWildcard(input as UseWildcardTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3880,7 +4068,7 @@ export function useWildcardFrom(input: unknown): unknown {
 export function variadicParameterFrom(input: VariadicParameterTree | VariadicParameter | VariadicParameterFromInput): VariadicParameter;
 export function variadicParameterFrom(input: unknown): unknown;
 export function variadicParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapVariadicParameter(input as VariadicParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3904,7 +4092,7 @@ export function variadicParameterFrom(input: unknown): unknown {
 export function visibilityModifierFrom(input: VisibilityModifierTree | VisibilityModifier | VisibilityModifierFromInput): VisibilityModifier;
 export function visibilityModifierFrom(input: unknown): unknown;
 export function visibilityModifierFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapVisibilityModifier(input as VisibilityModifierTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3924,25 +4112,32 @@ export function visibilityModifierFrom(input: unknown): unknown {
 export function whereClauseFrom(input: WhereClauseTree | WhereClause | WhereClauseFromInput): WhereClause;
 export function whereClauseFrom(input: unknown): unknown;
 export function whereClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapWhereClause(input as WhereClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return where_clause_({
-      wherePredicate1: f?.['where_predicate1'],
-      wherePredicate2: f?.['where_predicate2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as WhereClauseConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['wherePredicate1'] !== undefined) {
-    resolved['wherePredicate1'] = (isNodeData(obj['wherePredicate1']) ? obj['wherePredicate1'] : Array.isArray(obj['wherePredicate1']) ? wherePredicateFrom(obj['wherePredicate1']) : typeof obj['wherePredicate1'] === 'object' ? wherePredicateFrom(obj['wherePredicate1']) : obj['wherePredicate1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? wherePredicateFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? wherePredicateFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['wherePredicate2'] !== undefined) {
-    const raw = obj['wherePredicate2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['wherePredicate2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? wherePredicateFrom(v) : typeof v === 'object' ? wherePredicateFrom(v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? wherePredicateFrom(v) : typeof v === 'object' ? wherePredicateFrom(v) : v));
+  }
+  if (obj.wherePredicate1 !== undefined) {
+    resolved.wherePredicate1 = (isNodeData(obj.wherePredicate1) ? obj.wherePredicate1 : Array.isArray(obj.wherePredicate1) ? wherePredicateFrom(obj.wherePredicate1) : typeof obj.wherePredicate1 === 'object' ? wherePredicateFrom(obj.wherePredicate1) : obj.wherePredicate1);
+  }
+  if (obj.wherePredicate2 !== undefined) {
+    const arr = Array.isArray(obj.wherePredicate2) ? obj.wherePredicate2 : [obj.wherePredicate2];
+    resolved.wherePredicate2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? wherePredicateFrom(v) : typeof v === 'object' ? wherePredicateFrom(v) : v));
   }
   return where_clause_(resolved as WhereClauseConfig);
 }
@@ -3950,7 +4145,7 @@ export function whereClauseFrom(input: unknown): unknown {
 export function wherePredicateFrom(input: WherePredicateTree | WherePredicate | WherePredicateFromInput): WherePredicate;
 export function wherePredicateFrom(input: unknown): unknown;
 export function wherePredicateFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapWherePredicate(input as WherePredicateTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -3974,7 +4169,7 @@ export function wherePredicateFrom(input: unknown): unknown {
 export function whileExpressionFrom(input: WhileExpressionTree | WhileExpression | WhileExpressionFromInput): WhileExpression;
 export function whileExpressionFrom(input: unknown): unknown;
 export function whileExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapWhileExpression(input as WhileExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -4002,7 +4197,7 @@ export function whileExpressionFrom(input: unknown): unknown {
 export function yieldExpressionFrom(input: YieldExpressionTree | YieldExpression | YieldExpressionFromInput): YieldExpression;
 export function yieldExpressionFrom(input: unknown): unknown;
 export function yieldExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapYieldExpression(input as YieldExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;

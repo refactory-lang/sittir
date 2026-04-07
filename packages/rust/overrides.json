@@ -1,112 +1,25 @@
 {
-  "index_expression": {
-    "fields": {
-      "object": {},
-      "index": {}
-    }
-  },
-  "unary_expression": {
-    "fields": {
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "-",
-          "*",
-          "!",
-          "&"
-        ]
-      },
-      "operand": {}
-    }
-  },
-  "range_expression": {
-    "fields": {
-      "start": {},
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "..",
-          "..="
-        ]
-      },
-      "end": {}
-    }
-  },
-  "negative_literal": {
-    "fields": {
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "-"
-        ]
-      },
-      "value": {}
-    }
-  },
-  "return_expression": {
-    "fields": {
-      "value": {}
-    }
-  },
-  "try_expression": {
-    "fields": {
-      "value": {},
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "?"
-        ]
-      }
-    }
-  },
-  "or_pattern": {
-    "fields": {
-      "left": {},
-      "operator": {
-        "anonymous": true,
-        "values": [
-          "|"
-        ]
-      },
-      "right": {}
-    }
-  },
-  "reference_expression": {
-    "fields": {
-      "mutable_specifier": {}
-    }
-  },
-  "pointer_type": {
-    "fields": {
-      "mutable_specifier": {}
-    }
-  },
-  "let_chain": {
-    "fields": {
-      "conditions": {}
-    }
-  },
   "arguments": {
     "fields": {
-      "attribute_item": {
-        "multiple": true
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
+        "anonymous": true
       },
-      "expression": {},
-      "attribute_item_or_expression": {
+      "NEEDS_NAME_2": {
         "multiple": true
       }
     }
   },
   "array_expression": {
     "fields": {
-      "attribute_item": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       },
-      "attribute_item_or_expression1": {
-        "multiple": true
+      "NEEDS_NAME_2": {
+        "anonymous": true
       },
-      "expression": {},
-      "attribute_item_or_expression2": {
+      "NEEDS_NAME_3": {
         "multiple": true
       }
     }
@@ -114,34 +27,40 @@
   "block": {
     "fields": {
       "label": {},
-      "children2": {
+      "NEEDS_NAME_1": {
         "multiple": true
       },
-      "expression": {}
+      "NEEDS_NAME_2": {
+        "anonymous": true
+      }
     }
   },
   "bounded_type": {
     "fields": {
-      "lifetime_or_type_or_use_bounds1": {},
-      "lifetime_or_type_or_use_bounds2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "break_expression": {
     "fields": {
       "label": {},
-      "expression": {}
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "captured_pattern": {
     "fields": {
       "identifier": {},
-      "pattern": {}
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "closure_parameters": {
     "fields": {
-      "parameter_or_pattern1": {},
-      "parameter_or_pattern2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
@@ -154,11 +73,9 @@
   },
   "enum_variant_list": {
     "fields": {
-      "attribute_item": {
-        "multiple": true
-      },
-      "enum_variant": {},
-      "attribute_item_or_enum_variant": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {
         "multiple": true
       }
     }
@@ -171,29 +88,25 @@
   },
   "field_declaration_list": {
     "fields": {
-      "attribute_item": {
-        "multiple": true
-      },
-      "field_declaration": {},
-      "attribute_item_or_field_declaration": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {
         "multiple": true
       }
     }
   },
   "field_initializer_list": {
     "fields": {
-      "children1": {},
-      "children2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "for_lifetimes": {
     "fields": {
-      "lifetime1": {},
-      "lifetime2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "foreign_mod_item": {
@@ -222,52 +135,92 @@
       "function_modifiers": {}
     }
   },
+  "index_expression": {
+    "fields": {
+      "object": {},
+      "index": {}
+    }
+  },
   "macro_definition": {
     "fields": {
-      "macro_rule1": {
-        "multiple": true
-      },
-      "macro_rule2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "match_block": {
     "fields": {
-      "match_arm1": {
-        "multiple": true
-      },
-      "match_arm2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "mut_pattern": {
     "fields": {
       "mutable_specifier": {},
-      "pattern": {}
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
+    }
+  },
+  "negative_literal": {
+    "fields": {
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "-"
+        ]
+      },
+      "value": {}
+    }
+  },
+  "or_pattern": {
+    "fields": {
+      "left": {},
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "|"
+        ]
+      },
+      "right": {}
     }
   },
   "ordered_field_declaration_list": {
     "fields": {
-      "attribute_item": {
-        "multiple": true
-      },
-      "visibility_modifier": {},
-      "attribute_item_or_visibility_modifier": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {
         "multiple": true
       }
     }
   },
   "parameters": {
     "fields": {
-      "attribute_item": {},
-      "children2": {},
-      "children3": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {
         "multiple": true
       }
+    }
+  },
+  "range_expression": {
+    "fields": {
+      "start": {},
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "..",
+          "..="
+        ]
+      },
+      "end": {}
     }
   },
   "reference_pattern": {
     "fields": {
       "mutable_specifier": {},
-      "pattern": {}
+      "NEEDS_NAME_1": {
+        "anonymous": true
+      }
     }
   },
   "reference_type": {
@@ -294,7 +247,7 @@
   "source_file": {
     "fields": {
       "shebang": {},
-      "children2": {
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
@@ -313,16 +266,16 @@
   },
   "struct_pattern": {
     "fields": {
-      "field_pattern_or_remaining_field_pattern1": {},
-      "field_pattern_or_remaining_field_pattern2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "trait_bounds": {
     "fields": {
-      "higher_ranked_trait_bound_or_lifetime_or_type1": {},
-      "higher_ranked_trait_bound_or_lifetime_or_type2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
@@ -333,39 +286,56 @@
       "where_clause": {}
     }
   },
+  "try_expression": {
+    "fields": {
+      "value": {},
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "?"
+        ]
+      }
+    }
+  },
   "tuple_expression": {
     "fields": {
       "attribute_item": {
         "multiple": true
       },
-      "expression1": {},
-      "expression2": {
-        "multiple": true
+      "NEEDS_NAME_1": {
+        "anonymous": true
       },
-      "expression3": {}
+      "NEEDS_NAME_2": {
+        "anonymous": true
+      },
+      "NEEDS_NAME_3": {
+        "anonymous": true
+      }
     }
   },
   "tuple_pattern": {
     "fields": {
-      "closure_expression_or_pattern1": {},
-      "closure_expression_or_pattern2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "tuple_struct_pattern": {
     "fields": {
-      "pattern1": {},
-      "pattern2": {
-        "multiple": true
+      "NEEDS_NAME_0": {
+        "anonymous": true
+      },
+      "NEEDS_NAME_1": {
+        "anonymous": true
       }
     }
   },
   "type_arguments": {
     "fields": {
-      "children1": {},
-      "trait_bounds": {},
-      "children3": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {
         "multiple": true
       }
     }
@@ -373,19 +343,31 @@
   "type_item": {
     "fields": {
       "visibility_modifier": {},
-      "where_clause1": {},
-      "where_clause2": {}
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {}
     }
   },
   "type_parameters": {
     "fields": {
-      "attribute_item": {
-        "multiple": true
-      },
-      "children2": {},
-      "children3": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {
         "multiple": true
       }
+    }
+  },
+  "unary_expression": {
+    "fields": {
+      "operator": {
+        "anonymous": true,
+        "values": [
+          "-",
+          "*",
+          "!",
+          "&"
+        ]
+      },
+      "operand": {}
     }
   },
   "union_item": {
@@ -396,18 +378,16 @@
   },
   "use_bounds": {
     "fields": {
-      "lifetime_or_type_identifier1": {},
-      "lifetime_or_type_identifier2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "where_clause": {
     "fields": {
-      "where_predicate1": {},
-      "where_predicate2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   }
 }

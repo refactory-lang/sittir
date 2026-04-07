@@ -1,132 +1,112 @@
 {
   "argument_list": {
     "fields": {
-      "children1": {},
-      "children2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "assert_statement": {
     "fields": {
-      "expression1": {},
-      "expression2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "case_clause": {
     "fields": {
-      "case_pattern1": {},
-      "case_pattern2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "class_pattern": {
     "fields": {
       "dotted_name": {},
-      "case_pattern1": {},
-      "case_pattern2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {}
     }
   },
   "comparison_operator": {
     "fields": {
-      "primary_expression1": {},
-      "primary_expression2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "complex_pattern": {
     "fields": {
-      "float_or_integer1": {},
-      "float_or_integer2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "concatenated_string": {
     "fields": {
-      "string1": {},
-      "string2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "conditional_expression": {
     "fields": {
-      "expression1": {},
-      "expression2": {},
-      "expression3": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {}
     }
   },
   "constrained_type": {
     "fields": {
-      "child_type1": {},
-      "child_type2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "dict_pattern": {
     "fields": {
-      "splat_pattern1": {},
-      "splat_pattern2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "dictionary": {
     "fields": {
-      "dictionary_splat_or_pair1": {},
-      "dictionary_splat_or_pair2": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "dictionary_comprehension": {
     "fields": {
-      "for_in_clause": {},
-      "for_in_clause_or_if_clause": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "dotted_name": {
     "fields": {
-      "identifier1": {},
-      "identifier2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "exec_statement": {
     "fields": {
-      "expression1": {},
-      "expression2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "expression_list": {
     "fields": {
-      "expression1": {},
-      "expression2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "expression_statement": {
     "fields": {
-      "children1": {},
-      "expression": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "generator_expression": {
     "fields": {
-      "for_in_clause": {},
-      "for_in_clause_or_if_clause": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
@@ -139,46 +119,40 @@
   },
   "global_statement": {
     "fields": {
-      "identifier1": {},
-      "identifier2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "keyword_pattern": {
     "fields": {
       "identifier": {},
-      "children2": {}
+      "NEEDS_NAME_1": {}
     }
   },
   "list_comprehension": {
     "fields": {
-      "for_in_clause": {},
-      "for_in_clause_or_if_clause": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "member_type": {
     "fields": {
-      "child_type": {},
+      "type": {},
       "identifier": {}
     }
   },
   "nonlocal_statement": {
     "fields": {
-      "identifier1": {},
-      "identifier2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "pattern_list": {
     "fields": {
-      "pattern1": {},
-      "pattern2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "relative_import": {
@@ -189,23 +163,23 @@
   },
   "set_comprehension": {
     "fields": {
-      "for_in_clause": {},
-      "for_in_clause_or_if_clause": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {
         "multiple": true
       }
     }
   },
   "slice": {
     "fields": {
-      "expression1": {},
-      "expression2": {},
-      "expression3": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {}
     }
   },
   "string": {
     "fields": {
       "string_start": {},
-      "interpolation_or_string_content": {
+      "NEEDS_NAME_1": {
         "multiple": true
       },
       "string_end": {}
@@ -222,24 +196,20 @@
   },
   "type_parameter": {
     "fields": {
-      "child_type1": {},
-      "child_type2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "union_type": {
     "fields": {
-      "child_type1": {},
-      "child_type2": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "with_clause": {
     "fields": {
-      "with_item1": {},
-      "with_item2": {
-        "multiple": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   }
 }

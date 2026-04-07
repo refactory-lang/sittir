@@ -5,7 +5,6 @@ import type { AliasedImport, ArgumentList, AsPattern, AssertStatement, Assignmen
 import { isNodeData, isTreeNode, _inferBranch } from './utils.js';
 
 import { aliased_import_, argument_list_, as_pattern_, assert_statement_, assignment_, attribute_, augmented_assignment_, await_, binary_operator_, block_, boolean_operator_, break_statement_, call_, case_clause_, case_pattern_, chevron_, class_definition_, class_pattern_, comparison_operator_, complex_pattern_, concatenated_string_, conditional_expression_, constrained_type_, continue_statement_, decorated_definition_, decorator_, default_parameter_, delete_statement_, dict_pattern_, dictionary_, dictionary_comprehension_, dictionary_splat_, dictionary_splat_pattern_, dotted_name_, elif_clause_, ellipsis_, else_clause_, escape_interpolation_, escape_sequence_, except_clause_, exec_statement_, expression_list_, expression_statement_, false_, finally_clause_, float_, for_in_clause_, for_statement_, format_expression_, format_specifier_, function_definition_, future_import_statement_, generator_expression_, generic_type_, global_statement_, identifier_, if_clause_, if_statement_, import_from_statement_, import_prefix_, import_statement_, integer_, interpolation_, keyword_argument_, keyword_pattern_, keyword_separator_, lambda_, lambda_parameters_, list_, list_comprehension_, list_pattern_, list_splat_, list_splat_pattern_, match_statement_, member_type_, module_, named_expression_, none_, nonlocal_statement_, not_operator_, pair_, parameters_, parenthesized_expression_, parenthesized_list_splat_, pass_statement_, pattern_list_, positional_separator_, print_statement_, raise_statement_, relative_import_, return_statement_, set_, set_comprehension_, slice_, splat_pattern_, splat_type_, string_, string_content_, string_end_, string_start_, subscript_, true_, try_statement_, tuple_, tuple_pattern_, type_, type_alias_statement_, type_conversion_, type_parameter_, typed_default_parameter_, typed_parameter_, unary_operator_, union_pattern_, union_type_, while_statement_, wildcard_import_, with_clause_, with_item_, with_statement_, yield_ } from './factories.js';
-import { wrapAliasedImport, wrapArgumentList, wrapAsPattern, wrapAssertStatement, wrapAssignment, wrapAttribute, wrapAugmentedAssignment, wrapAwait, wrapBinaryOperator, wrapBlock, wrapBooleanOperator, wrapCall, wrapCaseClause, wrapCasePattern, wrapChevron, wrapClassDefinition, wrapClassPattern, wrapComparisonOperator, wrapComplexPattern, wrapConcatenatedString, wrapConditionalExpression, wrapConstrainedType, wrapDecoratedDefinition, wrapDecorator, wrapDefaultParameter, wrapDeleteStatement, wrapDictPattern, wrapDictionary, wrapDictionaryComprehension, wrapDictionarySplat, wrapDictionarySplatPattern, wrapDottedName, wrapElifClause, wrapElseClause, wrapExceptClause, wrapExecStatement, wrapExpressionList, wrapExpressionStatement, wrapFinallyClause, wrapForInClause, wrapForStatement, wrapFormatExpression, wrapFormatSpecifier, wrapFunctionDefinition, wrapFutureImportStatement, wrapGeneratorExpression, wrapGenericType, wrapGlobalStatement, wrapIfClause, wrapIfStatement, wrapImportFromStatement, wrapImportStatement, wrapInterpolation, wrapKeywordArgument, wrapKeywordPattern, wrapLambda, wrapLambdaParameters, wrapList, wrapListComprehension, wrapListPattern, wrapListSplat, wrapListSplatPattern, wrapMatchStatement, wrapMemberType, wrapModule, wrapNamedExpression, wrapNonlocalStatement, wrapNotOperator, wrapPair, wrapParameters, wrapParenthesizedExpression, wrapParenthesizedListSplat, wrapPatternList, wrapPrintStatement, wrapRaiseStatement, wrapRelativeImport, wrapReturnStatement, wrapSet, wrapSetComprehension, wrapSlice, wrapSplatPattern, wrapSplatType, wrapString, wrapStringContent, wrapSubscript, wrapTryStatement, wrapTuple, wrapTuplePattern, wrapType, wrapTypeAliasStatement, wrapTypeParameter, wrapTypedDefaultParameter, wrapTypedParameter, wrapUnaryOperator, wrapUnionPattern, wrapUnionType, wrapWhileStatement, wrapWithClause, wrapWithItem, wrapWithStatement, wrapYield } from './wrap.js';
 import type { AliasedImportFromInput, ArgumentListFromInput, AsPatternFromInput, AssertStatementFromInput, AssignmentFromInput, AttributeFromInput, AugmentedAssignmentFromInput, AwaitFromInput, BinaryOperatorFromInput, BlockFromInput, BooleanOperatorFromInput, CallFromInput, CaseClauseFromInput, CasePatternFromInput, ChevronFromInput, ClassDefinitionFromInput, ClassPatternFromInput, ComparisonOperatorFromInput, ComplexPatternFromInput, ConcatenatedStringFromInput, ConditionalExpressionFromInput, ConstrainedTypeFromInput, DecoratedDefinitionFromInput, DecoratorFromInput, DefaultParameterFromInput, DeleteStatementFromInput, DictPatternFromInput, DictionaryFromInput, DictionaryComprehensionFromInput, DictionarySplatFromInput, DictionarySplatPatternFromInput, DottedNameFromInput, ElifClauseFromInput, ElseClauseFromInput, ExceptClauseFromInput, ExecStatementFromInput, ExpressionListFromInput, ExpressionStatementFromInput, FinallyClauseFromInput, ForInClauseFromInput, ForStatementFromInput, FormatExpressionFromInput, FormatSpecifierFromInput, FunctionDefinitionFromInput, FutureImportStatementFromInput, GeneratorExpressionFromInput, GenericTypeFromInput, GlobalStatementFromInput, IfClauseFromInput, IfStatementFromInput, ImportFromStatementFromInput, ImportStatementFromInput, InterpolationFromInput, KeywordArgumentFromInput, KeywordPatternFromInput, LambdaFromInput, LambdaParametersFromInput, ListFromInput, ListComprehensionFromInput, ListPatternFromInput, ListSplatFromInput, ListSplatPatternFromInput, MatchStatementFromInput, MemberTypeFromInput, ModuleFromInput, NamedExpressionFromInput, NonlocalStatementFromInput, NotOperatorFromInput, PairFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, ParenthesizedListSplatFromInput, PatternListFromInput, PrintStatementFromInput, RaiseStatementFromInput, RelativeImportFromInput, ReturnStatementFromInput, SetFromInput, SetComprehensionFromInput, SliceFromInput, SplatPatternFromInput, SplatTypeFromInput, StringFromInput, StringContentFromInput, SubscriptFromInput, TryStatementFromInput, TupleFromInput, TuplePatternFromInput, TypeFromInput, TypeAliasStatementFromInput, TypeParameterFromInput, TypedDefaultParameterFromInput, TypedParameterFromInput, UnaryOperatorFromInput, UnionPatternFromInput, UnionTypeFromInput, WhileStatementFromInput, WithClauseFromInput, WithItemFromInput, WithStatementFromInput, YieldFromInput } from './types.js';
 
 function _resolveByKind(kind: string, rest: unknown): unknown {
@@ -298,7 +297,7 @@ function _r12do1e6(v: unknown): unknown {
 export function aliasedImportFrom(input: AliasedImportTree | AliasedImport | AliasedImportFromInput): AliasedImport;
 export function aliasedImportFrom(input: unknown): unknown;
 export function aliasedImportFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAliasedImport(input as AliasedImportTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -322,25 +321,32 @@ export function aliasedImportFrom(input: unknown): unknown {
 export function argumentListFrom(input: ArgumentListTree | ArgumentList | ArgumentListFromInput): ArgumentList;
 export function argumentListFrom(input: unknown): unknown;
 export function argumentListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapArgumentList(input as ArgumentListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return argument_list_({
-      children1: f?.['children1'],
-      children2: f?.['children2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ArgumentListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['children1'] !== undefined) {
-    resolved['children1'] = _rkthp94(obj['children1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rkthp94(obj['NEEDS_NAME_0']);
   }
-  if (obj['children2'] !== undefined) {
-    const raw = obj['children2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['children2'] = arr.map((v: unknown) => _rkthp94(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _rkthp94(v));
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _rkthp94(obj.children1);
+  }
+  if (obj.children2 !== undefined) {
+    const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
+    resolved.children2 = arr.map((v: unknown) => _rkthp94(v));
   }
   return argument_list_(resolved as ArgumentListConfig);
 }
@@ -348,7 +354,7 @@ export function argumentListFrom(input: unknown): unknown {
 export function asPatternFrom(input: AsPatternTree | AsPattern | AsPatternFromInput): AsPattern;
 export function asPatternFrom(input: unknown): unknown;
 export function asPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAsPattern(input as AsPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -372,25 +378,32 @@ export function asPatternFrom(input: unknown): unknown {
 export function assertStatementFrom(input: AssertStatementTree | AssertStatement | AssertStatementFromInput): AssertStatement;
 export function assertStatementFrom(input: unknown): unknown;
 export function assertStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAssertStatement(input as AssertStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return assert_statement_({
-      expression1: f?.['expression1'],
-      expression2: f?.['expression2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as AssertStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['expression1'] !== undefined) {
-    resolved['expression1'] = _resolveExpression(obj['expression1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
   }
-  if (obj['expression2'] !== undefined) {
-    const raw = obj['expression2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['expression2'] = arr.map((v: unknown) => _resolveExpression(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolveExpression(v));
+  }
+  if (obj.expression1 !== undefined) {
+    resolved.expression1 = _resolveExpression(obj.expression1);
+  }
+  if (obj.expression2 !== undefined) {
+    const arr = Array.isArray(obj.expression2) ? obj.expression2 : [obj.expression2];
+    resolved.expression2 = arr.map((v: unknown) => _resolveExpression(v));
   }
   return assert_statement_(resolved as AssertStatementConfig);
 }
@@ -398,7 +411,7 @@ export function assertStatementFrom(input: unknown): unknown {
 export function assignmentFrom(input: AssignmentTree | Assignment | AssignmentFromInput): Assignment;
 export function assignmentFrom(input: unknown): unknown;
 export function assignmentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAssignment(input as AssignmentTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -426,7 +439,7 @@ export function assignmentFrom(input: unknown): unknown {
 export function attributeFrom(input: AttributeTree | Attribute | AttributeFromInput): Attribute;
 export function attributeFrom(input: unknown): unknown;
 export function attributeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAttribute(input as AttributeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -450,7 +463,7 @@ export function attributeFrom(input: unknown): unknown {
 export function augmentedAssignmentFrom(input: AugmentedAssignmentTree | AugmentedAssignment | AugmentedAssignmentFromInput): AugmentedAssignment;
 export function augmentedAssignmentFrom(input: unknown): unknown;
 export function augmentedAssignmentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAugmentedAssignment(input as AugmentedAssignmentTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -478,7 +491,7 @@ export function augmentedAssignmentFrom(input: unknown): unknown {
 export function await_From(input: AwaitTree | Await | AwaitFromInput): Await;
 export function await_From(input: unknown): unknown;
 export function await_From(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapAwait(input as AwaitTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -498,7 +511,7 @@ export function await_From(input: unknown): unknown {
 export function binaryOperatorFrom(input: BinaryOperatorTree | BinaryOperator | BinaryOperatorFromInput): BinaryOperator;
 export function binaryOperatorFrom(input: unknown): unknown;
 export function binaryOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBinaryOperator(input as BinaryOperatorTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -526,7 +539,7 @@ export function binaryOperatorFrom(input: unknown): unknown {
 export function blockFrom(input: BlockTree | Block | BlockFromInput): Block;
 export function blockFrom(input: unknown): unknown;
 export function blockFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBlock(input as BlockTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -553,7 +566,7 @@ export function blockFrom(input: unknown): unknown {
 export function booleanOperatorFrom(input: BooleanOperatorTree | BooleanOperator | BooleanOperatorFromInput): BooleanOperator;
 export function booleanOperatorFrom(input: unknown): unknown;
 export function booleanOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapBooleanOperator(input as BooleanOperatorTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -581,7 +594,7 @@ export function booleanOperatorFrom(input: unknown): unknown {
 export function callFrom(input: CallTree | Call | CallFromInput): Call;
 export function callFrom(input: unknown): unknown;
 export function callFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapCall(input as CallTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -605,7 +618,7 @@ export function callFrom(input: unknown): unknown {
 export function caseClauseFrom(input: CaseClauseTree | CaseClause | CaseClauseFromInput): CaseClause;
 export function caseClauseFrom(input: unknown): unknown;
 export function caseClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapCaseClause(input as CaseClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -613,8 +626,8 @@ export function caseClauseFrom(input: unknown): unknown {
     return case_clause_({
       consequence: f?.['consequence'],
       guard: f?.['guard'],
-      casePattern1: f?.['case_pattern1'],
-      casePattern2: f?.['case_pattern2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as CaseClauseConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -625,13 +638,20 @@ export function caseClauseFrom(input: unknown): unknown {
   if (obj['guard'] !== undefined) {
     resolved['guard'] = (isNodeData(obj['guard']) ? obj['guard'] : Array.isArray(obj['guard']) ? ifClauseFrom(obj['guard']) : typeof obj['guard'] === 'object' ? ifClauseFrom(obj['guard']) : obj['guard']);
   }
-  if (obj['casePattern1'] !== undefined) {
-    resolved['casePattern1'] = (isNodeData(obj['casePattern1']) ? obj['casePattern1'] : Array.isArray(obj['casePattern1']) ? casePatternFrom(obj['casePattern1']) : typeof obj['casePattern1'] === 'object' ? casePatternFrom(obj['casePattern1']) : obj['casePattern1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? casePatternFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? casePatternFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['casePattern2'] !== undefined) {
-    const raw = obj['casePattern2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['casePattern2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
+  }
+  if (obj.casePattern1 !== undefined) {
+    resolved.casePattern1 = (isNodeData(obj.casePattern1) ? obj.casePattern1 : Array.isArray(obj.casePattern1) ? casePatternFrom(obj.casePattern1) : typeof obj.casePattern1 === 'object' ? casePatternFrom(obj.casePattern1) : obj.casePattern1);
+  }
+  if (obj.casePattern2 !== undefined) {
+    const arr = Array.isArray(obj.casePattern2) ? obj.casePattern2 : [obj.casePattern2];
+    resolved.casePattern2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
   }
   return case_clause_(resolved as CaseClauseConfig);
 }
@@ -639,7 +659,7 @@ export function caseClauseFrom(input: unknown): unknown {
 export function casePatternFrom(input: CasePatternTree | CasePattern | CasePatternFromInput): CasePattern;
 export function casePatternFrom(input: unknown): unknown;
 export function casePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapCasePattern(input as CasePatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -659,7 +679,7 @@ export function casePatternFrom(input: unknown): unknown {
 export function chevronFrom(input: ChevronTree | Chevron | ChevronFromInput): Chevron;
 export function chevronFrom(input: unknown): unknown;
 export function chevronFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapChevron(input as ChevronTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -679,7 +699,7 @@ export function chevronFrom(input: unknown): unknown {
 export function classDefinitionFrom(input: ClassDefinitionTree | ClassDefinition | ClassDefinitionFromInput): ClassDefinition;
 export function classDefinitionFrom(input: unknown): unknown;
 export function classDefinitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapClassDefinition(input as ClassDefinitionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -711,15 +731,15 @@ export function classDefinitionFrom(input: unknown): unknown {
 export function classPatternFrom(input: ClassPatternTree | ClassPattern | ClassPatternFromInput): ClassPattern;
 export function classPatternFrom(input: unknown): unknown;
 export function classPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapClassPattern(input as ClassPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return class_pattern_({
       dottedName: f?.['dotted_name'],
-      casePattern1: f?.['case_pattern1'],
-      casePattern2: f?.['case_pattern2'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as ClassPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -727,13 +747,20 @@ export function classPatternFrom(input: unknown): unknown {
   if (obj['dottedName'] !== undefined) {
     resolved['dottedName'] = (isNodeData(obj['dottedName']) ? obj['dottedName'] : Array.isArray(obj['dottedName']) ? dottedNameFrom(obj['dottedName']) : typeof obj['dottedName'] === 'object' ? dottedNameFrom(obj['dottedName']) : obj['dottedName']);
   }
-  if (obj['casePattern1'] !== undefined) {
-    resolved['casePattern1'] = (isNodeData(obj['casePattern1']) ? obj['casePattern1'] : Array.isArray(obj['casePattern1']) ? casePatternFrom(obj['casePattern1']) : typeof obj['casePattern1'] === 'object' ? casePatternFrom(obj['casePattern1']) : obj['casePattern1']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? casePatternFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? casePatternFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
   }
-  if (obj['casePattern2'] !== undefined) {
-    const raw = obj['casePattern2'];
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    const raw = obj['NEEDS_NAME_2'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['casePattern2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
+    resolved['NEEDS_NAME_2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
+  }
+  if (obj.casePattern1 !== undefined) {
+    resolved.casePattern1 = (isNodeData(obj.casePattern1) ? obj.casePattern1 : Array.isArray(obj.casePattern1) ? casePatternFrom(obj.casePattern1) : typeof obj.casePattern1 === 'object' ? casePatternFrom(obj.casePattern1) : obj.casePattern1);
+  }
+  if (obj.casePattern2 !== undefined) {
+    const arr = Array.isArray(obj.casePattern2) ? obj.casePattern2 : [obj.casePattern2];
+    resolved.casePattern2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
   }
   return class_pattern_(resolved as ClassPatternConfig);
 }
@@ -741,15 +768,15 @@ export function classPatternFrom(input: unknown): unknown {
 export function comparisonOperatorFrom(input: ComparisonOperatorTree | ComparisonOperator | ComparisonOperatorFromInput): ComparisonOperator;
 export function comparisonOperatorFrom(input: unknown): unknown;
 export function comparisonOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapComparisonOperator(input as ComparisonOperatorTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return comparison_operator_({
       operators: f?.['operators'],
-      primaryExpression1: f?.['primary_expression1'],
-      primaryExpression2: f?.['primary_expression2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ComparisonOperatorConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -761,13 +788,22 @@ export function comparisonOperatorFrom(input: unknown): unknown {
   } else {
     resolved['operators'] = [];
   }
-  if (obj['primaryExpression1'] !== undefined) {
-    resolved['primaryExpression1'] = _resolvePrimaryExpression(obj['primaryExpression1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolvePrimaryExpression(obj['NEEDS_NAME_0']);
   }
-  if (obj['primaryExpression2'] !== undefined) {
-    const raw = obj['primaryExpression2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['primaryExpression2'] = arr.map((v: unknown) => _resolvePrimaryExpression(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolvePrimaryExpression(v));
+  }
+  if (obj.primaryExpression1 !== undefined) {
+    resolved.primaryExpression1 = _resolvePrimaryExpression(obj.primaryExpression1);
+  }
+  if (obj.primaryExpression2 !== undefined) {
+    const arr = Array.isArray(obj.primaryExpression2) ? obj.primaryExpression2 : [obj.primaryExpression2];
+    resolved.primaryExpression2 = arr.map((v: unknown) => _resolvePrimaryExpression(v));
+  } else {
+    resolved.primaryExpression2 = [];
   }
   return comparison_operator_(resolved as ComparisonOperatorConfig);
 }
@@ -775,23 +811,29 @@ export function comparisonOperatorFrom(input: unknown): unknown {
 export function complexPatternFrom(input: ComplexPatternTree | ComplexPattern | ComplexPatternFromInput): ComplexPattern;
 export function complexPatternFrom(input: unknown): unknown;
 export function complexPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapComplexPattern(input as ComplexPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return complex_pattern_({
-      floatOrInteger1: f?.['float_or_integer1'],
-      floatOrInteger2: f?.['float_or_integer2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ComplexPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['floatOrInteger1'] !== undefined) {
-    resolved['floatOrInteger1'] = _r1q8uqc0(obj['floatOrInteger1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1q8uqc0(obj['NEEDS_NAME_0']);
   }
-  if (obj['floatOrInteger2'] !== undefined) {
-    resolved['floatOrInteger2'] = _r1q8uqc0(obj['floatOrInteger2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _r1q8uqc0(obj['NEEDS_NAME_1']);
+  }
+  if (obj.floatOrInteger1 !== undefined) {
+    resolved.floatOrInteger1 = _r1q8uqc0(obj.floatOrInteger1);
+  }
+  if (obj.floatOrInteger2 !== undefined) {
+    resolved.floatOrInteger2 = _r1q8uqc0(obj.floatOrInteger2);
   }
   return complex_pattern_(resolved as ComplexPatternConfig);
 }
@@ -799,25 +841,34 @@ export function complexPatternFrom(input: unknown): unknown {
 export function concatenatedStringFrom(input: ConcatenatedStringTree | ConcatenatedString | ConcatenatedStringFromInput): ConcatenatedString;
 export function concatenatedStringFrom(input: unknown): unknown;
 export function concatenatedStringFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapConcatenatedString(input as ConcatenatedStringTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return concatenated_string_({
-      string1: f?.['string1'],
-      string2: f?.['string2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ConcatenatedStringConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['string1'] !== undefined) {
-    resolved['string1'] = (isNodeData(obj['string1']) ? obj['string1'] : Array.isArray(obj['string1']) ? stringFrom(obj['string1']) : typeof obj['string1'] === 'object' ? stringFrom(obj['string1']) : obj['string1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? stringFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? stringFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['string2'] !== undefined) {
-    const raw = obj['string2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['string2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? stringFrom(v) : typeof v === 'object' ? stringFrom(v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? stringFrom(v) : typeof v === 'object' ? stringFrom(v) : v));
+  }
+  if (obj.string1 !== undefined) {
+    resolved.string1 = (isNodeData(obj.string1) ? obj.string1 : Array.isArray(obj.string1) ? stringFrom(obj.string1) : typeof obj.string1 === 'object' ? stringFrom(obj.string1) : obj.string1);
+  }
+  if (obj.string2 !== undefined) {
+    const arr = Array.isArray(obj.string2) ? obj.string2 : [obj.string2];
+    resolved.string2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? stringFrom(v) : typeof v === 'object' ? stringFrom(v) : v));
+  } else {
+    resolved.string2 = [];
   }
   return concatenated_string_(resolved as ConcatenatedStringConfig);
 }
@@ -825,27 +876,36 @@ export function concatenatedStringFrom(input: unknown): unknown {
 export function conditionalExpressionFrom(input: ConditionalExpressionTree | ConditionalExpression | ConditionalExpressionFromInput): ConditionalExpression;
 export function conditionalExpressionFrom(input: unknown): unknown;
 export function conditionalExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapConditionalExpression(input as ConditionalExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return conditional_expression_({
-      expression1: f?.['expression1'],
-      expression2: f?.['expression2'],
-      expression3: f?.['expression3'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as ConditionalExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['expression1'] !== undefined) {
-    resolved['expression1'] = _resolveExpression(obj['expression1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
   }
-  if (obj['expression2'] !== undefined) {
-    resolved['expression2'] = _resolveExpression(obj['expression2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
   }
-  if (obj['expression3'] !== undefined) {
-    resolved['expression3'] = _resolveExpression(obj['expression3']);
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _resolveExpression(obj['NEEDS_NAME_2']);
+  }
+  if (obj.expression1 !== undefined) {
+    resolved.expression1 = _resolveExpression(obj.expression1);
+  }
+  if (obj.expression2 !== undefined) {
+    resolved.expression2 = _resolveExpression(obj.expression2);
+  }
+  if (obj.expression3 !== undefined) {
+    resolved.expression3 = _resolveExpression(obj.expression3);
   }
   return conditional_expression_(resolved as ConditionalExpressionConfig);
 }
@@ -853,23 +913,29 @@ export function conditionalExpressionFrom(input: unknown): unknown {
 export function constrainedTypeFrom(input: ConstrainedTypeTree | ConstrainedType | ConstrainedTypeFromInput): ConstrainedType;
 export function constrainedTypeFrom(input: unknown): unknown;
 export function constrainedTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapConstrainedType(input as ConstrainedTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return constrained_type_({
-      childType1: f?.['child_type1'],
-      childType2: f?.['child_type2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ConstrainedTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['childType1'] !== undefined) {
-    resolved['childType1'] = (isNodeData(obj['childType1']) ? obj['childType1'] : Array.isArray(obj['childType1']) ? type_From(obj['childType1']) : typeof obj['childType1'] === 'object' ? type_From(obj['childType1']) : obj['childType1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? type_From(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? type_From(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['childType2'] !== undefined) {
-    resolved['childType2'] = (isNodeData(obj['childType2']) ? obj['childType2'] : Array.isArray(obj['childType2']) ? type_From(obj['childType2']) : typeof obj['childType2'] === 'object' ? type_From(obj['childType2']) : obj['childType2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? type_From(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? type_From(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  }
+  if (obj.childType1 !== undefined) {
+    resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
+  }
+  if (obj.childType2 !== undefined) {
+    resolved.childType2 = (isNodeData(obj.childType2) ? obj.childType2 : Array.isArray(obj.childType2) ? type_From(obj.childType2) : typeof obj.childType2 === 'object' ? type_From(obj.childType2) : obj.childType2);
   }
   return constrained_type_(resolved as ConstrainedTypeConfig);
 }
@@ -877,7 +943,7 @@ export function constrainedTypeFrom(input: unknown): unknown {
 export function decoratedDefinitionFrom(input: DecoratedDefinitionTree | DecoratedDefinition | DecoratedDefinitionFromInput): DecoratedDefinition;
 export function decoratedDefinitionFrom(input: unknown): unknown;
 export function decoratedDefinitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDecoratedDefinition(input as DecoratedDefinitionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -904,7 +970,7 @@ export function decoratedDefinitionFrom(input: unknown): unknown {
 export function decoratorFrom(input: DecoratorTree | Decorator | DecoratorFromInput): Decorator;
 export function decoratorFrom(input: unknown): unknown;
 export function decoratorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDecorator(input as DecoratorTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -924,7 +990,7 @@ export function decoratorFrom(input: unknown): unknown {
 export function defaultParameterFrom(input: DefaultParameterTree | DefaultParameter | DefaultParameterFromInput): DefaultParameter;
 export function defaultParameterFrom(input: unknown): unknown;
 export function defaultParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDefaultParameter(input as DefaultParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -948,7 +1014,7 @@ export function defaultParameterFrom(input: unknown): unknown {
 export function deleteStatementFrom(input: DeleteStatementTree | DeleteStatement | DeleteStatementFromInput): DeleteStatement;
 export function deleteStatementFrom(input: unknown): unknown;
 export function deleteStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDeleteStatement(input as DeleteStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -968,7 +1034,7 @@ export function deleteStatementFrom(input: unknown): unknown {
 export function dictPatternFrom(input: DictPatternTree | DictPattern | DictPatternFromInput): DictPattern;
 export function dictPatternFrom(input: unknown): unknown;
 export function dictPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDictPattern(input as DictPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -976,8 +1042,8 @@ export function dictPatternFrom(input: unknown): unknown {
     return dict_pattern_({
       key: f?.['key'],
       value: f?.['value'],
-      splatPattern1: f?.['splat_pattern1'],
-      splatPattern2: f?.['splat_pattern2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as DictPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -992,13 +1058,20 @@ export function dictPatternFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['value'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
   }
-  if (obj['splatPattern1'] !== undefined) {
-    resolved['splatPattern1'] = (isNodeData(obj['splatPattern1']) ? obj['splatPattern1'] : Array.isArray(obj['splatPattern1']) ? splatPatternFrom(obj['splatPattern1']) : typeof obj['splatPattern1'] === 'object' ? splatPatternFrom(obj['splatPattern1']) : obj['splatPattern1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? splatPatternFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? splatPatternFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['splatPattern2'] !== undefined) {
-    const raw = obj['splatPattern2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['splatPattern2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? splatPatternFrom(v) : typeof v === 'object' ? splatPatternFrom(v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? splatPatternFrom(v) : typeof v === 'object' ? splatPatternFrom(v) : v));
+  }
+  if (obj.splatPattern1 !== undefined) {
+    resolved.splatPattern1 = (isNodeData(obj.splatPattern1) ? obj.splatPattern1 : Array.isArray(obj.splatPattern1) ? splatPatternFrom(obj.splatPattern1) : typeof obj.splatPattern1 === 'object' ? splatPatternFrom(obj.splatPattern1) : obj.splatPattern1);
+  }
+  if (obj.splatPattern2 !== undefined) {
+    const arr = Array.isArray(obj.splatPattern2) ? obj.splatPattern2 : [obj.splatPattern2];
+    resolved.splatPattern2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? splatPatternFrom(v) : typeof v === 'object' ? splatPatternFrom(v) : v));
   }
   return dict_pattern_(resolved as DictPatternConfig);
 }
@@ -1006,25 +1079,32 @@ export function dictPatternFrom(input: unknown): unknown {
 export function dictionaryFrom(input: DictionaryTree | Dictionary | DictionaryFromInput): Dictionary;
 export function dictionaryFrom(input: unknown): unknown;
 export function dictionaryFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDictionary(input as DictionaryTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return dictionary_({
-      dictionarySplatOrPair1: f?.['dictionary_splat_or_pair1'],
-      dictionarySplatOrPair2: f?.['dictionary_splat_or_pair2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as DictionaryConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['dictionarySplatOrPair1'] !== undefined) {
-    resolved['dictionarySplatOrPair1'] = _rr1mjap(obj['dictionarySplatOrPair1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rr1mjap(obj['NEEDS_NAME_0']);
   }
-  if (obj['dictionarySplatOrPair2'] !== undefined) {
-    const raw = obj['dictionarySplatOrPair2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['dictionarySplatOrPair2'] = arr.map((v: unknown) => _rr1mjap(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _rr1mjap(v));
+  }
+  if (obj.dictionarySplatOrPair1 !== undefined) {
+    resolved.dictionarySplatOrPair1 = _rr1mjap(obj.dictionarySplatOrPair1);
+  }
+  if (obj.dictionarySplatOrPair2 !== undefined) {
+    const arr = Array.isArray(obj.dictionarySplatOrPair2) ? obj.dictionarySplatOrPair2 : [obj.dictionarySplatOrPair2];
+    resolved.dictionarySplatOrPair2 = arr.map((v: unknown) => _rr1mjap(v));
   }
   return dictionary_(resolved as DictionaryConfig);
 }
@@ -1032,15 +1112,15 @@ export function dictionaryFrom(input: unknown): unknown {
 export function dictionaryComprehensionFrom(input: DictionaryComprehensionTree | DictionaryComprehension | DictionaryComprehensionFromInput): DictionaryComprehension;
 export function dictionaryComprehensionFrom(input: unknown): unknown;
 export function dictionaryComprehensionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDictionaryComprehension(input as DictionaryComprehensionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return dictionary_comprehension_({
       body: f?.['body'],
-      forInClause: f?.['for_in_clause'],
-      forInClauseOrIfClause: f?.['for_in_clause_or_if_clause'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as DictionaryComprehensionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1048,13 +1128,20 @@ export function dictionaryComprehensionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = (isNodeData(obj['body']) ? obj['body'] : Array.isArray(obj['body']) ? pairFrom(obj['body']) : typeof obj['body'] === 'object' ? pairFrom(obj['body']) : obj['body']);
   }
-  if (obj['forInClause'] !== undefined) {
-    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause']) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['forInClauseOrIfClause'] !== undefined) {
-    const raw = obj['forInClauseOrIfClause'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['forInClauseOrIfClause'] = arr.map((v: unknown) => _r4vgrkg(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
+  }
+  if (obj.forInClause !== undefined) {
+    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
+  }
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return dictionary_comprehension_(resolved as DictionaryComprehensionConfig);
 }
@@ -1062,7 +1149,7 @@ export function dictionaryComprehensionFrom(input: unknown): unknown {
 export function dictionarySplatFrom(input: DictionarySplatTree | DictionarySplat | DictionarySplatFromInput): DictionarySplat;
 export function dictionarySplatFrom(input: unknown): unknown;
 export function dictionarySplatFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDictionarySplat(input as DictionarySplatTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1082,7 +1169,7 @@ export function dictionarySplatFrom(input: unknown): unknown {
 export function dictionarySplatPatternFrom(input: DictionarySplatPatternTree | DictionarySplatPattern | DictionarySplatPatternFromInput): DictionarySplatPattern;
 export function dictionarySplatPatternFrom(input: unknown): unknown;
 export function dictionarySplatPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDictionarySplatPattern(input as DictionarySplatPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1102,25 +1189,32 @@ export function dictionarySplatPatternFrom(input: unknown): unknown {
 export function dottedNameFrom(input: DottedNameTree | DottedName | DottedNameFromInput): DottedName;
 export function dottedNameFrom(input: unknown): unknown;
 export function dottedNameFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapDottedName(input as DottedNameTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return dotted_name_({
-      identifier1: f?.['identifier1'],
-      identifier2: f?.['identifier2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as DottedNameConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['identifier1'] !== undefined) {
-    resolved['identifier1'] = (isNodeData(obj['identifier1']) ? obj['identifier1'] : typeof obj['identifier1'] === 'string' || typeof obj['identifier1'] === 'number' || typeof obj['identifier1'] === 'boolean' ? identifier_(''+obj['identifier1']) : obj['identifier1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' || typeof obj['NEEDS_NAME_0'] === 'number' || typeof obj['NEEDS_NAME_0'] === 'boolean' ? identifier_(''+obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['identifier2'] !== undefined) {
-    const raw = obj['identifier2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['identifier2'] = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+  }
+  if (obj.identifier1 !== undefined) {
+    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier_(''+obj.identifier1) : obj.identifier1);
+  }
+  if (obj.identifier2 !== undefined) {
+    const arr = Array.isArray(obj.identifier2) ? obj.identifier2 : [obj.identifier2];
+    resolved.identifier2 = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
   }
   return dotted_name_(resolved as DottedNameConfig);
 }
@@ -1128,7 +1222,7 @@ export function dottedNameFrom(input: unknown): unknown {
 export function elifClauseFrom(input: ElifClauseTree | ElifClause | ElifClauseFromInput): ElifClause;
 export function elifClauseFrom(input: unknown): unknown;
 export function elifClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapElifClause(input as ElifClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1152,7 +1246,7 @@ export function elifClauseFrom(input: unknown): unknown {
 export function elseClauseFrom(input: ElseClauseTree | ElseClause | ElseClauseFromInput): ElseClause;
 export function elseClauseFrom(input: unknown): unknown;
 export function elseClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapElseClause(input as ElseClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1172,7 +1266,7 @@ export function elseClauseFrom(input: unknown): unknown {
 export function exceptClauseFrom(input: ExceptClauseTree | ExceptClause | ExceptClauseFromInput): ExceptClause;
 export function exceptClauseFrom(input: unknown): unknown;
 export function exceptClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapExceptClause(input as ExceptClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1202,15 +1296,15 @@ export function exceptClauseFrom(input: unknown): unknown {
 export function execStatementFrom(input: ExecStatementTree | ExecStatement | ExecStatementFromInput): ExecStatement;
 export function execStatementFrom(input: unknown): unknown;
 export function execStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapExecStatement(input as ExecStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return exec_statement_({
       code: f?.['code'],
-      expression1: f?.['expression1'],
-      expression2: f?.['expression2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ExecStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1218,13 +1312,20 @@ export function execStatementFrom(input: unknown): unknown {
   if (obj['code'] !== undefined) {
     resolved['code'] = _rq3krei(obj['code']);
   }
-  if (obj['expression1'] !== undefined) {
-    resolved['expression1'] = _resolveExpression(obj['expression1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
   }
-  if (obj['expression2'] !== undefined) {
-    const raw = obj['expression2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['expression2'] = arr.map((v: unknown) => _resolveExpression(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolveExpression(v));
+  }
+  if (obj.expression1 !== undefined) {
+    resolved.expression1 = _resolveExpression(obj.expression1);
+  }
+  if (obj.expression2 !== undefined) {
+    const arr = Array.isArray(obj.expression2) ? obj.expression2 : [obj.expression2];
+    resolved.expression2 = arr.map((v: unknown) => _resolveExpression(v));
   }
   return exec_statement_(resolved as ExecStatementConfig);
 }
@@ -1232,25 +1333,32 @@ export function execStatementFrom(input: unknown): unknown {
 export function expressionListFrom(input: ExpressionListTree | ExpressionList | ExpressionListFromInput): ExpressionList;
 export function expressionListFrom(input: unknown): unknown;
 export function expressionListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapExpressionList(input as ExpressionListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return expression_list_({
-      expression1: f?.['expression1'],
-      expression2: f?.['expression2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ExpressionListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['expression1'] !== undefined) {
-    resolved['expression1'] = _resolveExpression(obj['expression1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
   }
-  if (obj['expression2'] !== undefined) {
-    const raw = obj['expression2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['expression2'] = arr.map((v: unknown) => _resolveExpression(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolveExpression(v));
+  }
+  if (obj.expression1 !== undefined) {
+    resolved.expression1 = _resolveExpression(obj.expression1);
+  }
+  if (obj.expression2 !== undefined) {
+    const arr = Array.isArray(obj.expression2) ? obj.expression2 : [obj.expression2];
+    resolved.expression2 = arr.map((v: unknown) => _resolveExpression(v));
   }
   return expression_list_(resolved as ExpressionListConfig);
 }
@@ -1258,25 +1366,32 @@ export function expressionListFrom(input: unknown): unknown {
 export function expressionStatementFrom(input: ExpressionStatementTree | ExpressionStatement | ExpressionStatementFromInput): ExpressionStatement;
 export function expressionStatementFrom(input: unknown): unknown;
 export function expressionStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapExpressionStatement(input as ExpressionStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return expression_statement_({
-      children1: f?.['children1'],
-      expression: f?.['expression'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ExpressionStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['children1'] !== undefined) {
-    resolved['children1'] = _rldymh6(obj['children1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rldymh6(obj['NEEDS_NAME_0']);
   }
-  if (obj['expression'] !== undefined) {
-    const raw = obj['expression'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['expression'] = arr.map((v: unknown) => _resolveExpression(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolveExpression(v));
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _rldymh6(obj.children1);
+  }
+  if (obj.expression !== undefined) {
+    const arr = Array.isArray(obj.expression) ? obj.expression : [obj.expression];
+    resolved.expression = arr.map((v: unknown) => _resolveExpression(v));
   }
   return expression_statement_(resolved as ExpressionStatementConfig);
 }
@@ -1284,7 +1399,7 @@ export function expressionStatementFrom(input: unknown): unknown {
 export function finallyClauseFrom(input: FinallyClauseTree | FinallyClause | FinallyClauseFromInput): FinallyClause;
 export function finallyClauseFrom(input: unknown): unknown;
 export function finallyClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFinallyClause(input as FinallyClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1304,7 +1419,7 @@ export function finallyClauseFrom(input: unknown): unknown {
 export function forInClauseFrom(input: ForInClauseTree | ForInClause | ForInClauseFromInput): ForInClause;
 export function forInClauseFrom(input: unknown): unknown;
 export function forInClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapForInClause(input as ForInClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1332,7 +1447,7 @@ export function forInClauseFrom(input: unknown): unknown {
 export function forStatementFrom(input: ForStatementTree | ForStatement | ForStatementFromInput): ForStatement;
 export function forStatementFrom(input: unknown): unknown;
 export function forStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapForStatement(input as ForStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1364,7 +1479,7 @@ export function forStatementFrom(input: unknown): unknown {
 export function formatExpressionFrom(input: FormatExpressionTree | FormatExpression | FormatExpressionFromInput): FormatExpression;
 export function formatExpressionFrom(input: unknown): unknown;
 export function formatExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFormatExpression(input as FormatExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1392,7 +1507,7 @@ export function formatExpressionFrom(input: unknown): unknown {
 export function formatSpecifierFrom(input: FormatSpecifierTree | FormatSpecifier | FormatSpecifierFromInput): FormatSpecifier;
 export function formatSpecifierFrom(input: unknown): unknown;
 export function formatSpecifierFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFormatSpecifier(input as FormatSpecifierTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1413,7 +1528,7 @@ export function formatSpecifierFrom(input: unknown): unknown {
 export function functionDefinitionFrom(input: FunctionDefinitionTree | FunctionDefinition | FunctionDefinitionFromInput): FunctionDefinition;
 export function functionDefinitionFrom(input: unknown): unknown;
 export function functionDefinitionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFunctionDefinition(input as FunctionDefinitionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1449,7 +1564,7 @@ export function functionDefinitionFrom(input: unknown): unknown {
 export function futureImportStatementFrom(input: FutureImportStatementTree | FutureImportStatement | FutureImportStatementFromInput): FutureImportStatement;
 export function futureImportStatementFrom(input: unknown): unknown;
 export function futureImportStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapFutureImportStatement(input as FutureImportStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1473,15 +1588,15 @@ export function futureImportStatementFrom(input: unknown): unknown {
 export function generatorExpressionFrom(input: GeneratorExpressionTree | GeneratorExpression | GeneratorExpressionFromInput): GeneratorExpression;
 export function generatorExpressionFrom(input: unknown): unknown;
 export function generatorExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGeneratorExpression(input as GeneratorExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return generator_expression_({
       body: f?.['body'],
-      forInClause: f?.['for_in_clause'],
-      forInClauseOrIfClause: f?.['for_in_clause_or_if_clause'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as GeneratorExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1489,13 +1604,20 @@ export function generatorExpressionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['forInClause'] !== undefined) {
-    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause']) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['forInClauseOrIfClause'] !== undefined) {
-    const raw = obj['forInClauseOrIfClause'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['forInClauseOrIfClause'] = arr.map((v: unknown) => _r4vgrkg(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
+  }
+  if (obj.forInClause !== undefined) {
+    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
+  }
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return generator_expression_(resolved as GeneratorExpressionConfig);
 }
@@ -1503,7 +1625,7 @@ export function generatorExpressionFrom(input: unknown): unknown {
 export function genericTypeFrom(input: GenericTypeTree | GenericType | GenericTypeFromInput): GenericType;
 export function genericTypeFrom(input: unknown): unknown;
 export function genericTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGenericType(input as GenericTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1527,25 +1649,32 @@ export function genericTypeFrom(input: unknown): unknown {
 export function globalStatementFrom(input: GlobalStatementTree | GlobalStatement | GlobalStatementFromInput): GlobalStatement;
 export function globalStatementFrom(input: unknown): unknown;
 export function globalStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapGlobalStatement(input as GlobalStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return global_statement_({
-      identifier1: f?.['identifier1'],
-      identifier2: f?.['identifier2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as GlobalStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['identifier1'] !== undefined) {
-    resolved['identifier1'] = (isNodeData(obj['identifier1']) ? obj['identifier1'] : typeof obj['identifier1'] === 'string' || typeof obj['identifier1'] === 'number' || typeof obj['identifier1'] === 'boolean' ? identifier_(''+obj['identifier1']) : obj['identifier1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' || typeof obj['NEEDS_NAME_0'] === 'number' || typeof obj['NEEDS_NAME_0'] === 'boolean' ? identifier_(''+obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['identifier2'] !== undefined) {
-    const raw = obj['identifier2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['identifier2'] = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+  }
+  if (obj.identifier1 !== undefined) {
+    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier_(''+obj.identifier1) : obj.identifier1);
+  }
+  if (obj.identifier2 !== undefined) {
+    const arr = Array.isArray(obj.identifier2) ? obj.identifier2 : [obj.identifier2];
+    resolved.identifier2 = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
   }
   return global_statement_(resolved as GlobalStatementConfig);
 }
@@ -1553,7 +1682,7 @@ export function globalStatementFrom(input: unknown): unknown {
 export function ifClauseFrom(input: IfClauseTree | IfClause | IfClauseFromInput): IfClause;
 export function ifClauseFrom(input: unknown): unknown;
 export function ifClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapIfClause(input as IfClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1573,7 +1702,7 @@ export function ifClauseFrom(input: unknown): unknown {
 export function ifStatementFrom(input: IfStatementTree | IfStatement | IfStatementFromInput): IfStatement;
 export function ifStatementFrom(input: unknown): unknown;
 export function ifStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapIfStatement(input as IfStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1603,7 +1732,7 @@ export function ifStatementFrom(input: unknown): unknown {
 export function importFromStatementFrom(input: ImportFromStatementTree | ImportFromStatement | ImportFromStatementFromInput): ImportFromStatement;
 export function importFromStatementFrom(input: unknown): unknown;
 export function importFromStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapImportFromStatement(input as ImportFromStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1633,7 +1762,7 @@ export function importFromStatementFrom(input: unknown): unknown {
 export function importStatementFrom(input: ImportStatementTree | ImportStatement | ImportStatementFromInput): ImportStatement;
 export function importStatementFrom(input: unknown): unknown;
 export function importStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapImportStatement(input as ImportStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1657,7 +1786,7 @@ export function importStatementFrom(input: unknown): unknown {
 export function interpolationFrom(input: InterpolationTree | Interpolation | InterpolationFromInput): Interpolation;
 export function interpolationFrom(input: unknown): unknown;
 export function interpolationFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapInterpolation(input as InterpolationTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1685,7 +1814,7 @@ export function interpolationFrom(input: unknown): unknown {
 export function keywordArgumentFrom(input: KeywordArgumentTree | KeywordArgument | KeywordArgumentFromInput): KeywordArgument;
 export function keywordArgumentFrom(input: unknown): unknown;
 export function keywordArgumentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapKeywordArgument(input as KeywordArgumentTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1709,14 +1838,14 @@ export function keywordArgumentFrom(input: unknown): unknown {
 export function keywordPatternFrom(input: KeywordPatternTree | KeywordPattern | KeywordPatternFromInput): KeywordPattern;
 export function keywordPatternFrom(input: unknown): unknown;
 export function keywordPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapKeywordPattern(input as KeywordPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return keyword_pattern_({
       identifier: f?.['identifier'],
-      children2: f?.['children2'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as KeywordPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1724,8 +1853,11 @@ export function keywordPatternFrom(input: unknown): unknown {
   if (obj['identifier'] !== undefined) {
     resolved['identifier'] = (isNodeData(obj['identifier']) ? obj['identifier'] : typeof obj['identifier'] === 'string' || typeof obj['identifier'] === 'number' || typeof obj['identifier'] === 'boolean' ? identifier_(''+obj['identifier']) : obj['identifier']);
   }
-  if (obj['children2'] !== undefined) {
-    resolved['children2'] = _rl9y3fp(obj['children2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rl9y3fp(obj['NEEDS_NAME_1']);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rl9y3fp(obj.children2);
   }
   return keyword_pattern_(resolved as KeywordPatternConfig);
 }
@@ -1733,7 +1865,7 @@ export function keywordPatternFrom(input: unknown): unknown {
 export function lambdaFrom(input: LambdaTree | Lambda | LambdaFromInput): Lambda;
 export function lambdaFrom(input: unknown): unknown;
 export function lambdaFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLambda(input as LambdaTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1757,7 +1889,7 @@ export function lambdaFrom(input: unknown): unknown {
 export function lambdaParametersFrom(input: LambdaParametersTree | LambdaParameters | LambdaParametersFromInput): LambdaParameters;
 export function lambdaParametersFrom(input: unknown): unknown;
 export function lambdaParametersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapLambdaParameters(input as LambdaParametersTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1780,7 +1912,7 @@ export function lambdaParametersFrom(input: unknown): unknown {
 export function listFrom(input: ListTree | List | ListFromInput): List;
 export function listFrom(input: unknown): unknown;
 export function listFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapList(input as ListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1801,15 +1933,15 @@ export function listFrom(input: unknown): unknown {
 export function listComprehensionFrom(input: ListComprehensionTree | ListComprehension | ListComprehensionFromInput): ListComprehension;
 export function listComprehensionFrom(input: unknown): unknown;
 export function listComprehensionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapListComprehension(input as ListComprehensionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return list_comprehension_({
       body: f?.['body'],
-      forInClause: f?.['for_in_clause'],
-      forInClauseOrIfClause: f?.['for_in_clause_or_if_clause'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ListComprehensionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1817,13 +1949,20 @@ export function listComprehensionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['forInClause'] !== undefined) {
-    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause']) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['forInClauseOrIfClause'] !== undefined) {
-    const raw = obj['forInClauseOrIfClause'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['forInClauseOrIfClause'] = arr.map((v: unknown) => _r4vgrkg(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
+  }
+  if (obj.forInClause !== undefined) {
+    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
+  }
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return list_comprehension_(resolved as ListComprehensionConfig);
 }
@@ -1831,7 +1970,7 @@ export function listComprehensionFrom(input: unknown): unknown {
 export function listPatternFrom(input: ListPatternTree | ListPattern | ListPatternFromInput): ListPattern;
 export function listPatternFrom(input: unknown): unknown;
 export function listPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapListPattern(input as ListPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1852,7 +1991,7 @@ export function listPatternFrom(input: unknown): unknown {
 export function listSplatFrom(input: ListSplatTree | ListSplat | ListSplatFromInput): ListSplat;
 export function listSplatFrom(input: unknown): unknown;
 export function listSplatFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapListSplat(input as ListSplatTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1872,7 +2011,7 @@ export function listSplatFrom(input: unknown): unknown {
 export function listSplatPatternFrom(input: ListSplatPatternTree | ListSplatPattern | ListSplatPatternFromInput): ListSplatPattern;
 export function listSplatPatternFrom(input: unknown): unknown;
 export function listSplatPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapListSplatPattern(input as ListSplatPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1892,7 +2031,7 @@ export function listSplatPatternFrom(input: unknown): unknown {
 export function matchStatementFrom(input: MatchStatementTree | MatchStatement | MatchStatementFromInput): MatchStatement;
 export function matchStatementFrom(input: unknown): unknown;
 export function matchStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMatchStatement(input as MatchStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1920,23 +2059,26 @@ export function matchStatementFrom(input: unknown): unknown {
 export function memberTypeFrom(input: MemberTypeTree | MemberType | MemberTypeFromInput): MemberType;
 export function memberTypeFrom(input: unknown): unknown;
 export function memberTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapMemberType(input as MemberTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return member_type_({
-      childType: f?.['child_type'],
+      type: f?.['type'],
       identifier: f?.['identifier'],
     } as unknown as MemberTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['childType'] !== undefined) {
-    resolved['childType'] = (isNodeData(obj['childType']) ? obj['childType'] : Array.isArray(obj['childType']) ? type_From(obj['childType']) : typeof obj['childType'] === 'object' ? type_From(obj['childType']) : obj['childType']);
+  if (obj['type'] !== undefined) {
+    resolved['type'] = (isNodeData(obj['type']) ? obj['type'] : Array.isArray(obj['type']) ? type_From(obj['type']) : typeof obj['type'] === 'object' ? type_From(obj['type']) : obj['type']);
   }
   if (obj['identifier'] !== undefined) {
     resolved['identifier'] = (isNodeData(obj['identifier']) ? obj['identifier'] : typeof obj['identifier'] === 'string' || typeof obj['identifier'] === 'number' || typeof obj['identifier'] === 'boolean' ? identifier_(''+obj['identifier']) : obj['identifier']);
+  }
+  if (obj.childType !== undefined) {
+    resolved.childType = (isNodeData(obj.childType) ? obj.childType : Array.isArray(obj.childType) ? type_From(obj.childType) : typeof obj.childType === 'object' ? type_From(obj.childType) : obj.childType);
   }
   return member_type_(resolved as MemberTypeConfig);
 }
@@ -1944,7 +2086,7 @@ export function memberTypeFrom(input: unknown): unknown {
 export function moduleFrom(input: ModuleTree | Module | ModuleFromInput): Module;
 export function moduleFrom(input: unknown): unknown;
 export function moduleFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapModule(input as ModuleTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1965,7 +2107,7 @@ export function moduleFrom(input: unknown): unknown {
 export function namedExpressionFrom(input: NamedExpressionTree | NamedExpression | NamedExpressionFromInput): NamedExpression;
 export function namedExpressionFrom(input: unknown): unknown;
 export function namedExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapNamedExpression(input as NamedExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -1989,25 +2131,32 @@ export function namedExpressionFrom(input: unknown): unknown {
 export function nonlocalStatementFrom(input: NonlocalStatementTree | NonlocalStatement | NonlocalStatementFromInput): NonlocalStatement;
 export function nonlocalStatementFrom(input: unknown): unknown;
 export function nonlocalStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapNonlocalStatement(input as NonlocalStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return nonlocal_statement_({
-      identifier1: f?.['identifier1'],
-      identifier2: f?.['identifier2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as NonlocalStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['identifier1'] !== undefined) {
-    resolved['identifier1'] = (isNodeData(obj['identifier1']) ? obj['identifier1'] : typeof obj['identifier1'] === 'string' || typeof obj['identifier1'] === 'number' || typeof obj['identifier1'] === 'boolean' ? identifier_(''+obj['identifier1']) : obj['identifier1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' || typeof obj['NEEDS_NAME_0'] === 'number' || typeof obj['NEEDS_NAME_0'] === 'boolean' ? identifier_(''+obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['identifier2'] !== undefined) {
-    const raw = obj['identifier2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['identifier2'] = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
+  }
+  if (obj.identifier1 !== undefined) {
+    resolved.identifier1 = (isNodeData(obj.identifier1) ? obj.identifier1 : typeof obj.identifier1 === 'string' || typeof obj.identifier1 === 'number' || typeof obj.identifier1 === 'boolean' ? identifier_(''+obj.identifier1) : obj.identifier1);
+  }
+  if (obj.identifier2 !== undefined) {
+    const arr = Array.isArray(obj.identifier2) ? obj.identifier2 : [obj.identifier2];
+    resolved.identifier2 = arr.map((v: unknown) => (isNodeData(v) ? v : typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? identifier_(''+v) : v));
   }
   return nonlocal_statement_(resolved as NonlocalStatementConfig);
 }
@@ -2015,7 +2164,7 @@ export function nonlocalStatementFrom(input: unknown): unknown {
 export function notOperatorFrom(input: NotOperatorTree | NotOperator | NotOperatorFromInput): NotOperator;
 export function notOperatorFrom(input: unknown): unknown;
 export function notOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapNotOperator(input as NotOperatorTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2035,7 +2184,7 @@ export function notOperatorFrom(input: unknown): unknown {
 export function pairFrom(input: PairTree | Pair | PairFromInput): Pair;
 export function pairFrom(input: unknown): unknown;
 export function pairFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapPair(input as PairTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2059,7 +2208,7 @@ export function pairFrom(input: unknown): unknown {
 export function parametersFrom(input: ParametersTree | Parameters | ParametersFromInput): Parameters;
 export function parametersFrom(input: unknown): unknown;
 export function parametersFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapParameters(input as ParametersTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2080,7 +2229,7 @@ export function parametersFrom(input: unknown): unknown {
 export function parenthesizedExpressionFrom(input: ParenthesizedExpressionTree | ParenthesizedExpression | ParenthesizedExpressionFromInput): ParenthesizedExpression;
 export function parenthesizedExpressionFrom(input: unknown): unknown;
 export function parenthesizedExpressionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapParenthesizedExpression(input as ParenthesizedExpressionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2100,7 +2249,7 @@ export function parenthesizedExpressionFrom(input: unknown): unknown {
 export function parenthesizedListSplatFrom(input: ParenthesizedListSplatTree | ParenthesizedListSplat | ParenthesizedListSplatFromInput): ParenthesizedListSplat;
 export function parenthesizedListSplatFrom(input: unknown): unknown;
 export function parenthesizedListSplatFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapParenthesizedListSplat(input as ParenthesizedListSplatTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2120,25 +2269,32 @@ export function parenthesizedListSplatFrom(input: unknown): unknown {
 export function patternListFrom(input: PatternListTree | PatternList | PatternListFromInput): PatternList;
 export function patternListFrom(input: unknown): unknown;
 export function patternListFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapPatternList(input as PatternListTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return pattern_list_({
-      pattern1: f?.['pattern1'],
-      pattern2: f?.['pattern2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as PatternListConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['pattern1'] !== undefined) {
-    resolved['pattern1'] = _resolvePattern(obj['pattern1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolvePattern(obj['NEEDS_NAME_0']);
   }
-  if (obj['pattern2'] !== undefined) {
-    const raw = obj['pattern2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['pattern2'] = arr.map((v: unknown) => _resolvePattern(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolvePattern(v));
+  }
+  if (obj.pattern1 !== undefined) {
+    resolved.pattern1 = _resolvePattern(obj.pattern1);
+  }
+  if (obj.pattern2 !== undefined) {
+    const arr = Array.isArray(obj.pattern2) ? obj.pattern2 : [obj.pattern2];
+    resolved.pattern2 = arr.map((v: unknown) => _resolvePattern(v));
   }
   return pattern_list_(resolved as PatternListConfig);
 }
@@ -2146,7 +2302,7 @@ export function patternListFrom(input: unknown): unknown {
 export function printStatementFrom(input: PrintStatementTree | PrintStatement | PrintStatementFromInput): PrintStatement;
 export function printStatementFrom(input: unknown): unknown;
 export function printStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapPrintStatement(input as PrintStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2172,7 +2328,7 @@ export function printStatementFrom(input: unknown): unknown {
 export function raiseStatementFrom(input: RaiseStatementTree | RaiseStatement | RaiseStatementFromInput): RaiseStatement;
 export function raiseStatementFrom(input: unknown): unknown;
 export function raiseStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapRaiseStatement(input as RaiseStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2196,7 +2352,7 @@ export function raiseStatementFrom(input: unknown): unknown {
 export function relativeImportFrom(input: RelativeImportTree | RelativeImport | RelativeImportFromInput): RelativeImport;
 export function relativeImportFrom(input: unknown): unknown;
 export function relativeImportFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapRelativeImport(input as RelativeImportTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2220,7 +2376,7 @@ export function relativeImportFrom(input: unknown): unknown {
 export function returnStatementFrom(input: ReturnStatementTree | ReturnStatement | ReturnStatementFromInput): ReturnStatement;
 export function returnStatementFrom(input: unknown): unknown;
 export function returnStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapReturnStatement(input as ReturnStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2240,7 +2396,7 @@ export function returnStatementFrom(input: unknown): unknown {
 export function setFrom(input: SetTree | Set | SetFromInput): Set;
 export function setFrom(input: unknown): unknown;
 export function setFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSet(input as SetTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2263,15 +2419,15 @@ export function setFrom(input: unknown): unknown {
 export function setComprehensionFrom(input: SetComprehensionTree | SetComprehension | SetComprehensionFromInput): SetComprehension;
 export function setComprehensionFrom(input: unknown): unknown;
 export function setComprehensionFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSetComprehension(input as SetComprehensionTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return set_comprehension_({
       body: f?.['body'],
-      forInClause: f?.['for_in_clause'],
-      forInClauseOrIfClause: f?.['for_in_clause_or_if_clause'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as SetComprehensionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2279,13 +2435,20 @@ export function setComprehensionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['forInClause'] !== undefined) {
-    resolved['forInClause'] = (isNodeData(obj['forInClause']) ? obj['forInClause'] : Array.isArray(obj['forInClause']) ? forInClauseFrom(obj['forInClause']) : typeof obj['forInClause'] === 'object' ? forInClauseFrom(obj['forInClause']) : obj['forInClause']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['forInClauseOrIfClause'] !== undefined) {
-    const raw = obj['forInClauseOrIfClause'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['forInClauseOrIfClause'] = arr.map((v: unknown) => _r4vgrkg(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
+  }
+  if (obj.forInClause !== undefined) {
+    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
+  }
+  if (obj.forInClauseOrIfClause !== undefined) {
+    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
+    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
   }
   return set_comprehension_(resolved as SetComprehensionConfig);
 }
@@ -2293,27 +2456,36 @@ export function setComprehensionFrom(input: unknown): unknown {
 export function sliceFrom(input: SliceTree | Slice | SliceFromInput): Slice;
 export function sliceFrom(input: unknown): unknown;
 export function sliceFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSlice(input as SliceTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return slice_({
-      expression1: f?.['expression1'],
-      expression2: f?.['expression2'],
-      expression3: f?.['expression3'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as SliceConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['expression1'] !== undefined) {
-    resolved['expression1'] = _resolveExpression(obj['expression1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
   }
-  if (obj['expression2'] !== undefined) {
-    resolved['expression2'] = _resolveExpression(obj['expression2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
   }
-  if (obj['expression3'] !== undefined) {
-    resolved['expression3'] = _resolveExpression(obj['expression3']);
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _resolveExpression(obj['NEEDS_NAME_2']);
+  }
+  if (obj.expression1 !== undefined) {
+    resolved.expression1 = _resolveExpression(obj.expression1);
+  }
+  if (obj.expression2 !== undefined) {
+    resolved.expression2 = _resolveExpression(obj.expression2);
+  }
+  if (obj.expression3 !== undefined) {
+    resolved.expression3 = _resolveExpression(obj.expression3);
   }
   return slice_(resolved as SliceConfig);
 }
@@ -2321,7 +2493,7 @@ export function sliceFrom(input: unknown): unknown {
 export function splatPatternFrom(input: SplatPatternTree | SplatPattern | SplatPatternFromInput): SplatPattern;
 export function splatPatternFrom(input: unknown): unknown;
 export function splatPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSplatPattern(input as SplatPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2341,7 +2513,7 @@ export function splatPatternFrom(input: unknown): unknown {
 export function splatTypeFrom(input: SplatTypeTree | SplatType | SplatTypeFromInput): SplatType;
 export function splatTypeFrom(input: unknown): unknown;
 export function splatTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSplatType(input as SplatTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2361,14 +2533,14 @@ export function splatTypeFrom(input: unknown): unknown {
 export function stringFrom(input: StringTree | String | StringFromInput): String;
 export function stringFrom(input: unknown): unknown;
 export function stringFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapString(input as StringTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return string_({
       stringStart: f?.['string_start'],
-      interpolationOrStringContent: f?.['interpolation_or_string_content'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       stringEnd: f?.['string_end'],
     } as unknown as StringConfig);
   }
@@ -2377,13 +2549,17 @@ export function stringFrom(input: unknown): unknown {
   if (obj['stringStart'] !== undefined) {
     resolved['stringStart'] = (isNodeData(obj['stringStart']) ? obj['stringStart'] : typeof obj['stringStart'] === 'string' || typeof obj['stringStart'] === 'number' || typeof obj['stringStart'] === 'boolean' ? string_start_(''+obj['stringStart']) : obj['stringStart']);
   }
-  if (obj['interpolationOrStringContent'] !== undefined) {
-    const raw = obj['interpolationOrStringContent'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['interpolationOrStringContent'] = arr.map((v: unknown) => _r2im5d1(v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r2im5d1(v));
   }
   if (obj['stringEnd'] !== undefined) {
     resolved['stringEnd'] = (isNodeData(obj['stringEnd']) ? obj['stringEnd'] : typeof obj['stringEnd'] === 'string' || typeof obj['stringEnd'] === 'number' || typeof obj['stringEnd'] === 'boolean' ? string_end_(''+obj['stringEnd']) : obj['stringEnd']);
+  }
+  if (obj.interpolationOrStringContent !== undefined) {
+    const arr = Array.isArray(obj.interpolationOrStringContent) ? obj.interpolationOrStringContent : [obj.interpolationOrStringContent];
+    resolved.interpolationOrStringContent = arr.map((v: unknown) => _r2im5d1(v));
   }
   return string_(resolved as StringConfig);
 }
@@ -2391,7 +2567,7 @@ export function stringFrom(input: unknown): unknown {
 export function stringContentFrom(input: StringContentTree | StringContent | StringContentFromInput): StringContent;
 export function stringContentFrom(input: unknown): unknown;
 export function stringContentFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapStringContent(input as StringContentTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2412,7 +2588,7 @@ export function stringContentFrom(input: unknown): unknown {
 export function subscriptFrom(input: SubscriptTree | Subscript | SubscriptFromInput): Subscript;
 export function subscriptFrom(input: unknown): unknown;
 export function subscriptFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapSubscript(input as SubscriptTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2440,7 +2616,7 @@ export function subscriptFrom(input: unknown): unknown {
 export function tryStatementFrom(input: TryStatementTree | TryStatement | TryStatementFromInput): TryStatement;
 export function tryStatementFrom(input: unknown): unknown;
 export function tryStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTryStatement(input as TryStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2474,7 +2650,7 @@ export function tryStatementFrom(input: unknown): unknown {
 export function tupleFrom(input: TupleTree | Tuple | TupleFromInput): Tuple;
 export function tupleFrom(input: unknown): unknown;
 export function tupleFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTuple(input as TupleTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2495,7 +2671,7 @@ export function tupleFrom(input: unknown): unknown {
 export function tuplePatternFrom(input: TuplePatternTree | TuplePattern | TuplePatternFromInput): TuplePattern;
 export function tuplePatternFrom(input: unknown): unknown;
 export function tuplePatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTuplePattern(input as TuplePatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2516,7 +2692,7 @@ export function tuplePatternFrom(input: unknown): unknown {
 export function type_From(input: TypeTree | Type | TypeFromInput): Type;
 export function type_From(input: unknown): unknown;
 export function type_From(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapType(input as TypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2536,7 +2712,7 @@ export function type_From(input: unknown): unknown {
 export function typeAliasStatementFrom(input: TypeAliasStatementTree | TypeAliasStatement | TypeAliasStatementFromInput): TypeAliasStatement;
 export function typeAliasStatementFrom(input: unknown): unknown;
 export function typeAliasStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeAliasStatement(input as TypeAliasStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2560,25 +2736,32 @@ export function typeAliasStatementFrom(input: unknown): unknown {
 export function typeParameterFrom(input: TypeParameterTree | TypeParameter | TypeParameterFromInput): TypeParameter;
 export function typeParameterFrom(input: unknown): unknown;
 export function typeParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypeParameter(input as TypeParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return type_parameter_({
-      childType1: f?.['child_type1'],
-      childType2: f?.['child_type2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as TypeParameterConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['childType1'] !== undefined) {
-    resolved['childType1'] = (isNodeData(obj['childType1']) ? obj['childType1'] : Array.isArray(obj['childType1']) ? type_From(obj['childType1']) : typeof obj['childType1'] === 'object' ? type_From(obj['childType1']) : obj['childType1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? type_From(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? type_From(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['childType2'] !== undefined) {
-    const raw = obj['childType2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['childType2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v) : typeof v === 'object' ? type_From(v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v) : typeof v === 'object' ? type_From(v) : v));
+  }
+  if (obj.childType1 !== undefined) {
+    resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
+  }
+  if (obj.childType2 !== undefined) {
+    const arr = Array.isArray(obj.childType2) ? obj.childType2 : [obj.childType2];
+    resolved.childType2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? type_From(v) : typeof v === 'object' ? type_From(v) : v));
   }
   return type_parameter_(resolved as TypeParameterConfig);
 }
@@ -2586,7 +2769,7 @@ export function typeParameterFrom(input: unknown): unknown {
 export function typedDefaultParameterFrom(input: TypedDefaultParameterTree | TypedDefaultParameter | TypedDefaultParameterFromInput): TypedDefaultParameter;
 export function typedDefaultParameterFrom(input: unknown): unknown;
 export function typedDefaultParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypedDefaultParameter(input as TypedDefaultParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2614,7 +2797,7 @@ export function typedDefaultParameterFrom(input: unknown): unknown {
 export function typedParameterFrom(input: TypedParameterTree | TypedParameter | TypedParameterFromInput): TypedParameter;
 export function typedParameterFrom(input: unknown): unknown;
 export function typedParameterFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapTypedParameter(input as TypedParameterTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2638,7 +2821,7 @@ export function typedParameterFrom(input: unknown): unknown {
 export function unaryOperatorFrom(input: UnaryOperatorTree | UnaryOperator | UnaryOperatorFromInput): UnaryOperator;
 export function unaryOperatorFrom(input: unknown): unknown;
 export function unaryOperatorFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUnaryOperator(input as UnaryOperatorTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2662,7 +2845,7 @@ export function unaryOperatorFrom(input: unknown): unknown {
 export function unionPatternFrom(input: UnionPatternTree | UnionPattern | UnionPatternFromInput): UnionPattern;
 export function unionPatternFrom(input: unknown): unknown;
 export function unionPatternFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUnionPattern(input as UnionPatternTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2683,23 +2866,29 @@ export function unionPatternFrom(input: unknown): unknown {
 export function unionTypeFrom(input: UnionTypeTree | UnionType | UnionTypeFromInput): UnionType;
 export function unionTypeFrom(input: unknown): unknown;
 export function unionTypeFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapUnionType(input as UnionTypeTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return union_type_({
-      childType1: f?.['child_type1'],
-      childType2: f?.['child_type2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as UnionTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['childType1'] !== undefined) {
-    resolved['childType1'] = (isNodeData(obj['childType1']) ? obj['childType1'] : Array.isArray(obj['childType1']) ? type_From(obj['childType1']) : typeof obj['childType1'] === 'object' ? type_From(obj['childType1']) : obj['childType1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? type_From(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? type_From(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['childType2'] !== undefined) {
-    resolved['childType2'] = (isNodeData(obj['childType2']) ? obj['childType2'] : Array.isArray(obj['childType2']) ? type_From(obj['childType2']) : typeof obj['childType2'] === 'object' ? type_From(obj['childType2']) : obj['childType2']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? type_From(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? type_From(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  }
+  if (obj.childType1 !== undefined) {
+    resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
+  }
+  if (obj.childType2 !== undefined) {
+    resolved.childType2 = (isNodeData(obj.childType2) ? obj.childType2 : Array.isArray(obj.childType2) ? type_From(obj.childType2) : typeof obj.childType2 === 'object' ? type_From(obj.childType2) : obj.childType2);
   }
   return union_type_(resolved as UnionTypeConfig);
 }
@@ -2707,7 +2896,7 @@ export function unionTypeFrom(input: unknown): unknown {
 export function whileStatementFrom(input: WhileStatementTree | WhileStatement | WhileStatementFromInput): WhileStatement;
 export function whileStatementFrom(input: unknown): unknown;
 export function whileStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapWhileStatement(input as WhileStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2735,25 +2924,32 @@ export function whileStatementFrom(input: unknown): unknown {
 export function withClauseFrom(input: WithClauseTree | WithClause | WithClauseFromInput): WithClause;
 export function withClauseFrom(input: unknown): unknown;
 export function withClauseFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapWithClause(input as WithClauseTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
     const c = nd.children;
     return with_clause_({
-      withItem1: f?.['with_item1'],
-      withItem2: f?.['with_item2'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as WithClauseConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['withItem1'] !== undefined) {
-    resolved['withItem1'] = (isNodeData(obj['withItem1']) ? obj['withItem1'] : Array.isArray(obj['withItem1']) ? withItemFrom(obj['withItem1']) : typeof obj['withItem1'] === 'object' ? withItemFrom(obj['withItem1']) : obj['withItem1']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? withItemFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? withItemFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['withItem2'] !== undefined) {
-    const raw = obj['withItem2'];
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['withItem2'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? withItemFrom(v) : typeof v === 'object' ? withItemFrom(v) : v));
+    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? withItemFrom(v) : typeof v === 'object' ? withItemFrom(v) : v));
+  }
+  if (obj.withItem1 !== undefined) {
+    resolved.withItem1 = (isNodeData(obj.withItem1) ? obj.withItem1 : Array.isArray(obj.withItem1) ? withItemFrom(obj.withItem1) : typeof obj.withItem1 === 'object' ? withItemFrom(obj.withItem1) : obj.withItem1);
+  }
+  if (obj.withItem2 !== undefined) {
+    const arr = Array.isArray(obj.withItem2) ? obj.withItem2 : [obj.withItem2];
+    resolved.withItem2 = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? withItemFrom(v) : typeof v === 'object' ? withItemFrom(v) : v));
   }
   return with_clause_(resolved as WithClauseConfig);
 }
@@ -2761,7 +2957,7 @@ export function withClauseFrom(input: unknown): unknown {
 export function withItemFrom(input: WithItemTree | WithItem | WithItemFromInput): WithItem;
 export function withItemFrom(input: unknown): unknown;
 export function withItemFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapWithItem(input as WithItemTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2781,7 +2977,7 @@ export function withItemFrom(input: unknown): unknown {
 export function withStatementFrom(input: WithStatementTree | WithStatement | WithStatementFromInput): WithStatement;
 export function withStatementFrom(input: unknown): unknown;
 export function withStatementFrom(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapWithStatement(input as WithStatementTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;
@@ -2805,7 +3001,7 @@ export function withStatementFrom(input: unknown): unknown {
 export function yield_From(input: YieldTree | Yield | YieldFromInput): Yield;
 export function yield_From(input: unknown): unknown;
 export function yield_From(input: unknown): unknown {
-  if (isTreeNode(input)) return wrapYield(input as YieldTree);
+  if (isTreeNode(input)) return input as any;
   if (isNodeData(input)) {
     const nd = input as { type: string; fields?: Record<string, unknown>; children?: unknown[] };
     const f = nd.fields;

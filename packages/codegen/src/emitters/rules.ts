@@ -11,7 +11,7 @@ import type { GrammarRule } from '../grammar.ts';
 import { loadGrammar } from '../grammar.ts';
 import type { HydratedNodeModel, HydratedChildrenModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
-import { type StructuralNode, structuralNodes, fieldsOf, childSlotNames } from './utils.ts';
+import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
 import { buildProjectionContext, projectKinds } from './kind-projections.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
 
@@ -110,20 +110,10 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 		}
 	}
 
-	// Append missing child slots the walker didn't reach
-	const hasChildren = node.children != null;
-	if (hasChildren) {
-		const slotNames = childSlotNames(node.children!, ctx);
-		if (isTupleChildren(node.children!)) {
-			eachChildSlot(node.children!, (slot, i) => {
-				const slotName = slotNames[i]!;
-				if (!seen.has(`child:${slotName}`)) {
-					parts.push(slot.multiple ? ` $$$${toSnakeUpper(slotName)}` : ` $${toSnakeUpper(slotName)}`);
-				}
-			});
-		} else if (!seen.has('children')) {
-			parts.push(' $$$CHILDREN');
-		}
+	// Append $$$CHILDREN for any children the walker didn't reach.
+	// The consumption model ensures only unconsumed children are rendered.
+	if (node.children != null && !seen.has('children')) {
+		parts.push(' $$$CHILDREN');
 	}
 
 	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
@@ -163,14 +153,30 @@ function buildChildSlotMap(node: StructuralNode, ctx: ReturnType<typeof buildPro
 	const map = new Map<string, ChildSlotInfo>();
 	if (!node.children) return map;
 
-	const slotNames = childSlotNames(node.children, ctx);
-
 	if (isTupleChildren(node.children)) {
-		eachChildSlot(node.children, (slot, i) => {
-			const slotName = slotNames[i]!;
-			const varName = toSnakeUpper(slotName);
+		// Track how many slots each kind appears in (for multiplicity detection)
+		const kindSlotCount = new Map<string, number>();
+		eachChildSlot(node.children, (slot) => {
 			for (const k of slot.kinds) {
-				map.set(k.kind, { varName, multiple: slot.multiple, slotName });
+				kindSlotCount.set(k.kind, (kindSlotCount.get(k.kind) ?? 0) + 1);
+			}
+		});
+
+		eachChildSlot(node.children, (slot) => {
+			for (const k of slot.kinds) {
+				// Skip supertypes — they don't appear as concrete child types
+				if ((k as any).modelType === 'supertype') continue;
+
+				const kindName = k.kind.replace(/^_/, '');
+				const varName = kindName.toUpperCase();
+				const isMulti = slot.multiple || (kindSlotCount.get(k.kind) ?? 0) > 1;
+
+				if (!map.has(k.kind)) {
+					map.set(k.kind, { varName, multiple: isMulti, slotName: kindName });
+				} else {
+					// Already mapped — ensure it's marked as multiple
+					map.get(k.kind)!.multiple = true;
+				}
 			}
 		});
 	} else {

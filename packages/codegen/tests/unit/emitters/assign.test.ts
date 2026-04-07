@@ -16,15 +16,27 @@ describe('emitWrap', () => {
 	});
 
 	it('emits per-kind wrap functions', () => {
-		expect(source).toContain('function wrapFunctionItem(target');
-		expect(source).toContain('function wrapStructItem(target');
+		expect(source).toContain('function wrapFunctionItem(data');
+		expect(source).toContain('function wrapStructItem(data');
 	});
 
-	it('emits readNode() entry point', () => {
-		expect(source).toContain('export function readNode');
+	it('emits readTreeNode() entry point', () => {
+		expect(source).toContain('export function readTreeNode');
 	});
 
-	it('emits edit() as alias for readNode', () => {
-		expect(source).toContain('export const edit = readNode');
+	it('emits wrapNode() dispatcher', () => {
+		expect(source).toContain('export function wrapNode');
+	});
+
+	it('emits promote/drillIn helpers', () => {
+		expect(source).toContain('function promote(');
+		expect(source).toContain('function promoteAnon(');
+		expect(source).toContain('function drillIn(');
+	});
+
+	it('emits lazy getters (not eager recursion)', () => {
+		// Wrap functions should use getter syntax, not direct recursion
+		expect(source).toContain('get ');
+		expect(source).toContain('drillIn(');
 	});
 });

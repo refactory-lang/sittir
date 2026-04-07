@@ -270,7 +270,7 @@
     kind: "ambient_declaration",
     fields: [
       {
-        name: "children1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["declaration", "statement_block", "property_identifier"],
@@ -279,7 +279,7 @@
         overrideValues: null,
       },
       {
-        name: "child_type",
+        name: "type",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -306,7 +306,7 @@
     kind: "arguments",
     fields: [
       {
-        name: "expression_or_spread_element1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["expression", "spread_element"],
@@ -315,7 +315,7 @@
         overrideValues: null,
       },
       {
-        name: "expression_or_spread_element2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["expression", "spread_element"],
@@ -344,7 +344,7 @@
     kind: "array",
     fields: [
       {
-        name: "expression_or_spread_element1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["expression", "spread_element"],
@@ -353,7 +353,7 @@
         overrideValues: null,
       },
       {
-        name: "expression_or_spread_element2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["expression", "spread_element"],
@@ -382,7 +382,7 @@
     kind: "array_pattern",
     fields: [
       {
-        name: "assignment_pattern_or_pattern1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["pattern", "assignment_pattern"],
@@ -391,7 +391,7 @@
         overrideValues: null,
       },
       {
-        name: "assignment_pattern_or_pattern2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["pattern", "assignment_pattern"],
@@ -475,7 +475,7 @@
         overrideValues: null,
       },
       {
-        name: "child_type",
+        name: "type",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -862,7 +862,7 @@
     kind: "class_heritage",
     fields: [
       {
-        name: "extends_clause_or_implements_clause",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["extends_clause", "implements_clause"],
@@ -871,7 +871,7 @@
         overrideValues: null,
       },
       {
-        name: "implements_clause",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["implements_clause"],
@@ -1124,7 +1124,7 @@
         separator: null,
       },
       {
-        name: "enum_assignment1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["enum_assignment"],
@@ -1133,14 +1133,14 @@
         overrideValues: null,
       },
       {
-        name: "enum_assignment2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["enum_assignment"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -1186,7 +1186,7 @@
     kind: "export_clause",
     fields: [
       {
-        name: "export_specifier1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["export_specifier"],
@@ -1195,14 +1195,14 @@
         overrideValues: null,
       },
       {
-        name: "export_specifier2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["export_specifier"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -1701,7 +1701,7 @@
     kind: "implements_clause",
     fields: [
       {
-        name: "child_type1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -1710,14 +1710,14 @@
         overrideValues: null,
       },
       {
-        name: "child_type2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["type"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -1744,7 +1744,7 @@
     kind: "import_alias",
     fields: [
       {
-        name: "identifier",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["identifier"],
@@ -1753,7 +1753,7 @@
         overrideValues: null,
       },
       {
-        name: "identifier_or_nested_identifier",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["identifier", "nested_identifier"],
@@ -1789,7 +1789,7 @@
     kind: "import_clause",
     fields: [
       {
-        name: "children1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["namespace_import", "named_imports", "identifier"],
@@ -1798,7 +1798,7 @@
         overrideValues: null,
       },
       {
-        name: "named_imports_or_namespace_import",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["namespace_import", "named_imports"],
@@ -1867,7 +1867,7 @@
         kinds: ["string"],
       },
       {
-        name: "import_clause_or_import_require_clause",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["import_clause", "import_require_clause"],
@@ -1961,7 +1961,7 @@
         overrideValues: null,
       },
       {
-        name: "child_type",
+        name: "type",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -2076,7 +2076,7 @@
     kind: "intersection_type",
     fields: [
       {
-        name: "child_type1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -2085,7 +2085,7 @@
         overrideValues: null,
       },
       {
-        name: "child_type2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -2137,7 +2137,7 @@
         kinds: ["let", "const"],
       },
       {
-        name: "variable_declarator1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["variable_declarator"],
@@ -2146,14 +2146,14 @@
         overrideValues: null,
       },
       {
-        name: "variable_declarator2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["variable_declarator"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -2193,7 +2193,7 @@
         overrideValues: null,
       },
       {
-        name: "child_type",
+        name: "type",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -2434,7 +2434,7 @@
     kind: "named_imports",
     fields: [
       {
-        name: "import_specifier1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["import_specifier"],
@@ -2443,14 +2443,14 @@
         overrideValues: null,
       },
       {
-        name: "import_specifier2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["import_specifier"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -2562,7 +2562,7 @@
     kind: "object",
     fields: [
       {
-        name: "children1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["pair", "spread_element", "method_definition", "shorthand_property_identifier"],
@@ -2571,7 +2571,7 @@
         overrideValues: null,
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["pair", "spread_element", "method_definition", "shorthand_property_identifier"],
@@ -2624,7 +2624,7 @@
     kind: "object_pattern",
     fields: [
       {
-        name: "children1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: [
@@ -2638,7 +2638,7 @@
         overrideValues: null,
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: [
@@ -2682,7 +2682,7 @@
     kind: "object_type",
     fields: [
       {
-        name: "children1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: [
@@ -2698,7 +2698,7 @@
         overrideValues: null,
       },
       {
-        name: "children2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: [
@@ -3252,7 +3252,7 @@
         overrideValues: null,
       },
       {
-        name: "child_type",
+        name: "type",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -3279,7 +3279,7 @@
     kind: "sequence_expression",
     fields: [
       {
-        name: "expression1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["expression"],
@@ -3288,14 +3288,14 @@
         overrideValues: null,
       },
       {
-        name: "expression2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["expression"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -3588,7 +3588,7 @@
     kind: "type_arguments",
     fields: [
       {
-        name: "child_type1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -3597,14 +3597,14 @@
         overrideValues: null,
       },
       {
-        name: "child_type2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["type"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -3687,7 +3687,7 @@
     kind: "type_parameters",
     fields: [
       {
-        name: "type_parameter1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["type_parameter"],
@@ -3696,14 +3696,14 @@
         overrideValues: null,
       },
       {
-        name: "type_parameter2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["type_parameter"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [
@@ -3788,7 +3788,7 @@
     kind: "union_type",
     fields: [
       {
-        name: "child_type1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -3797,7 +3797,7 @@
         overrideValues: null,
       },
       {
-        name: "child_type2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: false,
         kinds: ["type"],
@@ -3843,7 +3843,7 @@
     kind: "variable_declaration",
     fields: [
       {
-        name: "variable_declarator1",
+        name: "NEEDS_NAME_0",
         required: false,
         multiple: false,
         kinds: ["variable_declarator"],
@@ -3852,14 +3852,14 @@
         overrideValues: null,
       },
       {
-        name: "variable_declarator2",
+        name: "NEEDS_NAME_1",
         required: false,
         multiple: true,
         kinds: ["variable_declarator"],
-        separator: ",",
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
+        separator: ",",
       },
     ],
     children: [

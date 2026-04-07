@@ -88,6 +88,7 @@ export function emitFactory(config: {
 
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
+	lines.push(`    named: true as const,`);
 	if (hasFields) {
 		lines.push(`    fields,`);
 	}
@@ -170,6 +171,7 @@ export function emitTerminalFactory(
 		lines.push(`export function ${internalName}() {`);
 		lines.push(`  return {`);
 		lines.push(`    type: '${kind}' as const,`);
+		lines.push(`    named: true as const,`);
 		lines.push(`    text: '${escapeString(fixedText)}',`);
 		lines.push(`    render: () => '${escapeString(fixedText)}',`);
 		lines.push(`    toEdit: (startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) => {`);
@@ -210,6 +212,7 @@ export function emitTerminalFactory(
 	}
 	lines.push(`  return {`);
 	lines.push(`    type: '${kind}' as const,`);
+	lines.push(`    named: true as const,`);
 	lines.push(`    text,`);
 	lines.push(`    render: () => text,`);
 	lines.push(`    toEdit: (startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) => {`);

@@ -18,7 +18,7 @@
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { toIrKey, toFactoryName, camelToSnake } from './naming.ts';
+import { toIrKey, toFactoryName } from './naming.ts';
 import { emitGrammar } from './emitters/grammar.ts';
 import { emitTypes } from './emitters/types.ts';
 import { emitTemplatesYaml } from './emitters/rules.ts';
@@ -35,9 +35,8 @@ import { emitIndex } from './emitters/index-file.ts';
 import { buildGrammarModel } from './grammar-model.ts';
 import type { HydratedNodeModel } from './node-model.ts';
 import { isTupleChildren, eachChildSlot } from './node-model.ts';
-import { structuralNodes, childSlotNames } from './emitters/utils.ts';
-import { buildProjectionContext } from './emitters/kind-projections.ts';
-import type { OverridesConfig } from './overrides.ts';
+import { structuralNodes } from './emitters/utils.ts';
+import type { OverridesConfig, OverrideFieldDef } from './overrides.ts';
 
 export { listBranchKinds, listLeafKinds, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
 
@@ -61,7 +60,7 @@ export interface GeneratedFiles {
 	templatesYaml: string;
 	/** factories.ts — pure factory functions (typed fields in → typed node out) */
 	factories: string;
-	/** wrap.ts — readNode entry point, per-kind wrap functions, edit() */
+	/** wrap.ts — lazy tree node hydration via readNode + promote/drillIn */
 	wrap: string;
 	/** utils.ts — shared client-side resolution utilities (isNodeData, _inferBranch, types) */
 	utils: string;
@@ -84,38 +83,64 @@ export interface GeneratedFiles {
 }
 
 /**
- * Detect tuple children that need auto-generated overrides.
- * Uses ProjectionContext + childSlotNames to compute the exact same
- * field names that the template/factory emitters will use.
+ * Auto-generate tuple child overrides with two tiers:
  *
- * Returns an OverridesConfig with entries only for nodes whose tuple
- * child slots are not already covered by existing overrides.
+ * Tier 1 (auto): Unique-kind children — field name = kind (e.g., visibility_modifier).
+ * Tier 2 (placeholder): Same-kind positional or anonymous discriminator tokens —
+ *   field name = NEEDS_NAME with a console warning for human review.
+ *
+ * Pure REPEAT nodes (single slot, multiple) are skipped — they use $$$CHILDREN.
  */
 function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfig {
-	const modelMap = new Map(nodes.map(n => [n.kind, n]));
-	const ctx = buildProjectionContext(modelMap);
 	const overrides: OverridesConfig = {};
 
 	for (const node of structuralNodes(nodes)) {
 		if (!node.children || !isTupleChildren(node.children)) continue;
 
-		const slotNames = childSlotNames(node.children, ctx);
-		// Check if any slot name differs from a simple 'children' — if so, we have named positions
-		const hasNamedSlots = slotNames.some(n => n !== 'children');
-		if (!hasNamedSlots) continue;
+		const fields: Record<string, OverrideFieldDef> = {};
+		const slots = node.children as readonly { multiple: boolean; kinds: readonly { kind: string; modelType?: string }[] }[];
 
-		// Check if existing fields already cover these slots (from disk overrides)
-		const existingFieldNames = new Set(
-			'fields' in node ? (node as any).fields?.map((f: any) => f.name) ?? [] : [],
-		);
-
-		const fields: Record<string, { anonymous?: boolean; multiple?: boolean }> = {};
-		eachChildSlot(node.children, (slot, i) => {
-			const rawName = camelToSnake(slotNames[i]!);
-			if (!existingFieldNames.has(rawName)) {
-				fields[rawName] = slot.multiple ? { multiple: true } : {};
+		// Count how many slots each kind appears in
+		const kindSlotCount = new Map<string, number>();
+		for (const slot of slots) {
+			for (const k of slot.kinds) {
+				kindSlotCount.set(k.kind, (kindSlotCount.get(k.kind) ?? 0) + 1);
 			}
-		});
+		}
+
+		for (let i = 0; i < slots.length; i++) {
+			const slot = slots[i]!;
+
+			// Skip pure REPEAT slots that are the only slot
+			if (slots.length === 1 && slot.multiple) continue;
+
+			// Determine field name
+			if (slot.kinds.length === 1) {
+				const k = slot.kinds[0]!;
+				const isAnon = k.kind.startsWith('_') || (k as any).modelType === 'token';
+
+				if (isAnon) {
+					// Anonymous token — needs human naming
+					const placeholder = `NEEDS_NAME_${i}`;
+					fields[placeholder] = { anonymous: true };
+					console.warn(`[overrides] ${node.kind}: ${placeholder} — anonymous token at position ${i} needs a field name`);
+				} else if ((kindSlotCount.get(k.kind) ?? 0) > 1) {
+					// Same kind appears in multiple slots — needs human naming
+					const placeholder = `NEEDS_NAME_${i}`;
+					fields[placeholder] = {};
+					console.warn(`[overrides] ${node.kind}: ${placeholder} — ${k.kind} appears in ${kindSlotCount.get(k.kind)} positions, needs distinct names`);
+				} else {
+					// Unique kind — Tier 1: kind-as-name
+					fields[k.kind] = slot.multiple ? { multiple: true } : {};
+				}
+			} else {
+				// Multiple kinds in this slot — needs human naming
+				const placeholder = `NEEDS_NAME_${i}`;
+				fields[placeholder] = slot.multiple ? { multiple: true } : {};
+				const kindList = slot.kinds.map(k => k.kind).join(', ');
+				console.warn(`[overrides] ${node.kind}: ${placeholder} — CHOICE(${kindList}) needs a field name`);
+			}
+		}
 
 		if (Object.keys(fields).length > 0) {
 			overrides[node.kind] = { fields };
@@ -133,7 +158,7 @@ function overridesPath(grammar: string): string {
 }
 
 /**
- * Merge auto-generated tuple child overrides into the on-disk overrides.json.
+ * Merge auto-generated overrides into the on-disk overrides.json.
  * Disk entries take priority — auto-generated entries are only added for
  * kinds/fields not already present.
  * Returns true if the file was updated.
@@ -161,7 +186,12 @@ function mergeAutoOverridesToDisk(grammar: string, autoOverrides: OverridesConfi
 	}
 
 	if (changed) {
-		writeFileSync(path, JSON.stringify(disk, null, 2) + '\n');
+		// Sort keys for stable output
+		const sorted: OverridesConfig = {};
+		for (const key of Object.keys(disk).sort()) {
+			sorted[key] = disk[key]!;
+		}
+		writeFileSync(path, JSON.stringify(sorted, null, 2) + '\n');
 	}
 	return changed;
 }
@@ -170,12 +200,12 @@ function mergeAutoOverridesToDisk(grammar: string, autoOverrides: OverridesConfi
  * Generate typed factory code from a tree-sitter grammar definition.
  */
 export function generate(cfg: CodegenConfig): GeneratedFiles {
-	// First pass: build models to detect tuple children needing overrides
+	// First pass: detect tuple children needing overrides
 	const firstPass = buildGrammarModel(cfg.grammar);
 	const firstNodes = [...firstPass.newModel.models.values()];
 	const autoOverrides = generateTupleChildOverrides(firstNodes);
 
-	// Write auto-generated overrides to disk and re-run if any were added
+	// Merge auto-generated overrides to disk, rebuild if changed
 	let nodeModel: string;
 	let newModel: typeof firstPass.newModel;
 	if (mergeAutoOverridesToDisk(cfg.grammar, autoOverrides)) {
