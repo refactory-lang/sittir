@@ -38,8 +38,23 @@ describe('abstract_class_declaration', () => {
 
 describe('abstract_method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
     expect(node.type).toBe('abstract_method_signature');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source).toContain('abstract');
+  });
+  it('node.render() works', () => {
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -1411,8 +1426,24 @@ describe('implements_clause', () => {
 
 describe('import_alias', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
     expect(node.type).toBe('import_alias');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
+    const source = render(node);
+    expect(source).toContain('import');
+    expect(source).toContain('=');
+  });
+  it('node.render() works', () => {
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -1504,8 +1535,23 @@ describe('import_specifier', () => {
 
 describe('import_statement', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
+    const node = ir.importStatement();
     expect(node.type).toBe('import_statement');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.importStatement();
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.importStatement();
+    const source = render(node);
+    expect(source).toContain('import');
+  });
+  it('node.render() works', () => {
+    const node = ir.importStatement();
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -1725,8 +1771,18 @@ describe('labeled_statement', () => {
 
 describe('lexical_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
+    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [] });
     expect(node.type).toBe('lexical_declaration');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [] });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [] });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -1826,15 +1882,35 @@ describe('member_expression', () => {
 
 describe('method_definition', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
     expect(node.type).toBe('method_definition');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
 describe('method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
     expect(node.type).toBe('method_signature');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -3214,8 +3290,23 @@ describe('update_expression', () => {
 
 describe('variable_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
+    const node = ir.variableDeclaration({ variableDeclarator: [] });
     expect(node.type).toBe('variable_declaration');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.variableDeclaration({ variableDeclarator: [] });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.variableDeclaration({ variableDeclarator: [] });
+    const source = render(node);
+    expect(source).toContain('var');
+  });
+  it('node.render() works', () => {
+    const node = ir.variableDeclaration({ variableDeclarator: [] });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 

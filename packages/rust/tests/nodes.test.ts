@@ -2068,8 +2068,18 @@ describe('range_pattern', () => {
 
 describe('raw_string_literal', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.rawStringLiteral({ children1: { type: 'unknown', fields: {} } as any, stringContent: ir.stringContent('hello') as any, children3: { type: 'unknown', fields: {} } as any });
+    const node = ir.rawStringLiteral({ stringContent: ir.stringContent('hello') as any });
     expect(node.type).toBe('raw_string_literal');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.rawStringLiteral({ stringContent: ir.stringContent('hello') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.rawStringLiteral({ stringContent: ir.stringContent('hello') as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 

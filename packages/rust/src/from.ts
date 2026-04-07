@@ -2661,12 +2661,6 @@ export function rawStringLiteralFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_2'] !== undefined) {
     resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
   }
-  if (obj.children1 !== undefined) {
-    resolved.children1 = _rd4g2sg(obj.children1);
-  }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
-  }
   return raw_string_literal_(resolved as RawStringLiteralConfig);
 }
 

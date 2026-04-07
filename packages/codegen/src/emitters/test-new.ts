@@ -190,6 +190,8 @@ function minimalArgs(node: StructuralNode, dc: DummyCtx): string {
 		const slotNames = childSlotNames(node.children, dc.ctx);
 		eachChildSlot(node.children, (slot, i) => {
 			if (slot.required) {
+				const proj = projectKinds(slot.kinds, dc.ctx);
+				if (proj.collapsedTypes.length === 0) return; // hidden rule without a model
 				requiredChildren.push({ name: slotNames[i]!, kinds: slot.kinds, multiple: slot.multiple });
 			}
 		});
@@ -220,6 +222,8 @@ function fullArgs(node: StructuralNode, dc: DummyCtx): string {
 	if (node.children != null) {
 		const slotNames = childSlotNames(node.children, dc.ctx);
 		eachChildSlot(node.children, (slot, i) => {
+			const proj = projectKinds(slot.kinds, dc.ctx);
+			if (proj.collapsedTypes.length === 0) return; // hidden rule without a model
 			allChildren.push({ name: slotNames[i]!, kinds: slot.kinds, multiple: slot.multiple, required: slot.required });
 		});
 	}

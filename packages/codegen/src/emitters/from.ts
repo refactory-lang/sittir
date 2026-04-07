@@ -276,6 +276,7 @@ function emitFromFunction(
 			const propName = slotNames[i]!;
 			if (fieldKeys.has(propName)) return; // already handled as field
 			const slotProj = projectKinds(slot.kinds, ctx);
+			if (slotProj.collapsedTypes.length === 0) return; // hidden rule without a model
 			lines.push(`  if (obj.${propName} !== undefined) {`);
 			if (slot.multiple) {
 				lines.push(`    const arr = Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}];`);

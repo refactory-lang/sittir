@@ -39,7 +39,17 @@ export function emitFactory(config: {
 
 	// Factory function — accepts *Config (camelCase), return type inferred
 	const hasChildren = node.children != null;
-	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && childHasRequired(node.children!));
+
+	// Skip child slots whose kinds don't project to any type (hidden rules without models)
+	const skipSlots = new Set<number>();
+	if (hasChildren) {
+		eachChildSlot(node.children!, (slot, i) => {
+			const proj = projectKinds(slot.kinds, ctx);
+			if (proj.collapsedTypes.length === 0) skipSlots.add(i);
+		});
+	}
+
+	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && childHasRequired(node.children!, skipSlots));
 
 	const opt = hasRequiredFields ? '' : '?';
 	lines.push(`export function ${internalName}(`);
@@ -60,21 +70,27 @@ export function emitFactory(config: {
 
 	// Build children array from child slots in config
 	if (hasChildren) {
+
 		const slotNames = childSlotNames(node.children!, ctx);
 		const isTuple = isTupleChildren(node.children!);
 		if (!isTuple) {
-			// Single child slot — direct assignment, no spread
-			const name = slotNames[0]!;
-			const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
-			if (slot.multiple) {
-				lines.push(`  const children = config${opt}.${name} ?? [];`);
+			if (!skipSlots.has(0)) {
+				// Single child slot — direct assignment, no spread
+				const name = slotNames[0]!;
+				const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+				if (slot.multiple) {
+					lines.push(`  const children = config${opt}.${name} ?? [];`);
+				} else {
+					lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
+				}
 			} else {
-				lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
+				lines.push(`  const children: unknown[] = [];`);
 			}
 		} else {
 			// Multiple child slots — merge into one array
 			const childExprs: string[] = [];
 			eachChildSlot(node.children!, (slot, i) => {
+				if (skipSlots.has(i)) return;
 				const name = slotNames[i]!;
 				if (slot.multiple) {
 					childExprs.push(`...(config${opt}.${name} ?? [])`);
@@ -120,8 +136,9 @@ export function emitFactory(config: {
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
 			if (fieldMethodNames.has(name)) return; // already emitted as field getter
+			if (skipSlots.has(i)) return; // hidden rule without a model — no type to emit
 			const slotProj = projectKinds(slot.kinds, ctx);
-			const slotType = slotProj.collapsedTypes.join(' | ') || 'AnyNodeData';
+			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (name === 'children') {
 				// Single children slot — use child/getChildren/setChildren to avoid name collision
 				if (slot.multiple) {
@@ -347,12 +364,12 @@ function fieldTypeExprFromProj(proj: import('./kind-projections.ts').KindProject
 	return proj.collapsedTypes.join(' | ');
 }
 
-/** Check if any child slot has `required: true`. */
-function childHasRequired(children: { required: boolean } | { required: boolean }[]): boolean {
+/** Check if any child slot has `required: true`, skipping slots in the skip set. */
+function childHasRequired(children: { required: boolean } | { required: boolean }[], skipSlots?: Set<number>): boolean {
 	if (Array.isArray(children)) {
-		return children.some(slot => slot.required);
+		return children.some((slot, i) => !skipSlots?.has(i) && slot.required);
 	}
-	return children.required;
+	return !skipSlots?.has(0) && children.required;
 }
 
 /** Check if a pattern can be safely embedded as a JS regex literal. */

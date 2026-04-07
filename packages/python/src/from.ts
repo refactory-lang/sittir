@@ -933,9 +933,6 @@ export function decoratorFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
   }
-  if (obj.children2 !== undefined) {
-    resolved.children2 = _rd4g2sg(obj.children2);
-  }
   return decorator_(resolved as DecoratorConfig);
 }
 

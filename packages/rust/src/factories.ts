@@ -2115,7 +2115,7 @@ export function raw_string_literal_(
     string_content: config.stringContent,
     NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
-  const children = [...(config.children1 ? [config.children1] : []), ...(config.stringContent ? [config.stringContent] : []), ...(config.children3 ? [config.children3] : [])];
+  const children = [...(config.stringContent ? [config.stringContent] : [])];
   return {
     type: 'raw_string_literal' as const,
     named: true as const,
@@ -2124,8 +2124,6 @@ export function raw_string_literal_(
     NEEDS_NAME_0(NEEDS_NAME_0?: string) { return NEEDS_NAME_0 !== undefined ? raw_string_literal_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     stringContent(stringContent?: StringContent) { return stringContent !== undefined ? raw_string_literal_({ ...config, stringContent: stringContent }) : fields.string_content; },
     NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? raw_string_literal_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
-    children1(children1?: AnyNodeData) { return children1 !== undefined ? raw_string_literal_({ ...config, children1 }) : config?.children1; },
-    children3(children3?: AnyNodeData) { return children3 !== undefined ? raw_string_literal_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

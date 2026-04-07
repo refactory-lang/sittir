@@ -528,9 +528,6 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
-  }
   return abstract_method_signature_(resolved as AbstractMethodSignatureConfig);
 }
 
@@ -584,9 +581,6 @@ export function ambientDeclarationFrom(input: unknown): unknown {
   }
   if (obj.childType !== undefined) {
     resolved.childType = _resolveType(obj.childType);
-  }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return ambient_declaration_(resolved as AmbientDeclarationConfig);
 }
@@ -1109,9 +1103,6 @@ export function classDeclarationFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
   }
-  if (obj.children2 !== undefined) {
-    resolved.children2 = _rd4g2sg(obj.children2);
-  }
   return class_declaration_(resolved as ClassDeclarationConfig);
 }
 
@@ -1574,12 +1565,6 @@ export function exportStatementFrom(input: unknown): unknown {
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r15z1pjf(obj.children1);
-  }
-  if (obj.children2 !== undefined) {
-    resolved.children2 = _rd4g2sg(obj.children2);
-  }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return export_statement_(resolved as ExportStatementConfig);
 }
@@ -2105,9 +2090,6 @@ export function importAliasFrom(input: unknown): unknown {
   if (obj.identifierOrNestedIdentifier !== undefined) {
     resolved.identifierOrNestedIdentifier = _r1lq7t9k(obj.identifierOrNestedIdentifier);
   }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
-  }
   return import_alias_(resolved as ImportAliasConfig);
 }
 
@@ -2244,12 +2226,6 @@ export function importStatementFrom(input: unknown): unknown {
   }
   if (obj.importClauseOrImportRequireClause !== undefined) {
     resolved.importClauseOrImportRequireClause = _r1a3965y(obj.importClauseOrImportRequireClause);
-  }
-  if (obj.children2 !== undefined) {
-    resolved.children2 = _rd4g2sg(obj.children2);
-  }
-  if (obj.children4 !== undefined) {
-    resolved.children4 = _rd4g2sg(obj.children4);
   }
   return import_statement_(resolved as ImportStatementConfig);
 }
@@ -2526,9 +2502,6 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
   }
-  if (obj.children2 !== undefined) {
-    resolved.children2 = _rd4g2sg(obj.children2);
-  }
   return lexical_declaration_(resolved as LexicalDeclarationConfig);
 }
 
@@ -2683,9 +2656,6 @@ export function methodDefinitionFrom(input: unknown): unknown {
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
-  }
   return method_definition_(resolved as MethodDefinitionConfig);
 }
 
@@ -2732,9 +2702,6 @@ export function methodSignatureFrom(input: unknown): unknown {
   }
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
-  }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return method_signature_(resolved as MethodSignatureConfig);
 }
@@ -3019,9 +2986,6 @@ export function objectTypeFrom(input: unknown): unknown {
   if (obj.children2 !== undefined) {
     const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
     resolved.children2 = arr.map((v: unknown) => _r1rfp6fa(v));
-  }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return object_type_(resolved as ObjectTypeConfig);
 }
@@ -3337,9 +3301,6 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
   }
-  if (obj.children3 !== undefined) {
-    resolved.children3 = _rd4g2sg(obj.children3);
-  }
   return public_field_definition_(resolved as PublicFieldDefinitionConfig);
 }
 
@@ -3591,9 +3552,6 @@ export function statementBlockFrom(input: unknown): unknown {
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
-  }
-  if (obj.children2 !== undefined) {
-    resolved.children2 = _rd4g2sg(obj.children2);
   }
   return statement_block_(resolved as StatementBlockConfig);
 }
@@ -4229,9 +4187,6 @@ export function variableDeclarationFrom(input: unknown): unknown {
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
-  }
-  if (obj.children2 !== undefined) {
-    resolved.children2 = _rd4g2sg(obj.children2);
   }
   return variable_declaration_(resolved as VariableDeclarationConfig);
 }
