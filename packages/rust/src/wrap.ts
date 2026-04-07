@@ -333,16 +333,17 @@ export function wrapBinaryExpression(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapBlock(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'label');
+  promoteNamed(data, 'NEEDS_NAME_0', ["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","label","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
   promoteNamed(data, 'NEEDS_NAME_1', ["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
-  promoteNamed(data, '_expression', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteNamed(data, 'NEEDS_NAME_2', ["array_expression","assignment_expression","associated_type","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","const_item","continue_expression","empty_statement","enum_item","expression_statement","extern_crate_declaration","field_expression","float_literal","for_expression","foreign_mod_item","function_item","function_signature_item","gen_block","generic_function","identifier","if_expression","impl_item","index_expression","inner_attribute_item","integer_literal","let_declaration","loop_expression","macro_definition","macro_invocation","match_expression","metavariable","mod_item","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","static_item","string_literal","struct_expression","struct_item","trait_item","try_block","try_expression","tuple_expression","type_cast_expression","type_item","unary_expression","union_item","unit_expression","unsafe_block","use_declaration","while_expression","yield_expression"]);
   return {
     ...data,
-    get label() { return drillIn(data.fields?.['label'], tree); },
+    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get Expression() { return drillIn(data.fields?.['_expression'], tree); },
+    get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
+    get children1() { return drillIn(data.fields?.['children1'], tree); },
     get children2() { return drillInAll(data.fields?.['children2'], tree); },
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
+    get children3() { return drillIn(data.fields?.['children3'], tree); },
   };
 }
 
@@ -996,9 +997,14 @@ export function wrapRangePattern(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapRawStringLiteral(data: AnyNodeData, tree: TreeHandle): unknown {
+  promote(data, 'string_content');
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
+    get stringContent() { return drillIn(data.fields?.['string_content'], tree); },
+    get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
+    get children1() { return drillIn(data.fields?.['children1'], tree); },
+    get children3() { return drillIn(data.fields?.['children3'], tree); },
   };
 }
 
@@ -1107,12 +1113,13 @@ export function wrapSlicePattern(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapSourceFile(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'shebang');
+  promoteNamed(data, 'NEEDS_NAME_0', ["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","shebang","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
   promoteNamed(data, 'NEEDS_NAME_1', ["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
   return {
     ...data,
-    get shebang() { return drillIn(data.fields?.['shebang'], tree); },
+    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
+    get children1() { return drillIn(data.fields?.['children1'], tree); },
     get children2() { return drillInAll(data.fields?.['children2'], tree); },
   };
 }

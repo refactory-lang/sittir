@@ -190,8 +190,16 @@ function _rbg0i2o(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){if(['&&','||','&','|','^','==','!=','<','<=','>','>=','<<','>>','+','-','*','/','%'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
+function _r12k79ex(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression_statement':return expressionStatementFrom(rest);case 'label':return labelFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["expression_statement","label","associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: expression_statement, label, associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
 function _r149dosd(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression_statement':return expressionStatementFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["expression_statement","associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: expression_statement, associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
+function _r1cmov3s(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression_statement':return expressionStatementFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["expression_statement","associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: expression_statement, associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rd726k3(v: unknown): unknown {
@@ -236,10 +244,6 @@ function _r1sy82yg(v: unknown): unknown {
 
 function _r18tu9jr(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'attribute_item':return attributeItemFrom(rest);case 'enum_variant':return enumVariantFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["attribute_item","enum_variant"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, enum_variant. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
-}
-
-function _r8oydk5(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'async_block':return asyncBlockFrom(rest);case 'block':return blockFrom(rest);case 'const_block':return constBlockFrom(rest);case 'for_expression':return forExpressionFrom(rest);case 'gen_block':return genBlockFrom(rest);case 'if_expression':return ifExpressionFrom(rest);case 'loop_expression':return loopExpressionFrom(rest);case 'match_expression':return matchExpressionFrom(rest);case 'try_block':return tryBlockFrom(rest);case 'unsafe_block':return unsafeBlockFrom(rest);case 'while_expression':return whileExpressionFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["async_block","block","const_block","for_expression","gen_block","if_expression","loop_expression","match_expression","try_block","unsafe_block","while_expression","raw_string_literal","string_literal","array_expression","assignment_expression","await_expression","binary_expression","break_expression","call_expression","closure_expression","compound_assignment_expr","continue_expression","field_expression","generic_function","index_expression","macro_invocation","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_expression","tuple_expression","type_cast_expression","unary_expression","yield_expression"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: async_block, block, const_block, for_expression, gen_block, if_expression, loop_expression, match_expression, try_block, unsafe_block, while_expression, raw_string_literal, string_literal, array_expression, assignment_expression, await_expression, binary_expression, break_expression, call_expression, closure_expression, compound_assignment_expr, continue_expression, field_expression, generic_function, index_expression, macro_invocation, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_expression, tuple_expression, type_cast_expression, unary_expression, yield_expression. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1wxvtav(v: unknown): unknown {
@@ -318,12 +322,20 @@ function _r2p0ntd(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){if(/^crate$/.test(v))return (v==='crate'?crate_():(()=>{throw new Error(`Expected 'crate' for crate, got '${v}'`)})());if(/^\$[a-zA-Z_]\w*$/.test(v))return metavariable_(v);if(/^self$/.test(v))return (v==='self'?self_():(()=>{throw new Error(`Expected 'self' for self, got '${v}'`)})());if(/^super$/.test(v))return (v==='super'?super_():(()=>{throw new Error(`Expected 'super' for super, got '${v}'`)})());return identifier_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'scoped_identifier':return scopedIdentifierFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["scoped_identifier","negative_literal","raw_string_literal","string_literal"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, negative_literal, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
+function _rd4g2sg(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
 function _r1xeglku(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){if(/^super$/.test(v))return (v==='super'?super_():(()=>{throw new Error(`Expected 'super' for super, got '${v}'`)})());return identifier_(v);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1ye8f6s(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){if(/^crate$/.test(v))return (v==='crate'?crate_():(()=>{throw new Error(`Expected 'crate' for crate, got '${v}'`)})());if(/^\$[a-zA-Z_]\w*$/.test(v))return metavariable_(v);if(/^self$/.test(v))return (v==='self'?self_():(()=>{throw new Error(`Expected 'self' for self, got '${v}'`)})());if(/^super$/.test(v))return (v==='super'?super_():(()=>{throw new Error(`Expected 'super' for super, got '${v}'`)})());return identifier_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'bracketed_type':return bracketedTypeFrom(rest);case 'generic_type':return genericTypeFrom(rest);case 'scoped_identifier':return scopedIdentifierFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["bracketed_type","generic_type","scoped_identifier"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: bracketed_type, generic_type, scoped_identifier. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
+function _r1b2gfqt(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='string'){return shebang_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'expression_statement':return expressionStatementFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["expression_statement","associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: expression_statement, associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r19ejq86(v: unknown): unknown {
@@ -688,30 +700,33 @@ export function blockFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return block_({
-      label: f?.['label'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      Expression: f?.['_expression'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as BlockConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['label'] !== undefined) {
-    resolved['label'] = (isNodeData(obj['label']) ? obj['label'] : Array.isArray(obj['label']) ? labelFrom(obj['label']) : typeof obj['label'] === 'object' ? labelFrom(obj['label']) : obj['label']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r12k79ex(obj['NEEDS_NAME_0']);
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
     const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r149dosd(v));
   }
-  if (obj['Expression'] !== undefined) {
-    resolved['Expression'] = _resolveExpression(obj['Expression']);
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _r1cmov3s(obj['NEEDS_NAME_2']);
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _r12k79ex(obj.children1);
   }
   if (obj.children2 !== undefined) {
     const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
     resolved.children2 = arr.map((v: unknown) => _r149dosd(v));
   }
-  if (obj.expression !== undefined) {
-    resolved.expression = _resolveExpression(obj.expression);
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _r1cmov3s(obj.children3);
   }
   return block_(resolved as BlockConfig);
 }
@@ -1214,7 +1229,7 @@ export function expressionStatementFrom(input: unknown): unknown {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj.children !== undefined) {
-    resolved.children = _r8oydk5(obj.children);
+    resolved.children = _resolveExpression(obj.children);
   }
   return expression_statement_(resolved as ExpressionStatementConfig);
 }
@@ -2630,13 +2645,27 @@ export function rawStringLiteralFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return raw_string_literal_({
-      children: c,
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      stringContent: f?.['string_content'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as RawStringLiteralConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' || typeof obj.children === 'number' || typeof obj.children === 'boolean' ? string_content_(''+obj.children) : obj.children);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rd4g2sg(obj['NEEDS_NAME_0']);
+  }
+  if (obj['stringContent'] !== undefined) {
+    resolved['stringContent'] = (isNodeData(obj['stringContent']) ? obj['stringContent'] : typeof obj['stringContent'] === 'string' || typeof obj['stringContent'] === 'number' || typeof obj['stringContent'] === 'boolean' ? string_content_(''+obj['stringContent']) : obj['stringContent']);
+  }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _rd4g2sg(obj.children1);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return raw_string_literal_(resolved as RawStringLiteralConfig);
 }
@@ -2948,19 +2977,22 @@ export function sourceFileFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return source_file_({
-      shebang: f?.['shebang'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as SourceFileConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['shebang'] !== undefined) {
-    resolved['shebang'] = (isNodeData(obj['shebang']) ? obj['shebang'] : typeof obj['shebang'] === 'string' || typeof obj['shebang'] === 'number' || typeof obj['shebang'] === 'boolean' ? shebang_(''+obj['shebang']) : obj['shebang']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1b2gfqt(obj['NEEDS_NAME_0']);
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
     const raw = obj['NEEDS_NAME_1'];
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r149dosd(v));
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _r1b2gfqt(obj.children1);
   }
   if (obj.children2 !== undefined) {
     const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];

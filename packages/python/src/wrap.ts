@@ -399,9 +399,12 @@ export function wrapDecoratedDefinition(data: AnyNodeData, tree: TreeHandle): un
 }
 
 export function wrapDecorator(data: AnyNodeData, tree: TreeHandle): unknown {
+  promoteNamed(data, 'expression', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get expression() { return drillIn(data.fields?.['expression'], tree); },
+    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get children2() { return drillIn(data.fields?.['children2'], tree); },
   };
 }
 
@@ -435,15 +438,10 @@ export function wrapDictionary(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapDictionaryComprehension(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["for_in_clause"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["for_in_clause","if_clause"]);
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get forInClause() { return drillIn(data.fields?.['forInClause'], tree); },
-    get forInClauseOrIfClause() { return drillInAll(data.fields?.['forInClauseOrIfClause'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -574,15 +572,10 @@ export function wrapFutureImportStatement(data: AnyNodeData, tree: TreeHandle): 
 }
 
 export function wrapGeneratorExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["for_in_clause"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["for_in_clause","if_clause"]);
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get forInClause() { return drillIn(data.fields?.['forInClause'], tree); },
-    get forInClauseOrIfClause() { return drillInAll(data.fields?.['forInClauseOrIfClause'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -653,12 +646,13 @@ export function wrapKeywordArgument(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapKeywordPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'identifier');
+  promoteNamed(data, 'NEEDS_NAME_0', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","identifier","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
   promoteNamed(data, 'NEEDS_NAME_1', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
   return {
     ...data,
-    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
     get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get children1() { return drillIn(data.fields?.['children1'], tree); },
     get children2() { return drillIn(data.fields?.['children2'], tree); },
   };
 }
@@ -686,15 +680,10 @@ export function wrapList(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapListComprehension(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["for_in_clause"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["for_in_clause","if_clause"]);
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get forInClause() { return drillIn(data.fields?.['forInClause'], tree); },
-    get forInClauseOrIfClause() { return drillInAll(data.fields?.['forInClauseOrIfClause'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -844,15 +833,10 @@ export function wrapSet(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapSetComprehension(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["for_in_clause"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["for_in_clause","if_clause"]);
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get forInClause() { return drillIn(data.fields?.['forInClause'], tree); },
-    get forInClauseOrIfClause() { return drillInAll(data.fields?.['forInClauseOrIfClause'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

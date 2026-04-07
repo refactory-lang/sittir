@@ -37,7 +37,7 @@ rules:
   conditional_expression: $$$CHILDREN if else $NEEDS_NAME_0 $NEEDS_NAME_1 $NEEDS_NAME_2
   constrained_type: "$$$TYPE : $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN"
   decorated_definition: $$$CHILDREN $DEFINITION
-  decorator: "@ $CHILDREN"
+  decorator: "@ $$$CHILDREN $EXPRESSION $NEEDS_NAME_1"
   default_parameter: $NAME = $VALUE
   delete_statement: del $$$CHILDREN
   dict_pattern:
@@ -46,7 +46,7 @@ rules:
   dictionary:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  dictionary_comprehension: "{$BODY $$$CHILDREN} $NEEDS_NAME_0 $$$NEEDS_NAME_1"
+  dictionary_comprehension: "{$BODY $$$CHILDREN}"
   dictionary_splat: "** $CHILDREN"
   dictionary_splat_pattern: "** $CHILDREN"
   dotted_name: $$$CHILDREN.
@@ -74,7 +74,7 @@ rules:
     template: "def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE : $BODY"
     return_type_clause: -> $RETURN_TYPE
   future_import_statement: from __future__ import $$$NAME ,
-  generator_expression: ($BODY $$$CHILDREN) $NEEDS_NAME_0 $$$NEEDS_NAME_1
+  generator_expression: ($BODY $$$CHILDREN)
   generic_type: $IDENTIFIER $TYPE_PARAMETER $IDENTIFIER $TYPE_PARAMETER $$$CHILDREN
   global_statement:
     template: global $$$CHILDREN ,
@@ -85,11 +85,11 @@ rules:
   import_statement: import $$$NAME ,
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME = $VALUE
-  keyword_pattern: $IDENTIFIER = $$$CHILDREN $IDENTIFIER $NEEDS_NAME_1
+  keyword_pattern: $IDENTIFIER = $$$CHILDREN $NEEDS_NAME_0 $NEEDS_NAME_1
   lambda: "lambda $PARAMETERS : $BODY"
   lambda_parameters: $$$CHILDREN
   list: "[$$$CHILDREN]"
-  list_comprehension: "[$BODY $$$CHILDREN] $NEEDS_NAME_0 $$$NEEDS_NAME_1"
+  list_comprehension: "[$BODY $$$CHILDREN]"
   list_pattern: "[$$$CHILDREN]"
   list_splat: "* $CHILDREN"
   list_splat_pattern: "* $CHILDREN"
@@ -119,7 +119,7 @@ rules:
   relative_import: $IMPORT_PREFIX $DOTTED_NAME $IMPORT_PREFIX $DOTTED_NAME $$$CHILDREN
   return_statement: return $$$CHILDREN
   set: "{$$$CHILDREN}"
-  set_comprehension: "{$BODY $$$CHILDREN} $NEEDS_NAME_0 $$$NEEDS_NAME_1"
+  set_comprehension: "{$BODY $$$CHILDREN}"
   slice: "$$$CHILDREN : $NEEDS_NAME_0 $NEEDS_NAME_1 $NEEDS_NAME_2"
   splat_pattern: "* $CHILDREN"
   splat_type: "* $CHILDREN"

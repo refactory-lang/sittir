@@ -194,6 +194,10 @@ function _r1k9ajy7(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'asserts_annotation':return assertsAnnotationFrom(rest);case 'type_annotation':return typeAnnotationFrom(rest);case 'type_predicate_annotation':return typePredicateAnnotationFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["asserts_annotation","type_annotation","type_predicate_annotation"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: asserts_annotation, type_annotation, type_predicate_annotation. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
+function _rd4g2sg(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
 function _r1bydq0c(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){return property_identifier_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'statement_block':return statementBlockFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["statement_block","abstract_class_declaration","ambient_declaration","class_declaration","enum_declaration","function_declaration","function_signature","generator_function_declaration","import_alias","interface_declaration","internal_module","lexical_declaration","module","type_alias_declaration","variable_declaration"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: statement_block, abstract_class_declaration, ambient_declaration, class_declaration, enum_declaration, function_declaration, function_signature, generator_function_declaration, import_alias, interface_declaration, internal_module, lexical_declaration, module, type_alias_declaration, variable_declaration. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -310,10 +314,6 @@ function _ruevll4(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){return identifier_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'named_imports':return namedImportsFrom(rest);case 'namespace_import':return namespaceImportFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["named_imports","namespace_import"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: named_imports, namespace_import. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
-function _r1qi2h5x(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'named_imports':return namedImportsFrom(rest);case 'namespace_import':return namespaceImportFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["named_imports","namespace_import"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: named_imports, namespace_import. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
-}
-
 function _r1a3965y(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'import_clause':return importClauseFrom(rest);case 'import_require_clause':return importRequireClauseFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["import_clause","import_require_clause"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: import_clause, import_require_clause. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -324,6 +324,10 @@ function _r19mlzvo(v: unknown): unknown {
 
 function _r1c9fi5w(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'adding_type_annotation':return addingTypeAnnotationFrom(rest);case 'omitting_type_annotation':return omittingTypeAnnotationFrom(rest);case 'opting_type_annotation':return optingTypeAnnotationFrom(rest);case 'type_annotation':return typeAnnotationFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["adding_type_annotation","omitting_type_annotation","opting_type_annotation","type_annotation"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: adding_type_annotation, omitting_type_annotation, opting_type_annotation, type_annotation. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
+function _r26qbl2(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='string'){return type_identifier_(v);};if(Array.isArray(v))return _resolveType(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}return _resolveType(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rohmphn(v: unknown): unknown {
@@ -372,6 +376,10 @@ function _r1t1xv6e(v: unknown): unknown {
 
 function _rdqiv86(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){return (v==='this'?this_():(()=>{throw new Error(`Expected 'this' for this, got '${v}'`)})());};if(Array.isArray(v))return _resolvePattern(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}return _resolvePattern(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
+function _r1fwk5u8(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['private','protected','public'].includes(v))return accessibility_modifier_(v);if(/^override$/.test(v))return (v==='override'?override_modifier_():(()=>{throw new Error(`Expected 'override' for override_modifier, got '${v}'`)})());return accessibility_modifier_(v);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rs8a4rp(v: unknown): unknown {
@@ -491,6 +499,7 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as AbstractMethodSignatureConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -513,8 +522,14 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
   }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return abstract_method_signature_(resolved as AbstractMethodSignatureConfig);
 }
@@ -550,6 +565,7 @@ export function ambientDeclarationFrom(input: unknown): unknown {
     return ambient_declaration_({
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       type: f?.['type'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as AmbientDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -560,11 +576,17 @@ export function ambientDeclarationFrom(input: unknown): unknown {
   if (obj['type'] !== undefined) {
     resolved['type'] = _resolveType(obj['type']);
   }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r1bydq0c(obj.children1);
   }
   if (obj.childType !== undefined) {
     resolved.childType = _resolveType(obj.childType);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return ambient_declaration_(resolved as AmbientDeclarationConfig);
 }
@@ -1061,7 +1083,8 @@ export function classDeclarationFrom(input: unknown): unknown {
       decorator: f?.['decorator'],
       name: f?.['name'],
       typeParameters: f?.['type_parameters'],
-      children: c,
+      classHeritage: f?.['class_heritage'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as ClassDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1080,8 +1103,14 @@ export function classDeclarationFrom(input: unknown): unknown {
   if (obj['typeParameters'] !== undefined) {
     resolved['typeParameters'] = (isNodeData(obj['typeParameters']) ? obj['typeParameters'] : Array.isArray(obj['typeParameters']) ? typeParametersFrom(obj['typeParameters']) : typeof obj['typeParameters'] === 'object' ? typeParametersFrom(obj['typeParameters']) : obj['typeParameters']);
   }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : Array.isArray(obj.children) ? classHeritageFrom(obj.children) : typeof obj.children === 'object' ? classHeritageFrom(obj.children) : obj.children);
+  if (obj['classHeritage'] !== undefined) {
+    resolved['classHeritage'] = (isNodeData(obj['classHeritage']) ? obj['classHeritage'] : Array.isArray(obj['classHeritage']) ? classHeritageFrom(obj['classHeritage']) : typeof obj['classHeritage'] === 'object' ? classHeritageFrom(obj['classHeritage']) : obj['classHeritage']);
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rd4g2sg(obj.children2);
   }
   return class_declaration_(resolved as ClassDeclarationConfig);
 }
@@ -1513,7 +1542,9 @@ export function exportStatementFrom(input: unknown): unknown {
       decorator: f?.['decorator'],
       source: f?.['source'],
       value: f?.['value'],
-      children: c,
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as ExportStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1532,8 +1563,23 @@ export function exportStatementFrom(input: unknown): unknown {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj.children !== undefined) {
-    resolved.children = _r15z1pjf(obj.children);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r15z1pjf(obj['NEEDS_NAME_0']);
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _r15z1pjf(obj.children1);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rd4g2sg(obj.children2);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return export_statement_(resolved as ExportStatementConfig);
 }
@@ -2039,6 +2085,7 @@ export function importAliasFrom(input: unknown): unknown {
     return import_alias_({
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as ImportAliasConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2049,11 +2096,17 @@ export function importAliasFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _r1lq7t9k(obj['NEEDS_NAME_1']);
   }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
   if (obj.identifier !== undefined) {
     resolved.identifier = (isNodeData(obj.identifier) ? obj.identifier : typeof obj.identifier === 'string' || typeof obj.identifier === 'number' || typeof obj.identifier === 'boolean' ? identifier_(''+obj.identifier) : obj.identifier);
   }
   if (obj.identifierOrNestedIdentifier !== undefined) {
     resolved.identifierOrNestedIdentifier = _r1lq7t9k(obj.identifierOrNestedIdentifier);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return import_alias_(resolved as ImportAliasConfig);
 }
@@ -2097,13 +2150,13 @@ export function importClauseFrom(input: unknown): unknown {
     resolved['NEEDS_NAME_0'] = _ruevll4(obj['NEEDS_NAME_0']);
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _r1qi2h5x(obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = _ruevll4(obj['NEEDS_NAME_1']);
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _ruevll4(obj.children1);
   }
-  if (obj.namedImportsOrNamespaceImport !== undefined) {
-    resolved.namedImportsOrNamespaceImport = _r1qi2h5x(obj.namedImportsOrNamespaceImport);
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _ruevll4(obj.children2);
   }
   return import_clause_(resolved as ImportClauseConfig);
 }
@@ -2167,7 +2220,9 @@ export function importStatementFrom(input: unknown): unknown {
     return import_statement_({
       source: f?.['source'],
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
       importAttribute: f?.['import_attribute'],
+      NEEDS_NAME_3: f?.['NEEDS_NAME_3'],
     } as unknown as ImportStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2178,11 +2233,23 @@ export function importStatementFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_0'] !== undefined) {
     resolved['NEEDS_NAME_0'] = _r1a3965y(obj['NEEDS_NAME_0']);
   }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  }
   if (obj['importAttribute'] !== undefined) {
     resolved['importAttribute'] = (isNodeData(obj['importAttribute']) ? obj['importAttribute'] : Array.isArray(obj['importAttribute']) ? importAttributeFrom(obj['importAttribute']) : typeof obj['importAttribute'] === 'object' ? importAttributeFrom(obj['importAttribute']) : obj['importAttribute']);
   }
+  if (obj['NEEDS_NAME_3'] !== undefined) {
+    resolved['NEEDS_NAME_3'] = _rd4g2sg(obj['NEEDS_NAME_3']);
+  }
   if (obj.importClauseOrImportRequireClause !== undefined) {
     resolved.importClauseOrImportRequireClause = _r1a3965y(obj.importClauseOrImportRequireClause);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rd4g2sg(obj.children2);
+  }
+  if (obj.children4 !== undefined) {
+    resolved.children4 = _rd4g2sg(obj.children4);
   }
   return import_statement_(resolved as ImportStatementConfig);
 }
@@ -2252,20 +2319,23 @@ export function inferTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return infer_type_({
-      typeIdentifier: f?.['type_identifier'],
-      type: f?.['type'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as InferTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['typeIdentifier'] !== undefined) {
-    resolved['typeIdentifier'] = (isNodeData(obj['typeIdentifier']) ? obj['typeIdentifier'] : typeof obj['typeIdentifier'] === 'string' || typeof obj['typeIdentifier'] === 'number' || typeof obj['typeIdentifier'] === 'boolean' ? type_identifier_(''+obj['typeIdentifier']) : obj['typeIdentifier']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' || typeof obj['NEEDS_NAME_0'] === 'number' || typeof obj['NEEDS_NAME_0'] === 'boolean' ? type_identifier_(''+obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
   }
-  if (obj['type'] !== undefined) {
-    resolved['type'] = _resolveType(obj['type']);
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _r26qbl2(obj['NEEDS_NAME_1']);
   }
-  if (obj.childType !== undefined) {
-    resolved.childType = _resolveType(obj.childType);
+  if (obj.typeIdentifier !== undefined) {
+    resolved.typeIdentifier = (isNodeData(obj.typeIdentifier) ? obj.typeIdentifier : typeof obj.typeIdentifier === 'string' || typeof obj.typeIdentifier === 'number' || typeof obj.typeIdentifier === 'boolean' ? type_identifier_(''+obj.typeIdentifier) : obj.typeIdentifier);
+  }
+  if (obj.typeOrTypeIdentifier !== undefined) {
+    resolved.typeOrTypeIdentifier = _r26qbl2(obj.typeOrTypeIdentifier);
   }
   return infer_type_(resolved as InferTypeConfig);
 }
@@ -2439,7 +2509,8 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
     const c = nd.children;
     return lexical_declaration_({
       kind: f?.['kind'],
-      children: c,
+      variableDeclarator: f?.['variable_declarator'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as LexicalDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2447,11 +2518,16 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
   if (obj['kind'] !== undefined) {
     resolved['kind'] = _ron60d4(obj['kind']);
   }
-  if (obj.children !== undefined) {
-    const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
-    resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
-  } else {
-    resolved.children = [];
+  if (obj['variableDeclarator'] !== undefined) {
+    const raw = obj['variableDeclarator'];
+    const arr = Array.isArray(raw) ? raw : [raw];
+    resolved['variableDeclarator'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rd4g2sg(obj.children2);
   }
   return lexical_declaration_(resolved as LexicalDeclarationConfig);
 }
@@ -2575,6 +2651,7 @@ export function methodDefinitionFrom(input: unknown): unknown {
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as MethodDefinitionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2600,8 +2677,14 @@ export function methodDefinitionFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
   }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return method_definition_(resolved as MethodDefinitionConfig);
 }
@@ -2621,6 +2704,7 @@ export function methodSignatureFrom(input: unknown): unknown {
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as MethodSignatureConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2643,8 +2727,14 @@ export function methodSignatureFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
   }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return method_signature_(resolved as MethodSignatureConfig);
 }
@@ -2907,6 +2997,7 @@ export function objectTypeFrom(input: unknown): unknown {
     return object_type_({
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as ObjectTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2919,12 +3010,18 @@ export function objectTypeFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1rfp6fa(v));
   }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r1rfp6fa(obj.children1);
   }
   if (obj.children2 !== undefined) {
     const arr = Array.isArray(obj.children2) ? obj.children2 : [obj.children2];
     resolved.children2 = arr.map((v: unknown) => _r1rfp6fa(v));
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return object_type_(resolved as ObjectTypeConfig);
 }
@@ -2983,7 +3080,7 @@ export function optionalParameterFrom(input: unknown): unknown {
       pattern: f?.['pattern'],
       type: f?.['type'],
       value: f?.['value'],
-      accessibilityModifier: f?.['accessibility_modifier'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as OptionalParameterConfig);
   }
@@ -3006,14 +3103,17 @@ export function optionalParameterFrom(input: unknown): unknown {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj['accessibilityModifier'] !== undefined) {
-    resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1fwk5u8(obj['NEEDS_NAME_0']);
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = _r1fwk5u8(obj['NEEDS_NAME_1']);
   }
-  if (obj.overrideModifier !== undefined) {
-    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  if (obj.accessibilityModifierOrOverrideModifier1 !== undefined) {
+    resolved.accessibilityModifierOrOverrideModifier1 = _r1fwk5u8(obj.accessibilityModifierOrOverrideModifier1);
+  }
+  if (obj.accessibilityModifierOrOverrideModifier2 !== undefined) {
+    resolved.accessibilityModifierOrOverrideModifier2 = _r1fwk5u8(obj.accessibilityModifierOrOverrideModifier2);
   }
   return optional_parameter_(resolved as OptionalParameterConfig);
 }
@@ -3206,6 +3306,7 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
       value: f?.['value'],
       accessibilityModifier: f?.['accessibility_modifier'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
     } as unknown as PublicFieldDefinitionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3230,8 +3331,14 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
   }
+  if (obj['NEEDS_NAME_2'] !== undefined) {
+    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  }
   if (obj.overrideModifier !== undefined) {
     resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  }
+  if (obj.children3 !== undefined) {
+    resolved.children3 = _rd4g2sg(obj.children3);
   }
   return public_field_definition_(resolved as PublicFieldDefinitionConfig);
 }
@@ -3294,7 +3401,7 @@ export function requiredParameterFrom(input: unknown): unknown {
       pattern: f?.['pattern'],
       type: f?.['type'],
       value: f?.['value'],
-      accessibilityModifier: f?.['accessibility_modifier'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as RequiredParameterConfig);
   }
@@ -3317,14 +3424,17 @@ export function requiredParameterFrom(input: unknown): unknown {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj['accessibilityModifier'] !== undefined) {
-    resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _r1fwk5u8(obj['NEEDS_NAME_0']);
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+    resolved['NEEDS_NAME_1'] = _r1fwk5u8(obj['NEEDS_NAME_1']);
   }
-  if (obj.overrideModifier !== undefined) {
-    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  if (obj.accessibilityModifierOrOverrideModifier1 !== undefined) {
+    resolved.accessibilityModifierOrOverrideModifier1 = _r1fwk5u8(obj.accessibilityModifierOrOverrideModifier1);
+  }
+  if (obj.accessibilityModifierOrOverrideModifier2 !== undefined) {
+    resolved.accessibilityModifierOrOverrideModifier2 = _r1fwk5u8(obj.accessibilityModifierOrOverrideModifier2);
   }
   return required_parameter_(resolved as RequiredParameterConfig);
 }
@@ -3468,14 +3578,22 @@ export function statementBlockFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return statement_block_({
-      children: c,
+      statement: f?.['statement'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as StatementBlockConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
-    resolved.children = arr.map((v: unknown) => _resolveStatement(v));
+  if (obj['statement'] !== undefined) {
+    const raw = obj['statement'];
+    const arr = Array.isArray(raw) ? raw : [raw];
+    resolved['statement'] = arr.map((v: unknown) => _resolveStatement(v));
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rd4g2sg(obj.children2);
   }
   return statement_block_(resolved as StatementBlockConfig);
 }
@@ -4098,16 +4216,22 @@ export function variableDeclarationFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return variable_declaration_({
-      children: c,
+      variableDeclarator: f?.['variable_declarator'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as VariableDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
-    resolved.children = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
-  } else {
-    resolved.children = [];
+  if (obj['variableDeclarator'] !== undefined) {
+    const raw = obj['variableDeclarator'];
+    const arr = Array.isArray(raw) ? raw : [raw];
+    resolved['variableDeclarator'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rd4g2sg(obj.children2);
   }
   return variable_declaration_(resolved as VariableDeclarationConfig);
 }

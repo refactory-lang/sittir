@@ -118,8 +118,9 @@ export function abstract_method_signature_(
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
+    NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
-  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
+  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : []), ...(config.children3 ? [config.children3] : [])];
   return {
     type: 'abstract_method_signature' as const,
     named: true as const,
@@ -131,7 +132,9 @@ export function abstract_method_signature_(
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? abstract_method_signature_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? abstract_method_signature_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? abstract_method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? abstract_method_signature_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? abstract_method_signature_({ ...config, overrideModifier }) : config?.overrideModifier; },
+    children3(children3?: ) { return children3 !== undefined ? abstract_method_signature_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -167,8 +170,9 @@ export function ambient_declaration_(
   const fields = {
     NEEDS_NAME_0: config.NEEDS_NAME_0,
     type: config.type,
+    NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
-  const children = [...(config.children1 ? [config.children1] : []), ...(config.childType ? [config.childType] : [])];
+  const children = [...(config.children1 ? [config.children1] : []), ...(config.childType ? [config.childType] : []), ...(config.children3 ? [config.children3] : [])];
   return {
     type: 'ambient_declaration' as const,
     named: true as const,
@@ -176,8 +180,10 @@ export function ambient_declaration_(
     children,
     NEEDS_NAME_0(NEEDS_NAME_0?: Declaration | PropertyIdentifier | StatementBlock) { return NEEDS_NAME_0 !== undefined ? ambient_declaration_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     typeField(type_?: Type) { return type_ !== undefined ? ambient_declaration_({ ...config, type: type_ }) : fields.type; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? ambient_declaration_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     children1(children1?: Declaration | PropertyIdentifier | StatementBlock) { return children1 !== undefined ? ambient_declaration_({ ...config, children1 }) : config?.children1; },
     childType(childType?: Type) { return childType !== undefined ? ambient_declaration_({ ...config, childType }) : config?.childType; },
+    children3(children3?: ) { return children3 !== undefined ? ambient_declaration_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -634,8 +640,10 @@ export function class_declaration_(
     decorator: config.decorator,
     name: config.name,
     type_parameters: config.typeParameters,
+    class_heritage: config.classHeritage,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = config.children ? [config.children] : [];
+  const children = [...(config.classHeritage ? [config.classHeritage] : []), ...(config.children2 ? [config.children2] : [])];
   return {
     type: 'class_declaration' as const,
     named: true as const,
@@ -645,7 +653,9 @@ export function class_declaration_(
     decorator(...decorator: (Decorator)[]) { return decorator.length ? class_declaration_({ ...config, decorator: decorator }) : fields.decorator; },
     name(name?: TypeIdentifier) { return name !== undefined ? class_declaration_({ ...config, name: name }) : fields.name; },
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? class_declaration_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
-    child(child?: ClassHeritage) { return child !== undefined ? class_declaration_({ ...config, children: child }) : config?.children; },
+    classHeritage(classHeritage?: ClassHeritage) { return classHeritage !== undefined ? class_declaration_({ ...config, classHeritage: classHeritage }) : fields.class_heritage; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? class_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    children2(children2?: ) { return children2 !== undefined ? class_declaration_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1046,8 +1056,11 @@ export function export_statement_(
     decorator: config?.decorator,
     source: config?.source,
     value: config?.value,
+    NEEDS_NAME_0: config?.NEEDS_NAME_0,
+    NEEDS_NAME_1: config?.NEEDS_NAME_1,
+    NEEDS_NAME_2: config?.NEEDS_NAME_2,
   };
-  const children = config?.children ? [config?.children] : [];
+  const children = [...(config?.children1 ? [config?.children1] : []), ...(config?.children2 ? [config?.children2] : []), ...(config?.children3 ? [config?.children3] : [])];
   return {
     type: 'export_statement' as const,
     named: true as const,
@@ -1057,7 +1070,12 @@ export function export_statement_(
     decorator(...decorator: (Decorator)[]) { return decorator.length ? export_statement_({ ...config, decorator: decorator }) : fields.decorator; },
     source(source?: String) { return source !== undefined ? export_statement_({ ...config, source: source }) : fields.source; },
     value(value?: Expression) { return value !== undefined ? export_statement_({ ...config, value: value }) : fields.value; },
-    child(child?: ExportClause | Expression | Identifier | NamespaceExport) { return child !== undefined ? export_statement_({ ...config, children: child }) : config?.children; },
+    NEEDS_NAME_0(NEEDS_NAME_0?: ExportClause | Expression | Identifier | NamespaceExport) { return NEEDS_NAME_0 !== undefined ? export_statement_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? export_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? export_statement_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
+    children1(children1?: ExportClause | Expression | Identifier | NamespaceExport) { return children1 !== undefined ? export_statement_({ ...config, children1 }) : config?.children1; },
+    children2(children2?: ) { return children2 !== undefined ? export_statement_({ ...config, children2 }) : config?.children2; },
+    children3(children3?: ) { return children3 !== undefined ? export_statement_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1491,8 +1509,9 @@ export function import_alias_(
   const fields = {
     NEEDS_NAME_0: config.NEEDS_NAME_0,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
+    NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
-  const children = [...(config.identifier ? [config.identifier] : []), ...(config.identifierOrNestedIdentifier ? [config.identifierOrNestedIdentifier] : [])];
+  const children = [...(config.identifier ? [config.identifier] : []), ...(config.identifierOrNestedIdentifier ? [config.identifierOrNestedIdentifier] : []), ...(config.children3 ? [config.children3] : [])];
   return {
     type: 'import_alias' as const,
     named: true as const,
@@ -1500,8 +1519,10 @@ export function import_alias_(
     children,
     NEEDS_NAME_0(NEEDS_NAME_0?: Identifier) { return NEEDS_NAME_0 !== undefined ? import_alias_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     NEEDS_NAME_1(NEEDS_NAME_1?: Identifier | NestedIdentifier) { return NEEDS_NAME_1 !== undefined ? import_alias_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? import_alias_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     identifier(identifier?: Identifier) { return identifier !== undefined ? import_alias_({ ...config, identifier }) : config?.identifier; },
     identifierOrNestedIdentifier(identifierOrNestedIdentifier?: Identifier | NestedIdentifier) { return identifierOrNestedIdentifier !== undefined ? import_alias_({ ...config, identifierOrNestedIdentifier }) : config?.identifierOrNestedIdentifier; },
+    children3(children3?: ) { return children3 !== undefined ? import_alias_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1538,16 +1559,16 @@ export function import_clause_(
     NEEDS_NAME_0: config.NEEDS_NAME_0,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config.children1 ? [config.children1] : []), ...(config.namedImportsOrNamespaceImport ? [config.namedImportsOrNamespaceImport] : [])];
+  const children = [...(config.children1 ? [config.children1] : []), ...(config.children2 ? [config.children2] : [])];
   return {
     type: 'import_clause' as const,
     named: true as const,
     fields,
     children,
     NEEDS_NAME_0(NEEDS_NAME_0?: Identifier | NamedImports | NamespaceImport) { return NEEDS_NAME_0 !== undefined ? import_clause_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: NamedImports | NamespaceImport) { return NEEDS_NAME_1 !== undefined ? import_clause_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: Identifier | NamedImports | NamespaceImport) { return NEEDS_NAME_1 !== undefined ? import_clause_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     children1(children1?: Identifier | NamedImports | NamespaceImport) { return children1 !== undefined ? import_clause_({ ...config, children1 }) : config?.children1; },
-    namedImportsOrNamespaceImport(namedImportsOrNamespaceImport?: NamedImports | NamespaceImport) { return namedImportsOrNamespaceImport !== undefined ? import_clause_({ ...config, namedImportsOrNamespaceImport }) : config?.namedImportsOrNamespaceImport; },
+    children2(children2?: Identifier | NamedImports | NamespaceImport) { return children2 !== undefined ? import_clause_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1606,14 +1627,16 @@ export function import_specifier_(
 
 
 export function import_statement_(
-  config?: ImportStatementConfig,
+  config: ImportStatementConfig,
 ) {
   const fields = {
-    source: config?.source,
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    import_attribute: config?.importAttribute,
+    source: config.source,
+    NEEDS_NAME_0: config.NEEDS_NAME_0,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    import_attribute: config.importAttribute,
+    NEEDS_NAME_3: config.NEEDS_NAME_3,
   };
-  const children = [...(config?.importClauseOrImportRequireClause ? [config?.importClauseOrImportRequireClause] : []), ...(config?.importAttribute ? [config?.importAttribute] : [])];
+  const children = [...(config.importClauseOrImportRequireClause ? [config.importClauseOrImportRequireClause] : []), ...(config.children2 ? [config.children2] : []), ...(config.importAttribute ? [config.importAttribute] : []), ...(config.children4 ? [config.children4] : [])];
   return {
     type: 'import_statement' as const,
     named: true as const,
@@ -1621,8 +1644,12 @@ export function import_statement_(
     children,
     source(source?: String) { return source !== undefined ? import_statement_({ ...config, source: source }) : fields.source; },
     NEEDS_NAME_0(NEEDS_NAME_0?: ImportClause | ImportRequireClause) { return NEEDS_NAME_0 !== undefined ? import_statement_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? import_statement_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
     importAttribute(importAttribute?: ImportAttribute) { return importAttribute !== undefined ? import_statement_({ ...config, importAttribute: importAttribute }) : fields.import_attribute; },
+    NEEDS_NAME_3(NEEDS_NAME_3?: string) { return NEEDS_NAME_3 !== undefined ? import_statement_({ ...config, NEEDS_NAME_3: NEEDS_NAME_3 }) : fields.NEEDS_NAME_3; },
     importClauseOrImportRequireClause(importClauseOrImportRequireClause?: ImportClause | ImportRequireClause) { return importClauseOrImportRequireClause !== undefined ? import_statement_({ ...config, importClauseOrImportRequireClause }) : config?.importClauseOrImportRequireClause; },
+    children2(children2?: ) { return children2 !== undefined ? import_statement_({ ...config, children2 }) : config?.children2; },
+    children4(children4?: ) { return children4 !== undefined ? import_statement_({ ...config, children4 }) : config?.children4; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1686,18 +1713,19 @@ export function infer_type_(
   config: InferTypeConfig,
 ) {
   const fields = {
-    type_identifier: config.typeIdentifier,
-    type: config.type,
+    NEEDS_NAME_0: config.NEEDS_NAME_0,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config.typeIdentifier ? [config.typeIdentifier] : []), ...(config.childType ? [config.childType] : [])];
+  const children = [...(config.typeIdentifier ? [config.typeIdentifier] : []), ...(config.typeOrTypeIdentifier ? [config.typeOrTypeIdentifier] : [])];
   return {
     type: 'infer_type' as const,
     named: true as const,
     fields,
     children,
-    typeIdentifier(typeIdentifier?: TypeIdentifier) { return typeIdentifier !== undefined ? infer_type_({ ...config, typeIdentifier: typeIdentifier }) : fields.type_identifier; },
-    typeField(type_?: Type) { return type_ !== undefined ? infer_type_({ ...config, type: type_ }) : fields.type; },
-    childType(childType?: Type) { return childType !== undefined ? infer_type_({ ...config, childType }) : config?.childType; },
+    NEEDS_NAME_0(NEEDS_NAME_0?: TypeIdentifier) { return NEEDS_NAME_0 !== undefined ? infer_type_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: Type | TypeIdentifier) { return NEEDS_NAME_1 !== undefined ? infer_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    typeIdentifier(typeIdentifier?: TypeIdentifier) { return typeIdentifier !== undefined ? infer_type_({ ...config, typeIdentifier }) : config?.typeIdentifier; },
+    typeOrTypeIdentifier(typeOrTypeIdentifier?: Type | TypeIdentifier) { return typeOrTypeIdentifier !== undefined ? infer_type_({ ...config, typeOrTypeIdentifier }) : config?.typeOrTypeIdentifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1860,16 +1888,19 @@ export function lexical_declaration_(
 ) {
   const fields = {
     kind: config.kind,
+    variable_declarator: config.variableDeclarator,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = config.children ?? [];
+  const children = [...(config.variableDeclarator ?? []), ...(config.children2 ? [config.children2] : [])];
   return {
     type: 'lexical_declaration' as const,
     named: true as const,
     fields,
     children,
     kind(kind?: 'let' | 'const') { return kind !== undefined ? lexical_declaration_({ ...config, kind: kind }) : fields.kind; },
-    getChildren() { return children; },
-    setChildren(...children: (VariableDeclarator)[]) { return lexical_declaration_({ ...config, children }); },
+    variableDeclarator(...variableDeclarator: (VariableDeclarator)[]) { return variableDeclarator.length ? lexical_declaration_({ ...config, variableDeclarator: variableDeclarator }) : fields.variable_declarator; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? lexical_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    children2(children2?: ) { return children2 !== undefined ? lexical_declaration_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1986,8 +2017,9 @@ export function method_definition_(
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
+    NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
-  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
+  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : []), ...(config.children3 ? [config.children3] : [])];
   return {
     type: 'method_definition' as const,
     named: true as const,
@@ -2000,7 +2032,9 @@ export function method_definition_(
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? method_definition_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? method_definition_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? method_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? method_definition_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_definition_({ ...config, overrideModifier }) : config?.overrideModifier; },
+    children3(children3?: ) { return children3 !== undefined ? method_definition_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2021,8 +2055,9 @@ export function method_signature_(
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
+    NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
-  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
+  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : []), ...(config.children3 ? [config.children3] : [])];
   return {
     type: 'method_signature' as const,
     named: true as const,
@@ -2034,7 +2069,9 @@ export function method_signature_(
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? method_signature_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? method_signature_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? method_signature_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? method_signature_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_signature_({ ...config, overrideModifier }) : config?.overrideModifier; },
+    children3(children3?: ) { return children3 !== undefined ? method_signature_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2285,8 +2322,9 @@ export function object_type_(
   const fields = {
     NEEDS_NAME_0: config?.NEEDS_NAME_0,
     NEEDS_NAME_1: config?.NEEDS_NAME_1,
+    NEEDS_NAME_2: config?.NEEDS_NAME_2,
   };
-  const children = [...(config?.children1 ? [config?.children1] : []), ...(config?.children2 ?? [])];
+  const children = [...(config?.children1 ? [config?.children1] : []), ...(config?.children2 ?? []), ...(config?.children3 ? [config?.children3] : [])];
   return {
     type: 'object_type' as const,
     named: true as const,
@@ -2294,8 +2332,10 @@ export function object_type_(
     children,
     NEEDS_NAME_0(NEEDS_NAME_0?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature) { return NEEDS_NAME_0 !== undefined ? object_type_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     NEEDS_NAME_1(...NEEDS_NAME_1: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return NEEDS_NAME_1.length ? object_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? object_type_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     children1(children1?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature) { return children1 !== undefined ? object_type_({ ...config, children1 }) : config?.children1; },
     children2(...children2: (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[]) { return children2.length ? object_type_({ ...config, children2 }) : config?.children2; },
+    children3(children3?: ) { return children3 !== undefined ? object_type_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2345,18 +2385,18 @@ export function opting_type_annotation_(
 
 
 export function optional_parameter_(
-  config?: OptionalParameterConfig,
+  config: OptionalParameterConfig,
 ) {
   const fields = {
-    decorator: config?.decorator,
-    name: config?.name,
-    pattern: config?.pattern,
-    type: config?.type,
-    value: config?.value,
-    accessibility_modifier: config?.accessibilityModifier,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
+    decorator: config.decorator,
+    name: config.name,
+    pattern: config.pattern,
+    type: config.type,
+    value: config.value,
+    NEEDS_NAME_0: config.NEEDS_NAME_0,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config?.accessibilityModifier ? [config?.accessibilityModifier] : []), ...(config?.overrideModifier ? [config?.overrideModifier] : [])];
+  const children = [...(config.accessibilityModifierOrOverrideModifier1 ? [config.accessibilityModifierOrOverrideModifier1] : []), ...(config.accessibilityModifierOrOverrideModifier2 ? [config.accessibilityModifierOrOverrideModifier2] : [])];
   return {
     type: 'optional_parameter' as const,
     named: true as const,
@@ -2367,9 +2407,10 @@ export function optional_parameter_(
     pattern(pattern?: Pattern | This) { return pattern !== undefined ? optional_parameter_({ ...config, pattern: pattern }) : fields.pattern; },
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? optional_parameter_({ ...config, type: type_ }) : fields.type; },
     value(value?: Expression) { return value !== undefined ? optional_parameter_({ ...config, value: value }) : fields.value; },
-    accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? optional_parameter_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? optional_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? optional_parameter_({ ...config, overrideModifier }) : config?.overrideModifier; },
+    NEEDS_NAME_0(NEEDS_NAME_0?: AccessibilityModifier | OverrideModifier) { return NEEDS_NAME_0 !== undefined ? optional_parameter_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: AccessibilityModifier | OverrideModifier) { return NEEDS_NAME_1 !== undefined ? optional_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    accessibilityModifierOrOverrideModifier1(accessibilityModifierOrOverrideModifier1?: AccessibilityModifier | OverrideModifier) { return accessibilityModifierOrOverrideModifier1 !== undefined ? optional_parameter_({ ...config, accessibilityModifierOrOverrideModifier1 }) : config?.accessibilityModifierOrOverrideModifier1; },
+    accessibilityModifierOrOverrideModifier2(accessibilityModifierOrOverrideModifier2?: AccessibilityModifier | OverrideModifier) { return accessibilityModifierOrOverrideModifier2 !== undefined ? optional_parameter_({ ...config, accessibilityModifierOrOverrideModifier2 }) : config?.accessibilityModifierOrOverrideModifier2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2553,8 +2594,9 @@ export function public_field_definition_(
     value: config.value,
     accessibility_modifier: config.accessibilityModifier,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
+    NEEDS_NAME_2: config.NEEDS_NAME_2,
   };
-  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : [])];
+  const children = [...(config.accessibilityModifier ? [config.accessibilityModifier] : []), ...(config.overrideModifier ? [config.overrideModifier] : []), ...(config.children3 ? [config.children3] : [])];
   return {
     type: 'public_field_definition' as const,
     named: true as const,
@@ -2566,7 +2608,9 @@ export function public_field_definition_(
     value(value?: Expression) { return value !== undefined ? public_field_definition_({ ...config, value: value }) : fields.value; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? public_field_definition_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
     NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? public_field_definition_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    NEEDS_NAME_2(NEEDS_NAME_2?: string) { return NEEDS_NAME_2 !== undefined ? public_field_definition_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? public_field_definition_({ ...config, overrideModifier }) : config?.overrideModifier; },
+    children3(children3?: ) { return children3 !== undefined ? public_field_definition_({ ...config, children3 }) : config?.children3; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2620,18 +2664,18 @@ export function regex_(
 
 
 export function required_parameter_(
-  config?: RequiredParameterConfig,
+  config: RequiredParameterConfig,
 ) {
   const fields = {
-    decorator: config?.decorator,
-    name: config?.name,
-    pattern: config?.pattern,
-    type: config?.type,
-    value: config?.value,
-    accessibility_modifier: config?.accessibilityModifier,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
+    decorator: config.decorator,
+    name: config.name,
+    pattern: config.pattern,
+    type: config.type,
+    value: config.value,
+    NEEDS_NAME_0: config.NEEDS_NAME_0,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config?.accessibilityModifier ? [config?.accessibilityModifier] : []), ...(config?.overrideModifier ? [config?.overrideModifier] : [])];
+  const children = [...(config.accessibilityModifierOrOverrideModifier1 ? [config.accessibilityModifierOrOverrideModifier1] : []), ...(config.accessibilityModifierOrOverrideModifier2 ? [config.accessibilityModifierOrOverrideModifier2] : [])];
   return {
     type: 'required_parameter' as const,
     named: true as const,
@@ -2642,9 +2686,10 @@ export function required_parameter_(
     pattern(pattern?: Pattern | This) { return pattern !== undefined ? required_parameter_({ ...config, pattern: pattern }) : fields.pattern; },
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? required_parameter_({ ...config, type: type_ }) : fields.type; },
     value(value?: Expression) { return value !== undefined ? required_parameter_({ ...config, value: value }) : fields.value; },
-    accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? required_parameter_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: OverrideModifier) { return NEEDS_NAME_1 !== undefined ? required_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? required_parameter_({ ...config, overrideModifier }) : config?.overrideModifier; },
+    NEEDS_NAME_0(NEEDS_NAME_0?: AccessibilityModifier | OverrideModifier) { return NEEDS_NAME_0 !== undefined ? required_parameter_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: AccessibilityModifier | OverrideModifier) { return NEEDS_NAME_1 !== undefined ? required_parameter_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    accessibilityModifierOrOverrideModifier1(accessibilityModifierOrOverrideModifier1?: AccessibilityModifier | OverrideModifier) { return accessibilityModifierOrOverrideModifier1 !== undefined ? required_parameter_({ ...config, accessibilityModifierOrOverrideModifier1 }) : config?.accessibilityModifierOrOverrideModifier1; },
+    accessibilityModifierOrOverrideModifier2(accessibilityModifierOrOverrideModifier2?: AccessibilityModifier | OverrideModifier) { return accessibilityModifierOrOverrideModifier2 !== undefined ? required_parameter_({ ...config, accessibilityModifierOrOverrideModifier2 }) : config?.accessibilityModifierOrOverrideModifier2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2780,13 +2825,19 @@ export function spread_element_(
 export function statement_block_(
   config?: StatementBlockConfig,
 ) {
-  const children = config?.children ?? [];
+  const fields = {
+    statement: config?.statement,
+    NEEDS_NAME_1: config?.NEEDS_NAME_1,
+  };
+  const children = [...(config?.statement ?? []), ...(config?.children2 ? [config?.children2] : [])];
   return {
     type: 'statement_block' as const,
     named: true as const,
+    fields,
     children,
-    getChildren() { return children; },
-    setChildren(...children: (Statement)[]) { return statement_block_({ ...config, children }); },
+    statement(...statement: (Statement)[]) { return statement.length ? statement_block_({ ...config, statement: statement }) : fields.statement; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? statement_block_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    children2(children2?: ) { return children2 !== undefined ? statement_block_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3367,13 +3418,19 @@ export function update_expression_(
 export function variable_declaration_(
   config: VariableDeclarationConfig,
 ) {
-  const children = config.children ?? [];
+  const fields = {
+    variable_declarator: config.variableDeclarator,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
+  };
+  const children = [...(config.variableDeclarator ?? []), ...(config.children2 ? [config.children2] : [])];
   return {
     type: 'variable_declaration' as const,
     named: true as const,
+    fields,
     children,
-    getChildren() { return children; },
-    setChildren(...children: (VariableDeclarator)[]) { return variable_declaration_({ ...config, children }); },
+    variableDeclarator(...variableDeclarator: (VariableDeclarator)[]) { return variableDeclarator.length ? variable_declaration_({ ...config, variableDeclarator: variableDeclarator }) : fields.variable_declarator; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? variable_declaration_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    children2(children2?: ) { return children2 !== undefined ? variable_declaration_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

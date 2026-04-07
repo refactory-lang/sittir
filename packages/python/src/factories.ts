@@ -353,9 +353,9 @@ export function case_clause_(
 
 
 export function case_pattern_(
-  config?: CasePatternConfig,
+  config: CasePatternConfig,
 ) {
-  const children = config?.children ? [config?.children] : [];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'case_pattern' as const,
     named: true as const,
@@ -603,12 +603,19 @@ export function decorated_definition_(
 export function decorator_(
   config: DecoratorConfig,
 ) {
-  const children = config.children ? [config.children] : [];
+  const fields = {
+    expression: config.expression,
+    NEEDS_NAME_1: config.NEEDS_NAME_1,
+  };
+  const children = [...(config.expression ? [config.expression] : []), ...(config.children2 ? [config.children2] : [])];
   return {
     type: 'decorator' as const,
     named: true as const,
+    fields,
     children,
-    child(child?: Expression) { return child !== undefined ? decorator_({ ...config, children: child }) : config?.children; },
+    expression(expression?: Expression) { return expression !== undefined ? decorator_({ ...config, expression: expression }) : fields.expression; },
+    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? decorator_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    children2(children2?: ) { return children2 !== undefined ? decorator_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -706,20 +713,15 @@ export function dictionary_comprehension_(
 ) {
   const fields = {
     body: config.body,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config.forInClause ? [config.forInClause] : []), ...(config.forInClauseOrIfClause ?? [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'dictionary_comprehension' as const,
     named: true as const,
     fields,
     children,
     body(body?: Pair) { return body !== undefined ? dictionary_comprehension_({ ...config, body: body }) : fields.body; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: ForInClause) { return NEEDS_NAME_0 !== undefined ? dictionary_comprehension_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (ForInClause | IfClause)[]) { return NEEDS_NAME_1.length ? dictionary_comprehension_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    forInClause(forInClause?: ForInClause) { return forInClause !== undefined ? dictionary_comprehension_({ ...config, forInClause }) : config?.forInClause; },
-    forInClauseOrIfClause(...forInClauseOrIfClause: (ForInClause | IfClause)[]) { return forInClauseOrIfClause.length ? dictionary_comprehension_({ ...config, forInClauseOrIfClause }) : config?.forInClauseOrIfClause; },
+    child(child?: ForInClause | IfClause) { return child !== undefined ? dictionary_comprehension_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1092,20 +1094,15 @@ export function generator_expression_(
 ) {
   const fields = {
     body: config.body,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config.forInClause ? [config.forInClause] : []), ...(config.forInClauseOrIfClause ?? [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'generator_expression' as const,
     named: true as const,
     fields,
     children,
     body(body?: Expression) { return body !== undefined ? generator_expression_({ ...config, body: body }) : fields.body; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: ForInClause) { return NEEDS_NAME_0 !== undefined ? generator_expression_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (ForInClause | IfClause)[]) { return NEEDS_NAME_1.length ? generator_expression_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    forInClause(forInClause?: ForInClause) { return forInClause !== undefined ? generator_expression_({ ...config, forInClause }) : config?.forInClause; },
-    forInClauseOrIfClause(...forInClauseOrIfClause: (ForInClause | IfClause)[]) { return forInClauseOrIfClause.length ? generator_expression_({ ...config, forInClauseOrIfClause }) : config?.forInClauseOrIfClause; },
+    child(child?: ForInClause | IfClause) { return child !== undefined ? generator_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1304,17 +1301,18 @@ export function keyword_pattern_(
   config: KeywordPatternConfig,
 ) {
   const fields = {
-    identifier: config.identifier,
+    NEEDS_NAME_0: config.NEEDS_NAME_0,
     NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config.identifier ? [config.identifier] : []), ...(config.children2 ? [config.children2] : [])];
+  const children = [...(config.children1 ? [config.children1] : []), ...(config.children2 ? [config.children2] : [])];
   return {
     type: 'keyword_pattern' as const,
     named: true as const,
     fields,
     children,
-    identifier(identifier?: Identifier) { return identifier !== undefined ? keyword_pattern_({ ...config, identifier: identifier }) : fields.identifier; },
+    NEEDS_NAME_0(NEEDS_NAME_0?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Identifier | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern) { return NEEDS_NAME_0 !== undefined ? keyword_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
     NEEDS_NAME_1(NEEDS_NAME_1?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern) { return NEEDS_NAME_1 !== undefined ? keyword_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    children1(children1?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Identifier | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern) { return children1 !== undefined ? keyword_pattern_({ ...config, children1 }) : config?.children1; },
     children2(children2?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern) { return children2 !== undefined ? keyword_pattern_({ ...config, children2 }) : config?.children2; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -1394,20 +1392,15 @@ export function list_comprehension_(
 ) {
   const fields = {
     body: config.body,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config.forInClause ? [config.forInClause] : []), ...(config.forInClauseOrIfClause ?? [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'list_comprehension' as const,
     named: true as const,
     fields,
     children,
     body(body?: Expression) { return body !== undefined ? list_comprehension_({ ...config, body: body }) : fields.body; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: ForInClause) { return NEEDS_NAME_0 !== undefined ? list_comprehension_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (ForInClause | IfClause)[]) { return NEEDS_NAME_1.length ? list_comprehension_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    forInClause(forInClause?: ForInClause) { return forInClause !== undefined ? list_comprehension_({ ...config, forInClause }) : config?.forInClause; },
-    forInClauseOrIfClause(...forInClauseOrIfClause: (ForInClause | IfClause)[]) { return forInClauseOrIfClause.length ? list_comprehension_({ ...config, forInClauseOrIfClause }) : config?.forInClauseOrIfClause; },
+    child(child?: ForInClause | IfClause) { return child !== undefined ? list_comprehension_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1827,20 +1820,15 @@ export function set_comprehension_(
 ) {
   const fields = {
     body: config.body,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
   };
-  const children = [...(config.forInClause ? [config.forInClause] : []), ...(config.forInClauseOrIfClause ?? [])];
+  const children = config.children ? [config.children] : [];
   return {
     type: 'set_comprehension' as const,
     named: true as const,
     fields,
     children,
     body(body?: Expression) { return body !== undefined ? set_comprehension_({ ...config, body: body }) : fields.body; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: ForInClause) { return NEEDS_NAME_0 !== undefined ? set_comprehension_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (ForInClause | IfClause)[]) { return NEEDS_NAME_1.length ? set_comprehension_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    forInClause(forInClause?: ForInClause) { return forInClause !== undefined ? set_comprehension_({ ...config, forInClause }) : config?.forInClause; },
-    forInClauseOrIfClause(...forInClauseOrIfClause: (ForInClause | IfClause)[]) { return forInClauseOrIfClause.length ? set_comprehension_({ ...config, forInClauseOrIfClause }) : config?.forInClauseOrIfClause; },
+    child(child?: ForInClause | IfClause) { return child !== undefined ? set_comprehension_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1948,9 +1936,9 @@ export function string_(
 
 
 export function string_content_(
-  config?: StringContentConfig,
+  config: StringContentConfig,
 ) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     type: 'string_content' as const,
     named: true as const,

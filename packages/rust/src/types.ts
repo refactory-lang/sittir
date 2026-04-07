@@ -391,12 +391,13 @@ export interface BinaryExpression {
 export interface Block {
   readonly type: 'block';
   readonly fields: {
-    readonly label?: Label;
+    readonly NEEDS_NAME_0?: DeclarationStatement | ExpressionStatement | Label;
     readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement)[];
-    readonly Expression?: Expression;
+    readonly NEEDS_NAME_2?: DeclarationStatement | Expression | ExpressionStatement;
   };
+  readonly children1?: DeclarationStatement | ExpressionStatement | Label;
   readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
-  readonly expression?: Expression;
+  readonly children3?: DeclarationStatement | Expression | ExpressionStatement;
 }
 export interface BlockComment {
   readonly type: 'block_comment';
@@ -528,7 +529,7 @@ export interface EnumVariantList {
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
-  readonly children: AsyncBlock | Block | ConstBlock | Expression | ForExpression | GenBlock | IfExpression | LoopExpression | MatchExpression | TryBlock | UnsafeBlock | WhileExpression;
+  readonly children: Expression;
 }
 export interface ExternCrateDeclaration {
   readonly type: 'extern_crate_declaration';
@@ -904,7 +905,11 @@ export interface RangePattern {
 }
 export interface RawStringLiteral {
   readonly type: 'raw_string_literal';
-  readonly children: StringContent;
+  readonly fields: {
+    readonly NEEDS_NAME_0?: string;
+    readonly stringContent?: StringContent;
+    readonly NEEDS_NAME_2?: string;
+  };
 }
 export interface RefPattern {
   readonly type: 'ref_pattern';
@@ -988,9 +993,10 @@ export interface SlicePattern {
 export interface SourceFile {
   readonly type: 'source_file';
   readonly fields: {
-    readonly shebang?: Shebang;
+    readonly NEEDS_NAME_0?: DeclarationStatement | ExpressionStatement | Shebang;
     readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement)[];
   };
+  readonly children1?: DeclarationStatement | ExpressionStatement | Shebang;
   readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
 }
 export interface StaticItem {

@@ -38,28 +38,23 @@ describe('abstract_class_declaration', () => {
 
 describe('abstract_method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('abstract_method_signature');
   });
   it('renders to non-empty string', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source).toContain('abstract');
   });
   it('node.render() works', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, returnType: ir.assertsAnnotation({ children: ir.asserts({ children: ir.identifier('test_children') as any }) as any }) as any, typeParameters: ir.typeParameters({ children: [] }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.overrideModifier() as any, overrideModifier: ir.overrideModifier() as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -104,11 +99,6 @@ describe('ambient_declaration', () => {
     const node = ir.ambientDeclaration({ children1: ir.propertyIdentifier('test') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.ambientDeclaration({ NEEDS_NAME_0: ir.propertyIdentifier('test') as any, type: ir.typeIdentifier('TestType') as any, children1: ir.propertyIdentifier('test') as any, childType: ir.typeIdentifier('TestChildType') as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -590,11 +580,6 @@ describe('class_declaration', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
-  it('renders with optional fields', () => {
-    const node = ir.classDeclaration({ body: ir.classBody() as any, decorator: [], name: ir.typeIdentifier('TestName') as any, typeParameters: ir.typeParameters({ children: [] }) as any, children: ir.classHeritage({ extendsClauseOrImplementsClause: ir.extendsClause({ value: [ir.identifier('test_value') as any] }) as any }) as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('class_heritage', () => {
@@ -1012,11 +997,6 @@ describe('export_statement', () => {
     const node = ir.exportStatement();
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.exportStatement({ declaration: ir.abstractClassDeclaration({ body: ir.classBody() as any, name: ir.typeIdentifier('TestName') as any }) as any, decorator: [], source: ir.string() as any, value: ir.identifier('test_value') as any, children: ir.identifier('test_children') as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1446,29 +1426,24 @@ describe('implements_clause', () => {
 
 describe('import_alias', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('import_alias');
   });
   it('renders to non-empty string', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source).toContain('import');
     expect(source).toContain('=');
   });
   it('node.render() works', () => {
-    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
+    const node = ir.importAlias({ identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any, children3: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.importAlias({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, identifier: ir.identifier('test_identifier') as any, identifierOrNestedIdentifier: ir.identifier('test_identifierOrNestedIdentifier') as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1505,7 +1480,7 @@ describe('import_clause', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.importClause({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.namedImports() as any, children1: ir.identifier('test_children1') as any, namedImportsOrNamespaceImport: ir.namedImports() as any });
+    const node = ir.importClause({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children1: ir.identifier('test_children1') as any, children2: ir.identifier('test_children2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1560,28 +1535,23 @@ describe('import_specifier', () => {
 
 describe('import_statement', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.importStatement();
+    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('import_statement');
   });
   it('renders to non-empty string', () => {
-    const node = ir.importStatement();
+    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.importStatement();
+    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source).toContain('import');
   });
   it('node.render() works', () => {
-    const node = ir.importStatement();
+    const node = ir.importStatement({ children4: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.importStatement({ source: ir.string() as any, NEEDS_NAME_0: ir.importClause({ children1: ir.identifier('test_children1') as any }) as any, importAttribute: ir.importAttribute({ children: ir.object() as any }) as any, importClauseOrImportRequireClause: ir.importClause({ children1: ir.identifier('test_children1') as any }) as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1656,7 +1626,7 @@ describe('infer_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.inferType({ typeIdentifier: ir.typeIdentifier('TestType_identifier') as any, type: ir.typeIdentifier('TestType') as any, childType: ir.typeIdentifier('TestChildType') as any });
+    const node = ir.inferType({ NEEDS_NAME_0: ir.typeIdentifier('TestNEEDS_NAME_0') as any, NEEDS_NAME_1: ir.typeIdentifier('TestNEEDS_NAME_1') as any, typeIdentifier: ir.typeIdentifier('TestTypeIdentifier') as any, typeOrTypeIdentifier: ir.typeIdentifier('TestTypeOrTypeIdentifier') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1801,16 +1771,16 @@ describe('labeled_statement', () => {
 
 describe('lexical_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.lexicalDeclaration({ kind: 'let' as any, children: [] });
+    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('lexical_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.lexicalDeclaration({ kind: 'let' as any, children: [] });
+    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.lexicalDeclaration({ kind: 'let' as any, children: [] });
+    const node = ir.lexicalDeclaration({ kind: 'let' as any, variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
@@ -1912,45 +1882,35 @@ describe('member_expression', () => {
 
 describe('method_definition', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('method_definition');
   });
   it('renders to non-empty string', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, returnType: ir.assertsAnnotation({ children: ir.asserts({ children: ir.identifier('test_children') as any }) as any }) as any, typeParameters: ir.typeParameters({ children: [] }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.overrideModifier() as any, overrideModifier: ir.overrideModifier() as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
 describe('method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('method_signature');
   });
   it('renders to non-empty string', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, children3: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, returnType: ir.assertsAnnotation({ children: ir.asserts({ children: ir.identifier('test_children') as any }) as any }) as any, typeParameters: ir.typeParameters({ children: [] }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.overrideModifier() as any, overrideModifier: ir.overrideModifier() as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2236,11 +2196,6 @@ describe('object_type', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
-  it('renders with optional fields', () => {
-    const node = ir.objectType({ NEEDS_NAME_0: ir.callSignature({ parameters: ir.formalParameters() as any }) as any, NEEDS_NAME_1: [], children1: ir.callSignature({ parameters: ir.formalParameters() as any }) as any, children2: [] });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('omitting_type_annotation', () => {
@@ -2289,26 +2244,26 @@ describe('opting_type_annotation', () => {
 
 describe('optional_parameter', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.optionalParameter();
+    const node = ir.optionalParameter({ accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any });
     expect(node.type).toBe('optional_parameter');
   });
   it('renders to non-empty string', () => {
-    const node = ir.optionalParameter();
+    const node = ir.optionalParameter({ accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.optionalParameter();
+    const node = ir.optionalParameter({ accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any });
     const source = render(node);
     expect(source).toContain('?');
   });
   it('node.render() works', () => {
-    const node = ir.optionalParameter();
+    const node = ir.optionalParameter({ accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.optionalParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, accessibilityModifier: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.overrideModifier() as any, overrideModifier: ir.overrideModifier() as any });
+    const node = ir.optionalParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, NEEDS_NAME_0: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.accessibilityModifier('private') as any, accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any, accessibilityModifierOrOverrideModifier2: ir.accessibilityModifier('private') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2485,11 +2440,6 @@ describe('public_field_definition', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
-  it('renders with optional fields', () => {
-    const node = ir.publicFieldDefinition({ decorator: [], name: ir.number('42') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, accessibilityModifier: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.overrideModifier() as any, overrideModifier: ir.overrideModifier() as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
-  });
 });
 
 describe('readonly_type', () => {
@@ -2544,16 +2494,21 @@ describe('regex', () => {
 
 describe('required_parameter', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.requiredParameter();
+    const node = ir.requiredParameter({ accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any });
     expect(node.type).toBe('required_parameter');
   });
+  it('renders to non-empty string', () => {
+    const node = ir.requiredParameter({ accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
   it('node.render() works', () => {
-    const node = ir.requiredParameter();
+    const node = ir.requiredParameter({ accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.requiredParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, accessibilityModifier: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.overrideModifier() as any, overrideModifier: ir.overrideModifier() as any });
+    const node = ir.requiredParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, NEEDS_NAME_0: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.accessibilityModifier('private') as any, accessibilityModifierOrOverrideModifier1: ir.accessibilityModifier('private') as any, accessibilityModifierOrOverrideModifier2: ir.accessibilityModifier('private') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2716,11 +2671,6 @@ describe('statement_block', () => {
     const node = ir.statementBlock();
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.statementBlock({ children: [] });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -3340,21 +3290,21 @@ describe('update_expression', () => {
 
 describe('variable_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.variableDeclaration({ children: [] });
+    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('variable_declaration');
   });
   it('renders to non-empty string', () => {
-    const node = ir.variableDeclaration({ children: [] });
+    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.variableDeclaration({ children: [] });
+    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source).toContain('var');
   });
   it('node.render() works', () => {
-    const node = ir.variableDeclaration({ children: [] });
+    const node = ir.variableDeclaration({ variableDeclarator: [], children2: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });

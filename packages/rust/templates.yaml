@@ -27,7 +27,7 @@ rules:
   base_field_initializer: .. $CHILDREN
   binary_expression: $LEFT $OPERATOR $RIGHT
   block:
-    template: $LABEL_CLAUSE{$$$CHILDREN} $LABEL $$$NEEDS_NAME_1 $_EXPRESSION
+    template: $LABEL_CLAUSE{$$$CHILDREN} $NEEDS_NAME_0 $$$NEEDS_NAME_1 $NEEDS_NAME_2
     label_clause: ":"
   block_comment: /* $OUTER $DOC */ $INNER
   bounded_type: $$$LIFETIME + $$$CHILDREN $NEEDS_NAME_0 $NEEDS_NAME_1
@@ -143,7 +143,7 @@ rules:
   qualified_type: $TYPE as $ALIAS
   range_expression: $$$CHILDREN .. $NEEDS_NAME_0 $NEEDS_NAME_1
   range_pattern: $LEFT ... $RIGHT
-  raw_string_literal: $$$CHILDREN $CHILDREN
+  raw_string_literal: $$$CHILDREN $STRING_CONTENT $NEEDS_NAME_0 $STRING_CONTENT $NEEDS_NAME_2
   ref_pattern: ref $CHILDREN
   reference_expression: "& raw $CHILDREN $VALUE"
   reference_pattern: "& $MUTABLE_SPECIFIER $$$CHILDREN $NEEDS_NAME_0 $_PATTERN"
@@ -158,7 +158,7 @@ rules:
   slice_pattern:
     template: "[$$$CHILDREN]"
     joinBy: ","
-  source_file: $SHEBANG $$$CHILDREN $SHEBANG $$$NEEDS_NAME_1
+  source_file: $SHEBANG $$$CHILDREN $NEEDS_NAME_0 $$$NEEDS_NAME_1
   static_item:
     template: "$VISIBILITY_MODIFIER static $MUTABLE_SPECIFIER $NAME : $TYPE $VALUE_CLAUSE ; $VISIBILITY_MODIFIER $NEEDS_NAME_1 $$$CHILDREN"
     value_clause: = $VALUE

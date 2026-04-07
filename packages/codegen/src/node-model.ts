@@ -420,6 +420,21 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 		}
 	}
 
+	// Detect children-vs-fields mismatches: grammar children whose kinds are
+	// covered by node-types fields (no FIELD wrapper in grammar.json).
+	if (rule.children && rule.children.length > 0) {
+		const ntFieldKinds = new Set<string>();
+		for (const f of model.fields) {
+			for (const k of f.kinds) ntFieldKinds.add(k);
+		}
+		for (const child of rule.children) {
+			const coveredKinds = child.kinds.filter(k => ntFieldKinds.has(k));
+			if (coveredKinds.length > 0) {
+				warnings.push(`  '${model.kind}': grammar child slot [${child.kinds.join(', ')}] overlaps with node-types fields (field-owned kinds: ${coveredKinds.join(', ')})`);
+			}
+		}
+	}
+
 	// Children consistency
 	const modelHasChildren = model.children != null;
 	const grammarHasChildren = rule.children != null && rule.children.length > 0;

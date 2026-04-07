@@ -32,20 +32,10 @@
       "NEEDS_NAME_1": {}
     }
   },
-  "dictionary_comprehension": {
+  "decorator": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
-    }
-  },
-  "generator_expression": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
+      "expression": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "generic_type": {
@@ -56,16 +46,8 @@
   },
   "keyword_pattern": {
     "fields": {
-      "identifier": {},
-      "NEEDS_NAME_1": {}
-    }
-  },
-  "list_comprehension": {
-    "fields": {
       "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
+      "NEEDS_NAME_1": {}
     }
   },
   "member_type": {
@@ -78,14 +60,6 @@
     "fields": {
       "import_prefix": {},
       "dotted_name": {}
-    }
-  },
-  "set_comprehension": {
-    "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
-        "multiple": true
-      }
     }
   },
   "slice": {

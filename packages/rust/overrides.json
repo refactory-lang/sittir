@@ -9,11 +9,11 @@
   },
   "block": {
     "fields": {
-      "label": {},
+      "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {
         "multiple": true
       },
-      "_expression": {}
+      "NEEDS_NAME_2": {}
     }
   },
   "bounded_type": {
@@ -115,6 +115,13 @@
       "NEEDS_NAME_1": {}
     }
   },
+  "raw_string_literal": {
+    "fields": {
+      "NEEDS_NAME_0": {},
+      "string_content": {},
+      "NEEDS_NAME_2": {}
+    }
+  },
   "reference_pattern": {
     "fields": {
       "NEEDS_NAME_0": {
@@ -152,7 +159,7 @@
   },
   "source_file": {
     "fields": {
-      "shebang": {},
+      "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {
         "multiple": true
       }

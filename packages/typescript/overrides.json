@@ -4,19 +4,27 @@
       "accessibility_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "NEEDS_NAME_2": {}
     }
   },
   "ambient_declaration": {
     "fields": {
       "NEEDS_NAME_0": {},
-      "type": {}
+      "type": {},
+      "NEEDS_NAME_2": {}
     }
   },
   "as_expression": {
     "fields": {
       "expression": {},
       "type": {}
+    }
+  },
+  "class_declaration": {
+    "fields": {
+      "class_heritage": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "class_heritage": {
@@ -31,10 +39,18 @@
       "NEEDS_NAME_1": {}
     }
   },
+  "export_statement": {
+    "fields": {
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {}
+    }
+  },
   "import_alias": {
     "fields": {
       "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "NEEDS_NAME_1": {},
+      "NEEDS_NAME_2": {}
     }
   },
   "import_clause": {
@@ -46,18 +62,28 @@
   "import_statement": {
     "fields": {
       "NEEDS_NAME_0": {},
-      "import_attribute": {}
+      "NEEDS_NAME_1": {},
+      "import_attribute": {},
+      "NEEDS_NAME_3": {}
     }
   },
   "infer_type": {
     "fields": {
-      "type_identifier": {},
-      "type": {}
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "intersection_type": {
     "fields": {
       "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
+    }
+  },
+  "lexical_declaration": {
+    "fields": {
+      "variable_declarator": {
+        "multiple": true
+      },
       "NEEDS_NAME_1": {}
     }
   },
@@ -72,7 +98,8 @@
       "accessibility_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "NEEDS_NAME_2": {}
     }
   },
   "method_signature": {
@@ -80,7 +107,8 @@
       "accessibility_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "NEEDS_NAME_2": {}
     }
   },
   "object_type": {
@@ -88,15 +116,14 @@
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {
         "multiple": true
-      }
+      },
+      "NEEDS_NAME_2": {}
     }
   },
   "optional_parameter": {
     "fields": {
-      "accessibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "program": {
@@ -120,21 +147,28 @@
       "accessibility_modifier": {},
       "NEEDS_NAME_1": {
         "anonymous": true
-      }
+      },
+      "NEEDS_NAME_2": {}
     }
   },
   "required_parameter": {
     "fields": {
-      "accessibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      }
+      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
     }
   },
   "satisfies_expression": {
     "fields": {
       "expression": {},
       "type": {}
+    }
+  },
+  "statement_block": {
+    "fields": {
+      "statement": {
+        "multiple": true
+      },
+      "NEEDS_NAME_1": {}
     }
   },
   "type_assertion": {
@@ -146,6 +180,14 @@
   "union_type": {
     "fields": {
       "NEEDS_NAME_0": {},
+      "NEEDS_NAME_1": {}
+    }
+  },
+  "variable_declaration": {
+    "fields": {
+      "variable_declarator": {
+        "multiple": true
+      },
       "NEEDS_NAME_1": {}
     }
   }

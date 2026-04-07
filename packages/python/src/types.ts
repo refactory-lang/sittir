@@ -322,7 +322,7 @@ export interface CaseClause {
 }
 export interface CasePattern {
   readonly type: 'case_pattern';
-  readonly children?: AsPattern | ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | KeywordPattern | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern;
+  readonly children: AsPattern | ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | KeywordPattern | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern;
 }
 export interface Chevron {
   readonly type: 'chevron';
@@ -396,7 +396,10 @@ export interface DecoratedDefinition {
 }
 export interface Decorator {
   readonly type: 'decorator';
-  readonly children: Expression;
+  readonly fields: {
+    readonly expression?: Expression;
+    readonly NEEDS_NAME_1?: string;
+  };
 }
 export interface DefaultParameter {
   readonly type: 'default_parameter';
@@ -421,11 +424,8 @@ export interface DictionaryComprehension {
   readonly type: 'dictionary_comprehension';
   readonly fields: {
     readonly body: Pair;
-    readonly NEEDS_NAME_0?: ForInClause;
-    readonly NEEDS_NAME_1?: readonly (ForInClause | IfClause)[];
   };
-  readonly forInClause: ForInClause;
-  readonly forInClauseOrIfClause?: readonly (ForInClause | IfClause)[];
+  readonly children: ForInClause | IfClause;
 }
 export interface DictionarySplat {
   readonly type: 'dictionary_splat';
@@ -527,11 +527,8 @@ export interface GeneratorExpression {
   readonly type: 'generator_expression';
   readonly fields: {
     readonly body: Expression;
-    readonly NEEDS_NAME_0?: ForInClause;
-    readonly NEEDS_NAME_1?: readonly (ForInClause | IfClause)[];
   };
-  readonly forInClause: ForInClause;
-  readonly forInClauseOrIfClause?: readonly (ForInClause | IfClause)[];
+  readonly children: ForInClause | IfClause;
 }
 export interface GenericType {
   readonly type: 'generic_type';
@@ -562,7 +559,7 @@ export interface ImportFromStatement {
     readonly moduleName: DottedName | RelativeImport;
     readonly name?: readonly (AliasedImport | DottedName)[];
   };
-  readonly children?: WildcardImport;
+  readonly children: WildcardImport;
 }
 export interface ImportStatement {
   readonly type: 'import_statement';
@@ -588,10 +585,11 @@ export interface KeywordArgument {
 export interface KeywordPattern {
   readonly type: 'keyword_pattern';
   readonly fields: {
-    readonly identifier?: Identifier;
+    readonly NEEDS_NAME_0?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Identifier | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern;
     readonly NEEDS_NAME_1?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern;
   };
-  readonly children2?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern;
+  readonly children1: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Identifier | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern;
+  readonly children2: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | False | Float | Integer | ListPattern | None | SplatPattern | String | True | TuplePattern | UnionPattern;
 }
 export interface Lambda {
   readonly type: 'lambda';
@@ -612,11 +610,8 @@ export interface ListComprehension {
   readonly type: 'list_comprehension';
   readonly fields: {
     readonly body: Expression;
-    readonly NEEDS_NAME_0?: ForInClause;
-    readonly NEEDS_NAME_1?: readonly (ForInClause | IfClause)[];
   };
-  readonly forInClause: ForInClause;
-  readonly forInClauseOrIfClause?: readonly (ForInClause | IfClause)[];
+  readonly children: ForInClause | IfClause;
 }
 export interface ListPattern {
   readonly type: 'list_pattern';
@@ -722,11 +717,8 @@ export interface SetComprehension {
   readonly type: 'set_comprehension';
   readonly fields: {
     readonly body: Expression;
-    readonly NEEDS_NAME_0?: ForInClause;
-    readonly NEEDS_NAME_1?: readonly (ForInClause | IfClause)[];
   };
-  readonly forInClause: ForInClause;
-  readonly forInClauseOrIfClause?: readonly (ForInClause | IfClause)[];
+  readonly children: ForInClause | IfClause;
 }
 export interface Slice {
   readonly type: 'slice';
@@ -758,7 +750,7 @@ export interface String {
 }
 export interface StringContent {
   readonly type: 'string_content';
-  readonly children?: readonly (EscapeInterpolation | EscapeSequence)[];
+  readonly children: readonly (EscapeInterpolation | EscapeSequence)[];
 }
 export interface Subscript {
   readonly type: 'subscript';

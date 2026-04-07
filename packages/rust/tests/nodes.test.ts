@@ -321,7 +321,7 @@ describe('block', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.block({ label: ir.label({ children: ir.identifier('test_children') as any }) as any, NEEDS_NAME_1: [], Expression: ir.identifier('test__expression') as any, children2: [], expression: ir.identifier('test_expression') as any });
+    const node = ir.block({ NEEDS_NAME_0: ir.emptyStatement() as any, NEEDS_NAME_1: [], NEEDS_NAME_2: ir.identifier('test_NEEDS_NAME_2') as any, children1: ir.emptyStatement() as any, children2: [], children3: ir.identifier('test_children3') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2068,16 +2068,16 @@ describe('range_pattern', () => {
 
 describe('raw_string_literal', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.rawStringLiteral({ children: ir.stringContent('hello') as any });
+    const node = ir.rawStringLiteral({ children1: { type: 'unknown', fields: {} } as any, stringContent: ir.stringContent('hello') as any, children3: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('raw_string_literal');
   });
   it('renders to non-empty string', () => {
-    const node = ir.rawStringLiteral({ children: ir.stringContent('hello') as any });
+    const node = ir.rawStringLiteral({ children1: { type: 'unknown', fields: {} } as any, stringContent: ir.stringContent('hello') as any, children3: { type: 'unknown', fields: {} } as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.rawStringLiteral({ children: ir.stringContent('hello') as any });
+    const node = ir.rawStringLiteral({ children1: { type: 'unknown', fields: {} } as any, stringContent: ir.stringContent('hello') as any, children3: { type: 'unknown', fields: {} } as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
@@ -2399,7 +2399,7 @@ describe('source_file', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.sourceFile({ shebang: ir.shebang('#!/bin/sh\n') as any, NEEDS_NAME_1: [], children2: [] });
+    const node = ir.sourceFile({ NEEDS_NAME_0: ir.emptyStatement() as any, NEEDS_NAME_1: [], children1: ir.emptyStatement() as any, children2: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

@@ -242,6 +242,10 @@ function _rrq3952(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'dotted_name':return dottedNameFrom(rest);case 'relative_import':return relativeImportFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["dotted_name","relative_import"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: dotted_name, relative_import. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
+function _rk9rdv8(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='string'){if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float_(v);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer_(v);if(/^None$/.test(v))return (v==='None'?none_():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return identifier_(v);};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest);case 'complex_pattern':return complexPatternFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dict_pattern':return dictPatternFrom(rest);case 'dotted_name':return dottedNameFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'splat_pattern':return splatPatternFrom(rest);case 'string':return stringFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'union_pattern':return unionPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+}
+
 function _rl9y3fp(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){if(/^False$/.test(v))return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());if(/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v))return float_(v);if(/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v))return integer_(v);if(/^None$/.test(v))return (v==='None'?none_():(()=>{throw new Error(`Expected 'None' for none, got '${v}'`)})());if(/^True$/.test(v))return (v==='True'?true_():(()=>{throw new Error(`Expected 'True' for true, got '${v}'`)})());return (v==='False'?false_():(()=>{throw new Error(`Expected 'False' for false, got '${v}'`)})());};if(Array.isArray(v))throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;switch(k){case 'class_pattern':return classPatternFrom(rest);case 'complex_pattern':return complexPatternFrom(rest);case 'concatenated_string':return concatenatedStringFrom(rest);case 'dict_pattern':return dictPatternFrom(rest);case 'dotted_name':return dottedNameFrom(rest);case 'list_pattern':return listPatternFrom(rest);case 'splat_pattern':return splatPatternFrom(rest);case 'string':return stringFrom(rest);case 'tuple_pattern':return tuplePatternFrom(rest);case 'union_pattern':return unionPatternFrom(rest);}return _resolveByKind(k,rest);}const _k=_inferBranch(v,["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);if(_k)return _resolveByKind(_k,v);throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
@@ -917,13 +921,20 @@ export function decoratorFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return decorator_({
-      children: c,
+      expression: f?.['expression'],
+      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as DecoratorConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _resolveExpression(obj.children);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _resolveExpression(obj['expression']);
+  }
+  if (obj['NEEDS_NAME_1'] !== undefined) {
+    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  }
+  if (obj.children2 !== undefined) {
+    resolved.children2 = _rd4g2sg(obj.children2);
   }
   return decorator_(resolved as DecoratorConfig);
 }
@@ -1024,8 +1035,7 @@ export function dictionaryComprehensionFrom(input: unknown): unknown {
     const c = nd.children;
     return dictionary_comprehension_({
       body: f?.['body'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      children: c,
     } as unknown as DictionaryComprehensionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1033,20 +1043,8 @@ export function dictionaryComprehensionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = (isNodeData(obj['body']) ? obj['body'] : Array.isArray(obj['body']) ? pairFrom(obj['body']) : typeof obj['body'] === 'object' ? pairFrom(obj['body']) : obj['body']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
-  }
-  if (obj.forInClause !== undefined) {
-    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
-  }
-  if (obj.forInClauseOrIfClause !== undefined) {
-    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
-    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.children !== undefined) {
+    resolved.children = _r4vgrkg(obj.children);
   }
   return dictionary_comprehension_(resolved as DictionaryComprehensionConfig);
 }
@@ -1458,8 +1456,7 @@ export function generatorExpressionFrom(input: unknown): unknown {
     const c = nd.children;
     return generator_expression_({
       body: f?.['body'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      children: c,
     } as unknown as GeneratorExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1467,20 +1464,8 @@ export function generatorExpressionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
-  }
-  if (obj.forInClause !== undefined) {
-    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
-  }
-  if (obj.forInClauseOrIfClause !== undefined) {
-    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
-    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.children !== undefined) {
+    resolved.children = _r4vgrkg(obj.children);
   }
   return generator_expression_(resolved as GeneratorExpressionConfig);
 }
@@ -1697,17 +1682,20 @@ export function keywordPatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return keyword_pattern_({
-      identifier: f?.['identifier'],
+      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
     } as unknown as KeywordPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['identifier'] !== undefined) {
-    resolved['identifier'] = (isNodeData(obj['identifier']) ? obj['identifier'] : typeof obj['identifier'] === 'string' || typeof obj['identifier'] === 'number' || typeof obj['identifier'] === 'boolean' ? identifier_(''+obj['identifier']) : obj['identifier']);
+  if (obj['NEEDS_NAME_0'] !== undefined) {
+    resolved['NEEDS_NAME_0'] = _rk9rdv8(obj['NEEDS_NAME_0']);
   }
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _rl9y3fp(obj['NEEDS_NAME_1']);
+  }
+  if (obj.children1 !== undefined) {
+    resolved.children1 = _rk9rdv8(obj.children1);
   }
   if (obj.children2 !== undefined) {
     resolved.children2 = _rl9y3fp(obj.children2);
@@ -1793,8 +1781,7 @@ export function listComprehensionFrom(input: unknown): unknown {
     const c = nd.children;
     return list_comprehension_({
       body: f?.['body'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      children: c,
     } as unknown as ListComprehensionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1802,20 +1789,8 @@ export function listComprehensionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
-  }
-  if (obj.forInClause !== undefined) {
-    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
-  }
-  if (obj.forInClauseOrIfClause !== undefined) {
-    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
-    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.children !== undefined) {
+    resolved.children = _r4vgrkg(obj.children);
   }
   return list_comprehension_(resolved as ListComprehensionConfig);
 }
@@ -2259,8 +2234,7 @@ export function setComprehensionFrom(input: unknown): unknown {
     const c = nd.children;
     return set_comprehension_({
       body: f?.['body'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      children: c,
     } as unknown as SetComprehensionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2268,20 +2242,8 @@ export function setComprehensionFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? forInClauseFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? forInClauseFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
-    const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r4vgrkg(v));
-  }
-  if (obj.forInClause !== undefined) {
-    resolved.forInClause = (isNodeData(obj.forInClause) ? obj.forInClause : Array.isArray(obj.forInClause) ? forInClauseFrom(obj.forInClause) : typeof obj.forInClause === 'object' ? forInClauseFrom(obj.forInClause) : obj.forInClause);
-  }
-  if (obj.forInClauseOrIfClause !== undefined) {
-    const arr = Array.isArray(obj.forInClauseOrIfClause) ? obj.forInClauseOrIfClause : [obj.forInClauseOrIfClause];
-    resolved.forInClauseOrIfClause = arr.map((v: unknown) => _r4vgrkg(v));
+  if (obj.children !== undefined) {
+    resolved.children = _r4vgrkg(obj.children);
   }
   return set_comprehension_(resolved as SetComprehensionConfig);
 }
@@ -2414,6 +2376,8 @@ export function stringContentFrom(input: unknown): unknown {
   if (obj.children !== undefined) {
     const arr = Array.isArray(obj.children) ? obj.children : [obj.children];
     resolved.children = arr.map((v: unknown) => _r1uewv1p(v));
+  } else {
+    resolved.children = [];
   }
   return string_content_(resolved as StringContentConfig);
 }

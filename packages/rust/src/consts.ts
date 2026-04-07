@@ -342,9 +342,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'block': [
-    { name: 'label', required: false, multiple: false },
+    { name: 'NEEDS_NAME_0', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: true },
-    { name: 'Expression', required: false, multiple: false },
+    { name: 'NEEDS_NAME_2', required: false, multiple: false },
   ],
   'block_comment': [
     { name: 'doc', required: false, multiple: false },
@@ -622,6 +622,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: false, multiple: false },
   ],
   'raw_string_literal': [
+    { name: 'NEEDS_NAME_0', required: false, multiple: false },
+    { name: 'stringContent', required: false, multiple: false },
+    { name: 'NEEDS_NAME_2', required: false, multiple: false },
   ],
   'ref_pattern': [
   ],
@@ -665,7 +668,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'slice_pattern': [
   ],
   'source_file': [
-    { name: 'shebang', required: false, multiple: false },
+    { name: 'NEEDS_NAME_0', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'static_item': [

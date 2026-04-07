@@ -324,6 +324,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'definition', required: true, multiple: false },
   ],
   'decorator': [
+    { name: 'expression', required: false, multiple: false },
+    { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'default_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -337,8 +339,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'dictionary_comprehension': [
     { name: 'body', required: true, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'dictionary_splat': [
   ],
@@ -395,8 +395,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'generator_expression': [
     { name: 'body', required: true, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'generic_type': [
     { name: 'identifier', required: false, multiple: false },
@@ -428,7 +426,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'keyword_pattern': [
-    { name: 'identifier', required: false, multiple: false },
+    { name: 'NEEDS_NAME_0', required: false, multiple: false },
     { name: 'NEEDS_NAME_1', required: false, multiple: false },
   ],
   'lambda': [
@@ -441,8 +439,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'list_comprehension': [
     { name: 'body', required: true, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'list_pattern': [
   ],
@@ -497,8 +493,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'set_comprehension': [
     { name: 'body', required: true, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
   ],
   'slice': [
     { name: 'NEEDS_NAME_0', required: false, multiple: false },

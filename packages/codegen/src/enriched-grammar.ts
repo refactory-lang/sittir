@@ -187,11 +187,11 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 	}
 
 	const simplified = simplifyRule(rule);
-	const childSlots = collectChildSlots(simplified, false, false, grammar, supertypeSet);
+	const childSlots = collectChildSlots(simplified, false, false);
 	const children: EnrichedChildInfo[] | undefined = childSlots.length > 0
 		? slotsToChildren(childSlots)
 		: undefined;
-	if (children) nameChildSlots(children, supertypeSet);
+	if (children) nameChildSlots(children);
 
 	const separators = extractSeparators(rule);
 
@@ -361,29 +361,18 @@ function collectChildSlots(
 	rule: GrammarRule,
 	optional: boolean,
 	repeated: boolean,
-	grammar: Grammar,
-	supertypeSet: ReadonlySet<string>,
-	visited?: Set<string>,
 ): ChildSlot[] {
 	switch (rule.type) {
 		case 'SYMBOL': {
-			// Named symbols and supertypes are real node kinds — keep as-is
-			if (!rule.name.startsWith('_') || supertypeSet.has(rule.name)) {
-				return [{ kinds: new Set([rule.name]), optional, repeated }];
-			}
-			// Hidden non-supertype symbols are inlined by tree-sitter — simplify and recurse
-			const inner = grammar.rules[rule.name];
-			if (!inner) return [];
-			const v = visited ?? new Set<string>();
-			if (v.has(rule.name)) return [];
-			v.add(rule.name);
-			return collectChildSlots(simplifyRule(inner), optional, repeated, grammar, supertypeSet, v);
+			// All symbols (named, supertypes, and hidden) are kept as single-kind slots.
+			// Hidden rules like _statement are meaningful groupings — don't expand them.
+			return [{ kinds: new Set([rule.name]), optional, repeated }];
 		}
 
 		case 'SEQ': {
 			const slots: ChildSlot[] = [];
 			for (const m of rule.members) {
-				slots.push(...collectChildSlots(m, optional, repeated, grammar, supertypeSet, visited));
+				slots.push(...collectChildSlots(m, optional, repeated));
 			}
 			return slots;
 		}
@@ -394,7 +383,7 @@ function collectChildSlots(
 			if (nonBlank.length === 0) return [];
 
 			const branchSlots = nonBlank.map(m =>
-				collectChildSlots(m, false, repeated, grammar, supertypeSet, visited),
+				collectChildSlots(m, false, repeated),
 			);
 
 			// Find max slot count across branches
@@ -427,12 +416,12 @@ function collectChildSlots(
 		}
 
 		case 'REPEAT': {
-			const inner = collectChildSlots(rule.content, true, true, grammar, supertypeSet, visited);
+			const inner = collectChildSlots(rule.content, true, true);
 			return collapseSlots(inner, true, true);
 		}
 
 		case 'REPEAT1': {
-			const inner = collectChildSlots(rule.content, optional, true, grammar, supertypeSet, visited);
+			const inner = collectChildSlots(rule.content, optional, true);
 			return collapseSlots(inner, optional, true);
 		}
 
@@ -465,8 +454,8 @@ function slotsToChildren(slots: ChildSlot[]): EnrichedChildInfo[] {
 
 function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: ReadonlySet<string>): ContainerRule {
 	const simplified = simplifyRule(rule);
-	const children = slotsToChildren(collectChildSlots(simplified, false, false, grammar, supertypeSet));
-	nameChildSlots(children, supertypeSet);
+	const children = slotsToChildren(collectChildSlots(simplified, false, false));
+	nameChildSlots(children);
 	const separators = extractSeparators(rule);
 	return { modelType: 'container', children, separators, rule, simplifiedRule: simplified };
 }
@@ -478,7 +467,7 @@ function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: Read
  * - Same kind in multiple slots or multi-kind slot → NEEDS_NAME_N placeholder (Tier 2)
  * - Single pure REPEAT slot → null (uses $$CHILDREN)
  */
-function nameChildSlots(children: EnrichedChildInfo[], supertypeSet: ReadonlySet<string>): void {
+function nameChildSlots(children: EnrichedChildInfo[]): void {
 	// Pure REPEAT (single slot, multiple) → no name needed, uses $$CHILDREN
 	if (children.length === 1 && children[0]!.multiple) return;
 
@@ -493,10 +482,7 @@ function nameChildSlots(children: EnrichedChildInfo[], supertypeSet: ReadonlySet
 	for (const child of children) {
 		if (child.kinds.length === 1) {
 			const kind = child.kinds[0]!;
-			if (supertypeSet.has(kind)) {
-				// Supertypes are referenced by field name, not child slot name
-				child.name = `NEEDS_NAME_${child.position}`;
-			} else if ((kindSlotCount.get(kind) ?? 0) > 1) {
+			if ((kindSlotCount.get(kind) ?? 0) > 1) {
 				// Same kind in multiple positions → needs human naming
 				child.name = `NEEDS_NAME_${child.position}`;
 			} else {
