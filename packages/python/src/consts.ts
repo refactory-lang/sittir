@@ -325,7 +325,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'decorator': [
     { name: 'expression', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'newline', required: false, multiple: false },
   ],
   'default_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -426,8 +426,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'keyword_pattern': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'identifier', required: false, multiple: false },
+    { name: 'simplePattern', required: false, multiple: false },
   ],
   'lambda': [
     { name: 'body', required: true, multiple: false },

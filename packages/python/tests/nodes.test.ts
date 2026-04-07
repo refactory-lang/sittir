@@ -1259,7 +1259,7 @@ describe('keyword_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.keywordPattern({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.false() as any, identifierOrSimplePattern: ir.identifier('test_identifierOrSimplePattern') as any, simplePattern: ir.false() as any });
+    const node = ir.keywordPattern({ identifier: ir.identifier('test_identifier') as any, simplePattern: ir.false() as any, identifierOrSimplePattern: ir.identifier('test_identifierOrSimplePattern') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

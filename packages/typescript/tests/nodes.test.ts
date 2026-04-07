@@ -1626,7 +1626,7 @@ describe('infer_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.inferType({ NEEDS_NAME_0: ir.typeIdentifier('TestNEEDS_NAME_0') as any, NEEDS_NAME_1: ir.typeIdentifier('TestNEEDS_NAME_1') as any, typeIdentifier: ir.typeIdentifier('TestTypeIdentifier') as any, typeOrTypeIdentifier: ir.typeIdentifier('TestTypeOrTypeIdentifier') as any });
+    const node = ir.inferType({ typeIdentifier: ir.typeIdentifier('TestType_identifier') as any, type: ir.typeIdentifier('TestType') as any, typeOrTypeIdentifier: ir.typeIdentifier('TestTypeOrTypeIdentifier') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2263,7 +2263,7 @@ describe('optional_parameter', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.optionalParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, NEEDS_NAME_0: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.accessibilityModifier('private') as any, parameterName1: ir.accessibilityModifier('private') as any, parameterName2: ir.accessibilityModifier('private') as any });
+    const node = ir.optionalParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, parameterName: ir.accessibilityModifier('private') as any, initializer: ir.accessibilityModifier('private') as any, parameterName1: ir.accessibilityModifier('private') as any, parameterName2: ir.accessibilityModifier('private') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2419,7 +2419,7 @@ describe('property_signature', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.propertySignature({ name: ir.number('42') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.overrideModifier() as any, overrideModifier: ir.overrideModifier() as any });
+    const node = ir.propertySignature({ name: ir.number('42') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, overrideModifier: ir.overrideModifier() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2508,7 +2508,7 @@ describe('required_parameter', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.requiredParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, NEEDS_NAME_0: ir.accessibilityModifier('private') as any, NEEDS_NAME_1: ir.accessibilityModifier('private') as any, parameterName1: ir.accessibilityModifier('private') as any, parameterName2: ir.accessibilityModifier('private') as any });
+    const node = ir.requiredParameter({ decorator: [], name: ir.identifier('test_name') as any, pattern: ir.identifier('test_pattern') as any, type: ir.typeAnnotation({ children: ir.typeIdentifier('TestChildren') as any }) as any, value: ir.identifier('test_value') as any, parameterName: ir.accessibilityModifier('private') as any, initializer: ir.accessibilityModifier('private') as any, parameterName1: ir.accessibilityModifier('private') as any, parameterName2: ir.accessibilityModifier('private') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

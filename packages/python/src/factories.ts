@@ -605,7 +605,7 @@ export function decorator_(
 ) {
   const fields = {
     expression: config.expression,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    newline: config.newline,
   };
   const children = [...(config.expression ? [config.expression] : [])];
   return {
@@ -614,7 +614,7 @@ export function decorator_(
     fields,
     children,
     expression(expression?: Expression) { return expression !== undefined ? decorator_({ ...config, expression: expression }) : fields.expression; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: string) { return NEEDS_NAME_1 !== undefined ? decorator_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    newline(newline?: string) { return newline !== undefined ? decorator_({ ...config, newline: newline }) : fields.newline; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1300,8 +1300,8 @@ export function keyword_pattern_(
   config: KeywordPatternConfig,
 ) {
   const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    identifier: config.identifier,
+    simple_pattern: config.simplePattern,
   };
   const children = [...(config.identifierOrSimplePattern ? [config.identifierOrSimplePattern] : []), ...(config.simplePattern ? [config.simplePattern] : [])];
   return {
@@ -1309,10 +1309,9 @@ export function keyword_pattern_(
     named: true as const,
     fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Identifier | SimplePattern) { return NEEDS_NAME_0 !== undefined ? keyword_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: SimplePattern) { return NEEDS_NAME_1 !== undefined ? keyword_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    identifier(identifier?: Identifier | SimplePattern) { return identifier !== undefined ? keyword_pattern_({ ...config, identifier: identifier }) : fields.identifier; },
+    simplePattern(simplePattern?: SimplePattern) { return simplePattern !== undefined ? keyword_pattern_({ ...config, simplePattern: simplePattern }) : fields.simple_pattern; },
     identifierOrSimplePattern(identifierOrSimplePattern?: Identifier | SimplePattern) { return identifierOrSimplePattern !== undefined ? keyword_pattern_({ ...config, identifierOrSimplePattern }) : config?.identifierOrSimplePattern; },
-    simplePattern(simplePattern?: SimplePattern) { return simplePattern !== undefined ? keyword_pattern_({ ...config, simplePattern }) : config?.simplePattern; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

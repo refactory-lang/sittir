@@ -970,7 +970,7 @@ export function decoratorFrom(input: unknown): unknown {
     const c = nd.children;
     return decorator_({
       expression: f?.['expression'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      newline: f?.['newline'],
     } as unknown as DecoratorConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -978,8 +978,8 @@ export function decoratorFrom(input: unknown): unknown {
   if (obj['expression'] !== undefined) {
     resolved['expression'] = _resolveExpression(obj['expression']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  if (obj['newline'] !== undefined) {
+    resolved['newline'] = _rd4g2sg(obj['newline']);
   }
   return decorator_(resolved as DecoratorConfig);
 }
@@ -1727,23 +1727,20 @@ export function keywordPatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return keyword_pattern_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      identifier: f?.['identifier'],
+      simplePattern: f?.['simple_pattern'],
     } as unknown as KeywordPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _rk9rdv8(obj['NEEDS_NAME_0']);
+  if (obj['identifier'] !== undefined) {
+    resolved['identifier'] = _rk9rdv8(obj['identifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _r1g8zebv(obj['NEEDS_NAME_1']);
+  if (obj['simplePattern'] !== undefined) {
+    resolved['simplePattern'] = _r1g8zebv(obj['simplePattern']);
   }
   if (obj.identifierOrSimplePattern !== undefined) {
     resolved.identifierOrSimplePattern = _rk9rdv8(obj.identifierOrSimplePattern);
-  }
-  if (obj.simplePattern !== undefined) {
-    resolved.simplePattern = _r1g8zebv(obj.simplePattern);
   }
   return keyword_pattern_(resolved as KeywordPatternConfig);
 }

@@ -2,17 +2,15 @@
   "abstract_method_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_2": {}
+      "override_modifier": {},
+      "call_signature": {}
     }
   },
   "ambient_declaration": {
     "fields": {
       "NEEDS_NAME_0": {},
       "type": {},
-      "NEEDS_NAME_2": {}
+      "semicolon": {}
     }
   },
   "as_expression": {
@@ -24,7 +22,7 @@
   "class_declaration": {
     "fields": {
       "class_heritage": {},
-      "NEEDS_NAME_1": {}
+      "automatic_semicolon": {}
     }
   },
   "class_heritage": {
@@ -36,7 +34,9 @@
   "enum_body": {
     "fields": {
       "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "NEEDS_NAME_1": {
+        "multiple": true
+      }
     }
   },
   "export_statement": {
@@ -50,7 +50,7 @@
     "fields": {
       "NEEDS_NAME_0": {},
       "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {}
+      "semicolon": {}
     }
   },
   "import_clause": {
@@ -62,15 +62,15 @@
   "import_statement": {
     "fields": {
       "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {},
+      "from_clause": {},
       "import_attribute": {},
-      "NEEDS_NAME_3": {}
+      "semicolon": {}
     }
   },
   "infer_type": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "type_identifier": {},
+      "type": {}
     }
   },
   "intersection_type": {
@@ -84,7 +84,7 @@
       "variable_declarator": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {}
+      "semicolon": {}
     }
   },
   "lookup_type": {
@@ -96,19 +96,15 @@
   "method_definition": {
     "fields": {
       "accessibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_2": {}
+      "override_modifier": {},
+      "call_signature": {}
     }
   },
   "method_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_2": {}
+      "override_modifier": {},
+      "call_signature": {}
     }
   },
   "object_type": {
@@ -122,8 +118,8 @@
   },
   "optional_parameter": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "parameter_name": {},
+      "initializer": {}
     }
   },
   "program": {
@@ -137,24 +133,20 @@
   "property_signature": {
     "fields": {
       "accessibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      }
+      "override_modifier": {}
     }
   },
   "public_field_definition": {
     "fields": {
       "accessibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_2": {}
+      "override_modifier": {},
+      "initializer": {}
     }
   },
   "required_parameter": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "parameter_name": {},
+      "initializer": {}
     }
   },
   "satisfies_expression": {
@@ -168,7 +160,7 @@
       "statement": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {}
+      "automatic_semicolon": {}
     }
   },
   "type_assertion": {
@@ -188,7 +180,7 @@
       "variable_declarator": {
         "multiple": true
       },
-      "NEEDS_NAME_1": {}
+      "semicolon": {}
     }
   }
 }

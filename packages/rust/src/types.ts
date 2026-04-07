@@ -391,9 +391,9 @@ export interface BinaryExpression {
 export interface Block {
   readonly type: 'block';
   readonly fields: {
-    readonly NEEDS_NAME_0?: DeclarationStatement | ExpressionStatement | Label;
-    readonly NEEDS_NAME_1?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
-    readonly NEEDS_NAME_2?: DeclarationStatement | Expression | ExpressionStatement;
+    readonly label?: DeclarationStatement | ExpressionStatement | Label;
+    readonly statement?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
+    readonly expression?: DeclarationStatement | Expression | ExpressionStatement;
   };
   readonly children1?: DeclarationStatement | ExpressionStatement | Label;
   readonly children2?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
@@ -535,9 +535,8 @@ export interface ExternCrateDeclaration {
     readonly alias?: Identifier;
     readonly name: Identifier;
     readonly visibilityModifier?: VisibilityModifier;
-    readonly NEEDS_NAME_1?: Crate;
+    readonly crate?: Crate;
   };
-  readonly crate: Crate;
 }
 export interface ExternModifier {
   readonly type: 'extern_modifier';
@@ -824,10 +823,9 @@ export interface ModItem {
 export interface MutPattern {
   readonly type: 'mut_pattern';
   readonly fields: {
-    readonly NEEDS_NAME_0?: MutableSpecifier;
+    readonly mutableSpecifier?: MutableSpecifier;
     readonly pattern?: Pattern;
   };
-  readonly mutableSpecifier: MutableSpecifier;
 }
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
@@ -903,9 +901,9 @@ export interface RangePattern {
 export interface RawStringLiteral {
   readonly type: 'raw_string_literal';
   readonly fields: {
-    readonly NEEDS_NAME_0?: string;
+    readonly rawStringLiteralStart?: string;
     readonly stringContent?: StringContent;
-    readonly NEEDS_NAME_2?: string;
+    readonly rawStringLiteralEnd?: string;
   };
 }
 export interface RefPattern {
@@ -922,19 +920,17 @@ export interface ReferenceExpression {
 export interface ReferencePattern {
   readonly type: 'reference_pattern';
   readonly fields: {
-    readonly NEEDS_NAME_0?: MutableSpecifier;
+    readonly mutableSpecifier?: MutableSpecifier;
     readonly pattern?: Pattern;
   };
-  readonly mutableSpecifier?: MutableSpecifier;
 }
 export interface ReferenceType {
   readonly type: 'reference_type';
   readonly fields: {
     readonly type: Type;
     readonly lifetime?: Lifetime;
-    readonly NEEDS_NAME_1?: MutableSpecifier;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
-  readonly mutableSpecifier?: MutableSpecifier;
 }
 export interface RemovedTraitBound {
   readonly type: 'removed_trait_bound';
@@ -969,11 +965,9 @@ export interface SelfParameter {
   readonly type: 'self_parameter';
   readonly fields: {
     readonly lifetime?: Lifetime;
-    readonly NEEDS_NAME_1?: MutableSpecifier;
-    readonly NEEDS_NAME_2?: Self;
+    readonly mutableSpecifier?: MutableSpecifier;
+    readonly self?: Self;
   };
-  readonly mutableSpecifier?: MutableSpecifier;
-  readonly self: Self;
 }
 export interface ShorthandFieldInitializer {
   readonly type: 'shorthand_field_initializer';
@@ -1002,9 +996,8 @@ export interface StaticItem {
     readonly type: Type;
     readonly value?: Expression;
     readonly visibilityModifier?: VisibilityModifier;
-    readonly NEEDS_NAME_1?: MutableSpecifier;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
-  readonly mutableSpecifier?: MutableSpecifier;
 }
 export interface StringLiteral {
   readonly type: 'string_literal';

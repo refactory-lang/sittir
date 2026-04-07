@@ -403,7 +403,7 @@ export function wrapDecorator(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get newline() { return drillIn(data.fields?.['newline'], tree); },
     get children2() { return drillIn(data.fields?.['children2'], tree); },
   };
 }
@@ -646,14 +646,13 @@ export function wrapKeywordArgument(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapKeywordPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","identifier","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
+  promoteNamed(data, 'identifier', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","identifier","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
+  promoteNamed(data, 'simple_pattern', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get simplePattern() { return drillIn(data.fields?.['simple_pattern'], tree); },
     get identifierOrSimplePattern() { return drillIn(data.fields?.['identifierOrSimplePattern'], tree); },
-    get simplePattern() { return drillIn(data.fields?.['simplePattern'], tree); },
   };
 }
 

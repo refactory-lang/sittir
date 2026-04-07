@@ -321,7 +321,7 @@ describe('block', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.block({ NEEDS_NAME_0: ir.emptyStatement() as any, NEEDS_NAME_1: [], NEEDS_NAME_2: ir.identifier('test_NEEDS_NAME_2') as any, children1: ir.emptyStatement() as any, children2: [], children3: ir.identifier('test_children3') as any });
+    const node = ir.block({ label: ir.emptyStatement() as any, statement: [], expression: ir.identifier('test_expression') as any, children1: ir.emptyStatement() as any, children2: [], children3: ir.identifier('test_children3') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -837,7 +837,7 @@ describe('extern_crate_declaration', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.externCrateDeclaration({ alias: ir.identifier('test_alias') as any, name: ir.identifier('test_name') as any, visibilityModifier: ir.visibilityModifier() as any, NEEDS_NAME_1: ir.crate() as any, crate: ir.crate() as any });
+    const node = ir.externCrateDeclaration({ alias: ir.identifier('test_alias') as any, name: ir.identifier('test_name') as any, visibilityModifier: ir.visibilityModifier() as any, crate: ir.crate() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1822,7 +1822,7 @@ describe('mut_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.mutPattern({ NEEDS_NAME_0: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any, mutableSpecifier: ir.mutableSpecifier() as any });
+    const node = ir.mutPattern({ mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2153,7 +2153,7 @@ describe('reference_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.referencePattern({ NEEDS_NAME_0: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any, mutableSpecifier: ir.mutableSpecifier() as any });
+    const node = ir.referencePattern({ mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2180,7 +2180,7 @@ describe('reference_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.referenceType({ type: ir.typeIdentifier('TestType') as any, lifetime: ir.lifetime({ children: ir.identifier('test_children') as any }) as any, NEEDS_NAME_1: ir.mutableSpecifier() as any, mutableSpecifier: ir.mutableSpecifier() as any });
+    const node = ir.referenceType({ type: ir.typeIdentifier('TestType') as any, lifetime: ir.lifetime({ children: ir.identifier('test_children') as any }) as any, mutableSpecifier: ir.mutableSpecifier() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2332,7 +2332,7 @@ describe('self_parameter', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.selfParameter({ lifetime: ir.lifetime({ children: ir.identifier('test_children') as any }) as any, NEEDS_NAME_1: ir.mutableSpecifier() as any, NEEDS_NAME_2: ir.self() as any, mutableSpecifier: ir.mutableSpecifier() as any, self: ir.self() as any });
+    const node = ir.selfParameter({ lifetime: ir.lifetime({ children: ir.identifier('test_children') as any }) as any, mutableSpecifier: ir.mutableSpecifier() as any, self: ir.self() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2428,7 +2428,7 @@ describe('static_item', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.static({ name: ir.identifier('test_name') as any, type: ir.typeIdentifier('TestType') as any, value: ir.identifier('test_value') as any, visibilityModifier: ir.visibilityModifier() as any, NEEDS_NAME_1: ir.mutableSpecifier() as any, mutableSpecifier: ir.mutableSpecifier() as any });
+    const node = ir.static({ name: ir.identifier('test_name') as any, type: ir.typeIdentifier('TestType') as any, value: ir.identifier('test_value') as any, visibilityModifier: ir.visibilityModifier() as any, mutableSpecifier: ir.mutableSpecifier() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

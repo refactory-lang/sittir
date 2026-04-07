@@ -37,7 +37,7 @@ rules:
   conditional_expression: $$$CHILDREN if else $NEEDS_NAME_0 $NEEDS_NAME_1 $NEEDS_NAME_2
   constrained_type: "$$$TYPE : $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN"
   decorated_definition: $$$CHILDREN $DEFINITION
-  decorator: "@ $$$CHILDREN $EXPRESSION $NEEDS_NAME_1"
+  decorator: "@ $$$CHILDREN $EXPRESSION $NEWLINE"
   default_parameter: $NAME = $VALUE
   delete_statement: del $$$CHILDREN
   dict_pattern:
@@ -85,7 +85,7 @@ rules:
   import_statement: import $$$NAME ,
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME = $VALUE
-  keyword_pattern: $IDENTIFIER = $SIMPLE_PATTERN $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN
+  keyword_pattern: $IDENTIFIER = $SIMPLE_PATTERN $IDENTIFIER $SIMPLE_PATTERN $$$CHILDREN
   lambda: "lambda $PARAMETERS : $BODY"
   lambda_parameters: $$$CHILDREN
   list: "[$$$CHILDREN]"

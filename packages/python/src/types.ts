@@ -398,7 +398,7 @@ export interface Decorator {
   readonly type: 'decorator';
   readonly fields: {
     readonly expression?: Expression;
-    readonly NEEDS_NAME_1?: string;
+    readonly newline?: string;
   };
 }
 export interface DefaultParameter {
@@ -585,11 +585,10 @@ export interface KeywordArgument {
 export interface KeywordPattern {
   readonly type: 'keyword_pattern';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Identifier | SimplePattern;
-    readonly NEEDS_NAME_1?: SimplePattern;
+    readonly identifier?: Identifier | SimplePattern;
+    readonly simplePattern?: SimplePattern;
   };
   readonly identifierOrSimplePattern: Identifier | SimplePattern;
-  readonly simplePattern: SimplePattern;
 }
 export interface Lambda {
   readonly type: 'lambda';

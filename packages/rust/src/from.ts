@@ -756,23 +756,23 @@ export function blockFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return block_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      label: f?.['label'],
+      statement: f?.['statement'],
+      expression: f?.['expression'],
     } as unknown as BlockConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r12k79ex(obj['NEEDS_NAME_0']);
+  if (obj['label'] !== undefined) {
+    resolved['label'] = _r12k79ex(obj['label']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
+  if (obj['statement'] !== undefined) {
+    const raw = obj['statement'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r18pzx6l(v));
+    resolved['statement'] = arr.map((v: unknown) => _r18pzx6l(v));
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _r1cmov3s(obj['NEEDS_NAME_2']);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _r1cmov3s(obj['expression']);
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r12k79ex(obj.children1);
@@ -1296,7 +1296,7 @@ export function externCrateDeclarationFrom(input: unknown): unknown {
       alias: f?.['alias'],
       name: f?.['name'],
       visibilityModifier: f?.['visibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      crate: f?.['crate'],
     } as unknown as ExternCrateDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1310,11 +1310,8 @@ export function externCrateDeclarationFrom(input: unknown): unknown {
   if (obj['visibilityModifier'] !== undefined) {
     resolved['visibilityModifier'] = (isNodeData(obj['visibilityModifier']) ? obj['visibilityModifier'] : Array.isArray(obj['visibilityModifier']) ? visibilityModifierFrom(obj['visibilityModifier']) : typeof obj['visibilityModifier'] === 'object' ? visibilityModifierFrom(obj['visibilityModifier']) : obj['visibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'crate' ? crate_() : obj['NEEDS_NAME_1']);
-  }
-  if (obj.crate !== undefined) {
-    resolved.crate = (isNodeData(obj.crate) ? obj.crate : typeof obj.crate === 'string' && obj.crate === 'crate' ? crate_() : obj.crate);
+  if (obj['crate'] !== undefined) {
+    resolved['crate'] = (isNodeData(obj['crate']) ? obj['crate'] : typeof obj['crate'] === 'string' && obj['crate'] === 'crate' ? crate_() : obj['crate']);
   }
   return extern_crate_declaration_(resolved as ExternCrateDeclarationConfig);
 }
@@ -2395,20 +2392,17 @@ export function mutPatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return mut_pattern_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      mutableSpecifier: f?.['mutable_specifier'],
       pattern: f?.['pattern'],
     } as unknown as MutPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' && obj['NEEDS_NAME_0'] === 'mut' ? mutable_specifier_() : obj['NEEDS_NAME_0']);
+  if (obj['mutableSpecifier'] !== undefined) {
+    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   if (obj['pattern'] !== undefined) {
     resolved['pattern'] = _resolvePattern(obj['pattern']);
-  }
-  if (obj.mutableSpecifier !== undefined) {
-    resolved.mutableSpecifier = (isNodeData(obj.mutableSpecifier) ? obj.mutableSpecifier : typeof obj.mutableSpecifier === 'string' && obj.mutableSpecifier === 'mut' ? mutable_specifier_() : obj.mutableSpecifier);
   }
   return mut_pattern_(resolved as MutPatternConfig);
 }
@@ -2692,21 +2686,21 @@ export function rawStringLiteralFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return raw_string_literal_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      rawStringLiteralStart: f?.['raw_string_literal_start'],
       stringContent: f?.['string_content'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      rawStringLiteralEnd: f?.['raw_string_literal_end'],
     } as unknown as RawStringLiteralConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _rd4g2sg(obj['NEEDS_NAME_0']);
+  if (obj['rawStringLiteralStart'] !== undefined) {
+    resolved['rawStringLiteralStart'] = _rd4g2sg(obj['rawStringLiteralStart']);
   }
   if (obj['stringContent'] !== undefined) {
     resolved['stringContent'] = (isNodeData(obj['stringContent']) ? obj['stringContent'] : typeof obj['stringContent'] === 'string' || typeof obj['stringContent'] === 'number' || typeof obj['stringContent'] === 'boolean' ? string_content_(''+obj['stringContent']) : obj['stringContent']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  if (obj['rawStringLiteralEnd'] !== undefined) {
+    resolved['rawStringLiteralEnd'] = _rd4g2sg(obj['rawStringLiteralEnd']);
   }
   return raw_string_literal_(resolved as RawStringLiteralConfig);
 }
@@ -2764,20 +2758,17 @@ export function referencePatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return reference_pattern_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      mutableSpecifier: f?.['mutable_specifier'],
       pattern: f?.['pattern'],
     } as unknown as ReferencePatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' && obj['NEEDS_NAME_0'] === 'mut' ? mutable_specifier_() : obj['NEEDS_NAME_0']);
+  if (obj['mutableSpecifier'] !== undefined) {
+    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   if (obj['pattern'] !== undefined) {
     resolved['pattern'] = _resolvePattern(obj['pattern']);
-  }
-  if (obj.mutableSpecifier !== undefined) {
-    resolved.mutableSpecifier = (isNodeData(obj.mutableSpecifier) ? obj.mutableSpecifier : typeof obj.mutableSpecifier === 'string' && obj.mutableSpecifier === 'mut' ? mutable_specifier_() : obj.mutableSpecifier);
   }
   return reference_pattern_(resolved as ReferencePatternConfig);
 }
@@ -2793,7 +2784,7 @@ export function referenceTypeFrom(input: unknown): unknown {
     return reference_type_({
       type: f?.['type'],
       lifetime: f?.['lifetime'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      mutableSpecifier: f?.['mutable_specifier'],
     } as unknown as ReferenceTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2804,11 +2795,8 @@ export function referenceTypeFrom(input: unknown): unknown {
   if (obj['lifetime'] !== undefined) {
     resolved['lifetime'] = (isNodeData(obj['lifetime']) ? obj['lifetime'] : Array.isArray(obj['lifetime']) ? lifetimeFrom(obj['lifetime']) : typeof obj['lifetime'] === 'object' ? lifetimeFrom(obj['lifetime']) : obj['lifetime']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'mut' ? mutable_specifier_() : obj['NEEDS_NAME_1']);
-  }
-  if (obj.mutableSpecifier !== undefined) {
-    resolved.mutableSpecifier = (isNodeData(obj.mutableSpecifier) ? obj.mutableSpecifier : typeof obj.mutableSpecifier === 'string' && obj.mutableSpecifier === 'mut' ? mutable_specifier_() : obj.mutableSpecifier);
+  if (obj['mutableSpecifier'] !== undefined) {
+    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   return reference_type_(resolved as ReferenceTypeConfig);
 }
@@ -2935,8 +2923,8 @@ export function selfParameterFrom(input: unknown): unknown {
     const c = nd.children;
     return self_parameter_({
       lifetime: f?.['lifetime'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      mutableSpecifier: f?.['mutable_specifier'],
+      self: f?.['self'],
     } as unknown as SelfParameterConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2944,17 +2932,11 @@ export function selfParameterFrom(input: unknown): unknown {
   if (obj['lifetime'] !== undefined) {
     resolved['lifetime'] = (isNodeData(obj['lifetime']) ? obj['lifetime'] : Array.isArray(obj['lifetime']) ? lifetimeFrom(obj['lifetime']) : typeof obj['lifetime'] === 'object' ? lifetimeFrom(obj['lifetime']) : obj['lifetime']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'mut' ? mutable_specifier_() : obj['NEEDS_NAME_1']);
+  if (obj['mutableSpecifier'] !== undefined) {
+    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = (isNodeData(obj['NEEDS_NAME_2']) ? obj['NEEDS_NAME_2'] : typeof obj['NEEDS_NAME_2'] === 'string' && obj['NEEDS_NAME_2'] === 'self' ? self_() : obj['NEEDS_NAME_2']);
-  }
-  if (obj.mutableSpecifier !== undefined) {
-    resolved.mutableSpecifier = (isNodeData(obj.mutableSpecifier) ? obj.mutableSpecifier : typeof obj.mutableSpecifier === 'string' && obj.mutableSpecifier === 'mut' ? mutable_specifier_() : obj.mutableSpecifier);
-  }
-  if (obj.self !== undefined) {
-    resolved.self = (isNodeData(obj.self) ? obj.self : typeof obj.self === 'string' && obj.self === 'self' ? self_() : obj.self);
+  if (obj['self'] !== undefined) {
+    resolved['self'] = (isNodeData(obj['self']) ? obj['self'] : typeof obj['self'] === 'string' && obj['self'] === 'self' ? self_() : obj['self']);
   }
   return self_parameter_(resolved as SelfParameterConfig);
 }
@@ -3052,7 +3034,7 @@ export function staticItemFrom(input: unknown): unknown {
       type: f?.['type'],
       value: f?.['value'],
       visibilityModifier: f?.['visibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      mutableSpecifier: f?.['mutable_specifier'],
     } as unknown as StaticItemConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3069,11 +3051,8 @@ export function staticItemFrom(input: unknown): unknown {
   if (obj['visibilityModifier'] !== undefined) {
     resolved['visibilityModifier'] = (isNodeData(obj['visibilityModifier']) ? obj['visibilityModifier'] : Array.isArray(obj['visibilityModifier']) ? visibilityModifierFrom(obj['visibilityModifier']) : typeof obj['visibilityModifier'] === 'object' ? visibilityModifierFrom(obj['visibilityModifier']) : obj['visibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'mut' ? mutable_specifier_() : obj['NEEDS_NAME_1']);
-  }
-  if (obj.mutableSpecifier !== undefined) {
-    resolved.mutableSpecifier = (isNodeData(obj.mutableSpecifier) ? obj.mutableSpecifier : typeof obj.mutableSpecifier === 'string' && obj.mutableSpecifier === 'mut' ? mutable_specifier_() : obj.mutableSpecifier);
+  if (obj['mutableSpecifier'] !== undefined) {
+    resolved['mutableSpecifier'] = (isNodeData(obj['mutableSpecifier']) ? obj['mutableSpecifier'] : typeof obj['mutableSpecifier'] === 'string' && obj['mutableSpecifier'] === 'mut' ? mutable_specifier_() : obj['mutableSpecifier']);
   }
   return static_item_(resolved as StaticItemConfig);
 }

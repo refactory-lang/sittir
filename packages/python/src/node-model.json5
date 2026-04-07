@@ -57,6 +57,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   as_pattern: {
@@ -74,6 +75,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "expression",
     },
   },
   assert_statement: {
@@ -84,6 +86,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   assignment: {
@@ -162,6 +165,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "primary_expression",
     },
   },
   binary_operator: {
@@ -279,6 +283,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   case_pattern: {
@@ -288,6 +293,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   chevron: {
@@ -297,6 +303,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "expression",
     },
   },
   class_definition: {
@@ -359,12 +366,14 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "dotted_name",
       },
       {
         required: false,
         multiple: true,
         kinds: {},
         separator: ",",
+        name: "case_pattern",
       },
     ],
   },
@@ -393,10 +402,10 @@
         required: false,
         multiple: true,
         kinds: {},
+        separator: null,
         override: true,
         overrideAnonymous: false,
         overrideValues: null,
-        separator: null,
       },
     ],
     children: [
@@ -404,12 +413,14 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_0",
       },
       {
         required: true,
         multiple: true,
         kinds: {},
         separator: null,
+        name: "NEEDS_NAME_1",
       },
     ],
   },
@@ -441,11 +452,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_0",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_1",
       },
     ],
   },
@@ -457,6 +470,7 @@
       multiple: true,
       kinds: {},
       separator: null,
+      name: null,
     },
   },
   conditional_expression: {
@@ -496,16 +510,19 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_0",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_1",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_2",
       },
     ],
   },
@@ -537,11 +554,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_0",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_1",
       },
     ],
   },
@@ -566,6 +585,7 @@
       multiple: true,
       kinds: {},
       separator: null,
+      name: null,
     },
   },
   decorator: {
@@ -582,7 +602,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "newline",
         required: false,
         multiple: false,
         kinds: {},
@@ -596,11 +616,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "expression",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "newline",
       },
     ],
   },
@@ -640,6 +662,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   dictionary: {
@@ -650,6 +673,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   dictionary_comprehension: {
@@ -667,6 +691,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "comprehension_clauses",
     },
   },
   dictionary_splat: {
@@ -676,6 +701,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "expression",
     },
   },
   dictionary_splat_pattern: {
@@ -685,6 +711,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   dotted_name: {
@@ -695,6 +722,7 @@
       multiple: true,
       kinds: {},
       separator: null,
+      name: null,
     },
   },
   elif_clause: {
@@ -751,6 +779,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "suite",
     },
   },
   exec_statement: {
@@ -769,6 +798,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   expression_list: {
@@ -779,6 +809,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   expression_statement: {
@@ -789,6 +820,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   finally_clause: {
@@ -884,6 +916,7 @@
       multiple: true,
       kinds: {},
       separator: null,
+      name: null,
     },
   },
   function_definition: {
@@ -952,6 +985,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "comprehension_clauses",
     },
   },
   generic_type: {
@@ -982,11 +1016,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "identifier",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "type_parameter",
       },
     ],
   },
@@ -998,6 +1034,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   if_clause: {
@@ -1007,6 +1044,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "expression",
     },
   },
   if_statement: {
@@ -1057,6 +1095,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   import_prefix: {
@@ -1132,7 +1171,7 @@
     kind: "keyword_pattern",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "identifier",
         required: false,
         multiple: false,
         kinds: {},
@@ -1141,7 +1180,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "simple_pattern",
         required: false,
         multiple: false,
         kinds: {},
@@ -1155,11 +1194,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "identifier",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "simple_pattern",
       },
     ],
   },
@@ -1222,6 +1263,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "comprehension_clauses",
     },
   },
   list_pattern: {
@@ -1241,6 +1283,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "expression",
     },
   },
   list_splat_pattern: {
@@ -1250,6 +1293,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   match_statement: {
@@ -1300,11 +1344,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "type",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "identifier",
       },
     ],
   },
@@ -1345,6 +1391,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   "not in": {
@@ -1401,6 +1448,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   parenthesized_list_splat: {
@@ -1410,6 +1458,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   pass_statement: {
@@ -1425,6 +1474,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   positional_separator: {
@@ -1448,6 +1498,7 @@
       required: false,
       multiple: false,
       kinds: {},
+      name: "chevron",
     },
   },
   raise_statement: {
@@ -1465,6 +1516,7 @@
       required: false,
       multiple: false,
       kinds: {},
+      name: "expressions",
     },
   },
   relative_import: {
@@ -1495,11 +1547,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "import_prefix",
       },
       {
         required: false,
         multiple: false,
         kinds: {},
+        name: "dotted_name",
       },
     ],
   },
@@ -1537,6 +1591,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "comprehension_clauses",
     },
   },
   slice: {
@@ -1576,16 +1631,19 @@
         required: false,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_0",
       },
       {
         required: false,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_1",
       },
       {
         required: false,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_2",
       },
     ],
   },
@@ -1596,6 +1654,7 @@
       required: false,
       multiple: false,
       kinds: {},
+      name: "identifier",
     },
   },
   splat_type: {
@@ -1605,6 +1664,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "identifier",
     },
   },
   string: {
@@ -1645,17 +1705,20 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "string_start",
       },
       {
         required: false,
         multiple: true,
         kinds: {},
         separator: null,
+        name: "NEEDS_NAME_1",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "string_end",
       },
     ],
   },
@@ -1667,6 +1730,7 @@
       multiple: true,
       kinds: {},
       separator: null,
+      name: null,
     },
   },
   subscript: {
@@ -1734,16 +1798,19 @@
         multiple: true,
         kinds: {},
         separator: null,
+        name: "except_clause",
       },
       {
         required: false,
         multiple: false,
         kinds: {},
+        name: "else_clause",
       },
       {
         required: false,
         multiple: false,
         kinds: {},
+        name: "finally_clause",
       },
     ],
   },
@@ -1774,6 +1841,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   type_alias_statement: {
@@ -1803,6 +1871,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   typed_default_parameter: {
@@ -1845,6 +1914,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   unary_operator: {
@@ -1904,11 +1974,13 @@
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_0",
       },
       {
         required: true,
         multiple: false,
         kinds: {},
+        name: "NEEDS_NAME_1",
       },
     ],
   },
@@ -1950,6 +2022,7 @@
       multiple: true,
       kinds: {},
       separator: ",",
+      name: null,
     },
   },
   with_item: {
@@ -1980,6 +2053,7 @@
       required: true,
       multiple: false,
       kinds: {},
+      name: "with_clause",
     },
   },
   yield: {
@@ -1989,6 +2063,7 @@
       required: false,
       multiple: false,
       kinds: {},
+      name: "NEEDS_NAME_0",
     },
   },
   "!=": {

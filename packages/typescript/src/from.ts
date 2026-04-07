@@ -554,8 +554,8 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
       returnType: f?.['return_type'],
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      overrideModifier: f?.['override_modifier'],
+      callSignature: f?.['call_signature'],
     } as unknown as AbstractMethodSignatureConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -575,14 +575,11 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  if (obj['overrideModifier'] !== undefined) {
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
-  }
-  if (obj.overrideModifier !== undefined) {
-    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  if (obj['callSignature'] !== undefined) {
+    resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
   }
   return abstract_method_signature_(resolved as AbstractMethodSignatureConfig);
 }
@@ -618,7 +615,7 @@ export function ambientDeclarationFrom(input: unknown): unknown {
     return ambient_declaration_({
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       type: f?.['type'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      semicolon: f?.['semicolon'],
     } as unknown as AmbientDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -629,8 +626,8 @@ export function ambientDeclarationFrom(input: unknown): unknown {
   if (obj['type'] !== undefined) {
     resolved['type'] = _resolveType(obj['type']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  if (obj['semicolon'] !== undefined) {
+    resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r1bydq0c(obj.children1);
@@ -1134,7 +1131,7 @@ export function classDeclarationFrom(input: unknown): unknown {
       name: f?.['name'],
       typeParameters: f?.['type_parameters'],
       classHeritage: f?.['class_heritage'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      automaticSemicolon: f?.['automatic_semicolon'],
     } as unknown as ClassDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1156,8 +1153,8 @@ export function classDeclarationFrom(input: unknown): unknown {
   if (obj['classHeritage'] !== undefined) {
     resolved['classHeritage'] = (isNodeData(obj['classHeritage']) ? obj['classHeritage'] : Array.isArray(obj['classHeritage']) ? classHeritageFrom(obj['classHeritage']) : typeof obj['classHeritage'] === 'object' ? classHeritageFrom(obj['classHeritage']) : obj['classHeritage']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  if (obj['automaticSemicolon'] !== undefined) {
+    resolved['automaticSemicolon'] = _rd4g2sg(obj['automaticSemicolon']);
   }
   return class_declaration_(resolved as ClassDeclarationConfig);
 }
@@ -2126,7 +2123,7 @@ export function importAliasFrom(input: unknown): unknown {
     return import_alias_({
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
       NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      semicolon: f?.['semicolon'],
     } as unknown as ImportAliasConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2137,8 +2134,8 @@ export function importAliasFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _r1lq7t9k(obj['NEEDS_NAME_1']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  if (obj['semicolon'] !== undefined) {
+    resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
   }
   if (obj.identifier !== undefined) {
     resolved.identifier = _resolveImportIdentifier(obj.identifier);
@@ -2258,9 +2255,9 @@ export function importStatementFrom(input: unknown): unknown {
     return import_statement_({
       source: f?.['source'],
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      fromClause: f?.['from_clause'],
       importAttribute: f?.['import_attribute'],
-      NEEDS_NAME_3: f?.['NEEDS_NAME_3'],
+      semicolon: f?.['semicolon'],
     } as unknown as ImportStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2271,14 +2268,14 @@ export function importStatementFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_0'] !== undefined) {
     resolved['NEEDS_NAME_0'] = _r1a3965y(obj['NEEDS_NAME_0']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  if (obj['fromClause'] !== undefined) {
+    resolved['fromClause'] = _rd4g2sg(obj['fromClause']);
   }
   if (obj['importAttribute'] !== undefined) {
     resolved['importAttribute'] = (isNodeData(obj['importAttribute']) ? obj['importAttribute'] : Array.isArray(obj['importAttribute']) ? importAttributeFrom(obj['importAttribute']) : typeof obj['importAttribute'] === 'object' ? importAttributeFrom(obj['importAttribute']) : obj['importAttribute']);
   }
-  if (obj['NEEDS_NAME_3'] !== undefined) {
-    resolved['NEEDS_NAME_3'] = _rd4g2sg(obj['NEEDS_NAME_3']);
+  if (obj['semicolon'] !== undefined) {
+    resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
   }
   if (obj.importClauseOrImportRequireClause !== undefined) {
     resolved.importClauseOrImportRequireClause = _r1a3965y(obj.importClauseOrImportRequireClause);
@@ -2351,20 +2348,17 @@ export function inferTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return infer_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      typeIdentifier: f?.['type_identifier'],
+      type: f?.['type'],
     } as unknown as InferTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1bp2k9z(obj['NEEDS_NAME_0']);
+  if (obj['typeIdentifier'] !== undefined) {
+    resolved['typeIdentifier'] = _r1bp2k9z(obj['typeIdentifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _r26qbl2(obj['NEEDS_NAME_1']);
-  }
-  if (obj.typeIdentifier !== undefined) {
-    resolved.typeIdentifier = _r1bp2k9z(obj.typeIdentifier);
+  if (obj['type'] !== undefined) {
+    resolved['type'] = _r26qbl2(obj['type']);
   }
   if (obj.typeOrTypeIdentifier !== undefined) {
     resolved.typeOrTypeIdentifier = _r26qbl2(obj.typeOrTypeIdentifier);
@@ -2542,7 +2536,7 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
     return lexical_declaration_({
       kind: f?.['kind'],
       variableDeclarator: f?.['variable_declarator'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      semicolon: f?.['semicolon'],
     } as unknown as LexicalDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2555,8 +2549,8 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['variableDeclarator'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  if (obj['semicolon'] !== undefined) {
+    resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
   }
   return lexical_declaration_(resolved as LexicalDeclarationConfig);
 }
@@ -2679,8 +2673,8 @@ export function methodDefinitionFrom(input: unknown): unknown {
       returnType: f?.['return_type'],
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      overrideModifier: f?.['override_modifier'],
+      callSignature: f?.['call_signature'],
     } as unknown as MethodDefinitionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2703,14 +2697,11 @@ export function methodDefinitionFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  if (obj['overrideModifier'] !== undefined) {
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
-  }
-  if (obj.overrideModifier !== undefined) {
-    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  if (obj['callSignature'] !== undefined) {
+    resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
   }
   return method_definition_(resolved as MethodDefinitionConfig);
 }
@@ -2729,8 +2720,8 @@ export function methodSignatureFrom(input: unknown): unknown {
       returnType: f?.['return_type'],
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      overrideModifier: f?.['override_modifier'],
+      callSignature: f?.['call_signature'],
     } as unknown as MethodSignatureConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2750,14 +2741,11 @@ export function methodSignatureFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  if (obj['overrideModifier'] !== undefined) {
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
-  }
-  if (obj.overrideModifier !== undefined) {
-    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  if (obj['callSignature'] !== undefined) {
+    resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
   }
   return method_signature_(resolved as MethodSignatureConfig);
 }
@@ -3100,8 +3088,8 @@ export function optionalParameterFrom(input: unknown): unknown {
       pattern: f?.['pattern'],
       type: f?.['type'],
       value: f?.['value'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      parameterName: f?.['parameter_name'],
+      initializer: f?.['initializer'],
     } as unknown as OptionalParameterConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3123,11 +3111,11 @@ export function optionalParameterFrom(input: unknown): unknown {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1hu51bk(obj['NEEDS_NAME_0']);
+  if (obj['parameterName'] !== undefined) {
+    resolved['parameterName'] = _r1hu51bk(obj['parameterName']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveParameterName(obj['NEEDS_NAME_1']);
+  if (obj['initializer'] !== undefined) {
+    resolved['initializer'] = _resolveParameterName(obj['initializer']);
   }
   if (obj.parameterName1 !== undefined) {
     resolved.parameterName1 = _r1hu51bk(obj.parameterName1);
@@ -3288,7 +3276,7 @@ export function propertySignatureFrom(input: unknown): unknown {
       name: f?.['name'],
       type: f?.['type'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      overrideModifier: f?.['override_modifier'],
     } as unknown as PropertySignatureConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3302,11 +3290,8 @@ export function propertySignatureFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
-  }
-  if (obj.overrideModifier !== undefined) {
-    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  if (obj['overrideModifier'] !== undefined) {
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
   return property_signature_(resolved as PropertySignatureConfig);
 }
@@ -3325,8 +3310,8 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
       type: f?.['type'],
       value: f?.['value'],
       accessibilityModifier: f?.['accessibility_modifier'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      overrideModifier: f?.['override_modifier'],
+      initializer: f?.['initializer'],
     } as unknown as PublicFieldDefinitionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3348,14 +3333,11 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
   if (obj['accessibilityModifier'] !== undefined) {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : typeof obj['NEEDS_NAME_1'] === 'string' && obj['NEEDS_NAME_1'] === 'override' ? override_modifier_() : obj['NEEDS_NAME_1']);
+  if (obj['overrideModifier'] !== undefined) {
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
-  }
-  if (obj.overrideModifier !== undefined) {
-    resolved.overrideModifier = (isNodeData(obj.overrideModifier) ? obj.overrideModifier : typeof obj.overrideModifier === 'string' && obj.overrideModifier === 'override' ? override_modifier_() : obj.overrideModifier);
+  if (obj['initializer'] !== undefined) {
+    resolved['initializer'] = _rd4g2sg(obj['initializer']);
   }
   return public_field_definition_(resolved as PublicFieldDefinitionConfig);
 }
@@ -3418,8 +3400,8 @@ export function requiredParameterFrom(input: unknown): unknown {
       pattern: f?.['pattern'],
       type: f?.['type'],
       value: f?.['value'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      parameterName: f?.['parameter_name'],
+      initializer: f?.['initializer'],
     } as unknown as RequiredParameterConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3441,11 +3423,11 @@ export function requiredParameterFrom(input: unknown): unknown {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1hu51bk(obj['NEEDS_NAME_0']);
+  if (obj['parameterName'] !== undefined) {
+    resolved['parameterName'] = _r1hu51bk(obj['parameterName']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveParameterName(obj['NEEDS_NAME_1']);
+  if (obj['initializer'] !== undefined) {
+    resolved['initializer'] = _resolveParameterName(obj['initializer']);
   }
   if (obj.parameterName1 !== undefined) {
     resolved.parameterName1 = _r1hu51bk(obj.parameterName1);
@@ -3596,7 +3578,7 @@ export function statementBlockFrom(input: unknown): unknown {
     const c = nd.children;
     return statement_block_({
       statement: f?.['statement'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      automaticSemicolon: f?.['automatic_semicolon'],
     } as unknown as StatementBlockConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3606,8 +3588,8 @@ export function statementBlockFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['statement'] = arr.map((v: unknown) => _resolveStatement(v));
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  if (obj['automaticSemicolon'] !== undefined) {
+    resolved['automaticSemicolon'] = _rd4g2sg(obj['automaticSemicolon']);
   }
   return statement_block_(resolved as StatementBlockConfig);
 }
@@ -4231,7 +4213,7 @@ export function variableDeclarationFrom(input: unknown): unknown {
     const c = nd.children;
     return variable_declaration_({
       variableDeclarator: f?.['variable_declarator'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      semicolon: f?.['semicolon'],
     } as unknown as VariableDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -4241,8 +4223,8 @@ export function variableDeclarationFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['variableDeclarator'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
+  if (obj['semicolon'] !== undefined) {
+    resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
   }
   return variable_declaration_(resolved as VariableDeclarationConfig);
 }

@@ -27,7 +27,7 @@ rules:
   base_field_initializer: .. $CHILDREN
   binary_expression: $LEFT $OPERATOR $RIGHT
   block:
-    template: $LABEL_CLAUSE{$$$STATEMENT $$$CHILDREN} $NEEDS_NAME_0 $$$NEEDS_NAME_1 $NEEDS_NAME_2
+    template: $LABEL_CLAUSE{$$$STATEMENT $$$CHILDREN} $LABEL $$$STATEMENT $EXPRESSION
     label_clause: ":"
   block_comment: /* $OUTER $DOC */ $INNER
   bounded_type: $$$LIFETIME + $$$CHILDREN $NEEDS_NAME_0 $NEEDS_NAME_1
@@ -62,7 +62,7 @@ rules:
     joinBy: ","
   expression_statement: $CHILDREN ;
   extern_crate_declaration:
-    template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE ; $VISIBILITY_MODIFIER $NEEDS_NAME_1 $$$CHILDREN
+    template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE ; $VISIBILITY_MODIFIER $CRATE $$$CHILDREN
     alias_clause: as $ALIAS
   extern_modifier: extern $CHILDREN
   field_declaration: "$CHILDREN $NAME : $TYPE"
@@ -128,7 +128,7 @@ rules:
     template: $CHILDREN $CONDITION_CLAUSE
     condition_clause: if $CONDITION
   mod_item: $CHILDREN mod $NAME $BODY
-  mut_pattern: $MUTABLE_SPECIFIER $$$CHILDREN $NEEDS_NAME_0 $PATTERN
+  mut_pattern: $MUTABLE_SPECIFIER $$$CHILDREN $MUTABLE_SPECIFIER $PATTERN
   negative_literal: "- $CHILDREN"
   or_pattern: $$$CHILDREN | $NEEDS_NAME_0 $NEEDS_NAME_1
   ordered_field_declaration_list:
@@ -143,24 +143,24 @@ rules:
   qualified_type: $TYPE as $ALIAS
   range_expression: $$$CHILDREN .. $NEEDS_NAME_0 $NEEDS_NAME_1
   range_pattern: $LEFT ... $RIGHT
-  raw_string_literal: $$$CHILDREN $STRING_CONTENT $NEEDS_NAME_0 $STRING_CONTENT $NEEDS_NAME_2
+  raw_string_literal: $$$CHILDREN $STRING_CONTENT $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression: "& raw $CHILDREN $VALUE"
-  reference_pattern: "& $MUTABLE_SPECIFIER $$$CHILDREN $NEEDS_NAME_0 $PATTERN"
-  reference_type: "& $LIFETIME $MUTABLE_SPECIFIER $TYPE $LIFETIME $NEEDS_NAME_1 $$$CHILDREN"
+  reference_pattern: "& $MUTABLE_SPECIFIER $$$CHILDREN $MUTABLE_SPECIFIER $PATTERN"
+  reference_type: "& $LIFETIME $MUTABLE_SPECIFIER $TYPE $LIFETIME $MUTABLE_SPECIFIER $$$CHILDREN"
   removed_trait_bound: "? $CHILDREN"
   return_expression: return $CHILDREN
   scoped_identifier: $PATH::$NAME
   scoped_type_identifier: $PATH::$NAME
   scoped_use_list: $PATH::$LIST
-  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF $LIFETIME $NEEDS_NAME_1 $NEEDS_NAME_2 $$$CHILDREN
+  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
   shorthand_field_initializer: $$$ATTRIBUTE_ITEM $IDENTIFIER $$$ATTRIBUTE_ITEM $IDENTIFIER $$$CHILDREN
   slice_pattern:
     template: "[$$$CHILDREN]"
     joinBy: ","
-  source_file: $SHEBANG $$$STATEMENT $NEEDS_NAME_0 $$$NEEDS_NAME_1 $$$CHILDREN
+  source_file: $SHEBANG $$$STATEMENT $SHEBANG $$$STATEMENT $$$CHILDREN
   static_item:
-    template: "$VISIBILITY_MODIFIER static $MUTABLE_SPECIFIER $NAME : $TYPE $VALUE_CLAUSE ; $VISIBILITY_MODIFIER $NEEDS_NAME_1 $$$CHILDREN"
+    template: "$VISIBILITY_MODIFIER static $MUTABLE_SPECIFIER $NAME : $TYPE $VALUE_CLAUSE ; $VISIBILITY_MODIFIER $MUTABLE_SPECIFIER $$$CHILDREN"
     value_clause: = $VALUE
   string_literal: '" $$$CHILDREN "'
   struct_expression: $NAME $BODY

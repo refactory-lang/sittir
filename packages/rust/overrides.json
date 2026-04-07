@@ -1,7 +1,9 @@
 {
   "array_expression": {
     "fields": {
-      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_0": {
+        "multiple": true
+      },
       "NEEDS_NAME_1": {
         "multiple": true
       }
@@ -9,11 +11,11 @@
   },
   "block": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
+      "label": {},
+      "statement": {
         "multiple": true
       },
-      "NEEDS_NAME_2": {}
+      "expression": {}
     }
   },
   "bounded_type": {
@@ -43,9 +45,7 @@
   "extern_crate_declaration": {
     "fields": {
       "visibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      }
+      "crate": {}
     }
   },
   "foreign_mod_item": {
@@ -82,15 +82,15 @@
   },
   "macro_definition": {
     "fields": {
-      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_0": {
+        "multiple": true
+      },
       "NEEDS_NAME_1": {}
     }
   },
   "mut_pattern": {
     "fields": {
-      "NEEDS_NAME_0": {
-        "anonymous": true
-      },
+      "mutable_specifier": {},
       "pattern": {}
     }
   },
@@ -102,7 +102,9 @@
   },
   "ordered_field_declaration_list": {
     "fields": {
-      "NEEDS_NAME_0": {},
+      "NEEDS_NAME_0": {
+        "multiple": true
+      },
       "NEEDS_NAME_1": {},
       "NEEDS_NAME_2": {
         "multiple": true
@@ -117,36 +119,28 @@
   },
   "raw_string_literal": {
     "fields": {
-      "NEEDS_NAME_0": {},
+      "raw_string_literal_start": {},
       "string_content": {},
-      "NEEDS_NAME_2": {}
+      "raw_string_literal_end": {}
     }
   },
   "reference_pattern": {
     "fields": {
-      "NEEDS_NAME_0": {
-        "anonymous": true
-      },
+      "mutable_specifier": {},
       "pattern": {}
     }
   },
   "reference_type": {
     "fields": {
       "lifetime": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      }
+      "mutable_specifier": {}
     }
   },
   "self_parameter": {
     "fields": {
       "lifetime": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      },
-      "NEEDS_NAME_2": {
-        "anonymous": true
-      }
+      "mutable_specifier": {},
+      "self": {}
     }
   },
   "shorthand_field_initializer": {
@@ -168,9 +162,7 @@
   "static_item": {
     "fields": {
       "visibility_modifier": {},
-      "NEEDS_NAME_1": {
-        "anonymous": true
-      }
+      "mutable_specifier": {}
     }
   },
   "struct_item": {
@@ -191,7 +183,9 @@
         "multiple": true
       },
       "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {},
+      "NEEDS_NAME_2": {
+        "multiple": true
+      },
       "NEEDS_NAME_3": {}
     }
   },
