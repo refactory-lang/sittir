@@ -112,8 +112,18 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 
 	// Append missing child slots the walker didn't reach
 	const hasChildren = node.children != null;
-	if (hasChildren && !seen.has('children')) {
-		parts.push(' $$$CHILDREN');
+	if (hasChildren) {
+		const slotNames = childSlotNames(node.children!, ctx);
+		if (isTupleChildren(node.children!)) {
+			eachChildSlot(node.children!, (slot, i) => {
+				const slotName = slotNames[i]!;
+				if (!seen.has(`child:${slotName}`)) {
+					parts.push(slot.multiple ? ` $$$${toSnakeUpper(slotName)}` : ` $${toSnakeUpper(slotName)}`);
+				}
+			});
+		} else if (!seen.has('children')) {
+			parts.push(' $$$CHILDREN');
+		}
 	}
 
 	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
@@ -156,14 +166,13 @@ function buildChildSlotMap(node: StructuralNode, ctx: ReturnType<typeof buildPro
 	const slotNames = childSlotNames(node.children, ctx);
 
 	if (isTupleChildren(node.children)) {
-		// Tuple children have positional slots in the factory API, but the render
-		// engine has no positional child resolution — it can only look up by kind.
-		// Map all tuple slots to CHILDREN so templates use $$$CHILDREN.
-		for (const slot of node.children) {
+		eachChildSlot(node.children, (slot, i) => {
+			const slotName = slotNames[i]!;
+			const varName = toSnakeUpper(slotName);
 			for (const k of slot.kinds) {
-				map.set(k.kind, { varName: 'CHILDREN', multiple: true, slotName: 'children' });
+				map.set(k.kind, { varName, multiple: slot.multiple, slotName });
 			}
-		}
+		});
 	} else {
 		// Single children slot — all kinds map to CHILDREN
 		const slot = Array.isArray(node.children) ? node.children[0]! : node.children;

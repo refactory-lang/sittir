@@ -92,8 +92,14 @@ export function arguments_(
   config?: ArgumentsConfig,
 ) {
   const children = [...(config?.attributeItem ?? []), ...(config?.expression ? [config?.expression] : []), ...(config?.attributeItemOrExpression ?? [])];
+  const childFields = {
+    "attribute_item": config?.attributeItem,
+    "expression": config?.expression,
+    "attribute_item_or_expression": config?.attributeItemOrExpression,
+  };
   return {
     type: 'arguments' as const,
+    fields: childFields,
     children,
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? arguments_({ ...config, attributeItem }) : config?.attributeItem; },
     expression(expression?: Expression) { return expression !== undefined ? arguments_({ ...config, expression }) : config?.expression; },
@@ -115,9 +121,15 @@ export function array_expression_(
     length: config?.length,
   };
   const children = [...(config?.attributeItem ?? []), ...(config?.attributeItemOrExpression1 ?? []), ...(config?.expression ? [config?.expression] : []), ...(config?.attributeItemOrExpression2 ?? [])];
+  const childFields = {
+    "attribute_item": config?.attributeItem,
+    "attribute_item_or_expression1": config?.attributeItemOrExpression1,
+    "expression": config?.expression,
+    "attribute_item_or_expression2": config?.attributeItemOrExpression2,
+  };
   return {
     type: 'array_expression' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     length(length?: Expression) { return length !== undefined ? array_expression_({ ...config, length: length }) : fields.length; },
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? array_expression_({ ...config, attributeItem }) : config?.attributeItem; },
@@ -330,8 +342,14 @@ export function block_(
   config?: BlockConfig,
 ) {
   const children = [...(config?.label ? [config?.label] : []), ...(config?.children2 ?? []), ...(config?.expression ? [config?.expression] : [])];
+  const childFields = {
+    "label": config?.label,
+    "children2": config?.children2,
+    "expression": config?.expression,
+  };
   return {
     type: 'block' as const,
+    fields: childFields,
     children,
     label(label?: Label) { return label !== undefined ? block_({ ...config, label }) : config?.label; },
     children2(...children2: (DeclarationStatement | ExpressionStatement)[]) { return children2.length ? block_({ ...config, children2 }) : config?.children2; },
@@ -374,8 +392,13 @@ export function bounded_type_(
   config: BoundedTypeConfig,
 ) {
   const children = [...(config.lifetimeOrTypeOrUseBounds1 ? [config.lifetimeOrTypeOrUseBounds1] : []), ...(config.lifetimeOrTypeOrUseBounds2 ? [config.lifetimeOrTypeOrUseBounds2] : [])];
+  const childFields = {
+    "lifetime_or_type_or_use_bounds1": config.lifetimeOrTypeOrUseBounds1,
+    "lifetime_or_type_or_use_bounds2": config.lifetimeOrTypeOrUseBounds2,
+  };
   return {
     type: 'bounded_type' as const,
+    fields: childFields,
     children,
     lifetimeOrTypeOrUseBounds1(lifetimeOrTypeOrUseBounds1?: Lifetime | Type | UseBounds) { return lifetimeOrTypeOrUseBounds1 !== undefined ? bounded_type_({ ...config, lifetimeOrTypeOrUseBounds1 }) : config?.lifetimeOrTypeOrUseBounds1; },
     lifetimeOrTypeOrUseBounds2(lifetimeOrTypeOrUseBounds2?: Lifetime | Type | UseBounds) { return lifetimeOrTypeOrUseBounds2 !== undefined ? bounded_type_({ ...config, lifetimeOrTypeOrUseBounds2 }) : config?.lifetimeOrTypeOrUseBounds2; },
@@ -411,8 +434,13 @@ export function break_expression_(
   config?: BreakExpressionConfig,
 ) {
   const children = [...(config?.label ? [config?.label] : []), ...(config?.expression ? [config?.expression] : [])];
+  const childFields = {
+    "label": config?.label,
+    "expression": config?.expression,
+  };
   return {
     type: 'break_expression' as const,
+    fields: childFields,
     children,
     label(label?: Label) { return label !== undefined ? break_expression_({ ...config, label }) : config?.label; },
     expression(expression?: Expression) { return expression !== undefined ? break_expression_({ ...config, expression }) : config?.expression; },
@@ -452,8 +480,13 @@ export function captured_pattern_(
   config: CapturedPatternConfig,
 ) {
   const children = [...(config.identifier ? [config.identifier] : []), ...(config.pattern ? [config.pattern] : [])];
+  const childFields = {
+    "identifier": config.identifier,
+    "pattern": config.pattern,
+  };
   return {
     type: 'captured_pattern' as const,
+    fields: childFields,
     children,
     identifier(identifier?: Identifier) { return identifier !== undefined ? captured_pattern_({ ...config, identifier }) : config?.identifier; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? captured_pattern_({ ...config, pattern }) : config?.pattern; },
@@ -495,8 +528,13 @@ export function closure_parameters_(
   config?: ClosureParametersConfig,
 ) {
   const children = [...(config?.parameterOrPattern1 ? [config?.parameterOrPattern1] : []), ...(config?.parameterOrPattern2 ?? [])];
+  const childFields = {
+    "parameter_or_pattern1": config?.parameterOrPattern1,
+    "parameter_or_pattern2": config?.parameterOrPattern2,
+  };
   return {
     type: 'closure_parameters' as const,
+    fields: childFields,
     children,
     parameterOrPattern1(parameterOrPattern1?: Parameter | Pattern) { return parameterOrPattern1 !== undefined ? closure_parameters_({ ...config, parameterOrPattern1 }) : config?.parameterOrPattern1; },
     parameterOrPattern2(...parameterOrPattern2: (Parameter | Pattern)[]) { return parameterOrPattern2.length ? closure_parameters_({ ...config, parameterOrPattern2 }) : config?.parameterOrPattern2; },
@@ -689,9 +727,13 @@ export function enum_item_(
     type_parameters: config.typeParameters,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "where_clause": config.whereClause,
+  };
   return {
     type: 'enum_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     body(body?: EnumVariantList) { return body !== undefined ? enum_item_({ ...config, body: body }) : fields.body; },
     name(name?: TypeIdentifier) { return name !== undefined ? enum_item_({ ...config, name: name }) : fields.name; },
@@ -739,8 +781,14 @@ export function enum_variant_list_(
   config?: EnumVariantListConfig,
 ) {
   const children = [...(config?.attributeItem ?? []), ...(config?.enumVariant ? [config?.enumVariant] : []), ...(config?.attributeItemOrEnumVariant ?? [])];
+  const childFields = {
+    "attribute_item": config?.attributeItem,
+    "enum_variant": config?.enumVariant,
+    "attribute_item_or_enum_variant": config?.attributeItemOrEnumVariant,
+  };
   return {
     type: 'enum_variant_list' as const,
+    fields: childFields,
     children,
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? enum_variant_list_({ ...config, attributeItem }) : config?.attributeItem; },
     enumVariant(enumVariant?: EnumVariant) { return enumVariant !== undefined ? enum_variant_list_({ ...config, enumVariant }) : config?.enumVariant; },
@@ -781,9 +829,13 @@ export function extern_crate_declaration_(
     name: config.name,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.crate ? [config.crate] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "crate": config.crate,
+  };
   return {
     type: 'extern_crate_declaration' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     alias(alias?: Identifier) { return alias !== undefined ? extern_crate_declaration_({ ...config, alias: alias }) : fields.alias; },
     name(name?: Identifier) { return name !== undefined ? extern_crate_declaration_({ ...config, name: name }) : fields.name; },
@@ -846,8 +898,14 @@ export function field_declaration_list_(
   config?: FieldDeclarationListConfig,
 ) {
   const children = [...(config?.attributeItem ?? []), ...(config?.fieldDeclaration ? [config?.fieldDeclaration] : []), ...(config?.attributeItemOrFieldDeclaration ?? [])];
+  const childFields = {
+    "attribute_item": config?.attributeItem,
+    "field_declaration": config?.fieldDeclaration,
+    "attribute_item_or_field_declaration": config?.attributeItemOrFieldDeclaration,
+  };
   return {
     type: 'field_declaration_list' as const,
+    fields: childFields,
     children,
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? field_declaration_list_({ ...config, attributeItem }) : config?.attributeItem; },
     fieldDeclaration(fieldDeclaration?: FieldDeclaration) { return fieldDeclaration !== undefined ? field_declaration_list_({ ...config, fieldDeclaration }) : config?.fieldDeclaration; },
@@ -914,8 +972,13 @@ export function field_initializer_list_(
   config?: FieldInitializerListConfig,
 ) {
   const children = [...(config?.children1 ? [config?.children1] : []), ...(config?.children2 ?? [])];
+  const childFields = {
+    "children1": config?.children1,
+    "children2": config?.children2,
+  };
   return {
     type: 'field_initializer_list' as const,
+    fields: childFields,
     children,
     children1(children1?: BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer) { return children1 !== undefined ? field_initializer_list_({ ...config, children1 }) : config?.children1; },
     children2(...children2: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]) { return children2.length ? field_initializer_list_({ ...config, children2 }) : config?.children2; },
@@ -985,8 +1048,13 @@ export function for_lifetimes_(
   config: ForLifetimesConfig,
 ) {
   const children = [...(config.lifetime1 ? [config.lifetime1] : []), ...(config.lifetime2 ?? [])];
+  const childFields = {
+    "lifetime1": config.lifetime1,
+    "lifetime2": config.lifetime2,
+  };
   return {
     type: 'for_lifetimes' as const,
+    fields: childFields,
     children,
     lifetime1(lifetime1?: Lifetime) { return lifetime1 !== undefined ? for_lifetimes_({ ...config, lifetime1 }) : config?.lifetime1; },
     lifetime2(...lifetime2: (Lifetime)[]) { return lifetime2.length ? for_lifetimes_({ ...config, lifetime2 }) : config?.lifetime2; },
@@ -1007,9 +1075,13 @@ export function foreign_mod_item_(
     body: config.body,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.externModifier ? [config.externModifier] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "extern_modifier": config.externModifier,
+  };
   return {
     type: 'foreign_mod_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     body(body?: DeclarationList) { return body !== undefined ? foreign_mod_item_({ ...config, body: body }) : fields.body; },
     visibilityModifier(visibilityModifier?: VisibilityModifier) { return visibilityModifier !== undefined ? foreign_mod_item_({ ...config, visibilityModifier }) : config?.visibilityModifier; },
@@ -1035,9 +1107,14 @@ export function function_item_(
     type_parameters: config.typeParameters,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.functionModifiers ? [config.functionModifiers] : []), ...(config.whereClause ? [config.whereClause] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "function_modifiers": config.functionModifiers,
+    "where_clause": config.whereClause,
+  };
   return {
     type: 'function_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     body(body?: Block) { return body !== undefined ? function_item_({ ...config, body: body }) : fields.body; },
     name(name?: Identifier | Metavariable) { return name !== undefined ? function_item_({ ...config, name: name }) : fields.name; },
@@ -1086,9 +1163,14 @@ export function function_signature_item_(
     type_parameters: config.typeParameters,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.functionModifiers ? [config.functionModifiers] : []), ...(config.whereClause ? [config.whereClause] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "function_modifiers": config.functionModifiers,
+    "where_clause": config.whereClause,
+  };
   return {
     type: 'function_signature_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     name(name?: Identifier | Metavariable) { return name !== undefined ? function_signature_item_({ ...config, name: name }) : fields.name; },
     parameters(parameters?: Parameters) { return parameters !== undefined ? function_signature_item_({ ...config, parameters: parameters }) : fields.parameters; },
@@ -1116,9 +1198,13 @@ export function function_type_(
     trait: config.trait,
   };
   const children = [...(config.forLifetimes ? [config.forLifetimes] : []), ...(config.functionModifiers ? [config.functionModifiers] : [])];
+  const childFields = {
+    "for_lifetimes": config.forLifetimes,
+    "function_modifiers": config.functionModifiers,
+  };
   return {
     type: 'function_type' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     parameters(parameters?: Parameters) { return parameters !== undefined ? function_type_({ ...config, parameters: parameters }) : fields.parameters; },
     returnType(returnType?: Type) { return returnType !== undefined ? function_type_({ ...config, returnType: returnType }) : fields.return_type; },
@@ -1548,9 +1634,13 @@ export function macro_definition_(
     name: config.name,
   };
   const children = [...(config.macroRule1 ?? []), ...(config.macroRule2 ? [config.macroRule2] : [])];
+  const childFields = {
+    "macro_rule1": config.macroRule1,
+    "macro_rule2": config.macroRule2,
+  };
   return {
     type: 'macro_definition' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     name(name?: Identifier) { return name !== undefined ? macro_definition_({ ...config, name: name }) : fields.name; },
     macroRule1(...macroRule1: (MacroRule)[]) { return macroRule1.length ? macro_definition_({ ...config, macroRule1 }) : config?.macroRule1; },
@@ -1640,8 +1730,13 @@ export function match_block_(
   config?: MatchBlockConfig,
 ) {
   const children = [...(config?.matchArm1 ?? []), ...(config?.matchArm2 ? [config?.matchArm2] : [])];
+  const childFields = {
+    "match_arm1": config?.matchArm1,
+    "match_arm2": config?.matchArm2,
+  };
   return {
     type: 'match_block' as const,
+    fields: childFields,
     children,
     matchArm1(...matchArm1: (MatchArm)[]) { return matchArm1.length ? match_block_({ ...config, matchArm1 }) : config?.matchArm1; },
     matchArm2(matchArm2?: MatchArm) { return matchArm2 !== undefined ? match_block_({ ...config, matchArm2 }) : config?.matchArm2; },
@@ -1729,8 +1824,13 @@ export function mut_pattern_(
   config: MutPatternConfig,
 ) {
   const children = [...(config.mutableSpecifier ? [config.mutableSpecifier] : []), ...(config.pattern ? [config.pattern] : [])];
+  const childFields = {
+    "mutable_specifier": config.mutableSpecifier,
+    "pattern": config.pattern,
+  };
   return {
     type: 'mut_pattern' as const,
+    fields: childFields,
     children,
     mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? mut_pattern_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? mut_pattern_({ ...config, pattern }) : config?.pattern; },
@@ -1797,9 +1897,14 @@ export function ordered_field_declaration_list_(
     type: config?.type,
   };
   const children = [...(config?.attributeItem ?? []), ...(config?.visibilityModifier ? [config?.visibilityModifier] : []), ...(config?.attributeItemOrVisibilityModifier ?? [])];
+  const childFields = {
+    "attribute_item": config?.attributeItem,
+    "visibility_modifier": config?.visibilityModifier,
+    "attribute_item_or_visibility_modifier": config?.attributeItemOrVisibilityModifier,
+  };
   return {
     type: 'ordered_field_declaration_list' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     typeField(...type_: (Type)[]) { return type_.length ? ordered_field_declaration_list_({ ...config, type: type_ }) : fields.type; },
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? ordered_field_declaration_list_({ ...config, attributeItem }) : config?.attributeItem; },
@@ -1844,8 +1949,14 @@ export function parameters_(
   config?: ParametersConfig,
 ) {
   const children = [...(config?.attributeItem ? [config?.attributeItem] : []), ...(config?.children2 ? [config?.children2] : []), ...(config?.children3 ?? [])];
+  const childFields = {
+    "attribute_item": config?.attributeItem,
+    "children2": config?.children2,
+    "children3": config?.children3,
+  };
   return {
     type: 'parameters' as const,
+    fields: childFields,
     children,
     attributeItem(attributeItem?: AttributeItem) { return attributeItem !== undefined ? parameters_({ ...config, attributeItem }) : config?.attributeItem; },
     children2(children2?: Parameter | SelfParameter | Type | VariadicParameter) { return children2 !== undefined ? parameters_({ ...config, children2 }) : config?.children2; },
@@ -2040,8 +2151,13 @@ export function reference_pattern_(
   config: ReferencePatternConfig,
 ) {
   const children = [...(config.mutableSpecifier ? [config.mutableSpecifier] : []), ...(config.pattern ? [config.pattern] : [])];
+  const childFields = {
+    "mutable_specifier": config.mutableSpecifier,
+    "pattern": config.pattern,
+  };
   return {
     type: 'reference_pattern' as const,
+    fields: childFields,
     children,
     mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_pattern_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? reference_pattern_({ ...config, pattern }) : config?.pattern; },
@@ -2062,9 +2178,13 @@ export function reference_type_(
     type: config.type,
   };
   const children = [...(config.lifetime ? [config.lifetime] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : [])];
+  const childFields = {
+    "lifetime": config.lifetime,
+    "mutable_specifier": config.mutableSpecifier,
+  };
   return {
     type: 'reference_type' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     typeField(type_?: Type) { return type_ !== undefined ? reference_type_({ ...config, type: type_ }) : fields.type; },
     lifetime(lifetime?: Lifetime) { return lifetime !== undefined ? reference_type_({ ...config, lifetime }) : config?.lifetime; },
@@ -2190,8 +2310,14 @@ export function self_parameter_(
   config: SelfParameterConfig,
 ) {
   const children = [...(config.lifetime ? [config.lifetime] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : []), ...(config.self ? [config.self] : [])];
+  const childFields = {
+    "lifetime": config.lifetime,
+    "mutable_specifier": config.mutableSpecifier,
+    "self": config.self,
+  };
   return {
     type: 'self_parameter' as const,
+    fields: childFields,
     children,
     lifetime(lifetime?: Lifetime) { return lifetime !== undefined ? self_parameter_({ ...config, lifetime }) : config?.lifetime; },
     mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? self_parameter_({ ...config, mutableSpecifier }) : config?.mutableSpecifier; },
@@ -2210,8 +2336,13 @@ export function shorthand_field_initializer_(
   config: ShorthandFieldInitializerConfig,
 ) {
   const children = [...(config.attributeItem ?? []), ...(config.identifier ? [config.identifier] : [])];
+  const childFields = {
+    "attribute_item": config.attributeItem,
+    "identifier": config.identifier,
+  };
   return {
     type: 'shorthand_field_initializer' as const,
+    fields: childFields,
     children,
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? shorthand_field_initializer_({ ...config, attributeItem }) : config?.attributeItem; },
     identifier(identifier?: Identifier) { return identifier !== undefined ? shorthand_field_initializer_({ ...config, identifier }) : config?.identifier; },
@@ -2248,8 +2379,13 @@ export function source_file_(
   config?: SourceFileConfig,
 ) {
   const children = [...(config?.shebang ? [config?.shebang] : []), ...(config?.children2 ?? [])];
+  const childFields = {
+    "shebang": config?.shebang,
+    "children2": config?.children2,
+  };
   return {
     type: 'source_file' as const,
+    fields: childFields,
     children,
     shebang(shebang?: Shebang) { return shebang !== undefined ? source_file_({ ...config, shebang }) : config?.shebang; },
     children2(...children2: (DeclarationStatement | ExpressionStatement)[]) { return children2.length ? source_file_({ ...config, children2 }) : config?.children2; },
@@ -2272,9 +2408,13 @@ export function static_item_(
     value: config.value,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.mutableSpecifier ? [config.mutableSpecifier] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "mutable_specifier": config.mutableSpecifier,
+  };
   return {
     type: 'static_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     name(name?: Identifier) { return name !== undefined ? static_item_({ ...config, name: name }) : fields.name; },
     typeField(type_?: Type) { return type_ !== undefined ? static_item_({ ...config, type: type_ }) : fields.type; },
@@ -2341,9 +2481,13 @@ export function struct_item_(
     type_parameters: config.typeParameters,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "where_clause": config.whereClause,
+  };
   return {
     type: 'struct_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     body(body?: FieldDeclarationList | OrderedFieldDeclarationList) { return body !== undefined ? struct_item_({ ...config, body: body }) : fields.body; },
     name(name?: TypeIdentifier) { return name !== undefined ? struct_item_({ ...config, name: name }) : fields.name; },
@@ -2367,9 +2511,13 @@ export function struct_pattern_(
     type: config.type,
   };
   const children = [...(config.fieldPatternOrRemainingFieldPattern1 ? [config.fieldPatternOrRemainingFieldPattern1] : []), ...(config.fieldPatternOrRemainingFieldPattern2 ?? [])];
+  const childFields = {
+    "field_pattern_or_remaining_field_pattern1": config.fieldPatternOrRemainingFieldPattern1,
+    "field_pattern_or_remaining_field_pattern2": config.fieldPatternOrRemainingFieldPattern2,
+  };
   return {
     type: 'struct_pattern' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     typeField(type_?: ScopedTypeIdentifier | TypeIdentifier) { return type_ !== undefined ? struct_pattern_({ ...config, type: type_ }) : fields.type; },
     fieldPatternOrRemainingFieldPattern1(fieldPatternOrRemainingFieldPattern1?: FieldPattern | RemainingFieldPattern) { return fieldPatternOrRemainingFieldPattern1 !== undefined ? struct_pattern_({ ...config, fieldPatternOrRemainingFieldPattern1 }) : config?.fieldPatternOrRemainingFieldPattern1; },
@@ -2486,8 +2634,13 @@ export function trait_bounds_(
   config: TraitBoundsConfig,
 ) {
   const children = [...(config.higherRankedTraitBoundOrLifetimeOrType1 ? [config.higherRankedTraitBoundOrLifetimeOrType1] : []), ...(config.higherRankedTraitBoundOrLifetimeOrType2 ?? [])];
+  const childFields = {
+    "higher_ranked_trait_bound_or_lifetime_or_type1": config.higherRankedTraitBoundOrLifetimeOrType1,
+    "higher_ranked_trait_bound_or_lifetime_or_type2": config.higherRankedTraitBoundOrLifetimeOrType2,
+  };
   return {
     type: 'trait_bounds' as const,
+    fields: childFields,
     children,
     higherRankedTraitBoundOrLifetimeOrType1(higherRankedTraitBoundOrLifetimeOrType1?: HigherRankedTraitBound | Lifetime | Type) { return higherRankedTraitBoundOrLifetimeOrType1 !== undefined ? trait_bounds_({ ...config, higherRankedTraitBoundOrLifetimeOrType1 }) : config?.higherRankedTraitBoundOrLifetimeOrType1; },
     higherRankedTraitBoundOrLifetimeOrType2(...higherRankedTraitBoundOrLifetimeOrType2: (HigherRankedTraitBound | Lifetime | Type)[]) { return higherRankedTraitBoundOrLifetimeOrType2.length ? trait_bounds_({ ...config, higherRankedTraitBoundOrLifetimeOrType2 }) : config?.higherRankedTraitBoundOrLifetimeOrType2; },
@@ -2511,9 +2664,13 @@ export function trait_item_(
     type_parameters: config.typeParameters,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "where_clause": config.whereClause,
+  };
   return {
     type: 'trait_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     body(body?: DeclarationList) { return body !== undefined ? trait_item_({ ...config, body: body }) : fields.body; },
     bounds(bounds?: TraitBounds) { return bounds !== undefined ? trait_item_({ ...config, bounds: bounds }) : fields.bounds; },
@@ -2578,8 +2735,15 @@ export function tuple_expression_(
   config: TupleExpressionConfig,
 ) {
   const children = [...(config.attributeItem ?? []), ...(config.expression1 ? [config.expression1] : []), ...(config.expression2 ?? []), ...(config.expression3 ? [config.expression3] : [])];
+  const childFields = {
+    "attribute_item": config.attributeItem,
+    "expression1": config.expression1,
+    "expression2": config.expression2,
+    "expression3": config.expression3,
+  };
   return {
     type: 'tuple_expression' as const,
+    fields: childFields,
     children,
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? tuple_expression_({ ...config, attributeItem }) : config?.attributeItem; },
     expression1(expression1?: Expression) { return expression1 !== undefined ? tuple_expression_({ ...config, expression1 }) : config?.expression1; },
@@ -2599,8 +2763,13 @@ export function tuple_pattern_(
   config?: TuplePatternConfig,
 ) {
   const children = [...(config?.closureExpressionOrPattern1 ? [config?.closureExpressionOrPattern1] : []), ...(config?.closureExpressionOrPattern2 ?? [])];
+  const childFields = {
+    "closure_expression_or_pattern1": config?.closureExpressionOrPattern1,
+    "closure_expression_or_pattern2": config?.closureExpressionOrPattern2,
+  };
   return {
     type: 'tuple_pattern' as const,
+    fields: childFields,
     children,
     closureExpressionOrPattern1(closureExpressionOrPattern1?: ClosureExpression | Pattern) { return closureExpressionOrPattern1 !== undefined ? tuple_pattern_({ ...config, closureExpressionOrPattern1 }) : config?.closureExpressionOrPattern1; },
     closureExpressionOrPattern2(...closureExpressionOrPattern2: (ClosureExpression | Pattern)[]) { return closureExpressionOrPattern2.length ? tuple_pattern_({ ...config, closureExpressionOrPattern2 }) : config?.closureExpressionOrPattern2; },
@@ -2621,9 +2790,13 @@ export function tuple_struct_pattern_(
     type: config.type,
   };
   const children = [...(config.pattern1 ? [config.pattern1] : []), ...(config.pattern2 ?? [])];
+  const childFields = {
+    "pattern1": config.pattern1,
+    "pattern2": config.pattern2,
+  };
   return {
     type: 'tuple_struct_pattern' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     typeField(type_?: GenericType | Identifier | ScopedIdentifier) { return type_ !== undefined ? tuple_struct_pattern_({ ...config, type: type_ }) : fields.type; },
     pattern1(pattern1?: Pattern) { return pattern1 !== undefined ? tuple_struct_pattern_({ ...config, pattern1 }) : config?.pattern1; },
@@ -2661,8 +2834,14 @@ export function type_arguments_(
   config: TypeArgumentsConfig,
 ) {
   const children = [...(config.children1 ? [config.children1] : []), ...(config.traitBounds ? [config.traitBounds] : []), ...(config.children3 ?? [])];
+  const childFields = {
+    "children1": config.children1,
+    "trait_bounds": config.traitBounds,
+    "children3": config.children3,
+  };
   return {
     type: 'type_arguments' as const,
+    fields: childFields,
     children,
     children1(children1?: Block | Lifetime | Literal | Type | TypeBinding) { return children1 !== undefined ? type_arguments_({ ...config, children1 }) : config?.children1; },
     traitBounds(traitBounds?: TraitBounds) { return traitBounds !== undefined ? type_arguments_({ ...config, traitBounds }) : config?.traitBounds; },
@@ -2732,9 +2911,14 @@ export function type_item_(
     type_parameters: config.typeParameters,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause1 ? [config.whereClause1] : []), ...(config.whereClause2 ? [config.whereClause2] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "where_clause1": config.whereClause1,
+    "where_clause2": config.whereClause2,
+  };
   return {
     type: 'type_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     name(name?: TypeIdentifier) { return name !== undefined ? type_item_({ ...config, name: name }) : fields.name; },
     typeField(type_?: Type) { return type_ !== undefined ? type_item_({ ...config, type: type_ }) : fields.type; },
@@ -2780,8 +2964,14 @@ export function type_parameters_(
   config: TypeParametersConfig,
 ) {
   const children = [...(config.attributeItem ?? []), ...(config.children2 ? [config.children2] : []), ...(config.children3 ?? [])];
+  const childFields = {
+    "attribute_item": config.attributeItem,
+    "children2": config.children2,
+    "children3": config.children3,
+  };
   return {
     type: 'type_parameters' as const,
+    fields: childFields,
     children,
     attributeItem(...attributeItem: (AttributeItem)[]) { return attributeItem.length ? type_parameters_({ ...config, attributeItem }) : config?.attributeItem; },
     children2(children2?: ConstParameter | LifetimeParameter | Metavariable | TypeParameter) { return children2 !== undefined ? type_parameters_({ ...config, children2 }) : config?.children2; },
@@ -2830,9 +3020,13 @@ export function union_item_(
     type_parameters: config.typeParameters,
   };
   const children = [...(config.visibilityModifier ? [config.visibilityModifier] : []), ...(config.whereClause ? [config.whereClause] : [])];
+  const childFields = {
+    "visibility_modifier": config.visibilityModifier,
+    "where_clause": config.whereClause,
+  };
   return {
     type: 'union_item' as const,
-    fields,
+    fields: { ...fields, ...childFields },
     children,
     body(body?: FieldDeclarationList) { return body !== undefined ? union_item_({ ...config, body: body }) : fields.body; },
     name(name?: TypeIdentifier) { return name !== undefined ? union_item_({ ...config, name: name }) : fields.name; },
@@ -2893,8 +3087,13 @@ export function use_bounds_(
   config?: UseBoundsConfig,
 ) {
   const children = [...(config?.lifetimeOrTypeIdentifier1 ? [config?.lifetimeOrTypeIdentifier1] : []), ...(config?.lifetimeOrTypeIdentifier2 ?? [])];
+  const childFields = {
+    "lifetime_or_type_identifier1": config?.lifetimeOrTypeIdentifier1,
+    "lifetime_or_type_identifier2": config?.lifetimeOrTypeIdentifier2,
+  };
   return {
     type: 'use_bounds' as const,
+    fields: childFields,
     children,
     lifetimeOrTypeIdentifier1(lifetimeOrTypeIdentifier1?: Lifetime | TypeIdentifier) { return lifetimeOrTypeIdentifier1 !== undefined ? use_bounds_({ ...config, lifetimeOrTypeIdentifier1 }) : config?.lifetimeOrTypeIdentifier1; },
     lifetimeOrTypeIdentifier2(...lifetimeOrTypeIdentifier2: (Lifetime | TypeIdentifier)[]) { return lifetimeOrTypeIdentifier2.length ? use_bounds_({ ...config, lifetimeOrTypeIdentifier2 }) : config?.lifetimeOrTypeIdentifier2; },
@@ -3013,8 +3212,13 @@ export function where_clause_(
   config?: WhereClauseConfig,
 ) {
   const children = [...(config?.wherePredicate1 ? [config?.wherePredicate1] : []), ...(config?.wherePredicate2 ?? [])];
+  const childFields = {
+    "where_predicate1": config?.wherePredicate1,
+    "where_predicate2": config?.wherePredicate2,
+  };
   return {
     type: 'where_clause' as const,
+    fields: childFields,
     children,
     wherePredicate1(wherePredicate1?: WherePredicate) { return wherePredicate1 !== undefined ? where_clause_({ ...config, wherePredicate1 }) : config?.wherePredicate1; },
     wherePredicate2(...wherePredicate2: (WherePredicate)[]) { return wherePredicate2.length ? where_clause_({ ...config, wherePredicate2 }) : config?.wherePredicate2; },

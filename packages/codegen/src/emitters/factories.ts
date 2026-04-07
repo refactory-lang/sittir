@@ -11,7 +11,7 @@
 import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { extractLeafPattern } from '../grammar-reader.ts';
-import { toTypeName, toFactoryName, toFieldName, toParamName, toRawFactoryName } from '../naming.ts';
+import { toTypeName, toFactoryName, toFieldName, toParamName, toRawFactoryName, camelToSnake } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, keywordTokensOf, operatorTokensOf, escapeString, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
 
@@ -86,10 +86,31 @@ export function emitFactory(config: {
 		}
 	}
 
+	// For tuple children, build a supplemental fields object mapping each
+	// positional child slot to a named field so render templates can resolve
+	// $SLOT_NAME variables (e.g., $PRIMARY_EXPRESSION1).
+	const isTuple = hasChildren && isTupleChildren(node.children!);
+	if (isTuple) {
+		const slotNames = childSlotNames(node.children!, ctx);
+		const entries: string[] = [];
+		eachChildSlot(node.children!, (slot, i) => {
+			const camel = slotNames[i]!;
+			const raw = camelToSnake(camel);
+			entries.push(`    ${JSON.stringify(raw)}: config${opt}.${camel}`);
+		});
+		lines.push(`  const childFields = {`);
+		for (const e of entries) lines.push(`${e},`);
+		lines.push(`  };`);
+	}
+
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
-	if (hasFields) {
+	if (hasFields && isTuple) {
+		lines.push(`    fields: { ...fields, ...childFields },`);
+	} else if (hasFields) {
 		lines.push(`    fields,`);
+	} else if (isTuple) {
+		lines.push(`    fields: childFields,`);
 	}
 	if (hasChildren) {
 		lines.push(`    children,`);

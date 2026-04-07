@@ -27,6 +27,11 @@ function snakeToCamel(s: string): string {
   return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
+/** Convert camelCase to snake_case: `primaryExpression1` -> `primary_expression1` */
+export function camelToSnake(s: string): string {
+  return s.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
+}
+
 /** Convert snake_case to PascalCase */
 function snakeToPascal(s: string): string {
   const camel = snakeToCamel(s);
