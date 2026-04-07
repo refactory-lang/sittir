@@ -2,36 +2,36 @@
   "class_pattern": {
     "fields": {
       "dotted_name": {},
-      "case_pattern": {
+      "arguments": {
         "multiple": true
       }
     }
   },
   "comparison_operator": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
+      "left": {},
+      "comparators": {
         "multiple": true
       }
     }
   },
   "complex_pattern": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "real": {},
+      "imaginary": {}
     }
   },
   "conditional_expression": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {}
+      "body": {},
+      "condition": {},
+      "alternative": {}
     }
   },
   "constrained_type": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "type": {},
+      "constraint": {}
     }
   },
   "decorator": {
@@ -66,15 +66,15 @@
   },
   "slice": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {}
+      "start": {},
+      "stop": {},
+      "step": {}
     }
   },
   "string": {
     "fields": {
       "string_start": {},
-      "NEEDS_NAME_1": {
+      "content": {
         "multiple": true
       },
       "string_end": {}
@@ -82,7 +82,7 @@
   },
   "try_statement": {
     "fields": {
-      "except_clause": {
+      "except_clauses": {
         "multiple": true
       },
       "else_clause": {},
@@ -91,8 +91,8 @@
   },
   "union_type": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "left": {},
+      "right": {}
     }
   }
 }

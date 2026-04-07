@@ -280,11 +280,11 @@ export function wrapAddingTypeAnnotation(data: AnyNodeData, tree: TreeHandle): u
 }
 
 export function wrapAmbientDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["abstract_class_declaration","ambient_declaration","class_declaration","enum_declaration","function_declaration","function_signature","generator_function_declaration","import_alias","interface_declaration","internal_module","lexical_declaration","module","property_identifier","statement_block","type_alias_declaration","variable_declaration"]);
+  promoteNamed(data, 'declaration', ["abstract_class_declaration","ambient_declaration","class_declaration","enum_declaration","function_declaration","function_signature","generator_function_declaration","import_alias","interface_declaration","internal_module","lexical_declaration","module","property_identifier","statement_block","type_alias_declaration","variable_declaration"]);
   promoteNamed(data, 'type', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
+    get declaration() { return drillIn(data.fields?.['declaration'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children1() { return drillIn(data.fields?.['children1'], tree); },
@@ -466,14 +466,13 @@ export function wrapClassDeclaration(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapClassHeritage(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["extends_clause","implements_clause"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["implements_clause"]);
+  promoteNamed(data, 'extends_clause', ["extends_clause","implements_clause"]);
+  promote(data, 'implements_clause');
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get extendsClause() { return drillIn(data.fields?.['extends_clause'], tree); },
+    get implementsClause() { return drillIn(data.fields?.['implements_clause'], tree); },
     get extendsClauseOrImplementsClause() { return drillIn(data.fields?.['extendsClauseOrImplementsClause'], tree); },
-    get implementsClause() { return drillIn(data.fields?.['implementsClause'], tree); },
   };
 }
 
@@ -571,13 +570,13 @@ export function wrapEnumAssignment(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapEnumBody(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["enum_assignment"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["enum_assignment"]);
+  promoteNamed(data, 'opening', ["enum_assignment"]);
+  promoteNamed(data, 'members', ["enum_assignment"]);
   return {
     ...data,
     get name() { return drillInAll(data.fields?.['name'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
+    get opening() { return drillIn(data.fields?.['opening'], tree); },
+    get members() { return drillInAll(data.fields?.['members'], tree); },
     get enumAssignment1() { return drillIn(data.fields?.['enumAssignment1'], tree); },
     get enumAssignment2() { return drillInAll(data.fields?.['enumAssignment2'], tree); },
   };
@@ -607,16 +606,14 @@ export function wrapExportSpecifier(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapExportStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","export_clause","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","namespace_export","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
+  promoteNamed(data, 'semicolon', ["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","export_clause","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","namespace_export","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
   return {
     ...data,
     get declaration() { return drillIn(data.fields?.['declaration'], tree); },
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get source() { return drillIn(data.fields?.['source'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
+    get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children1() { return drillIn(data.fields?.['children1'], tree); },
     get children2() { return drillIn(data.fields?.['children2'], tree); },
     get children3() { return drillIn(data.fields?.['children3'], tree); },
@@ -776,12 +773,12 @@ export function wrapImplementsClause(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapImportAlias(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["identifier"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["identifier","nested_identifier"]);
+  promoteNamed(data, 'name', ["identifier"]);
+  promoteNamed(data, 'value', ["identifier","nested_identifier"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get value() { return drillIn(data.fields?.['value'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
     get identifierOrNestedIdentifier() { return drillIn(data.fields?.['identifierOrNestedIdentifier'], tree); },
@@ -797,12 +794,12 @@ export function wrapImportAttribute(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapImportClause(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["identifier","named_imports","namespace_import"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["identifier","named_imports","namespace_import"]);
+  promoteNamed(data, 'default_import', ["identifier","named_imports","namespace_import"]);
+  promoteNamed(data, 'named_imports', ["identifier","named_imports","namespace_import"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get defaultImport() { return drillIn(data.fields?.['default_import'], tree); },
+    get namedImports() { return drillIn(data.fields?.['named_imports'], tree); },
     get children1() { return drillIn(data.fields?.['children1'], tree); },
     get children2() { return drillIn(data.fields?.['children2'], tree); },
   };
@@ -825,12 +822,12 @@ export function wrapImportSpecifier(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapImportStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["import_clause","import_require_clause"]);
+  promoteNamed(data, 'import_clause', ["import_clause","import_require_clause"]);
   promote(data, 'import_attribute');
   return {
     ...data,
     get source() { return drillIn(data.fields?.['source'], tree); },
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
+    get importClause() { return drillIn(data.fields?.['import_clause'], tree); },
     get fromClause() { return drillIn(data.fields?.['from_clause'], tree); },
     get importAttribute() { return drillIn(data.fields?.['import_attribute'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
@@ -904,12 +901,12 @@ export function wrapInternalModule(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapIntersectionType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteNamed(data, 'left', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteNamed(data, 'right', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get left() { return drillIn(data.fields?.['left'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
     get childType1() { return drillIn(data.fields?.['childType1'], tree); },
     get childType2() { return drillIn(data.fields?.['childType2'], tree); },
   };
@@ -924,12 +921,13 @@ export function wrapLabeledStatement(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapLexicalDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'variable_declarator');
+  promoteNamed(data, 'declarators', ["variable_declarator"]);
   return {
     ...data,
     get kind() { return (data.fields?.['kind'] as AnyNodeData | undefined)?.text; },
-    get variableDeclarator() { return drillInAll(data.fields?.['variable_declarator'], tree); },
+    get declarators() { return drillInAll(data.fields?.['declarators'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
+    get variableDeclarator() { return drillInAll(data.fields?.['variableDeclarator'], tree); },
     get children2() { return drillIn(data.fields?.['children2'], tree); },
   };
 }
@@ -1087,13 +1085,13 @@ export function wrapObjectPattern(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapObjectType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
+  promoteNamed(data, 'opening', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
+  promoteNamed(data, 'members', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillInAll(data.fields?.['NEEDS_NAME_1'], tree); },
-    get NEEDS_NAME_2() { return drillIn(data.fields?.['NEEDS_NAME_2'], tree); },
+    get opening() { return drillIn(data.fields?.['opening'], tree); },
+    get members() { return drillInAll(data.fields?.['members'], tree); },
+    get closing() { return drillIn(data.fields?.['closing'], tree); },
     get children1() { return drillIn(data.fields?.['children1'], tree); },
     get children2() { return drillInAll(data.fields?.['children2'], tree); },
     get children3() { return drillIn(data.fields?.['children3'], tree); },
@@ -1171,10 +1169,11 @@ export function wrapParenthesizedType(data: AnyNodeData, tree: TreeHandle): unkn
 
 export function wrapProgram(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'hash_bang_line');
-  promoteNamed(data, 'statement', ["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
+  promoteNamed(data, 'statements', ["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
   return {
     ...data,
     get hashBangLine() { return drillIn(data.fields?.['hash_bang_line'], tree); },
+    get statements() { return drillInAll(data.fields?.['statements'], tree); },
     get statement() { return drillInAll(data.fields?.['statement'], tree); },
   };
 }
@@ -1286,11 +1285,12 @@ export function wrapSpreadElement(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapStatementBlock(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'statement', ["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
+  promoteNamed(data, 'statements', ["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
   return {
     ...data,
-    get statement() { return drillInAll(data.fields?.['statement'], tree); },
+    get statements() { return drillInAll(data.fields?.['statements'], tree); },
     get automaticSemicolon() { return drillIn(data.fields?.['automatic_semicolon'], tree); },
+    get statement() { return drillInAll(data.fields?.['statement'], tree); },
     get children2() { return drillIn(data.fields?.['children2'], tree); },
   };
 }
@@ -1481,12 +1481,12 @@ export function wrapUnaryExpression(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapUnionType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'NEEDS_NAME_0', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-  promoteNamed(data, 'NEEDS_NAME_1', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteNamed(data, 'left', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteNamed(data, 'right', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
   return {
     ...data,
-    get NEEDS_NAME_0() { return drillIn(data.fields?.['NEEDS_NAME_0'], tree); },
-    get NEEDS_NAME_1() { return drillIn(data.fields?.['NEEDS_NAME_1'], tree); },
+    get left() { return drillIn(data.fields?.['left'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
     get childType1() { return drillIn(data.fields?.['childType1'], tree); },
     get childType2() { return drillIn(data.fields?.['childType2'], tree); },
   };
@@ -1501,11 +1501,12 @@ export function wrapUpdateExpression(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapVariableDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'variable_declarator');
+  promoteNamed(data, 'declarators', ["variable_declarator"]);
   return {
     ...data,
-    get variableDeclarator() { return drillInAll(data.fields?.['variable_declarator'], tree); },
+    get declarators() { return drillInAll(data.fields?.['declarators'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
+    get variableDeclarator() { return drillInAll(data.fields?.['variableDeclarator'], tree); },
     get children2() { return drillIn(data.fields?.['children2'], tree); },
   };
 }

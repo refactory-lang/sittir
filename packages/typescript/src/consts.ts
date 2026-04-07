@@ -356,7 +356,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'adding_type_annotation': [
   ],
   'ambient_declaration': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
+    { name: 'declaration', required: false, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
   ],
@@ -439,8 +439,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'class_heritage': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'extendsClause', required: false, multiple: false },
+    { name: 'implementsClause', required: false, multiple: false },
   ],
   'class_static_block': [
     { name: 'body', required: true, multiple: false },
@@ -484,8 +484,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'enum_body': [
     { name: 'name', required: false, multiple: true },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
+    { name: 'opening', required: false, multiple: false },
+    { name: 'members', required: false, multiple: true },
   ],
   'enum_declaration': [
     { name: 'body', required: true, multiple: false },
@@ -502,9 +502,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'decorator', required: false, multiple: true },
     { name: 'source', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
-    { name: 'NEEDS_NAME_2', required: false, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'expression_statement': [
   ],
@@ -587,15 +585,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'implements_clause': [
   ],
   'import_alias': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'name', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
   ],
   'import_attribute': [
   ],
   'import_clause': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'defaultImport', required: false, multiple: false },
+    { name: 'namedImports', required: false, multiple: false },
   ],
   'import_require_clause': [
     { name: 'source', required: true, multiple: false },
@@ -606,7 +604,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_statement': [
     { name: 'source', required: false, multiple: false },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
+    { name: 'importClause', required: false, multiple: false },
     { name: 'fromClause', required: false, multiple: false },
     { name: 'importAttribute', required: false, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
@@ -639,8 +637,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   'intersection_type': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'left', required: false, multiple: false },
+    { name: 'right', required: false, multiple: false },
   ],
   'labeled_statement': [
     { name: 'body', required: true, multiple: false },
@@ -648,7 +646,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'lexical_declaration': [
     { name: 'kind', required: true, multiple: false },
-    { name: 'variableDeclarator', required: false, multiple: true },
+    { name: 'declarators', required: false, multiple: true },
     { name: 'semicolon', required: false, multiple: false },
   ],
   'literal_type': [
@@ -720,9 +718,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'object_pattern': [
   ],
   'object_type': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
-    { name: 'NEEDS_NAME_2', required: false, multiple: false },
+    { name: 'opening', required: false, multiple: false },
+    { name: 'members', required: false, multiple: true },
+    { name: 'closing', required: false, multiple: false },
   ],
   'omitting_type_annotation': [
   ],
@@ -754,7 +752,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'program': [
     { name: 'hashBangLine', required: false, multiple: false },
-    { name: 'statement', required: false, multiple: true },
+    { name: 'statements', required: false, multiple: true },
   ],
   'property_signature': [
     { name: 'name', required: true, multiple: false },
@@ -801,7 +799,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'spread_element': [
   ],
   'statement_block': [
-    { name: 'statement', required: false, multiple: true },
+    { name: 'statements', required: false, multiple: true },
     { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'string': [
@@ -879,15 +877,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'operator', required: true, multiple: false },
   ],
   'union_type': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'left', required: false, multiple: false },
+    { name: 'right', required: false, multiple: false },
   ],
   'update_expression': [
     { name: 'argument', required: true, multiple: false },
     { name: 'operator', required: true, multiple: false },
   ],
   'variable_declaration': [
-    { name: 'variableDeclarator', required: false, multiple: true },
+    { name: 'declarators', required: false, multiple: true },
     { name: 'semicolon', required: false, multiple: false },
   ],
   'variable_declarator': [

@@ -29,13 +29,13 @@ rules:
   chevron: ">> $CHILDREN"
   class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES : $BODY"
   class_pattern:
-    template: $DOTTED_NAME($$$CASE_PATTERN) $DOTTED_NAME $$$CASE_PATTERN $$$CHILDREN
+    template: $DOTTED_NAME($$$CASE_PATTERN) $DOTTED_NAME $$$ARGUMENTS $$$CHILDREN
     joinBy: ","
-  comparison_operator: $$$CHILDREN $$$OPERATORS $NEEDS_NAME_0 $$$NEEDS_NAME_1
-  complex_pattern: $$$INTEGER + $$$FLOAT $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN
+  comparison_operator: $$$CHILDREN $$$OPERATORS $LEFT $$$COMPARATORS
+  complex_pattern: $$$INTEGER + $$$FLOAT $REAL $IMAGINARY $$$CHILDREN
   concatenated_string: $$$CHILDREN
-  conditional_expression: $$$CHILDREN if else $NEEDS_NAME_0 $NEEDS_NAME_1 $NEEDS_NAME_2
-  constrained_type: "$$$TYPE : $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN"
+  conditional_expression: $$$CHILDREN if else $BODY $CONDITION $ALTERNATIVE
+  constrained_type: "$$$TYPE : $TYPE $CONSTRAINT $$$CHILDREN"
   decorated_definition: $$$CHILDREN $DEFINITION
   decorator: "@ $$$CHILDREN $EXPRESSION $NEWLINE"
   default_parameter: $NAME = $VALUE
@@ -120,15 +120,15 @@ rules:
   return_statement: return $$$CHILDREN
   set: "{$$$CHILDREN}"
   set_comprehension: "{$BODY $CHILDREN}"
-  slice: "$$$CHILDREN : $NEEDS_NAME_0 $NEEDS_NAME_1 $NEEDS_NAME_2"
+  slice: "$$$CHILDREN : $START $STOP $STEP"
   splat_pattern: "* $CHILDREN"
   splat_type: "* $CHILDREN"
-  string: $STRING_START $$$INTERPOLATION $STRING_END $STRING_START $$$NEEDS_NAME_1 $STRING_END $$$CHILDREN
+  string: $STRING_START $$$INTERPOLATION $STRING_END $STRING_START $$$CONTENT $STRING_END $$$CHILDREN
   string_content: $$$CHILDREN
   subscript:
     template: $VALUE[$$$SUBSCRIPT ,]
     joinBy: ","
-  try_statement: "try : $BODY $$$EXCEPT_CLAUSE $ELSE_CLAUSE $FINALLY_CLAUSE $$$EXCEPT_CLAUSE $ELSE_CLAUSE $FINALLY_CLAUSE $$$CHILDREN"
+  try_statement: "try : $BODY $$$EXCEPT_CLAUSE $ELSE_CLAUSE $FINALLY_CLAUSE $$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE $$$CHILDREN"
   tuple: ($$$CHILDREN)
   tuple_pattern: ($$$CHILDREN)
   type: $CHILDREN
@@ -140,7 +140,7 @@ rules:
   typed_parameter: "$CHILDREN : $TYPE"
   unary_operator: $OPERATOR $ARGUMENT
   union_pattern: $$$CHILDREN |
-  union_type: $$$TYPE | $NEEDS_NAME_0 $NEEDS_NAME_1 $$$CHILDREN
+  union_type: $$$TYPE | $LEFT $RIGHT $$$CHILDREN
   while_statement: "while $CONDITION : $BODY $ALTERNATIVE"
   with_clause:
     template: $$$CHILDREN ,

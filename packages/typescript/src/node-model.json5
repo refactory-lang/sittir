@@ -169,7 +169,7 @@
     kind: "ambient_declaration",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "declaration",
         required: false,
         multiple: false,
         kinds: {},
@@ -666,7 +666,7 @@
     kind: "class_heritage",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "extends_clause",
         required: false,
         multiple: false,
         kinds: {},
@@ -675,7 +675,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "implements_clause",
         required: false,
         multiple: false,
         kinds: {},
@@ -916,7 +916,7 @@
         separator: null,
       },
       {
-        name: "NEEDS_NAME_0",
+        name: "opening",
         required: false,
         multiple: false,
         kinds: {},
@@ -925,7 +925,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "members",
         required: false,
         multiple: true,
         kinds: {},
@@ -1035,25 +1035,7 @@
         kinds: {},
       },
       {
-        name: "NEEDS_NAME_0",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "NEEDS_NAME_1",
-        required: false,
-        multiple: false,
-        kinds: {},
-        override: true,
-        overrideAnonymous: false,
-        overrideValues: null,
-      },
-      {
-        name: "NEEDS_NAME_2",
+        name: "semicolon",
         required: false,
         multiple: false,
         kinds: {},
@@ -1509,7 +1491,7 @@
     kind: "import_alias",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "name",
         required: false,
         multiple: false,
         kinds: {},
@@ -1518,7 +1500,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "value",
         required: false,
         multiple: false,
         kinds: {},
@@ -1572,7 +1554,7 @@
     kind: "import_clause",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "default_import",
         required: false,
         multiple: false,
         kinds: {},
@@ -1581,7 +1563,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "named_imports",
         required: false,
         multiple: false,
         kinds: {},
@@ -1653,7 +1635,7 @@
         kinds: {},
       },
       {
-        name: "NEEDS_NAME_0",
+        name: "import_clause",
         required: false,
         multiple: false,
         kinds: {},
@@ -1888,7 +1870,7 @@
     kind: "intersection_type",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "left",
         required: false,
         multiple: false,
         kinds: {},
@@ -1897,7 +1879,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "right",
         required: false,
         multiple: false,
         kinds: {},
@@ -1951,7 +1933,7 @@
         kinds: {},
       },
       {
-        name: "variable_declarator",
+        name: "declarators",
         required: false,
         multiple: true,
         kinds: {},
@@ -2417,7 +2399,7 @@
     kind: "object_type",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "opening",
         required: false,
         multiple: false,
         kinds: {},
@@ -2426,7 +2408,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "members",
         required: false,
         multiple: true,
         kinds: {},
@@ -2436,7 +2418,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_2",
+        name: "closing",
         required: false,
         multiple: false,
         kinds: {},
@@ -2672,7 +2654,7 @@
         overrideValues: null,
       },
       {
-        name: "statement",
+        name: "statements",
         required: false,
         multiple: true,
         kinds: {},
@@ -3016,7 +2998,7 @@
     kind: "statement_block",
     fields: [
       {
-        name: "statement",
+        name: "statements",
         required: false,
         multiple: true,
         kinds: {},
@@ -3444,7 +3426,7 @@
     kind: "union_type",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "left",
         required: false,
         multiple: false,
         kinds: {},
@@ -3453,7 +3435,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "right",
         required: false,
         multiple: false,
         kinds: {},
@@ -3501,7 +3483,7 @@
     kind: "variable_declaration",
     fields: [
       {
-        name: "variable_declarator",
+        name: "declarators",
         required: false,
         multiple: true,
         kinds: {},

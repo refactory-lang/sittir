@@ -352,7 +352,7 @@ export interface AddingTypeAnnotation {
 export interface AmbientDeclaration {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Declaration | PropertyIdentifier | StatementBlock;
+    readonly declaration?: Declaration | PropertyIdentifier | StatementBlock;
     readonly type?: Type;
     readonly semicolon?: string;
   };
@@ -496,11 +496,10 @@ export interface ClassDeclaration {
 export interface ClassHeritage {
   readonly type: 'class_heritage';
   readonly fields: {
-    readonly NEEDS_NAME_0?: ExtendsClause | ImplementsClause;
-    readonly NEEDS_NAME_1?: ImplementsClause;
+    readonly extendsClause?: ExtendsClause | ImplementsClause;
+    readonly implementsClause?: ImplementsClause;
   };
   readonly extendsClauseOrImplementsClause: ExtendsClause | ImplementsClause;
-  readonly implementsClause?: ImplementsClause;
 }
 export interface ClassStaticBlock {
   readonly type: 'class_static_block';
@@ -577,8 +576,8 @@ export interface EnumBody {
   readonly type: 'enum_body';
   readonly fields: {
     readonly name?: readonly (PropertyName)[];
-    readonly NEEDS_NAME_0?: EnumAssignment;
-    readonly NEEDS_NAME_1?: readonly (EnumAssignment)[];
+    readonly opening?: EnumAssignment;
+    readonly members?: readonly (EnumAssignment)[];
   };
   readonly enumAssignment1?: EnumAssignment;
   readonly enumAssignment2?: readonly (EnumAssignment)[];
@@ -608,9 +607,7 @@ export interface ExportStatement {
     readonly decorator?: readonly (Decorator)[];
     readonly source?: String;
     readonly value?: Expression;
-    readonly NEEDS_NAME_0?: ExportClause | Expression | Identifier | NamespaceExport;
-    readonly NEEDS_NAME_1?: string;
-    readonly NEEDS_NAME_2?: string;
+    readonly semicolon?: ExportClause | Expression | Identifier | NamespaceExport;
   };
   readonly children1?: ExportClause | Expression | Identifier | NamespaceExport;
 }
@@ -744,8 +741,8 @@ export interface ImplementsClause {
 export interface ImportAlias {
   readonly type: 'import_alias';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Identifier;
-    readonly NEEDS_NAME_1?: Identifier | NestedIdentifier;
+    readonly name?: Identifier;
+    readonly value?: Identifier | NestedIdentifier;
     readonly semicolon?: string;
   };
   readonly identifier: Identifier;
@@ -758,8 +755,8 @@ export interface ImportAttribute {
 export interface ImportClause {
   readonly type: 'import_clause';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Identifier | NamedImports | NamespaceImport;
-    readonly NEEDS_NAME_1?: Identifier | NamedImports | NamespaceImport;
+    readonly defaultImport?: Identifier | NamedImports | NamespaceImport;
+    readonly namedImports?: Identifier | NamedImports | NamespaceImport;
   };
   readonly children1: Identifier | NamedImports | NamespaceImport;
   readonly children2?: Identifier | NamedImports | NamespaceImport;
@@ -782,7 +779,7 @@ export interface ImportStatement {
   readonly type: 'import_statement';
   readonly fields: {
     readonly source?: String;
-    readonly NEEDS_NAME_0?: ImportClause | ImportRequireClause;
+    readonly importClause?: ImportClause | ImportRequireClause;
     readonly fromClause?: string;
     readonly importAttribute?: ImportAttribute;
     readonly semicolon?: string;
@@ -842,8 +839,8 @@ export interface InternalModule {
 export interface IntersectionType {
   readonly type: 'intersection_type';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Type;
-    readonly NEEDS_NAME_1?: Type;
+    readonly left?: Type;
+    readonly right?: Type;
   };
   readonly childType1?: Type;
   readonly childType2: Type;
@@ -859,9 +856,10 @@ export interface LexicalDeclaration {
   readonly type: 'lexical_declaration';
   readonly fields: {
     readonly kind: 'const' | 'let';
-    readonly variableDeclarator?: readonly (VariableDeclarator)[];
+    readonly declarators?: readonly (VariableDeclarator)[];
     readonly semicolon?: string;
   };
+  readonly variableDeclarator: readonly (VariableDeclarator)[];
 }
 export interface LiteralType {
   readonly type: 'literal_type';
@@ -979,9 +977,9 @@ export interface ObjectPattern {
 export interface ObjectType {
   readonly type: 'object_type';
   readonly fields: {
-    readonly NEEDS_NAME_0?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature;
-    readonly NEEDS_NAME_1?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
-    readonly NEEDS_NAME_2?: string;
+    readonly opening?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature;
+    readonly members?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
+    readonly closing?: string;
   };
   readonly children1?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature;
   readonly children2?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
@@ -1041,8 +1039,9 @@ export interface Program {
   readonly type: 'program';
   readonly fields: {
     readonly hashBangLine?: HashBangLine;
-    readonly statement?: readonly (Statement)[];
+    readonly statements?: readonly (Statement)[];
   };
+  readonly statement?: readonly (Statement)[];
 }
 export interface PropertySignature {
   readonly type: 'property_signature';
@@ -1121,9 +1120,10 @@ export interface SpreadElement {
 export interface StatementBlock {
   readonly type: 'statement_block';
   readonly fields: {
-    readonly statement?: readonly (Statement)[];
+    readonly statements?: readonly (Statement)[];
     readonly automaticSemicolon?: string;
   };
+  readonly statement?: readonly (Statement)[];
 }
 export interface String {
   readonly type: 'string';
@@ -1261,8 +1261,8 @@ export interface UnaryExpression {
 export interface UnionType {
   readonly type: 'union_type';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Type;
-    readonly NEEDS_NAME_1?: Type;
+    readonly left?: Type;
+    readonly right?: Type;
   };
   readonly childType1?: Type;
   readonly childType2: Type;
@@ -1277,9 +1277,10 @@ export interface UpdateExpression {
 export interface VariableDeclaration {
   readonly type: 'variable_declaration';
   readonly fields: {
-    readonly variableDeclarator?: readonly (VariableDeclarator)[];
+    readonly declarators?: readonly (VariableDeclarator)[];
     readonly semicolon?: string;
   };
+  readonly variableDeclarator: readonly (VariableDeclarator)[];
 }
 export interface VariableDeclarator {
   readonly type: 'variable_declarator';

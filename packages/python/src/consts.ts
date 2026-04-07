@@ -298,27 +298,27 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_pattern': [
     { name: 'dottedName', required: false, multiple: false },
-    { name: 'casePattern', required: false, multiple: true },
+    { name: 'arguments', required: false, multiple: true },
   ],
   'comparison_operator': [
     { name: 'operators', required: true, multiple: true },
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
+    { name: 'left', required: false, multiple: false },
+    { name: 'comparators', required: false, multiple: true },
   ],
   'complex_pattern': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'real', required: false, multiple: false },
+    { name: 'imaginary', required: false, multiple: false },
   ],
   'concatenated_string': [
   ],
   'conditional_expression': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
-    { name: 'NEEDS_NAME_2', required: false, multiple: false },
+    { name: 'body', required: false, multiple: false },
+    { name: 'condition', required: false, multiple: false },
+    { name: 'alternative', required: false, multiple: false },
   ],
   'constrained_type': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'type', required: false, multiple: false },
+    { name: 'constraint', required: false, multiple: false },
   ],
   'decorated_definition': [
     { name: 'definition', required: true, multiple: false },
@@ -495,9 +495,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'slice': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
-    { name: 'NEEDS_NAME_2', required: false, multiple: false },
+    { name: 'start', required: false, multiple: false },
+    { name: 'stop', required: false, multiple: false },
+    { name: 'step', required: false, multiple: false },
   ],
   'splat_pattern': [
   ],
@@ -505,7 +505,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'string': [
     { name: 'stringStart', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: true },
+    { name: 'content', required: false, multiple: true },
     { name: 'stringEnd', required: false, multiple: false },
   ],
   'string_content': [
@@ -516,7 +516,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'try_statement': [
     { name: 'body', required: true, multiple: false },
-    { name: 'exceptClause', required: false, multiple: true },
+    { name: 'exceptClauses', required: false, multiple: true },
     { name: 'elseClause', required: false, multiple: false },
     { name: 'finallyClause', required: false, multiple: false },
   ],
@@ -547,8 +547,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'union_pattern': [
   ],
   'union_type': [
-    { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'NEEDS_NAME_1', required: false, multiple: false },
+    { name: 'left', required: false, multiple: false },
+    { name: 'right', required: false, multiple: false },
   ],
   'while_statement': [
     { name: 'alternative', required: false, multiple: false },

@@ -598,7 +598,7 @@ describe('class_heritage', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.classHeritage({ NEEDS_NAME_0: ir.extendsClause({ value: [ir.identifier('test_value') as any] }) as any, NEEDS_NAME_1: ir.implementsClause({ children: [ir.typeIdentifier('TestChildren') as any] }) as any, extendsClauseOrImplementsClause: ir.extendsClause({ value: [ir.identifier('test_value') as any] }) as any, implementsClause: ir.implementsClause({ children: [ir.typeIdentifier('TestChildren') as any] }) as any });
+    const node = ir.classHeritage({ extendsClause: ir.extendsClause({ value: [ir.identifier('test_value') as any] }) as any, implementsClause: ir.implementsClause({ children: [ir.typeIdentifier('TestChildren') as any] }) as any, extendsClauseOrImplementsClause: ir.extendsClause({ value: [ir.identifier('test_value') as any] }) as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -900,7 +900,7 @@ describe('enum_body', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.enumBody({ name: [], NEEDS_NAME_0: ir.enumAssignment({ name: ir.number('42') as any, value: ir.identifier('test_value') as any }) as any, NEEDS_NAME_1: [], enumAssignment1: ir.enumAssignment({ name: ir.number('42') as any, value: ir.identifier('test_value') as any }) as any, enumAssignment2: [] });
+    const node = ir.enumBody({ name: [], opening: ir.enumAssignment({ name: ir.number('42') as any, value: ir.identifier('test_value') as any }) as any, members: [], enumAssignment1: ir.enumAssignment({ name: ir.number('42') as any, value: ir.identifier('test_value') as any }) as any, enumAssignment2: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -997,6 +997,11 @@ describe('export_statement', () => {
     const node = ir.exportStatement();
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.exportStatement({ declaration: ir.abstractClassDeclaration({ body: ir.classBody() as any, name: ir.typeIdentifier('TestName') as any }) as any, decorator: [], source: ir.string() as any, value: ir.identifier('test_value') as any, semicolon: ir.identifier('test_semicolon') as any, children1: ir.identifier('test_children1') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1480,7 +1485,7 @@ describe('import_clause', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.importClause({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, children1: ir.identifier('test_children1') as any, children2: ir.identifier('test_children2') as any });
+    const node = ir.importClause({ defaultImport: ir.identifier('test_default_import') as any, namedImports: ir.identifier('test_named_imports') as any, children1: ir.identifier('test_children1') as any, children2: ir.identifier('test_children2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1741,7 +1746,7 @@ describe('intersection_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.intersectionType({ NEEDS_NAME_0: ir.typeIdentifier('TestNEEDS_NAME_0') as any, NEEDS_NAME_1: ir.typeIdentifier('TestNEEDS_NAME_1') as any, childType1: ir.typeIdentifier('TestChildType1') as any, childType2: ir.typeIdentifier('TestChildType2') as any });
+    const node = ir.intersectionType({ left: ir.typeIdentifier('TestLeft') as any, right: ir.typeIdentifier('TestRight') as any, childType1: ir.typeIdentifier('TestChildType1') as any, childType2: ir.typeIdentifier('TestChildType2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2397,7 +2402,7 @@ describe('program', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.program({ hashBangLine: ir.hashBangLine('#!/usr/bin/env node') as any, statement: [] });
+    const node = ir.program({ hashBangLine: ir.hashBangLine('#!/usr/bin/env node') as any, statements: [], statement: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -3265,7 +3270,7 @@ describe('union_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.unionType({ NEEDS_NAME_0: ir.typeIdentifier('TestNEEDS_NAME_0') as any, NEEDS_NAME_1: ir.typeIdentifier('TestNEEDS_NAME_1') as any, childType1: ir.typeIdentifier('TestChildType1') as any, childType2: ir.typeIdentifier('TestChildType2') as any });
+    const node = ir.unionType({ left: ir.typeIdentifier('TestLeft') as any, right: ir.typeIdentifier('TestRight') as any, childType1: ir.typeIdentifier('TestChildType1') as any, childType2: ir.typeIdentifier('TestChildType2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

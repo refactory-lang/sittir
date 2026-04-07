@@ -422,7 +422,7 @@ export function class_pattern_(
 ) {
   const fields = {
     dotted_name: config.dottedName,
-    case_pattern: config.casePattern,
+    arguments: config.arguments,
   };
   const children = [...(config.dottedName ? [config.dottedName] : []), ...(config.casePattern ?? [])];
   return {
@@ -431,7 +431,8 @@ export function class_pattern_(
     fields,
     children,
     dottedName(dottedName?: DottedName) { return dottedName !== undefined ? class_pattern_({ ...config, dottedName: dottedName }) : fields.dotted_name; },
-    casePattern(...casePattern: (CasePattern)[]) { return casePattern.length ? class_pattern_({ ...config, casePattern: casePattern }) : fields.case_pattern; },
+    arguments(...arguments_: (CasePattern)[]) { return arguments_.length ? class_pattern_({ ...config, arguments: arguments_ }) : fields.arguments; },
+    casePattern(...casePattern: (CasePattern)[]) { return casePattern.length ? class_pattern_({ ...config, casePattern }) : config?.casePattern; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -447,8 +448,8 @@ export function comparison_operator_(
 ) {
   const fields = {
     operators: config.operators,
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    left: config.left,
+    comparators: config.comparators,
   };
   const children = [...(config.primaryExpression1 ? [config.primaryExpression1] : []), ...(config.primaryExpression2 ?? [])];
   return {
@@ -457,8 +458,8 @@ export function comparison_operator_(
     fields,
     children,
     operators(...operators: ('!=' | '<' | '<=' | '<>' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in')[]) { return operators.length ? comparison_operator_({ ...config, operators: operators }) : fields.operators; },
-    NEEDS_NAME_0(NEEDS_NAME_0?: PrimaryExpression) { return NEEDS_NAME_0 !== undefined ? comparison_operator_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (PrimaryExpression)[]) { return NEEDS_NAME_1.length ? comparison_operator_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    left(left?: PrimaryExpression) { return left !== undefined ? comparison_operator_({ ...config, left: left }) : fields.left; },
+    comparators(...comparators: (PrimaryExpression)[]) { return comparators.length ? comparison_operator_({ ...config, comparators: comparators }) : fields.comparators; },
     primaryExpression1(primaryExpression1?: PrimaryExpression) { return primaryExpression1 !== undefined ? comparison_operator_({ ...config, primaryExpression1 }) : config?.primaryExpression1; },
     primaryExpression2(...primaryExpression2: (PrimaryExpression)[]) { return primaryExpression2.length ? comparison_operator_({ ...config, primaryExpression2 }) : config?.primaryExpression2; },
     render() { return render(this); },
@@ -475,8 +476,8 @@ export function complex_pattern_(
   config: ComplexPatternConfig,
 ) {
   const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    real: config.real,
+    imaginary: config.imaginary,
   };
   const children = [...(config.floatOrInteger1 ? [config.floatOrInteger1] : []), ...(config.floatOrInteger2 ? [config.floatOrInteger2] : [])];
   return {
@@ -484,8 +485,8 @@ export function complex_pattern_(
     named: true as const,
     fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Float | Integer) { return NEEDS_NAME_0 !== undefined ? complex_pattern_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Float | Integer) { return NEEDS_NAME_1 !== undefined ? complex_pattern_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    real(real?: Float | Integer) { return real !== undefined ? complex_pattern_({ ...config, real: real }) : fields.real; },
+    imaginary(imaginary?: Float | Integer) { return imaginary !== undefined ? complex_pattern_({ ...config, imaginary: imaginary }) : fields.imaginary; },
     floatOrInteger1(floatOrInteger1?: Float | Integer) { return floatOrInteger1 !== undefined ? complex_pattern_({ ...config, floatOrInteger1 }) : config?.floatOrInteger1; },
     floatOrInteger2(floatOrInteger2?: Float | Integer) { return floatOrInteger2 !== undefined ? complex_pattern_({ ...config, floatOrInteger2 }) : config?.floatOrInteger2; },
     render() { return render(this); },
@@ -522,9 +523,9 @@ export function conditional_expression_(
   config: ConditionalExpressionConfig,
 ) {
   const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
-    NEEDS_NAME_2: config.NEEDS_NAME_2,
+    body: config.body,
+    condition: config.condition,
+    alternative: config.alternative,
   };
   const children = [...(config.expression1 ? [config.expression1] : []), ...(config.expression2 ? [config.expression2] : []), ...(config.expression3 ? [config.expression3] : [])];
   return {
@@ -532,9 +533,9 @@ export function conditional_expression_(
     named: true as const,
     fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? conditional_expression_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? conditional_expression_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(NEEDS_NAME_2?: Expression) { return NEEDS_NAME_2 !== undefined ? conditional_expression_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
+    body(body?: Expression) { return body !== undefined ? conditional_expression_({ ...config, body: body }) : fields.body; },
+    condition(condition?: Expression) { return condition !== undefined ? conditional_expression_({ ...config, condition: condition }) : fields.condition; },
+    alternative(alternative?: Expression) { return alternative !== undefined ? conditional_expression_({ ...config, alternative: alternative }) : fields.alternative; },
     expression1(expression1?: Expression) { return expression1 !== undefined ? conditional_expression_({ ...config, expression1 }) : config?.expression1; },
     expression2(expression2?: Expression) { return expression2 !== undefined ? conditional_expression_({ ...config, expression2 }) : config?.expression2; },
     expression3(expression3?: Expression) { return expression3 !== undefined ? conditional_expression_({ ...config, expression3 }) : config?.expression3; },
@@ -552,8 +553,8 @@ export function constrained_type_(
   config: ConstrainedTypeConfig,
 ) {
   const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    type: config.type,
+    constraint: config.constraint,
   };
   const children = [...(config.childType1 ? [config.childType1] : []), ...(config.childType2 ? [config.childType2] : [])];
   return {
@@ -561,8 +562,8 @@ export function constrained_type_(
     named: true as const,
     fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Type) { return NEEDS_NAME_0 !== undefined ? constrained_type_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Type) { return NEEDS_NAME_1 !== undefined ? constrained_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    typeField(type_?: Type) { return type_ !== undefined ? constrained_type_({ ...config, type: type_ }) : fields.type; },
+    constraint(constraint?: Type) { return constraint !== undefined ? constrained_type_({ ...config, constraint: constraint }) : fields.constraint; },
     childType1(childType1?: Type) { return childType1 !== undefined ? constrained_type_({ ...config, childType1 }) : config?.childType1; },
     childType2(childType2?: Type) { return childType2 !== undefined ? constrained_type_({ ...config, childType2 }) : config?.childType2; },
     render() { return render(this); },
@@ -1841,9 +1842,9 @@ export function slice_(
   config?: SliceConfig,
 ) {
   const fields = {
-    NEEDS_NAME_0: config?.NEEDS_NAME_0,
-    NEEDS_NAME_1: config?.NEEDS_NAME_1,
-    NEEDS_NAME_2: config?.NEEDS_NAME_2,
+    start: config?.start,
+    stop: config?.stop,
+    step: config?.step,
   };
   const children = [...(config?.expression1 ? [config?.expression1] : []), ...(config?.expression2 ? [config?.expression2] : []), ...(config?.expression3 ? [config?.expression3] : [])];
   return {
@@ -1851,9 +1852,9 @@ export function slice_(
     named: true as const,
     fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Expression) { return NEEDS_NAME_0 !== undefined ? slice_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Expression) { return NEEDS_NAME_1 !== undefined ? slice_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
-    NEEDS_NAME_2(NEEDS_NAME_2?: Expression) { return NEEDS_NAME_2 !== undefined ? slice_({ ...config, NEEDS_NAME_2: NEEDS_NAME_2 }) : fields.NEEDS_NAME_2; },
+    start(start?: Expression) { return start !== undefined ? slice_({ ...config, start: start }) : fields.start; },
+    stop(stop?: Expression) { return stop !== undefined ? slice_({ ...config, stop: stop }) : fields.stop; },
+    step(step?: Expression) { return step !== undefined ? slice_({ ...config, step: step }) : fields.step; },
     expression1(expression1?: Expression) { return expression1 !== undefined ? slice_({ ...config, expression1 }) : config?.expression1; },
     expression2(expression2?: Expression) { return expression2 !== undefined ? slice_({ ...config, expression2 }) : config?.expression2; },
     expression3(expression3?: Expression) { return expression3 !== undefined ? slice_({ ...config, expression3 }) : config?.expression3; },
@@ -1910,7 +1911,7 @@ export function string_(
 ) {
   const fields = {
     string_start: config.stringStart,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    content: config.content,
     string_end: config.stringEnd,
   };
   const children = [...(config.stringStart ? [config.stringStart] : []), ...(config.interpolationOrStringContent ?? []), ...(config.stringEnd ? [config.stringEnd] : [])];
@@ -1920,7 +1921,7 @@ export function string_(
     fields,
     children,
     stringStart(stringStart?: StringStart) { return stringStart !== undefined ? string_({ ...config, stringStart: stringStart }) : fields.string_start; },
-    NEEDS_NAME_1(...NEEDS_NAME_1: (Interpolation | StringContent)[]) { return NEEDS_NAME_1.length ? string_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    content(...content: (Interpolation | StringContent)[]) { return content.length ? string_({ ...config, content: content }) : fields.content; },
     stringEnd(stringEnd?: StringEnd) { return stringEnd !== undefined ? string_({ ...config, stringEnd: stringEnd }) : fields.string_end; },
     interpolationOrStringContent(...interpolationOrStringContent: (Interpolation | StringContent)[]) { return interpolationOrStringContent.length ? string_({ ...config, interpolationOrStringContent }) : config?.interpolationOrStringContent; },
     render() { return render(this); },
@@ -1981,7 +1982,7 @@ export function try_statement_(
 ) {
   const fields = {
     body: config.body,
-    except_clause: config.exceptClause,
+    except_clauses: config.exceptClauses,
     else_clause: config.elseClause,
     finally_clause: config.finallyClause,
   };
@@ -1992,9 +1993,10 @@ export function try_statement_(
     fields,
     children,
     body(body?: Block) { return body !== undefined ? try_statement_({ ...config, body: body }) : fields.body; },
-    exceptClause(...exceptClause: (ExceptClause)[]) { return exceptClause.length ? try_statement_({ ...config, exceptClause: exceptClause }) : fields.except_clause; },
+    exceptClauses(...exceptClauses: (ExceptClause)[]) { return exceptClauses.length ? try_statement_({ ...config, exceptClauses: exceptClauses }) : fields.except_clauses; },
     elseClause(elseClause?: ElseClause) { return elseClause !== undefined ? try_statement_({ ...config, elseClause: elseClause }) : fields.else_clause; },
     finallyClause(finallyClause?: FinallyClause) { return finallyClause !== undefined ? try_statement_({ ...config, finallyClause: finallyClause }) : fields.finally_clause; },
+    exceptClause(...exceptClause: (ExceptClause)[]) { return exceptClause.length ? try_statement_({ ...config, exceptClause }) : config?.exceptClause; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2203,8 +2205,8 @@ export function union_type_(
   config: UnionTypeConfig,
 ) {
   const fields = {
-    NEEDS_NAME_0: config.NEEDS_NAME_0,
-    NEEDS_NAME_1: config.NEEDS_NAME_1,
+    left: config.left,
+    right: config.right,
   };
   const children = [...(config.childType1 ? [config.childType1] : []), ...(config.childType2 ? [config.childType2] : [])];
   return {
@@ -2212,8 +2214,8 @@ export function union_type_(
     named: true as const,
     fields,
     children,
-    NEEDS_NAME_0(NEEDS_NAME_0?: Type) { return NEEDS_NAME_0 !== undefined ? union_type_({ ...config, NEEDS_NAME_0: NEEDS_NAME_0 }) : fields.NEEDS_NAME_0; },
-    NEEDS_NAME_1(NEEDS_NAME_1?: Type) { return NEEDS_NAME_1 !== undefined ? union_type_({ ...config, NEEDS_NAME_1: NEEDS_NAME_1 }) : fields.NEEDS_NAME_1; },
+    left(left?: Type) { return left !== undefined ? union_type_({ ...config, left: left }) : fields.left; },
+    right(right?: Type) { return right !== undefined ? union_type_({ ...config, right: right }) : fields.right; },
     childType1(childType1?: Type) { return childType1 !== undefined ? union_type_({ ...config, childType1 }) : config?.childType1; },
     childType2(childType2?: Type) { return childType2 !== undefined ? union_type_({ ...config, childType2 }) : config?.childType2; },
     render() { return render(this); },

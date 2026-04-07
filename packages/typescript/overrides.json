@@ -8,7 +8,7 @@
   },
   "ambient_declaration": {
     "fields": {
-      "NEEDS_NAME_0": {},
+      "declaration": {},
       "type": {},
       "semicolon": {}
     }
@@ -27,41 +27,41 @@
   },
   "class_heritage": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "extends_clause": {},
+      "implements_clause": {}
     }
   },
   "enum_body": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
+      "opening": {},
+      "members": {
         "multiple": true
       }
     }
   },
   "export_statement": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {},
-      "NEEDS_NAME_2": {}
+      "declaration": {},
+      "source": {},
+      "semicolon": {}
     }
   },
   "import_alias": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {},
+      "name": {},
+      "value": {},
       "semicolon": {}
     }
   },
   "import_clause": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "default_import": {},
+      "named_imports": {}
     }
   },
   "import_statement": {
     "fields": {
-      "NEEDS_NAME_0": {},
+      "import_clause": {},
       "from_clause": {},
       "import_attribute": {},
       "semicolon": {}
@@ -75,13 +75,13 @@
   },
   "intersection_type": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "left": {},
+      "right": {}
     }
   },
   "lexical_declaration": {
     "fields": {
-      "variable_declarator": {
+      "declarators": {
         "multiple": true
       },
       "semicolon": {}
@@ -109,11 +109,11 @@
   },
   "object_type": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {
+      "opening": {},
+      "members": {
         "multiple": true
       },
-      "NEEDS_NAME_2": {}
+      "closing": {}
     }
   },
   "optional_parameter": {
@@ -125,7 +125,7 @@
   "program": {
     "fields": {
       "hash_bang_line": {},
-      "statement": {
+      "statements": {
         "multiple": true
       }
     }
@@ -157,7 +157,7 @@
   },
   "statement_block": {
     "fields": {
-      "statement": {
+      "statements": {
         "multiple": true
       },
       "automatic_semicolon": {}
@@ -171,13 +171,13 @@
   },
   "union_type": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "left": {},
+      "right": {}
     }
   },
   "variable_declaration": {
     "fields": {
-      "variable_declarator": {
+      "declarators": {
         "multiple": true
       },
       "semicolon": {}

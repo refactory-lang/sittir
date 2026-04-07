@@ -613,15 +613,15 @@ export function ambientDeclarationFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return ambient_declaration_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      declaration: f?.['declaration'],
       type: f?.['type'],
       semicolon: f?.['semicolon'],
     } as unknown as AmbientDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1bydq0c(obj['NEEDS_NAME_0']);
+  if (obj['declaration'] !== undefined) {
+    resolved['declaration'] = _r1bydq0c(obj['declaration']);
   }
   if (obj['type'] !== undefined) {
     resolved['type'] = _resolveType(obj['type']);
@@ -1168,23 +1168,20 @@ export function classHeritageFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return class_heritage_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      extendsClause: f?.['extends_clause'],
+      implementsClause: f?.['implements_clause'],
     } as unknown as ClassHeritageConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1ibd40t(obj['NEEDS_NAME_0']);
+  if (obj['extendsClause'] !== undefined) {
+    resolved['extendsClause'] = _r1ibd40t(obj['extendsClause']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? implementsClauseFrom(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? implementsClauseFrom(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  if (obj['implementsClause'] !== undefined) {
+    resolved['implementsClause'] = (isNodeData(obj['implementsClause']) ? obj['implementsClause'] : Array.isArray(obj['implementsClause']) ? implementsClauseFrom(obj['implementsClause']) : typeof obj['implementsClause'] === 'object' ? implementsClauseFrom(obj['implementsClause']) : obj['implementsClause']);
   }
   if (obj.extendsClauseOrImplementsClause !== undefined) {
     resolved.extendsClauseOrImplementsClause = _r1ibd40t(obj.extendsClauseOrImplementsClause);
-  }
-  if (obj.implementsClause !== undefined) {
-    resolved.implementsClause = (isNodeData(obj.implementsClause) ? obj.implementsClause : Array.isArray(obj.implementsClause) ? implementsClauseFrom(obj.implementsClause) : typeof obj.implementsClause === 'object' ? implementsClauseFrom(obj.implementsClause) : obj.implementsClause);
   }
   return class_heritage_(resolved as ClassHeritageConfig);
 }
@@ -1475,8 +1472,8 @@ export function enumBodyFrom(input: unknown): unknown {
     const c = nd.children;
     return enum_body_({
       name: f?.['name'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      opening: f?.['opening'],
+      members: f?.['members'],
     } as unknown as EnumBodyConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1486,13 +1483,13 @@ export function enumBodyFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['name'] = arr.map((v: unknown) => _r1vtw8vp(v));
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? enumAssignmentFrom(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? enumAssignmentFrom(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
+  if (obj['opening'] !== undefined) {
+    resolved['opening'] = (isNodeData(obj['opening']) ? obj['opening'] : Array.isArray(obj['opening']) ? enumAssignmentFrom(obj['opening']) : typeof obj['opening'] === 'object' ? enumAssignmentFrom(obj['opening']) : obj['opening']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
+  if (obj['members'] !== undefined) {
+    const raw = obj['members'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? enumAssignmentFrom(v) : typeof v === 'object' ? enumAssignmentFrom(v) : v));
+    resolved['members'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? enumAssignmentFrom(v) : typeof v === 'object' ? enumAssignmentFrom(v) : v));
   }
   if (obj.enumAssignment1 !== undefined) {
     resolved.enumAssignment1 = (isNodeData(obj.enumAssignment1) ? obj.enumAssignment1 : Array.isArray(obj.enumAssignment1) ? enumAssignmentFrom(obj.enumAssignment1) : typeof obj.enumAssignment1 === 'object' ? enumAssignmentFrom(obj.enumAssignment1) : obj.enumAssignment1);
@@ -1586,9 +1583,7 @@ export function exportStatementFrom(input: unknown): unknown {
       decorator: f?.['decorator'],
       source: f?.['source'],
       value: f?.['value'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      semicolon: f?.['semicolon'],
     } as unknown as ExportStatementConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1607,14 +1602,8 @@ export function exportStatementFrom(input: unknown): unknown {
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r15z1pjf(obj['NEEDS_NAME_0']);
-  }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _rd4g2sg(obj['NEEDS_NAME_1']);
-  }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  if (obj['semicolon'] !== undefined) {
+    resolved['semicolon'] = _r15z1pjf(obj['semicolon']);
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r15z1pjf(obj.children1);
@@ -2121,18 +2110,18 @@ export function importAliasFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return import_alias_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      name: f?.['name'],
+      value: f?.['value'],
       semicolon: f?.['semicolon'],
     } as unknown as ImportAliasConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveImportIdentifier(obj['NEEDS_NAME_0']);
+  if (obj['name'] !== undefined) {
+    resolved['name'] = _resolveImportIdentifier(obj['name']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _r1lq7t9k(obj['NEEDS_NAME_1']);
+  if (obj['value'] !== undefined) {
+    resolved['value'] = _r1lq7t9k(obj['value']);
   }
   if (obj['semicolon'] !== undefined) {
     resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
@@ -2175,17 +2164,17 @@ export function importClauseFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return import_clause_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      defaultImport: f?.['default_import'],
+      namedImports: f?.['named_imports'],
     } as unknown as ImportClauseConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r8rpwn8(obj['NEEDS_NAME_0']);
+  if (obj['defaultImport'] !== undefined) {
+    resolved['defaultImport'] = _r8rpwn8(obj['defaultImport']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _ruevll4(obj['NEEDS_NAME_1']);
+  if (obj['namedImports'] !== undefined) {
+    resolved['namedImports'] = _ruevll4(obj['namedImports']);
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r8rpwn8(obj.children1);
@@ -2254,7 +2243,7 @@ export function importStatementFrom(input: unknown): unknown {
     const c = nd.children;
     return import_statement_({
       source: f?.['source'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
+      importClause: f?.['import_clause'],
       fromClause: f?.['from_clause'],
       importAttribute: f?.['import_attribute'],
       semicolon: f?.['semicolon'],
@@ -2265,8 +2254,8 @@ export function importStatementFrom(input: unknown): unknown {
   if (obj['source'] !== undefined) {
     resolved['source'] = (isNodeData(obj['source']) ? obj['source'] : Array.isArray(obj['source']) ? stringFrom(obj['source']) : typeof obj['source'] === 'object' ? stringFrom(obj['source']) : obj['source']);
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1a3965y(obj['NEEDS_NAME_0']);
+  if (obj['importClause'] !== undefined) {
+    resolved['importClause'] = _r1a3965y(obj['importClause']);
   }
   if (obj['fromClause'] !== undefined) {
     resolved['fromClause'] = _rd4g2sg(obj['fromClause']);
@@ -2480,17 +2469,17 @@ export function intersectionTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return intersection_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      left: f?.['left'],
+      right: f?.['right'],
     } as unknown as IntersectionTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveType(obj['NEEDS_NAME_0']);
+  if (obj['left'] !== undefined) {
+    resolved['left'] = _resolveType(obj['left']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveType(obj['NEEDS_NAME_1']);
+  if (obj['right'] !== undefined) {
+    resolved['right'] = _resolveType(obj['right']);
   }
   if (obj.childType1 !== undefined) {
     resolved.childType1 = _resolveType(obj.childType1);
@@ -2535,7 +2524,7 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
     const c = nd.children;
     return lexical_declaration_({
       kind: f?.['kind'],
-      variableDeclarator: f?.['variable_declarator'],
+      declarators: f?.['declarators'],
       semicolon: f?.['semicolon'],
     } as unknown as LexicalDeclarationConfig);
   }
@@ -2544,13 +2533,19 @@ export function lexicalDeclarationFrom(input: unknown): unknown {
   if (obj['kind'] !== undefined) {
     resolved['kind'] = _ron60d4(obj['kind']);
   }
-  if (obj['variableDeclarator'] !== undefined) {
-    const raw = obj['variableDeclarator'];
+  if (obj['declarators'] !== undefined) {
+    const raw = obj['declarators'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['variableDeclarator'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+    resolved['declarators'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
   }
   if (obj['semicolon'] !== undefined) {
     resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
+  }
+  if (obj.variableDeclarator !== undefined) {
+    const arr = Array.isArray(obj.variableDeclarator) ? obj.variableDeclarator : [obj.variableDeclarator];
+    resolved.variableDeclarator = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+  } else {
+    resolved.variableDeclarator = [];
   }
   return lexical_declaration_(resolved as LexicalDeclarationConfig);
 }
@@ -3006,23 +3001,23 @@ export function objectTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return object_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      opening: f?.['opening'],
+      members: f?.['members'],
+      closing: f?.['closing'],
     } as unknown as ObjectTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1rfp6fa(obj['NEEDS_NAME_0']);
+  if (obj['opening'] !== undefined) {
+    resolved['opening'] = _r1rfp6fa(obj['opening']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
+  if (obj['members'] !== undefined) {
+    const raw = obj['members'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r1rfp6fa(v));
+    resolved['members'] = arr.map((v: unknown) => _r1rfp6fa(v));
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _rd4g2sg(obj['NEEDS_NAME_2']);
+  if (obj['closing'] !== undefined) {
+    resolved['closing'] = _rd4g2sg(obj['closing']);
   }
   if (obj.children1 !== undefined) {
     resolved.children1 = _r1rfp6fa(obj.children1);
@@ -3248,7 +3243,7 @@ export function programFrom(input: unknown): unknown {
     const c = nd.children;
     return program_({
       hashBangLine: f?.['hash_bang_line'],
-      statement: f?.['statement'],
+      statements: f?.['statements'],
     } as unknown as ProgramConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -3256,10 +3251,14 @@ export function programFrom(input: unknown): unknown {
   if (obj['hashBangLine'] !== undefined) {
     resolved['hashBangLine'] = (isNodeData(obj['hashBangLine']) ? obj['hashBangLine'] : typeof obj['hashBangLine'] === 'string' || typeof obj['hashBangLine'] === 'number' || typeof obj['hashBangLine'] === 'boolean' ? hash_bang_line_(''+obj['hashBangLine']) : obj['hashBangLine']);
   }
-  if (obj['statement'] !== undefined) {
-    const raw = obj['statement'];
+  if (obj['statements'] !== undefined) {
+    const raw = obj['statements'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['statement'] = arr.map((v: unknown) => _resolveStatement(v));
+    resolved['statements'] = arr.map((v: unknown) => _resolveStatement(v));
+  }
+  if (obj.statement !== undefined) {
+    const arr = Array.isArray(obj.statement) ? obj.statement : [obj.statement];
+    resolved.statement = arr.map((v: unknown) => _resolveStatement(v));
   }
   return program_(resolved as ProgramConfig);
 }
@@ -3577,19 +3576,23 @@ export function statementBlockFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return statement_block_({
-      statement: f?.['statement'],
+      statements: f?.['statements'],
       automaticSemicolon: f?.['automatic_semicolon'],
     } as unknown as StatementBlockConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['statement'] !== undefined) {
-    const raw = obj['statement'];
+  if (obj['statements'] !== undefined) {
+    const raw = obj['statements'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['statement'] = arr.map((v: unknown) => _resolveStatement(v));
+    resolved['statements'] = arr.map((v: unknown) => _resolveStatement(v));
   }
   if (obj['automaticSemicolon'] !== undefined) {
     resolved['automaticSemicolon'] = _rd4g2sg(obj['automaticSemicolon']);
+  }
+  if (obj.statement !== undefined) {
+    const arr = Array.isArray(obj.statement) ? obj.statement : [obj.statement];
+    resolved.statement = arr.map((v: unknown) => _resolveStatement(v));
   }
   return statement_block_(resolved as StatementBlockConfig);
 }
@@ -4158,17 +4161,17 @@ export function unionTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return union_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      left: f?.['left'],
+      right: f?.['right'],
     } as unknown as UnionTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveType(obj['NEEDS_NAME_0']);
+  if (obj['left'] !== undefined) {
+    resolved['left'] = _resolveType(obj['left']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveType(obj['NEEDS_NAME_1']);
+  if (obj['right'] !== undefined) {
+    resolved['right'] = _resolveType(obj['right']);
   }
   if (obj.childType1 !== undefined) {
     resolved.childType1 = _resolveType(obj.childType1);
@@ -4212,19 +4215,25 @@ export function variableDeclarationFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return variable_declaration_({
-      variableDeclarator: f?.['variable_declarator'],
+      declarators: f?.['declarators'],
       semicolon: f?.['semicolon'],
     } as unknown as VariableDeclarationConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['variableDeclarator'] !== undefined) {
-    const raw = obj['variableDeclarator'];
+  if (obj['declarators'] !== undefined) {
+    const raw = obj['declarators'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['variableDeclarator'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+    resolved['declarators'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
   }
   if (obj['semicolon'] !== undefined) {
     resolved['semicolon'] = _rd4g2sg(obj['semicolon']);
+  }
+  if (obj.variableDeclarator !== undefined) {
+    const arr = Array.isArray(obj.variableDeclarator) ? obj.variableDeclarator : [obj.variableDeclarator];
+    resolved.variableDeclarator = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? variableDeclaratorFrom(v) : typeof v === 'object' ? variableDeclaratorFrom(v) : v));
+  } else {
+    resolved.variableDeclarator = [];
   }
   return variable_declaration_(resolved as VariableDeclarationConfig);
 }

@@ -351,7 +351,7 @@
         overrideValues: null,
       },
       {
-        name: "case_pattern",
+        name: "arguments",
         required: false,
         multiple: true,
         kinds: {},
@@ -389,7 +389,7 @@
         separator: null,
       },
       {
-        name: "NEEDS_NAME_0",
+        name: "left",
         required: false,
         multiple: false,
         kinds: {},
@@ -398,7 +398,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "comparators",
         required: false,
         multiple: true,
         kinds: {},
@@ -429,7 +429,7 @@
     kind: "complex_pattern",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "real",
         required: false,
         multiple: false,
         kinds: {},
@@ -438,7 +438,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "imaginary",
         required: false,
         multiple: false,
         kinds: {},
@@ -478,7 +478,7 @@
     kind: "conditional_expression",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "body",
         required: false,
         multiple: false,
         kinds: {},
@@ -487,7 +487,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "condition",
         required: false,
         multiple: false,
         kinds: {},
@@ -496,7 +496,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_2",
+        name: "alternative",
         required: false,
         multiple: false,
         kinds: {},
@@ -531,7 +531,7 @@
     kind: "constrained_type",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "type",
         required: false,
         multiple: false,
         kinds: {},
@@ -540,7 +540,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "constraint",
         required: false,
         multiple: false,
         kinds: {},
@@ -1599,7 +1599,7 @@
     kind: "slice",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "start",
         required: false,
         multiple: false,
         kinds: {},
@@ -1608,7 +1608,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "stop",
         required: false,
         multiple: false,
         kinds: {},
@@ -1617,7 +1617,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_2",
+        name: "step",
         required: false,
         multiple: false,
         kinds: {},
@@ -1681,7 +1681,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "content",
         required: false,
         multiple: true,
         kinds: {},
@@ -1764,7 +1764,7 @@
         kinds: {},
       },
       {
-        name: "except_clause",
+        name: "except_clauses",
         required: false,
         multiple: true,
         kinds: {},
@@ -1951,7 +1951,7 @@
     kind: "union_type",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "left",
         required: false,
         multiple: false,
         kinds: {},
@@ -1960,7 +1960,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "right",
         required: false,
         multiple: false,
         kinds: {},

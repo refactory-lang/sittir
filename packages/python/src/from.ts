@@ -754,7 +754,7 @@ export function classPatternFrom(input: unknown): unknown {
     const c = nd.children;
     return class_pattern_({
       dottedName: f?.['dotted_name'],
-      casePattern: f?.['case_pattern'],
+      arguments: f?.['arguments'],
     } as unknown as ClassPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -762,10 +762,14 @@ export function classPatternFrom(input: unknown): unknown {
   if (obj['dottedName'] !== undefined) {
     resolved['dottedName'] = (isNodeData(obj['dottedName']) ? obj['dottedName'] : Array.isArray(obj['dottedName']) ? dottedNameFrom(obj['dottedName']) : typeof obj['dottedName'] === 'object' ? dottedNameFrom(obj['dottedName']) : obj['dottedName']);
   }
-  if (obj['casePattern'] !== undefined) {
-    const raw = obj['casePattern'];
+  if (obj['arguments'] !== undefined) {
+    const raw = obj['arguments'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['casePattern'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
+    resolved['arguments'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
+  }
+  if (obj.casePattern !== undefined) {
+    const arr = Array.isArray(obj.casePattern) ? obj.casePattern : [obj.casePattern];
+    resolved.casePattern = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? casePatternFrom(v) : typeof v === 'object' ? casePatternFrom(v) : v));
   }
   return class_pattern_(resolved as ClassPatternConfig);
 }
@@ -780,8 +784,8 @@ export function comparisonOperatorFrom(input: unknown): unknown {
     const c = nd.children;
     return comparison_operator_({
       operators: f?.['operators'],
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      left: f?.['left'],
+      comparators: f?.['comparators'],
     } as unknown as ComparisonOperatorConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -793,13 +797,13 @@ export function comparisonOperatorFrom(input: unknown): unknown {
   } else {
     resolved['operators'] = [];
   }
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolvePrimaryExpression(obj['NEEDS_NAME_0']);
+  if (obj['left'] !== undefined) {
+    resolved['left'] = _resolvePrimaryExpression(obj['left']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
+  if (obj['comparators'] !== undefined) {
+    const raw = obj['comparators'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _resolvePrimaryExpression(v));
+    resolved['comparators'] = arr.map((v: unknown) => _resolvePrimaryExpression(v));
   }
   if (obj.primaryExpression1 !== undefined) {
     resolved.primaryExpression1 = _resolvePrimaryExpression(obj.primaryExpression1);
@@ -822,17 +826,17 @@ export function complexPatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return complex_pattern_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      real: f?.['real'],
+      imaginary: f?.['imaginary'],
     } as unknown as ComplexPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _r1q8uqc0(obj['NEEDS_NAME_0']);
+  if (obj['real'] !== undefined) {
+    resolved['real'] = _r1q8uqc0(obj['real']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _r1q8uqc0(obj['NEEDS_NAME_1']);
+  if (obj['imaginary'] !== undefined) {
+    resolved['imaginary'] = _r1q8uqc0(obj['imaginary']);
   }
   if (obj.floatOrInteger1 !== undefined) {
     resolved.floatOrInteger1 = _r1q8uqc0(obj.floatOrInteger1);
@@ -875,21 +879,21 @@ export function conditionalExpressionFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return conditional_expression_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      body: f?.['body'],
+      condition: f?.['condition'],
+      alternative: f?.['alternative'],
     } as unknown as ConditionalExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
+  if (obj['body'] !== undefined) {
+    resolved['body'] = _resolveExpression(obj['body']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
+  if (obj['condition'] !== undefined) {
+    resolved['condition'] = _resolveExpression(obj['condition']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _resolveExpression(obj['NEEDS_NAME_2']);
+  if (obj['alternative'] !== undefined) {
+    resolved['alternative'] = _resolveExpression(obj['alternative']);
   }
   if (obj.expression1 !== undefined) {
     resolved.expression1 = _resolveExpression(obj.expression1);
@@ -912,17 +916,17 @@ export function constrainedTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return constrained_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      type: f?.['type'],
+      constraint: f?.['constraint'],
     } as unknown as ConstrainedTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? type_From(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? type_From(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
+  if (obj['type'] !== undefined) {
+    resolved['type'] = (isNodeData(obj['type']) ? obj['type'] : Array.isArray(obj['type']) ? type_From(obj['type']) : typeof obj['type'] === 'object' ? type_From(obj['type']) : obj['type']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? type_From(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? type_From(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  if (obj['constraint'] !== undefined) {
+    resolved['constraint'] = (isNodeData(obj['constraint']) ? obj['constraint'] : Array.isArray(obj['constraint']) ? type_From(obj['constraint']) : typeof obj['constraint'] === 'object' ? type_From(obj['constraint']) : obj['constraint']);
   }
   if (obj.childType1 !== undefined) {
     resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
@@ -2299,21 +2303,21 @@ export function sliceFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return slice_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
-      NEEDS_NAME_2: f?.['NEEDS_NAME_2'],
+      start: f?.['start'],
+      stop: f?.['stop'],
+      step: f?.['step'],
     } as unknown as SliceConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = _resolveExpression(obj['NEEDS_NAME_0']);
+  if (obj['start'] !== undefined) {
+    resolved['start'] = _resolveExpression(obj['start']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = _resolveExpression(obj['NEEDS_NAME_1']);
+  if (obj['stop'] !== undefined) {
+    resolved['stop'] = _resolveExpression(obj['stop']);
   }
-  if (obj['NEEDS_NAME_2'] !== undefined) {
-    resolved['NEEDS_NAME_2'] = _resolveExpression(obj['NEEDS_NAME_2']);
+  if (obj['step'] !== undefined) {
+    resolved['step'] = _resolveExpression(obj['step']);
   }
   if (obj.expression1 !== undefined) {
     resolved.expression1 = _resolveExpression(obj.expression1);
@@ -2377,7 +2381,7 @@ export function stringFrom(input: unknown): unknown {
     const c = nd.children;
     return string_({
       stringStart: f?.['string_start'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      content: f?.['content'],
       stringEnd: f?.['string_end'],
     } as unknown as StringConfig);
   }
@@ -2386,10 +2390,10 @@ export function stringFrom(input: unknown): unknown {
   if (obj['stringStart'] !== undefined) {
     resolved['stringStart'] = (isNodeData(obj['stringStart']) ? obj['stringStart'] : typeof obj['stringStart'] === 'string' || typeof obj['stringStart'] === 'number' || typeof obj['stringStart'] === 'boolean' ? string_start_(''+obj['stringStart']) : obj['stringStart']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    const raw = obj['NEEDS_NAME_1'];
+  if (obj['content'] !== undefined) {
+    const raw = obj['content'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['NEEDS_NAME_1'] = arr.map((v: unknown) => _r2im5d1(v));
+    resolved['content'] = arr.map((v: unknown) => _r2im5d1(v));
   }
   if (obj['stringEnd'] !== undefined) {
     resolved['stringEnd'] = (isNodeData(obj['stringEnd']) ? obj['stringEnd'] : typeof obj['stringEnd'] === 'string' || typeof obj['stringEnd'] === 'number' || typeof obj['stringEnd'] === 'boolean' ? string_end_(''+obj['stringEnd']) : obj['stringEnd']);
@@ -2462,7 +2466,7 @@ export function tryStatementFrom(input: unknown): unknown {
     const c = nd.children;
     return try_statement_({
       body: f?.['body'],
-      exceptClause: f?.['except_clause'],
+      exceptClauses: f?.['except_clauses'],
       elseClause: f?.['else_clause'],
       finallyClause: f?.['finally_clause'],
     } as unknown as TryStatementConfig);
@@ -2472,16 +2476,20 @@ export function tryStatementFrom(input: unknown): unknown {
   if (obj['body'] !== undefined) {
     resolved['body'] = _r10v9xtg(obj['body']);
   }
-  if (obj['exceptClause'] !== undefined) {
-    const raw = obj['exceptClause'];
+  if (obj['exceptClauses'] !== undefined) {
+    const raw = obj['exceptClauses'];
     const arr = Array.isArray(raw) ? raw : [raw];
-    resolved['exceptClause'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? exceptClauseFrom(v) : typeof v === 'object' ? exceptClauseFrom(v) : v));
+    resolved['exceptClauses'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? exceptClauseFrom(v) : typeof v === 'object' ? exceptClauseFrom(v) : v));
   }
   if (obj['elseClause'] !== undefined) {
     resolved['elseClause'] = (isNodeData(obj['elseClause']) ? obj['elseClause'] : Array.isArray(obj['elseClause']) ? elseClauseFrom(obj['elseClause']) : typeof obj['elseClause'] === 'object' ? elseClauseFrom(obj['elseClause']) : obj['elseClause']);
   }
   if (obj['finallyClause'] !== undefined) {
     resolved['finallyClause'] = (isNodeData(obj['finallyClause']) ? obj['finallyClause'] : Array.isArray(obj['finallyClause']) ? finallyClauseFrom(obj['finallyClause']) : typeof obj['finallyClause'] === 'object' ? finallyClauseFrom(obj['finallyClause']) : obj['finallyClause']);
+  }
+  if (obj.exceptClause !== undefined) {
+    const arr = Array.isArray(obj.exceptClause) ? obj.exceptClause : [obj.exceptClause];
+    resolved.exceptClause = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? exceptClauseFrom(v) : typeof v === 'object' ? exceptClauseFrom(v) : v));
   }
   return try_statement_(resolved as TryStatementConfig);
 }
@@ -2701,17 +2709,17 @@ export function unionTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return union_type_({
-      NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      NEEDS_NAME_1: f?.['NEEDS_NAME_1'],
+      left: f?.['left'],
+      right: f?.['right'],
     } as unknown as UnionTypeConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj['NEEDS_NAME_0'] !== undefined) {
-    resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : Array.isArray(obj['NEEDS_NAME_0']) ? type_From(obj['NEEDS_NAME_0']) : typeof obj['NEEDS_NAME_0'] === 'object' ? type_From(obj['NEEDS_NAME_0']) : obj['NEEDS_NAME_0']);
+  if (obj['left'] !== undefined) {
+    resolved['left'] = (isNodeData(obj['left']) ? obj['left'] : Array.isArray(obj['left']) ? type_From(obj['left']) : typeof obj['left'] === 'object' ? type_From(obj['left']) : obj['left']);
   }
-  if (obj['NEEDS_NAME_1'] !== undefined) {
-    resolved['NEEDS_NAME_1'] = (isNodeData(obj['NEEDS_NAME_1']) ? obj['NEEDS_NAME_1'] : Array.isArray(obj['NEEDS_NAME_1']) ? type_From(obj['NEEDS_NAME_1']) : typeof obj['NEEDS_NAME_1'] === 'object' ? type_From(obj['NEEDS_NAME_1']) : obj['NEEDS_NAME_1']);
+  if (obj['right'] !== undefined) {
+    resolved['right'] = (isNodeData(obj['right']) ? obj['right'] : Array.isArray(obj['right']) ? type_From(obj['right']) : typeof obj['right'] === 'object' ? type_From(obj['right']) : obj['right']);
   }
   if (obj.childType1 !== undefined) {
     resolved.childType1 = (isNodeData(obj.childType1) ? obj.childType1 : Array.isArray(obj.childType1) ? type_From(obj.childType1) : typeof obj.childType1 === 'object' ? type_From(obj.childType1) : obj.childType1);
