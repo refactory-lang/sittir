@@ -1,186 +1,863 @@
 {
   "abstract_method_signature": {
     "fields": {
-      "accessibility_modifier": {},
-      "override_modifier": {},
-      "call_signature": {}
+      "accessibility_modifier": {
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "override_modifier": {
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "call_signature": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "ambient_declaration": {
     "fields": {
-      "declaration": {},
-      "type": {},
-      "semicolon": {}
+      "declaration": {
+        "types": [
+          {
+            "type": "declaration",
+            "named": true
+          },
+          {
+            "type": "statement_block",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "type_annotation": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "semicolon": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "as_expression": {
     "fields": {
-      "expression": {},
-      "type": {}
+      "expression": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "type_annotation": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "class_declaration": {
     "fields": {
-      "class_heritage": {},
-      "automatic_semicolon": {}
+      "class_heritage": {
+        "types": [
+          {
+            "type": "class_heritage",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "automatic_semicolon": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "class_heritage": {
     "fields": {
-      "extends_clause": {},
-      "implements_clause": {}
+      "extends_clause": {
+        "types": [
+          {
+            "type": "extends_clause",
+            "named": true
+          },
+          {
+            "type": "implements_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "implements_clause": {
+        "types": [
+          {
+            "type": "implements_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "enum_body": {
     "fields": {
-      "opening": {},
+      "opening": {
+        "types": [
+          {
+            "type": "enum_assignment",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
       "members": {
-        "multiple": true
+        "types": [
+          {
+            "type": "enum_assignment",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
       }
     }
   },
   "export_statement": {
     "fields": {
-      "declaration": {},
-      "source": {},
-      "semicolon": {}
+      "declaration": {
+        "types": [
+          {
+            "type": "namespace_export",
+            "named": true
+          },
+          {
+            "type": "export_clause",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "source": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "semicolon_inner": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "import_alias": {
     "fields": {
-      "name": {},
-      "value": {},
-      "semicolon": {}
+      "name": {
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "value": {
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "nested_identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      },
+      "semicolon": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "import_clause": {
     "fields": {
-      "default_import": {},
-      "named_imports": {}
+      "default_import": {
+        "types": [
+          {
+            "type": "namespace_import",
+            "named": true
+          },
+          {
+            "type": "named_imports",
+            "named": true
+          },
+          {
+            "type": "_import_identifier",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "named_imports": {
+        "types": [
+          {
+            "type": "namespace_import",
+            "named": true
+          },
+          {
+            "type": "named_imports",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "import_statement": {
     "fields": {
-      "import_clause": {},
-      "from_clause": {},
-      "import_attribute": {},
-      "semicolon": {}
+      "import_clause": {
+        "types": [
+          {
+            "type": "import_clause",
+            "named": true
+          },
+          {
+            "type": "import_require_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "from_clause": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "import_attribute": {
+        "types": [
+          {
+            "type": "import_attribute",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      },
+      "semicolon": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 3
+      }
     }
   },
   "infer_type": {
     "fields": {
-      "type_identifier": {},
-      "type": {}
+      "type_identifier": {
+        "types": [
+          {
+            "type": "_type_identifier",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "constraint": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "intersection_type": {
     "fields": {
-      "left": {},
-      "right": {}
+      "left": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "right": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "lexical_declaration": {
     "fields": {
       "declarators": {
-        "multiple": true
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": true,
+        "position": 0
       },
-      "semicolon": {}
+      "semicolon": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "lookup_type": {
     "fields": {
-      "primary_type": {},
-      "type": {}
+      "primary_type": {
+        "types": [
+          {
+            "type": "primary_type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "index_type": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "method_definition": {
     "fields": {
-      "accessibility_modifier": {},
-      "override_modifier": {},
-      "call_signature": {}
+      "accessibility_modifier": {
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "override_modifier": {
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "call_signature": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "method_signature": {
     "fields": {
-      "accessibility_modifier": {},
-      "override_modifier": {},
-      "call_signature": {}
+      "accessibility_modifier": {
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "override_modifier": {
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "call_signature": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "object_type": {
     "fields": {
-      "opening": {},
-      "members": {
-        "multiple": true
+      "opening": {
+        "types": [
+          {
+            "type": "export_statement",
+            "named": true
+          },
+          {
+            "type": "property_signature",
+            "named": true
+          },
+          {
+            "type": "call_signature",
+            "named": true
+          },
+          {
+            "type": "construct_signature",
+            "named": true
+          },
+          {
+            "type": "index_signature",
+            "named": true
+          },
+          {
+            "type": "method_signature",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
       },
-      "closing": {}
+      "members": {
+        "types": [
+          {
+            "type": "export_statement",
+            "named": true
+          },
+          {
+            "type": "property_signature",
+            "named": true
+          },
+          {
+            "type": "call_signature",
+            "named": true
+          },
+          {
+            "type": "construct_signature",
+            "named": true
+          },
+          {
+            "type": "index_signature",
+            "named": true
+          },
+          {
+            "type": "method_signature",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
+      },
+      "closing": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "optional_parameter": {
     "fields": {
-      "parameter_name": {},
-      "initializer": {}
+      "parameter_name": {
+        "types": [
+          {
+            "type": "_parameter_name",
+            "named": true
+          },
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          },
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "initializer": {
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          },
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "program": {
     "fields": {
-      "hash_bang_line": {},
+      "hash_bang_line": {
+        "types": [
+          {
+            "type": "hash_bang_line",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
       "statements": {
-        "multiple": true
+        "types": [
+          {
+            "type": "statement",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
       }
     }
   },
   "property_signature": {
     "fields": {
-      "accessibility_modifier": {},
-      "override_modifier": {}
+      "accessibility_modifier": {
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "override_modifier": {
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "public_field_definition": {
     "fields": {
-      "accessibility_modifier": {},
-      "override_modifier": {},
-      "initializer": {}
+      "accessibility_modifier": {
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "override_modifier": {
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "initializer": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "required_parameter": {
     "fields": {
-      "parameter_name": {},
-      "initializer": {}
+      "parameter_name": {
+        "types": [
+          {
+            "type": "_parameter_name",
+            "named": true
+          },
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          },
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "initializer": {
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          },
+          {
+            "type": "override_modifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "satisfies_expression": {
     "fields": {
-      "expression": {},
-      "type": {}
+      "expression": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "type_annotation": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "statement_block": {
     "fields": {
       "statements": {
-        "multiple": true
+        "types": [
+          {
+            "type": "statement",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 0
       },
-      "automatic_semicolon": {}
+      "automatic_semicolon": {
+        "types": [],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "type_assertion": {
     "fields": {
-      "type_arguments": {},
-      "expression": {}
+      "type_arguments": {
+        "types": [
+          {
+            "type": "type_arguments",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "expression": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "union_type": {
     "fields": {
-      "left": {},
-      "right": {}
+      "left": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "right": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "variable_declaration": {
     "fields": {
       "declarators": {
-        "multiple": true
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": true,
+        "position": 0
       },
-      "semicolon": {}
+      "semicolon": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   }
 }

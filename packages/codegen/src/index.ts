@@ -36,7 +36,7 @@ import { buildGrammarModel } from './grammar-model.ts';
 import type { HydratedNodeModel } from './node-model.ts';
 import { isTupleChildren, eachChildSlot } from './node-model.ts';
 import { structuralNodes } from './emitters/utils.ts';
-import type { OverridesConfig, OverrideFieldDef } from './overrides.ts';
+import type { OverridesConfig, OverrideFieldDef, OverrideTypeRef } from './overrides.ts';
 
 export { listBranchKinds, listLeafKinds, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
 
@@ -98,7 +98,7 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 		if (!node.children || !isTupleChildren(node.children)) continue;
 
 		const fields: Record<string, OverrideFieldDef> = {};
-		const slots = node.children as readonly { multiple: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] }[];
+		const slots = node.children as readonly { multiple: boolean; required?: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] }[];
 
 		for (let i = 0; i < slots.length; i++) {
 			const slot = slots[i]!;
@@ -106,33 +106,31 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 			// Skip pure REPEAT slots that are the only slot
 			if (slots.length === 1 && slot.multiple) continue;
 
+			// Build types array from slot kinds
+			const types: OverrideTypeRef[] = slot.kinds.map(k => {
+				const mt = (k as any).modelType;
+				const named = mt !== 'token' && mt !== 'keyword';
+				return { type: k.kind, named };
+			});
+
 			// Use the slot name from grammar's nameChildSlots when available
 			const slotName = slot.name;
+			let fieldName: string;
 
 			if (slotName && !slotName.startsWith('NEEDS_NAME')) {
-				// Grammar auto-assigned a meaningful name
-				fields[slotName] = slot.multiple ? { multiple: true } : {};
-			} else if (slot.kinds.length === 1) {
-				const k = slot.kinds[0]!;
-				const mt = (k as any).modelType;
-				const isAnon = mt === 'token' || mt === 'keyword';
-
-				if (isAnon) {
-					const placeholder = slotName ?? `NEEDS_NAME_${i}`;
-					fields[placeholder] = { anonymous: true };
-					console.warn(`[overrides] ${node.kind}: ${placeholder} — anonymous token at position ${i} needs a field name`);
-				} else {
-					const placeholder = slotName ?? `NEEDS_NAME_${i}`;
-					fields[placeholder] = slot.multiple ? { multiple: true } : {};
-					console.warn(`[overrides] ${node.kind}: ${placeholder} — needs a field name`);
-				}
+				fieldName = slotName;
 			} else {
-				// Multiple kinds in this slot — use grammar name or placeholder
-				const placeholder = slotName ?? `NEEDS_NAME_${i}`;
-				fields[placeholder] = slot.multiple ? { multiple: true } : {};
+				fieldName = slotName ?? `NEEDS_NAME_${i}`;
 				const kindList = slot.kinds.map(k => k.kind).join(', ');
-				console.warn(`[overrides] ${node.kind}: ${placeholder} — CHOICE(${kindList}) needs a field name`);
+				console.warn(`[overrides] ${node.kind}: ${fieldName} — position ${i} (${kindList}) needs a field name`);
 			}
+
+			fields[fieldName] = {
+				types,
+				multiple: slot.multiple,
+				required: slot.required ?? false,
+				position: i,
+			};
 		}
 
 		if (Object.keys(fields).length > 0) {
@@ -165,10 +163,42 @@ function mergeAutoOverridesToDisk(grammar: string, autoOverrides: OverridesConfi
 	let changed = false;
 	for (const [kind, entry] of Object.entries(autoOverrides)) {
 		if (!disk[kind]) {
+			// New kind — add entirely from auto-generation
 			disk[kind] = entry;
 			changed = true;
+		} else {
+			// Kind exists on disk — update types/multiple/required/position from auto
+			// while preserving human-curated field names.
+			const diskFields = disk[kind]!.fields;
+			const autoFields = entry.fields;
+
+			// Match by position: auto-generated fields carry position, disk fields
+			// may have been renamed but share the same position.
+			const autoByPos = new Map<number, [string, OverrideFieldDef]>();
+			for (const [name, def] of Object.entries(autoFields)) {
+				autoByPos.set(def.position, [name, def]);
+			}
+
+			for (const [diskName, diskDef] of Object.entries(diskFields)) {
+				const auto = autoByPos.get(diskDef.position);
+				if (auto) {
+					const [, autoDef] = auto;
+					// Update mechanical facts from grammar
+					if (JSON.stringify(diskDef.types) !== JSON.stringify(autoDef.types)) {
+						diskDef.types = autoDef.types;
+						changed = true;
+					}
+					if (diskDef.multiple !== autoDef.multiple) {
+						diskDef.multiple = autoDef.multiple;
+						changed = true;
+					}
+					if (diskDef.required !== autoDef.required) {
+						diskDef.required = autoDef.required;
+						changed = true;
+					}
+				}
+			}
 		}
-		// If kind already exists on disk, human has taken ownership — don't merge auto-generated fields
 	}
 
 	if (changed) {

@@ -2,228 +2,958 @@
   "array_expression": {
     "fields": {
       "attributes": {
-        "multiple": true
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 0
       },
       "elements": {
-        "multiple": true
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          },
+          {
+            "type": "attribute_item",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
       }
     }
   },
   "block": {
     "fields": {
-      "label": {},
-      "statements": {
-        "multiple": true
+      "label": {
+        "types": [
+          {
+            "type": "label",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
       },
-      "expression": {}
+      "statements": {
+        "types": [
+          {
+            "type": "_statement",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
+      },
+      "expression": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "bounded_type": {
     "fields": {
-      "left": {},
-      "right": {}
+      "left": {
+        "types": [
+          {
+            "type": "lifetime",
+            "named": true
+          },
+          {
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "use_bounds",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "right": {
+        "types": [
+          {
+            "type": "lifetime",
+            "named": true
+          },
+          {
+            "type": "_type",
+            "named": true
+          },
+          {
+            "type": "use_bounds",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "break_expression": {
     "fields": {
-      "label": {},
-      "expression": {}
+      "label": {
+        "types": [
+          {
+            "type": "label",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "expression": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "captured_pattern": {
     "fields": {
-      "identifier": {},
-      "pattern": {}
+      "identifier": {
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "pattern": {
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "enum_item": {
     "fields": {
-      "visibility_modifier": {},
-      "where_clause": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "extern_crate_declaration": {
     "fields": {
-      "visibility_modifier": {},
-      "crate": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "crate": {
+        "types": [
+          {
+            "type": "crate",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "foreign_mod_item": {
     "fields": {
-      "visibility_modifier": {},
-      "extern_modifier": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "extern_modifier": {
+        "types": [
+          {
+            "type": "extern_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "function_item": {
     "fields": {
-      "visibility_modifier": {},
-      "function_modifiers": {},
-      "where_clause": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "function_modifiers": {
+        "types": [
+          {
+            "type": "function_modifiers",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "function_signature_item": {
     "fields": {
-      "visibility_modifier": {},
-      "function_modifiers": {},
-      "where_clause": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "function_modifiers": {
+        "types": [
+          {
+            "type": "function_modifiers",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "function_type": {
     "fields": {
-      "for_lifetimes": {},
-      "function_modifiers": {}
+      "for_lifetimes": {
+        "types": [
+          {
+            "type": "for_lifetimes",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "function_modifiers": {
+        "types": [
+          {
+            "type": "function_modifiers",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "index_expression": {
     "fields": {
-      "object": {},
-      "index": {}
+      "object": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "index": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "macro_definition": {
     "fields": {
       "rules": {
-        "multiple": true
+        "types": [
+          {
+            "type": "macro_rule",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 0
       },
-      "rule": {}
+      "rule": {
+        "types": [
+          {
+            "type": "macro_rule",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "mut_pattern": {
     "fields": {
-      "mutable_specifier": {},
-      "pattern": {}
+      "mutable_specifier": {
+        "types": [
+          {
+            "type": "mutable_specifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "pattern": {
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "negative_literal": {
     "fields": {
       "operator": {
-        "anonymous": true
+        "types": [
+          {
+            "type": "-",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": -1
       },
-      "value": {}
+      "value": {
+        "types": [
+          {
+            "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      }
     }
   },
   "or_pattern": {
     "fields": {
-      "left": {},
-      "right": {}
+      "left": {
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "right": {
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "ordered_field_declaration_list": {
     "fields": {
       "attributes": {
-        "multiple": true
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 0
       },
-      "visibility_modifier": {},
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
       "declarations": {
-        "multiple": true
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          },
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 2
       }
     }
   },
   "range_expression": {
     "fields": {
-      "start": {},
-      "end": {}
+      "start": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "end": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "raw_string_literal": {
     "fields": {
-      "raw_string_literal_start": {},
-      "string_content": {},
-      "raw_string_literal_end": {}
+      "raw_string_literal_start": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "string_content": {
+        "types": [
+          {
+            "type": "string_content",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      },
+      "raw_string_literal_end": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "reference_pattern": {
     "fields": {
-      "mutable_specifier": {},
-      "pattern": {}
+      "mutable_specifier": {
+        "types": [
+          {
+            "type": "mutable_specifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "pattern": {
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "reference_type": {
     "fields": {
-      "lifetime": {},
-      "mutable_specifier": {}
+      "lifetime": {
+        "types": [
+          {
+            "type": "lifetime",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "mutable_specifier": {
+        "types": [
+          {
+            "type": "mutable_specifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "self_parameter": {
     "fields": {
-      "lifetime": {},
-      "mutable_specifier": {},
-      "self": {}
+      "lifetime": {
+        "types": [
+          {
+            "type": "mutable_specifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "mutable_specifier": {
+        "types": [
+          {
+            "type": "self",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      },
+      "self": {
+        "types": [
+          {
+            "type": "self",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "shorthand_field_initializer": {
     "fields": {
       "attributes": {
-        "multiple": true
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 0
       },
-      "identifier": {}
+      "identifier": {
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "source_file": {
     "fields": {
-      "shebang": {},
+      "shebang": {
+        "types": [
+          {
+            "type": "shebang",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
       "statements": {
-        "multiple": true
+        "types": [
+          {
+            "type": "_statement",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
       }
     }
   },
   "static_item": {
     "fields": {
-      "visibility_modifier": {},
-      "mutable_specifier": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "mutable_specifier": {
+        "types": [
+          {
+            "type": "mutable_specifier",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "struct_item": {
     "fields": {
-      "visibility_modifier": {},
-      "where_clause": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "trait_item": {
     "fields": {
-      "visibility_modifier": {},
-      "where_clause": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "try_expression": {
     "fields": {
-      "value": {},
+      "value": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
       "operator": {
-        "anonymous": true
+        "types": [
+          {
+            "type": "?",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": -1
       }
     }
   },
   "tuple_expression": {
     "fields": {
       "attributes": {
-        "multiple": true
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 0
       },
-      "first": {},
+      "first": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      },
       "rest": {
-        "multiple": true
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 2
       },
-      "trailing": {}
+      "trailing": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 3
+      }
     }
   },
   "type_item": {
     "fields": {
-      "visibility_modifier": {},
-      "where_clause": {},
-      "trailing_where_clause": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "trailing_where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "unary_expression": {
     "fields": {
       "operator": {
-        "anonymous": true
+        "types": [
+          {
+            "type": "-",
+            "named": false
+          },
+          {
+            "type": "*",
+            "named": false
+          },
+          {
+            "type": "!",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": -1
       },
-      "operand": {}
+      "operand": {
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      }
     }
   },
   "union_item": {
     "fields": {
-      "visibility_modifier": {},
-      "where_clause": {}
+      "visibility_modifier": {
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "where_clause": {
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   }
 }

@@ -352,8 +352,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'outer', required: false, multiple: false },
   ],
   'bounded_type': [
-    { name: 'left', required: false, multiple: false },
-    { name: 'right', required: false, multiple: false },
+    { name: 'left', required: true, multiple: false },
+    { name: 'right', required: true, multiple: false },
   ],
   'bracketed_type': [
   ],
@@ -366,8 +366,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'function', required: true, multiple: false },
   ],
   'captured_pattern': [
-    { name: 'identifier', required: false, multiple: false },
-    { name: 'pattern', required: false, multiple: false },
+    { name: 'identifier', required: true, multiple: false },
+    { name: 'pattern', required: true, multiple: false },
   ],
   'closure_expression': [
     { name: 'body', required: true, multiple: false },
@@ -423,7 +423,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'crate', required: false, multiple: false },
+    { name: 'crate', required: true, multiple: false },
   ],
   'extern_modifier': [
   ],
@@ -457,7 +457,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'foreign_mod_item': [
     { name: 'body', required: false, multiple: false },
     { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'externModifier', required: false, multiple: false },
+    { name: 'externModifier', required: true, multiple: false },
   ],
   'function_item': [
     { name: 'body', required: true, multiple: false },
@@ -520,8 +520,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
   ],
   'index_expression': [
-    { name: 'object', required: false, multiple: false },
-    { name: 'index', required: false, multiple: false },
+    { name: 'object', required: true, multiple: false },
+    { name: 'index', required: true, multiple: false },
   ],
   'inner_attribute_item': [
   ],
@@ -583,15 +583,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   'mut_pattern': [
-    { name: 'mutableSpecifier', required: false, multiple: false },
-    { name: 'pattern', required: false, multiple: false },
+    { name: 'mutableSpecifier', required: true, multiple: false },
+    { name: 'pattern', required: true, multiple: false },
   ],
   'negative_literal': [
-    { name: 'operator', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'operator', required: true, multiple: false },
+    { name: 'value', required: true, multiple: false },
   ],
   'or_pattern': [
-    { name: 'left', required: false, multiple: false },
+    { name: 'left', required: true, multiple: false },
     { name: 'right', required: false, multiple: false },
   ],
   'ordered_field_declaration_list': [
@@ -624,9 +624,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: false, multiple: false },
   ],
   'raw_string_literal': [
-    { name: 'rawStringLiteralStart', required: false, multiple: false },
-    { name: 'stringContent', required: false, multiple: false },
-    { name: 'rawStringLiteralEnd', required: false, multiple: false },
+    { name: 'rawStringLiteralStart', required: true, multiple: false },
+    { name: 'stringContent', required: true, multiple: false },
+    { name: 'rawStringLiteralEnd', required: true, multiple: false },
   ],
   'ref_pattern': [
   ],
@@ -635,7 +635,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'reference_pattern': [
     { name: 'mutableSpecifier', required: false, multiple: false },
-    { name: 'pattern', required: false, multiple: false },
+    { name: 'pattern', required: true, multiple: false },
   ],
   'reference_type': [
     { name: 'type', required: true, multiple: false },
@@ -661,11 +661,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'self_parameter': [
     { name: 'lifetime', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
-    { name: 'self', required: false, multiple: false },
+    { name: 'self', required: true, multiple: false },
   ],
   'shorthand_field_initializer': [
     { name: 'attributes', required: false, multiple: true },
-    { name: 'identifier', required: false, multiple: false },
+    { name: 'identifier', required: true, multiple: false },
   ],
   'slice_pattern': [
   ],
@@ -721,12 +721,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'try_block': [
   ],
   'try_expression': [
-    { name: 'value', required: false, multiple: false },
-    { name: 'operator', required: false, multiple: false },
+    { name: 'value', required: true, multiple: false },
+    { name: 'operator', required: true, multiple: false },
   ],
   'tuple_expression': [
     { name: 'attributes', required: false, multiple: true },
-    { name: 'first', required: false, multiple: false },
+    { name: 'first', required: true, multiple: false },
     { name: 'rest', required: false, multiple: true },
     { name: 'trailing', required: false, multiple: false },
   ],
@@ -764,8 +764,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'type_parameters': [
   ],
   'unary_expression': [
-    { name: 'operator', required: false, multiple: false },
-    { name: 'operand', required: false, multiple: false },
+    { name: 'operator', required: true, multiple: false },
+    { name: 'operand', required: true, multiple: false },
   ],
   'union_item': [
     { name: 'body', required: true, multiple: false },

@@ -1,98 +1,537 @@
 {
   "class_pattern": {
     "fields": {
-      "dotted_name": {},
+      "dotted_name": {
+        "types": [
+          {
+            "type": "dotted_name",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
       "arguments": {
-        "multiple": true
+        "types": [
+          {
+            "type": "case_pattern",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
       }
     }
   },
   "comparison_operator": {
     "fields": {
-      "left": {},
+      "left": {
+        "types": [
+          {
+            "type": "primary_expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
       "comparators": {
-        "multiple": true
+        "types": [
+          {
+            "type": "primary_expression",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": true,
+        "position": 1
       }
     }
   },
   "complex_pattern": {
     "fields": {
-      "real": {},
-      "imaginary": {}
+      "real": {
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "float",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "imaginary": {
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "float",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "conditional_expression": {
     "fields": {
-      "body": {},
-      "condition": {},
-      "alternative": {}
+      "body": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "condition": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      },
+      "alternative": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "constrained_type": {
     "fields": {
-      "type": {},
-      "constraint": {}
+      "base_type": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "constraint": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "decorator": {
     "fields": {
-      "expression": {},
-      "newline": {}
+      "expression": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "newline": {
+        "types": [],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "generic_type": {
     "fields": {
-      "identifier": {},
-      "type_parameter": {}
+      "identifier": {
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "type_parameter": {
+        "types": [
+          {
+            "type": "type_parameter",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "keyword_pattern": {
     "fields": {
-      "identifier": {},
-      "simple_pattern": {}
+      "identifier": {
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "class_pattern",
+            "named": true
+          },
+          {
+            "type": "complex_pattern",
+            "named": true
+          },
+          {
+            "type": "concatenated_string",
+            "named": true
+          },
+          {
+            "type": "dict_pattern",
+            "named": true
+          },
+          {
+            "type": "dotted_name",
+            "named": true
+          },
+          {
+            "type": "false",
+            "named": false
+          },
+          {
+            "type": "float",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list_pattern",
+            "named": true
+          },
+          {
+            "type": "none",
+            "named": false
+          },
+          {
+            "type": "splat_pattern",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "true",
+            "named": false
+          },
+          {
+            "type": "tuple_pattern",
+            "named": true
+          },
+          {
+            "type": "union_pattern",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "simple_pattern": {
+        "types": [
+          {
+            "type": "_simple_pattern",
+            "named": true
+          },
+          {
+            "type": "class_pattern",
+            "named": true
+          },
+          {
+            "type": "complex_pattern",
+            "named": true
+          },
+          {
+            "type": "concatenated_string",
+            "named": true
+          },
+          {
+            "type": "dict_pattern",
+            "named": true
+          },
+          {
+            "type": "dotted_name",
+            "named": true
+          },
+          {
+            "type": "false",
+            "named": false
+          },
+          {
+            "type": "float",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list_pattern",
+            "named": true
+          },
+          {
+            "type": "none",
+            "named": false
+          },
+          {
+            "type": "splat_pattern",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "true",
+            "named": false
+          },
+          {
+            "type": "tuple_pattern",
+            "named": true
+          },
+          {
+            "type": "union_pattern",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "member_type": {
     "fields": {
-      "type": {},
-      "identifier": {}
+      "base_type": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "identifier": {
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   },
   "relative_import": {
     "fields": {
-      "import_prefix": {},
-      "dotted_name": {}
+      "import_prefix": {
+        "types": [
+          {
+            "type": "import_prefix",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "dotted_name": {
+        "types": [
+          {
+            "type": "dotted_name",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      }
     }
   },
   "slice": {
     "fields": {
-      "start": {},
-      "stop": {},
-      "step": {}
+      "start": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 0
+      },
+      "stop": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "step": {
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "string": {
     "fields": {
-      "string_start": {},
-      "content": {
-        "multiple": true
+      "string_start": {
+        "types": [
+          {
+            "type": "string_start",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
       },
-      "string_end": {}
+      "content": {
+        "types": [
+          {
+            "type": "interpolation",
+            "named": true
+          },
+          {
+            "type": "string_content",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 1
+      },
+      "string_end": {
+        "types": [
+          {
+            "type": "string_end",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 2
+      }
     }
   },
   "try_statement": {
     "fields": {
       "except_clauses": {
-        "multiple": true
+        "types": [
+          {
+            "type": "except_clause",
+            "named": true
+          }
+        ],
+        "multiple": true,
+        "required": false,
+        "position": 0
       },
-      "else_clause": {},
-      "finally_clause": {}
+      "else_clause": {
+        "types": [
+          {
+            "type": "else_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 1
+      },
+      "finally_clause": {
+        "types": [
+          {
+            "type": "finally_clause",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": false,
+        "position": 2
+      }
     }
   },
   "union_type": {
     "fields": {
-      "left": {},
-      "right": {}
+      "left": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 0
+      },
+      "right": {
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": 1
+      }
     }
   }
 }

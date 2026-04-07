@@ -339,21 +339,25 @@ export interface ClassDefinition {
 }
 export interface ClassPattern {
   readonly type: 'class_pattern';
-  readonly dottedName: DottedName;
-  readonly casePattern?: readonly (CasePattern)[];
+  readonly fields: {
+    readonly dottedName: DottedName;
+    readonly arguments?: readonly (CasePattern)[];
+  };
 }
 export interface ComparisonOperator {
   readonly type: 'comparison_operator';
   readonly fields: {
     readonly operators: readonly ('!=' | '<' | '<=' | '<>' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in')[];
+    readonly left: PrimaryExpression;
+    readonly comparators: readonly (PrimaryExpression)[];
   };
-  readonly primaryExpression1: PrimaryExpression;
-  readonly primaryExpression2: readonly (PrimaryExpression)[];
 }
 export interface ComplexPattern {
   readonly type: 'complex_pattern';
-  readonly floatOrInteger1: Float | Integer;
-  readonly floatOrInteger2: Float | Integer;
+  readonly fields: {
+    readonly real: Float | Integer;
+    readonly imaginary: Float | Integer;
+  };
 }
 export interface ConcatenatedString {
   readonly type: 'concatenated_string';
@@ -361,14 +365,18 @@ export interface ConcatenatedString {
 }
 export interface ConditionalExpression {
   readonly type: 'conditional_expression';
-  readonly expression1: Expression;
-  readonly expression2: Expression;
-  readonly expression3: Expression;
+  readonly fields: {
+    readonly body: Expression;
+    readonly condition: Expression;
+    readonly alternative: Expression;
+  };
 }
 export interface ConstrainedType {
   readonly type: 'constrained_type';
-  readonly childType1: Type;
-  readonly childType2: Type;
+  readonly fields: {
+    readonly baseType: Type;
+    readonly constraint: Type;
+  };
 }
 export interface DecoratedDefinition {
   readonly type: 'decorated_definition';
@@ -379,7 +387,10 @@ export interface DecoratedDefinition {
 }
 export interface Decorator {
   readonly type: 'decorator';
-  readonly expression: Expression;
+  readonly fields: {
+    readonly expression: Expression;
+    readonly newline: string;
+  };
 }
 export interface DefaultParameter {
   readonly type: 'default_parameter';
@@ -512,8 +523,10 @@ export interface GeneratorExpression {
 }
 export interface GenericType {
   readonly type: 'generic_type';
-  readonly identifier: Identifier;
-  readonly typeParameter: TypeParameter;
+  readonly fields: {
+    readonly identifier: Identifier;
+    readonly typeParameter: TypeParameter;
+  };
 }
 export interface GlobalStatement {
   readonly type: 'global_statement';
@@ -562,8 +575,10 @@ export interface KeywordArgument {
 }
 export interface KeywordPattern {
   readonly type: 'keyword_pattern';
-  readonly identifierOrSimplePattern: Identifier | SimplePattern;
-  readonly simplePattern: SimplePattern;
+  readonly fields: {
+    readonly identifier: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | Float | Identifier | Integer | ListPattern | SplatPattern | String | TuplePattern | UnionPattern;
+    readonly simplePattern: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | Float | Integer | ListPattern | SimplePattern | SplatPattern | String | TuplePattern | UnionPattern;
+  };
 }
 export interface Lambda {
   readonly type: 'lambda';
@@ -608,8 +623,10 @@ export interface MatchStatement {
 }
 export interface MemberType {
   readonly type: 'member_type';
-  readonly childType: Type;
-  readonly identifier: Identifier;
+  readonly fields: {
+    readonly baseType: Type;
+    readonly identifier: Identifier;
+  };
 }
 export interface Module {
   readonly type: 'module';
@@ -671,8 +688,10 @@ export interface RaiseStatement {
 }
 export interface RelativeImport {
   readonly type: 'relative_import';
-  readonly importPrefix: ImportPrefix;
-  readonly dottedName?: DottedName;
+  readonly fields: {
+    readonly importPrefix: ImportPrefix;
+    readonly dottedName?: DottedName;
+  };
 }
 export interface ReturnStatement {
   readonly type: 'return_statement';
@@ -691,9 +710,11 @@ export interface SetComprehension {
 }
 export interface Slice {
   readonly type: 'slice';
-  readonly expression1?: Expression;
-  readonly expression2?: Expression;
-  readonly expression3?: Expression;
+  readonly fields: {
+    readonly start?: Expression;
+    readonly stop?: Expression;
+    readonly step?: Expression;
+  };
 }
 export interface SplatPattern {
   readonly type: 'splat_pattern';
@@ -705,9 +726,11 @@ export interface SplatType {
 }
 export interface String {
   readonly type: 'string';
-  readonly stringStart: StringStart;
-  readonly interpolationOrStringContent?: readonly (Interpolation | StringContent)[];
-  readonly stringEnd: StringEnd;
+  readonly fields: {
+    readonly stringStart: StringStart;
+    readonly content?: readonly (Interpolation | StringContent)[];
+    readonly stringEnd: StringEnd;
+  };
 }
 export interface StringContent {
   readonly type: 'string_content';
@@ -724,10 +747,10 @@ export interface TryStatement {
   readonly type: 'try_statement';
   readonly fields: {
     readonly body: Block;
+    readonly exceptClauses?: readonly (ExceptClause)[];
+    readonly elseClause?: ElseClause;
+    readonly finallyClause?: FinallyClause;
   };
-  readonly exceptClause?: readonly (ExceptClause)[];
-  readonly elseClause?: ElseClause;
-  readonly finallyClause?: FinallyClause;
 }
 export interface Tuple {
   readonly type: 'tuple';
@@ -780,8 +803,10 @@ export interface UnionPattern {
 }
 export interface UnionType {
   readonly type: 'union_type';
-  readonly childType1: Type;
-  readonly childType2: Type;
+  readonly fields: {
+    readonly left: Type;
+    readonly right: Type;
+  };
 }
 export interface WhileStatement {
   readonly type: 'while_statement';

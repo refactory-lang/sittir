@@ -53,13 +53,20 @@ import type { Grammar, GrammarRule } from './grammar.ts';
 // Types
 // ---------------------------------------------------------------------------
 
+export interface OverrideTypeRef {
+	type: string;
+	named: boolean;
+}
+
 export interface OverrideFieldDef {
-	/** True if this field maps to an anonymous token (operator, delimiter). */
-	anonymous?: boolean;
-	/** Token values to match for anonymous fields (e.g., ["-", "*", "!"] for operator). */
-	values?: string[];
-	/** True if this field is a list (multiple children). */
-	multiple?: boolean;
+	/** The node types this field accepts (same shape as node-types.json). */
+	types: OverrideTypeRef[];
+	/** Whether this field is a list (multiple children). */
+	multiple: boolean;
+	/** Whether this field is required. */
+	required: boolean;
+	/** Positional index in the original children tuple. */
+	position: number;
 }
 
 export interface OverrideEntry {
@@ -179,50 +186,19 @@ export function validateOverrides(
 			}
 		}
 
-		// (b) field count must be plausible for the rule's positional children
-		if (model) {
-			const namedOverrideCount = Object.values(entry.fields).filter(f => !f.anonymous).length;
-			const anonOverrideCount = Object.values(entry.fields).filter(f => f.anonymous).length;
-			let childKindCount = 0;
-			let anonTokenCount = 0;
-			if (model.modelType === 'container' || model.modelType === 'branch') {
-				const children = model.modelType === 'container' ? model.children : model.children;
-				if (children) {
-					if (Array.isArray(children)) {
-						childKindCount = children.reduce((sum, slot) => sum + slot.kinds.size, 0);
-					} else {
-						childKindCount = children.kinds.size;
-					}
-				}
-			}
-			const rule = grammar.rules[kind];
-			if (rule) anonTokenCount = collectAnonymousTokens(rule).size;
-
-			if (namedOverrideCount > childKindCount && childKindCount > 0) {
-				errors.push({
-					kind,
-					message: `Override defines ${namedOverrideCount} named fields but '${kind}' has only ${childKindCount} children kind(s) — field count may be implausible`,
-				});
-			}
-			if (anonOverrideCount > anonTokenCount && anonTokenCount > 0) {
-				errors.push({
-					kind,
-					message: `Override defines ${anonOverrideCount} anonymous fields but '${kind}' has only ${anonTokenCount} anonymous token(s) in grammar rule`,
-				});
-			}
-		}
-
-		// (c) anonymous: true fields should map to actual anonymous tokens
+		// (b) Validate types references exist in grammar
 		const grammarRule = grammar.rules[kind];
 		if (grammarRule) {
 			const anonTokens = collectAnonymousTokens(grammarRule);
 			for (const [fieldName, fieldDef] of Object.entries(entry.fields)) {
-				if (fieldDef.anonymous && anonTokens.size === 0) {
-					errors.push({
-						kind,
-						field: fieldName,
-						message: `Override field '${fieldName}' marked anonymous but '${kind}' has no anonymous tokens in grammar rule`,
-					});
+				for (const typeRef of fieldDef.types) {
+					if (!typeRef.named && anonTokens.size === 0) {
+						errors.push({
+							kind,
+							field: fieldName,
+							message: `Override field '${fieldName}' references anonymous type '${typeRef.type}' but '${kind}' has no anonymous tokens in grammar rule`,
+						});
+					}
 				}
 			}
 		}
@@ -256,11 +232,12 @@ function walkRule(rule: GrammarRule, fn: (r: GrammarRule) => void): void {
 
 /**
  * Merge override fields into NodeModels.
+ * Override fields carry their own `types` array (same shape as node-types.json),
+ * so kinds are read directly — no positional guessing needed.
+ *
  * For branch models: appends override fields to the existing fields array.
  * For container models: promotes to branch model with the override fields.
- *
- * Named override fields inherit their kinds from the model's children
- * (since they promote children into fields).
+ * In both cases, children are cleared since overrides fully replace them.
  */
 export function mergeOverrides(
 	models: Map<string, NodeModel>,
@@ -270,59 +247,43 @@ export function mergeOverrides(
 		const model = models.get(kind);
 		if (!model) continue;
 
-		// Collect per-slot kinds for positional mapping to override fields
-		const childSlots = collectChildSlots(model);
-		const namedEntries = Object.entries(entry.fields).filter(([, d]) => !d.anonymous);
-
 		const overrideFields: FieldModel[] = [];
-		let namedIdx = 0;
 		for (const [fieldName, fieldDef] of Object.entries(entry.fields)) {
-			const isMultiple = fieldDef.multiple ?? false;
-			// Anonymous fields have no kinds (they match by token text).
-			// Named fields get kinds from the corresponding child slot (positional).
-			let kinds: Set<string>;
-			if (fieldDef.anonymous) {
-				kinds = new Set<string>();
-			} else if (namedIdx < childSlots.length) {
-				kinds = new Set(childSlots[namedIdx]!);
-				namedIdx++;
-			} else {
-				// Fallback: use all children kinds if no slot available
-				kinds = new Set(collectChildrenKinds(model));
-			}
+			// Extract kinds from the types array (named types only)
+			const namedKinds = new Set(
+				fieldDef.types
+					.filter(t => t.named)
+					.map(t => t.type),
+			);
+			const hasAnonymous = fieldDef.types.some(t => !t.named);
+			const anonValues = fieldDef.types.filter(t => !t.named).map(t => t.type);
+
 			overrideFields.push({
 				name: fieldName,
-				required: false,
-				multiple: isMultiple,
-				kinds,
-				...(isMultiple ? { separator: null } : {}),
+				required: fieldDef.required,
+				multiple: fieldDef.multiple,
+				kinds: namedKinds,
+				position: fieldDef.position,
+				...(fieldDef.multiple ? { separator: null } : {}),
 				override: true,
-				overrideAnonymous: fieldDef.anonymous ?? false,
-				overrideValues: fieldDef.values,
+				overrideAnonymous: hasAnonymous && namedKinds.size === 0,
+				...(anonValues.length > 0 ? { overrideValues: anonValues } : {}),
 			} as FieldModel);
 		}
 
-		// Override fields fully replace children — clear children to avoid duplication
-		const clearChildren = namedEntries.length >= childSlots.length && childSlots.length > 0;
-
 		if (model.modelType === 'branch') {
-			// Append override fields that don't already exist
 			const existingNames = new Set(model.fields.map(f => f.name));
 			for (const f of overrideFields) {
 				if (!existingNames.has(f.name)) {
 					model.fields.push(f);
 				}
 			}
-			if (clearChildren) {
-				(model as any).children = undefined;
-			}
 		} else if (model.modelType === 'container') {
-			// Promote container to branch with override fields (no children — overrides replace them)
 			const branch: BranchModel = {
 				modelType: 'branch',
 				kind: model.kind,
 				fields: overrideFields,
-				children: clearChildren ? undefined : model.children,
+				children: model.children,
 				rule: model.rule,
 				typeName: model.typeName,
 				factoryName: model.factoryName,
@@ -330,41 +291,6 @@ export function mergeOverrides(
 			models.set(kind, branch);
 		}
 	}
-}
-
-/** Collect kinds per child slot (preserves positional order for tuple children). */
-function collectChildSlots(model: NodeModel): string[][] {
-	let children: import('./node-model.ts').ChildrenModel | undefined;
-	if (model.modelType === 'branch') children = model.children;
-	else if (model.modelType === 'container') children = model.children;
-	else return [];
-
-	if (!children) return [];
-
-	if (Array.isArray(children)) {
-		return children.map(slot => [...slot.kinds]);
-	}
-	return [[...children.kinds]];
-}
-
-/** Collect all kinds from a model's children slots. */
-function collectChildrenKinds(model: NodeModel): string[] {
-	let children: import('./node-model.ts').ChildrenModel | undefined;
-	if (model.modelType === 'branch') children = model.children;
-	else if (model.modelType === 'container') children = model.children;
-	else return [];
-
-	if (!children) return [];
-
-	const kinds = new Set<string>();
-	if (Array.isArray(children)) {
-		for (const slot of children) {
-			for (const k of slot.kinds) kinds.add(k);
-		}
-	} else {
-		for (const k of children.kinds) kinds.add(k);
-	}
-	return [...kinds];
 }
 
 // ---------------------------------------------------------------------------

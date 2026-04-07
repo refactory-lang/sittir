@@ -49,6 +49,8 @@ export interface SingleFieldModel {
 	required: boolean;
 	multiple: false;
 	kinds: Set<string>;
+	/** Positional index in the parent's children tuple (-1 for anonymous-only). */
+	position?: number;
 	propertyName?: string;
 	fieldSignature?: FieldSignature;
 	/** True if this field comes from overrides.json (not a tree-sitter FIELD). */
@@ -65,6 +67,8 @@ export interface ListFieldModel {
 	multiple: true;
 	kinds: Set<string>;
 	separator: string | null;
+	/** Positional index in the parent's children tuple (-1 for anonymous-only). */
+	position?: number;
 	propertyName?: string;
 	fieldSignature?: FieldSignature;
 	/** True if this field comes from overrides.json (not a tree-sitter FIELD). */
@@ -87,6 +91,8 @@ export interface SingleChildModel {
 	kinds: Set<string>;
 	/** Slot name from grammar (kind-as-name or NEEDS_NAME placeholder). */
 	name?: string | null;
+	/** Positional index in the parent's children tuple. */
+	position?: number;
 	childSignature?: ChildSignature;
 }
 
@@ -97,6 +103,8 @@ export interface ListChildModel {
 	separator: string | null;
 	/** Slot name from grammar (kind-as-name or NEEDS_NAME placeholder). */
 	name?: string | null;
+	/** Positional index in the parent's children tuple. */
+	position?: number;
 	childSignature?: ChildSignature;
 }
 
@@ -464,9 +472,9 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 	// Build children from grammar positions, supplemented by NT kinds
 	if (grammarHasChildren && modelHasChildren) {
 		model.children = buildChildrenFromGrammar(model.children!, rule.children!, rule.separators);
-		// Refine override field kinds/multiple from their matching child slots
-		if (model.children && isTupleChildren(model.children) && model.fields.some(f => f.override)) {
-			refineOverrideFieldsFromSlots(model);
+		// Remove child slots covered by override fields
+		if (model.children && model.fields.some(f => f.override)) {
+			removeOverriddenChildSlots(model);
 		}
 	}
 
@@ -513,19 +521,19 @@ function buildChildrenFromGrammar(
 	// Children separator from grammar rule (REPEAT(SEQ(STRING, non-FIELD)))
 	const childSep = separators?.get('__children__') ?? null;
 
-	function buildSlot(rc: EnrichedChildInfo): ChildModel {
+	function buildSlot(rc: EnrichedChildInfo, index: number): ChildModel {
 		// Grammar kinds + NT-only supplements
 		const kinds = new Set([...rc.kinds, ...ntOnlyKinds]);
 		if (rc.multiple) {
-			return { required: rc.required, multiple: true, kinds, separator: childSep, name: rc.name } as ListChildModel;
+			return { required: rc.required, multiple: true, kinds, separator: childSep, name: rc.name, position: index } as ListChildModel;
 		}
-		return { required: rc.required, multiple: false, kinds, name: rc.name } as SingleChildModel;
+		return { required: rc.required, multiple: false, kinds, name: rc.name, position: index } as SingleChildModel;
 	}
 
 	if (ruleChildren.length === 1) {
-		return buildSlot(ruleChildren[0]!);
+		return buildSlot(ruleChildren[0]!, 0);
 	}
-	return ruleChildren.map(buildSlot);
+	return ruleChildren.map((rc, i) => buildSlot(rc, i));
 }
 
 function enrichLeaf(model: LeafModel, rule: LeafRule): void {
@@ -558,19 +566,33 @@ function enrichSupertype(model: SupertypeModel, rule: SupertypeRule): void {
  * Override fields are generated in child slot order, so positional matching is
  * used: override field i ↔ child slot i.
  */
-function refineOverrideFieldsFromSlots(branch: BranchModel): void {
+/**
+ * Remove child slots that are covered by override fields (matched by position).
+ * Override fields carry their own `types` — they are the source of truth for kinds.
+ * Remaining uncovered child slots stay as `children`.
+ */
+function removeOverriddenChildSlots(branch: BranchModel): void {
 	if (!branch.children || !isTupleChildren(branch.children)) return;
 	const slots = branch.children as ChildModel[];
-	const overrideFields = branch.fields.filter(f => f.override);
 
-	for (let i = 0; i < overrideFields.length && i < slots.length; i++) {
-		const field = overrideFields[i]!;
-		const slot = slots[i]!;
-		field.kinds = new Set(slot.kinds);
-		(field as any).multiple = slot.multiple;
-		if (slot.multiple) {
-			(field as any).separator = (slot as ListChildModel).separator ?? null;
+	// Collect positions covered by override fields
+	const coveredPositions = new Set<number>();
+	for (const field of branch.fields) {
+		if (!field.override || field.overrideAnonymous) continue;
+		if (field.position != null && field.position >= 0) {
+			coveredPositions.add(field.position);
 		}
+	}
+
+	// Filter out covered slots
+	const remaining = slots.filter((_slot, i) => !coveredPositions.has(i));
+
+	if (remaining.length === 0) {
+		branch.children = undefined;
+	} else if (remaining.length === 1) {
+		branch.children = remaining[0]!;
+	} else {
+		branch.children = remaining;
 	}
 }
 
@@ -647,12 +669,10 @@ export function reconcile(
 			if (branch.fields.some(f => f.override)) {
 				const containerRule = rule as ContainerRule;
 				if (containerRule.children.length > 0) {
+					// Build children from grammar, then remove slots covered by overrides
 					const existing = branch.children ?? { required: false, multiple: false, kinds: new Set<string>() } as SingleChildModel;
 					branch.children = buildChildrenFromGrammar(existing, containerRule.children, containerRule.separators);
-					// Refine override field kinds/multiple from their matching child slots
-					if (isTupleChildren(branch.children)) {
-						refineOverrideFieldsFromSlots(branch);
-					}
+					removeOverriddenChildSlots(branch);
 				}
 				branch.rule = rule;
 				continue;
