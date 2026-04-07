@@ -148,16 +148,16 @@ describe('attribute', () => {
 
 describe('augmented_assignment', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.augmentedAssignment({ left: ir.identifier('test_left') as any, operator: '+=' as any, right: ir.identifier('test_right') as any });
+    const node = ir.augmentedAssignment({ left: ir.identifier('test_left') as any, operator: '%=' as any, right: ir.identifier('test_right') as any });
     expect(node.type).toBe('augmented_assignment');
   });
   it('renders to non-empty string', () => {
-    const node = ir.augmentedAssignment({ left: ir.identifier('test_left') as any, operator: '+=' as any, right: ir.identifier('test_right') as any });
+    const node = ir.augmentedAssignment({ left: ir.identifier('test_left') as any, operator: '%=' as any, right: ir.identifier('test_right') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.augmentedAssignment({ left: ir.identifier('test_left') as any, operator: '+=' as any, right: ir.identifier('test_right') as any });
+    const node = ir.augmentedAssignment({ left: ir.identifier('test_left') as any, operator: '%=' as any, right: ir.identifier('test_right') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
@@ -187,16 +187,16 @@ describe('await', () => {
 
 describe('binary_operator', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.binaryOperator({ left: ir.identifier('test_left') as any, operator: '+' as any, right: ir.identifier('test_right') as any });
+    const node = ir.binaryOperator({ left: ir.identifier('test_left') as any, operator: '%' as any, right: ir.identifier('test_right') as any });
     expect(node.type).toBe('binary_operator');
   });
   it('renders to non-empty string', () => {
-    const node = ir.binaryOperator({ left: ir.identifier('test_left') as any, operator: '+' as any, right: ir.identifier('test_right') as any });
+    const node = ir.binaryOperator({ left: ir.identifier('test_left') as any, operator: '%' as any, right: ir.identifier('test_right') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.binaryOperator({ left: ir.identifier('test_left') as any, operator: '+' as any, right: ir.identifier('test_right') as any });
+    const node = ir.binaryOperator({ left: ir.identifier('test_left') as any, operator: '%' as any, right: ir.identifier('test_right') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
@@ -1240,26 +1240,26 @@ describe('keyword_argument', () => {
 
 describe('keyword_pattern', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.keywordPattern({ namedExpressionLhsOrSimplePattern: ir.identifier('test_namedExpressionLhsOrSimplePattern') as any, simplePatternOrSimplePattern: ir.false() as any });
+    const node = ir.keywordPattern({ identifierOrSimplePattern: ir.identifier('test_identifierOrSimplePattern') as any, simplePattern: ir.false() as any });
     expect(node.type).toBe('keyword_pattern');
   });
   it('renders to non-empty string', () => {
-    const node = ir.keywordPattern({ namedExpressionLhsOrSimplePattern: ir.identifier('test_namedExpressionLhsOrSimplePattern') as any, simplePatternOrSimplePattern: ir.false() as any });
+    const node = ir.keywordPattern({ identifierOrSimplePattern: ir.identifier('test_identifierOrSimplePattern') as any, simplePattern: ir.false() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.keywordPattern({ namedExpressionLhsOrSimplePattern: ir.identifier('test_namedExpressionLhsOrSimplePattern') as any, simplePatternOrSimplePattern: ir.false() as any });
+    const node = ir.keywordPattern({ identifierOrSimplePattern: ir.identifier('test_identifierOrSimplePattern') as any, simplePattern: ir.false() as any });
     const source = render(node);
     expect(source).toContain('=');
   });
   it('node.render() works', () => {
-    const node = ir.keywordPattern({ namedExpressionLhsOrSimplePattern: ir.identifier('test_namedExpressionLhsOrSimplePattern') as any, simplePatternOrSimplePattern: ir.false() as any });
+    const node = ir.keywordPattern({ identifierOrSimplePattern: ir.identifier('test_identifierOrSimplePattern') as any, simplePattern: ir.false() as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.keywordPattern({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.false() as any, namedExpressionLhsOrSimplePattern: ir.identifier('test_namedExpressionLhsOrSimplePattern') as any, simplePatternOrSimplePattern: ir.false() as any });
+    const node = ir.keywordPattern({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.false() as any, identifierOrSimplePattern: ir.identifier('test_identifierOrSimplePattern') as any, simplePattern: ir.false() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

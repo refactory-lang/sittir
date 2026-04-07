@@ -284,16 +284,16 @@ describe('base_field_initializer', () => {
 
 describe('binary_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.binaryExpression({ left: ir.identifier('test_left') as any, operator: '&&' as any, right: ir.identifier('test_right') as any });
+    const node = ir.binaryExpression({ left: ir.identifier('test_left') as any, operator: '!=' as any, right: ir.identifier('test_right') as any });
     expect(node.type).toBe('binary_expression');
   });
   it('renders to non-empty string', () => {
-    const node = ir.binaryExpression({ left: ir.identifier('test_left') as any, operator: '&&' as any, right: ir.identifier('test_right') as any });
+    const node = ir.binaryExpression({ left: ir.identifier('test_left') as any, operator: '!=' as any, right: ir.identifier('test_right') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.binaryExpression({ left: ir.identifier('test_left') as any, operator: '&&' as any, right: ir.identifier('test_right') as any });
+    const node = ir.binaryExpression({ left: ir.identifier('test_left') as any, operator: '!=' as any, right: ir.identifier('test_right') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
@@ -426,7 +426,7 @@ describe('break_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.breakExpression({ label: ir.label({ children: ir.identifier('test_children') as any }) as any, Expression: ir.identifier('test__expression') as any, expression: ir.identifier('test_expression') as any });
+    const node = ir.breakExpression({ label: ir.label({ children: ir.identifier('test_children') as any }) as any, expression: ir.identifier('test_expression') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -470,7 +470,7 @@ describe('captured_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.capturedPattern({ identifier: ir.identifier('test_identifier') as any, Pattern: ir.identifier('test__pattern') as any, pattern: ir.identifier('test_pattern') as any });
+    const node = ir.capturedPattern({ identifier: ir.identifier('test_identifier') as any, pattern: ir.identifier('test_pattern') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -528,16 +528,16 @@ describe('closure_parameters', () => {
 
 describe('compound_assignment_expr', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.compoundAssignmentExpr({ left: ir.identifier('test_left') as any, operator: '+=' as any, right: ir.identifier('test_right') as any });
+    const node = ir.compoundAssignmentExpr({ left: ir.identifier('test_left') as any, operator: '%=' as any, right: ir.identifier('test_right') as any });
     expect(node.type).toBe('compound_assignment_expr');
   });
   it('renders to non-empty string', () => {
-    const node = ir.compoundAssignmentExpr({ left: ir.identifier('test_left') as any, operator: '+=' as any, right: ir.identifier('test_right') as any });
+    const node = ir.compoundAssignmentExpr({ left: ir.identifier('test_left') as any, operator: '%=' as any, right: ir.identifier('test_right') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('node.render() works', () => {
-    const node = ir.compoundAssignmentExpr({ left: ir.identifier('test_left') as any, operator: '+=' as any, right: ir.identifier('test_right') as any });
+    const node = ir.compoundAssignmentExpr({ left: ir.identifier('test_left') as any, operator: '%=' as any, right: ir.identifier('test_right') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
@@ -1822,7 +1822,7 @@ describe('mut_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.mutPattern({ NEEDS_NAME_0: ir.mutableSpecifier() as any, Pattern: ir.identifier('test__pattern') as any, mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
+    const node = ir.mutPattern({ NEEDS_NAME_0: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any, mutableSpecifier: ir.mutableSpecifier() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2153,7 +2153,7 @@ describe('reference_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.referencePattern({ NEEDS_NAME_0: ir.mutableSpecifier() as any, Pattern: ir.identifier('test__pattern') as any, mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
+    const node = ir.referencePattern({ NEEDS_NAME_0: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any, mutableSpecifier: ir.mutableSpecifier() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

@@ -32,9 +32,9 @@ rules:
   block_comment: /* $OUTER $DOC */ $INNER
   bounded_type: $$$LIFETIME + $$$CHILDREN $NEEDS_NAME_0 $NEEDS_NAME_1
   bracketed_type: <$CHILDREN>
-  break_expression: break $LABEL $$$CHILDREN $LABEL $_EXPRESSION
+  break_expression: break $LABEL $$$CHILDREN $LABEL $EXPRESSION
   call_expression: $FUNCTION $ARGUMENTS
-  captured_pattern: $IDENTIFIER @ $$$CHILDREN $IDENTIFIER $_PATTERN
+  captured_pattern: $IDENTIFIER @ $$$CHILDREN $IDENTIFIER $PATTERN
   closure_expression:
     template: $PARAMETERS $RETURN_TYPE_CLAUSE $BODY
     return_type_clause: -> $RETURN_TYPE
@@ -128,7 +128,7 @@ rules:
     template: $CHILDREN $CONDITION_CLAUSE
     condition_clause: if $CONDITION
   mod_item: $CHILDREN mod $NAME $BODY
-  mut_pattern: $MUTABLE_SPECIFIER $$$CHILDREN $NEEDS_NAME_0 $_PATTERN
+  mut_pattern: $MUTABLE_SPECIFIER $$$CHILDREN $NEEDS_NAME_0 $PATTERN
   negative_literal: "- $CHILDREN"
   or_pattern: $$$CHILDREN | $NEEDS_NAME_0 $NEEDS_NAME_1
   ordered_field_declaration_list:
@@ -146,7 +146,7 @@ rules:
   raw_string_literal: $$$CHILDREN $STRING_CONTENT $NEEDS_NAME_0 $STRING_CONTENT $NEEDS_NAME_2
   ref_pattern: ref $CHILDREN
   reference_expression: "& raw $CHILDREN $VALUE"
-  reference_pattern: "& $MUTABLE_SPECIFIER $$$CHILDREN $NEEDS_NAME_0 $_PATTERN"
+  reference_pattern: "& $MUTABLE_SPECIFIER $$$CHILDREN $NEEDS_NAME_0 $PATTERN"
   reference_type: "& $LIFETIME $MUTABLE_SPECIFIER $TYPE $LIFETIME $NEEDS_NAME_1 $$$CHILDREN"
   removed_trait_bound: "? $CHILDREN"
   return_expression: return $CHILDREN
