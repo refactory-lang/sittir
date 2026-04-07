@@ -270,25 +270,40 @@ export function mergeOverrides(
 		const model = models.get(kind);
 		if (!model) continue;
 
-		// Collect all children kinds from the model to assign to named override fields
-		const childrenKinds = collectChildrenKinds(model);
+		// Collect per-slot kinds for positional mapping to override fields
+		const childSlots = collectChildSlots(model);
+		const namedEntries = Object.entries(entry.fields).filter(([, d]) => !d.anonymous);
 
 		const overrideFields: FieldModel[] = [];
+		let namedIdx = 0;
 		for (const [fieldName, fieldDef] of Object.entries(entry.fields)) {
 			const isMultiple = fieldDef.multiple ?? false;
+			// Anonymous fields have no kinds (they match by token text).
+			// Named fields get kinds from the corresponding child slot (positional).
+			let kinds: Set<string>;
+			if (fieldDef.anonymous) {
+				kinds = new Set<string>();
+			} else if (namedIdx < childSlots.length) {
+				kinds = new Set(childSlots[namedIdx]!);
+				namedIdx++;
+			} else {
+				// Fallback: use all children kinds if no slot available
+				kinds = new Set(collectChildrenKinds(model));
+			}
 			overrideFields.push({
 				name: fieldName,
 				required: false,
 				multiple: isMultiple,
-				// Anonymous fields have no kinds (they match by token text).
-				// Named fields inherit from the model's children kinds.
-				kinds: new Set(fieldDef.anonymous ? [] : childrenKinds),
+				kinds,
 				...(isMultiple ? { separator: null } : {}),
 				override: true,
 				overrideAnonymous: fieldDef.anonymous ?? false,
 				overrideValues: fieldDef.values,
 			} as FieldModel);
 		}
+
+		// Override fields fully replace children — clear children to avoid duplication
+		const clearChildren = namedEntries.length >= childSlots.length && childSlots.length > 0;
 
 		if (model.modelType === 'branch') {
 			// Append override fields that don't already exist
@@ -298,13 +313,16 @@ export function mergeOverrides(
 					model.fields.push(f);
 				}
 			}
+			if (clearChildren) {
+				(model as any).children = undefined;
+			}
 		} else if (model.modelType === 'container') {
-			// Promote container to branch with override fields + children
+			// Promote container to branch with override fields (no children — overrides replace them)
 			const branch: BranchModel = {
 				modelType: 'branch',
 				kind: model.kind,
 				fields: overrideFields,
-				children: model.children,
+				children: clearChildren ? undefined : model.children,
 				rule: model.rule,
 				typeName: model.typeName,
 				factoryName: model.factoryName,
@@ -312,6 +330,21 @@ export function mergeOverrides(
 			models.set(kind, branch);
 		}
 	}
+}
+
+/** Collect kinds per child slot (preserves positional order for tuple children). */
+function collectChildSlots(model: NodeModel): string[][] {
+	let children: import('./node-model.ts').ChildrenModel | undefined;
+	if (model.modelType === 'branch') children = model.children;
+	else if (model.modelType === 'container') children = model.children;
+	else return [];
+
+	if (!children) return [];
+
+	if (Array.isArray(children)) {
+		return children.map(slot => [...slot.kinds]);
+	}
+	return [[...children.kinds]];
 }
 
 /** Collect all kinds from a model's children slots. */
