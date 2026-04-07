@@ -3,6 +3,45 @@
  *
  * Loads `overrides.json` per grammar, validates against the grammar rule structure,
  * and merges override fields into NodeModels during the build pipeline.
+ *
+ * ## Naming Conventions
+ *
+ * Override field names must avoid collision with built-in NodeData properties:
+ *   `type`, `named`, `fields`, `children`, `render`, `toEdit`, `replace`
+ *
+ * Naming tiers (in preference order):
+ *
+ * 1. **Kind-as-name** — single unique kind in the slot (auto-assigned):
+ *    `visibility_modifier`, `where_clause`, `label`, `shebang`
+ *
+ * 2. **Hidden-rule-as-name** — _ prefix stripped (auto-assigned):
+ *    `_expression` → `expression`, `_pattern` → `pattern`
+ *
+ * 3. **Semantic names** — hand-curated for multi-kind or same-kind-in-multiple-positions:
+ *    - Binary:     `left` / `right` (bounded_type, or_pattern, union_type, intersection_type)
+ *    - Positional: `start` / `end` (range_expression), `start` / `stop` / `step` (slice),
+ *                  `object` / `index` (index_expression), `body` / `condition` / `alternative`
+ *    - Unary ops:  `operator` (anonymous) + `operand` / `value`
+ *    - Sequences:  `first` / `rest*` / `trailing` (tuple_expression)
+ *    - Same-kind:  `where_clause` / `trailing_where_clause` (type_item),
+ *                  `rules*` / `rule` (macro_definition)
+ *
+ * 4. **Pluralized multiples** — `multiple: true` fields use plural form:
+ *    `statements*`, `members*`, `declarators*`, `elements*`, `attributes*`,
+ *    `comparators*`, `except_clauses*`, `declarations*`
+ *
+ * 5. **Interleaved attributes** — `(attr* vis? element, ...)` patterns:
+ *    `attributes*` / `visibility_modifier` / `declarations*` (ordered_field_declaration_list)
+ *    These are the hardest cases — SEQ of different kinds inside a comma list.
+ *
+ * ## Reserved Names
+ *
+ * The following names collide with NodeData properties and must NOT be used:
+ *   `type`, `named`, `fields`, `children`, `render`, `toEdit`, `replace`
+ *
+ * JS reserved words (`default`, `class`, `new`, etc.) are also problematic as
+ * they cannot be used as method names in object literals. Use suffixed variants:
+ *   `default` → `default_import`, `class` → `class_body`, etc.
  */
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -63,9 +102,24 @@ export function loadOverrides(grammarName: string): OverridesConfig {
 	return parseOverridesFile(overridesPath);
 }
 
+/** Names that collide with built-in NodeData properties or object literal methods. */
+const RESERVED_FIELD_NAMES = new Set([
+	'type', 'named', 'fields', 'children',
+	'render', 'toEdit', 'replace',
+]);
+
 function parseOverridesFile(path: string): OverridesConfig {
 	try {
-		return JSON.parse(readFileSync(path, 'utf-8')) as OverridesConfig;
+		const config = JSON.parse(readFileSync(path, 'utf-8')) as OverridesConfig;
+		// Validate field names against reserved set
+		for (const [kind, entry] of Object.entries(config)) {
+			for (const fieldName of Object.keys(entry.fields)) {
+				if (RESERVED_FIELD_NAMES.has(fieldName)) {
+					throw new Error(`${kind}.${fieldName}: '${fieldName}' is a reserved NodeData property — choose a different name`);
+				}
+			}
+		}
+		return config;
 	} catch (e) {
 		console.warn(`[overrides] Failed to parse ${path}: ${e instanceof Error ? e.message : e}`);
 		return {};
