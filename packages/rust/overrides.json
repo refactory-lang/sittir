@@ -25,13 +25,13 @@
   "break_expression": {
     "fields": {
       "label": {},
-      "_expression": {}
+      "expression": {}
     }
   },
   "captured_pattern": {
     "fields": {
       "identifier": {},
-      "_pattern": {}
+      "pattern": {}
     }
   },
   "enum_item": {
@@ -91,7 +91,7 @@
       "NEEDS_NAME_0": {
         "anonymous": true
       },
-      "_pattern": {}
+      "pattern": {}
     }
   },
   "or_pattern": {
@@ -127,7 +127,7 @@
       "NEEDS_NAME_0": {
         "anonymous": true
       },
-      "_pattern": {}
+      "pattern": {}
     }
   },
   "reference_type": {

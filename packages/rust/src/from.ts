@@ -227,7 +227,7 @@ function _rhh310(v: unknown): unknown {
 }
 
 function _rbg0i2o(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){if(['&&','||','&','|','^','==','!=','<','<=','>','>=','<<','>>','+','-','*','/','%'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){if(['!=','%','&','&&','*','+','-','/','<','<<','<=','==','>','>=','>>','^','|','||'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r12k79ex(v: unknown): unknown {
@@ -263,7 +263,7 @@ function _rmv6nku(v: unknown): unknown {
 }
 
 function _r15wvk9k(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){if(['+=','-=','*=','/=','%=','&=','|=','^=','<<=','>>='].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='boolean')return boolean_literal_(v?'true':'false');if(typeof v==='number')return Number.isInteger(v)?integer_literal_(`${v}`):float_literal_(`${v}`);if(typeof v==='string'){if(['%=','&=','*=','+=','-=','/=','<<=','>>=','^=','|='].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1repi6d(v: unknown): unknown {
@@ -875,7 +875,7 @@ export function breakExpressionFrom(input: unknown): unknown {
     const c = nd.children;
     return break_expression_({
       label: f?.['label'],
-      Expression: f?.['_expression'],
+      expression: f?.['expression'],
     } as unknown as BreakExpressionConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -883,11 +883,8 @@ export function breakExpressionFrom(input: unknown): unknown {
   if (obj['label'] !== undefined) {
     resolved['label'] = (isNodeData(obj['label']) ? obj['label'] : Array.isArray(obj['label']) ? labelFrom(obj['label']) : typeof obj['label'] === 'object' ? labelFrom(obj['label']) : obj['label']);
   }
-  if (obj['Expression'] !== undefined) {
-    resolved['Expression'] = _resolveExpression(obj['Expression']);
-  }
-  if (obj.expression !== undefined) {
-    resolved.expression = _resolveExpression(obj.expression);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _resolveExpression(obj['expression']);
   }
   return break_expression_(resolved as BreakExpressionConfig);
 }
@@ -926,7 +923,7 @@ export function capturedPatternFrom(input: unknown): unknown {
     const c = nd.children;
     return captured_pattern_({
       identifier: f?.['identifier'],
-      Pattern: f?.['_pattern'],
+      pattern: f?.['pattern'],
     } as unknown as CapturedPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -934,11 +931,8 @@ export function capturedPatternFrom(input: unknown): unknown {
   if (obj['identifier'] !== undefined) {
     resolved['identifier'] = _resolveReservedIdentifier(obj['identifier']);
   }
-  if (obj['Pattern'] !== undefined) {
-    resolved['Pattern'] = _resolvePattern(obj['Pattern']);
-  }
-  if (obj.pattern !== undefined) {
-    resolved.pattern = _resolvePattern(obj.pattern);
+  if (obj['pattern'] !== undefined) {
+    resolved['pattern'] = _resolvePattern(obj['pattern']);
   }
   return captured_pattern_(resolved as CapturedPatternConfig);
 }
@@ -2402,7 +2396,7 @@ export function mutPatternFrom(input: unknown): unknown {
     const c = nd.children;
     return mut_pattern_({
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      Pattern: f?.['_pattern'],
+      pattern: f?.['pattern'],
     } as unknown as MutPatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2410,14 +2404,11 @@ export function mutPatternFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_0'] !== undefined) {
     resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' && obj['NEEDS_NAME_0'] === 'mut' ? mutable_specifier_() : obj['NEEDS_NAME_0']);
   }
-  if (obj['Pattern'] !== undefined) {
-    resolved['Pattern'] = _resolvePattern(obj['Pattern']);
+  if (obj['pattern'] !== undefined) {
+    resolved['pattern'] = _resolvePattern(obj['pattern']);
   }
   if (obj.mutableSpecifier !== undefined) {
     resolved.mutableSpecifier = (isNodeData(obj.mutableSpecifier) ? obj.mutableSpecifier : typeof obj.mutableSpecifier === 'string' && obj.mutableSpecifier === 'mut' ? mutable_specifier_() : obj.mutableSpecifier);
-  }
-  if (obj.pattern !== undefined) {
-    resolved.pattern = _resolvePattern(obj.pattern);
   }
   return mut_pattern_(resolved as MutPatternConfig);
 }
@@ -2774,7 +2765,7 @@ export function referencePatternFrom(input: unknown): unknown {
     const c = nd.children;
     return reference_pattern_({
       NEEDS_NAME_0: f?.['NEEDS_NAME_0'],
-      Pattern: f?.['_pattern'],
+      pattern: f?.['pattern'],
     } as unknown as ReferencePatternConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2782,14 +2773,11 @@ export function referencePatternFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_0'] !== undefined) {
     resolved['NEEDS_NAME_0'] = (isNodeData(obj['NEEDS_NAME_0']) ? obj['NEEDS_NAME_0'] : typeof obj['NEEDS_NAME_0'] === 'string' && obj['NEEDS_NAME_0'] === 'mut' ? mutable_specifier_() : obj['NEEDS_NAME_0']);
   }
-  if (obj['Pattern'] !== undefined) {
-    resolved['Pattern'] = _resolvePattern(obj['Pattern']);
+  if (obj['pattern'] !== undefined) {
+    resolved['pattern'] = _resolvePattern(obj['pattern']);
   }
   if (obj.mutableSpecifier !== undefined) {
     resolved.mutableSpecifier = (isNodeData(obj.mutableSpecifier) ? obj.mutableSpecifier : typeof obj.mutableSpecifier === 'string' && obj.mutableSpecifier === 'mut' ? mutable_specifier_() : obj.mutableSpecifier);
-  }
-  if (obj.pattern !== undefined) {
-    resolved.pattern = _resolvePattern(obj.pattern);
   }
   return reference_pattern_(resolved as ReferencePatternConfig);
 }

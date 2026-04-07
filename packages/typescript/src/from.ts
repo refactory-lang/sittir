@@ -267,7 +267,7 @@ function _rrq76a4(v: unknown): unknown {
 }
 
 function _rh2xyid(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['+=','-=','*=','/=','%=','^=','&=','|=','>>=','>>>=','<<=','**=','&&=','||=','??='].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['%=','&&=','&=','**=','*=','+=','-=','/=','<<=','>>=','>>>=','??=','^=','|=','||='].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1jfh169(v: unknown): unknown {
@@ -275,7 +275,7 @@ function _r1jfh169(v: unknown): unknown {
 }
 
 function _rhkly9f(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['&&','||','>>','>>>','<<','&','^','|','+','-','*','/','%','**','<','<=','==','===','!=','!==','>=','>','??','instanceof','in'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['!=','!==','%','&','&&','*','**','+','-','/','<','<<','<=','==','===','>','>=','>>','>>>','??','^','in','instanceof','|','||'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rc9x5f8(v: unknown): unknown {
@@ -319,7 +319,7 @@ function _r1pr8wc7(v: unknown): unknown {
 }
 
 function _rz3oeel(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['var','let','const'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['const','let','var'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1dxsnpn(v: unknown): unknown {
@@ -379,7 +379,7 @@ function _r1a3965y(v: unknown): unknown {
 }
 
 function _r19mlzvo(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['-','+'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['+','-'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1c9fi5w(v: unknown): unknown {
@@ -403,7 +403,7 @@ function _r1pjzuq3(v: unknown): unknown {
 }
 
 function _ron60d4(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['let','const'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['const','let'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1u0hf2q(v: unknown): unknown {
@@ -495,7 +495,7 @@ function _r62jx5(v: unknown): unknown {
 }
 
 function _rgz232z(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['!','~','-','+','typeof','void','delete'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['!','+','-','delete','typeof','void','~'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r12dn8sc(v: unknown): unknown {
@@ -2143,8 +2143,8 @@ export function importAliasFrom(input: unknown): unknown {
   if (obj.identifier !== undefined) {
     resolved.identifier = _resolveImportIdentifier(obj.identifier);
   }
-  if (obj.importIdentifierOrNestedIdentifier !== undefined) {
-    resolved.importIdentifierOrNestedIdentifier = _r1lq7t9k(obj.importIdentifierOrNestedIdentifier);
+  if (obj.identifierOrNestedIdentifier !== undefined) {
+    resolved.identifierOrNestedIdentifier = _r1lq7t9k(obj.identifierOrNestedIdentifier);
   }
   return import_alias_(resolved as ImportAliasConfig);
 }
@@ -2363,8 +2363,8 @@ export function inferTypeFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _r26qbl2(obj['NEEDS_NAME_1']);
   }
-  if (obj.typeIdentifierOrTypeIdentifier !== undefined) {
-    resolved.typeIdentifierOrTypeIdentifier = _r1bp2k9z(obj.typeIdentifierOrTypeIdentifier);
+  if (obj.typeIdentifier !== undefined) {
+    resolved.typeIdentifier = _r1bp2k9z(obj.typeIdentifier);
   }
   if (obj.typeOrTypeIdentifier !== undefined) {
     resolved.typeOrTypeIdentifier = _r26qbl2(obj.typeOrTypeIdentifier);
@@ -3129,11 +3129,11 @@ export function optionalParameterFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _resolveParameterName(obj['NEEDS_NAME_1']);
   }
-  if (obj.parameterNameOrParameterName !== undefined) {
-    resolved.parameterNameOrParameterName = _r1hu51bk(obj.parameterNameOrParameterName);
+  if (obj.parameterName1 !== undefined) {
+    resolved.parameterName1 = _r1hu51bk(obj.parameterName1);
   }
-  if (obj.parameterName !== undefined) {
-    resolved.parameterName = _resolveParameterName(obj.parameterName);
+  if (obj.parameterName2 !== undefined) {
+    resolved.parameterName2 = _resolveParameterName(obj.parameterName2);
   }
   return optional_parameter_(resolved as OptionalParameterConfig);
 }
@@ -3447,11 +3447,11 @@ export function requiredParameterFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _resolveParameterName(obj['NEEDS_NAME_1']);
   }
-  if (obj.parameterNameOrParameterName !== undefined) {
-    resolved.parameterNameOrParameterName = _r1hu51bk(obj.parameterNameOrParameterName);
+  if (obj.parameterName1 !== undefined) {
+    resolved.parameterName1 = _r1hu51bk(obj.parameterName1);
   }
-  if (obj.parameterName !== undefined) {
-    resolved.parameterName = _resolveParameterName(obj.parameterName);
+  if (obj.parameterName2 !== undefined) {
+    resolved.parameterName2 = _resolveParameterName(obj.parameterName2);
   }
   return required_parameter_(resolved as RequiredParameterConfig);
 }

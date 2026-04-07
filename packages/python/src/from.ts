@@ -191,11 +191,11 @@ function _r49ezd9(v: unknown): unknown {
 }
 
 function _rks19s5(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['+=','-=','*=','/=','@=','//=','%=','**=','>>=','<<=','&=','^=','|='].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['%=','&=','**=','*=','+=','-=','//=','/=','<<=','>>=','@=','^=','|='].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r10smw8c(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['+','-','*','@','/','%','//','**','|','&','^','<<','>>'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['%','&','*','**','+','-','/','//','<<','>>','@','^','|'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1ntg9k1(v: unknown): unknown {
@@ -219,7 +219,7 @@ function _r4s6aba(v: unknown): unknown {
 }
 
 function _r1detdb4(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){if(['<','<=','==','!=','>=','>','<>','in','is','is not','not in'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['!=','<','<=','<>','==','>','>=','in','is','is not','not in'].includes(v))return{type:v,text:v};throw new Error(`Cannot resolve string value: no leaf types accepted for this field`);};if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}throw new Error('No branch types accepted for object value');};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _r1q8uqc0(v: unknown): unknown {
@@ -1739,11 +1739,11 @@ export function keywordPatternFrom(input: unknown): unknown {
   if (obj['NEEDS_NAME_1'] !== undefined) {
     resolved['NEEDS_NAME_1'] = _r1g8zebv(obj['NEEDS_NAME_1']);
   }
-  if (obj.namedExpressionLhsOrSimplePattern !== undefined) {
-    resolved.namedExpressionLhsOrSimplePattern = _rk9rdv8(obj.namedExpressionLhsOrSimplePattern);
+  if (obj.identifierOrSimplePattern !== undefined) {
+    resolved.identifierOrSimplePattern = _rk9rdv8(obj.identifierOrSimplePattern);
   }
-  if (obj.simplePatternOrSimplePattern !== undefined) {
-    resolved.simplePatternOrSimplePattern = _r1g8zebv(obj.simplePatternOrSimplePattern);
+  if (obj.simplePattern !== undefined) {
+    resolved.simplePattern = _r1g8zebv(obj.simplePattern);
   }
   return keyword_pattern_(resolved as KeywordPatternConfig);
 }

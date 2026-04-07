@@ -359,7 +359,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'break_expression': [
     { name: 'label', required: false, multiple: false },
-    { name: 'Expression', required: false, multiple: false },
+    { name: 'expression', required: false, multiple: false },
   ],
   'call_expression': [
     { name: 'arguments', required: true, multiple: false },
@@ -367,7 +367,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'captured_pattern': [
     { name: 'identifier', required: false, multiple: false },
-    { name: 'Pattern', required: false, multiple: false },
+    { name: 'pattern', required: false, multiple: false },
   ],
   'closure_expression': [
     { name: 'body', required: true, multiple: false },
@@ -584,7 +584,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'mut_pattern': [
     { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'Pattern', required: false, multiple: false },
+    { name: 'pattern', required: false, multiple: false },
   ],
   'negative_literal': [
   ],
@@ -633,7 +633,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'reference_pattern': [
     { name: 'NEEDS_NAME_0', required: false, multiple: false },
-    { name: 'Pattern', required: false, multiple: false },
+    { name: 'pattern', required: false, multiple: false },
   ],
   'reference_type': [
     { name: 'type', required: true, multiple: false },

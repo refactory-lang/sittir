@@ -492,8 +492,8 @@ function nameChildSlots(children: EnrichedChildInfo[]): void {
 				// Same kind in multiple positions → needs human naming
 				child.name = `NEEDS_NAME_${child.position}`;
 			} else {
-				// Unique kind → kind-as-name
-				child.name = kind;
+				// Unique kind → kind-as-name (strip _ prefix from hidden rules)
+				child.name = kind.startsWith('_') ? kind.slice(1) : kind;
 			}
 		} else {
 			// Multiple kinds → needs human naming

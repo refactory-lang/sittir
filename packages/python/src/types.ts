@@ -236,7 +236,7 @@ export const enum PrimaryExpressionKind {
 export interface AliasedImport {
   readonly type: 'aliased_import';
   readonly fields: {
-    readonly alias: NamedExpressionLhs;
+    readonly alias: Identifier;
     readonly name: DottedName;
   };
 }
@@ -249,7 +249,7 @@ export interface AsPattern {
   readonly fields: {
     readonly alias?: string;
   };
-  readonly children: CasePattern | Expression | NamedExpressionLhs;
+  readonly children: CasePattern | Expression | Identifier;
 }
 export interface AssertStatement {
   readonly type: 'assert_statement';
@@ -266,7 +266,7 @@ export interface Assignment {
 export interface Attribute {
   readonly type: 'attribute';
   readonly fields: {
-    readonly attribute: NamedExpressionLhs;
+    readonly attribute: Identifier;
     readonly object: PrimaryExpression;
   };
 }
@@ -274,7 +274,7 @@ export interface AugmentedAssignment {
   readonly type: 'augmented_assignment';
   readonly fields: {
     readonly left: LeftHandSide | Pattern | PatternList;
-    readonly operator: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=';
+    readonly operator: '%=' | '&=' | '**=' | '*=' | '+=' | '-=' | '//=' | '/=' | '<<=' | '>>=' | '@=' | '^=' | '|=';
     readonly right: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | RightHandSide | Yield;
   };
 }
@@ -286,7 +286,7 @@ export interface BinaryOperator {
   readonly type: 'binary_operator';
   readonly fields: {
     readonly left: PrimaryExpression;
-    readonly operator: '+' | '-' | '*' | '@' | '/' | '%' | '//' | '**' | '|' | '&' | '^' | '<<' | '>>';
+    readonly operator: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|';
     readonly right: PrimaryExpression;
   };
 }
@@ -315,14 +315,14 @@ export interface Call {
 export interface CaseClause {
   readonly type: 'case_clause';
   readonly fields: {
-    readonly consequence: Suite | Suite;
+    readonly consequence: Block;
     readonly guard?: IfClause;
   };
   readonly children: readonly (CasePattern)[];
 }
 export interface CasePattern {
   readonly type: 'case_pattern';
-  readonly children: AsPattern | KeywordPattern | SimplePattern | SimplePattern;
+  readonly children: AsPattern | KeywordPattern | SimplePattern;
 }
 export interface Chevron {
   readonly type: 'chevron';
@@ -331,8 +331,8 @@ export interface Chevron {
 export interface ClassDefinition {
   readonly type: 'class_definition';
   readonly fields: {
-    readonly body: Suite | Suite;
-    readonly name: NamedExpressionLhs;
+    readonly body: Block;
+    readonly name: Identifier;
     readonly superclasses?: ArgumentList;
     readonly typeParameters?: TypeParameter;
   };
@@ -347,7 +347,7 @@ export interface ClassPattern {
 export interface ComparisonOperator {
   readonly type: 'comparison_operator';
   readonly fields: {
-    readonly operators: readonly ('<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'is' | 'is not' | 'not in')[];
+    readonly operators: readonly ('!=' | '<' | '<=' | '<>' | '==' | '>' | '>=' | 'in' | 'is' | 'is not' | 'not in')[];
     readonly NEEDS_NAME_0?: PrimaryExpression;
     readonly NEEDS_NAME_1?: readonly (PrimaryExpression)[];
   };
@@ -404,7 +404,7 @@ export interface Decorator {
 export interface DefaultParameter {
   readonly type: 'default_parameter';
   readonly fields: {
-    readonly name: NamedExpressionLhs | TuplePattern;
+    readonly name: Identifier | TuplePattern;
     readonly value: Expression;
   };
 }
@@ -425,7 +425,7 @@ export interface DictionaryComprehension {
   readonly fields: {
     readonly body: Pair;
   };
-  readonly children: ComprehensionClauses | ComprehensionClauses | IfClause;
+  readonly children: ForInClause | IfClause;
 }
 export interface DictionarySplat {
   readonly type: 'dictionary_splat';
@@ -433,23 +433,23 @@ export interface DictionarySplat {
 }
 export interface DictionarySplatPattern {
   readonly type: 'dictionary_splat_pattern';
-  readonly children: Attribute | NamedExpressionLhs | Subscript;
+  readonly children: Attribute | Identifier | Subscript;
 }
 export interface DottedName {
   readonly type: 'dotted_name';
-  readonly children: readonly (NamedExpressionLhs)[];
+  readonly children: readonly (Identifier)[];
 }
 export interface ElifClause {
   readonly type: 'elif_clause';
   readonly fields: {
     readonly condition: Expression;
-    readonly consequence: Suite | Suite;
+    readonly consequence: Block;
   };
 }
 export interface ElseClause {
   readonly type: 'else_clause';
   readonly fields: {
-    readonly body: Suite | Suite;
+    readonly body: Block;
   };
 }
 export interface ExceptClause {
@@ -458,12 +458,12 @@ export interface ExceptClause {
     readonly alias?: Expression;
     readonly value?: readonly (Expression)[];
   };
-  readonly children: Suite | Suite;
+  readonly children: Block;
 }
 export interface ExecStatement {
   readonly type: 'exec_statement';
   readonly fields: {
-    readonly code: NamedExpressionLhs | String;
+    readonly code: Identifier | String;
   };
   readonly children?: readonly (Expression)[];
 }
@@ -477,7 +477,7 @@ export interface ExpressionStatement {
 }
 export interface FinallyClause {
   readonly type: 'finally_clause';
-  readonly children: Suite;
+  readonly children: Block;
 }
 export interface ForInClause {
   readonly type: 'for_in_clause';
@@ -490,7 +490,7 @@ export interface ForStatement {
   readonly type: 'for_statement';
   readonly fields: {
     readonly alternative?: ElseClause;
-    readonly body: Suite | Suite;
+    readonly body: Block;
     readonly left: LeftHandSide | Pattern | PatternList;
     readonly right: Expression | ExpressionList | Expressions;
   };
@@ -510,8 +510,8 @@ export interface FormatSpecifier {
 export interface FunctionDefinition {
   readonly type: 'function_definition';
   readonly fields: {
-    readonly body: Suite | Suite;
-    readonly name: NamedExpressionLhs;
+    readonly body: Block;
+    readonly name: Identifier;
     readonly parameters: Parameters;
     readonly returnType?: Type;
     readonly typeParameters?: TypeParameter;
@@ -528,18 +528,18 @@ export interface GeneratorExpression {
   readonly fields: {
     readonly body: Expression;
   };
-  readonly children: ComprehensionClauses | ComprehensionClauses | IfClause;
+  readonly children: ForInClause | IfClause;
 }
 export interface GenericType {
   readonly type: 'generic_type';
   readonly fields: {
-    readonly identifier?: NamedExpressionLhs;
+    readonly identifier?: Identifier;
     readonly typeParameter?: TypeParameter;
   };
 }
 export interface GlobalStatement {
   readonly type: 'global_statement';
-  readonly children: readonly (NamedExpressionLhs)[];
+  readonly children: readonly (Identifier)[];
 }
 export interface IfClause {
   readonly type: 'if_clause';
@@ -550,7 +550,7 @@ export interface IfStatement {
   readonly fields: {
     readonly alternative?: readonly (ElifClause | ElseClause)[];
     readonly condition: Expression;
-    readonly consequence: Suite | Suite;
+    readonly consequence: Block;
   };
 }
 export interface ImportFromStatement {
@@ -578,18 +578,18 @@ export interface Interpolation {
 export interface KeywordArgument {
   readonly type: 'keyword_argument';
   readonly fields: {
-    readonly name: NamedExpressionLhs;
+    readonly name: Identifier;
     readonly value: Expression;
   };
 }
 export interface KeywordPattern {
   readonly type: 'keyword_pattern';
   readonly fields: {
-    readonly NEEDS_NAME_0?: NamedExpressionLhs | SimplePattern;
-    readonly NEEDS_NAME_1?: SimplePattern | SimplePattern;
+    readonly NEEDS_NAME_0?: Identifier | SimplePattern;
+    readonly NEEDS_NAME_1?: SimplePattern;
   };
-  readonly namedExpressionLhsOrSimplePattern: NamedExpressionLhs | SimplePattern;
-  readonly simplePatternOrSimplePattern: SimplePattern | SimplePattern;
+  readonly identifierOrSimplePattern: Identifier | SimplePattern;
+  readonly simplePattern: SimplePattern;
 }
 export interface Lambda {
   readonly type: 'lambda';
@@ -611,7 +611,7 @@ export interface ListComprehension {
   readonly fields: {
     readonly body: Expression;
   };
-  readonly children: ComprehensionClauses | ComprehensionClauses | IfClause;
+  readonly children: ForInClause | IfClause;
 }
 export interface ListPattern {
   readonly type: 'list_pattern';
@@ -619,16 +619,16 @@ export interface ListPattern {
 }
 export interface ListSplat {
   readonly type: 'list_splat';
-  readonly children: Attribute | Expression | NamedExpressionLhs | Subscript;
+  readonly children: Attribute | Expression | Identifier | Subscript;
 }
 export interface ListSplatPattern {
   readonly type: 'list_splat_pattern';
-  readonly children: Attribute | NamedExpressionLhs | Subscript;
+  readonly children: Attribute | Identifier | Subscript;
 }
 export interface MatchStatement {
   readonly type: 'match_statement';
   readonly fields: {
-    readonly body: Suite;
+    readonly body: Block;
     readonly subject: readonly (Expression)[];
   };
 }
@@ -636,7 +636,7 @@ export interface MemberType {
   readonly type: 'member_type';
   readonly fields: {
     readonly type?: Type;
-    readonly identifier?: NamedExpressionLhs;
+    readonly identifier?: Identifier;
   };
   readonly childType: Type;
 }
@@ -647,13 +647,13 @@ export interface Module {
 export interface NamedExpression {
   readonly type: 'named_expression';
   readonly fields: {
-    readonly name: NamedExpressionLhs | NamedExpressionLhs;
+    readonly name: Identifier;
     readonly value: Expression;
   };
 }
 export interface NonlocalStatement {
   readonly type: 'nonlocal_statement';
-  readonly children: readonly (NamedExpressionLhs)[];
+  readonly children: readonly (Identifier)[];
 }
 export interface NotOperator {
   readonly type: 'not_operator';
@@ -718,7 +718,7 @@ export interface SetComprehension {
   readonly fields: {
     readonly body: Expression;
   };
-  readonly children: ComprehensionClauses | ComprehensionClauses | IfClause;
+  readonly children: ForInClause | IfClause;
 }
 export interface Slice {
   readonly type: 'slice';
@@ -733,11 +733,11 @@ export interface Slice {
 }
 export interface SplatPattern {
   readonly type: 'splat_pattern';
-  readonly children?: NamedExpressionLhs;
+  readonly children?: Identifier;
 }
 export interface SplatType {
   readonly type: 'splat_type';
-  readonly children: NamedExpressionLhs;
+  readonly children: Identifier;
 }
 export interface String {
   readonly type: 'string';
@@ -762,7 +762,7 @@ export interface Subscript {
 export interface TryStatement {
   readonly type: 'try_statement';
   readonly fields: {
-    readonly body: Suite | Suite;
+    readonly body: Block;
     readonly exceptClause?: readonly (ExceptClause)[];
     readonly elseClause?: ElseClause;
     readonly finallyClause?: FinallyClause;
@@ -794,7 +794,7 @@ export interface TypeParameter {
 export interface TypedDefaultParameter {
   readonly type: 'typed_default_parameter';
   readonly fields: {
-    readonly name: NamedExpressionLhs;
+    readonly name: Identifier;
     readonly type: Type;
     readonly value: Expression;
   };
@@ -804,7 +804,7 @@ export interface TypedParameter {
   readonly fields: {
     readonly type: Type;
   };
-  readonly children: DictionarySplatPattern | ListSplatPattern | NamedExpressionLhs;
+  readonly children: DictionarySplatPattern | Identifier | ListSplatPattern;
 }
 export interface UnaryOperator {
   readonly type: 'unary_operator';
@@ -830,7 +830,7 @@ export interface WhileStatement {
   readonly type: 'while_statement';
   readonly fields: {
     readonly alternative?: ElseClause;
-    readonly body: Suite | Suite;
+    readonly body: Block;
     readonly condition: Expression;
   };
 }
@@ -847,7 +847,7 @@ export interface WithItem {
 export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
-    readonly body: Suite | Suite;
+    readonly body: Block;
   };
   readonly children: WithClause;
 }
@@ -1635,8 +1635,6 @@ export type ComprehensionClauses =
 ;
 
 export type Suite =
-  | Block
-  | Block
   | Block
 ;
 
