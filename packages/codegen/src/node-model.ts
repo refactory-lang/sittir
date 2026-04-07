@@ -421,16 +421,20 @@ function enrichBranch(model: BranchModel, rule: BranchRule, warnings: string[]):
 	}
 
 	// Detect children-vs-fields mismatches: grammar children whose kinds are
-	// covered by node-types fields (no FIELD wrapper in grammar.json).
+	// covered by native grammar fields (FIELD wrapper in grammar.json).
+	// Override-promoted fields are expected to overlap with children — skip those.
 	if (rule.children && rule.children.length > 0) {
-		const ntFieldKinds = new Set<string>();
+		const nativeFieldKinds = new Set<string>();
 		for (const f of model.fields) {
-			for (const k of f.kinds) ntFieldKinds.add(k);
+			if (f.override) continue; // override-promoted fields overlap by design
+			for (const k of f.kinds) nativeFieldKinds.add(k);
 		}
-		for (const child of rule.children) {
-			const coveredKinds = child.kinds.filter(k => ntFieldKinds.has(k));
-			if (coveredKinds.length > 0) {
-				warnings.push(`  '${model.kind}': grammar child slot [${child.kinds.join(', ')}] overlaps with node-types fields (field-owned kinds: ${coveredKinds.join(', ')})`);
+		if (nativeFieldKinds.size > 0) {
+			for (const child of rule.children) {
+				const coveredKinds = child.kinds.filter(k => nativeFieldKinds.has(k));
+				if (coveredKinds.length > 0) {
+					warnings.push(`  '${model.kind}': grammar child slot [${child.kinds.join(', ')}] overlaps with native fields (field-owned kinds: ${coveredKinds.join(', ')})`);
+				}
 			}
 		}
 	}
