@@ -278,7 +278,7 @@
         overrideValues: null,
       },
       {
-        name: "statement",
+        name: "statements",
         required: false,
         multiple: true,
         kinds: {},
@@ -1454,7 +1454,7 @@
     kind: "index_expression",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "object",
         required: false,
         multiple: false,
         kinds: {},
@@ -1463,7 +1463,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "index",
         required: false,
         multiple: false,
         kinds: {},
@@ -1660,7 +1660,7 @@
         kinds: {},
       },
       {
-        name: "NEEDS_NAME_0",
+        name: "rules",
         required: false,
         multiple: true,
         kinds: {},
@@ -1868,8 +1868,28 @@
     ],
   },
   negative_literal: {
-    modelType: "container",
+    modelType: "branch",
     kind: "negative_literal",
+    fields: [
+      {
+        name: "operator",
+        required: false,
+        multiple: false,
+        kinds: {},
+        override: true,
+        overrideAnonymous: true,
+        overrideValues: null,
+      },
+      {
+        name: "value",
+        required: false,
+        multiple: false,
+        kinds: {},
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: {
       required: true,
       multiple: false,
@@ -1887,7 +1907,7 @@
     kind: "or_pattern",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "left",
         required: false,
         multiple: false,
         kinds: {},
@@ -1896,7 +1916,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "right",
         required: false,
         multiple: false,
         kinds: {},
@@ -2076,7 +2096,7 @@
     kind: "range_expression",
     fields: [
       {
-        name: "NEEDS_NAME_0",
+        name: "start",
         required: false,
         multiple: false,
         kinds: {},
@@ -2085,7 +2105,7 @@
         overrideValues: null,
       },
       {
-        name: "NEEDS_NAME_1",
+        name: "end",
         required: false,
         multiple: false,
         kinds: {},
@@ -2431,7 +2451,7 @@
     kind: "shorthand_field_initializer",
     fields: [
       {
-        name: "attribute_item",
+        name: "attributes",
         required: false,
         multiple: true,
         kinds: {},
@@ -2491,7 +2511,7 @@
         overrideValues: null,
       },
       {
-        name: "statement",
+        name: "statements",
         required: false,
         multiple: true,
         kinds: {},
@@ -2821,8 +2841,28 @@
     },
   },
   try_expression: {
-    modelType: "container",
+    modelType: "branch",
     kind: "try_expression",
+    fields: [
+      {
+        name: "value",
+        required: false,
+        multiple: false,
+        kinds: {},
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+      {
+        name: "operator",
+        required: false,
+        multiple: false,
+        kinds: {},
+        override: true,
+        overrideAnonymous: true,
+        overrideValues: null,
+      },
+    ],
     children: {
       required: true,
       multiple: false,
@@ -2835,7 +2875,7 @@
     kind: "tuple_expression",
     fields: [
       {
-        name: "attribute_item",
+        name: "attributes",
         required: false,
         multiple: true,
         kinds: {},
@@ -3106,8 +3146,28 @@
     },
   },
   unary_expression: {
-    modelType: "container",
+    modelType: "branch",
     kind: "unary_expression",
+    fields: [
+      {
+        name: "operator",
+        required: false,
+        multiple: false,
+        kinds: {},
+        override: true,
+        overrideAnonymous: true,
+        overrideValues: null,
+      },
+      {
+        name: "operand",
+        required: false,
+        multiple: false,
+        kinds: {},
+        override: true,
+        overrideAnonymous: false,
+        overrideValues: null,
+      },
+    ],
     children: {
       required: true,
       multiple: false,

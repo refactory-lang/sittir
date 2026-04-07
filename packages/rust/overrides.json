@@ -12,7 +12,7 @@
   "block": {
     "fields": {
       "label": {},
-      "statement": {
+      "statements": {
         "multiple": true
       },
       "expression": {}
@@ -76,13 +76,13 @@
   },
   "index_expression": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "object": {},
+      "index": {}
     }
   },
   "macro_definition": {
     "fields": {
-      "NEEDS_NAME_0": {
+      "rules": {
         "multiple": true
       },
       "NEEDS_NAME_1": {}
@@ -94,10 +94,18 @@
       "pattern": {}
     }
   },
+  "negative_literal": {
+    "fields": {
+      "operator": {
+        "anonymous": true
+      },
+      "value": {}
+    }
+  },
   "or_pattern": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "left": {},
+      "right": {}
     }
   },
   "ordered_field_declaration_list": {
@@ -113,8 +121,8 @@
   },
   "range_expression": {
     "fields": {
-      "NEEDS_NAME_0": {},
-      "NEEDS_NAME_1": {}
+      "start": {},
+      "end": {}
     }
   },
   "raw_string_literal": {
@@ -145,7 +153,7 @@
   },
   "shorthand_field_initializer": {
     "fields": {
-      "attribute_item": {
+      "attributes": {
         "multiple": true
       },
       "identifier": {}
@@ -154,7 +162,7 @@
   "source_file": {
     "fields": {
       "shebang": {},
-      "statement": {
+      "statements": {
         "multiple": true
       }
     }
@@ -177,9 +185,17 @@
       "where_clause": {}
     }
   },
+  "try_expression": {
+    "fields": {
+      "value": {},
+      "operator": {
+        "anonymous": true
+      }
+    }
+  },
   "tuple_expression": {
     "fields": {
-      "attribute_item": {
+      "attributes": {
         "multiple": true
       },
       "NEEDS_NAME_1": {},
@@ -194,6 +210,14 @@
       "visibility_modifier": {},
       "NEEDS_NAME_1": {},
       "NEEDS_NAME_2": {}
+    }
+  },
+  "unary_expression": {
+    "fields": {
+      "operator": {
+        "anonymous": true
+      },
+      "operand": {}
     }
   },
   "union_item": {

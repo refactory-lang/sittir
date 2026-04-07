@@ -321,7 +321,7 @@ describe('block', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.block({ label: ir.emptyStatement() as any, statement: [], expression: ir.identifier('test_expression') as any, children1: ir.emptyStatement() as any, children2: [], children3: ir.identifier('test_children3') as any });
+    const node = ir.block({ label: ir.emptyStatement() as any, statements: [], expression: ir.identifier('test_expression') as any, children1: ir.emptyStatement() as any, children2: [], children3: ir.identifier('test_children3') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1390,7 +1390,7 @@ describe('index_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.indexExpression({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, expression1: ir.identifier('test_expression1') as any, expression2: ir.identifier('test_expression2') as any });
+    const node = ir.indexExpression({ object: ir.identifier('test_object') as any, index: ir.identifier('test_index') as any, expression1: ir.identifier('test_expression1') as any, expression2: ir.identifier('test_expression2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1630,7 +1630,7 @@ describe('macro_definition', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, NEEDS_NAME_0: [], NEEDS_NAME_1: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any, macroRule1: [], macroRule2: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any });
+    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [], NEEDS_NAME_1: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any, macroRule1: [], macroRule2: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1871,7 +1871,7 @@ describe('or_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.orPattern({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, pattern1: ir.identifier('test_pattern1') as any, pattern2: ir.identifier('test_pattern2') as any });
+    const node = ir.orPattern({ left: ir.identifier('test_left') as any, right: ir.identifier('test_right') as any, pattern1: ir.identifier('test_pattern1') as any, pattern2: ir.identifier('test_pattern2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2043,7 +2043,7 @@ describe('range_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.rangeExpression({ NEEDS_NAME_0: ir.identifier('test_NEEDS_NAME_0') as any, NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, expression1: ir.identifier('test_expression1') as any, expression2: ir.identifier('test_expression2') as any });
+    const node = ir.rangeExpression({ start: ir.identifier('test_start') as any, end: ir.identifier('test_end') as any, expression1: ir.identifier('test_expression1') as any, expression2: ir.identifier('test_expression2') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2354,7 +2354,7 @@ describe('shorthand_field_initializer', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.shorthandFieldInitializer({ attributeItem: [], identifier: ir.identifier('test_identifier') as any });
+    const node = ir.shorthandFieldInitializer({ attributes: [], identifier: ir.identifier('test_identifier') as any, attributeItem: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2399,7 +2399,7 @@ describe('source_file', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.sourceFile({ shebang: ir.emptyStatement() as any, statement: [], children1: ir.emptyStatement() as any, children2: [] });
+    const node = ir.sourceFile({ shebang: ir.emptyStatement() as any, statements: [], children1: ir.emptyStatement() as any, children2: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2753,7 +2753,7 @@ describe('tuple_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.tupleExpression({ attributeItem: [], NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, NEEDS_NAME_2: [ir.identifier('test_NEEDS_NAME_2') as any], NEEDS_NAME_3: ir.identifier('test_NEEDS_NAME_3') as any, expression1: ir.identifier('test_expression1') as any, expression2: [ir.identifier('test_expression2') as any], expression3: ir.identifier('test_expression3') as any });
+    const node = ir.tupleExpression({ attributes: [], NEEDS_NAME_1: ir.identifier('test_NEEDS_NAME_1') as any, NEEDS_NAME_2: [ir.identifier('test_NEEDS_NAME_2') as any], NEEDS_NAME_3: ir.identifier('test_NEEDS_NAME_3') as any, attributeItem: [], expression1: ir.identifier('test_expression1') as any, expression2: [ir.identifier('test_expression2') as any], expression3: ir.identifier('test_expression3') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

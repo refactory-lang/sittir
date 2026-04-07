@@ -392,7 +392,7 @@ export interface Block {
   readonly type: 'block';
   readonly fields: {
     readonly label?: DeclarationStatement | ExpressionStatement | Label;
-    readonly statement?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
+    readonly statements?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
     readonly expression?: DeclarationStatement | Expression | ExpressionStatement;
   };
   readonly children1?: DeclarationStatement | ExpressionStatement | Label;
@@ -701,8 +701,8 @@ export interface ImplItem {
 export interface IndexExpression {
   readonly type: 'index_expression';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Expression;
-    readonly NEEDS_NAME_1?: Expression;
+    readonly object?: Expression;
+    readonly index?: Expression;
   };
   readonly expression1: Expression;
   readonly expression2: Expression;
@@ -766,7 +766,7 @@ export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
     readonly name: Identifier;
-    readonly NEEDS_NAME_0?: readonly (MacroRule)[];
+    readonly rules?: readonly (MacroRule)[];
     readonly NEEDS_NAME_1?: MacroRule;
   };
   readonly macroRule1?: readonly (MacroRule)[];
@@ -829,13 +829,17 @@ export interface MutPattern {
 }
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
+  readonly fields: {
+    readonly operator?: string;
+    readonly value?: FloatLiteral | IntegerLiteral;
+  };
   readonly children: FloatLiteral | IntegerLiteral;
 }
 export interface OrPattern {
   readonly type: 'or_pattern';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Pattern;
-    readonly NEEDS_NAME_1?: Pattern;
+    readonly left?: Pattern;
+    readonly right?: Pattern;
   };
   readonly pattern1: Pattern;
   readonly pattern2?: Pattern;
@@ -885,8 +889,8 @@ export interface QualifiedType {
 export interface RangeExpression {
   readonly type: 'range_expression';
   readonly fields: {
-    readonly NEEDS_NAME_0?: Expression;
-    readonly NEEDS_NAME_1?: Expression;
+    readonly start?: Expression;
+    readonly end?: Expression;
   };
   readonly expression1?: Expression;
   readonly expression2?: Expression;
@@ -972,9 +976,10 @@ export interface SelfParameter {
 export interface ShorthandFieldInitializer {
   readonly type: 'shorthand_field_initializer';
   readonly fields: {
-    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly attributes?: readonly (AttributeItem)[];
     readonly identifier?: Identifier;
   };
+  readonly attributeItem?: readonly (AttributeItem)[];
 }
 export interface SlicePattern {
   readonly type: 'slice_pattern';
@@ -984,7 +989,7 @@ export interface SourceFile {
   readonly type: 'source_file';
   readonly fields: {
     readonly shebang?: DeclarationStatement | ExpressionStatement | Shebang;
-    readonly statement?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
+    readonly statements?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
   };
   readonly children1?: DeclarationStatement | ExpressionStatement | Shebang;
   readonly children2?: readonly (DeclarationStatement | ExpressionStatement | Statement)[];
@@ -1071,16 +1076,21 @@ export interface TryBlock {
 }
 export interface TryExpression {
   readonly type: 'try_expression';
+  readonly fields: {
+    readonly value?: Expression;
+    readonly operator?: string;
+  };
   readonly children: Expression;
 }
 export interface TupleExpression {
   readonly type: 'tuple_expression';
   readonly fields: {
-    readonly attributeItem?: readonly (AttributeItem)[];
+    readonly attributes?: readonly (AttributeItem)[];
     readonly NEEDS_NAME_1?: Expression;
     readonly NEEDS_NAME_2?: readonly (Expression)[];
     readonly NEEDS_NAME_3?: Expression;
   };
+  readonly attributeItem?: readonly (AttributeItem)[];
   readonly expression1: Expression;
   readonly expression2?: readonly (Expression)[];
   readonly expression3?: Expression;
@@ -1146,6 +1156,10 @@ export interface TypeParameters {
 }
 export interface UnaryExpression {
   readonly type: 'unary_expression';
+  readonly fields: {
+    readonly operator?: string;
+    readonly operand?: Expression;
+  };
   readonly children: Expression;
 }
 export interface UnionItem {
