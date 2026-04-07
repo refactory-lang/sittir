@@ -169,7 +169,14 @@ function typesToCollapsed(
 	const result: string[] = [];
 	for (const st of pruned) {
 		for (const sub of st.subtypes) covered.add(sub);
+		covered.add(st.name); // The supertype itself is represented by this collapse
 		result.push(toTypeName(st.name.replace(/^_/, '')));
+	}
+	// Mark supertype/hidden keys whose subtypes are all already in the input or covered
+	// (e.g., _type_identifier with subtypes={type_identifier} when both appear in input)
+	for (const [stName, subtypes] of supertypeMap) {
+		if (covered.has(stName)) continue;
+		if (subtypes.size > 0 && [...subtypes].every(s => covered.has(s) || inputSet.has(s))) covered.add(stName);
 	}
 	for (const t of inputSet) {
 		if (!covered.has(t)) {
