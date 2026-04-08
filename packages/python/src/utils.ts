@@ -2,6 +2,7 @@
 // Shared client-side resolution utilities for .from() and factories
 
 import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
+import type { KindMap, ConfigMap, FromInputMap } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Type guards
@@ -152,4 +153,41 @@ export function resolveField<T>(
   if (isNodeData(value)) return value as T;
   if (Array.isArray(value)) return value.map(v => resolveField(v, resolver)) as T;
   return resolver(value);
+}
+
+// ---------------------------------------------------------------------------
+// Grammar-typed type guards
+// ---------------------------------------------------------------------------
+
+/**
+ * Type guard: returns true if `v` is a NodeData of the given kind.
+ * Narrows `v` to the concrete interface `KindMap[K]`.
+ */
+export function isNodeOfKind<K extends keyof KindMap>(
+  v: unknown,
+  kind: K,
+): v is KindMap[K] {
+  return isNodeData(v) && v.type === kind;
+}
+
+/**
+ * Type guard: returns true if `v` has `kind === k`.
+ * Narrows `v` to `{ kind: K } & FromInputMap[K]`.
+ */
+export function hasKindOf<K extends keyof FromInputMap>(
+  v: object,
+  kind: K,
+): v is { kind: K } & FromInputMap[K] {
+  return 'kind' in v && (v as Record<string, unknown>).kind === kind;
+}
+
+/**
+ * Resolve a field value and narrow the result to `KindMap[K]`.
+ * Combines resolveField with a kind-specific type assertion.
+ */
+export function resolveFieldAs<K extends keyof KindMap>(
+  value: unknown,
+  resolver: (input: unknown) => KindMap[K],
+): KindMap[K] {
+  return resolveField(value, resolver) as KindMap[K];
 }

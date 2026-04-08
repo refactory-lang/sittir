@@ -24,6 +24,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('');
 
 	lines.push("import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';");
+	lines.push("import type { KindMap, ConfigMap, FromInputMap } from './types.js';");
 	lines.push('');
 
 	// Type guards
@@ -125,6 +126,53 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('  if (isNodeData(value)) return value as T;');
 	lines.push('  if (Array.isArray(value)) return value.map(v => resolveField(v, resolver)) as T;');
 	lines.push('  return resolver(value);');
+	lines.push('}');
+	lines.push('');
+
+	// -----------------------------------------------------------------------
+	// Grammar-typed utilities — use KindMap/ConfigMap/FromInputMap for narrowing
+	// -----------------------------------------------------------------------
+	lines.push('// ---------------------------------------------------------------------------');
+	lines.push('// Grammar-typed type guards');
+	lines.push('// ---------------------------------------------------------------------------');
+	lines.push('');
+
+	// isNodeOfKind — type guard narrowing to KindMap[K]
+	lines.push('/**');
+	lines.push(' * Type guard: returns true if `v` is a NodeData of the given kind.');
+	lines.push(' * Narrows `v` to the concrete interface `KindMap[K]`.');
+	lines.push(' */');
+	lines.push('export function isNodeOfKind<K extends keyof KindMap>(');
+	lines.push('  v: unknown,');
+	lines.push('  kind: K,');
+	lines.push('): v is KindMap[K] {');
+	lines.push("  return isNodeData(v) && v.type === kind;");
+	lines.push('}');
+	lines.push('');
+
+	// hasKindOf — typed hasKind narrowing to { kind: K } & FromInputMap[K]
+	lines.push('/**');
+	lines.push(' * Type guard: returns true if `v` has `kind === k`.');
+	lines.push(' * Narrows `v` to `{ kind: K } & FromInputMap[K]`.');
+	lines.push(' */');
+	lines.push('export function hasKindOf<K extends keyof FromInputMap>(');
+	lines.push('  v: object,');
+	lines.push('  kind: K,');
+	lines.push('): v is { kind: K } & FromInputMap[K] {');
+	lines.push("  return 'kind' in v && (v as Record<string, unknown>).kind === kind;");
+	lines.push('}');
+	lines.push('');
+
+	// resolveFieldAs — typed resolveField returning KindMap[K]
+	lines.push('/**');
+	lines.push(' * Resolve a field value and narrow the result to `KindMap[K]`.');
+	lines.push(' * Combines resolveField with a kind-specific type assertion.');
+	lines.push(' */');
+	lines.push('export function resolveFieldAs<K extends keyof KindMap>(');
+	lines.push('  value: unknown,');
+	lines.push('  resolver: (input: unknown) => KindMap[K],');
+	lines.push('): KindMap[K] {');
+	lines.push('  return resolveField(value, resolver) as KindMap[K];');
 	lines.push('}');
 	lines.push('');
 

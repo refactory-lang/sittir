@@ -270,7 +270,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	// -----------------------------------------------------------------------
-	// 7. KindMap — kind string → concrete interface
+	// 7. KindMap, ConfigMap, FromInputMap — kind string → type mappings
 	// -----------------------------------------------------------------------
 	lines.push('/** Maps every kind string to its concrete interface. */');
 	lines.push('export interface KindMap {');
@@ -279,6 +279,22 @@ export function emitTypes(config: EmitTypesConfig): string {
 		if (generatedTypes.has(typeName)) {
 			lines.push(`  '${kind}': ${typeName};`);
 		}
+	}
+	lines.push('}');
+	lines.push('');
+
+	lines.push('/** Maps every branch kind string to its Config (factory input) type. */');
+	lines.push('export interface ConfigMap {');
+	for (const kind of nodeKinds) {
+		lines.push(`  '${kind}': ${toTypeName(kind)}Config;`);
+	}
+	lines.push('}');
+	lines.push('');
+
+	lines.push('/** Maps every branch kind string to its FromInput (ergonomic .from() input) type. */');
+	lines.push('export interface FromInputMap {');
+	for (const kind of nodeKinds) {
+		lines.push(`  '${kind}': ${toTypeName(kind)}FromInput;`);
 	}
 	lines.push('}');
 	lines.push('');
