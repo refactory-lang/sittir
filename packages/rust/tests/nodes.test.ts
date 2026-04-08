@@ -1805,8 +1805,23 @@ describe('mut_pattern', () => {
 
 describe('negative_literal', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.negativeLiteral({ operator: { type: 'unknown', fields: {} } as any, value: ir.floatLiteral('3.14') as any });
+    const node = ir.negativeLiteral({ operator: '-' as any, value: ir.floatLiteral('3.14') as any });
     expect(node.type).toBe('negative_literal');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.negativeLiteral({ operator: '-' as any, value: ir.floatLiteral('3.14') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.negativeLiteral({ operator: '-' as any, value: ir.floatLiteral('3.14') as any });
+    const source = render(node);
+    expect(source).toContain('-');
+  });
+  it('node.render() works', () => {
+    const node = ir.negativeLiteral({ operator: '-' as any, value: ir.floatLiteral('3.14') as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -1994,8 +2009,23 @@ describe('qualified_type', () => {
 
 describe('range_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.rangeExpression({ operator: { type: 'unknown', fields: {} } as any });
+    const node = ir.rangeExpression({ operator: '..' as any });
     expect(node.type).toBe('range_expression');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.rangeExpression({ operator: '..' as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.rangeExpression({ operator: '..' as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.rangeExpression({ start: ir.identifier('test_start') as any, operator: '..' as any, end: ir.identifier('test_end') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2650,8 +2680,23 @@ describe('try_block', () => {
 
 describe('try_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.tryExpression({ value: ir.identifier('test_value') as any, operator: { type: 'unknown', fields: {} } as any });
+    const node = ir.tryExpression({ value: ir.identifier('test_value') as any, operator: '?' as any });
     expect(node.type).toBe('try_expression');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.tryExpression({ value: ir.identifier('test_value') as any, operator: '?' as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.tryExpression({ value: ir.identifier('test_value') as any, operator: '?' as any });
+    const source = render(node);
+    expect(source).toContain('?');
+  });
+  it('node.render() works', () => {
+    const node = ir.tryExpression({ value: ir.identifier('test_value') as any, operator: '?' as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -2911,8 +2956,18 @@ describe('type_parameters', () => {
 
 describe('unary_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.unaryExpression({ operator: { type: 'unknown', fields: {} } as any, operand: ir.identifier('test_operand') as any });
+    const node = ir.unaryExpression({ operator: '-' as any, operand: ir.identifier('test_operand') as any });
     expect(node.type).toBe('unary_expression');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.unaryExpression({ operator: '-' as any, operand: ir.identifier('test_operand') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.unaryExpression({ operator: '-' as any, operand: ir.identifier('test_operand') as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 

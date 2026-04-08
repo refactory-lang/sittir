@@ -249,11 +249,12 @@ export function mergeOverrides(
 
 		const overrideFields: FieldModel[] = [];
 		for (const [fieldName, fieldDef] of Object.entries(entry.fields)) {
-			// Extract kinds from the types array (named types only)
+			// Include both named and anonymous types in kinds — token models
+			// exist for anonymous types and hydration resolves them the same way
+			// as native fields (projectKinds classifies them as anonTokens).
+			const allKinds = new Set(fieldDef.types.map(t => t.type));
 			const namedKinds = new Set(
-				fieldDef.types
-					.filter(t => t.named)
-					.map(t => t.type),
+				fieldDef.types.filter(t => t.named).map(t => t.type),
 			);
 			const hasAnonymous = fieldDef.types.some(t => !t.named);
 			const anonValues = fieldDef.types.filter(t => !t.named).map(t => t.type);
@@ -262,7 +263,7 @@ export function mergeOverrides(
 				name: fieldName,
 				required: fieldDef.required,
 				multiple: fieldDef.multiple,
-				kinds: namedKinds,
+				kinds: allKinds,
 				position: fieldDef.position,
 				...(fieldDef.multiple ? { separator: null } : {}),
 				override: true,

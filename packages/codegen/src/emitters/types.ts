@@ -312,13 +312,7 @@ function emitConcreteInterface(
 		lines.push('  readonly fields: {');
 		for (const f of fields) {
 			const proj = projectKinds(f.kinds, ctx);
-			let typeExpr: string;
-			// Override fields with anonymous token values → string literal union
-			if (f.overrideAnonymous && f.overrideValues && f.overrideValues.length > 0 && proj.expandedAll.length === 0) {
-				typeExpr = f.overrideValues.map(v => `'${escapeString(v)}'`).join(' | ');
-			} else {
-				typeExpr = fieldTypeExpr(proj, leafSet);
-			}
+			const typeExpr = fieldTypeExpr(proj, leafSet);
 			const opt = f.required ? '' : '?';
 			const key = f.propertyName ?? toFieldName(f.name);
 			if (f.multiple) {
