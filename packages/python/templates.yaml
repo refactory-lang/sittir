@@ -28,9 +28,9 @@ rules:
   case_pattern: $CHILDREN
   chevron: ">> $EXPRESSION"
   class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES : $BODY"
-  class_pattern: $DOTTED_NAME($$$ARGUMENTS)
+  class_pattern: $DOTTED_NAME($$$ARGUMENTS $$$CHILDREN)
   comparison_operator: $LEFT $$$OPERATORS $$$COMPARATORS
-  complex_pattern: $REAL $IMAGINARY +
+  complex_pattern: $REAL + $IMAGINARY
   concatenated_string: $$$CHILDREN
   conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
   constrained_type: "$BASE_TYPE : $CONSTRAINT"
@@ -63,7 +63,7 @@ rules:
   expression_statement:
     template: $$$CHILDREN
     joinBy: ","
-  finally_clause: "finally : $BLOCK"
+  finally_clause: "finally : $$$CHILDREN $BLOCK"
   for_in_clause: for $LEFT in $$$RIGHT
   for_statement: "for $LEFT in $RIGHT : $BODY $ALTERNATIVE"
   format_expression: $EXPRESSION $FORMAT_SPECIFIER $TYPE_CONVERSION
@@ -73,7 +73,7 @@ rules:
     return_type_clause: -> $RETURN_TYPE
   future_import_statement: from __future__ import $$$NAME , $$$CHILDREN
   generator_expression: ($BODY $CHILDREN)
-  generic_type: $IDENTIFIER $$$CHILDREN $TYPE_PARAMETER
+  generic_type: $IDENTIFIER $TYPE_PARAMETER
   global_statement:
     template: global $$$CHILDREN ,
     joinBy: ","
