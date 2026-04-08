@@ -61,6 +61,23 @@ function resolverName(key: string): string {
 	return `_r${(hash >>> 0).toString(36)}`;
 }
 
+/**
+ * Compute the return type expression for a resolver from its concrete types.
+ * Uses `KindMap[K]` union for the return type. If a supertype union name is
+ * available, uses that directly.
+ */
+function resolverReturnType(resolved: ResolvedFieldTypes, supertypeKind?: string): string {
+	if (supertypeKind) {
+		const cleanName = supertypeKind.replace(/^_/, '');
+		return toTypeName(cleanName);
+	}
+	const members: string[] = [];
+	for (const kind of resolved.leafTypes) members.push(`KindMap['${kind}']`);
+	for (const kind of resolved.branchTypes) members.push(`KindMap['${kind}']`);
+	if (members.length === 0) return 'unknown';
+	return members.join(' | ');
+}
+
 // ---------------------------------------------------------------------------
 // Indented line builder
 // ---------------------------------------------------------------------------
@@ -112,7 +129,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	const supertypeSet = new Set(ctx.expandedSupertypes.keys());
 
 	// --- Phase 1: Register supertype/hidden resolvers with readable names ---
-	const resolverRegistry = new Map<string, { name: string; resolved: ResolvedFieldTypes }>();
+	const resolverRegistry = new Map<string, { name: string; resolved: ResolvedFieldTypes; supertypeKind?: string }>();
 	const supertypeResolverNames = new Map<string, string>();
 
 	for (const [supertypeKind, concreteKinds] of ctx.expandedSupertypes) {
@@ -124,7 +141,7 @@ export function emitFrom(config: EmitFromConfig): string {
 		const name = `_resolve${toTypeName(supertypeKind)}`;
 		supertypeResolverNames.set(supertypeKind, name);
 		if (!resolverRegistry.has(key)) {
-			resolverRegistry.set(key, { name, resolved });
+			resolverRegistry.set(key, { name, resolved, supertypeKind });
 		}
 	}
 
@@ -163,10 +180,17 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line('// .from() API — shared resolvers, immutable ergonomic setters');
 	out.line();
 
-	// Type-only imports
+	// Type-only imports — collect supertype union names used as resolver return types
 	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
 	const configTypeImports = nodes.map(n => toTypeName(n.kind) + 'Config').sort();
-	out.line(`import type { ${[...baseTypeImports, ...configTypeImports].join(', ')} } from './types.js';`);
+	const supertypeUnionImports = new Set<string>();
+	for (const [, { supertypeKind }] of resolverRegistry) {
+		if (supertypeKind) {
+			supertypeUnionImports.add(toTypeName(supertypeKind.replace(/^_/, '')));
+		}
+	}
+	const allTypeImports = [...new Set([...baseTypeImports, ...configTypeImports, ...supertypeUnionImports])].sort();
+	out.line(`import type { ${allTypeImports.join(', ')} } from './types.js';`);
 	out.line("import type { KindMap, FromInputMap } from './types.js';");
 	out.line("import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';");
 	out.line();
@@ -216,8 +240,8 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line();
 
 	// --- Emit shared resolver functions ---
-	for (const [, { name, resolved }] of resolverRegistry) {
-		emitResolverFunction(out, name, resolved, leafSet, leafValueMap, keywordKinds, nodes, supertypeResolverNames, ctx.expandedSupertypes, branchNodeSet, config.grammar);
+	for (const [, { name, resolved, supertypeKind }] of resolverRegistry) {
+		emitResolverFunction(out, name, resolved, supertypeKind, leafSet, leafValueMap, keywordKinds, nodes, supertypeResolverNames, ctx.expandedSupertypes, branchNodeSet, config.grammar);
 	}
 
 	// --- Per-kind .from() functions ---
@@ -237,6 +261,7 @@ function emitResolverFunction(
 	out: CodeBuilder,
 	name: string,
 	resolved: ResolvedFieldTypes,
+	supertypeKind: string | undefined,
 	leafSet: Set<string>,
 	leafValueMap: Map<string, string[]>,
 	keywordKinds: Map<string, string>,
@@ -247,8 +272,10 @@ function emitResolverFunction(
 	grammar?: string,
 ): void {
 	const { leafTypes, branchTypes, supertypes, anonTokens } = resolved;
+	const returnType = resolverReturnType(resolved, supertypeKind);
 
-	out.line(`function ${name}(v: unknown): unknown {`);
+	out.line(`function ${name}(v: unknown): ${returnType};`);
+	out.line(`function ${name}(v: unknown) {`);
 	out.indent();
 
 	// NodeData passthrough
