@@ -296,7 +296,6 @@ export function wrapAbstractClassDeclaration(data: AnyNodeData, tree: TreeHandle
 export function wrapAbstractMethodSignature(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
   promote(data, 'override_modifier');
-  promoteFirstAnon(data, 'call_signature');
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
@@ -305,7 +304,7 @@ export function wrapAbstractMethodSignature(data: AnyNodeData, tree: TreeHandle)
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
-    get callSignature() { return drillIn(data.fields?.['call_signature'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1003,7 +1002,6 @@ export function wrapMemberExpression(data: AnyNodeData, tree: TreeHandle): unkno
 export function wrapMethodDefinition(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
   promote(data, 'override_modifier');
-  promoteFirstAnon(data, 'call_signature');
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
@@ -1013,14 +1011,13 @@ export function wrapMethodDefinition(data: AnyNodeData, tree: TreeHandle): unkno
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
-    get callSignature() { return drillIn(data.fields?.['call_signature'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapMethodSignature(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
   promote(data, 'override_modifier');
-  promoteFirstAnon(data, 'call_signature');
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
@@ -1029,7 +1026,7 @@ export function wrapMethodSignature(data: AnyNodeData, tree: TreeHandle): unknow
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
-    get callSignature() { return drillIn(data.fields?.['call_signature'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

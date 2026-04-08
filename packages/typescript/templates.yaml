@@ -60,7 +60,7 @@ rules:
     alias_clause: as $ALIAS
   export_statement: export * from $SOURCE $CHILDREN $$$DECORATOR $DECLARATION $VALUE $SEMICOLON_INNER
   expression_statement: $$$CHILDREN
-  extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS ,
+  extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS , $$$CHILDREN
   extends_type_clause:
     template: extends $$$TYPE ,
     joinBy: ","

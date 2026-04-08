@@ -38,8 +38,28 @@ describe('abstract_class_declaration', () => {
 
 describe('abstract_method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, callSignature: { type: 'unknown', fields: {} } as any });
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
     expect(node.type).toBe('abstract_method_signature');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source).toContain('abstract');
+  });
+  it('node.render() works', () => {
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.abstractMethodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, returnType: ir.assertsAnnotation({ asserts: ir.asserts({ children: ir.identifier('test_children') as any }) as any }) as any, typeParameters: ir.typeParameters({ children: [] }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, overrideModifier: ir.overrideModifier() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1821,15 +1841,45 @@ describe('member_expression', () => {
 
 describe('method_definition', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, callSignature: { type: 'unknown', fields: {} } as any });
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
     expect(node.type).toBe('method_definition');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.methodDefinition({ body: ir.statementBlock() as any, name: ir.number('42') as any, parameters: ir.formalParameters() as any, returnType: ir.assertsAnnotation({ asserts: ir.asserts({ children: ir.identifier('test_children') as any }) as any }) as any, typeParameters: ir.typeParameters({ children: [] }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, overrideModifier: ir.overrideModifier() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
 describe('method_signature', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, callSignature: { type: 'unknown', fields: {} } as any });
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
     expect(node.type).toBe('method_signature');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.methodSignature({ name: ir.number('42') as any, parameters: ir.formalParameters() as any, returnType: ir.assertsAnnotation({ asserts: ir.asserts({ children: ir.identifier('test_children') as any }) as any }) as any, typeParameters: ir.typeParameters({ children: [] }) as any, accessibilityModifier: ir.accessibilityModifier('private') as any, overrideModifier: ir.overrideModifier() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 

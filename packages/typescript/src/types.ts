@@ -342,7 +342,6 @@ export interface AbstractMethodSignature {
     readonly typeParameters?: TypeParameters;
     readonly accessibilityModifier?: AccessibilityModifier;
     readonly overrideModifier?: OverrideModifier;
-    readonly callSignature: string;
   };
 }
 export interface AddingTypeAnnotation {
@@ -899,7 +898,6 @@ export interface MethodDefinition {
     readonly typeParameters?: TypeParameters;
     readonly accessibilityModifier?: AccessibilityModifier;
     readonly overrideModifier?: OverrideModifier;
-    readonly callSignature: string;
   };
 }
 export interface MethodSignature {
@@ -911,7 +909,6 @@ export interface MethodSignature {
     readonly typeParameters?: TypeParameters;
     readonly accessibilityModifier?: AccessibilityModifier;
     readonly overrideModifier?: OverrideModifier;
-    readonly callSignature: string;
   };
 }
 export interface Module {

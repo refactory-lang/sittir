@@ -555,10 +555,10 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
-      callSignature: f?.['call_signature'],
+      children: c,
     } as unknown as AbstractMethodSignatureConfig);
   }
-  const obj = input as Record<string, unknown>;
+  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['name'] !== undefined) {
     resolved['name'] = _r1vtw8vp(obj['name']);
@@ -577,9 +577,6 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
   }
   if (obj['overrideModifier'] !== undefined) {
     resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
-  if (obj['callSignature'] !== undefined) {
-    resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
   }
   return abstract_method_signature_(resolved as AbstractMethodSignatureConfig);
 }
@@ -2620,10 +2617,10 @@ export function methodDefinitionFrom(input: unknown): unknown {
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
-      callSignature: f?.['call_signature'],
+      children: c,
     } as unknown as MethodDefinitionConfig);
   }
-  const obj = input as Record<string, unknown>;
+  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['body'] !== undefined) {
     resolved['body'] = (isNodeData(obj['body']) ? obj['body'] : Array.isArray(obj['body']) ? statementBlockFrom(obj['body']) : typeof obj['body'] === 'object' ? statementBlockFrom(obj['body']) : obj['body']);
@@ -2646,9 +2643,6 @@ export function methodDefinitionFrom(input: unknown): unknown {
   if (obj['overrideModifier'] !== undefined) {
     resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
-  if (obj['callSignature'] !== undefined) {
-    resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
-  }
   return method_definition_(resolved as MethodDefinitionConfig);
 }
 
@@ -2667,10 +2661,10 @@ export function methodSignatureFrom(input: unknown): unknown {
       typeParameters: f?.['type_parameters'],
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
-      callSignature: f?.['call_signature'],
+      children: c,
     } as unknown as MethodSignatureConfig);
   }
-  const obj = input as Record<string, unknown>;
+  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['name'] !== undefined) {
     resolved['name'] = _r1vtw8vp(obj['name']);
@@ -2689,9 +2683,6 @@ export function methodSignatureFrom(input: unknown): unknown {
   }
   if (obj['overrideModifier'] !== undefined) {
     resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
-  }
-  if (obj['callSignature'] !== undefined) {
-    resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
   }
   return method_signature_(resolved as MethodSignatureConfig);
 }

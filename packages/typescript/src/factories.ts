@@ -117,19 +117,19 @@ export function abstract_method_signature_(
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
-    call_signature: config.callSignature,
   };
+  const children: unknown[] = [];
   return {
     type: 'abstract_method_signature' as const,
     named: true as const,
     fields,
+    children,
     name(name?: PropertyName) { return name !== undefined ? abstract_method_signature_({ ...config, name: name }) : fields.name; },
     parameters(parameters?: FormalParameters) { return parameters !== undefined ? abstract_method_signature_({ ...config, parameters: parameters }) : fields.parameters; },
     returnType(returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation) { return returnType !== undefined ? abstract_method_signature_({ ...config, returnType: returnType }) : fields.return_type; },
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? abstract_method_signature_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? abstract_method_signature_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? abstract_method_signature_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    callSignature(callSignature?: string) { return callSignature !== undefined ? abstract_method_signature_({ ...config, callSignature: callSignature }) : fields.call_signature; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1970,12 +1970,13 @@ export function method_definition_(
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
-    call_signature: config.callSignature,
   };
+  const children: unknown[] = [];
   return {
     type: 'method_definition' as const,
     named: true as const,
     fields,
+    children,
     body(body?: StatementBlock) { return body !== undefined ? method_definition_({ ...config, body: body }) : fields.body; },
     name(name?: PropertyName) { return name !== undefined ? method_definition_({ ...config, name: name }) : fields.name; },
     parameters(parameters?: FormalParameters) { return parameters !== undefined ? method_definition_({ ...config, parameters: parameters }) : fields.parameters; },
@@ -1983,7 +1984,6 @@ export function method_definition_(
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? method_definition_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? method_definition_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_definition_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    callSignature(callSignature?: string) { return callSignature !== undefined ? method_definition_({ ...config, callSignature: callSignature }) : fields.call_signature; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2004,19 +2004,19 @@ export function method_signature_(
     type_parameters: config.typeParameters,
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
-    call_signature: config.callSignature,
   };
+  const children: unknown[] = [];
   return {
     type: 'method_signature' as const,
     named: true as const,
     fields,
+    children,
     name(name?: PropertyName) { return name !== undefined ? method_signature_({ ...config, name: name }) : fields.name; },
     parameters(parameters?: FormalParameters) { return parameters !== undefined ? method_signature_({ ...config, parameters: parameters }) : fields.parameters; },
     returnType(returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation) { return returnType !== undefined ? method_signature_({ ...config, returnType: returnType }) : fields.return_type; },
     typeParameters(typeParameters?: TypeParameters) { return typeParameters !== undefined ? method_signature_({ ...config, typeParameters: typeParameters }) : fields.type_parameters; },
     accessibilityModifier(accessibilityModifier?: AccessibilityModifier) { return accessibilityModifier !== undefined ? method_signature_({ ...config, accessibilityModifier: accessibilityModifier }) : fields.accessibility_modifier; },
     overrideModifier(overrideModifier?: OverrideModifier) { return overrideModifier !== undefined ? method_signature_({ ...config, overrideModifier: overrideModifier }) : fields.override_modifier; },
-    callSignature(callSignature?: string) { return callSignature !== undefined ? method_signature_({ ...config, callSignature: callSignature }) : fields.call_signature; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

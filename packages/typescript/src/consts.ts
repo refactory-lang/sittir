@@ -352,7 +352,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
-    { name: 'callSignature', required: true, multiple: false },
   ],
   'adding_type_annotation': [
   ],
@@ -687,7 +686,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
-    { name: 'callSignature', required: true, multiple: false },
   ],
   'method_signature': [
     { name: 'name', required: true, multiple: false },
@@ -696,7 +694,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
-    { name: 'callSignature', required: true, multiple: false },
   ],
   'module': [
     { name: 'body', required: false, multiple: false },

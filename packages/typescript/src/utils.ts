@@ -29,7 +29,7 @@ export function isTreeNode(v: unknown): boolean {
 /** Field names per branch kind — used by _inferBranch for scoring. */
 export const _BRANCH_FIELDS: Record<string, string[]> = {
   'abstract_class_declaration': ["body","decorator","name","typeParameters","classHeritage"],
-  'abstract_method_signature': ["name","parameters","returnType","typeParameters","accessibilityModifier","overrideModifier","callSignature"],
+  'abstract_method_signature': ["name","parameters","returnType","typeParameters","accessibilityModifier","overrideModifier"],
   'ambient_declaration': ["declaration","typeAnnotation","semicolon"],
   'array_type': ["primaryType"],
   'arrow_function': ["body","parameter","parameters","returnType","typeParameters"],
@@ -93,8 +93,8 @@ export const _BRANCH_FIELDS: Record<string, string[]> = {
   'lookup_type': ["primaryType","indexType"],
   'mapped_type_clause': ["alias","name","type"],
   'member_expression': ["object","optionalChain","property"],
-  'method_definition': ["body","name","parameters","returnType","typeParameters","accessibilityModifier","overrideModifier","callSignature"],
-  'method_signature': ["name","parameters","returnType","typeParameters","accessibilityModifier","overrideModifier","callSignature"],
+  'method_definition': ["body","name","parameters","returnType","typeParameters","accessibilityModifier","overrideModifier"],
+  'method_signature': ["name","parameters","returnType","typeParameters","accessibilityModifier","overrideModifier"],
   'module': ["body","name"],
   'namespace_import': ["identifier"],
   'nested_identifier': ["object","property"],

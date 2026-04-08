@@ -197,7 +197,7 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 	const children: EnrichedChildInfo[] | undefined = childSlots.length > 0
 		? slotsToChildren(childSlots)
 		: undefined;
-	if (children) nameChildSlots(children);
+	if (children) nameChildSlots(children, grammar.rules);
 
 	const separators = extractSeparators(rule);
 
@@ -550,7 +550,7 @@ function slotsToChildren(slots: ChildSlot[]): EnrichedChildInfo[] {
 function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: ReadonlySet<string>): ContainerRule {
 	const simplified = simplifyRule(rule);
 	const children = slotsToChildren(collectChildSlots(simplified, false, false));
-	nameChildSlots(children);
+	nameChildSlots(children, grammar.rules);
 	const separators = extractSeparators(rule);
 	return { modelType: 'container', children, separators, rule, simplifiedRule: simplified };
 }
@@ -559,16 +559,11 @@ function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: Read
  * Assign names to child slots based on kind uniqueness:
  * - Single-kind, unique across all slots → kind-as-name (Tier 1)
  * - Single-kind supertype → skip (supertypes are fields, not children)
+ * - Hidden rule whose body is all FIELDs → skip (tree-sitter inlines its fields onto the parent)
  * - Same kind in multiple slots or multi-kind slot → NEEDS_NAME_N placeholder (Tier 2)
  * - Single pure REPEAT slot → null (uses $$CHILDREN)
- *
- * TODO: Hidden rule names (e.g. _call_signature, _from_clause, _parameter_name,
- * _destructuring_pattern, _string_content, _comprehension_clauses) are useful
- * candidates for auto-inferring field names — strip `_` prefix and use as name
- * when the hidden rule is unique across slots. Currently these produce NEEDS_NAME
- * placeholders because the kinds don't resolve to named types.
  */
-function nameChildSlots(children: EnrichedChildInfo[]): void {
+function nameChildSlots(children: EnrichedChildInfo[], grammarRules: Record<string, GrammarRule>): void {
 	// Pure REPEAT (single slot, multiple) → no name needed, uses $$CHILDREN
 	if (children.length === 1 && children[0]!.multiple) return;
 
@@ -586,6 +581,11 @@ function nameChildSlots(children: EnrichedChildInfo[]): void {
 			if ((kindSlotCount.get(kind) ?? 0) > 1) {
 				// Same kind in multiple positions → needs human naming
 				child.name = `NEEDS_NAME_${child.position}`;
+			} else if (kind.startsWith('_') && isAllFieldsRule(grammarRules[kind])) {
+				// Hidden rule whose body is entirely FIELDs — tree-sitter inlines
+				// these onto the parent, so the fields already exist directly.
+				// Don't name it; the template walker inlines the hidden rule.
+				child.name = null;
 			} else {
 				// Unique kind → kind-as-name (strip _ prefix from hidden rules)
 				child.name = kind.startsWith('_') ? kind.slice(1) : kind;
@@ -595,6 +595,26 @@ function nameChildSlots(children: EnrichedChildInfo[]): void {
 			child.name = `NEEDS_NAME_${child.position}`;
 		}
 	}
+}
+
+/** Check if a grammar rule's body (after unwrapping PREC) is a SEQ of only FIELDs. */
+function isAllFieldsRule(rule: GrammarRule | undefined): boolean {
+	if (!rule) return false;
+	let r = rule;
+	while (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') {
+		r = r.content;
+	}
+	if (r.type !== 'SEQ') return false;
+	return r.members.every(m => {
+		let u = m;
+		while (u.type === 'PREC' || u.type === 'PREC_LEFT' || u.type === 'PREC_RIGHT' || u.type === 'PREC_DYNAMIC') {
+			u = u.content;
+		}
+		// FIELD or CHOICE-with-BLANK wrapping a FIELD (optional field)
+		if (u.type === 'FIELD') return true;
+		if (u.type === 'CHOICE' && u.members.some(m2 => m2.type === 'BLANK') && u.members.some(m2 => m2.type === 'FIELD')) return true;
+		return false;
+	});
 }
 
 // ---------------------------------------------------------------------------
@@ -827,80 +847,6 @@ export function classifyRules(grammar: Grammar): Map<string, EnrichedRule> {
 	}
 
 	return result;
-}
-
-// ---------------------------------------------------------------------------
-// Hidden rule inlining — replace _-prefixed SYMBOLs with their rule body
-// ---------------------------------------------------------------------------
-//
-// Runs before override enrichment. When a hidden rule (e.g. _call_signature)
-// appears as an unnamed child and its rule body is a SEQ of FIELDs that all
-// exist on the parent, replace the SYMBOL reference with the rule body.
-//
-//   SYMBOL("_call_signature")  →  SEQ(FIELD("type_parameters"), FIELD("parameters"), FIELD("return_type"))
-//
-// This prevents override enrichment from wrapping the hidden rule as a
-// pseudo-field (e.g. FIELD("call_signature", SYMBOL("_call_signature")))
-// which would produce redundant $CALL_SIGNATURE + appended individual fields.
-// ---------------------------------------------------------------------------
-
-/**
- * Inline hidden rules whose body consists entirely of FIELDs present on the parent.
- * Returns the modified rule and the set of hidden rule names that were inlined.
- */
-export function inlineHiddenRules(
-	rule: GrammarRule,
-	parentFieldNames: Set<string>,
-	grammarRules: Record<string, GrammarRule>,
-): { rule: GrammarRule; inlinedNames: Set<string> } {
-	const inlinedNames = new Set<string>();
-	const result = walkInline(rule, parentFieldNames, grammarRules, inlinedNames);
-	return { rule: result, inlinedNames };
-}
-
-function walkInline(
-	rule: GrammarRule,
-	parentFieldNames: Set<string>,
-	grammarRules: Record<string, GrammarRule>,
-	inlinedNames: Set<string>,
-): GrammarRule {
-	switch (rule.type) {
-		case 'SYMBOL': {
-			if (!rule.name.startsWith('_')) return rule;
-			const hiddenRule = grammarRules[rule.name];
-			if (!hiddenRule) return rule;
-			// Check if the rule body (after unwrapping PREC) is a SEQ of FIELDs on the parent
-			const unwrapped = unwrapPrecForOverride(hiddenRule);
-			if (unwrapped.type !== 'SEQ') return rule;
-			const allParentFields = unwrapped.members.every(m => {
-				const u = unwrapPrecForOverride(m);
-				return u.type === 'FIELD' && parentFieldNames.has(u.name);
-			});
-			if (!allParentFields) return rule;
-			// Inline: replace SYMBOL with the hidden rule's body
-			const stripped = rule.name.replace(/^_/, '');
-			inlinedNames.add(stripped);
-			return hiddenRule;
-		}
-		case 'SEQ':
-			return { ...rule, members: rule.members.map(m => walkInline(m, parentFieldNames, grammarRules, inlinedNames)) };
-		case 'CHOICE':
-			return { ...rule, members: rule.members.map(m => walkInline(m, parentFieldNames, grammarRules, inlinedNames)) };
-		case 'REPEAT':
-		case 'REPEAT1':
-		case 'PREC':
-		case 'PREC_LEFT':
-		case 'PREC_RIGHT':
-		case 'PREC_DYNAMIC':
-		case 'TOKEN':
-		case 'IMMEDIATE_TOKEN':
-		case 'ALIAS':
-			return { ...rule, content: walkInline(rule.content, parentFieldNames, grammarRules, inlinedNames) };
-		case 'FIELD':
-			return { ...rule, content: walkInline(rule.content, parentFieldNames, grammarRules, inlinedNames) };
-		default:
-			return rule;
-	}
 }
 
 // ---------------------------------------------------------------------------

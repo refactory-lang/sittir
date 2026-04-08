@@ -37,12 +37,6 @@
         "multiple": false,
         "required": false,
         "position": 1
-      },
-      "call_signature": {
-        "types": [],
-        "multiple": false,
-        "required": true,
-        "position": 2
       }
     }
   },
@@ -677,12 +671,6 @@
         "multiple": false,
         "required": false,
         "position": 1
-      },
-      "call_signature": {
-        "types": [],
-        "multiple": false,
-        "required": true,
-        "position": 2
       }
     }
   },
@@ -709,12 +697,6 @@
         "multiple": false,
         "required": false,
         "position": 1
-      },
-      "call_signature": {
-        "types": [],
-        "multiple": false,
-        "required": true,
-        "position": 2
       }
     }
   },
