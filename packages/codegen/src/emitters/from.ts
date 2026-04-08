@@ -166,9 +166,8 @@ export function emitFrom(config: EmitFromConfig): string {
 	// Type-only imports
 	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
 	const configTypeImports = nodes.map(n => toTypeName(n.kind) + 'Config').sort();
-	const treeTypeImports = nodes.map(n => toTypeName(n.kind) + 'Tree').sort();
-	out.line(`import type { ${[...baseTypeImports, ...configTypeImports, ...treeTypeImports].join(', ')} } from './types.js';`);
-	out.line("import { isNodeData, isTreeNode, _inferBranch, hasKind, resolveField } from './utils.js';");
+	out.line(`import type { ${[...baseTypeImports, ...configTypeImports].join(', ')} } from './types.js';`);
+	out.line("import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';");
 	out.line();
 
 	// Import factory functions
@@ -183,8 +182,8 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line(`import type { ${fromInputImports.join(', ')} } from './types.js';`);
 	out.line();
 
-	// _resolveByKind dispatch
-	out.line('function _resolveByKind(kind: string, rest: unknown): unknown {');
+	// _resolveByKind dispatch — `any` param to call typed from functions internally
+	out.line('function _resolveByKind(kind: string, rest: any): unknown {');
 	out.indent();
 	out.line('switch (kind) {');
 	out.indent();
@@ -270,7 +269,7 @@ function emitResolverFunction(
 	if (allBranch > 0) {
 		if (allBranch === 1 && branchTypes.length === 1) {
 			const fromFn = `${toFactoryName(branchTypes[0]!)}From`;
-			out.line(`if (Array.isArray(v)) return ${fromFn}(v);`);
+			out.line(`if (Array.isArray(v)) return ${fromFn}(v as any);`);
 		} else if (allBranch === 1 && supertypes.length === 1) {
 			const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
 			out.line(`if (Array.isArray(v)) return ${resolverFn}(v);`);
@@ -405,7 +404,7 @@ function emitObjectResolveFormatted(
 		out.line('switch (k) {');
 		out.indent();
 		for (const bt of branchTypes) {
-			out.line(`case '${bt}': return ${toFactoryName(bt)}From(rest);`);
+			out.line(`case '${bt}': return ${toFactoryName(bt)}From(rest as any);`);
 		}
 		out.dedent();
 		out.line('}');
@@ -417,7 +416,7 @@ function emitObjectResolveFormatted(
 	// Object inference (no explicit kind)
 	const allBranch = branchTypes.length + supertypes.length;
 	if (allBranch === 1 && branchTypes.length === 1) {
-		out.line(`return ${toFactoryName(branchTypes[0]!)}From(${v});`);
+		out.line(`return ${toFactoryName(branchTypes[0]!)}From(${v} as any);`);
 	} else if (allBranch === 1 && supertypes.length === 1) {
 		const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
 		out.line(`return ${resolverFn}(${v});`);
@@ -461,15 +460,10 @@ function emitFromFunction(
 
 	const exportName = `${camelFactoryName}From`;
 
-	out.line(`export function ${exportName}(input: ${typeName}Tree | ${typeName} | ${typeName}FromInput): ${typeName};`);
-	out.line(`export function ${exportName}(input: unknown): unknown;`);
-	out.line(`export function ${exportName}(input: unknown): unknown {`);
+	out.line(`export function ${exportName}(input: ${typeName} | ${typeName}FromInput): ${typeName} {`);
 	out.indent();
 
-	// --- Path 1: TreeNode → pass-through ---
-	out.line('if (isTreeNode(input)) return input;');
-
-	// --- Path 2: NodeData → reconstruct via factory ---
+	// --- Path 1: NodeData → reconstruct via factory ---
 	out.line('if (isNodeData(input)) {');
 	out.indent();
 	out.line(`return ${factoryName}({`);
@@ -485,7 +479,7 @@ function emitFromFunction(
 		}
 	}
 	out.dedent();
-	out.line(`} as ${typeName}Config);`);
+	out.line(`} as ${typeName}Config) as unknown as ${typeName};`);
 	out.dedent();
 	out.line('}');
 
@@ -540,7 +534,7 @@ function emitFromFunction(
 	}
 
 	out.dedent();
-	out.line(`} as ${typeName}Config);`);
+	out.line(`} as ${typeName}Config) as unknown as ${typeName};`);
 	out.dedent();
 	out.line('}');
 }
@@ -584,7 +578,7 @@ function getResolverExpression(
 
 	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
 		const fromFn = `${toFactoryName(resolved.branchTypes[0]!)}From`;
-		return `(v: unknown) => (typeof v === 'object' ? ${fromFn}(v) : v)`;
+		return `(v: unknown) => (typeof v === 'object' ? ${fromFn}(v as any) : v)`;
 	}
 
 	// Single supertype — delegate to its resolver
