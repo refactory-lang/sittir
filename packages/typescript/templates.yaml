@@ -10,7 +10,7 @@ rules:
   abstract_class_declaration: $$$DECORATOR abstract class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   adding_type_annotation: "+?: $CHILDREN"
-  ambient_declaration: "declare $DECLARATIONglobalmodule.$$$CHILDREN : $TYPE_ANNOTATION $SEMICOLON"
+  ambient_declaration: declare $DECLARATION $$$CHILDREN $TYPE_ANNOTATION $SEMICOLON
   arguments:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -21,8 +21,8 @@ rules:
     template: "[$$$CHILDREN]"
     joinBy: ","
   array_type: $PRIMARY_TYPE[]
-  arrow_function: $PARAMETER$TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE => $BODY
-  as_expression: $EXPRESSION as const$TYPE_ANNOTATION
+  arrow_function: $PARAMETER $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE => $BODY
+  as_expression: $EXPRESSION as const $TYPE_ANNOTATION
   asserts: asserts $CHILDREN
   asserts_annotation: ": $ASSERTS"
   assignment_expression: $LEFT = $RIGHT
@@ -31,17 +31,17 @@ rules:
   await_expression: await $EXPRESSION
   binary_expression: $LEFT $OPERATOR $RIGHT
   break_statement: break $LABEL $$$CHILDREN
-  call_expression: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS?.
+  call_expression: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   catch_clause: catch $PARAMETER $TYPE $BODY
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
-  class_body: "{$$$DECORATOR $$$CHILDREN,;}"
+  class_body: "{$$$DECORATOR $$$CHILDREN}"
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
   class_heritage: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_static_block: static $$$CHILDREN $BODY
   computed_property_name: "[$EXPRESSION]"
   conditional_type: "$LEFT extends $RIGHT ? $CONSEQUENCE : $ALTERNATIVE"
-  constraint: "extends: $CHILDREN"
+  constraint: extends $CHILDREN
   construct_signature: new $TYPE_PARAMETERS $PARAMETERS $TYPE
   constructor_type: new $TYPE_PARAMETERS $PARAMETERS => $TYPE
   continue_statement: continue $LABEL $$$CHILDREN
@@ -50,7 +50,7 @@ rules:
   do_statement: do $BODY while $CONDITION $$$CHILDREN
   else_clause: else $STATEMENT
   enum_assignment: $NAME = $VALUE
-  enum_body: "{$$$NAME$OPENING $$$MEMBERS}"
+  enum_body: "{$$$NAME $OPENING $$$MEMBERS}"
   enum_declaration: enum $NAME $BODY
   export_clause:
     template: "{$$$CHILDREN}"
@@ -58,7 +58,7 @@ rules:
   export_specifier:
     template: $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
-  export_statement: export * from $SOURCE$CHILDREN$$$DECORATOR $DECLARATIONdefault $VALUEtype=as namespace
+  export_statement: export * from $SOURCE $CHILDREN $$$DECORATOR $DECLARATION $VALUE
   expression_statement: $$$CHILDREN
   extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS , $$$CHILDREN
   extends_type_clause:
@@ -66,8 +66,8 @@ rules:
     joinBy: ","
   finally_clause: finally $BODY
   flow_maybe_type: "? $PRIMARY_TYPE"
-  for_in_statement: for($LEFT$KIND $VALUE$$$CHILDREN $OPERATOR $RIGHT) $BODY
-  for_statement: for($INITIALIZER; $$$CONDITION $INCREMENT) $BODY
+  for_in_statement: for($LEFT $KIND $VALUE $$$CHILDREN $OPERATOR $RIGHT) $BODY
+  for_statement: for($INITIALIZER $$$CONDITION $INCREMENT) $BODY
   formal_parameters: ($$$CHILDREN)
   function_declaration: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
   function_expression: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
@@ -81,13 +81,13 @@ rules:
     template: implements $$$CHILDREN ,
     joinBy: ","
   import_alias: import $NAME = $VALUE $SEMICOLON
-  import_attribute: withassert $OBJECT
-  import_clause: $DEFAULT_IMPORT$NAMED_IMPORTS
+  import_attribute: with $OBJECT
+  import_clause: $DEFAULT_IMPORT $NAMED_IMPORTS
   import_require_clause: $IDENTIFIER = require($SOURCE)
-  import_specifier: $NAMEas $ALIAS
+  import_specifier: $NAME $ALIAS
   import_statement: import $IMPORT_CLAUSE from $SOURCE $IMPORT_ATTRIBUTE $SEMICOLON
   index_signature:
-    template: "$SIGN_CLAUSE[$NAME : $INDEX_TYPE$MAPPED_TYPE_CLAUSE] $TYPE"
+    template: "$SIGN_CLAUSE[$NAME : $INDEX_TYPE $MAPPED_TYPE_CLAUSE] $TYPE"
     sign_clause: $SIGN readonly
   index_type_query: keyof $PRIMARY_TYPE
   infer_type:
@@ -105,7 +105,7 @@ rules:
   mapped_type_clause:
     template: $NAME in $TYPE $ALIAS_CLAUSE
     alias_clause: as $ALIAS
-  member_expression: $OBJECT.$OPTIONAL_CHAIN $PROPERTY
+  member_expression: $OBJECT. $OPTIONAL_CHAIN $PROPERTY
   method_definition: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   method_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   module: module $NAME $BODY
@@ -125,7 +125,7 @@ rules:
   object_pattern:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  object_type: "{{| $OPENING$$$MEMBERS $$$CHILDREN}|}"
+  object_type: "{$OPENING $$$MEMBERS $$$CHILDREN}"
   omitting_type_annotation: "-?: $CHILDREN"
   opting_type_annotation: "?: $CHILDREN"
   optional_parameter: $$$DECORATOR $PARAMETER_NAME $INITIALIZER $PATTERN ? $TYPE $VALUE $NAME
@@ -149,7 +149,7 @@ rules:
     joinBy: ","
   spread_element: ... $EXPRESSION
   statement_block: "{$$$STATEMENTS} $AUTOMATIC_SEMICOLON"
-  string: "\" $$$CHILDREN'"
+  string: '" $$$CHILDREN'
   subscript_expression: $OBJECT $OPTIONAL_CHAIN[$INDEX]
   switch_body: "{$$$CHILDREN}"
   switch_case: "case $VALUE : $$$BODY"
@@ -180,7 +180,7 @@ rules:
   union_type: $LEFT | $RIGHT
   update_expression: $ARGUMENT $OPERATOR
   variable_declaration: var $$$DECLARATORS , $SEMICOLON
-  variable_declarator: $NAME $TYPE $VALUE!
+  variable_declarator: $NAME $TYPE $VALUE
   while_statement: while $CONDITION $BODY
   with_statement: with $OBJECT $BODY
   yield_expression: yield * $EXPRESSION

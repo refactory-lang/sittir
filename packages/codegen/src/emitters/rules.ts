@@ -379,14 +379,31 @@ function ruleToTemplate(
 				return parts;
 			}
 
-			// No BLANK — walk all branches, union results via seen set.
-			// First branch adds variables/tokens; subsequent branches skip already-seen items.
-			const choiceParts: string[] = [];
-			for (const m of rule.members) {
-				if (m.type === 'BLANK') continue;
-				choiceParts.push(...ruleToTemplate(m, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens));
+			// No BLANK — variant selection. Take the first branch's full output,
+			// then walk remaining branches but only keep variable references
+			// ($-prefixed). This prevents garbled templates from concatenating
+			// different branches' string literals while preserving field references
+			// that only appear in non-first branches.
+			{
+				const result: string[] = [];
+				let isFirst = true;
+				for (const m of rule.members) {
+					if (m.type === 'BLANK') continue;
+					const branchParts = ruleToTemplate(m, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
+					if (isFirst) {
+						result.push(...branchParts);
+						isFirst = false;
+					} else {
+						// Keep only variable references from non-first branches
+						for (const part of branchParts) {
+							if (part.startsWith('$')) {
+								result.push(' ', part);
+							}
+						}
+					}
+				}
+				return result;
 			}
-			return choiceParts;
 		}
 
 		case 'REPEAT':
