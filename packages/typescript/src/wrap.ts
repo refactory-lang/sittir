@@ -30,6 +30,31 @@ function promoteAnon(data: AnyNodeData, name: string, values: string[]): void {
   }
 }
 
+/** Promote the first remaining named child into a field (positional). */
+function promoteFirst(data: AnyNodeData, fieldName: string): void {
+  if (!data.children) return;
+  const arr = data.children as AnyNodeData[];
+  const idx = arr.findIndex(c => c.named);
+  if (idx >= 0) {
+    data.fields = data.fields ?? {};
+    (data.fields as Record<string, unknown>)[fieldName] = arr.splice(idx, 1)[0];
+  }
+}
+
+/** Promote all remaining named children into a field array (positional). */
+function promoteAll(data: AnyNodeData, fieldName: string): void {
+  if (!data.children) return;
+  const arr = data.children as AnyNodeData[];
+  const matching: AnyNodeData[] = [];
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (arr[i]!.named) matching.unshift(arr.splice(i, 1)[0]!);
+  }
+  if (matching.length > 0) {
+    data.fields = data.fields ?? {};
+    (data.fields as Record<string, unknown>)[fieldName] = matching;
+  }
+}
+
 /** Promote a named child by kind into a specific field name (different from kind). */
 function promoteNamed(data: AnyNodeData, fieldName: string, kinds: string[]): void {
   if (!data.children) return;
@@ -280,8 +305,8 @@ export function wrapAddingTypeAnnotation(data: AnyNodeData, tree: TreeHandle): u
 }
 
 export function wrapAmbientDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'declaration', ["abstract_class_declaration","ambient_declaration","class_declaration","enum_declaration","function_declaration","function_signature","generator_function_declaration","import_alias","interface_declaration","internal_module","lexical_declaration","module","property_identifier","statement_block","type_alias_declaration","variable_declaration"]);
-  promoteNamed(data, 'type_annotation', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteFirst(data, 'declaration');
+  promoteFirst(data, 'type_annotation');
   return {
     ...data,
     get declaration() { return drillIn(data.fields?.['declaration'], tree); },
@@ -330,8 +355,8 @@ export function wrapArrowFunction(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapAsExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'expression', ["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-  promoteNamed(data, 'type_annotation', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteFirst(data, 'expression');
+  promoteFirst(data, 'type_annotation');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
@@ -839,7 +864,7 @@ export function wrapIndexTypeQuery(data: AnyNodeData, tree: TreeHandle): unknown
 
 export function wrapInferType(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'type_identifier');
-  promoteNamed(data, 'constraint', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteFirst(data, 'constraint');
   return {
     ...data,
     get typeIdentifier() { return drillIn(data.fields?.['type_identifier'], tree); },
@@ -882,8 +907,8 @@ export function wrapInternalModule(data: AnyNodeData, tree: TreeHandle): unknown
 }
 
 export function wrapIntersectionType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'left', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-  promoteNamed(data, 'right', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteFirst(data, 'left');
+  promoteFirst(data, 'right');
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
@@ -917,8 +942,8 @@ export function wrapLiteralType(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapLookupType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'primary_type', ["array_type","conditional_type","existential_type","flow_maybe_type","generic_type","index_type_query","intersection_type","literal_type","lookup_type","nested_type_identifier","object_type","parenthesized_type","predefined_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-  promoteNamed(data, 'index_type', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteFirst(data, 'primary_type');
+  promoteFirst(data, 'index_type');
   return {
     ...data,
     get primaryType() { return drillIn(data.fields?.['primary_type'], tree); },
@@ -1061,8 +1086,8 @@ export function wrapObjectPattern(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapObjectType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'opening', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
-  promoteNamed(data, 'members', ["call_signature","construct_signature","export_statement","index_signature","method_signature","property_signature"]);
+  promoteFirst(data, 'opening');
+  promoteAll(data, 'members');
   return {
     ...data,
     get opening() { return drillIn(data.fields?.['opening'], tree); },
@@ -1140,7 +1165,7 @@ export function wrapParenthesizedType(data: AnyNodeData, tree: TreeHandle): unkn
 
 export function wrapProgram(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'hash_bang_line');
-  promoteNamed(data, 'statements', ["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
+  promoteAll(data, 'statements');
   return {
     ...data,
     get hashBangLine() { return drillIn(data.fields?.['hash_bang_line'], tree); },
@@ -1229,8 +1254,8 @@ export function wrapReturnStatement(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapSatisfiesExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'expression', ["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
-  promoteNamed(data, 'type_annotation', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteFirst(data, 'expression');
+  promoteFirst(data, 'type_annotation');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
@@ -1253,7 +1278,7 @@ export function wrapSpreadElement(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapStatementBlock(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'statements', ["abstract_class_declaration","ambient_declaration","break_statement","class_declaration","continue_statement","debugger_statement","do_statement","empty_statement","enum_declaration","export_statement","expression_statement","for_in_statement","for_statement","function_declaration","function_signature","generator_function_declaration","if_statement","import_alias","import_statement","interface_declaration","internal_module","labeled_statement","lexical_declaration","module","return_statement","statement_block","switch_statement","throw_statement","try_statement","type_alias_declaration","variable_declaration","while_statement","with_statement"]);
+  promoteAll(data, 'statements');
   return {
     ...data,
     get statements() { return drillInAll(data.fields?.['statements'], tree); },
@@ -1392,7 +1417,7 @@ export function wrapTypeArguments(data: AnyNodeData, tree: TreeHandle): unknown 
 
 export function wrapTypeAssertion(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'type_arguments');
-  promoteNamed(data, 'expression', ["array","arrow_function","as_expression","assignment_expression","augmented_assignment_expression","await_expression","binary_expression","call_expression","class","false","function_expression","generator_function","identifier","instantiation_expression","internal_module","member_expression","meta_property","new_expression","non_null_expression","null","number","object","parenthesized_expression","regex","satisfies_expression","string","subscript_expression","super","template_string","ternary_expression","this","true","type_assertion","unary_expression","undefined","update_expression","yield_expression"]);
+  promoteFirst(data, 'expression');
   return {
     ...data,
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
@@ -1447,8 +1472,8 @@ export function wrapUnaryExpression(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapUnionType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'left', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
-  promoteNamed(data, 'right', ["array_type","call_expression","conditional_type","constructor_type","existential_type","flow_maybe_type","function_type","generic_type","index_type_query","infer_type","intersection_type","literal_type","lookup_type","member_expression","nested_type_identifier","object_type","parenthesized_type","predefined_type","readonly_type","template_literal_type","this_type","tuple_type","type_identifier","type_query","union_type"]);
+  promoteFirst(data, 'left');
+  promoteFirst(data, 'right');
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },

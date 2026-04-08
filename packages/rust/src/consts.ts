@@ -555,8 +555,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'macro_definition': [
     { name: 'name', required: true, multiple: false },
-    { name: 'rules', required: false, multiple: true },
-    { name: 'rule', required: false, multiple: false },
+    { name: 'rules', required: true, multiple: true },
   ],
   'macro_invocation': [
     { name: 'macro', required: true, multiple: false },
@@ -617,6 +616,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'range_expression': [
     { name: 'start', required: false, multiple: false },
+    { name: 'operator', required: true, multiple: false },
     { name: 'end', required: false, multiple: false },
   ],
   'range_pattern': [

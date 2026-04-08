@@ -374,19 +374,8 @@
           }
         ],
         "multiple": true,
-        "required": false,
+        "required": true,
         "position": 0
-      },
-      "rule": {
-        "types": [
-          {
-            "type": "macro_rule",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": false,
-        "position": 1
       }
     }
   },
@@ -526,6 +515,25 @@
         "required": false,
         "position": 0
       },
+      "operator": {
+        "types": [
+          {
+            "type": "..",
+            "named": false
+          },
+          {
+            "type": "..=",
+            "named": false
+          },
+          {
+            "type": "...",
+            "named": false
+          }
+        ],
+        "multiple": false,
+        "required": true,
+        "position": -1
+      },
       "end": {
         "types": [
           {
@@ -535,7 +543,7 @@
         ],
         "multiple": false,
         "required": false,
-        "position": 1
+        "position": 2
       }
     }
   },
@@ -623,8 +631,8 @@
       "lifetime": {
         "types": [
           {
-            "type": "mutable_specifier",
-            "named": false
+            "type": "lifetime",
+            "named": true
           }
         ],
         "multiple": false,
@@ -634,12 +642,12 @@
       "mutable_specifier": {
         "types": [
           {
-            "type": "self",
+            "type": "mutable_specifier",
             "named": false
           }
         ],
         "multiple": false,
-        "required": true,
+        "required": false,
         "position": 1
       },
       "self": {

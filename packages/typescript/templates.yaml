@@ -8,9 +8,9 @@ metadata:
   grammarSha: ""
 rules:
   abstract_class_declaration: $$$DECORATOR abstract class $NAME $TYPE_PARAMETERS $CHILDREN $BODY
-  abstract_method_signature: $$$CHILDREN abstract $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $CALL_SIGNATURE
+  abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $OVERRIDE_MODIFIER $CALL_SIGNATURE
   adding_type_annotation: "+?: $CHILDREN"
-  ambient_declaration: declare $$$CHILDREN $DECLARATION $TYPE_ANNOTATION $SEMICOLON
+  ambient_declaration: "declare module.$DECLARATION : $TYPE_ANNOTATION $$$CHILDREN $SEMICOLON"
   arguments:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -22,7 +22,7 @@ rules:
     joinBy: ","
   array_type: $CHILDREN[]
   arrow_function: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE => $BODY $PARAMETER
-  as_expression: $$$CHILDREN as const $EXPRESSION $TYPE_ANNOTATION
+  as_expression: $EXPRESSION as $TYPE_ANNOTATION
   asserts: asserts $CHILDREN
   asserts_annotation: ": $CHILDREN"
   assignment_expression: $LEFT = $RIGHT
@@ -36,8 +36,8 @@ rules:
   catch_clause: catch $PARAMETER $TYPE $BODY
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CHILDREN $BODY
   class_body: "{$$$DECORATOR $$$CHILDREN}"
-  class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY $CLASS_HERITAGE $AUTOMATIC_SEMICOLON
-  class_heritage: $$$CHILDREN $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
+  class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $$$CHILDREN $AUTOMATIC_SEMICOLON
+  class_heritage: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_static_block: static $$$CHILDREN $BODY
   computed_property_name: "[$CHILDREN]"
   conditional_type: "$LEFT extends $RIGHT ? $CONSEQUENCE : $ALTERNATIVE"
@@ -50,7 +50,7 @@ rules:
   do_statement: do $BODY while $CONDITION $$$CHILDREN
   else_clause: else $CHILDREN
   enum_assignment: $NAME = $VALUE
-  enum_body: "{$$$NAME $$$CHILDREN} $OPENING $$$MEMBERS"
+  enum_body: "{$$$NAME $OPENING} $$$MEMBERS"
   enum_declaration: enum $NAME $BODY
   export_clause:
     template: "{$$$CHILDREN}"
@@ -80,34 +80,34 @@ rules:
   implements_clause:
     template: implements $$$CHILDREN ,
     joinBy: ","
-  import_alias: import $$$CHILDREN = $NAME $VALUE $SEMICOLON
+  import_alias: import $NAME = $VALUE $$$CHILDREN $SEMICOLON
   import_attribute: with $CHILDREN
-  import_clause: $$$CHILDREN $DEFAULT_IMPORT $NAMED_IMPORTS
+  import_clause: $DEFAULT_IMPORT $NAMED_IMPORTS
   import_require_clause: $CHILDREN = require($SOURCE)
   import_specifier: $NAME as $ALIAS
-  import_statement: import $$$CHILDREN from $SOURCE $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
+  import_statement: import $IMPORT_CLAUSE from $SOURCE $IMPORT_ATTRIBUTE $$$CHILDREN $FROM_CLAUSE $SEMICOLON
   index_signature:
     template: "$SIGN_CLAUSE[$NAME : $INDEX_TYPE] $TYPE $$$CHILDREN"
     sign_clause: $SIGN readonly
   index_type_query: keyof $CHILDREN
   infer_type:
-    template: infer $$$CHILDREN $TYPE_CLAUSE $TYPE_IDENTIFIER $CONSTRAINT
-    type_clause: extends
+    template: infer $TYPE_IDENTIFIER $TYPE_CLAUSE $CONSTRAINT
+    type_clause: extends $TYPE
   instantiation_expression: $CHILDREN $TYPE_ARGUMENTS $FUNCTION
   interface_body: $$$CHILDREN
   interface_declaration: interface $NAME $TYPE_PARAMETERS $CHILDREN $BODY
   internal_module: namespace $NAME $BODY
-  intersection_type: $$$CHILDREN & $LEFT $RIGHT
+  intersection_type: $LEFT & $RIGHT
   labeled_statement: "$LABEL : $BODY"
-  lexical_declaration: $KIND $$$CHILDREN , $$$DECLARATORS $SEMICOLON
+  lexical_declaration: $KIND $$$DECLARATORS , $$$CHILDREN $SEMICOLON
   literal_type: $CHILDREN
-  lookup_type: $$$CHILDREN[] $PRIMARY_TYPE $INDEX_TYPE
+  lookup_type: $PRIMARY_TYPE[$INDEX_TYPE]
   mapped_type_clause:
     template: $NAME in $TYPE $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   member_expression: $OBJECT $OPTIONAL_CHAIN $PROPERTY
-  method_definition: $$$CHILDREN $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $CALL_SIGNATURE
-  method_signature: $$$CHILDREN $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $CALL_SIGNATURE
+  method_definition: $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $OVERRIDE_MODIFIER $CALL_SIGNATURE
+  method_signature: $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $OVERRIDE_MODIFIER $CALL_SIGNATURE
   module: module $NAME $BODY
   named_imports:
     template: "{$$$CHILDREN}"
@@ -125,30 +125,30 @@ rules:
   object_pattern:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  object_type: "{$$$CHILDREN} $OPENING $$$MEMBERS $CLOSING"
+  object_type: "{$OPENING $$$CHILDREN $$$MEMBERS} $CLOSING"
   omitting_type_annotation: "-?: $CHILDREN"
   opting_type_annotation: "?: $CHILDREN"
-  optional_parameter: $$$DECORATOR $$$CHILDREN $PATTERN ? $TYPE $VALUE $NAME $PARAMETER_NAME $INITIALIZER
+  optional_parameter: $$$DECORATOR $PARAMETER_NAME $$$CHILDREN $PATTERN ? $TYPE $VALUE $NAME $INITIALIZER
   optional_type: $CHILDREN ?
   pair: "$KEY : $VALUE"
   pair_pattern: "$KEY : $VALUE"
   parenthesized_expression: ($CHILDREN $TYPE)
   parenthesized_type: ($CHILDREN)
-  program: $$$CHILDREN $HASH_BANG_LINE $$$STATEMENTS
-  property_signature: $$$CHILDREN $CHILDREN $NAME $TYPE $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER
-  public_field_definition: $$$DECORATOR $$$CHILDREN $CHILDREN $NAME $TYPE $VALUE $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER
+  program: $HASH_BANG_LINE $$$STATEMENTS
+  property_signature: $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE $OVERRIDE_MODIFIER
+  public_field_definition: $$$DECORATOR $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE $VALUE $OVERRIDE_MODIFIER $INITIALIZER
   readonly_type: readonly $CHILDREN
   regex: / $PATTERN / $FLAGS
-  required_parameter: $$$DECORATOR $$$CHILDREN $PATTERN $TYPE $VALUE $NAME $PARAMETER_NAME $INITIALIZER
+  required_parameter: $$$DECORATOR $PARAMETER_NAME $$$CHILDREN $PATTERN $TYPE $VALUE $NAME $INITIALIZER
   rest_pattern: ... $$$CHILDREN
   rest_type: ... $CHILDREN
   return_statement: return $$$CHILDREN
-  satisfies_expression: $$$CHILDREN satisfies $EXPRESSION $TYPE_ANNOTATION
+  satisfies_expression: $EXPRESSION satisfies $TYPE_ANNOTATION
   sequence_expression:
     template: $$$CHILDREN ,
     joinBy: ","
   spread_element: ... $CHILDREN
-  statement_block: "{$$$CHILDREN} $$$STATEMENTS $AUTOMATIC_SEMICOLON"
+  statement_block: "{$$$STATEMENTS} $$$CHILDREN $AUTOMATIC_SEMICOLON"
   string: '" $$$CHILDREN "'
   subscript_expression: $OBJECT $OPTIONAL_CHAIN[$INDEX]
   switch_body: "{$$$CHILDREN}"
@@ -168,7 +168,7 @@ rules:
   type_arguments:
     template: <$$$CHILDREN ,>
     joinBy: ","
-  type_assertion: $$$CHILDREN $TYPE_ARGUMENTS $EXPRESSION
+  type_assertion: $TYPE_ARGUMENTS $EXPRESSION
   type_parameter: $NAME $CONSTRAINT $VALUE
   type_parameters:
     template: <$$$CHILDREN ,>
@@ -177,9 +177,9 @@ rules:
   type_predicate_annotation: ": $CHILDREN"
   type_query: typeof $CHILDREN
   unary_expression: $OPERATOR $ARGUMENT
-  union_type: $$$CHILDREN | $LEFT $RIGHT
+  union_type: $LEFT | $RIGHT
   update_expression: $ARGUMENT $OPERATOR
-  variable_declaration: var $$$CHILDREN , $$$DECLARATORS $SEMICOLON
+  variable_declaration: var $$$DECLARATORS , $$$CHILDREN $SEMICOLON
   variable_declarator: $NAME $TYPE $VALUE
   while_statement: while $CONDITION $BODY
   with_statement: with $OBJECT $BODY

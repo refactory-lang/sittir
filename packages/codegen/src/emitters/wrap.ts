@@ -69,6 +69,31 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push('  }');
 	lines.push('}');
 	lines.push('');
+	lines.push('/** Promote the first remaining named child into a field (positional). */');
+	lines.push('function promoteFirst(data: AnyNodeData, fieldName: string): void {');
+	lines.push('  if (!data.children) return;');
+	lines.push('  const arr = data.children as AnyNodeData[];');
+	lines.push('  const idx = arr.findIndex(c => c.named);');
+	lines.push('  if (idx >= 0) {');
+	lines.push('    data.fields = data.fields ?? {};');
+	lines.push('    (data.fields as Record<string, unknown>)[fieldName] = arr.splice(idx, 1)[0];');
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+	lines.push('/** Promote all remaining named children into a field array (positional). */');
+	lines.push('function promoteAll(data: AnyNodeData, fieldName: string): void {');
+	lines.push('  if (!data.children) return;');
+	lines.push('  const arr = data.children as AnyNodeData[];');
+	lines.push('  const matching: AnyNodeData[] = [];');
+	lines.push('  for (let i = arr.length - 1; i >= 0; i--) {');
+	lines.push('    if (arr[i]!.named) matching.unshift(arr.splice(i, 1)[0]!);');
+	lines.push('  }');
+	lines.push('  if (matching.length > 0) {');
+	lines.push('    data.fields = data.fields ?? {};');
+	lines.push('    (data.fields as Record<string, unknown>)[fieldName] = matching;');
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
 	lines.push('/** Promote a named child by kind into a specific field name (different from kind). */');
 	lines.push('function promoteNamed(data: AnyNodeData, fieldName: string, kinds: string[]): void {');
 	lines.push('  if (!data.children) return;');
@@ -130,7 +155,8 @@ export function emitWrap(config: EmitWrapConfig): string {
 		const fields = fieldsOf(node);
 
 		const tsFields = fields.filter(f => !f.override);
-		const overrideFields = fields.filter(f => f.override);
+		const overrideFields = fields.filter(f => f.override)
+			.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
 
 		lines.push(`export function wrap${typeName}(data: AnyNodeData, tree: TreeHandle): unknown {`);
 
@@ -147,6 +173,14 @@ export function emitWrap(config: EmitWrapConfig): string {
 				if (named.length === 1 && named[0] === f.name) {
 					// Kind matches field name — use simple promote
 					lines.push(`  promote(data, '${f.name}');`);
+				} else if (named.length > 5) {
+					// Large supertype expansion — use positional promote
+					// (safe because overrides are sorted by position)
+					if (f.multiple) {
+						lines.push(`  promoteAll(data, '${f.name}');`);
+					} else {
+						lines.push(`  promoteFirst(data, '${f.name}');`);
+					}
 				} else if (named.length > 0) {
 					lines.push(`  promoteNamed(data, '${f.name}', ${JSON.stringify(named)});`);
 				}

@@ -1617,7 +1617,6 @@ export function macro_definition_(
   const fields = {
     name: config.name,
     rules: config.rules,
-    rule: config.rule,
   };
   return {
     type: 'macro_definition' as const,
@@ -1625,7 +1624,6 @@ export function macro_definition_(
     fields,
     name(name?: Identifier) { return name !== undefined ? macro_definition_({ ...config, name: name }) : fields.name; },
     rules(...rules: (MacroRule)[]) { return rules.length ? macro_definition_({ ...config, rules: rules }) : fields.rules; },
-    rule(rule?: MacroRule) { return rule !== undefined ? macro_definition_({ ...config, rule: rule }) : fields.rule; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1836,15 +1834,12 @@ export function negative_literal_(
     operator: config.operator,
     value: config.value,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'negative_literal' as const,
     named: true as const,
     fields,
-    children,
     operator(operator?: string) { return operator !== undefined ? negative_literal_({ ...config, operator: operator }) : fields.operator; },
     value(value?: FloatLiteral | IntegerLiteral) { return value !== undefined ? negative_literal_({ ...config, value: value }) : fields.value; },
-    child(child?: FloatLiteral | IntegerLiteral) { return child !== undefined ? negative_literal_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2018,17 +2013,19 @@ export function qualified_type_(
 
 
 export function range_expression_(
-  config?: RangeExpressionConfig,
+  config: RangeExpressionConfig,
 ) {
   const fields = {
-    start: config?.start,
-    end: config?.end,
+    start: config.start,
+    operator: config.operator,
+    end: config.end,
   };
   return {
     type: 'range_expression' as const,
     named: true as const,
     fields,
     start(start?: Expression) { return start !== undefined ? range_expression_({ ...config, start: start }) : fields.start; },
+    operator(operator?: string) { return operator !== undefined ? range_expression_({ ...config, operator: operator }) : fields.operator; },
     end(end?: Expression) { return end !== undefined ? range_expression_({ ...config, end: end }) : fields.end; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2694,15 +2691,12 @@ export function try_expression_(
     value: config.value,
     operator: config.operator,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'try_expression' as const,
     named: true as const,
     fields,
-    children,
     value(value?: Expression) { return value !== undefined ? try_expression_({ ...config, value: value }) : fields.value; },
     operator(operator?: string) { return operator !== undefined ? try_expression_({ ...config, operator: operator }) : fields.operator; },
-    child(child?: Expression) { return child !== undefined ? try_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2956,15 +2950,12 @@ export function unary_expression_(
     operator: config.operator,
     operand: config.operand,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'unary_expression' as const,
     named: true as const,
     fields,
-    children,
     operator(operator?: string) { return operator !== undefined ? unary_expression_({ ...config, operator: operator }) : fields.operator; },
     operand(operand?: Expression) { return operand !== undefined ? unary_expression_({ ...config, operand: operand }) : fields.operand; },
-    child(child?: Expression) { return child !== undefined ? unary_expression_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

@@ -1575,28 +1575,23 @@ describe('loop_expression', () => {
 
 describe('macro_definition', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any });
+    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [] });
     expect(node.type).toBe('macro_definition');
   });
   it('renders to non-empty string', () => {
-    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any });
+    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any });
+    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [] });
     const source = render(node);
     expect(source).toContain('macro_rules!');
   });
   it('node.render() works', () => {
-    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any });
+    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [] });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.macroDefinition({ name: ir.identifier('test_name') as any, rules: [], rule: ir.macroRule({ left: ir.tokenTreePattern() as any, right: ir.tokenTree() as any }) as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1779,7 +1774,7 @@ describe('mut_pattern', () => {
 
 describe('negative_literal', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.negativeLiteral({ operator: { type: 'unknown', fields: {} } as any, value: ir.floatLiteral('3.14') as any, children: ir.floatLiteral('3.14') as any });
+    const node = ir.negativeLiteral({ operator: { type: 'unknown', fields: {} } as any, value: ir.floatLiteral('3.14') as any });
     expect(node.type).toBe('negative_literal');
   });
 });
@@ -1968,18 +1963,8 @@ describe('qualified_type', () => {
 
 describe('range_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.rangeExpression();
+    const node = ir.rangeExpression({ operator: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('range_expression');
-  });
-  it('node.render() works', () => {
-    const node = ir.rangeExpression();
-    expect(typeof node.render).toBe('function');
-    expect(node.render()).toBe(render(node));
-  });
-  it('renders with optional fields', () => {
-    const node = ir.rangeExpression({ start: ir.identifier('test_start') as any, end: ir.identifier('test_end') as any });
-    const source = render(node);
-    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2604,7 +2589,7 @@ describe('try_block', () => {
 
 describe('try_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.tryExpression({ value: ir.identifier('test_value') as any, operator: { type: 'unknown', fields: {} } as any, children: ir.identifier('test_children') as any });
+    const node = ir.tryExpression({ value: ir.identifier('test_value') as any, operator: { type: 'unknown', fields: {} } as any });
     expect(node.type).toBe('try_expression');
   });
 });
@@ -2865,7 +2850,7 @@ describe('type_parameters', () => {
 
 describe('unary_expression', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.unaryExpression({ operator: { type: 'unknown', fields: {} } as any, operand: ir.identifier('test_operand') as any, children: ir.identifier('test_children') as any });
+    const node = ir.unaryExpression({ operator: { type: 'unknown', fields: {} } as any, operand: ir.identifier('test_operand') as any });
     expect(node.type).toBe('unary_expression');
   });
 });

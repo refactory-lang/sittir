@@ -93,12 +93,43 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	// For tuple children, each slot has specific kinds. For single children, all kinds map to CHILDREN.
 	const childSlotMap = buildChildSlotMap(node, ctx);
 
+	// Build override field queue: sorted by position, consumed in order during rule walk.
+	// Each entry knows its grammar kinds so the walker can match SYMBOL → override field.
+	const overrideQueue: OverrideFieldEntry[] = nodeFields
+		.filter(f => f.override && !f.overrideAnonymous)
+		.sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+		.map(f => ({
+			varName: f.name.toUpperCase(),
+			multiple: f.multiple,
+			slotName: f.name,
+			kinds: new Set([...f.kinds].map(k => typeof k === 'string' ? k : (k as any).kind as string)),
+		}));
+	const overrideState = { cursor: 0 };
+
+	// Also build the set of ALL kinds that override fields consume (for SYMBOL matching)
+	const overrideKindSet = new Set<string>();
+	for (const entry of overrideQueue) {
+		for (const k of entry.kinds) overrideKindSet.add(k);
+	}
+
+	// Build anonymous override token map: token value → field name
+	// When the walker sees a STRING matching an anonymous override, mark it as seen
+	const anonOverrideTokens = new Map<string, string>();
+	for (const f of nodeFields) {
+		if (!f.override || !f.overrideAnonymous) continue;
+		if (f.overrideValues) {
+			for (const v of f.overrideValues) {
+				anonOverrideTokens.set(v, f.name);
+			}
+		}
+	}
+
 	// Walk the grammar rule tree
 	const rawRule = node.rule?.rule;
 	const seen = new Set<string>();
 	const clauses: ClauseEntry[] = [];
 	const parts = rawRule
-		? ruleToTemplate(rawRule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap)
+		? ruleToTemplate(rawRule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens)
 		: [];
 
 	// Append missing fields the walker didn't reach
@@ -146,6 +177,13 @@ interface ChildSlotInfo {
 	varName: string;  // UPPER_SNAKE variable name
 	multiple: boolean;
 	slotName: string; // camelCase slot name (for tracking in seen set)
+}
+
+interface OverrideFieldEntry {
+	varName: string;  // UPPER_SNAKE variable name
+	multiple: boolean;
+	slotName: string; // raw snake_case field name (for tracking in seen set)
+	kinds: Set<string>; // raw grammar kinds this field consumes
 }
 
 /** Build a mapping from grammar kind → child slot variable info. */
@@ -204,6 +242,10 @@ function ruleToTemplate(
 	clauses: ClauseEntry[],
 	immediate: boolean,
 	childSlotMap: Map<string, ChildSlotInfo>,
+	overrideQueue?: OverrideFieldEntry[],
+	overrideState?: { cursor: number },
+	overrideKindSet?: Set<string>,
+	anonOverrideTokens?: Map<string, string>,
 ): string[] {
 	switch (rule.type) {
 		case 'SEQ': {
@@ -211,7 +253,7 @@ function ruleToTemplate(
 			for (let i = 0; i < rule.members.length; i++) {
 				const member = rule.members[i]!;
 				const isFirst = i === 0;
-				const memberParts = ruleToTemplate(member, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+				const memberParts = ruleToTemplate(member, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 				if (!isFirst && memberParts.length > 0 && parts.length > 0) {
 					// Add space between parts unless immediate
 					const lastPart = parts[parts.length - 1]!;
@@ -225,9 +267,18 @@ function ruleToTemplate(
 			return parts;
 		}
 
-		case 'STRING':
+		case 'STRING': {
 			if (optional) return [];
+			// If this token matches an anonymous override field, replace with variable
+			if (anonOverrideTokens) {
+				const anonFieldName = anonOverrideTokens.get(rule.value);
+				if (anonFieldName && !seen.has(anonFieldName)) {
+					seen.add(anonFieldName);
+					return [`$${anonFieldName.toUpperCase()}`];
+				}
+			}
 			return [rule.value];
+		}
 
 		case 'FIELD': {
 			if (seen.has(rule.name)) return [];
@@ -241,7 +292,7 @@ function ruleToTemplate(
 			// Inline _-prefixed (hidden/abstract) rules that contain fields
 			if (rule.name.startsWith('_') && gr[rule.name]) {
 				const inlineSeen = new Set(seen);
-				const inlined = ruleToTemplate(gr[rule.name]!, optional, inlineSeen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+				const inlined = ruleToTemplate(gr[rule.name]!, optional, inlineSeen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 				// Filter to only parts with fields that belong to this node
 				const hasRelevantFields = [...inlineSeen].some(f => !seen.has(f) && fieldRequired.has(f));
 				if (hasRelevantFields) {
@@ -250,6 +301,20 @@ function ruleToTemplate(
 					}
 					return inlined;
 				}
+			}
+			// Check if this symbol matches the next override field in the queue (positional)
+			if (overrideQueue && overrideState && overrideKindSet && overrideKindSet.has(rule.name)) {
+				// Consume the next override field whose kinds include this symbol
+				for (let i = overrideState.cursor; i < overrideQueue.length; i++) {
+					const entry = overrideQueue[i]!;
+					if (entry.kinds.has(rule.name) && !seen.has(entry.slotName)) {
+						seen.add(entry.slotName);
+						overrideState.cursor = i + 1;
+						return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
+					}
+				}
+				// All matching overrides already consumed — this occurrence is covered
+				return [];
 			}
 			// Check if this symbol maps to a named child slot
 			const childSlot = childSlotMap.get(rule.name);
@@ -281,7 +346,7 @@ function ruleToTemplate(
 				const parts: string[] = [];
 				for (const m of rule.members) {
 					if (m.type === 'BLANK') continue;
-					parts.push(...ruleToTemplate(m, true, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap));
+					parts.push(...ruleToTemplate(m, true, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens));
 				}
 				return parts;
 			}
@@ -290,34 +355,39 @@ function ruleToTemplate(
 			let best: string[] = [];
 			let bestCount = -1;
 			let bestSeen = new Set<string>();
+			let bestCursor = overrideState?.cursor ?? 0;
+			const savedCursor = overrideState?.cursor ?? 0;
 			for (const m of rule.members) {
+				if (overrideState) overrideState.cursor = savedCursor;
 				const branchSeen = new Set(seen);
 				const branchClauses: ClauseEntry[] = [];
-				const branchParts = ruleToTemplate(m, optional, branchSeen, fieldRequired, fieldMultiple, gr, branchClauses, immediate, childSlotMap);
+				const branchParts = ruleToTemplate(m, optional, branchSeen, fieldRequired, fieldMultiple, gr, branchClauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 				const fieldCount = [...branchSeen].filter(f => !seen.has(f)).length;
 				if (fieldCount > bestCount) {
 					bestCount = fieldCount;
 					best = branchParts;
 					bestSeen = branchSeen;
+					bestCursor = overrideState?.cursor ?? 0;
 					clauses.push(...branchClauses);
 				}
 			}
+			if (overrideState) overrideState.cursor = bestCursor;
 			for (const f of bestSeen) seen.add(f);
 			return best;
 		}
 
 		case 'REPEAT':
 		case 'REPEAT1':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 
 		case 'TOKEN':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, false, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, false, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 
 		case 'IMMEDIATE_TOKEN': {
 			let inner: GrammarRule = rule.content;
@@ -328,13 +398,24 @@ function ruleToTemplate(
 				if (optional) return [];
 				return [inner.value]; // no leading space — immediate
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, true, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, true, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 		}
 
 		case 'ALIAS':
 			if (rule.named) {
-				// Named alias — treat like a symbol
-				const aliasSlot = childSlotMap.get(rule.value ?? '');
+				// Named alias — check override fields first, then child slots
+				const aliasName = rule.value ?? '';
+				if (overrideQueue && overrideState && overrideKindSet && overrideKindSet.has(aliasName)) {
+					for (let i = overrideState.cursor; i < overrideQueue.length; i++) {
+						const entry = overrideQueue[i]!;
+						if (entry.kinds.has(aliasName) && !seen.has(entry.slotName)) {
+							seen.add(entry.slotName);
+							overrideState.cursor = i + 1;
+							return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
+						}
+					}
+				}
+				const aliasSlot = childSlotMap.get(aliasName);
 				if (aliasSlot) {
 					if (seen.has(`child:${aliasSlot.slotName}`)) return [];
 					seen.add(`child:${aliasSlot.slotName}`);
@@ -348,7 +429,7 @@ function ruleToTemplate(
 				if (optional) return [];
 				return [rule.value];
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
 
 		case 'BLANK':
 		case 'PATTERN':
@@ -413,6 +494,10 @@ function tryClause(
 			const varName = unwrapped.name.toUpperCase();
 			const multi = fieldMultiple.get(unwrapped.name) ?? false;
 			clauseParts.push(multi ? `$$$${varName}` : `$${varName}`);
+			seen.add(unwrapped.name);
+		} else if (unwrapped.type === 'SYMBOL' && !unwrapped.name.startsWith('_')) {
+			const varName = unwrapped.name.toUpperCase();
+			clauseParts.push(`$${varName}`);
 			seen.add(unwrapped.name);
 		}
 	}

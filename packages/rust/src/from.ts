@@ -2141,7 +2141,6 @@ export function macroDefinitionFrom(input: unknown): unknown {
     return macro_definition_({
       name: f?.['name'],
       rules: f?.['rules'],
-      rule: f?.['rule'],
     } as unknown as MacroDefinitionConfig);
   }
   const obj = input as Record<string, unknown>;
@@ -2153,9 +2152,8 @@ export function macroDefinitionFrom(input: unknown): unknown {
     const raw = obj['rules'];
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['rules'] = arr.map((v: unknown) => (isNodeData(v) ? v : Array.isArray(v) ? macroRuleFrom(v) : typeof v === 'object' ? macroRuleFrom(v) : v));
-  }
-  if (obj['rule'] !== undefined) {
-    resolved['rule'] = (isNodeData(obj['rule']) ? obj['rule'] : Array.isArray(obj['rule']) ? macroRuleFrom(obj['rule']) : typeof obj['rule'] === 'object' ? macroRuleFrom(obj['rule']) : obj['rule']);
+  } else {
+    resolved['rules'] = [];
   }
   return macro_definition_(resolved as MacroDefinitionConfig);
 }
@@ -2373,19 +2371,15 @@ export function negativeLiteralFrom(input: unknown): unknown {
     return negative_literal_({
       operator: f?.['operator'],
       value: f?.['value'],
-      children: c,
     } as unknown as NegativeLiteralConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['operator'] !== undefined) {
     resolved['operator'] = _rd4g2sg(obj['operator']);
   }
   if (obj['value'] !== undefined) {
     resolved['value'] = _rft8noo(obj['value']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = _rft8noo(obj.children);
   }
   return negative_literal_(resolved as NegativeLiteralConfig);
 }
@@ -2579,6 +2573,7 @@ export function rangeExpressionFrom(input: unknown): unknown {
     const c = nd.children;
     return range_expression_({
       start: f?.['start'],
+      operator: f?.['operator'],
       end: f?.['end'],
     } as unknown as RangeExpressionConfig);
   }
@@ -2586,6 +2581,9 @@ export function rangeExpressionFrom(input: unknown): unknown {
   const resolved: Record<string, unknown> = {};
   if (obj['start'] !== undefined) {
     resolved['start'] = _resolveExpression(obj['start']);
+  }
+  if (obj['operator'] !== undefined) {
+    resolved['operator'] = _rd4g2sg(obj['operator']);
   }
   if (obj['end'] !== undefined) {
     resolved['end'] = _resolveExpression(obj['end']);
@@ -3310,19 +3308,15 @@ export function tryExpressionFrom(input: unknown): unknown {
     return try_expression_({
       value: f?.['value'],
       operator: f?.['operator'],
-      children: c,
     } as unknown as TryExpressionConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['value'] !== undefined) {
     resolved['value'] = _resolveExpression(obj['value']);
   }
   if (obj['operator'] !== undefined) {
     resolved['operator'] = _rd4g2sg(obj['operator']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = _resolveExpression(obj.children);
   }
   return try_expression_(resolved as TryExpressionConfig);
 }
@@ -3609,19 +3603,15 @@ export function unaryExpressionFrom(input: unknown): unknown {
     return unary_expression_({
       operator: f?.['operator'],
       operand: f?.['operand'],
-      children: c,
     } as unknown as UnaryExpressionConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['operator'] !== undefined) {
     resolved['operator'] = _rd4g2sg(obj['operator']);
   }
   if (obj['operand'] !== undefined) {
     resolved['operand'] = _resolveExpression(obj['operand']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = _resolveExpression(obj.children);
   }
   return unary_expression_(resolved as UnaryExpressionConfig);
 }

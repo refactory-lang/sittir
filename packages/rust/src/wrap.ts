@@ -30,6 +30,31 @@ function promoteAnon(data: AnyNodeData, name: string, values: string[]): void {
   }
 }
 
+/** Promote the first remaining named child into a field (positional). */
+function promoteFirst(data: AnyNodeData, fieldName: string): void {
+  if (!data.children) return;
+  const arr = data.children as AnyNodeData[];
+  const idx = arr.findIndex(c => c.named);
+  if (idx >= 0) {
+    data.fields = data.fields ?? {};
+    (data.fields as Record<string, unknown>)[fieldName] = arr.splice(idx, 1)[0];
+  }
+}
+
+/** Promote all remaining named children into a field array (positional). */
+function promoteAll(data: AnyNodeData, fieldName: string): void {
+  if (!data.children) return;
+  const arr = data.children as AnyNodeData[];
+  const matching: AnyNodeData[] = [];
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (arr[i]!.named) matching.unshift(arr.splice(i, 1)[0]!);
+  }
+  if (matching.length > 0) {
+    data.fields = data.fields ?? {};
+    (data.fields as Record<string, unknown>)[fieldName] = matching;
+  }
+}
+
 /** Promote a named child by kind into a specific field name (different from kind). */
 function promoteNamed(data: AnyNodeData, fieldName: string, kinds: string[]): void {
   if (!data.children) return;
@@ -249,7 +274,7 @@ export function wrapArguments(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapArrayExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'attributes', ["attribute_item"]);
-  promoteNamed(data, 'elements', ["array_expression","assignment_expression","async_block","attribute_item","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteAll(data, 'elements');
   return {
     ...data,
     get length() { return drillIn(data.fields?.['length'], tree); },
@@ -332,8 +357,8 @@ export function wrapBinaryExpression(data: AnyNodeData, tree: TreeHandle): unkno
 
 export function wrapBlock(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'label');
-  promoteNamed(data, 'statements', ["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
-  promoteNamed(data, 'expression', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteAll(data, 'statements');
+  promoteFirst(data, 'expression');
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
@@ -352,8 +377,8 @@ export function wrapBlockComment(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapBoundedType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'left', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
-  promoteNamed(data, 'right', ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","lifetime","macro_invocation","metavariable","never_type","pointer_type","primitive_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type","type_identifier","unit_type","use_bounds"]);
+  promoteFirst(data, 'left');
+  promoteFirst(data, 'right');
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
@@ -370,7 +395,7 @@ export function wrapBracketedType(data: AnyNodeData, tree: TreeHandle): unknown 
 
 export function wrapBreakExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'label');
-  promoteNamed(data, 'expression', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteFirst(data, 'expression');
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
@@ -388,7 +413,7 @@ export function wrapCallExpression(data: AnyNodeData, tree: TreeHandle): unknown
 
 export function wrapCapturedPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'identifier');
-  promoteNamed(data, 'pattern', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+  promoteFirst(data, 'pattern');
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
@@ -730,8 +755,8 @@ export function wrapImplItem(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapIndexExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'object', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteNamed(data, 'index', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteFirst(data, 'object');
+  promoteFirst(data, 'index');
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
@@ -813,12 +838,10 @@ export function wrapLoopExpression(data: AnyNodeData, tree: TreeHandle): unknown
 
 export function wrapMacroDefinition(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'rules', ["macro_rule"]);
-  promoteNamed(data, 'rule', ["macro_rule"]);
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get rules() { return drillInAll(data.fields?.['rules'], tree); },
-    get rule() { return drillIn(data.fields?.['rule'], tree); },
   };
 }
 
@@ -881,7 +904,7 @@ export function wrapModItem(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapMutPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteAnon(data, 'mutable_specifier', ["mutable_specifier"]);
-  promoteNamed(data, 'pattern', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+  promoteFirst(data, 'pattern');
   return {
     ...data,
     get mutableSpecifier() { return (data.fields?.['mutable_specifier'] as AnyNodeData | undefined)?.text; },
@@ -897,13 +920,12 @@ export function wrapNegativeLiteral(data: AnyNodeData, tree: TreeHandle): unknow
     ...data,
     get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapOrPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'left', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
-  promoteNamed(data, 'right', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+  promoteFirst(data, 'left');
+  promoteFirst(data, 'right');
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
@@ -964,10 +986,12 @@ export function wrapQualifiedType(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapRangeExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'start', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteNamed(data, 'end', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteAnon(data, 'operator', ["..","..=","..."]);
+  promoteFirst(data, 'start');
+  promoteFirst(data, 'end');
   return {
     ...data,
+    get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
     get start() { return drillIn(data.fields?.['start'], tree); },
     get end() { return drillIn(data.fields?.['end'], tree); },
   };
@@ -1008,7 +1032,7 @@ export function wrapReferenceExpression(data: AnyNodeData, tree: TreeHandle): un
 
 export function wrapReferencePattern(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteAnon(data, 'mutable_specifier', ["mutable_specifier"]);
-  promoteNamed(data, 'pattern', ["boolean_literal","captured_pattern","char_literal","const_block","float_literal","generic_pattern","identifier","integer_literal","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","remaining_field_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
+  promoteFirst(data, 'pattern');
   return {
     ...data,
     get mutableSpecifier() { return (data.fields?.['mutable_specifier'] as AnyNodeData | undefined)?.text; },
@@ -1098,7 +1122,7 @@ export function wrapSlicePattern(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapSourceFile(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'shebang');
-  promoteNamed(data, 'statements', ["associated_type","attribute_item","const_item","empty_statement","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
+  promoteAll(data, 'statements');
   return {
     ...data,
     get shebang() { return drillIn(data.fields?.['shebang'], tree); },
@@ -1221,21 +1245,20 @@ export function wrapTryBlock(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapTryExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'value', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
   promoteAnon(data, 'operator', ["?"]);
+  promoteFirst(data, 'value');
   return {
     ...data,
-    get value() { return drillIn(data.fields?.['value'], tree); },
     get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get value() { return drillIn(data.fields?.['value'], tree); },
   };
 }
 
 export function wrapTupleExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'attributes', ["attribute_item"]);
-  promoteNamed(data, 'first', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteNamed(data, 'rest', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
-  promoteNamed(data, 'trailing', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteFirst(data, 'first');
+  promoteAll(data, 'rest');
+  promoteFirst(data, 'trailing');
   return {
     ...data,
     get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
@@ -1324,12 +1347,11 @@ export function wrapTypeParameters(data: AnyNodeData, tree: TreeHandle): unknown
 
 export function wrapUnaryExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteAnon(data, 'operator', ["-","*","!"]);
-  promoteNamed(data, 'operand', ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","boolean_literal","break_expression","call_expression","char_literal","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","float_literal","for_expression","gen_block","generic_function","identifier","if_expression","index_expression","integer_literal","loop_expression","macro_invocation","match_expression","metavariable","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","self","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unit_expression","unsafe_block","while_expression","yield_expression"]);
+  promoteFirst(data, 'operand');
   return {
     ...data,
     get operator() { return (data.fields?.['operator'] as AnyNodeData | undefined)?.text; },
     get operand() { return drillIn(data.fields?.['operand'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

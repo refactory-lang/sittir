@@ -30,6 +30,31 @@ function promoteAnon(data: AnyNodeData, name: string, values: string[]): void {
   }
 }
 
+/** Promote the first remaining named child into a field (positional). */
+function promoteFirst(data: AnyNodeData, fieldName: string): void {
+  if (!data.children) return;
+  const arr = data.children as AnyNodeData[];
+  const idx = arr.findIndex(c => c.named);
+  if (idx >= 0) {
+    data.fields = data.fields ?? {};
+    (data.fields as Record<string, unknown>)[fieldName] = arr.splice(idx, 1)[0];
+  }
+}
+
+/** Promote all remaining named children into a field array (positional). */
+function promoteAll(data: AnyNodeData, fieldName: string): void {
+  if (!data.children) return;
+  const arr = data.children as AnyNodeData[];
+  const matching: AnyNodeData[] = [];
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (arr[i]!.named) matching.unshift(arr.splice(i, 1)[0]!);
+  }
+  if (matching.length > 0) {
+    data.fields = data.fields ?? {};
+    (data.fields as Record<string, unknown>)[fieldName] = matching;
+  }
+}
+
 /** Promote a named child by kind into a specific field name (different from kind). */
 function promoteNamed(data: AnyNodeData, fieldName: string, kinds: string[]): void {
   if (!data.children) return;
@@ -332,8 +357,8 @@ export function wrapClassPattern(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapComparisonOperator(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'left', ["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","list","list_comprehension","list_splat","none","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'comparators', ["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","list","list_comprehension","list_splat","none","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
+  promoteFirst(data, 'left');
+  promoteAll(data, 'comparators');
   return {
     ...data,
     get operators() { return drillInAll(data.fields?.['operators'], tree); },
@@ -360,9 +385,9 @@ export function wrapConcatenatedString(data: AnyNodeData, tree: TreeHandle): unk
 }
 
 export function wrapConditionalExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'body', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'condition', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'alternative', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
+  promoteFirst(data, 'body');
+  promoteFirst(data, 'condition');
+  promoteFirst(data, 'alternative');
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
@@ -390,7 +415,7 @@ export function wrapDecoratedDefinition(data: AnyNodeData, tree: TreeHandle): un
 }
 
 export function wrapDecorator(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'expression', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
+  promoteFirst(data, 'expression');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
@@ -636,8 +661,8 @@ export function wrapKeywordArgument(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapKeywordPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'identifier', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","float","identifier","integer","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);
-  promoteNamed(data, 'simple_pattern', ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","false","float","integer","list_pattern","none","splat_pattern","string","true","tuple_pattern","union_pattern"]);
+  promoteFirst(data, 'identifier');
+  promoteFirst(data, 'simple_pattern');
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
@@ -828,9 +853,9 @@ export function wrapSetComprehension(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapSlice(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'start', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'stop', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
-  promoteNamed(data, 'step', ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","ellipsis","false","float","generator_expression","identifier","integer","lambda","list","list_comprehension","list_splat","named_expression","none","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","true","tuple","unary_operator"]);
+  promoteFirst(data, 'start');
+  promoteFirst(data, 'stop');
+  promoteFirst(data, 'step');
   return {
     ...data,
     get start() { return drillIn(data.fields?.['start'], tree); },

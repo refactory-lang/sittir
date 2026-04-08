@@ -574,20 +574,44 @@ function enrichSupertype(model: SupertypeModel, rule: SupertypeRule): void {
  * Remaining uncovered child slots stay as `children`.
  */
 function removeOverriddenChildSlots(branch: BranchModel): void {
-	if (!branch.children || !isTupleChildren(branch.children)) return;
-	const slots = branch.children as ChildModel[];
+	if (!branch.children) return;
 
-	// Collect positions covered by override fields
+	// Collect positions and kinds covered by override fields
 	const coveredPositions = new Set<number>();
+	const coveredKinds = new Set<string>();
 	for (const field of branch.fields) {
 		if (!field.override || field.overrideAnonymous) continue;
 		if (field.position != null && field.position >= 0) {
 			coveredPositions.add(field.position);
 		}
+		for (const k of field.kinds) coveredKinds.add(k);
 	}
 
-	// Filter out covered slots
-	const remaining = slots.filter((_slot, i) => !coveredPositions.has(i));
+	if (coveredPositions.size === 0 && coveredKinds.size === 0) return;
+
+	/** Check if all kinds in a child slot are covered by override fields. */
+	function isKindCovered(slot: ChildModel): boolean {
+		if (slot.kinds.size === 0) return false;
+		for (const k of slot.kinds) {
+			if (!coveredKinds.has(k)) return false;
+		}
+		return true;
+	}
+
+	if (!isTupleChildren(branch.children)) {
+		// Single-slot child — check if position or kinds are covered
+		const slot = branch.children as ChildModel;
+		const pos = slot.position ?? 0;
+		if (coveredPositions.has(pos) || isKindCovered(slot)) {
+			branch.children = undefined;
+		}
+		return;
+	}
+
+	const slots = branch.children as ChildModel[];
+
+	// Filter out slots covered by position or by kind
+	const remaining = slots.filter((slot, i) => !coveredPositions.has(i) && !isKindCovered(slot));
 
 	if (remaining.length === 0) {
 		branch.children = undefined;

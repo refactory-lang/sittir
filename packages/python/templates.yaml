@@ -28,14 +28,14 @@ rules:
   case_pattern: $CHILDREN
   chevron: ">> $CHILDREN"
   class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES : $BODY"
-  class_pattern: $$$CHILDREN() $DOTTED_NAME $$$ARGUMENTS
-  comparison_operator: $$$CHILDREN $$$OPERATORS $LEFT $$$COMPARATORS
-  complex_pattern: $$$CHILDREN + $REAL $IMAGINARY
+  class_pattern: $DOTTED_NAME($$$ARGUMENTS)
+  comparison_operator: $LEFT $$$OPERATORS $$$COMPARATORS
+  complex_pattern: $REAL + $IMAGINARY
   concatenated_string: $$$CHILDREN
-  conditional_expression: $$$CHILDREN if else $BODY $CONDITION $ALTERNATIVE
-  constrained_type: "$$$CHILDREN : $BASE_TYPE $CONSTRAINT"
+  conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
+  constrained_type: "$BASE_TYPE : $CONSTRAINT"
   decorated_definition: $$$CHILDREN $DEFINITION
-  decorator: "@ $$$CHILDREN $EXPRESSION $NEWLINE"
+  decorator: "@ $EXPRESSION $$$CHILDREN $NEWLINE"
   default_parameter: $NAME = $VALUE
   delete_statement: del $$$CHILDREN
   dict_pattern:
@@ -73,7 +73,7 @@ rules:
     return_type_clause: -> $RETURN_TYPE
   future_import_statement: from __future__ import $$$NAME ,
   generator_expression: ($BODY $CHILDREN)
-  generic_type: $$$CHILDREN $IDENTIFIER $TYPE_PARAMETER
+  generic_type: $IDENTIFIER $TYPE_PARAMETER
   global_statement:
     template: global $$$CHILDREN ,
     joinBy: ","
@@ -83,7 +83,7 @@ rules:
   import_statement: import $$$NAME ,
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME = $VALUE
-  keyword_pattern: $$$CHILDREN = $IDENTIFIER $SIMPLE_PATTERN
+  keyword_pattern: $IDENTIFIER = $SIMPLE_PATTERN
   lambda: "lambda $PARAMETERS : $BODY"
   lambda_parameters: $$$CHILDREN
   list: "[$$$CHILDREN]"
@@ -94,7 +94,7 @@ rules:
   match_statement:
     template: "match $$$SUBJECT , : $BODY"
     joinBy: ","
-  member_type: $$$CHILDREN. $BASE_TYPE $IDENTIFIER
+  member_type: $BASE_TYPE.$IDENTIFIER
   module: $$$CHILDREN
   named_expression: $NAME := $VALUE
   nonlocal_statement:
@@ -114,19 +114,19 @@ rules:
   raise_statement:
     template: raise $CHILDREN $CAUSE_CLAUSE
     cause_clause: from $CAUSE
-  relative_import: $$$CHILDREN $IMPORT_PREFIX $DOTTED_NAME
+  relative_import: $IMPORT_PREFIX $DOTTED_NAME
   return_statement: return $$$CHILDREN
   set: "{$$$CHILDREN}"
   set_comprehension: "{$BODY $CHILDREN}"
-  slice: "$$$CHILDREN : $START $STOP $STEP"
+  slice: "$START : $STOP $STEP"
   splat_pattern: "* $CHILDREN"
   splat_type: "* $CHILDREN"
-  string: $$$CHILDREN $STRING_START $$$CONTENT $STRING_END
+  string: $STRING_START $$$CONTENT $STRING_END
   string_content: $$$CHILDREN
   subscript:
     template: $VALUE[$$$SUBSCRIPT ,]
     joinBy: ","
-  try_statement: "try : $BODY $$$CHILDREN $$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
+  try_statement: "try : $BODY $$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
   tuple: ($$$CHILDREN)
   tuple_pattern: ($$$CHILDREN)
   type: $CHILDREN
@@ -138,7 +138,7 @@ rules:
   typed_parameter: "$CHILDREN : $TYPE"
   unary_operator: $OPERATOR $ARGUMENT
   union_pattern: $$$CHILDREN |
-  union_type: $$$CHILDREN | $LEFT $RIGHT
+  union_type: $LEFT | $RIGHT
   while_statement: "while $CONDITION : $BODY $ALTERNATIVE"
   with_clause:
     template: $$$CHILDREN ,

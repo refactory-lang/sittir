@@ -758,8 +758,7 @@ export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
     readonly name: Identifier;
-    readonly rules?: readonly (MacroRule)[];
-    readonly rule?: MacroRule;
+    readonly rules: readonly (MacroRule)[];
   };
 }
 export interface MacroInvocation {
@@ -824,7 +823,6 @@ export interface NegativeLiteral {
     readonly operator: string;
     readonly value: FloatLiteral | IntegerLiteral;
   };
-  readonly children: FloatLiteral | IntegerLiteral;
 }
 export interface OrPattern {
   readonly type: 'or_pattern';
@@ -876,6 +874,7 @@ export interface RangeExpression {
   readonly type: 'range_expression';
   readonly fields: {
     readonly start?: Expression;
+    readonly operator: string;
     readonly end?: Expression;
   };
 }
@@ -1064,7 +1063,6 @@ export interface TryExpression {
     readonly value: Expression;
     readonly operator: string;
   };
-  readonly children: Expression;
 }
 export interface TupleExpression {
   readonly type: 'tuple_expression';
@@ -1138,7 +1136,6 @@ export interface UnaryExpression {
     readonly operator: string;
     readonly operand: Expression;
   };
-  readonly children: Expression;
 }
 export interface UnionItem {
   readonly type: 'union_item';
