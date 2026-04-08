@@ -54,10 +54,11 @@ export interface AnyNodeData {
  */
 export type TemplateRule =
 	| string
+	| string[]
 	| TemplateRuleObject;
 
 export interface TemplateRuleObject {
-	template: string;
+	template: string | string[];
 	joinBy?: string;
 	[clauseKey: `${string}_clause`]: string;
 }
