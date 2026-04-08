@@ -7,7 +7,7 @@ import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';
 import { aliased_import_, argument_list_, as_pattern_, assert_statement_, assignment_, attribute_, augmented_assignment_, await_, binary_operator_, block_, boolean_operator_, break_statement_, call_, case_clause_, case_pattern_, chevron_, class_definition_, class_pattern_, comparison_operator_, complex_pattern_, concatenated_string_, conditional_expression_, constrained_type_, continue_statement_, decorated_definition_, decorator_, default_parameter_, delete_statement_, dict_pattern_, dictionary_, dictionary_comprehension_, dictionary_splat_, dictionary_splat_pattern_, dotted_name_, elif_clause_, ellipsis_, else_clause_, escape_interpolation_, escape_sequence_, except_clause_, exec_statement_, expression_list_, expression_statement_, false_, finally_clause_, float_, for_in_clause_, for_statement_, format_expression_, format_specifier_, function_definition_, future_import_statement_, generator_expression_, generic_type_, global_statement_, identifier_, if_clause_, if_statement_, import_from_statement_, import_prefix_, import_statement_, integer_, interpolation_, keyword_argument_, keyword_pattern_, keyword_separator_, lambda_, lambda_parameters_, list_, list_comprehension_, list_pattern_, list_splat_, list_splat_pattern_, match_statement_, member_type_, module_, named_expression_, none_, nonlocal_statement_, not_operator_, pair_, parameters_, parenthesized_expression_, parenthesized_list_splat_, pass_statement_, pattern_list_, positional_separator_, print_statement_, raise_statement_, relative_import_, return_statement_, set_, set_comprehension_, slice_, splat_pattern_, splat_type_, string_, string_content_, string_end_, string_start_, subscript_, true_, try_statement_, tuple_, tuple_pattern_, type_, type_alias_statement_, type_conversion_, type_parameter_, typed_default_parameter_, typed_parameter_, unary_operator_, union_pattern_, union_type_, while_statement_, wildcard_import_, with_clause_, with_item_, with_statement_, yield_ } from './factories.js';
 import type { AliasedImportFromInput, ArgumentListFromInput, AsPatternFromInput, AssertStatementFromInput, AssignmentFromInput, AttributeFromInput, AugmentedAssignmentFromInput, AwaitFromInput, BinaryOperatorFromInput, BlockFromInput, BooleanOperatorFromInput, CallFromInput, CaseClauseFromInput, CasePatternFromInput, ChevronFromInput, ClassDefinitionFromInput, ClassPatternFromInput, ComparisonOperatorFromInput, ComplexPatternFromInput, ConcatenatedStringFromInput, ConditionalExpressionFromInput, ConstrainedTypeFromInput, DecoratedDefinitionFromInput, DecoratorFromInput, DefaultParameterFromInput, DeleteStatementFromInput, DictPatternFromInput, DictionaryFromInput, DictionaryComprehensionFromInput, DictionarySplatFromInput, DictionarySplatPatternFromInput, DottedNameFromInput, ElifClauseFromInput, ElseClauseFromInput, ExceptClauseFromInput, ExecStatementFromInput, ExpressionListFromInput, ExpressionStatementFromInput, FinallyClauseFromInput, ForInClauseFromInput, ForStatementFromInput, FormatExpressionFromInput, FormatSpecifierFromInput, FunctionDefinitionFromInput, FutureImportStatementFromInput, GeneratorExpressionFromInput, GenericTypeFromInput, GlobalStatementFromInput, IfClauseFromInput, IfStatementFromInput, ImportFromStatementFromInput, ImportStatementFromInput, InterpolationFromInput, KeywordArgumentFromInput, KeywordPatternFromInput, LambdaFromInput, LambdaParametersFromInput, ListFromInput, ListComprehensionFromInput, ListPatternFromInput, ListSplatFromInput, ListSplatPatternFromInput, MatchStatementFromInput, MemberTypeFromInput, ModuleFromInput, NamedExpressionFromInput, NonlocalStatementFromInput, NotOperatorFromInput, PairFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, ParenthesizedListSplatFromInput, PatternListFromInput, PrintStatementFromInput, RaiseStatementFromInput, RelativeImportFromInput, ReturnStatementFromInput, SetFromInput, SetComprehensionFromInput, SliceFromInput, SplatPatternFromInput, SplatTypeFromInput, StringFromInput, StringContentFromInput, SubscriptFromInput, TryStatementFromInput, TupleFromInput, TuplePatternFromInput, TypeFromInput, TypeAliasStatementFromInput, TypeParameterFromInput, TypedDefaultParameterFromInput, TypedParameterFromInput, UnaryOperatorFromInput, UnionPatternFromInput, UnionTypeFromInput, WhileStatementFromInput, WithClauseFromInput, WithItemFromInput, WithStatementFromInput, YieldFromInput } from './types.js';
 
-function _resolveByKind(kind: string, rest: any): unknown {
+function _resolveByKind(kind: string, rest: object): unknown {
   switch (kind) {
     case 'aliased_import': return aliasedImportFrom(rest);
     case 'argument_list': return argumentListFrom(rest);
@@ -124,15 +124,15 @@ function _resolveCompoundStatement(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'class_definition': return classDefinitionFrom(rest as any);
-        case 'decorated_definition': return decoratedDefinitionFrom(rest as any);
-        case 'for_statement': return forStatementFrom(rest as any);
-        case 'function_definition': return functionDefinitionFrom(rest as any);
-        case 'if_statement': return ifStatementFrom(rest as any);
-        case 'match_statement': return matchStatementFrom(rest as any);
-        case 'try_statement': return tryStatementFrom(rest as any);
-        case 'while_statement': return whileStatementFrom(rest as any);
-        case 'with_statement': return withStatementFrom(rest as any);
+        case 'class_definition': return classDefinitionFrom(rest);
+        case 'decorated_definition': return decoratedDefinitionFrom(rest);
+        case 'for_statement': return forStatementFrom(rest);
+        case 'function_definition': return functionDefinitionFrom(rest);
+        case 'if_statement': return ifStatementFrom(rest);
+        case 'match_statement': return matchStatementFrom(rest);
+        case 'try_statement': return tryStatementFrom(rest);
+        case 'while_statement': return whileStatementFrom(rest);
+        case 'with_statement': return withStatementFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -156,19 +156,19 @@ function _resolveSimpleStatement(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'assert_statement': return assertStatementFrom(rest as any);
-        case 'delete_statement': return deleteStatementFrom(rest as any);
-        case 'exec_statement': return execStatementFrom(rest as any);
-        case 'expression_statement': return expressionStatementFrom(rest as any);
-        case 'future_import_statement': return futureImportStatementFrom(rest as any);
-        case 'global_statement': return globalStatementFrom(rest as any);
-        case 'import_from_statement': return importFromStatementFrom(rest as any);
-        case 'import_statement': return importStatementFrom(rest as any);
-        case 'nonlocal_statement': return nonlocalStatementFrom(rest as any);
-        case 'print_statement': return printStatementFrom(rest as any);
-        case 'raise_statement': return raiseStatementFrom(rest as any);
-        case 'return_statement': return returnStatementFrom(rest as any);
-        case 'type_alias_statement': return typeAliasStatementFrom(rest as any);
+        case 'assert_statement': return assertStatementFrom(rest);
+        case 'delete_statement': return deleteStatementFrom(rest);
+        case 'exec_statement': return execStatementFrom(rest);
+        case 'expression_statement': return expressionStatementFrom(rest);
+        case 'future_import_statement': return futureImportStatementFrom(rest);
+        case 'global_statement': return globalStatementFrom(rest);
+        case 'import_from_statement': return importFromStatementFrom(rest);
+        case 'import_statement': return importStatementFrom(rest);
+        case 'nonlocal_statement': return nonlocalStatementFrom(rest);
+        case 'print_statement': return printStatementFrom(rest);
+        case 'raise_statement': return raiseStatementFrom(rest);
+        case 'return_statement': return returnStatementFrom(rest);
+        case 'type_alias_statement': return typeAliasStatementFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -195,24 +195,24 @@ function _resolvePrimaryExpression(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'attribute': return attributeFrom(rest as any);
-        case 'await': return await_From(rest as any);
-        case 'binary_operator': return binaryOperatorFrom(rest as any);
-        case 'call': return callFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'dictionary': return dictionaryFrom(rest as any);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest as any);
-        case 'generator_expression': return generatorExpressionFrom(rest as any);
-        case 'list': return listFrom(rest as any);
-        case 'list_comprehension': return listComprehensionFrom(rest as any);
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
-        case 'set': return setFrom(rest as any);
-        case 'set_comprehension': return setComprehensionFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
-        case 'tuple': return tupleFrom(rest as any);
-        case 'unary_operator': return unaryOperatorFrom(rest as any);
+        case 'attribute': return attributeFrom(rest);
+        case 'await': return await_From(rest);
+        case 'binary_operator': return binaryOperatorFrom(rest);
+        case 'call': return callFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'dictionary': return dictionaryFrom(rest);
+        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
+        case 'generator_expression': return generatorExpressionFrom(rest);
+        case 'list': return listFrom(rest);
+        case 'list_comprehension': return listComprehensionFrom(rest);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
+        case 'set': return setFrom(rest);
+        case 'set_comprehension': return setComprehensionFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
+        case 'tuple': return tupleFrom(rest);
+        case 'unary_operator': return unaryOperatorFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -239,31 +239,31 @@ function _resolveExpression(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'as_pattern': return asPatternFrom(rest as any);
-        case 'attribute': return attributeFrom(rest as any);
-        case 'await': return await_From(rest as any);
-        case 'binary_operator': return binaryOperatorFrom(rest as any);
-        case 'boolean_operator': return booleanOperatorFrom(rest as any);
-        case 'call': return callFrom(rest as any);
-        case 'comparison_operator': return comparisonOperatorFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'conditional_expression': return conditionalExpressionFrom(rest as any);
-        case 'dictionary': return dictionaryFrom(rest as any);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest as any);
-        case 'generator_expression': return generatorExpressionFrom(rest as any);
-        case 'lambda': return lambdaFrom(rest as any);
-        case 'list': return listFrom(rest as any);
-        case 'list_comprehension': return listComprehensionFrom(rest as any);
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'named_expression': return namedExpressionFrom(rest as any);
-        case 'not_operator': return notOperatorFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
-        case 'set': return setFrom(rest as any);
-        case 'set_comprehension': return setComprehensionFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
-        case 'tuple': return tupleFrom(rest as any);
-        case 'unary_operator': return unaryOperatorFrom(rest as any);
+        case 'as_pattern': return asPatternFrom(rest);
+        case 'attribute': return attributeFrom(rest);
+        case 'await': return await_From(rest);
+        case 'binary_operator': return binaryOperatorFrom(rest);
+        case 'boolean_operator': return booleanOperatorFrom(rest);
+        case 'call': return callFrom(rest);
+        case 'comparison_operator': return comparisonOperatorFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'conditional_expression': return conditionalExpressionFrom(rest);
+        case 'dictionary': return dictionaryFrom(rest);
+        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
+        case 'generator_expression': return generatorExpressionFrom(rest);
+        case 'lambda': return lambdaFrom(rest);
+        case 'list': return listFrom(rest);
+        case 'list_comprehension': return listComprehensionFrom(rest);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'named_expression': return namedExpressionFrom(rest);
+        case 'not_operator': return notOperatorFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
+        case 'set': return setFrom(rest);
+        case 'set_comprehension': return setComprehensionFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
+        case 'tuple': return tupleFrom(rest);
+        case 'unary_operator': return unaryOperatorFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -286,12 +286,12 @@ function _resolveParameter(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'default_parameter': return defaultParameterFrom(rest as any);
-        case 'dictionary_splat_pattern': return dictionarySplatPatternFrom(rest as any);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest as any);
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
-        case 'typed_default_parameter': return typedDefaultParameterFrom(rest as any);
-        case 'typed_parameter': return typedParameterFrom(rest as any);
+        case 'default_parameter': return defaultParameterFrom(rest);
+        case 'dictionary_splat_pattern': return dictionarySplatPatternFrom(rest);
+        case 'list_splat_pattern': return listSplatPatternFrom(rest);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
+        case 'typed_default_parameter': return typedDefaultParameterFrom(rest);
+        case 'typed_parameter': return typedParameterFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -312,11 +312,11 @@ function _resolvePattern(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'attribute': return attributeFrom(rest as any);
-        case 'list_pattern': return listPatternFrom(rest as any);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
+        case 'attribute': return attributeFrom(rest);
+        case 'list_pattern': return listPatternFrom(rest);
+        case 'list_splat_pattern': return listSplatPatternFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -342,16 +342,16 @@ function _resolveSimplePattern(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'class_pattern': return classPatternFrom(rest as any);
-        case 'complex_pattern': return complexPatternFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'dict_pattern': return dictPatternFrom(rest as any);
-        case 'dotted_name': return dottedNameFrom(rest as any);
-        case 'list_pattern': return listPatternFrom(rest as any);
-        case 'splat_pattern': return splatPatternFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
-        case 'union_pattern': return unionPatternFrom(rest as any);
+        case 'class_pattern': return classPatternFrom(rest);
+        case 'complex_pattern': return complexPatternFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'dict_pattern': return dictPatternFrom(rest);
+        case 'dotted_name': return dottedNameFrom(rest);
+        case 'list_pattern': return listPatternFrom(rest);
+        case 'splat_pattern': return splatPatternFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
+        case 'union_pattern': return unionPatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -367,16 +367,16 @@ function _resolveComprehensionClauses(v: unknown): unknown {
   if (typeof v === 'string') {
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
-  if (Array.isArray(v)) return forInClauseFrom(v as any);
+  if (Array.isArray(v)) return forInClauseFrom(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'for_in_clause': return forInClauseFrom(rest as any);
+        case 'for_in_clause': return forInClauseFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
-    return forInClauseFrom(v as any);
+    return forInClauseFrom(v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -386,16 +386,16 @@ function _resolveSuite(v: unknown): unknown {
   if (typeof v === 'string') {
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
-  if (Array.isArray(v)) return blockFrom(v as any);
+  if (Array.isArray(v)) return blockFrom(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'block': return blockFrom(rest as any);
+        case 'block': return blockFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
-    return blockFrom(v as any);
+    return blockFrom(v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -416,32 +416,32 @@ function _resolveExpressions(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'as_pattern': return asPatternFrom(rest as any);
-        case 'attribute': return attributeFrom(rest as any);
-        case 'await': return await_From(rest as any);
-        case 'binary_operator': return binaryOperatorFrom(rest as any);
-        case 'boolean_operator': return booleanOperatorFrom(rest as any);
-        case 'call': return callFrom(rest as any);
-        case 'comparison_operator': return comparisonOperatorFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'conditional_expression': return conditionalExpressionFrom(rest as any);
-        case 'dictionary': return dictionaryFrom(rest as any);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest as any);
-        case 'expression_list': return expressionListFrom(rest as any);
-        case 'generator_expression': return generatorExpressionFrom(rest as any);
-        case 'lambda': return lambdaFrom(rest as any);
-        case 'list': return listFrom(rest as any);
-        case 'list_comprehension': return listComprehensionFrom(rest as any);
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'named_expression': return namedExpressionFrom(rest as any);
-        case 'not_operator': return notOperatorFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
-        case 'set': return setFrom(rest as any);
-        case 'set_comprehension': return setComprehensionFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
-        case 'tuple': return tupleFrom(rest as any);
-        case 'unary_operator': return unaryOperatorFrom(rest as any);
+        case 'as_pattern': return asPatternFrom(rest);
+        case 'attribute': return attributeFrom(rest);
+        case 'await': return await_From(rest);
+        case 'binary_operator': return binaryOperatorFrom(rest);
+        case 'boolean_operator': return booleanOperatorFrom(rest);
+        case 'call': return callFrom(rest);
+        case 'comparison_operator': return comparisonOperatorFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'conditional_expression': return conditionalExpressionFrom(rest);
+        case 'dictionary': return dictionaryFrom(rest);
+        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
+        case 'expression_list': return expressionListFrom(rest);
+        case 'generator_expression': return generatorExpressionFrom(rest);
+        case 'lambda': return lambdaFrom(rest);
+        case 'list': return listFrom(rest);
+        case 'list_comprehension': return listComprehensionFrom(rest);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'named_expression': return namedExpressionFrom(rest);
+        case 'not_operator': return notOperatorFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
+        case 'set': return setFrom(rest);
+        case 'set_comprehension': return setComprehensionFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
+        case 'tuple': return tupleFrom(rest);
+        case 'unary_operator': return unaryOperatorFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -462,12 +462,12 @@ function _resolveLeftHandSide(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'attribute': return attributeFrom(rest as any);
-        case 'list_pattern': return listPatternFrom(rest as any);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest as any);
-        case 'pattern_list': return patternListFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
+        case 'attribute': return attributeFrom(rest);
+        case 'list_pattern': return listPatternFrom(rest);
+        case 'list_splat_pattern': return listSplatPatternFrom(rest);
+        case 'pattern_list': return patternListFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -494,36 +494,36 @@ function _resolveRightHandSide(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'as_pattern': return asPatternFrom(rest as any);
-        case 'assignment': return assignmentFrom(rest as any);
-        case 'attribute': return attributeFrom(rest as any);
-        case 'augmented_assignment': return augmentedAssignmentFrom(rest as any);
-        case 'await': return await_From(rest as any);
-        case 'binary_operator': return binaryOperatorFrom(rest as any);
-        case 'boolean_operator': return booleanOperatorFrom(rest as any);
-        case 'call': return callFrom(rest as any);
-        case 'comparison_operator': return comparisonOperatorFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'conditional_expression': return conditionalExpressionFrom(rest as any);
-        case 'dictionary': return dictionaryFrom(rest as any);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest as any);
-        case 'expression_list': return expressionListFrom(rest as any);
-        case 'generator_expression': return generatorExpressionFrom(rest as any);
-        case 'lambda': return lambdaFrom(rest as any);
-        case 'list': return listFrom(rest as any);
-        case 'list_comprehension': return listComprehensionFrom(rest as any);
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'named_expression': return namedExpressionFrom(rest as any);
-        case 'not_operator': return notOperatorFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
-        case 'pattern_list': return patternListFrom(rest as any);
-        case 'set': return setFrom(rest as any);
-        case 'set_comprehension': return setComprehensionFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
-        case 'tuple': return tupleFrom(rest as any);
-        case 'unary_operator': return unaryOperatorFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'as_pattern': return asPatternFrom(rest);
+        case 'assignment': return assignmentFrom(rest);
+        case 'attribute': return attributeFrom(rest);
+        case 'augmented_assignment': return augmentedAssignmentFrom(rest);
+        case 'await': return await_From(rest);
+        case 'binary_operator': return binaryOperatorFrom(rest);
+        case 'boolean_operator': return booleanOperatorFrom(rest);
+        case 'call': return callFrom(rest);
+        case 'comparison_operator': return comparisonOperatorFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'conditional_expression': return conditionalExpressionFrom(rest);
+        case 'dictionary': return dictionaryFrom(rest);
+        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
+        case 'expression_list': return expressionListFrom(rest);
+        case 'generator_expression': return generatorExpressionFrom(rest);
+        case 'lambda': return lambdaFrom(rest);
+        case 'list': return listFrom(rest);
+        case 'list_comprehension': return listComprehensionFrom(rest);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'named_expression': return namedExpressionFrom(rest);
+        case 'not_operator': return notOperatorFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
+        case 'pattern_list': return patternListFrom(rest);
+        case 'set': return setFrom(rest);
+        case 'set_comprehension': return setComprehensionFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
+        case 'tuple': return tupleFrom(rest);
+        case 'unary_operator': return unaryOperatorFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -550,34 +550,34 @@ function _resolveFExpression(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'as_pattern': return asPatternFrom(rest as any);
-        case 'attribute': return attributeFrom(rest as any);
-        case 'await': return await_From(rest as any);
-        case 'binary_operator': return binaryOperatorFrom(rest as any);
-        case 'boolean_operator': return booleanOperatorFrom(rest as any);
-        case 'call': return callFrom(rest as any);
-        case 'comparison_operator': return comparisonOperatorFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'conditional_expression': return conditionalExpressionFrom(rest as any);
-        case 'dictionary': return dictionaryFrom(rest as any);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest as any);
-        case 'expression_list': return expressionListFrom(rest as any);
-        case 'generator_expression': return generatorExpressionFrom(rest as any);
-        case 'lambda': return lambdaFrom(rest as any);
-        case 'list': return listFrom(rest as any);
-        case 'list_comprehension': return listComprehensionFrom(rest as any);
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'named_expression': return namedExpressionFrom(rest as any);
-        case 'not_operator': return notOperatorFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
-        case 'pattern_list': return patternListFrom(rest as any);
-        case 'set': return setFrom(rest as any);
-        case 'set_comprehension': return setComprehensionFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
-        case 'tuple': return tupleFrom(rest as any);
-        case 'unary_operator': return unaryOperatorFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'as_pattern': return asPatternFrom(rest);
+        case 'attribute': return attributeFrom(rest);
+        case 'await': return await_From(rest);
+        case 'binary_operator': return binaryOperatorFrom(rest);
+        case 'boolean_operator': return booleanOperatorFrom(rest);
+        case 'call': return callFrom(rest);
+        case 'comparison_operator': return comparisonOperatorFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'conditional_expression': return conditionalExpressionFrom(rest);
+        case 'dictionary': return dictionaryFrom(rest);
+        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
+        case 'expression_list': return expressionListFrom(rest);
+        case 'generator_expression': return generatorExpressionFrom(rest);
+        case 'lambda': return lambdaFrom(rest);
+        case 'list': return listFrom(rest);
+        case 'list_comprehension': return listComprehensionFrom(rest);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'named_expression': return namedExpressionFrom(rest);
+        case 'not_operator': return notOperatorFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
+        case 'pattern_list': return patternListFrom(rest);
+        case 'set': return setFrom(rest);
+        case 'set_comprehension': return setComprehensionFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
+        case 'tuple': return tupleFrom(rest);
+        case 'unary_operator': return unaryOperatorFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -613,10 +613,10 @@ function _rkthp94(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'dictionary_splat': return dictionarySplatFrom(rest as any);
-        case 'keyword_argument': return keywordArgumentFrom(rest as any);
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
+        case 'dictionary_splat': return dictionarySplatFrom(rest);
+        case 'keyword_argument': return keywordArgumentFrom(rest);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -652,7 +652,7 @@ function _rb6s74c(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'case_pattern': return casePatternFrom(rest as any);
+        case 'case_pattern': return casePatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -673,7 +673,7 @@ function _r8t0lsb(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'pattern_list': return patternListFrom(rest as any);
+        case 'pattern_list': return patternListFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -694,11 +694,11 @@ function _r49ezd9(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'assignment': return assignmentFrom(rest as any);
-        case 'augmented_assignment': return augmentedAssignmentFrom(rest as any);
-        case 'expression_list': return expressionListFrom(rest as any);
-        case 'pattern_list': return patternListFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'assignment': return assignmentFrom(rest);
+        case 'augmented_assignment': return augmentedAssignmentFrom(rest);
+        case 'expression_list': return expressionListFrom(rest);
+        case 'pattern_list': return patternListFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -785,8 +785,8 @@ function _rgmxmo(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'argument_list': return argumentListFrom(rest as any);
-        case 'generator_expression': return generatorExpressionFrom(rest as any);
+        case 'argument_list': return argumentListFrom(rest);
+        case 'generator_expression': return generatorExpressionFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -807,7 +807,7 @@ function _r10v9xtg(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'block': return blockFrom(rest as any);
+        case 'block': return blockFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -833,18 +833,18 @@ function _r4s6aba(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'as_pattern': return asPatternFrom(rest as any);
-        case 'class_pattern': return classPatternFrom(rest as any);
-        case 'complex_pattern': return complexPatternFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'dict_pattern': return dictPatternFrom(rest as any);
-        case 'dotted_name': return dottedNameFrom(rest as any);
-        case 'keyword_pattern': return keywordPatternFrom(rest as any);
-        case 'list_pattern': return listPatternFrom(rest as any);
-        case 'splat_pattern': return splatPatternFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
-        case 'union_pattern': return unionPatternFrom(rest as any);
+        case 'as_pattern': return asPatternFrom(rest);
+        case 'class_pattern': return classPatternFrom(rest);
+        case 'complex_pattern': return complexPatternFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'dict_pattern': return dictPatternFrom(rest);
+        case 'dotted_name': return dottedNameFrom(rest);
+        case 'keyword_pattern': return keywordPatternFrom(rest);
+        case 'list_pattern': return listPatternFrom(rest);
+        case 'splat_pattern': return splatPatternFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
+        case 'union_pattern': return unionPatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -898,8 +898,8 @@ function _rdlbv6g(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'class_definition': return classDefinitionFrom(rest as any);
-        case 'function_definition': return functionDefinitionFrom(rest as any);
+        case 'class_definition': return classDefinitionFrom(rest);
+        case 'function_definition': return functionDefinitionFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -915,16 +915,16 @@ function _r17ic1ai(v: unknown): unknown {
   if (typeof v === 'string') {
     return identifier_(v);
   }
-  if (Array.isArray(v)) return tuplePatternFrom(v as any);
+  if (Array.isArray(v)) return tuplePatternFrom(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
-    return tuplePatternFrom(v as any);
+    return tuplePatternFrom(v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -939,7 +939,7 @@ function _ra9cmgr(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'expression_list': return expressionListFrom(rest as any);
+        case 'expression_list': return expressionListFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -960,8 +960,8 @@ function _rr1mjap(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'dictionary_splat': return dictionarySplatFrom(rest as any);
-        case 'pair': return pairFrom(rest as any);
+        case 'dictionary_splat': return dictionarySplatFrom(rest);
+        case 'pair': return pairFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -982,8 +982,8 @@ function _rxj908(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'for_in_clause': return forInClauseFrom(rest as any);
-        case 'if_clause': return ifClauseFrom(rest as any);
+        case 'for_in_clause': return forInClauseFrom(rest);
+        case 'if_clause': return ifClauseFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1004,8 +1004,8 @@ function _r1odq136(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'attribute': return attributeFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
+        case 'attribute': return attributeFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1021,16 +1021,16 @@ function _rq3krei(v: unknown): unknown {
   if (typeof v === 'string') {
     return identifier_(v);
   }
-  if (Array.isArray(v)) return stringFrom(v as any);
+  if (Array.isArray(v)) return stringFrom(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'string': return stringFrom(rest as any);
+        case 'string': return stringFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
-    return stringFrom(v as any);
+    return stringFrom(v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1045,9 +1045,9 @@ function _rldymh6(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'assignment': return assignmentFrom(rest as any);
-        case 'augmented_assignment': return augmentedAssignmentFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'assignment': return assignmentFrom(rest);
+        case 'augmented_assignment': return augmentedAssignmentFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1087,7 +1087,7 @@ function _r1tj7jk9(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'expression_list': return expressionListFrom(rest as any);
+        case 'expression_list': return expressionListFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1108,9 +1108,9 @@ function _r130w83n(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'expression_list': return expressionListFrom(rest as any);
-        case 'pattern_list': return patternListFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'expression_list': return expressionListFrom(rest);
+        case 'pattern_list': return patternListFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1131,8 +1131,8 @@ function _r144bmot(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'aliased_import': return aliasedImportFrom(rest as any);
-        case 'dotted_name': return dottedNameFrom(rest as any);
+        case 'aliased_import': return aliasedImportFrom(rest);
+        case 'dotted_name': return dottedNameFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1153,8 +1153,8 @@ function _rjyu65p(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'elif_clause': return elifClauseFrom(rest as any);
-        case 'else_clause': return elseClauseFrom(rest as any);
+        case 'elif_clause': return elifClauseFrom(rest);
+        case 'else_clause': return elseClauseFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1175,8 +1175,8 @@ function _rrq3952(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'dotted_name': return dottedNameFrom(rest as any);
-        case 'relative_import': return relativeImportFrom(rest as any);
+        case 'dotted_name': return dottedNameFrom(rest);
+        case 'relative_import': return relativeImportFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1197,9 +1197,9 @@ function _r2m155v(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'expression_list': return expressionListFrom(rest as any);
-        case 'pattern_list': return patternListFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'expression_list': return expressionListFrom(rest);
+        case 'pattern_list': return patternListFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1225,16 +1225,16 @@ function _rk9rdv8(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'class_pattern': return classPatternFrom(rest as any);
-        case 'complex_pattern': return complexPatternFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'dict_pattern': return dictPatternFrom(rest as any);
-        case 'dotted_name': return dottedNameFrom(rest as any);
-        case 'list_pattern': return listPatternFrom(rest as any);
-        case 'splat_pattern': return splatPatternFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
-        case 'union_pattern': return unionPatternFrom(rest as any);
+        case 'class_pattern': return classPatternFrom(rest);
+        case 'complex_pattern': return complexPatternFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'dict_pattern': return dictPatternFrom(rest);
+        case 'dotted_name': return dottedNameFrom(rest);
+        case 'list_pattern': return listPatternFrom(rest);
+        case 'splat_pattern': return splatPatternFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
+        case 'union_pattern': return unionPatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1260,16 +1260,16 @@ function _r1g8zebv(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'class_pattern': return classPatternFrom(rest as any);
-        case 'complex_pattern': return complexPatternFrom(rest as any);
-        case 'concatenated_string': return concatenatedStringFrom(rest as any);
-        case 'dict_pattern': return dictPatternFrom(rest as any);
-        case 'dotted_name': return dottedNameFrom(rest as any);
-        case 'list_pattern': return listPatternFrom(rest as any);
-        case 'splat_pattern': return splatPatternFrom(rest as any);
-        case 'string': return stringFrom(rest as any);
-        case 'tuple_pattern': return tuplePatternFrom(rest as any);
-        case 'union_pattern': return unionPatternFrom(rest as any);
+        case 'class_pattern': return classPatternFrom(rest);
+        case 'complex_pattern': return complexPatternFrom(rest);
+        case 'concatenated_string': return concatenatedStringFrom(rest);
+        case 'dict_pattern': return dictPatternFrom(rest);
+        case 'dotted_name': return dottedNameFrom(rest);
+        case 'list_pattern': return listPatternFrom(rest);
+        case 'splat_pattern': return splatPatternFrom(rest);
+        case 'string': return stringFrom(rest);
+        case 'tuple_pattern': return tuplePatternFrom(rest);
+        case 'union_pattern': return unionPatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1290,9 +1290,9 @@ function _rtx2b9u(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'parenthesized_list_splat': return parenthesizedListSplatFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'parenthesized_list_splat': return parenthesizedListSplatFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1313,7 +1313,7 @@ function _rc9xpef(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'case_pattern': return casePatternFrom(rest as any);
+        case 'case_pattern': return casePatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1334,8 +1334,8 @@ function _r11t6afm(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'attribute': return attributeFrom(rest as any);
-        case 'subscript': return subscriptFrom(rest as any);
+        case 'attribute': return attributeFrom(rest);
+        case 'subscript': return subscriptFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1372,9 +1372,9 @@ function _rs19yyr(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
-        case 'yield': return yield_From(rest as any);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
+        case 'yield': return yield_From(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1395,8 +1395,8 @@ function _rqjjrtc(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'list_splat': return listSplatFrom(rest as any);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest as any);
+        case 'list_splat': return listSplatFrom(rest);
+        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1417,8 +1417,8 @@ function _r2im5d1(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'interpolation': return interpolationFrom(rest as any);
-        case 'string_content': return stringContentFrom(rest as any);
+        case 'interpolation': return interpolationFrom(rest);
+        case 'string_content': return stringContentFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1455,7 +1455,7 @@ function _r1s4dtcw(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'slice': return sliceFrom(rest as any);
+        case 'slice': return sliceFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1476,11 +1476,11 @@ function _rsof3up(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'constrained_type': return constrainedTypeFrom(rest as any);
-        case 'generic_type': return genericTypeFrom(rest as any);
-        case 'member_type': return memberTypeFrom(rest as any);
-        case 'splat_type': return splatTypeFrom(rest as any);
-        case 'union_type': return unionTypeFrom(rest as any);
+        case 'constrained_type': return constrainedTypeFrom(rest);
+        case 'generic_type': return genericTypeFrom(rest);
+        case 'member_type': return memberTypeFrom(rest);
+        case 'splat_type': return splatTypeFrom(rest);
+        case 'union_type': return unionTypeFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1501,8 +1501,8 @@ function _r10r1qu9(v: unknown): unknown {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
       switch (k) {
-        case 'dictionary_splat_pattern': return dictionarySplatPatternFrom(rest as any);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest as any);
+        case 'dictionary_splat_pattern': return dictionarySplatPatternFrom(rest);
+        case 'list_splat_pattern': return listSplatPatternFrom(rest);
       }
       return _resolveByKind(k, rest);
     }
@@ -1529,7 +1529,7 @@ function _r12do1e6(v: unknown): unknown {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-export function aliasedImportFrom(input: AliasedImport | AliasedImportFromInput): AliasedImport {
+export function aliasedImportFrom(input: AliasedImport | AliasedImportFromInput | object): AliasedImport {
   if (isNodeData(input)) {
     return aliased_import_({
       alias: input.fields?.['alias'],
@@ -1539,14 +1539,14 @@ export function aliasedImportFrom(input: AliasedImport | AliasedImportFromInput)
   const obj = input as Record<string, unknown>;
   return aliased_import_({
     alias: resolveField(obj['alias'], _resolveNamedExpressionLhs),
-    name: resolveField(obj['name'], (v: unknown) => (typeof v === 'object' ? dottedNameFrom(v as any) : v)),
+    name: resolveField(obj['name'], (v: unknown) => (typeof v === 'object' && v !== null ? dottedNameFrom(v) : v)),
   } as AliasedImportConfig) as unknown as AliasedImport;
 }
 
-export function argumentListFrom(input: ArgumentList | ArgumentListFromInput): ArgumentList {
+export function argumentListFrom(input: ArgumentList | ArgumentListFromInput | object): ArgumentList {
   if (isNodeData(input)) {
     return argument_list_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ArgumentListConfig) as unknown as ArgumentList;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1555,7 +1555,7 @@ export function argumentListFrom(input: ArgumentList | ArgumentListFromInput): A
   } as ArgumentListConfig) as unknown as ArgumentList;
 }
 
-export function asPatternFrom(input: AsPattern | AsPatternFromInput): AsPattern {
+export function asPatternFrom(input: AsPattern | AsPatternFromInput | object): AsPattern {
   if (isNodeData(input)) {
     return as_pattern_({
       alias: input.fields?.['alias'],
@@ -1569,10 +1569,10 @@ export function asPatternFrom(input: AsPattern | AsPatternFromInput): AsPattern 
   } as AsPatternConfig) as unknown as AsPattern;
 }
 
-export function assertStatementFrom(input: AssertStatement | AssertStatementFromInput): AssertStatement {
+export function assertStatementFrom(input: AssertStatement | AssertStatementFromInput | object): AssertStatement {
   if (isNodeData(input)) {
     return assert_statement_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as AssertStatementConfig) as unknown as AssertStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1581,7 +1581,7 @@ export function assertStatementFrom(input: AssertStatement | AssertStatementFrom
   } as AssertStatementConfig) as unknown as AssertStatement;
 }
 
-export function assignmentFrom(input: Assignment | AssignmentFromInput): Assignment {
+export function assignmentFrom(input: Assignment | AssignmentFromInput | object): Assignment {
   if (isNodeData(input)) {
     return assignment_({
       left: input.fields?.['left'],
@@ -1593,11 +1593,11 @@ export function assignmentFrom(input: Assignment | AssignmentFromInput): Assignm
   return assignment_({
     left: resolveField(obj['left'], _r8t0lsb),
     right: obj['right'] !== undefined ? resolveField(obj['right'], _r49ezd9) : undefined,
-    type: obj['type'] !== undefined ? resolveField(obj['type'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)) : undefined,
+    type: obj['type'] !== undefined ? resolveField(obj['type'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)) : undefined,
   } as AssignmentConfig) as unknown as Assignment;
 }
 
-export function attributeFrom(input: Attribute | AttributeFromInput): Attribute {
+export function attributeFrom(input: Attribute | AttributeFromInput | object): Attribute {
   if (isNodeData(input)) {
     return attribute_({
       attribute: input.fields?.['attribute'],
@@ -1611,7 +1611,7 @@ export function attributeFrom(input: Attribute | AttributeFromInput): Attribute 
   } as AttributeConfig) as unknown as Attribute;
 }
 
-export function augmentedAssignmentFrom(input: AugmentedAssignment | AugmentedAssignmentFromInput): AugmentedAssignment {
+export function augmentedAssignmentFrom(input: AugmentedAssignment | AugmentedAssignmentFromInput | object): AugmentedAssignment {
   if (isNodeData(input)) {
     return augmented_assignment_({
       left: input.fields?.['left'],
@@ -1627,7 +1627,7 @@ export function augmentedAssignmentFrom(input: AugmentedAssignment | AugmentedAs
   } as AugmentedAssignmentConfig) as unknown as AugmentedAssignment;
 }
 
-export function await_From(input: Await | AwaitFromInput): Await {
+export function await_From(input: Await | AwaitFromInput | object): Await {
   if (isNodeData(input)) {
     return await_({
       primaryExpression: input.fields?.['primary_expression'],
@@ -1639,7 +1639,7 @@ export function await_From(input: Await | AwaitFromInput): Await {
   } as AwaitConfig) as unknown as Await;
 }
 
-export function binaryOperatorFrom(input: BinaryOperator | BinaryOperatorFromInput): BinaryOperator {
+export function binaryOperatorFrom(input: BinaryOperator | BinaryOperatorFromInput | object): BinaryOperator {
   if (isNodeData(input)) {
     return binary_operator_({
       left: input.fields?.['left'],
@@ -1655,21 +1655,21 @@ export function binaryOperatorFrom(input: BinaryOperator | BinaryOperatorFromInp
   } as BinaryOperatorConfig) as unknown as BinaryOperator;
 }
 
-export function blockFrom(input: Block | BlockFromInput): Block {
+export function blockFrom(input: Block | BlockFromInput | object): Block {
   if (isNodeData(input)) {
     return block_({
       alternative: input.fields?.['alternative'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as BlockConfig) as unknown as Block;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return block_({
-    alternative: obj['alternative'] !== undefined ? resolveField(obj['alternative'], (v: unknown) => (typeof v === 'object' ? caseClauseFrom(v as any) : v)) : undefined,
+    alternative: obj['alternative'] !== undefined ? resolveField(obj['alternative'], (v: unknown) => (typeof v === 'object' && v !== null ? caseClauseFrom(v) : v)) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r1ntg9k1) : undefined,
   } as BlockConfig) as unknown as Block;
 }
 
-export function booleanOperatorFrom(input: BooleanOperator | BooleanOperatorFromInput): BooleanOperator {
+export function booleanOperatorFrom(input: BooleanOperator | BooleanOperatorFromInput | object): BooleanOperator {
   if (isNodeData(input)) {
     return boolean_operator_({
       left: input.fields?.['left'],
@@ -1685,7 +1685,7 @@ export function booleanOperatorFrom(input: BooleanOperator | BooleanOperatorFrom
   } as BooleanOperatorConfig) as unknown as BooleanOperator;
 }
 
-export function callFrom(input: Call | CallFromInput): Call {
+export function callFrom(input: Call | CallFromInput | object): Call {
   if (isNodeData(input)) {
     return call_({
       arguments: input.fields?.['arguments'],
@@ -1699,26 +1699,26 @@ export function callFrom(input: Call | CallFromInput): Call {
   } as CallConfig) as unknown as Call;
 }
 
-export function caseClauseFrom(input: CaseClause | CaseClauseFromInput): CaseClause {
+export function caseClauseFrom(input: CaseClause | CaseClauseFromInput | object): CaseClause {
   if (isNodeData(input)) {
     return case_clause_({
       consequence: input.fields?.['consequence'],
       guard: input.fields?.['guard'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as CaseClauseConfig) as unknown as CaseClause;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return case_clause_({
     consequence: resolveField(obj['consequence'], _r10v9xtg),
-    guard: obj['guard'] !== undefined ? resolveField(obj['guard'], (v: unknown) => (typeof v === 'object' ? ifClauseFrom(v as any) : v)) : undefined,
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' ? casePatternFrom(v as any) : v)) : [],
+    guard: obj['guard'] !== undefined ? resolveField(obj['guard'], (v: unknown) => (typeof v === 'object' && v !== null ? ifClauseFrom(v) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? casePatternFrom(v) : v)) : [],
   } as CaseClauseConfig) as unknown as CaseClause;
 }
 
-export function casePatternFrom(input: CasePattern | CasePatternFromInput): CasePattern {
+export function casePatternFrom(input: CasePattern | CasePatternFromInput | object): CasePattern {
   if (isNodeData(input)) {
     return case_pattern_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as CasePatternConfig) as unknown as CasePattern;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1727,7 +1727,7 @@ export function casePatternFrom(input: CasePattern | CasePatternFromInput): Case
   } as CasePatternConfig) as unknown as CasePattern;
 }
 
-export function chevronFrom(input: Chevron | ChevronFromInput): Chevron {
+export function chevronFrom(input: Chevron | ChevronFromInput | object): Chevron {
   if (isNodeData(input)) {
     return chevron_({
       expression: input.fields?.['expression'],
@@ -1739,7 +1739,7 @@ export function chevronFrom(input: Chevron | ChevronFromInput): Chevron {
   } as ChevronConfig) as unknown as Chevron;
 }
 
-export function classDefinitionFrom(input: ClassDefinition | ClassDefinitionFromInput): ClassDefinition {
+export function classDefinitionFrom(input: ClassDefinition | ClassDefinitionFromInput | object): ClassDefinition {
   if (isNodeData(input)) {
     return class_definition_({
       body: input.fields?.['body'],
@@ -1752,12 +1752,12 @@ export function classDefinitionFrom(input: ClassDefinition | ClassDefinitionFrom
   return class_definition_({
     body: resolveField(obj['body'], _r10v9xtg),
     name: resolveField(obj['name'], _resolveNamedExpressionLhs),
-    superclasses: obj['superclasses'] !== undefined ? resolveField(obj['superclasses'], (v: unknown) => (typeof v === 'object' ? argumentListFrom(v as any) : v)) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' ? typeParameterFrom(v as any) : v)) : undefined,
+    superclasses: obj['superclasses'] !== undefined ? resolveField(obj['superclasses'], (v: unknown) => (typeof v === 'object' && v !== null ? argumentListFrom(v) : v)) : undefined,
+    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParameterFrom(v) : v)) : undefined,
   } as ClassDefinitionConfig) as unknown as ClassDefinition;
 }
 
-export function classPatternFrom(input: ClassPattern | ClassPatternFromInput): ClassPattern {
+export function classPatternFrom(input: ClassPattern | ClassPatternFromInput | object): ClassPattern {
   if (isNodeData(input)) {
     return class_pattern_({
       dottedName: input.fields?.['dotted_name'],
@@ -1766,12 +1766,12 @@ export function classPatternFrom(input: ClassPattern | ClassPatternFromInput): C
   }
   const obj = input as Record<string, unknown>;
   return class_pattern_({
-    dottedName: resolveField(obj['dottedName'], (v: unknown) => (typeof v === 'object' ? dottedNameFrom(v as any) : v)),
-    arguments: obj['arguments'] !== undefined ? resolveField(obj['arguments'], (v: unknown) => (typeof v === 'object' ? casePatternFrom(v as any) : v)) : undefined,
+    dottedName: resolveField(obj['dottedName'], (v: unknown) => (typeof v === 'object' && v !== null ? dottedNameFrom(v) : v)),
+    arguments: obj['arguments'] !== undefined ? resolveField(obj['arguments'], (v: unknown) => (typeof v === 'object' && v !== null ? casePatternFrom(v) : v)) : undefined,
   } as ClassPatternConfig) as unknown as ClassPattern;
 }
 
-export function comparisonOperatorFrom(input: ComparisonOperator | ComparisonOperatorFromInput): ComparisonOperator {
+export function comparisonOperatorFrom(input: ComparisonOperator | ComparisonOperatorFromInput | object): ComparisonOperator {
   if (isNodeData(input)) {
     return comparison_operator_({
       operators: input.fields?.['operators'],
@@ -1787,7 +1787,7 @@ export function comparisonOperatorFrom(input: ComparisonOperator | ComparisonOpe
   } as ComparisonOperatorConfig) as unknown as ComparisonOperator;
 }
 
-export function complexPatternFrom(input: ComplexPattern | ComplexPatternFromInput): ComplexPattern {
+export function complexPatternFrom(input: ComplexPattern | ComplexPatternFromInput | object): ComplexPattern {
   if (isNodeData(input)) {
     return complex_pattern_({
       real: input.fields?.['real'],
@@ -1801,19 +1801,19 @@ export function complexPatternFrom(input: ComplexPattern | ComplexPatternFromInp
   } as ComplexPatternConfig) as unknown as ComplexPattern;
 }
 
-export function concatenatedStringFrom(input: ConcatenatedString | ConcatenatedStringFromInput): ConcatenatedString {
+export function concatenatedStringFrom(input: ConcatenatedString | ConcatenatedStringFromInput | object): ConcatenatedString {
   if (isNodeData(input)) {
     return concatenated_string_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ConcatenatedStringConfig) as unknown as ConcatenatedString;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return concatenated_string_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' ? stringFrom(v as any) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? stringFrom(v) : v)) : [],
   } as ConcatenatedStringConfig) as unknown as ConcatenatedString;
 }
 
-export function conditionalExpressionFrom(input: ConditionalExpression | ConditionalExpressionFromInput): ConditionalExpression {
+export function conditionalExpressionFrom(input: ConditionalExpression | ConditionalExpressionFromInput | object): ConditionalExpression {
   if (isNodeData(input)) {
     return conditional_expression_({
       body: input.fields?.['body'],
@@ -1829,7 +1829,7 @@ export function conditionalExpressionFrom(input: ConditionalExpression | Conditi
   } as ConditionalExpressionConfig) as unknown as ConditionalExpression;
 }
 
-export function constrainedTypeFrom(input: ConstrainedType | ConstrainedTypeFromInput): ConstrainedType {
+export function constrainedTypeFrom(input: ConstrainedType | ConstrainedTypeFromInput | object): ConstrainedType {
   if (isNodeData(input)) {
     return constrained_type_({
       baseType: input.fields?.['base_type'],
@@ -1838,26 +1838,26 @@ export function constrainedTypeFrom(input: ConstrainedType | ConstrainedTypeFrom
   }
   const obj = input as Record<string, unknown>;
   return constrained_type_({
-    baseType: resolveField(obj['baseType'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
-    constraint: resolveField(obj['constraint'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
+    baseType: resolveField(obj['baseType'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
+    constraint: resolveField(obj['constraint'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
   } as ConstrainedTypeConfig) as unknown as ConstrainedType;
 }
 
-export function decoratedDefinitionFrom(input: DecoratedDefinition | DecoratedDefinitionFromInput): DecoratedDefinition {
+export function decoratedDefinitionFrom(input: DecoratedDefinition | DecoratedDefinitionFromInput | object): DecoratedDefinition {
   if (isNodeData(input)) {
     return decorated_definition_({
       definition: input.fields?.['definition'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as DecoratedDefinitionConfig) as unknown as DecoratedDefinition;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return decorated_definition_({
     definition: resolveField(obj['definition'], _rdlbv6g),
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' ? decoratorFrom(v as any) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? decoratorFrom(v) : v)) : [],
   } as DecoratedDefinitionConfig) as unknown as DecoratedDefinition;
 }
 
-export function decoratorFrom(input: Decorator | DecoratorFromInput): Decorator {
+export function decoratorFrom(input: Decorator | DecoratorFromInput | object): Decorator {
   if (isNodeData(input)) {
     return decorator_({
       expression: input.fields?.['expression'],
@@ -1871,7 +1871,7 @@ export function decoratorFrom(input: Decorator | DecoratorFromInput): Decorator 
   } as DecoratorConfig) as unknown as Decorator;
 }
 
-export function defaultParameterFrom(input: DefaultParameter | DefaultParameterFromInput): DefaultParameter {
+export function defaultParameterFrom(input: DefaultParameter | DefaultParameterFromInput | object): DefaultParameter {
   if (isNodeData(input)) {
     return default_parameter_({
       name: input.fields?.['name'],
@@ -1885,10 +1885,10 @@ export function defaultParameterFrom(input: DefaultParameter | DefaultParameterF
   } as DefaultParameterConfig) as unknown as DefaultParameter;
 }
 
-export function deleteStatementFrom(input: DeleteStatement | DeleteStatementFromInput): DeleteStatement {
+export function deleteStatementFrom(input: DeleteStatement | DeleteStatementFromInput | object): DeleteStatement {
   if (isNodeData(input)) {
     return delete_statement_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as DeleteStatementConfig) as unknown as DeleteStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1897,22 +1897,22 @@ export function deleteStatementFrom(input: DeleteStatement | DeleteStatementFrom
   } as DeleteStatementConfig) as unknown as DeleteStatement;
 }
 
-export function dictPatternFrom(input: DictPattern | DictPatternFromInput): DictPattern {
+export function dictPatternFrom(input: DictPattern | DictPatternFromInput | object): DictPattern {
   if (isNodeData(input)) {
     return dict_pattern_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as DictPatternConfig) as unknown as DictPattern;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return dict_pattern_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' ? splatPatternFrom(v as any) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? splatPatternFrom(v) : v)) : undefined,
   } as DictPatternConfig) as unknown as DictPattern;
 }
 
-export function dictionaryFrom(input: Dictionary | DictionaryFromInput): Dictionary {
+export function dictionaryFrom(input: Dictionary | DictionaryFromInput | object): Dictionary {
   if (isNodeData(input)) {
     return dictionary_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as DictionaryConfig) as unknown as Dictionary;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1921,21 +1921,21 @@ export function dictionaryFrom(input: Dictionary | DictionaryFromInput): Diction
   } as DictionaryConfig) as unknown as Dictionary;
 }
 
-export function dictionaryComprehensionFrom(input: DictionaryComprehension | DictionaryComprehensionFromInput): DictionaryComprehension {
+export function dictionaryComprehensionFrom(input: DictionaryComprehension | DictionaryComprehensionFromInput | object): DictionaryComprehension {
   if (isNodeData(input)) {
     return dictionary_comprehension_({
       body: input.fields?.['body'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as DictionaryComprehensionConfig) as unknown as DictionaryComprehension;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return dictionary_comprehension_({
-    body: resolveField(obj['body'], (v: unknown) => (typeof v === 'object' ? pairFrom(v as any) : v)),
+    body: resolveField(obj['body'], (v: unknown) => (typeof v === 'object' && v !== null ? pairFrom(v) : v)),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _rxj908) : undefined,
   } as DictionaryComprehensionConfig) as unknown as DictionaryComprehension;
 }
 
-export function dictionarySplatFrom(input: DictionarySplat | DictionarySplatFromInput): DictionarySplat {
+export function dictionarySplatFrom(input: DictionarySplat | DictionarySplatFromInput | object): DictionarySplat {
   if (isNodeData(input)) {
     return dictionary_splat_({
       expression: input.fields?.['expression'],
@@ -1947,10 +1947,10 @@ export function dictionarySplatFrom(input: DictionarySplat | DictionarySplatFrom
   } as DictionarySplatConfig) as unknown as DictionarySplat;
 }
 
-export function dictionarySplatPatternFrom(input: DictionarySplatPattern | DictionarySplatPatternFromInput): DictionarySplatPattern {
+export function dictionarySplatPatternFrom(input: DictionarySplatPattern | DictionarySplatPatternFromInput | object): DictionarySplatPattern {
   if (isNodeData(input)) {
     return dictionary_splat_pattern_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as DictionarySplatPatternConfig) as unknown as DictionarySplatPattern;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1959,10 +1959,10 @@ export function dictionarySplatPatternFrom(input: DictionarySplatPattern | Dicti
   } as DictionarySplatPatternConfig) as unknown as DictionarySplatPattern;
 }
 
-export function dottedNameFrom(input: DottedName | DottedNameFromInput): DottedName {
+export function dottedNameFrom(input: DottedName | DottedNameFromInput | object): DottedName {
   if (isNodeData(input)) {
     return dotted_name_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as DottedNameConfig) as unknown as DottedName;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -1971,7 +1971,7 @@ export function dottedNameFrom(input: DottedName | DottedNameFromInput): DottedN
   } as DottedNameConfig) as unknown as DottedName;
 }
 
-export function elifClauseFrom(input: ElifClause | ElifClauseFromInput): ElifClause {
+export function elifClauseFrom(input: ElifClause | ElifClauseFromInput | object): ElifClause {
   if (isNodeData(input)) {
     return elif_clause_({
       condition: input.fields?.['condition'],
@@ -1985,7 +1985,7 @@ export function elifClauseFrom(input: ElifClause | ElifClauseFromInput): ElifCla
   } as ElifClauseConfig) as unknown as ElifClause;
 }
 
-export function elseClauseFrom(input: ElseClause | ElseClauseFromInput): ElseClause {
+export function elseClauseFrom(input: ElseClause | ElseClauseFromInput | object): ElseClause {
   if (isNodeData(input)) {
     return else_clause_({
       body: input.fields?.['body'],
@@ -1997,12 +1997,12 @@ export function elseClauseFrom(input: ElseClause | ElseClauseFromInput): ElseCla
   } as ElseClauseConfig) as unknown as ElseClause;
 }
 
-export function exceptClauseFrom(input: ExceptClause | ExceptClauseFromInput): ExceptClause {
+export function exceptClauseFrom(input: ExceptClause | ExceptClauseFromInput | object): ExceptClause {
   if (isNodeData(input)) {
     return except_clause_({
       alias: input.fields?.['alias'],
       value: input.fields?.['value'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ExceptClauseConfig) as unknown as ExceptClause;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2013,11 +2013,11 @@ export function exceptClauseFrom(input: ExceptClause | ExceptClauseFromInput): E
   } as ExceptClauseConfig) as unknown as ExceptClause;
 }
 
-export function execStatementFrom(input: ExecStatement | ExecStatementFromInput): ExecStatement {
+export function execStatementFrom(input: ExecStatement | ExecStatementFromInput | object): ExecStatement {
   if (isNodeData(input)) {
     return exec_statement_({
       code: input.fields?.['code'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ExecStatementConfig) as unknown as ExecStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2027,10 +2027,10 @@ export function execStatementFrom(input: ExecStatement | ExecStatementFromInput)
   } as ExecStatementConfig) as unknown as ExecStatement;
 }
 
-export function expressionListFrom(input: ExpressionList | ExpressionListFromInput): ExpressionList {
+export function expressionListFrom(input: ExpressionList | ExpressionListFromInput | object): ExpressionList {
   if (isNodeData(input)) {
     return expression_list_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ExpressionListConfig) as unknown as ExpressionList;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2039,10 +2039,10 @@ export function expressionListFrom(input: ExpressionList | ExpressionListFromInp
   } as ExpressionListConfig) as unknown as ExpressionList;
 }
 
-export function expressionStatementFrom(input: ExpressionStatement | ExpressionStatementFromInput): ExpressionStatement {
+export function expressionStatementFrom(input: ExpressionStatement | ExpressionStatementFromInput | object): ExpressionStatement {
   if (isNodeData(input)) {
     return expression_statement_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ExpressionStatementConfig) as unknown as ExpressionStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2051,11 +2051,11 @@ export function expressionStatementFrom(input: ExpressionStatement | ExpressionS
   } as ExpressionStatementConfig) as unknown as ExpressionStatement;
 }
 
-export function finallyClauseFrom(input: FinallyClause | FinallyClauseFromInput): FinallyClause {
+export function finallyClauseFrom(input: FinallyClause | FinallyClauseFromInput | object): FinallyClause {
   if (isNodeData(input)) {
     return finally_clause_({
       block: input.fields?.['block'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as FinallyClauseConfig) as unknown as FinallyClause;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2065,7 +2065,7 @@ export function finallyClauseFrom(input: FinallyClause | FinallyClauseFromInput)
   } as FinallyClauseConfig) as unknown as FinallyClause;
 }
 
-export function forInClauseFrom(input: ForInClause | ForInClauseFromInput): ForInClause {
+export function forInClauseFrom(input: ForInClause | ForInClauseFromInput | object): ForInClause {
   if (isNodeData(input)) {
     return for_in_clause_({
       left: input.fields?.['left'],
@@ -2079,7 +2079,7 @@ export function forInClauseFrom(input: ForInClause | ForInClauseFromInput): ForI
   } as ForInClauseConfig) as unknown as ForInClause;
 }
 
-export function forStatementFrom(input: ForStatement | ForStatementFromInput): ForStatement {
+export function forStatementFrom(input: ForStatement | ForStatementFromInput | object): ForStatement {
   if (isNodeData(input)) {
     return for_statement_({
       alternative: input.fields?.['alternative'],
@@ -2090,14 +2090,14 @@ export function forStatementFrom(input: ForStatement | ForStatementFromInput): F
   }
   const obj = input as Record<string, unknown>;
   return for_statement_({
-    alternative: obj['alternative'] !== undefined ? resolveField(obj['alternative'], (v: unknown) => (typeof v === 'object' ? elseClauseFrom(v as any) : v)) : undefined,
+    alternative: obj['alternative'] !== undefined ? resolveField(obj['alternative'], (v: unknown) => (typeof v === 'object' && v !== null ? elseClauseFrom(v) : v)) : undefined,
     body: resolveField(obj['body'], _r10v9xtg),
     left: resolveField(obj['left'], _r8t0lsb),
     right: resolveField(obj['right'], _r1tj7jk9),
   } as ForStatementConfig) as unknown as ForStatement;
 }
 
-export function formatExpressionFrom(input: FormatExpression | FormatExpressionFromInput): FormatExpression {
+export function formatExpressionFrom(input: FormatExpression | FormatExpressionFromInput | object): FormatExpression {
   if (isNodeData(input)) {
     return format_expression_({
       expression: input.fields?.['expression'],
@@ -2108,24 +2108,24 @@ export function formatExpressionFrom(input: FormatExpression | FormatExpressionF
   const obj = input as Record<string, unknown>;
   return format_expression_({
     expression: resolveField(obj['expression'], _r130w83n),
-    formatSpecifier: obj['formatSpecifier'] !== undefined ? resolveField(obj['formatSpecifier'], (v: unknown) => (typeof v === 'object' ? formatSpecifierFrom(v as any) : v)) : undefined,
+    formatSpecifier: obj['formatSpecifier'] !== undefined ? resolveField(obj['formatSpecifier'], (v: unknown) => (typeof v === 'object' && v !== null ? formatSpecifierFrom(v) : v)) : undefined,
     typeConversion: obj['typeConversion'] !== undefined ? resolveField(obj['typeConversion'], (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
   } as FormatExpressionConfig) as unknown as FormatExpression;
 }
 
-export function formatSpecifierFrom(input: FormatSpecifier | FormatSpecifierFromInput): FormatSpecifier {
+export function formatSpecifierFrom(input: FormatSpecifier | FormatSpecifierFromInput | object): FormatSpecifier {
   if (isNodeData(input)) {
     return format_specifier_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as FormatSpecifierConfig) as unknown as FormatSpecifier;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return format_specifier_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' ? formatExpressionFrom(v as any) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? formatExpressionFrom(v) : v)) : undefined,
   } as FormatSpecifierConfig) as unknown as FormatSpecifier;
 }
 
-export function functionDefinitionFrom(input: FunctionDefinition | FunctionDefinitionFromInput): FunctionDefinition {
+export function functionDefinitionFrom(input: FunctionDefinition | FunctionDefinitionFromInput | object): FunctionDefinition {
   if (isNodeData(input)) {
     return function_definition_({
       body: input.fields?.['body'],
@@ -2139,13 +2139,13 @@ export function functionDefinitionFrom(input: FunctionDefinition | FunctionDefin
   return function_definition_({
     body: resolveField(obj['body'], _r10v9xtg),
     name: resolveField(obj['name'], _resolveNamedExpressionLhs),
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' ? parametersFrom(v as any) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' ? typeParameterFrom(v as any) : v)) : undefined,
+    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? parametersFrom(v) : v)),
+    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)) : undefined,
+    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParameterFrom(v) : v)) : undefined,
   } as FunctionDefinitionConfig) as unknown as FunctionDefinition;
 }
 
-export function futureImportStatementFrom(input: FutureImportStatement | FutureImportStatementFromInput): FutureImportStatement {
+export function futureImportStatementFrom(input: FutureImportStatement | FutureImportStatementFromInput | object): FutureImportStatement {
   if (isNodeData(input)) {
     return future_import_statement_({
       name: input.fields?.['name'],
@@ -2157,11 +2157,11 @@ export function futureImportStatementFrom(input: FutureImportStatement | FutureI
   } as FutureImportStatementConfig) as unknown as FutureImportStatement;
 }
 
-export function generatorExpressionFrom(input: GeneratorExpression | GeneratorExpressionFromInput): GeneratorExpression {
+export function generatorExpressionFrom(input: GeneratorExpression | GeneratorExpressionFromInput | object): GeneratorExpression {
   if (isNodeData(input)) {
     return generator_expression_({
       body: input.fields?.['body'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as GeneratorExpressionConfig) as unknown as GeneratorExpression;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2171,7 +2171,7 @@ export function generatorExpressionFrom(input: GeneratorExpression | GeneratorEx
   } as GeneratorExpressionConfig) as unknown as GeneratorExpression;
 }
 
-export function genericTypeFrom(input: GenericType | GenericTypeFromInput): GenericType {
+export function genericTypeFrom(input: GenericType | GenericTypeFromInput | object): GenericType {
   if (isNodeData(input)) {
     return generic_type_({
       identifier: input.fields?.['identifier'],
@@ -2181,14 +2181,14 @@ export function genericTypeFrom(input: GenericType | GenericTypeFromInput): Gene
   const obj = input as Record<string, unknown>;
   return generic_type_({
     identifier: resolveField(obj['identifier'], _resolveNamedExpressionLhs),
-    typeParameter: resolveField(obj['typeParameter'], (v: unknown) => (typeof v === 'object' ? typeParameterFrom(v as any) : v)),
+    typeParameter: resolveField(obj['typeParameter'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParameterFrom(v) : v)),
   } as GenericTypeConfig) as unknown as GenericType;
 }
 
-export function globalStatementFrom(input: GlobalStatement | GlobalStatementFromInput): GlobalStatement {
+export function globalStatementFrom(input: GlobalStatement | GlobalStatementFromInput | object): GlobalStatement {
   if (isNodeData(input)) {
     return global_statement_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as GlobalStatementConfig) as unknown as GlobalStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2197,7 +2197,7 @@ export function globalStatementFrom(input: GlobalStatement | GlobalStatementFrom
   } as GlobalStatementConfig) as unknown as GlobalStatement;
 }
 
-export function ifClauseFrom(input: IfClause | IfClauseFromInput): IfClause {
+export function ifClauseFrom(input: IfClause | IfClauseFromInput | object): IfClause {
   if (isNodeData(input)) {
     return if_clause_({
       expression: input.fields?.['expression'],
@@ -2209,7 +2209,7 @@ export function ifClauseFrom(input: IfClause | IfClauseFromInput): IfClause {
   } as IfClauseConfig) as unknown as IfClause;
 }
 
-export function ifStatementFrom(input: IfStatement | IfStatementFromInput): IfStatement {
+export function ifStatementFrom(input: IfStatement | IfStatementFromInput | object): IfStatement {
   if (isNodeData(input)) {
     return if_statement_({
       alternative: input.fields?.['alternative'],
@@ -2225,7 +2225,7 @@ export function ifStatementFrom(input: IfStatement | IfStatementFromInput): IfSt
   } as IfStatementConfig) as unknown as IfStatement;
 }
 
-export function importFromStatementFrom(input: ImportFromStatement | ImportFromStatementFromInput): ImportFromStatement {
+export function importFromStatementFrom(input: ImportFromStatement | ImportFromStatementFromInput | object): ImportFromStatement {
   if (isNodeData(input)) {
     return import_from_statement_({
       moduleName: input.fields?.['module_name'],
@@ -2241,7 +2241,7 @@ export function importFromStatementFrom(input: ImportFromStatement | ImportFromS
   } as ImportFromStatementConfig) as unknown as ImportFromStatement;
 }
 
-export function importStatementFrom(input: ImportStatement | ImportStatementFromInput): ImportStatement {
+export function importStatementFrom(input: ImportStatement | ImportStatementFromInput | object): ImportStatement {
   if (isNodeData(input)) {
     return import_statement_({
       name: input.fields?.['name'],
@@ -2253,7 +2253,7 @@ export function importStatementFrom(input: ImportStatement | ImportStatementFrom
   } as ImportStatementConfig) as unknown as ImportStatement;
 }
 
-export function interpolationFrom(input: Interpolation | InterpolationFromInput): Interpolation {
+export function interpolationFrom(input: Interpolation | InterpolationFromInput | object): Interpolation {
   if (isNodeData(input)) {
     return interpolation_({
       expression: input.fields?.['expression'],
@@ -2264,12 +2264,12 @@ export function interpolationFrom(input: Interpolation | InterpolationFromInput)
   const obj = input as Record<string, unknown>;
   return interpolation_({
     expression: resolveField(obj['expression'], _r2m155v),
-    formatSpecifier: obj['formatSpecifier'] !== undefined ? resolveField(obj['formatSpecifier'], (v: unknown) => (typeof v === 'object' ? formatSpecifierFrom(v as any) : v)) : undefined,
+    formatSpecifier: obj['formatSpecifier'] !== undefined ? resolveField(obj['formatSpecifier'], (v: unknown) => (typeof v === 'object' && v !== null ? formatSpecifierFrom(v) : v)) : undefined,
     typeConversion: obj['typeConversion'] !== undefined ? resolveField(obj['typeConversion'], (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
   } as InterpolationConfig) as unknown as Interpolation;
 }
 
-export function keywordArgumentFrom(input: KeywordArgument | KeywordArgumentFromInput): KeywordArgument {
+export function keywordArgumentFrom(input: KeywordArgument | KeywordArgumentFromInput | object): KeywordArgument {
   if (isNodeData(input)) {
     return keyword_argument_({
       name: input.fields?.['name'],
@@ -2283,7 +2283,7 @@ export function keywordArgumentFrom(input: KeywordArgument | KeywordArgumentFrom
   } as KeywordArgumentConfig) as unknown as KeywordArgument;
 }
 
-export function keywordPatternFrom(input: KeywordPattern | KeywordPatternFromInput): KeywordPattern {
+export function keywordPatternFrom(input: KeywordPattern | KeywordPatternFromInput | object): KeywordPattern {
   if (isNodeData(input)) {
     return keyword_pattern_({
       identifier: input.fields?.['identifier'],
@@ -2297,7 +2297,7 @@ export function keywordPatternFrom(input: KeywordPattern | KeywordPatternFromInp
   } as KeywordPatternConfig) as unknown as KeywordPattern;
 }
 
-export function lambdaFrom(input: Lambda | LambdaFromInput): Lambda {
+export function lambdaFrom(input: Lambda | LambdaFromInput | object): Lambda {
   if (isNodeData(input)) {
     return lambda_({
       body: input.fields?.['body'],
@@ -2307,14 +2307,14 @@ export function lambdaFrom(input: Lambda | LambdaFromInput): Lambda {
   const obj = input as Record<string, unknown>;
   return lambda_({
     body: resolveField(obj['body'], _resolveExpression),
-    parameters: obj['parameters'] !== undefined ? resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' ? lambdaParametersFrom(v as any) : v)) : undefined,
+    parameters: obj['parameters'] !== undefined ? resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? lambdaParametersFrom(v) : v)) : undefined,
   } as LambdaConfig) as unknown as Lambda;
 }
 
-export function lambdaParametersFrom(input: LambdaParameters | LambdaParametersFromInput): LambdaParameters {
+export function lambdaParametersFrom(input: LambdaParameters | LambdaParametersFromInput | object): LambdaParameters {
   if (isNodeData(input)) {
     return lambda_parameters_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as LambdaParametersConfig) as unknown as LambdaParameters;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2323,10 +2323,10 @@ export function lambdaParametersFrom(input: LambdaParameters | LambdaParametersF
   } as LambdaParametersConfig) as unknown as LambdaParameters;
 }
 
-export function listFrom(input: List | ListFromInput): List {
+export function listFrom(input: List | ListFromInput | object): List {
   if (isNodeData(input)) {
     return list_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ListConfig) as unknown as List;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2335,11 +2335,11 @@ export function listFrom(input: List | ListFromInput): List {
   } as ListConfig) as unknown as List;
 }
 
-export function listComprehensionFrom(input: ListComprehension | ListComprehensionFromInput): ListComprehension {
+export function listComprehensionFrom(input: ListComprehension | ListComprehensionFromInput | object): ListComprehension {
   if (isNodeData(input)) {
     return list_comprehension_({
       body: input.fields?.['body'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ListComprehensionConfig) as unknown as ListComprehension;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2349,10 +2349,10 @@ export function listComprehensionFrom(input: ListComprehension | ListComprehensi
   } as ListComprehensionConfig) as unknown as ListComprehension;
 }
 
-export function listPatternFrom(input: ListPattern | ListPatternFromInput): ListPattern {
+export function listPatternFrom(input: ListPattern | ListPatternFromInput | object): ListPattern {
   if (isNodeData(input)) {
     return list_pattern_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ListPatternConfig) as unknown as ListPattern;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2361,7 +2361,7 @@ export function listPatternFrom(input: ListPattern | ListPatternFromInput): List
   } as ListPatternConfig) as unknown as ListPattern;
 }
 
-export function listSplatFrom(input: ListSplat | ListSplatFromInput): ListSplat {
+export function listSplatFrom(input: ListSplat | ListSplatFromInput | object): ListSplat {
   if (isNodeData(input)) {
     return list_splat_({
       expression: input.fields?.['expression'],
@@ -2373,10 +2373,10 @@ export function listSplatFrom(input: ListSplat | ListSplatFromInput): ListSplat 
   } as ListSplatConfig) as unknown as ListSplat;
 }
 
-export function listSplatPatternFrom(input: ListSplatPattern | ListSplatPatternFromInput): ListSplatPattern {
+export function listSplatPatternFrom(input: ListSplatPattern | ListSplatPatternFromInput | object): ListSplatPattern {
   if (isNodeData(input)) {
     return list_splat_pattern_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ListSplatPatternConfig) as unknown as ListSplatPattern;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2385,7 +2385,7 @@ export function listSplatPatternFrom(input: ListSplatPattern | ListSplatPatternF
   } as ListSplatPatternConfig) as unknown as ListSplatPattern;
 }
 
-export function matchStatementFrom(input: MatchStatement | MatchStatementFromInput): MatchStatement {
+export function matchStatementFrom(input: MatchStatement | MatchStatementFromInput | object): MatchStatement {
   if (isNodeData(input)) {
     return match_statement_({
       body: input.fields?.['body'],
@@ -2399,7 +2399,7 @@ export function matchStatementFrom(input: MatchStatement | MatchStatementFromInp
   } as MatchStatementConfig) as unknown as MatchStatement;
 }
 
-export function memberTypeFrom(input: MemberType | MemberTypeFromInput): MemberType {
+export function memberTypeFrom(input: MemberType | MemberTypeFromInput | object): MemberType {
   if (isNodeData(input)) {
     return member_type_({
       baseType: input.fields?.['base_type'],
@@ -2408,15 +2408,15 @@ export function memberTypeFrom(input: MemberType | MemberTypeFromInput): MemberT
   }
   const obj = input as Record<string, unknown>;
   return member_type_({
-    baseType: resolveField(obj['baseType'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
+    baseType: resolveField(obj['baseType'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
     identifier: resolveField(obj['identifier'], _resolveNamedExpressionLhs),
   } as MemberTypeConfig) as unknown as MemberType;
 }
 
-export function moduleFrom(input: Module | ModuleFromInput): Module {
+export function moduleFrom(input: Module | ModuleFromInput | object): Module {
   if (isNodeData(input)) {
     return module_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ModuleConfig) as unknown as Module;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2425,7 +2425,7 @@ export function moduleFrom(input: Module | ModuleFromInput): Module {
   } as ModuleConfig) as unknown as Module;
 }
 
-export function namedExpressionFrom(input: NamedExpression | NamedExpressionFromInput): NamedExpression {
+export function namedExpressionFrom(input: NamedExpression | NamedExpressionFromInput | object): NamedExpression {
   if (isNodeData(input)) {
     return named_expression_({
       name: input.fields?.['name'],
@@ -2439,10 +2439,10 @@ export function namedExpressionFrom(input: NamedExpression | NamedExpressionFrom
   } as NamedExpressionConfig) as unknown as NamedExpression;
 }
 
-export function nonlocalStatementFrom(input: NonlocalStatement | NonlocalStatementFromInput): NonlocalStatement {
+export function nonlocalStatementFrom(input: NonlocalStatement | NonlocalStatementFromInput | object): NonlocalStatement {
   if (isNodeData(input)) {
     return nonlocal_statement_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as NonlocalStatementConfig) as unknown as NonlocalStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2451,7 +2451,7 @@ export function nonlocalStatementFrom(input: NonlocalStatement | NonlocalStateme
   } as NonlocalStatementConfig) as unknown as NonlocalStatement;
 }
 
-export function notOperatorFrom(input: NotOperator | NotOperatorFromInput): NotOperator {
+export function notOperatorFrom(input: NotOperator | NotOperatorFromInput | object): NotOperator {
   if (isNodeData(input)) {
     return not_operator_({
       argument: input.fields?.['argument'],
@@ -2463,7 +2463,7 @@ export function notOperatorFrom(input: NotOperator | NotOperatorFromInput): NotO
   } as NotOperatorConfig) as unknown as NotOperator;
 }
 
-export function pairFrom(input: Pair | PairFromInput): Pair {
+export function pairFrom(input: Pair | PairFromInput | object): Pair {
   if (isNodeData(input)) {
     return pair_({
       key: input.fields?.['key'],
@@ -2477,10 +2477,10 @@ export function pairFrom(input: Pair | PairFromInput): Pair {
   } as PairConfig) as unknown as Pair;
 }
 
-export function parametersFrom(input: Parameters | ParametersFromInput): Parameters {
+export function parametersFrom(input: Parameters | ParametersFromInput | object): Parameters {
   if (isNodeData(input)) {
     return parameters_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ParametersConfig) as unknown as Parameters;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2489,10 +2489,10 @@ export function parametersFrom(input: Parameters | ParametersFromInput): Paramet
   } as ParametersConfig) as unknown as Parameters;
 }
 
-export function parenthesizedExpressionFrom(input: ParenthesizedExpression | ParenthesizedExpressionFromInput): ParenthesizedExpression {
+export function parenthesizedExpressionFrom(input: ParenthesizedExpression | ParenthesizedExpressionFromInput | object): ParenthesizedExpression {
   if (isNodeData(input)) {
     return parenthesized_expression_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ParenthesizedExpressionConfig) as unknown as ParenthesizedExpression;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2501,10 +2501,10 @@ export function parenthesizedExpressionFrom(input: ParenthesizedExpression | Par
   } as ParenthesizedExpressionConfig) as unknown as ParenthesizedExpression;
 }
 
-export function parenthesizedListSplatFrom(input: ParenthesizedListSplat | ParenthesizedListSplatFromInput): ParenthesizedListSplat {
+export function parenthesizedListSplatFrom(input: ParenthesizedListSplat | ParenthesizedListSplatFromInput | object): ParenthesizedListSplat {
   if (isNodeData(input)) {
     return parenthesized_list_splat_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ParenthesizedListSplatConfig) as unknown as ParenthesizedListSplat;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2513,10 +2513,10 @@ export function parenthesizedListSplatFrom(input: ParenthesizedListSplat | Paren
   } as ParenthesizedListSplatConfig) as unknown as ParenthesizedListSplat;
 }
 
-export function patternListFrom(input: PatternList | PatternListFromInput): PatternList {
+export function patternListFrom(input: PatternList | PatternListFromInput | object): PatternList {
   if (isNodeData(input)) {
     return pattern_list_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as PatternListConfig) as unknown as PatternList;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2525,7 +2525,7 @@ export function patternListFrom(input: PatternList | PatternListFromInput): Patt
   } as PatternListConfig) as unknown as PatternList;
 }
 
-export function printStatementFrom(input: PrintStatement | PrintStatementFromInput): PrintStatement {
+export function printStatementFrom(input: PrintStatement | PrintStatementFromInput | object): PrintStatement {
   if (isNodeData(input)) {
     return print_statement_({
       argument: input.fields?.['argument'],
@@ -2535,15 +2535,15 @@ export function printStatementFrom(input: PrintStatement | PrintStatementFromInp
   const obj = input as Record<string, unknown>;
   return print_statement_({
     argument: obj['argument'] !== undefined ? resolveField(obj['argument'], _resolveExpression) : undefined,
-    chevron: obj['chevron'] !== undefined ? resolveField(obj['chevron'], (v: unknown) => (typeof v === 'object' ? chevronFrom(v as any) : v)) : undefined,
+    chevron: obj['chevron'] !== undefined ? resolveField(obj['chevron'], (v: unknown) => (typeof v === 'object' && v !== null ? chevronFrom(v) : v)) : undefined,
   } as PrintStatementConfig) as unknown as PrintStatement;
 }
 
-export function raiseStatementFrom(input: RaiseStatement | RaiseStatementFromInput): RaiseStatement {
+export function raiseStatementFrom(input: RaiseStatement | RaiseStatementFromInput | object): RaiseStatement {
   if (isNodeData(input)) {
     return raise_statement_({
       cause: input.fields?.['cause'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as RaiseStatementConfig) as unknown as RaiseStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2553,7 +2553,7 @@ export function raiseStatementFrom(input: RaiseStatement | RaiseStatementFromInp
   } as RaiseStatementConfig) as unknown as RaiseStatement;
 }
 
-export function relativeImportFrom(input: RelativeImport | RelativeImportFromInput): RelativeImport {
+export function relativeImportFrom(input: RelativeImport | RelativeImportFromInput | object): RelativeImport {
   if (isNodeData(input)) {
     return relative_import_({
       importPrefix: input.fields?.['import_prefix'],
@@ -2563,14 +2563,14 @@ export function relativeImportFrom(input: RelativeImport | RelativeImportFromInp
   const obj = input as Record<string, unknown>;
   return relative_import_({
     importPrefix: resolveField(obj['importPrefix'], (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? import_prefix_('' + v) : v)),
-    dottedName: obj['dottedName'] !== undefined ? resolveField(obj['dottedName'], (v: unknown) => (typeof v === 'object' ? dottedNameFrom(v as any) : v)) : undefined,
+    dottedName: obj['dottedName'] !== undefined ? resolveField(obj['dottedName'], (v: unknown) => (typeof v === 'object' && v !== null ? dottedNameFrom(v) : v)) : undefined,
   } as RelativeImportConfig) as unknown as RelativeImport;
 }
 
-export function returnStatementFrom(input: ReturnStatement | ReturnStatementFromInput): ReturnStatement {
+export function returnStatementFrom(input: ReturnStatement | ReturnStatementFromInput | object): ReturnStatement {
   if (isNodeData(input)) {
     return return_statement_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as ReturnStatementConfig) as unknown as ReturnStatement;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2579,10 +2579,10 @@ export function returnStatementFrom(input: ReturnStatement | ReturnStatementFrom
   } as ReturnStatementConfig) as unknown as ReturnStatement;
 }
 
-export function setFrom(input: Set | SetFromInput): Set {
+export function setFrom(input: Set | SetFromInput | object): Set {
   if (isNodeData(input)) {
     return set_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as SetConfig) as unknown as Set;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2591,11 +2591,11 @@ export function setFrom(input: Set | SetFromInput): Set {
   } as SetConfig) as unknown as Set;
 }
 
-export function setComprehensionFrom(input: SetComprehension | SetComprehensionFromInput): SetComprehension {
+export function setComprehensionFrom(input: SetComprehension | SetComprehensionFromInput | object): SetComprehension {
   if (isNodeData(input)) {
     return set_comprehension_({
       body: input.fields?.['body'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as SetComprehensionConfig) as unknown as SetComprehension;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2605,7 +2605,7 @@ export function setComprehensionFrom(input: SetComprehension | SetComprehensionF
   } as SetComprehensionConfig) as unknown as SetComprehension;
 }
 
-export function sliceFrom(input: Slice | SliceFromInput): Slice {
+export function sliceFrom(input: Slice | SliceFromInput | object): Slice {
   if (isNodeData(input)) {
     return slice_({
       start: input.fields?.['start'],
@@ -2621,7 +2621,7 @@ export function sliceFrom(input: Slice | SliceFromInput): Slice {
   } as SliceConfig) as unknown as Slice;
 }
 
-export function splatPatternFrom(input: SplatPattern | SplatPatternFromInput): SplatPattern {
+export function splatPatternFrom(input: SplatPattern | SplatPatternFromInput | object): SplatPattern {
   if (isNodeData(input)) {
     return splat_pattern_({
       identifier: input.fields?.['identifier'],
@@ -2633,7 +2633,7 @@ export function splatPatternFrom(input: SplatPattern | SplatPatternFromInput): S
   } as SplatPatternConfig) as unknown as SplatPattern;
 }
 
-export function splatTypeFrom(input: SplatType | SplatTypeFromInput): SplatType {
+export function splatTypeFrom(input: SplatType | SplatTypeFromInput | object): SplatType {
   if (isNodeData(input)) {
     return splat_type_({
       identifier: input.fields?.['identifier'],
@@ -2645,7 +2645,7 @@ export function splatTypeFrom(input: SplatType | SplatTypeFromInput): SplatType 
   } as SplatTypeConfig) as unknown as SplatType;
 }
 
-export function stringFrom(input: String | StringFromInput): String {
+export function stringFrom(input: String | StringFromInput | object): String {
   if (isNodeData(input)) {
     return string_({
       stringStart: input.fields?.['string_start'],
@@ -2661,10 +2661,10 @@ export function stringFrom(input: String | StringFromInput): String {
   } as StringConfig) as unknown as String;
 }
 
-export function stringContentFrom(input: StringContent | StringContentFromInput): StringContent {
+export function stringContentFrom(input: StringContent | StringContentFromInput | object): StringContent {
   if (isNodeData(input)) {
     return string_content_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as StringContentConfig) as unknown as StringContent;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2673,7 +2673,7 @@ export function stringContentFrom(input: StringContent | StringContentFromInput)
   } as StringContentConfig) as unknown as StringContent;
 }
 
-export function subscriptFrom(input: Subscript | SubscriptFromInput): Subscript {
+export function subscriptFrom(input: Subscript | SubscriptFromInput | object): Subscript {
   if (isNodeData(input)) {
     return subscript_({
       subscript: input.fields?.['subscript'],
@@ -2687,7 +2687,7 @@ export function subscriptFrom(input: Subscript | SubscriptFromInput): Subscript 
   } as SubscriptConfig) as unknown as Subscript;
 }
 
-export function tryStatementFrom(input: TryStatement | TryStatementFromInput): TryStatement {
+export function tryStatementFrom(input: TryStatement | TryStatementFromInput | object): TryStatement {
   if (isNodeData(input)) {
     return try_statement_({
       body: input.fields?.['body'],
@@ -2699,16 +2699,16 @@ export function tryStatementFrom(input: TryStatement | TryStatementFromInput): T
   const obj = input as Record<string, unknown>;
   return try_statement_({
     body: resolveField(obj['body'], _r10v9xtg),
-    exceptClauses: obj['exceptClauses'] !== undefined ? resolveField(obj['exceptClauses'], (v: unknown) => (typeof v === 'object' ? exceptClauseFrom(v as any) : v)) : undefined,
-    elseClause: obj['elseClause'] !== undefined ? resolveField(obj['elseClause'], (v: unknown) => (typeof v === 'object' ? elseClauseFrom(v as any) : v)) : undefined,
-    finallyClause: obj['finallyClause'] !== undefined ? resolveField(obj['finallyClause'], (v: unknown) => (typeof v === 'object' ? finallyClauseFrom(v as any) : v)) : undefined,
+    exceptClauses: obj['exceptClauses'] !== undefined ? resolveField(obj['exceptClauses'], (v: unknown) => (typeof v === 'object' && v !== null ? exceptClauseFrom(v) : v)) : undefined,
+    elseClause: obj['elseClause'] !== undefined ? resolveField(obj['elseClause'], (v: unknown) => (typeof v === 'object' && v !== null ? elseClauseFrom(v) : v)) : undefined,
+    finallyClause: obj['finallyClause'] !== undefined ? resolveField(obj['finallyClause'], (v: unknown) => (typeof v === 'object' && v !== null ? finallyClauseFrom(v) : v)) : undefined,
   } as TryStatementConfig) as unknown as TryStatement;
 }
 
-export function tupleFrom(input: Tuple | TupleFromInput): Tuple {
+export function tupleFrom(input: Tuple | TupleFromInput | object): Tuple {
   if (isNodeData(input)) {
     return tuple_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as TupleConfig) as unknown as Tuple;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2717,10 +2717,10 @@ export function tupleFrom(input: Tuple | TupleFromInput): Tuple {
   } as TupleConfig) as unknown as Tuple;
 }
 
-export function tuplePatternFrom(input: TuplePattern | TuplePatternFromInput): TuplePattern {
+export function tuplePatternFrom(input: TuplePattern | TuplePatternFromInput | object): TuplePattern {
   if (isNodeData(input)) {
     return tuple_pattern_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as TuplePatternConfig) as unknown as TuplePattern;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2729,10 +2729,10 @@ export function tuplePatternFrom(input: TuplePattern | TuplePatternFromInput): T
   } as TuplePatternConfig) as unknown as TuplePattern;
 }
 
-export function type_From(input: Type | TypeFromInput): Type {
+export function type_From(input: Type | TypeFromInput | object): Type {
   if (isNodeData(input)) {
     return type_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as TypeConfig) as unknown as Type;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2741,7 +2741,7 @@ export function type_From(input: Type | TypeFromInput): Type {
   } as TypeConfig) as unknown as Type;
 }
 
-export function typeAliasStatementFrom(input: TypeAliasStatement | TypeAliasStatementFromInput): TypeAliasStatement {
+export function typeAliasStatementFrom(input: TypeAliasStatement | TypeAliasStatementFromInput | object): TypeAliasStatement {
   if (isNodeData(input)) {
     return type_alias_statement_({
       left: input.fields?.['left'],
@@ -2750,24 +2750,24 @@ export function typeAliasStatementFrom(input: TypeAliasStatement | TypeAliasStat
   }
   const obj = input as Record<string, unknown>;
   return type_alias_statement_({
-    left: resolveField(obj['left'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
-    right: resolveField(obj['right'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
+    left: resolveField(obj['left'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
+    right: resolveField(obj['right'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
   } as TypeAliasStatementConfig) as unknown as TypeAliasStatement;
 }
 
-export function typeParameterFrom(input: TypeParameter | TypeParameterFromInput): TypeParameter {
+export function typeParameterFrom(input: TypeParameter | TypeParameterFromInput | object): TypeParameter {
   if (isNodeData(input)) {
     return type_parameter_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as TypeParameterConfig) as unknown as TypeParameter;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return type_parameter_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)) : [],
   } as TypeParameterConfig) as unknown as TypeParameter;
 }
 
-export function typedDefaultParameterFrom(input: TypedDefaultParameter | TypedDefaultParameterFromInput): TypedDefaultParameter {
+export function typedDefaultParameterFrom(input: TypedDefaultParameter | TypedDefaultParameterFromInput | object): TypedDefaultParameter {
   if (isNodeData(input)) {
     return typed_default_parameter_({
       name: input.fields?.['name'],
@@ -2778,26 +2778,26 @@ export function typedDefaultParameterFrom(input: TypedDefaultParameter | TypedDe
   const obj = input as Record<string, unknown>;
   return typed_default_parameter_({
     name: resolveField(obj['name'], _resolveNamedExpressionLhs),
-    type: resolveField(obj['type'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
+    type: resolveField(obj['type'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
     value: resolveField(obj['value'], _resolveExpression),
   } as TypedDefaultParameterConfig) as unknown as TypedDefaultParameter;
 }
 
-export function typedParameterFrom(input: TypedParameter | TypedParameterFromInput): TypedParameter {
+export function typedParameterFrom(input: TypedParameter | TypedParameterFromInput | object): TypedParameter {
   if (isNodeData(input)) {
     return typed_parameter_({
       type: input.fields?.['type'],
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as TypedParameterConfig) as unknown as TypedParameter;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return typed_parameter_({
-    type: resolveField(obj['type'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
+    type: resolveField(obj['type'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r10r1qu9) : undefined,
   } as TypedParameterConfig) as unknown as TypedParameter;
 }
 
-export function unaryOperatorFrom(input: UnaryOperator | UnaryOperatorFromInput): UnaryOperator {
+export function unaryOperatorFrom(input: UnaryOperator | UnaryOperatorFromInput | object): UnaryOperator {
   if (isNodeData(input)) {
     return unary_operator_({
       argument: input.fields?.['argument'],
@@ -2811,10 +2811,10 @@ export function unaryOperatorFrom(input: UnaryOperator | UnaryOperatorFromInput)
   } as UnaryOperatorConfig) as unknown as UnaryOperator;
 }
 
-export function unionPatternFrom(input: UnionPattern | UnionPatternFromInput): UnionPattern {
+export function unionPatternFrom(input: UnionPattern | UnionPatternFromInput | object): UnionPattern {
   if (isNodeData(input)) {
     return union_pattern_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as UnionPatternConfig) as unknown as UnionPattern;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
@@ -2823,7 +2823,7 @@ export function unionPatternFrom(input: UnionPattern | UnionPatternFromInput): U
   } as UnionPatternConfig) as unknown as UnionPattern;
 }
 
-export function unionTypeFrom(input: UnionType | UnionTypeFromInput): UnionType {
+export function unionTypeFrom(input: UnionType | UnionTypeFromInput | object): UnionType {
   if (isNodeData(input)) {
     return union_type_({
       left: input.fields?.['left'],
@@ -2832,12 +2832,12 @@ export function unionTypeFrom(input: UnionType | UnionTypeFromInput): UnionType 
   }
   const obj = input as Record<string, unknown>;
   return union_type_({
-    left: resolveField(obj['left'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
-    right: resolveField(obj['right'], (v: unknown) => (typeof v === 'object' ? type_From(v as any) : v)),
+    left: resolveField(obj['left'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
+    right: resolveField(obj['right'], (v: unknown) => (typeof v === 'object' && v !== null ? type_From(v) : v)),
   } as UnionTypeConfig) as unknown as UnionType;
 }
 
-export function whileStatementFrom(input: WhileStatement | WhileStatementFromInput): WhileStatement {
+export function whileStatementFrom(input: WhileStatement | WhileStatementFromInput | object): WhileStatement {
   if (isNodeData(input)) {
     return while_statement_({
       alternative: input.fields?.['alternative'],
@@ -2847,25 +2847,25 @@ export function whileStatementFrom(input: WhileStatement | WhileStatementFromInp
   }
   const obj = input as Record<string, unknown>;
   return while_statement_({
-    alternative: obj['alternative'] !== undefined ? resolveField(obj['alternative'], (v: unknown) => (typeof v === 'object' ? elseClauseFrom(v as any) : v)) : undefined,
+    alternative: obj['alternative'] !== undefined ? resolveField(obj['alternative'], (v: unknown) => (typeof v === 'object' && v !== null ? elseClauseFrom(v) : v)) : undefined,
     body: resolveField(obj['body'], _r10v9xtg),
     condition: resolveField(obj['condition'], _resolveExpression),
   } as WhileStatementConfig) as unknown as WhileStatement;
 }
 
-export function withClauseFrom(input: WithClause | WithClauseFromInput): WithClause {
+export function withClauseFrom(input: WithClause | WithClauseFromInput | object): WithClause {
   if (isNodeData(input)) {
     return with_clause_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as WithClauseConfig) as unknown as WithClause;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return with_clause_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' ? withItemFrom(v as any) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? withItemFrom(v) : v)) : [],
   } as WithClauseConfig) as unknown as WithClause;
 }
 
-export function withItemFrom(input: WithItem | WithItemFromInput): WithItem {
+export function withItemFrom(input: WithItem | WithItemFromInput | object): WithItem {
   if (isNodeData(input)) {
     return with_item_({
       value: input.fields?.['value'],
@@ -2877,7 +2877,7 @@ export function withItemFrom(input: WithItem | WithItemFromInput): WithItem {
   } as WithItemConfig) as unknown as WithItem;
 }
 
-export function withStatementFrom(input: WithStatement | WithStatementFromInput): WithStatement {
+export function withStatementFrom(input: WithStatement | WithStatementFromInput | object): WithStatement {
   if (isNodeData(input)) {
     return with_statement_({
       body: input.fields?.['body'],
@@ -2887,14 +2887,14 @@ export function withStatementFrom(input: WithStatement | WithStatementFromInput)
   const obj = input as Record<string, unknown>;
   return with_statement_({
     body: resolveField(obj['body'], _r10v9xtg),
-    withClause: resolveField(obj['withClause'], (v: unknown) => (typeof v === 'object' ? withClauseFrom(v as any) : v)),
+    withClause: resolveField(obj['withClause'], (v: unknown) => (typeof v === 'object' && v !== null ? withClauseFrom(v) : v)),
   } as WithStatementConfig) as unknown as WithStatement;
 }
 
-export function yield_From(input: Yield | YieldFromInput): Yield {
+export function yield_From(input: Yield | YieldFromInput | object): Yield {
   if (isNodeData(input)) {
     return yield_({
-      children: (input as any).children,
+      children: (input as { children?: unknown }).children,
     } as YieldConfig) as unknown as Yield;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
