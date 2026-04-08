@@ -135,6 +135,11 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	// Append missing fields the walker didn't reach
 	for (const f of nodeFields) {
 		if (!seen.has(f.name)) {
+			if (f.override) {
+				// Override fields have positions — if the walker didn't reach them,
+				// don't silently append at wrong position
+				continue;
+			}
 			const varName = f.name.toUpperCase();
 			parts.push(f.multiple ? ` $$$${varName}` : ` $${varName}`);
 			seen.add(f.name);
@@ -277,6 +282,10 @@ function ruleToTemplate(
 					return [`$${anonFieldName.toUpperCase()}`];
 				}
 			}
+			// Track string tokens to prevent duplication across CHOICE branches
+			const tokenKey = `__token__${rule.value}`;
+			if (seen.has(tokenKey)) return [];
+			seen.add(tokenKey);
 			return [rule.value];
 		}
 
@@ -299,40 +308,46 @@ function ruleToTemplate(
 					for (const f of inlineSeen) {
 						if (fieldRequired.has(f)) seen.add(f);
 					}
+					// Propagate children-seen marker from inline scope
+					if (inlineSeen.has('children')) seen.add('children');
 					return inlined;
 				}
 			}
-			// Check if this symbol matches the next override field in the queue (positional)
-			if (overrideQueue && overrideState && overrideKindSet && overrideKindSet.has(rule.name)) {
-				// Consume the next override field whose kinds include this symbol
-				for (let i = overrideState.cursor; i < overrideQueue.length; i++) {
-					const entry = overrideQueue[i]!;
-					if (entry.kinds.has(rule.name) && !seen.has(entry.slotName)) {
-						seen.add(entry.slotName);
-						overrideState.cursor = i + 1;
-						return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
+			// Check if this symbol matches an override field — strip _ prefix for hidden rules
+			if (overrideQueue && overrideState) {
+				const lookupName = rule.name.startsWith('_') ? rule.name.slice(1) : rule.name;
+				if (overrideKindSet?.has(lookupName) || overrideKindSet?.has(rule.name)) {
+					for (let i = overrideState.cursor; i < overrideQueue.length; i++) {
+						const entry = overrideQueue[i]!;
+						if ((entry.kinds.has(lookupName) || entry.kinds.has(rule.name)) && !seen.has(entry.slotName)) {
+							seen.add(entry.slotName);
+							overrideState.cursor = i + 1;
+							// If all override fields consumed, mark children as covered
+							if (overrideQueue.every(e => seen.has(e.slotName))) seen.add('children');
+							return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
+						}
 					}
+					// All matching overrides already consumed — this occurrence is covered
+					return [];
 				}
-				// All matching overrides already consumed — this occurrence is covered
-				return [];
-			}
-			// Name-based fallback for hidden symbols with empty-kinds override fields
-			// (e.g. _raw_string_literal_start → raw_string_literal_start override field)
-			if (overrideQueue && overrideState && rule.name.startsWith('_')) {
-				const baseName = rule.name.slice(1);
-				for (let i = overrideState.cursor; i < overrideQueue.length; i++) {
-					const entry = overrideQueue[i]!;
-					if (entry.slotName === baseName && entry.kinds.size === 0 && !seen.has(entry.slotName)) {
-						seen.add(entry.slotName);
-						overrideState.cursor = i + 1;
-						return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
+				// Name-based fallback for hidden symbols with empty-kinds override fields
+				// (e.g. _raw_string_literal_start → raw_string_literal_start override field)
+				if (rule.name.startsWith('_')) {
+					for (let i = overrideState.cursor; i < overrideQueue.length; i++) {
+						const entry = overrideQueue[i]!;
+						if (entry.slotName === lookupName && entry.kinds.size === 0 && !seen.has(entry.slotName)) {
+							seen.add(entry.slotName);
+							overrideState.cursor = i + 1;
+							if (overrideQueue.every(e => seen.has(e.slotName))) seen.add('children');
+							return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
+						}
 					}
 				}
 			}
 			// Check if this symbol maps to a named child slot
 			const childSlot = childSlotMap.get(rule.name);
 			if (childSlot) {
-				if (seen.has(`child:${childSlot.slotName}`)) return [];
+				if (seen.has(`child:${childSlot.slotName}`) || (childSlot.slotName === 'children' && seen.has('children'))) return [];
 				seen.add(`child:${childSlot.slotName}`);
 				// If this slot resolves to CHILDREN, also mark 'children' to prevent fallback duplication
 				if (childSlot.slotName === 'children') seen.add('children');
@@ -364,29 +379,14 @@ function ruleToTemplate(
 				return parts;
 			}
 
-			// No BLANK — pick the branch with the most field coverage
-			let best: string[] = [];
-			let bestCount = -1;
-			let bestSeen = new Set<string>();
-			let bestCursor = overrideState?.cursor ?? 0;
-			const savedCursor = overrideState?.cursor ?? 0;
+			// No BLANK — walk all branches, union results via seen set.
+			// First branch adds variables/tokens; subsequent branches skip already-seen items.
+			const choiceParts: string[] = [];
 			for (const m of rule.members) {
-				if (overrideState) overrideState.cursor = savedCursor;
-				const branchSeen = new Set(seen);
-				const branchClauses: ClauseEntry[] = [];
-				const branchParts = ruleToTemplate(m, optional, branchSeen, fieldRequired, fieldMultiple, gr, branchClauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens);
-				const fieldCount = [...branchSeen].filter(f => !seen.has(f)).length;
-				if (fieldCount > bestCount) {
-					bestCount = fieldCount;
-					best = branchParts;
-					bestSeen = branchSeen;
-					bestCursor = overrideState?.cursor ?? 0;
-					clauses.push(...branchClauses);
-				}
+				if (m.type === 'BLANK') continue;
+				choiceParts.push(...ruleToTemplate(m, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, overrideQueue, overrideState, overrideKindSet, anonOverrideTokens));
 			}
-			if (overrideState) overrideState.cursor = bestCursor;
-			for (const f of bestSeen) seen.add(f);
-			return best;
+			return choiceParts;
 		}
 
 		case 'REPEAT':
@@ -424,14 +424,16 @@ function ruleToTemplate(
 						if (entry.kinds.has(aliasName) && !seen.has(entry.slotName)) {
 							seen.add(entry.slotName);
 							overrideState.cursor = i + 1;
+							if (overrideQueue.every(e => seen.has(e.slotName))) seen.add('children');
 							return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
 						}
 					}
 				}
 				const aliasSlot = childSlotMap.get(aliasName);
 				if (aliasSlot) {
-					if (seen.has(`child:${aliasSlot.slotName}`)) return [];
+					if (seen.has(`child:${aliasSlot.slotName}`) || (aliasSlot.slotName === 'children' && seen.has('children'))) return [];
 					seen.add(`child:${aliasSlot.slotName}`);
+					if (aliasSlot.slotName === 'children') seen.add('children');
 					return [aliasSlot.multiple ? `$$$${aliasSlot.varName}` : `$${aliasSlot.varName}`];
 				}
 				if (seen.has('children')) return [];

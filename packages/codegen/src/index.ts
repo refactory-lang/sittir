@@ -37,6 +37,7 @@ import type { HydratedNodeModel } from './node-model.ts';
 import { isTupleChildren, eachChildSlot } from './node-model.ts';
 import { structuralNodes } from './emitters/utils.ts';
 import type { OverridesConfig, OverrideFieldDef, OverrideTypeRef } from './overrides.ts';
+import { RESERVED_FIELD_NAMES } from './overrides.ts';
 
 export { listBranchKinds, listLeafKinds, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
 
@@ -119,8 +120,11 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 				const slotName = slot.name;
 				let fieldName: string;
 
-				if (slotName && !slotName.startsWith('NEEDS_NAME')) {
+				if (slotName && !slotName.startsWith('NEEDS_NAME') && !RESERVED_FIELD_NAMES.has(slotName)) {
 					fieldName = slotName;
+				} else if (RESERVED_FIELD_NAMES.has(slotName ?? '')) {
+					// Skip reserved field names — can't be used as override field names
+					continue;
 				} else {
 					fieldName = slotName ?? `NEEDS_NAME_${i}`;
 					const kindList = slot.kinds.map(k => k.kind).join(', ');
@@ -147,18 +151,22 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 			// Single concrete kind → promote to named override field
 			// Only when we can derive a meaningful name (single kind → kind-as-name)
 			else if (slot.kinds.length === 1) {
-				const types: OverrideTypeRef[] = slot.kinds.map(k => {
-					const mt = (k as any).modelType;
-					return { type: k.kind, named: mt !== 'token' };
-				});
 				const fieldName = slot.kinds[0]!.kind;
+				// Skip reserved field names
+				if (RESERVED_FIELD_NAMES.has(fieldName)) { /* keep as $CHILDREN */ }
+				else {
+					const types: OverrideTypeRef[] = slot.kinds.map(k => {
+						const mt = (k as any).modelType;
+						return { type: k.kind, named: mt !== 'token' };
+					});
 
-				fields[fieldName] = {
-					types,
-					multiple: slot.multiple,
-					required: slot.required ?? false,
-					position: 0,
-				};
+					fields[fieldName] = {
+						types,
+						multiple: slot.multiple,
+						required: slot.required ?? false,
+						position: 0,
+					};
+				}
 			}
 		}
 

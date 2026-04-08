@@ -110,7 +110,7 @@ export function loadOverrides(grammarName: string): OverridesConfig {
 }
 
 /** Names that collide with built-in NodeData properties or object literal methods. */
-const RESERVED_FIELD_NAMES = new Set([
+export const RESERVED_FIELD_NAMES = new Set([
 	'type', 'named', 'fields', 'children',
 	'render', 'toEdit', 'replace',
 ]);
@@ -118,11 +118,12 @@ const RESERVED_FIELD_NAMES = new Set([
 function parseOverridesFile(path: string): OverridesConfig {
 	try {
 		const config = JSON.parse(readFileSync(path, 'utf-8')) as OverridesConfig;
-		// Validate field names against reserved set
+		// Remove fields with reserved names (skip with warning, don't abort)
 		for (const [kind, entry] of Object.entries(config)) {
 			for (const fieldName of Object.keys(entry.fields)) {
 				if (RESERVED_FIELD_NAMES.has(fieldName)) {
-					throw new Error(`${kind}.${fieldName}: '${fieldName}' is a reserved NodeData property — choose a different name`);
+					console.warn(`[overrides] ${kind}.${fieldName}: '${fieldName}' is reserved — skipping field`);
+					delete entry.fields[fieldName];
 				}
 			}
 		}

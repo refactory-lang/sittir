@@ -46,21 +46,6 @@
       }
     }
   },
-  "adding_type_annotation": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
-      }
-    }
-  },
   "ambient_declaration": {
     "fields": {
       "declaration": {
@@ -244,36 +229,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
-      }
-    }
-  },
-  "constraint": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
-      }
-    }
-  },
-  "default_type": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
             "named": true
           }
         ],
@@ -865,36 +820,6 @@
       }
     }
   },
-  "omitting_type_annotation": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
-      }
-    }
-  },
-  "opting_type_annotation": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
-      }
-    }
-  },
   "optional_parameter": {
     "fields": {
       "parameter_name": {
@@ -930,36 +855,6 @@
         "multiple": false,
         "required": false,
         "position": 1
-      }
-    }
-  },
-  "optional_type": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
-      }
-    }
-  },
-  "parenthesized_type": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
       }
     }
   },
@@ -1047,21 +942,6 @@
       }
     }
   },
-  "readonly_type": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
-      }
-    }
-  },
   "required_parameter": {
     "fields": {
       "parameter_name": {
@@ -1097,21 +977,6 @@
         "multiple": false,
         "required": false,
         "position": 1
-      }
-    }
-  },
-  "rest_type": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
       }
     }
   },
@@ -1174,21 +1039,6 @@
         "multiple": false,
         "required": false,
         "position": 1
-      }
-    }
-  },
-  "type_annotation": {
-    "fields": {
-      "type": {
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ],
-        "multiple": false,
-        "required": true,
-        "position": 0
       }
     }
   },
