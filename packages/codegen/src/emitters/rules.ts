@@ -15,7 +15,7 @@ import type { HydratedNodeModel, HydratedChildrenModel } from '../node-model.ts'
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
 import { buildProjectionContext, projectKinds } from './kind-projections.ts';
-import { applyOverrides, type OverrideFieldInfo } from '../apply-overrides.ts';
+import { applyOverrides, type OverrideFieldInfo } from '../enriched-grammar.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
 
 // ---------------------------------------------------------------------------
