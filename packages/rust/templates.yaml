@@ -137,7 +137,7 @@ rules:
   qualified_type: $TYPE as $ALIAS
   range_expression: $START $OPERATOR $END
   range_pattern: $LEFT ... $RIGHT
-  raw_string_literal: $$$CHILDREN $STRING_CONTENT $RAW_STRING_LITERAL_START $RAW_STRING_LITERAL_END
+  raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression: "& raw $MUTABLE_SPECIFIER $VALUE"
   reference_pattern: "& $MUTABLE_SPECIFIER $PATTERN"

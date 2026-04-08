@@ -66,6 +66,17 @@ function promoteNamed(data: AnyNodeData, fieldName: string, kinds: string[]): vo
   }
 }
 
+/** Promote the first anonymous child into a field (positional, for hidden grammar tokens). */
+function promoteFirstAnon(data: AnyNodeData, fieldName: string): void {
+  if (!data.children) return;
+  const arr = data.children as AnyNodeData[];
+  const idx = arr.findIndex(c => !c.named);
+  if (idx >= 0) {
+    data.fields = data.fields ?? {};
+    (data.fields as Record<string, unknown>)[fieldName] = arr.splice(idx, 1)[0];
+  }
+}
+
 /** Drill into a child entry: read its subtree lazily via readNode + wrapNode. */
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
@@ -419,6 +430,7 @@ export function wrapDecoratedDefinition(data: AnyNodeData, tree: TreeHandle): un
 
 export function wrapDecorator(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirst(data, 'expression');
+  promoteFirstAnon(data, 'newline');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },

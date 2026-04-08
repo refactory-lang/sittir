@@ -316,6 +316,19 @@ function ruleToTemplate(
 				// All matching overrides already consumed — this occurrence is covered
 				return [];
 			}
+			// Name-based fallback for hidden symbols with empty-kinds override fields
+			// (e.g. _raw_string_literal_start → raw_string_literal_start override field)
+			if (overrideQueue && overrideState && rule.name.startsWith('_')) {
+				const baseName = rule.name.slice(1);
+				for (let i = overrideState.cursor; i < overrideQueue.length; i++) {
+					const entry = overrideQueue[i]!;
+					if (entry.slotName === baseName && entry.kinds.size === 0 && !seen.has(entry.slotName)) {
+						seen.add(entry.slotName);
+						overrideState.cursor = i + 1;
+						return [entry.multiple ? `$$$${entry.varName}` : `$${entry.varName}`];
+					}
+				}
+			}
 			// Check if this symbol maps to a named child slot
 			const childSlot = childSlotMap.get(rule.name);
 			if (childSlot) {

@@ -35,7 +35,7 @@ rules:
   conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
   constrained_type: "$BASE_TYPE : $CONSTRAINT"
   decorated_definition: $$$CHILDREN $DEFINITION
-  decorator: "@ $EXPRESSION $$$CHILDREN $NEWLINE"
+  decorator: "@ $EXPRESSION $NEWLINE"
   default_parameter: $NAME = $VALUE
   delete_statement: del $$$CHILDREN
   dict_pattern:

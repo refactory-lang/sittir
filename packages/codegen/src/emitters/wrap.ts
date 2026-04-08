@@ -105,6 +105,17 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push('  }');
 	lines.push('}');
 	lines.push('');
+	lines.push('/** Promote the first anonymous child into a field (positional, for hidden grammar tokens). */');
+	lines.push('function promoteFirstAnon(data: AnyNodeData, fieldName: string): void {');
+	lines.push('  if (!data.children) return;');
+	lines.push('  const arr = data.children as AnyNodeData[];');
+	lines.push('  const idx = arr.findIndex(c => !c.named);');
+	lines.push('  if (idx >= 0) {');
+	lines.push('    data.fields = data.fields ?? {};');
+	lines.push('    (data.fields as Record<string, unknown>)[fieldName] = arr.splice(idx, 1)[0];');
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
 	lines.push('/** Drill into a child entry: read its subtree lazily via readNode + wrapNode. */');
 	lines.push('function drillIn(entry: unknown, tree: TreeHandle): unknown {');
 	lines.push('  if (!entry) return undefined;');
@@ -170,7 +181,10 @@ export function emitWrap(config: EmitWrapConfig): string {
 			} else {
 				const proj = projectKinds(f.kinds, ctx);
 				const named = expandForRuntime(proj.expandedAll, ctx);
-				if (named.length === 1 && named[0] === f.name) {
+				if (named.length === 0) {
+					// No kinds — hidden grammar token, promote by position
+					lines.push(`  promoteFirstAnon(data, '${f.name}');`);
+				} else if (named.length === 1 && named[0] === f.name) {
 					// Kind matches field name — use simple promote
 					lines.push(`  promote(data, '${f.name}');`);
 				} else if (named.length > 5) {
