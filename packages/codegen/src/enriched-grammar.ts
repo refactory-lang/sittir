@@ -830,6 +830,80 @@ export function classifyRules(grammar: Grammar): Map<string, EnrichedRule> {
 }
 
 // ---------------------------------------------------------------------------
+// Hidden rule inlining — replace _-prefixed SYMBOLs with their rule body
+// ---------------------------------------------------------------------------
+//
+// Runs before override enrichment. When a hidden rule (e.g. _call_signature)
+// appears as an unnamed child and its rule body is a SEQ of FIELDs that all
+// exist on the parent, replace the SYMBOL reference with the rule body.
+//
+//   SYMBOL("_call_signature")  →  SEQ(FIELD("type_parameters"), FIELD("parameters"), FIELD("return_type"))
+//
+// This prevents override enrichment from wrapping the hidden rule as a
+// pseudo-field (e.g. FIELD("call_signature", SYMBOL("_call_signature")))
+// which would produce redundant $CALL_SIGNATURE + appended individual fields.
+// ---------------------------------------------------------------------------
+
+/**
+ * Inline hidden rules whose body consists entirely of FIELDs present on the parent.
+ * Returns the modified rule and the set of hidden rule names that were inlined.
+ */
+export function inlineHiddenRules(
+	rule: GrammarRule,
+	parentFieldNames: Set<string>,
+	grammarRules: Record<string, GrammarRule>,
+): { rule: GrammarRule; inlinedNames: Set<string> } {
+	const inlinedNames = new Set<string>();
+	const result = walkInline(rule, parentFieldNames, grammarRules, inlinedNames);
+	return { rule: result, inlinedNames };
+}
+
+function walkInline(
+	rule: GrammarRule,
+	parentFieldNames: Set<string>,
+	grammarRules: Record<string, GrammarRule>,
+	inlinedNames: Set<string>,
+): GrammarRule {
+	switch (rule.type) {
+		case 'SYMBOL': {
+			if (!rule.name.startsWith('_')) return rule;
+			const hiddenRule = grammarRules[rule.name];
+			if (!hiddenRule) return rule;
+			// Check if the rule body (after unwrapping PREC) is a SEQ of FIELDs on the parent
+			const unwrapped = unwrapPrecForOverride(hiddenRule);
+			if (unwrapped.type !== 'SEQ') return rule;
+			const allParentFields = unwrapped.members.every(m => {
+				const u = unwrapPrecForOverride(m);
+				return u.type === 'FIELD' && parentFieldNames.has(u.name);
+			});
+			if (!allParentFields) return rule;
+			// Inline: replace SYMBOL with the hidden rule's body
+			const stripped = rule.name.replace(/^_/, '');
+			inlinedNames.add(stripped);
+			return hiddenRule;
+		}
+		case 'SEQ':
+			return { ...rule, members: rule.members.map(m => walkInline(m, parentFieldNames, grammarRules, inlinedNames)) };
+		case 'CHOICE':
+			return { ...rule, members: rule.members.map(m => walkInline(m, parentFieldNames, grammarRules, inlinedNames)) };
+		case 'REPEAT':
+		case 'REPEAT1':
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN':
+		case 'ALIAS':
+			return { ...rule, content: walkInline(rule.content, parentFieldNames, grammarRules, inlinedNames) };
+		case 'FIELD':
+			return { ...rule, content: walkInline(rule.content, parentFieldNames, grammarRules, inlinedNames) };
+		default:
+			return rule;
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Override enrichment — inject synthetic FIELD nodes into grammar rules
 // ---------------------------------------------------------------------------
 //

@@ -15,7 +15,7 @@ import type { HydratedNodeModel, HydratedChildrenModel } from '../node-model.ts'
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
 import { buildProjectionContext, projectKinds } from './kind-projections.ts';
-import { applyOverrides, type OverrideFieldInfo } from '../enriched-grammar.ts';
+import { applyOverrides, inlineHiddenRules, type OverrideFieldInfo } from '../enriched-grammar.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
 
 // ---------------------------------------------------------------------------
@@ -113,9 +113,18 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 			return { name: f.name, namedKinds, anonymousKinds };
 		});
 
-	// Enrich the grammar rule: inject synthetic FIELDs at override positions
+	// Inline hidden rules whose body is entirely FIELDs present on the parent
 	const rawRule = node.rule?.rule;
-	const enrichedGrammarRule = rawRule ? applyOverrides(rawRule, overrideFields) : rawRule;
+	const parentFieldNames = new Set(nodeFields.map(f => f.name));
+	const { rule: inlinedRule, inlinedNames } = rawRule
+		? inlineHiddenRules(rawRule, parentFieldNames, grammarRules)
+		: { rule: rawRule, inlinedNames: new Set<string>() };
+
+	// Filter out override fields for inlined hidden rules (they're now direct FIELDs)
+	const filteredOverrideFields = overrideFields.filter(f => !inlinedNames.has(f.name));
+
+	// Enrich the grammar rule: inject synthetic FIELDs at override positions
+	const enrichedGrammarRule = inlinedRule ? applyOverrides(inlinedRule, filteredOverrideFields) : inlinedRule;
 
 	// Walk the enriched grammar rule tree
 	const seen = new Set<string>();
@@ -124,8 +133,9 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 		? ruleToTemplate(enrichedGrammarRule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap)
 		: [];
 
-	// Append missing fields the walker didn't reach
+	// Append missing fields the walker didn't reach (skip inlined pseudo-fields)
 	for (const f of nodeFields) {
+		if (inlinedNames.has(f.name)) continue;
 		if (!seen.has(f.name)) {
 			const varName = f.name.toUpperCase();
 			parts.push(f.multiple ? ` $$$${varName}` : ` $${varName}`);
