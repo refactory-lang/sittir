@@ -30,24 +30,29 @@ rules:
   augmented_assignment_expression: $LEFT $OPERATOR $RIGHT
   await_expression: await $EXPRESSION
   binary_expression: $LEFT $OPERATOR $RIGHT
-  break_statement: break $LABEL $$$CHILDREN
-  call_expression: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
+  break_statement: break $LABEL
+  call_expression:
+    - $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
+    - $FUNCTION $ARGUMENTS
+    - $FUNCTION ?. $TYPE_ARGUMENTS $ARGUMENTS
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   catch_clause: catch $PARAMETER $TYPE $BODY
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   class_body: "{$$$DECORATOR $$$CHILDREN}"
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
-  class_heritage: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
-  class_static_block: static $$$CHILDREN $BODY
+  class_heritage:
+    - $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
+    - $EXTENDS_CLAUSE
+  class_static_block: static $BODY
   computed_property_name: "[$EXPRESSION]"
   conditional_type: "$LEFT extends $RIGHT ? $CONSEQUENCE : $ALTERNATIVE"
   constraint: extends $CHILDREN
   construct_signature: new $TYPE_PARAMETERS $PARAMETERS $TYPE
   constructor_type: new $TYPE_PARAMETERS $PARAMETERS => $TYPE
-  continue_statement: continue $LABEL $$$CHILDREN
+  continue_statement: continue $LABEL
   decorator: "@ $CHILDREN"
   default_type: = $CHILDREN
-  do_statement: do $BODY while $CONDITION $$$CHILDREN
+  do_statement: do $BODY while $CONDITION
   else_clause: else $STATEMENT
   enum_assignment: $NAME = $VALUE
   enum_body: "{$$$NAME $OPENING $$$MEMBERS}"
@@ -58,23 +63,27 @@ rules:
   export_specifier:
     template: $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
-  export_statement: export * from $SOURCE $CHILDREN $$$DECORATOR $DECLARATION $VALUE $SEMICOLON_INNER
+  export_statement:
+    - export * from $SOURCE $DECLARATION $$$DECORATOR $VALUE
+    - export type $DECLARATION $SOURCE
+    - export = $DECLARATION
+    - export as namespace $DECLARATION
   expression_statement: $$$CHILDREN
-  extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS , $$$CHILDREN
+  extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS ,
   extends_type_clause:
     template: extends $$$TYPE ,
     joinBy: ","
   finally_clause: finally $BODY
   flow_maybe_type: "? $PRIMARY_TYPE"
-  for_in_statement: for($LEFT $KIND $VALUE $$$CHILDREN $OPERATOR $RIGHT) $BODY
+  for_in_statement: for($LEFT $KIND $VALUE $OPERATOR $RIGHT) $BODY
   for_statement: for($INITIALIZER $$$CONDITION $INCREMENT) $BODY
-  formal_parameters: ($$$CHILDREN)
-  function_declaration: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
+  formal_parameters: () $$$CHILDREN
+  function_declaration: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_expression: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
-  function_signature: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $$$CHILDREN
+  function_signature: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   function_type: $TYPE_PARAMETERS $PARAMETERS => $RETURN_TYPE
   generator_function: function * $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
-  generator_function_declaration: function * $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
+  generator_function_declaration: function * $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   generic_type: $NAME $TYPE_ARGUMENTS
   if_statement: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   implements_clause:
@@ -125,7 +134,7 @@ rules:
   object_pattern:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  object_type: "{$OPENING $$$CHILDREN $$$MEMBERS} $CLOSING"
+  object_type: "{$OPENING $$$MEMBERS} $CLOSING"
   omitting_type_annotation: "-?: $CHILDREN"
   opting_type_annotation: "?: $CHILDREN"
   optional_parameter: $PARAMETER_NAME ? $TYPE $VALUE $$$DECORATOR $NAME $PATTERN $INITIALIZER
@@ -149,7 +158,9 @@ rules:
     joinBy: ","
   spread_element: ... $EXPRESSION
   statement_block: "{$$$STATEMENTS} $AUTOMATIC_SEMICOLON"
-  string: '" $$$CHILDREN "'
+  string:
+    - '" $$$CHILDREN "'
+    - "' $$$CHILDREN '"
   subscript_expression: $OBJECT $OPTIONAL_CHAIN[$INDEX]
   switch_body: "{$$$CHILDREN}"
   switch_case: "case $VALUE : $$$BODY"
@@ -157,13 +168,13 @@ rules:
   switch_statement: switch $VALUE $BODY
   template_literal_type: "` $$$CHILDREN `"
   template_string: "` $$$CHILDREN `"
-  template_substitution: ${$$$CHILDREN}
+  template_substitution: ${} $$$CHILDREN
   template_type: ${$CHILDREN}
   ternary_expression: "$CONDITION ? $CONSEQUENCE : $ALTERNATIVE"
   throw_statement: throw $$$CHILDREN
   try_statement: try $BODY $HANDLER $FINALIZER
-  tuple_type: "[$$$CHILDREN]"
-  type_alias_declaration: type $NAME $TYPE_PARAMETERS = $VALUE $$$CHILDREN
+  tuple_type: "[] $$$CHILDREN"
+  type_alias_declaration: type $NAME $TYPE_PARAMETERS = $VALUE
   type_annotation: ": $CHILDREN"
   type_arguments:
     template: <$$$CHILDREN ,>
@@ -178,9 +189,13 @@ rules:
   type_query: typeof $CHILDREN
   unary_expression: $OPERATOR $ARGUMENT
   union_type: $LEFT | $RIGHT
-  update_expression: $ARGUMENT $OPERATOR
+  update_expression:
+    - $ARGUMENT $OPERATOR
+    - $OPERATOR $ARGUMENT
   variable_declaration: var $$$DECLARATORS , $$$CHILDREN $SEMICOLON
-  variable_declarator: $NAME $TYPE $VALUE
+  variable_declarator:
+    - $NAME $TYPE $VALUE
+    - $NAME ! $TYPE
   while_statement: while $CONDITION $BODY
   with_statement: with $OBJECT $BODY
   yield_expression: yield * $EXPRESSION

@@ -27,8 +27,9 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 	const rule = config.rules[node.type];
 	if (!rule) throw new Error(`No render rule for '${node.type}'`);
 
-	const isObject = typeof rule !== 'string';
-	const template = isObject ? (rule as { template: string }).template : rule;
+	const isObject = typeof rule !== 'string' && !Array.isArray(rule);
+	const rawTemplate = isObject ? (rule as { template: string | string[] }).template
+		: rule;
 	const ruleObj = isObject ? rule as unknown as Record<string, unknown> : undefined;
 
 	// Resolve expandoChar: if set, the template uses expandoChar instead of $
@@ -38,6 +39,12 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 	const varPattern = prefix === '$'
 		? VAR_RE
 		: new RegExp(`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`, 'g');
+
+	// Variant templates: try each and pick the first where all variables resolve
+	const templates = Array.isArray(rawTemplate) ? rawTemplate : [rawTemplate];
+	const template = templates.length === 1
+		? templates[0]!
+		: pickTemplate(templates, node, config, varPattern) ?? templates[0]!;
 
 	// Trim trailing newline from YAML | block scalar
 	const tmpl = template.endsWith('\n') ? template.slice(0, -1) : template;
@@ -119,6 +126,46 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 	// FR-017: Absent-field space absorption — collapse runs of spaces left by
 	// empty variable interpolations into single spaces, and trim edges.
 	return result.replace(/ {2,}/g, ' ').trim();
+}
+
+/**
+ * Pick the best variant template: the first where all $VARIABLES resolve.
+ * Falls back to the first template with the most resolved variables.
+ */
+function pickTemplate(
+	templates: string[],
+	node: AnyNodeData,
+	_config: RulesConfig,
+	varPattern: RegExp,
+): string | null {
+	let bestTemplate: string | null = null;
+	let bestResolved = -1;
+
+	for (const tmpl of templates) {
+		let total = 0;
+		let resolved = 0;
+		const tpl = tmpl.endsWith('\n') ? tmpl.slice(0, -1) : tmpl;
+		tpl.replace(varPattern, (_match: string, pfx: string, name: string) => {
+			const fieldKey = name.toLowerCase();
+			total++;
+			// Check fields
+			if (node.fields?.[fieldKey] !== undefined) { resolved++; return ''; }
+			// Check children by kind (for $$ and $$$ prefixed)
+			if (fieldKey === 'children' && node.children) { resolved++; return ''; }
+			if (node.children && Array.isArray(node.children)) {
+				if (node.children.some((c: any) => c?.type === fieldKey)) { resolved++; return ''; }
+			}
+			return '';
+		});
+		// All variables resolved — use this template
+		if (total > 0 && resolved === total) return tmpl;
+		// Track best partial match
+		if (resolved > bestResolved) {
+			bestResolved = resolved;
+			bestTemplate = tmpl;
+		}
+	}
+	return bestTemplate;
 }
 
 /** Render a clause sub-template. If any variable is absent, omit the entire clause. */

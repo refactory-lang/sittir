@@ -27,7 +27,7 @@ rules:
   block:
     template: $LABEL_CLAUSE{$$$CHILDREN}
     label_clause: "$LABEL :"
-  block_comment: /* $OUTER $INNER $DOC $$$CHILDREN */
+  block_comment: /* $OUTER $INNER $DOC */
   bounded_type: $LEFT + $RIGHT
   bracketed_type: <$CHILDREN>
   break_expression: break $LABEL $EXPRESSION
@@ -58,7 +58,9 @@ rules:
   enum_variant_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  expression_statement: $CHILDREN ;
+  expression_statement:
+    - $CHILDREN ;
+    - $CHILDREN
   extern_crate_declaration:
     template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE ;
     alias_clause: as $ALIAS
@@ -126,7 +128,9 @@ rules:
   mod_item: $VISIBILITY_MODIFIER mod $NAME ; $BODY
   mut_pattern: $MUTABLE_SPECIFIER $PATTERN
   negative_literal: $OPERATOR $VALUE
-  or_pattern: $LEFT | $RIGHT
+  or_pattern:
+    - $LEFT | $RIGHT
+    - "| $LEFT"
   ordered_field_declaration_list: ($$$ATTRIBUTES $VISIBILITY_MODIFIER $$$TYPE $$$DECLARATIONS $$$CHILDREN)
   parameter: "$MUTABLE_SPECIFIER $PATTERN : $TYPE"
   parameters:
@@ -135,15 +139,23 @@ rules:
   parenthesized_expression: ($CHILDREN)
   pointer_type: "* const $MUTABLE_SPECIFIER $TYPE"
   qualified_type: $TYPE as $ALIAS
-  range_expression: $START $OPERATOR $END
-  range_pattern: $LEFT ... $RIGHT
+  range_expression:
+    - $START $OPERATOR $END
+    - $START $OPERATOR
+    - $OPERATOR $START
+    - $OPERATOR
+  range_pattern:
+    - $LEFT ... $RIGHT
+    - ..= $RIGHT
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression: "& raw const $MUTABLE_SPECIFIER $VALUE"
   reference_pattern: "& $MUTABLE_SPECIFIER $PATTERN"
   reference_type: "& $LIFETIME $MUTABLE_SPECIFIER $TYPE"
   removed_trait_bound: "? $CHILDREN"
-  return_expression: return $CHILDREN
+  return_expression:
+    - return $CHILDREN
+    - return $$$CHILDREN
   scoped_identifier: $PATH::$NAME
   scoped_type_identifier: $PATH::$NAME
   scoped_use_list: $PATH::$LIST
@@ -163,10 +175,16 @@ rules:
     template: $TYPE{$$$CHILDREN}
     joinBy: ","
   token_binding_pattern: "$NAME : $TYPE"
-  token_repetition: $($$$CHILDREN) +
-  token_repetition_pattern: $($$$CHILDREN) +
-  token_tree: ($$$CHILDREN)
-  token_tree_pattern: ($$$CHILDREN)
+  token_repetition: $() + $$$CHILDREN
+  token_repetition_pattern: $() + $$$CHILDREN
+  token_tree:
+    - () $$$CHILDREN
+    - "[] $$$CHILDREN"
+    - "{} $$$CHILDREN"
+  token_tree_pattern:
+    - () $$$CHILDREN
+    - "[] $$$CHILDREN"
+    - "{} $$$CHILDREN"
   trait_bounds: ": $$$CHILDREN +"
   trait_item: $VISIBILITY_MODIFIER trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
   try_block: try $BLOCK
@@ -201,12 +219,14 @@ rules:
     template: use<$$$CHILDREN>
     joinBy: ","
   use_declaration: $VISIBILITY_MODIFIER use $ARGUMENT ;
-  use_list: "{$$$CHILDREN}"
-  use_wildcard: $$$CHILDREN * $PATH
+  use_list: "{} $$$CHILDREN"
+  use_wildcard: "* $PATH"
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE ...
     pattern_clause: "$PATTERN :"
-  visibility_modifier: $CHILDREN
+  visibility_modifier:
+    - $CHILDREN
+    - pub $CHILDREN
   where_clause:
     template: where $$$CHILDREN
     joinBy: ","
@@ -214,4 +234,6 @@ rules:
   while_expression:
     template: $LABEL_CLAUSE while $CONDITION $BODY
     label_clause: "$LABEL :"
-  yield_expression: yield $CHILDREN
+  yield_expression:
+    - yield $CHILDREN
+    - yield $$$CHILDREN

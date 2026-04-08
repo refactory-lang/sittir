@@ -274,10 +274,22 @@ export function mergeOverrides(
 		}
 
 		if (model.modelType === 'branch') {
-			const existingNames = new Set(model.fields.map(f => f.name));
+			const existingByName = new Map(model.fields.map(f => [f.name, f]));
 			for (const f of overrideFields) {
-				if (!existingNames.has(f.name)) {
+				const existing = existingByName.get(f.name);
+				if (existing) {
+					// Override shadows a grammar-defined field — merge override kinds
+					// and mark as override so applyOverrides wraps bare SYMBOLs in
+					// CHOICE branches that lack grammar-defined FIELD wrappers.
+					for (const k of f.kinds) existing.kinds.add(k);
+					existing.override = true;
+					if (f.overrideValues) {
+						existing.overrideValues = [...(existing.overrideValues ?? []), ...f.overrideValues];
+					}
+					if (f.overrideAnonymous) existing.overrideAnonymous = true;
+				} else {
 					model.fields.push(f);
+					existingByName.set(f.name, f);
 				}
 			}
 		} else if (model.modelType === 'container') {

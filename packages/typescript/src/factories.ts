@@ -1049,7 +1049,7 @@ export function export_statement_(
     named: true as const,
     fields,
     children,
-    declaration(declaration?: Declaration) { return declaration !== undefined ? export_statement_({ ...config, declaration: declaration }) : fields.declaration; },
+    declaration(declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport) { return declaration !== undefined ? export_statement_({ ...config, declaration: declaration }) : fields.declaration; },
     decorator(...decorator: (Decorator)[]) { return decorator.length ? export_statement_({ ...config, decorator: decorator }) : fields.decorator; },
     source(source?: String) { return source !== undefined ? export_statement_({ ...config, source: source }) : fields.source; },
     value(value?: Expression) { return value !== undefined ? export_statement_({ ...config, value: value }) : fields.value; },

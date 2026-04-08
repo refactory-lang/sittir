@@ -606,7 +606,7 @@ export interface ExportSpecifier {
 export interface ExportStatement {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration;
+    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
     readonly decorator?: readonly (Decorator)[];
     readonly source?: String;
     readonly value?: Expression;

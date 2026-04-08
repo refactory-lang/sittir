@@ -117,7 +117,15 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	const rawRule = node.rule?.rule;
 	const enrichedGrammarRule = rawRule ? applyOverrides(rawRule, overrideFields) : rawRule;
 
-	// Walk the enriched grammar rule tree
+	// Detect top-level CHOICE (variant node) — distinct structural alternatives
+	const variantBranches = enrichedGrammarRule ? topLevelChoice(enrichedGrammarRule) : null;
+
+	if (variantBranches && variantBranches.length > 1) {
+		// Variant template: walk each branch independently
+		return emitVariantTemplates(variantBranches, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node);
+	}
+
+	// Single-template path (non-variant or single branch after flattening)
 	const seen = new Set<string>();
 	const clauses: ClauseEntry[] = [];
 	const parts = enrichedGrammarRule
@@ -125,33 +133,10 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 		: [];
 
 	// Append missing fields the walker didn't reach
-	for (const f of nodeFields) {
-		if (!seen.has(f.name)) {
-			const varName = f.name.toUpperCase();
-			parts.push(f.multiple ? ` $$$${varName}` : ` $${varName}`);
-			seen.add(f.name);
-		}
-	}
+	appendMissingFields(parts, nodeFields, seen);
 
 	// Append $$$CHILDREN for any children the walker didn't reach
-	if (node.children != null && !seen.has('children')) {
-		// Check if all child kinds are already accounted for (e.g. promoted to override fields)
-		let allChildrenCovered = true;
-		eachChildSlot(node.children, (slot) => {
-			for (const k of slot.kinds) {
-				const kind = k.kind;
-				// Covered by a child slot the walker consumed?
-				const slotInfo = childSlotMap.get(kind);
-				if (slotInfo && seen.has(`child:${slotInfo.slotName}`)) continue;
-				// Covered by an override field the walker processed?
-				if (overrideFields.some(of => of.namedKinds.has(kind) && seen.has(of.name))) continue;
-				allChildrenCovered = false;
-			}
-		});
-		if (!allChildrenCovered) {
-			parts.push(' $$$CHILDREN');
-		}
-	}
+	appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
 	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
 
@@ -172,6 +157,121 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	}
 
 	return ruleObj as unknown as TemplateRule;
+}
+
+// ---------------------------------------------------------------------------
+// Variant template helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Detect a top-level non-optional CHOICE and return its branches.
+ * Unwraps PREC wrappers. Returns null if the rule is not a top-level
+ * CHOICE, or if any BLANK member exists (optionality, not variants).
+ */
+function topLevelChoice(rule: GrammarRule): GrammarRule[] | null {
+	let r = rule;
+	while (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') {
+		r = r.content;
+	}
+	if (r.type !== 'CHOICE') return null;
+	if (r.members.some(m => m.type === 'BLANK')) return null;
+	return r.members.length > 1 ? r.members : null;
+}
+
+/** Walk each variant branch and produce a template array. */
+function emitVariantTemplates(
+	branches: GrammarRule[],
+	nodeFields: ReturnType<typeof fieldsOf>,
+	fieldRequired: Map<string, boolean>,
+	fieldMultiple: Map<string, boolean>,
+	fieldSeparators: Map<string, string>,
+	grammarRules: Record<string, GrammarRule>,
+	childSlotMap: Map<string, ChildSlotInfo>,
+	overrideFields: OverrideFieldInfo[],
+	node: StructuralNode,
+): TemplateRule {
+	const allClauses: ClauseEntry[] = [];
+	const clauseNames = new Set<string>();
+	const templates: string[] = [];
+
+	for (const branch of branches) {
+		const seen = new Set<string>();
+		const clauses: ClauseEntry[] = [];
+		const parts = ruleToTemplate(branch, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap);
+
+		// Append children if needed for this branch
+		appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
+
+		const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
+		if (templateStr) templates.push(templateStr);
+
+		// Collect clauses (deduplicate by name)
+		for (const c of clauses) {
+			if (!clauseNames.has(c.name)) {
+				allClauses.push(c);
+				clauseNames.add(c.name);
+			}
+		}
+	}
+
+	// Deduplicate templates
+	const unique = [...new Set(templates)];
+	if (unique.length <= 1) {
+		// Collapsed to single template — return as normal string
+		const templateStr = unique[0] ?? '';
+		const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
+		if (allClauses.length === 0 && joinBy === undefined) return templateStr;
+		const ruleObj: Record<string, unknown> = { template: templateStr };
+		for (const c of allClauses) ruleObj[c.name] = c.template;
+		if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+		return ruleObj as unknown as TemplateRule;
+	}
+
+	// Multi-variant: return string[] or TemplateRuleObject with template: string[]
+	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
+	if (allClauses.length === 0 && joinBy === undefined) {
+		return unique as unknown as TemplateRule;
+	}
+	const ruleObj: Record<string, unknown> = { template: unique };
+	for (const c of allClauses) ruleObj[c.name] = c.template;
+	if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+	return ruleObj as unknown as TemplateRule;
+}
+
+/** Append missing fields the walker didn't reach. */
+function appendMissingFields(parts: string[], nodeFields: ReturnType<typeof fieldsOf>, seen: Set<string>): void {
+	for (const f of nodeFields) {
+		if (!seen.has(f.name)) {
+			const varName = f.name.toUpperCase();
+			parts.push(f.multiple ? ` $$$${varName}` : ` $${varName}`);
+			seen.add(f.name);
+		}
+	}
+}
+
+/** Append $$$CHILDREN if any child kinds remain unhandled. */
+function appendChildrenIfNeeded(
+	parts: string[],
+	node: StructuralNode,
+	seen: Set<string>,
+	childSlotMap: Map<string, ChildSlotInfo>,
+	overrideFields: OverrideFieldInfo[],
+): void {
+	if (node.children != null && !seen.has('children')) {
+		let allChildrenCovered = true;
+		eachChildSlot(node.children, (slot) => {
+			for (const k of slot.kinds) {
+				const kind = k.kind;
+				const slotInfo = childSlotMap.get(kind);
+				if (slotInfo && seen.has(`child:${slotInfo.slotName}`)) continue;
+				if (overrideFields.some(of => of.namedKinds.has(kind) && seen.has(of.name))) continue;
+				allChildrenCovered = false;
+			}
+		});
+		if (!allChildrenCovered) {
+			parts.push(' $$$CHILDREN');
+		}
+	}
 }
 
 /** Convert camelCase to UPPER_SNAKE for template variable names. */
@@ -297,7 +397,10 @@ function ruleToTemplate(
 				if (childSlot.slotName === 'children') seen.add('children');
 				return [childSlot.multiple ? `$$$${childSlot.varName}` : `$${childSlot.varName}`];
 			}
-			// Unknown symbol — generic children
+			// Hidden rules that couldn't be inlined and aren't in childSlotMap
+			// are token-like (e.g. _semicolon) — they don't produce CST children
+			if (rule.name.startsWith('_')) return [];
+			// Unknown named symbol — generic children
 			if (seen.has('children')) return [];
 			seen.add('children');
 			return ['$$$CHILDREN'];

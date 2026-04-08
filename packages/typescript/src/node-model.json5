@@ -1028,6 +1028,7 @@
         required: false,
         multiple: false,
         kinds: {},
+        override: true,
         position: 2,
       },
       {
@@ -1043,6 +1044,7 @@
         required: false,
         multiple: false,
         kinds: {},
+        override: true,
         position: 3,
       },
       {
