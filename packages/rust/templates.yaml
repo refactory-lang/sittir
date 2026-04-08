@@ -60,7 +60,7 @@ rules:
     joinBy: ","
   expression_statement: $CHILDREN ;
   extern_crate_declaration:
-    template: $VISIBILITY_MODIFIER extern $CHILDREN $NAME $ALIAS_CLAUSE ; $CRATE
+    template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE ;
     alias_clause: as $ALIAS
   extern_modifier: extern $CHILDREN
   field_declaration: "$CHILDREN $NAME : $TYPE"
@@ -124,7 +124,7 @@ rules:
     template: $CHILDREN $CONDITION_CLAUSE
     condition_clause: if $CONDITION
   mod_item: $CHILDREN mod $NAME $BODY
-  mut_pattern: $CHILDREN $PATTERN $MUTABLE_SPECIFIER
+  mut_pattern: $MUTABLE_SPECIFIER $PATTERN
   negative_literal: $OPERATOR $VALUE
   or_pattern: $LEFT | $RIGHT
   ordered_field_declaration_list: ($$$ATTRIBUTES $VISIBILITY_MODIFIER $$$TYPE $$$DECLARATIONS)
@@ -140,21 +140,21 @@ rules:
   raw_string_literal: $$$CHILDREN $STRING_CONTENT $RAW_STRING_LITERAL_START $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression: "& raw $CHILDREN $VALUE"
-  reference_pattern: "& $CHILDREN $PATTERN $MUTABLE_SPECIFIER"
-  reference_type: "& $LIFETIME $CHILDREN $TYPE $MUTABLE_SPECIFIER"
+  reference_pattern: "& $MUTABLE_SPECIFIER $PATTERN"
+  reference_type: "& $LIFETIME $MUTABLE_SPECIFIER $TYPE"
   removed_trait_bound: "? $CHILDREN"
   return_expression: return $CHILDREN
   scoped_identifier: $PATH::$NAME
   scoped_type_identifier: $PATH::$NAME
   scoped_use_list: $PATH::$LIST
-  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF $MUTABLE_SPECIFIER $SELF $$$CHILDREN
+  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF
   shorthand_field_initializer: $$$ATTRIBUTES $IDENTIFIER
   slice_pattern:
     template: "[$$$CHILDREN]"
     joinBy: ","
   source_file: $SHEBANG $$$STATEMENTS
   static_item:
-    template: "$VISIBILITY_MODIFIER static $CHILDREN $NAME : $TYPE $VALUE_CLAUSE ; $MUTABLE_SPECIFIER"
+    template: "$VISIBILITY_MODIFIER static $MUTABLE_SPECIFIER $NAME : $TYPE $VALUE_CLAUSE ;"
     value_clause: = $VALUE
   string_literal: '" $$$CHILDREN "'
   struct_expression: $NAME $BODY

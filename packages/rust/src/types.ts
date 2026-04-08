@@ -528,9 +528,8 @@ export interface ExternCrateDeclaration {
     readonly alias?: Identifier;
     readonly name: Identifier;
     readonly visibilityModifier?: VisibilityModifier;
-    readonly crate: string;
+    readonly crate: Crate;
   };
-  readonly children: Crate;
 }
 export interface ExternModifier {
   readonly type: 'extern_modifier';
@@ -812,15 +811,14 @@ export interface ModItem {
 export interface MutPattern {
   readonly type: 'mut_pattern';
   readonly fields: {
-    readonly mutableSpecifier: string;
+    readonly mutableSpecifier: MutableSpecifier;
     readonly pattern: Pattern;
   };
-  readonly children: MutableSpecifier;
 }
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
   readonly fields: {
-    readonly operator: string;
+    readonly operator: '-';
     readonly value: FloatLiteral | IntegerLiteral;
   };
 }
@@ -874,7 +872,7 @@ export interface RangeExpression {
   readonly type: 'range_expression';
   readonly fields: {
     readonly start?: Expression;
-    readonly operator: string;
+    readonly operator: '..' | '..=' | '...';
     readonly end?: Expression;
   };
 }
@@ -907,19 +905,17 @@ export interface ReferenceExpression {
 export interface ReferencePattern {
   readonly type: 'reference_pattern';
   readonly fields: {
-    readonly mutableSpecifier?: string;
+    readonly mutableSpecifier?: MutableSpecifier;
     readonly pattern: Pattern;
   };
-  readonly children?: MutableSpecifier;
 }
 export interface ReferenceType {
   readonly type: 'reference_type';
   readonly fields: {
     readonly type: Type;
     readonly lifetime?: Lifetime;
-    readonly mutableSpecifier?: string;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
-  readonly children?: MutableSpecifier;
 }
 export interface RemovedTraitBound {
   readonly type: 'removed_trait_bound';
@@ -954,8 +950,8 @@ export interface SelfParameter {
   readonly type: 'self_parameter';
   readonly fields: {
     readonly lifetime?: Lifetime;
-    readonly mutableSpecifier?: string;
-    readonly self: string;
+    readonly mutableSpecifier?: MutableSpecifier;
+    readonly self: Self;
   };
 }
 export interface ShorthandFieldInitializer {
@@ -983,9 +979,8 @@ export interface StaticItem {
     readonly type: Type;
     readonly value?: Expression;
     readonly visibilityModifier?: VisibilityModifier;
-    readonly mutableSpecifier?: string;
+    readonly mutableSpecifier?: MutableSpecifier;
   };
-  readonly children?: MutableSpecifier;
 }
 export interface StringLiteral {
   readonly type: 'string_literal';
@@ -1061,7 +1056,7 @@ export interface TryExpression {
   readonly type: 'try_expression';
   readonly fields: {
     readonly value: Expression;
-    readonly operator: string;
+    readonly operator: '?';
   };
 }
 export interface TupleExpression {
@@ -1133,7 +1128,7 @@ export interface TypeParameters {
 export interface UnaryExpression {
   readonly type: 'unary_expression';
   readonly fields: {
-    readonly operator: string;
+    readonly operator: '-' | '*' | '!';
     readonly operand: Expression;
   };
 }

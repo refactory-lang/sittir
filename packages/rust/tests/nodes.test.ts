@@ -807,8 +807,29 @@ describe('expression_statement', () => {
 
 describe('extern_crate_declaration', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.externCrateDeclaration({ name: ir.identifier('test_name') as any, crate: { type: 'unknown', fields: {} } as any, children: ir.crate() as any });
+    const node = ir.externCrateDeclaration({ name: ir.identifier('test_name') as any, crate: ir.crate() as any });
     expect(node.type).toBe('extern_crate_declaration');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.externCrateDeclaration({ name: ir.identifier('test_name') as any, crate: ir.crate() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('contains required tokens', () => {
+    const node = ir.externCrateDeclaration({ name: ir.identifier('test_name') as any, crate: ir.crate() as any });
+    const source = render(node);
+    expect(source).toContain('extern');
+    expect(source).toContain(';');
+  });
+  it('node.render() works', () => {
+    const node = ir.externCrateDeclaration({ name: ir.identifier('test_name') as any, crate: ir.crate() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.externCrateDeclaration({ alias: ir.identifier('test_alias') as any, name: ir.identifier('test_name') as any, visibilityModifier: ir.visibilityModifier() as any, crate: ir.crate() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -1767,8 +1788,18 @@ describe('mod_item', () => {
 
 describe('mut_pattern', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.mutPattern({ mutableSpecifier: { type: 'unknown', fields: {} } as any, pattern: ir.identifier('test_pattern') as any, children: ir.mutableSpecifier() as any });
+    const node = ir.mutPattern({ mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
     expect(node.type).toBe('mut_pattern');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.mutPattern({ mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.mutPattern({ mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
   });
 });
 
@@ -2061,6 +2092,11 @@ describe('reference_pattern', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.referencePattern({ mutableSpecifier: ir.mutableSpecifier() as any, pattern: ir.identifier('test_pattern') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('reference_type', () => {
@@ -2082,6 +2118,11 @@ describe('reference_type', () => {
     const node = ir.referenceType({ type: ir.typeIdentifier('TestType') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.referenceType({ type: ir.typeIdentifier('TestType') as any, lifetime: ir.lifetime({ children: ir.identifier('test_children') as any }) as any, mutableSpecifier: ir.mutableSpecifier() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2217,8 +2258,23 @@ describe('scoped_use_list', () => {
 
 describe('self_parameter', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.selfParameter({ self: { type: 'unknown', fields: {} } as any });
+    const node = ir.selfParameter({ self: ir.self() as any });
     expect(node.type).toBe('self_parameter');
+  });
+  it('renders to non-empty string', () => {
+    const node = ir.selfParameter({ self: ir.self() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
+  it('node.render() works', () => {
+    const node = ir.selfParameter({ self: ir.self() as any });
+    expect(typeof node.render).toBe('function');
+    expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.selfParameter({ lifetime: ir.lifetime({ children: ir.identifier('test_children') as any }) as any, mutableSpecifier: ir.mutableSpecifier() as any, self: ir.self() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -2310,6 +2366,11 @@ describe('static_item', () => {
     const node = ir.static({ name: ir.identifier('test_name') as any, type: ir.typeIdentifier('TestType') as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.static({ name: ir.identifier('test_name') as any, type: ir.typeIdentifier('TestType') as any, value: ir.identifier('test_value') as any, visibilityModifier: ir.visibilityModifier() as any, mutableSpecifier: ir.mutableSpecifier() as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 

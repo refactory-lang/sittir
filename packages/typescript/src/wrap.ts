@@ -283,7 +283,7 @@ export function wrapAbstractClassDeclaration(data: AnyNodeData, tree: TreeHandle
 
 export function wrapAbstractMethodSignature(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
-  promoteAnon(data, 'override_modifier', ["override_modifier"]);
+  promote(data, 'override_modifier');
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
@@ -291,9 +291,8 @@ export function wrapAbstractMethodSignature(data: AnyNodeData, tree: TreeHandle)
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
-    get overrideModifier() { return (data.fields?.['override_modifier'] as AnyNodeData | undefined)?.text; },
+    get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
     get callSignature() { return drillIn(data.fields?.['call_signature'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -971,7 +970,7 @@ export function wrapMemberExpression(data: AnyNodeData, tree: TreeHandle): unkno
 
 export function wrapMethodDefinition(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
-  promoteAnon(data, 'override_modifier', ["override_modifier"]);
+  promote(data, 'override_modifier');
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
@@ -980,15 +979,14 @@ export function wrapMethodDefinition(data: AnyNodeData, tree: TreeHandle): unkno
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
-    get overrideModifier() { return (data.fields?.['override_modifier'] as AnyNodeData | undefined)?.text; },
+    get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
     get callSignature() { return drillIn(data.fields?.['call_signature'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapMethodSignature(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
-  promoteAnon(data, 'override_modifier', ["override_modifier"]);
+  promote(data, 'override_modifier');
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
@@ -996,9 +994,8 @@ export function wrapMethodSignature(data: AnyNodeData, tree: TreeHandle): unknow
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
-    get overrideModifier() { return (data.fields?.['override_modifier'] as AnyNodeData | undefined)?.text; },
+    get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
     get callSignature() { return drillIn(data.fields?.['call_signature'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1112,7 +1109,7 @@ export function wrapOptingTypeAnnotation(data: AnyNodeData, tree: TreeHandle): u
 
 export function wrapOptionalParameter(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'parameter_name', ["accessibility_modifier","override_modifier"]);
-  promoteNamed(data, 'initializer', ["accessibility_modifier"]);
+  promoteNamed(data, 'initializer', ["accessibility_modifier","override_modifier"]);
   return {
     ...data,
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
@@ -1175,20 +1172,19 @@ export function wrapProgram(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapPropertySignature(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
-  promoteAnon(data, 'override_modifier', ["override_modifier"]);
+  promote(data, 'override_modifier');
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
-    get overrideModifier() { return (data.fields?.['override_modifier'] as AnyNodeData | undefined)?.text; },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
   };
 }
 
 export function wrapPublicFieldDefinition(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'accessibility_modifier');
-  promoteAnon(data, 'override_modifier', ["override_modifier"]);
+  promote(data, 'override_modifier');
   return {
     ...data,
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
@@ -1196,9 +1192,8 @@ export function wrapPublicFieldDefinition(data: AnyNodeData, tree: TreeHandle): 
     get type() { return drillIn(data.fields?.['type'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
-    get overrideModifier() { return (data.fields?.['override_modifier'] as AnyNodeData | undefined)?.text; },
+    get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
     get initializer() { return drillIn(data.fields?.['initializer'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1219,7 +1214,7 @@ export function wrapRegex(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapRequiredParameter(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'parameter_name', ["accessibility_modifier","override_modifier"]);
-  promoteNamed(data, 'initializer', ["accessibility_modifier"]);
+  promoteNamed(data, 'initializer', ["accessibility_modifier","override_modifier"]);
   return {
     ...data,
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },

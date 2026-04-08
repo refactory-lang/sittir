@@ -539,14 +539,13 @@ export function wrapExpressionStatement(data: AnyNodeData, tree: TreeHandle): un
 
 export function wrapExternCrateDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
-  promoteAnon(data, 'crate', ["crate"]);
+  promote(data, 'crate');
   return {
     ...data,
     get alias() { return drillIn(data.fields?.['alias'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
-    get crate() { return (data.fields?.['crate'] as AnyNodeData | undefined)?.text; },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get crate() { return drillIn(data.fields?.['crate'], tree); },
   };
 }
 
@@ -903,13 +902,12 @@ export function wrapModItem(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapMutPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteAnon(data, 'mutable_specifier', ["mutable_specifier"]);
+  promote(data, 'mutable_specifier');
   promoteFirst(data, 'pattern');
   return {
     ...data,
-    get mutableSpecifier() { return (data.fields?.['mutable_specifier'] as AnyNodeData | undefined)?.text; },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1031,25 +1029,23 @@ export function wrapReferenceExpression(data: AnyNodeData, tree: TreeHandle): un
 }
 
 export function wrapReferencePattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteAnon(data, 'mutable_specifier', ["mutable_specifier"]);
+  promote(data, 'mutable_specifier');
   promoteFirst(data, 'pattern');
   return {
     ...data,
-    get mutableSpecifier() { return (data.fields?.['mutable_specifier'] as AnyNodeData | undefined)?.text; },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapReferenceType(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'lifetime');
-  promoteAnon(data, 'mutable_specifier', ["mutable_specifier"]);
+  promote(data, 'mutable_specifier');
   return {
     ...data,
     get type() { return drillIn(data.fields?.['type'], tree); },
     get lifetime() { return drillIn(data.fields?.['lifetime'], tree); },
-    get mutableSpecifier() { return (data.fields?.['mutable_specifier'] as AnyNodeData | undefined)?.text; },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
   };
 }
 
@@ -1093,13 +1089,13 @@ export function wrapScopedUseList(data: AnyNodeData, tree: TreeHandle): unknown 
 
 export function wrapSelfParameter(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'lifetime');
-  promoteAnon(data, 'mutable_specifier', ["mutable_specifier"]);
-  promoteAnon(data, 'self', ["self"]);
+  promote(data, 'mutable_specifier');
+  promote(data, 'self');
   return {
     ...data,
     get lifetime() { return drillIn(data.fields?.['lifetime'], tree); },
-    get mutableSpecifier() { return (data.fields?.['mutable_specifier'] as AnyNodeData | undefined)?.text; },
-    get self() { return (data.fields?.['self'] as AnyNodeData | undefined)?.text; },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
+    get self() { return drillIn(data.fields?.['self'], tree); },
   };
 }
 
@@ -1132,15 +1128,14 @@ export function wrapSourceFile(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapStaticItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
-  promoteAnon(data, 'mutable_specifier', ["mutable_specifier"]);
+  promote(data, 'mutable_specifier');
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
-    get mutableSpecifier() { return (data.fields?.['mutable_specifier'] as AnyNodeData | undefined)?.text; },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
   };
 }
 

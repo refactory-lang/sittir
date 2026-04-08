@@ -438,8 +438,8 @@ function _rdqiv86(v: unknown): unknown {
   if(isNodeData(v))return v;if(typeof v==='string'){return (v==='this'?this_():(()=>{throw new Error(`Expected 'this' for this, got '${v}'`)})());};if(Array.isArray(v))return _resolvePattern(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}return _resolvePattern(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
-function _rj1u86u(v: unknown): unknown {
-  if(isNodeData(v))return v;if(typeof v==='string'){return accessibility_modifier_(v);};if(Array.isArray(v))return _resolveParameterName(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}return _resolveParameterName(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
+function _r1hu51bk(v: unknown): unknown {
+  if(isNodeData(v))return v;if(typeof v==='string'){if(['private','protected','public'].includes(v))return accessibility_modifier_(v);if(/^override$/.test(v))return (v==='override'?override_modifier_():(()=>{throw new Error(`Expected 'override' for override_modifier, got '${v}'`)})());return accessibility_modifier_(v);};if(Array.isArray(v))return _resolveParameterName(v);if(typeof v==='object'&&v!==null){if('kind' in v&&typeof v.kind==='string'){const{kind:k,...rest}=v;return _resolveByKind(k,rest);}return _resolveParameterName(v);};throw new Error(`Cannot resolve .from() value: got ${typeof v}`)
 }
 
 function _rs8a4rp(v: unknown): unknown {
@@ -556,10 +556,9 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
       callSignature: f?.['call_signature'],
-      children: c,
     } as unknown as AbstractMethodSignatureConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['name'] !== undefined) {
     resolved['name'] = _r1vtw8vp(obj['name']);
@@ -577,13 +576,10 @@ export function abstractMethodSignatureFrom(input: unknown): unknown {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
   if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = _rd4g2sg(obj['overrideModifier']);
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
   if (obj['callSignature'] !== undefined) {
     resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'override' ? override_modifier_() : obj.children);
   }
   return abstract_method_signature_(resolved as AbstractMethodSignatureConfig);
 }
@@ -2624,10 +2620,9 @@ export function methodDefinitionFrom(input: unknown): unknown {
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
       callSignature: f?.['call_signature'],
-      children: c,
     } as unknown as MethodDefinitionConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['body'] !== undefined) {
     resolved['body'] = (isNodeData(obj['body']) ? obj['body'] : Array.isArray(obj['body']) ? statementBlockFrom(obj['body']) : typeof obj['body'] === 'object' ? statementBlockFrom(obj['body']) : obj['body']);
@@ -2648,13 +2643,10 @@ export function methodDefinitionFrom(input: unknown): unknown {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
   if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = _rd4g2sg(obj['overrideModifier']);
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
   if (obj['callSignature'] !== undefined) {
     resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'override' ? override_modifier_() : obj.children);
   }
   return method_definition_(resolved as MethodDefinitionConfig);
 }
@@ -2675,10 +2667,9 @@ export function methodSignatureFrom(input: unknown): unknown {
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
       callSignature: f?.['call_signature'],
-      children: c,
     } as unknown as MethodSignatureConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['name'] !== undefined) {
     resolved['name'] = _r1vtw8vp(obj['name']);
@@ -2696,13 +2687,10 @@ export function methodSignatureFrom(input: unknown): unknown {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
   if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = _rd4g2sg(obj['overrideModifier']);
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
   if (obj['callSignature'] !== undefined) {
     resolved['callSignature'] = _rd4g2sg(obj['callSignature']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'override' ? override_modifier_() : obj.children);
   }
   return method_signature_(resolved as MethodSignatureConfig);
 }
@@ -3062,10 +3050,10 @@ export function optionalParameterFrom(input: unknown): unknown {
     resolved['value'] = _resolveExpression(obj['value']);
   }
   if (obj['parameterName'] !== undefined) {
-    resolved['parameterName'] = _rj1u86u(obj['parameterName']);
+    resolved['parameterName'] = _r1hu51bk(obj['parameterName']);
   }
   if (obj['initializer'] !== undefined) {
-    resolved['initializer'] = (isNodeData(obj['initializer']) ? obj['initializer'] : typeof obj['initializer'] === 'string' || typeof obj['initializer'] === 'number' || typeof obj['initializer'] === 'boolean' ? accessibility_modifier_(''+obj['initializer']) : obj['initializer']);
+    resolved['initializer'] = _resolveParameterName(obj['initializer']);
   }
   return optional_parameter_(resolved as OptionalParameterConfig);
 }
@@ -3221,10 +3209,9 @@ export function propertySignatureFrom(input: unknown): unknown {
       type: f?.['type'],
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
-      children: c,
     } as unknown as PropertySignatureConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['name'] !== undefined) {
     resolved['name'] = _r1vtw8vp(obj['name']);
@@ -3236,10 +3223,7 @@ export function propertySignatureFrom(input: unknown): unknown {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
   if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = _rd4g2sg(obj['overrideModifier']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'override' ? override_modifier_() : obj.children);
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
   return property_signature_(resolved as PropertySignatureConfig);
 }
@@ -3260,10 +3244,9 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
       accessibilityModifier: f?.['accessibility_modifier'],
       overrideModifier: f?.['override_modifier'],
       initializer: f?.['initializer'],
-      children: c,
     } as unknown as PublicFieldDefinitionConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['decorator'] !== undefined) {
     const raw = obj['decorator'];
@@ -3283,13 +3266,10 @@ export function publicFieldDefinitionFrom(input: unknown): unknown {
     resolved['accessibilityModifier'] = (isNodeData(obj['accessibilityModifier']) ? obj['accessibilityModifier'] : typeof obj['accessibilityModifier'] === 'string' || typeof obj['accessibilityModifier'] === 'number' || typeof obj['accessibilityModifier'] === 'boolean' ? accessibility_modifier_(''+obj['accessibilityModifier']) : obj['accessibilityModifier']);
   }
   if (obj['overrideModifier'] !== undefined) {
-    resolved['overrideModifier'] = _rd4g2sg(obj['overrideModifier']);
+    resolved['overrideModifier'] = (isNodeData(obj['overrideModifier']) ? obj['overrideModifier'] : typeof obj['overrideModifier'] === 'string' && obj['overrideModifier'] === 'override' ? override_modifier_() : obj['overrideModifier']);
   }
   if (obj['initializer'] !== undefined) {
     resolved['initializer'] = _rd4g2sg(obj['initializer']);
-  }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === 'override' ? override_modifier_() : obj.children);
   }
   return public_field_definition_(resolved as PublicFieldDefinitionConfig);
 }
@@ -3376,10 +3356,10 @@ export function requiredParameterFrom(input: unknown): unknown {
     resolved['value'] = _resolveExpression(obj['value']);
   }
   if (obj['parameterName'] !== undefined) {
-    resolved['parameterName'] = _rj1u86u(obj['parameterName']);
+    resolved['parameterName'] = _r1hu51bk(obj['parameterName']);
   }
   if (obj['initializer'] !== undefined) {
-    resolved['initializer'] = (isNodeData(obj['initializer']) ? obj['initializer'] : typeof obj['initializer'] === 'string' || typeof obj['initializer'] === 'number' || typeof obj['initializer'] === 'boolean' ? accessibility_modifier_(''+obj['initializer']) : obj['initializer']);
+    resolved['initializer'] = _resolveParameterName(obj['initializer']);
   }
   return required_parameter_(resolved as RequiredParameterConfig);
 }

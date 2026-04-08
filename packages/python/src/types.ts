@@ -576,8 +576,8 @@ export interface KeywordArgument {
 export interface KeywordPattern {
   readonly type: 'keyword_pattern';
   readonly fields: {
-    readonly identifier: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | Float | Identifier | Integer | ListPattern | SplatPattern | String | TuplePattern | UnionPattern;
-    readonly simplePattern: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | Float | Integer | ListPattern | SimplePattern | SplatPattern | String | TuplePattern | UnionPattern;
+    readonly identifier: Identifier | SimplePattern;
+    readonly simplePattern: SimplePattern;
   };
 }
 export interface Lambda {

@@ -118,7 +118,12 @@ export function emitFactory(config: {
 		const paramName = toParamName(f.name);
 		const methodName = camel === 'type' ? 'typeField' : camel;
 		const proj = projectKinds(f.kinds, ctx);
-		const fieldType = fieldTypeExprFromProj(proj, leafSet);
+		let fieldType: string;
+		if (f.overrideAnonymous && f.overrideValues && f.overrideValues.length > 0 && proj.expandedAll.length === 0) {
+			fieldType = f.overrideValues.map(v => `'${escapeString(v)}'`).join(' | ');
+		} else {
+			fieldType = fieldTypeExprFromProj(proj, leafSet);
+		}
 
 		if (f.multiple) {
 			lines.push(`    ${methodName}(...${paramName}: (${fieldType})[]) { return ${paramName}.length ? ${internalName}({ ...config, ${camel}: ${paramName} }) : fields.${f.name}; },`);

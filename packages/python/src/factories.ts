@@ -1284,8 +1284,8 @@ export function keyword_pattern_(
     type: 'keyword_pattern' as const,
     named: true as const,
     fields,
-    identifier(identifier?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | Float | Identifier | Integer | ListPattern | SplatPattern | String | TuplePattern | UnionPattern) { return identifier !== undefined ? keyword_pattern_({ ...config, identifier: identifier }) : fields.identifier; },
-    simplePattern(simplePattern?: ClassPattern | ComplexPattern | ConcatenatedString | DictPattern | DottedName | Float | Integer | ListPattern | SimplePattern | SplatPattern | String | TuplePattern | UnionPattern) { return simplePattern !== undefined ? keyword_pattern_({ ...config, simplePattern: simplePattern }) : fields.simple_pattern; },
+    identifier(identifier?: Identifier | SimplePattern) { return identifier !== undefined ? keyword_pattern_({ ...config, identifier: identifier }) : fields.identifier; },
+    simplePattern(simplePattern?: SimplePattern) { return simplePattern !== undefined ? keyword_pattern_({ ...config, simplePattern: simplePattern }) : fields.simple_pattern; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

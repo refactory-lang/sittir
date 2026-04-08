@@ -1161,7 +1161,6 @@
         position: 0,
         override: true,
         overrideAnonymous: false,
-        overrideValues: ["false", "none", "true"],
       },
       {
         name: "simple_pattern",
@@ -1171,7 +1170,6 @@
         position: 1,
         override: true,
         overrideAnonymous: false,
-        overrideValues: ["false", "none", "true"],
       },
     ],
     children: null,

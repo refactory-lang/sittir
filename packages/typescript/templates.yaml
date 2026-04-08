@@ -8,7 +8,7 @@ metadata:
   grammarSha: ""
 rules:
   abstract_class_declaration: $$$DECORATOR abstract class $NAME $TYPE_PARAMETERS $CHILDREN $BODY
-  abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $OVERRIDE_MODIFIER $CALL_SIGNATURE
+  abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $CALL_SIGNATURE
   adding_type_annotation: "+?: $CHILDREN"
   ambient_declaration: "declare module.$DECLARATION : $TYPE_ANNOTATION $$$CHILDREN $SEMICOLON"
   arguments:
@@ -106,8 +106,8 @@ rules:
     template: $NAME in $TYPE $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   member_expression: $OBJECT $OPTIONAL_CHAIN $PROPERTY
-  method_definition: $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $OVERRIDE_MODIFIER $CALL_SIGNATURE
-  method_signature: $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $OVERRIDE_MODIFIER $CALL_SIGNATURE
+  method_definition: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $CALL_SIGNATURE
+  method_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $CALL_SIGNATURE
   module: module $NAME $BODY
   named_imports:
     template: "{$$$CHILDREN}"
@@ -128,18 +128,18 @@ rules:
   object_type: "{$OPENING $$$CHILDREN $$$MEMBERS} $CLOSING"
   omitting_type_annotation: "-?: $CHILDREN"
   opting_type_annotation: "?: $CHILDREN"
-  optional_parameter: $$$DECORATOR $PARAMETER_NAME $$$CHILDREN $PATTERN ? $TYPE $VALUE $NAME $INITIALIZER
+  optional_parameter: $$$DECORATOR $PARAMETER_NAME $INITIALIZER $PATTERN ? $TYPE $VALUE $NAME
   optional_type: $CHILDREN ?
   pair: "$KEY : $VALUE"
   pair_pattern: "$KEY : $VALUE"
   parenthesized_expression: ($CHILDREN $TYPE)
   parenthesized_type: ($CHILDREN)
   program: $HASH_BANG_LINE $$$STATEMENTS
-  property_signature: $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE $OVERRIDE_MODIFIER
-  public_field_definition: $$$DECORATOR $ACCESSIBILITY_MODIFIER $CHILDREN $NAME $TYPE $VALUE $OVERRIDE_MODIFIER $INITIALIZER
+  property_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE
+  public_field_definition: $$$DECORATOR $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE $VALUE $INITIALIZER
   readonly_type: readonly $CHILDREN
   regex: / $PATTERN / $FLAGS
-  required_parameter: $$$DECORATOR $PARAMETER_NAME $$$CHILDREN $PATTERN $TYPE $VALUE $NAME $INITIALIZER
+  required_parameter: $$$DECORATOR $PARAMETER_NAME $INITIALIZER $PATTERN $TYPE $VALUE $NAME
   rest_pattern: ... $$$CHILDREN
   rest_type: ... $CHILDREN
   return_statement: return $$$CHILDREN

@@ -203,7 +203,7 @@
         "types": [
           {
             "type": "crate",
-            "named": false
+            "named": true
           }
         ],
         "multiple": false,
@@ -385,7 +385,7 @@
         "types": [
           {
             "type": "mutable_specifier",
-            "named": false
+            "named": true
           }
         ],
         "multiple": false,
@@ -580,7 +580,7 @@
         "types": [
           {
             "type": "mutable_specifier",
-            "named": false
+            "named": true
           }
         ],
         "multiple": false,
@@ -617,7 +617,7 @@
         "types": [
           {
             "type": "mutable_specifier",
-            "named": false
+            "named": true
           }
         ],
         "multiple": false,
@@ -643,7 +643,7 @@
         "types": [
           {
             "type": "mutable_specifier",
-            "named": false
+            "named": true
           }
         ],
         "multiple": false,
@@ -654,7 +654,7 @@
         "types": [
           {
             "type": "self",
-            "named": false
+            "named": true
           }
         ],
         "multiple": false,
@@ -732,7 +732,7 @@
         "types": [
           {
             "type": "mutable_specifier",
-            "named": false
+            "named": true
           }
         ],
         "multiple": false,

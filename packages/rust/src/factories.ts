@@ -824,17 +824,14 @@ export function extern_crate_declaration_(
     visibility_modifier: config.visibilityModifier,
     crate: config.crate,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'extern_crate_declaration' as const,
     named: true as const,
     fields,
-    children,
     alias(alias?: Identifier) { return alias !== undefined ? extern_crate_declaration_({ ...config, alias: alias }) : fields.alias; },
     name(name?: Identifier) { return name !== undefined ? extern_crate_declaration_({ ...config, name: name }) : fields.name; },
     visibilityModifier(visibilityModifier?: VisibilityModifier) { return visibilityModifier !== undefined ? extern_crate_declaration_({ ...config, visibilityModifier: visibilityModifier }) : fields.visibility_modifier; },
-    crate(crate?: string) { return crate !== undefined ? extern_crate_declaration_({ ...config, crate: crate }) : fields.crate; },
-    child(child?: Crate) { return child !== undefined ? extern_crate_declaration_({ ...config, children: child }) : config?.children; },
+    crate(crate?: Crate) { return crate !== undefined ? extern_crate_declaration_({ ...config, crate: crate }) : fields.crate; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1808,15 +1805,12 @@ export function mut_pattern_(
     mutable_specifier: config.mutableSpecifier,
     pattern: config.pattern,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'mut_pattern' as const,
     named: true as const,
     fields,
-    children,
-    mutableSpecifier(mutableSpecifier?: string) { return mutableSpecifier !== undefined ? mut_pattern_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? mut_pattern_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? mut_pattern_({ ...config, pattern: pattern }) : fields.pattern; },
-    child(child?: MutableSpecifier) { return child !== undefined ? mut_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1838,7 +1832,7 @@ export function negative_literal_(
     type: 'negative_literal' as const,
     named: true as const,
     fields,
-    operator(operator?: string) { return operator !== undefined ? negative_literal_({ ...config, operator: operator }) : fields.operator; },
+    operator(operator?: '-') { return operator !== undefined ? negative_literal_({ ...config, operator: operator }) : fields.operator; },
     value(value?: FloatLiteral | IntegerLiteral) { return value !== undefined ? negative_literal_({ ...config, value: value }) : fields.value; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2025,7 +2019,7 @@ export function range_expression_(
     named: true as const,
     fields,
     start(start?: Expression) { return start !== undefined ? range_expression_({ ...config, start: start }) : fields.start; },
-    operator(operator?: string) { return operator !== undefined ? range_expression_({ ...config, operator: operator }) : fields.operator; },
+    operator(operator?: '..' | '..=' | '...') { return operator !== undefined ? range_expression_({ ...config, operator: operator }) : fields.operator; },
     end(end?: Expression) { return end !== undefined ? range_expression_({ ...config, end: end }) : fields.end; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
@@ -2135,15 +2129,12 @@ export function reference_pattern_(
     mutable_specifier: config.mutableSpecifier,
     pattern: config.pattern,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'reference_pattern' as const,
     named: true as const,
     fields,
-    children,
-    mutableSpecifier(mutableSpecifier?: string) { return mutableSpecifier !== undefined ? reference_pattern_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_pattern_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? reference_pattern_({ ...config, pattern: pattern }) : fields.pattern; },
-    child(child?: MutableSpecifier) { return child !== undefined ? reference_pattern_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2162,16 +2153,13 @@ export function reference_type_(
     lifetime: config.lifetime,
     mutable_specifier: config.mutableSpecifier,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'reference_type' as const,
     named: true as const,
     fields,
-    children,
     typeField(type_?: Type) { return type_ !== undefined ? reference_type_({ ...config, type: type_ }) : fields.type; },
     lifetime(lifetime?: Lifetime) { return lifetime !== undefined ? reference_type_({ ...config, lifetime: lifetime }) : fields.lifetime; },
-    mutableSpecifier(mutableSpecifier?: string) { return mutableSpecifier !== undefined ? reference_type_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    child(child?: MutableSpecifier) { return child !== undefined ? reference_type_({ ...config, children: child }) : config?.children; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_type_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2297,15 +2285,13 @@ export function self_parameter_(
     mutable_specifier: config.mutableSpecifier,
     self: config.self,
   };
-  const children = [...(config.mutableSpecifier ? [config.mutableSpecifier] : []), ...(config.self ? [config.self] : [])];
   return {
     type: 'self_parameter' as const,
     named: true as const,
     fields,
-    children,
     lifetime(lifetime?: Lifetime) { return lifetime !== undefined ? self_parameter_({ ...config, lifetime: lifetime }) : fields.lifetime; },
-    mutableSpecifier(mutableSpecifier?: string) { return mutableSpecifier !== undefined ? self_parameter_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    self(self?: string) { return self !== undefined ? self_parameter_({ ...config, self: self }) : fields.self; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? self_parameter_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
+    self(self?: Self) { return self !== undefined ? self_parameter_({ ...config, self: self }) : fields.self; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2392,18 +2378,15 @@ export function static_item_(
     visibility_modifier: config.visibilityModifier,
     mutable_specifier: config.mutableSpecifier,
   };
-  const children = config.children ? [config.children] : [];
   return {
     type: 'static_item' as const,
     named: true as const,
     fields,
-    children,
     name(name?: Identifier) { return name !== undefined ? static_item_({ ...config, name: name }) : fields.name; },
     typeField(type_?: Type) { return type_ !== undefined ? static_item_({ ...config, type: type_ }) : fields.type; },
     value(value?: Expression) { return value !== undefined ? static_item_({ ...config, value: value }) : fields.value; },
     visibilityModifier(visibilityModifier?: VisibilityModifier) { return visibilityModifier !== undefined ? static_item_({ ...config, visibilityModifier: visibilityModifier }) : fields.visibility_modifier; },
-    mutableSpecifier(mutableSpecifier?: string) { return mutableSpecifier !== undefined ? static_item_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
-    child(child?: MutableSpecifier) { return child !== undefined ? static_item_({ ...config, children: child }) : config?.children; },
+    mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? static_item_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2696,7 +2679,7 @@ export function try_expression_(
     named: true as const,
     fields,
     value(value?: Expression) { return value !== undefined ? try_expression_({ ...config, value: value }) : fields.value; },
-    operator(operator?: string) { return operator !== undefined ? try_expression_({ ...config, operator: operator }) : fields.operator; },
+    operator(operator?: '?') { return operator !== undefined ? try_expression_({ ...config, operator: operator }) : fields.operator; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2954,7 +2937,7 @@ export function unary_expression_(
     type: 'unary_expression' as const,
     named: true as const,
     fields,
-    operator(operator?: string) { return operator !== undefined ? unary_expression_({ ...config, operator: operator }) : fields.operator; },
+    operator(operator?: '-' | '*' | '!') { return operator !== undefined ? unary_expression_({ ...config, operator: operator }) : fields.operator; },
     operand(operand?: Expression) { return operand !== undefined ? unary_expression_({ ...config, operand: operand }) : fields.operand; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

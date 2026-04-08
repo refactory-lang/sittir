@@ -225,7 +225,7 @@
           },
           {
             "type": "false",
-            "named": false
+            "named": true
           },
           {
             "type": "float",
@@ -241,7 +241,7 @@
           },
           {
             "type": "none",
-            "named": false
+            "named": true
           },
           {
             "type": "splat_pattern",
@@ -253,7 +253,7 @@
           },
           {
             "type": "true",
-            "named": false
+            "named": true
           },
           {
             "type": "tuple_pattern",
@@ -296,7 +296,7 @@
           },
           {
             "type": "false",
-            "named": false
+            "named": true
           },
           {
             "type": "float",
@@ -312,7 +312,7 @@
           },
           {
             "type": "none",
-            "named": false
+            "named": true
           },
           {
             "type": "splat_pattern",
@@ -324,7 +324,7 @@
           },
           {
             "type": "true",
-            "named": false
+            "named": true
           },
           {
             "type": "tuple_pattern",

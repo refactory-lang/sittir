@@ -341,10 +341,9 @@ export interface AbstractMethodSignature {
     readonly returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation;
     readonly typeParameters?: TypeParameters;
     readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: string;
+    readonly overrideModifier?: OverrideModifier;
     readonly callSignature: string;
   };
-  readonly children?: OverrideModifier;
 }
 export interface AddingTypeAnnotation {
   readonly type: 'adding_type_annotation';
@@ -883,10 +882,9 @@ export interface MethodDefinition {
     readonly returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation;
     readonly typeParameters?: TypeParameters;
     readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: string;
+    readonly overrideModifier?: OverrideModifier;
     readonly callSignature: string;
   };
-  readonly children?: OverrideModifier;
 }
 export interface MethodSignature {
   readonly type: 'method_signature';
@@ -896,10 +894,9 @@ export interface MethodSignature {
     readonly returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation;
     readonly typeParameters?: TypeParameters;
     readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: string;
+    readonly overrideModifier?: OverrideModifier;
     readonly callSignature: string;
   };
-  readonly children?: OverrideModifier;
 }
 export interface Module {
   readonly type: 'module';
@@ -985,8 +982,8 @@ export interface OptionalParameter {
     readonly pattern?: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
-    readonly parameterName: AccessibilityModifier | ParameterName;
-    readonly initializer?: AccessibilityModifier;
+    readonly parameterName: ParameterName;
+    readonly initializer?: ParameterName;
   };
 }
 export interface OptionalType {
@@ -1031,9 +1028,8 @@ export interface PropertySignature {
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
     readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: string;
+    readonly overrideModifier?: OverrideModifier;
   };
-  readonly children?: OverrideModifier;
 }
 export interface PublicFieldDefinition {
   readonly type: 'public_field_definition';
@@ -1043,10 +1039,9 @@ export interface PublicFieldDefinition {
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
     readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: string;
+    readonly overrideModifier?: OverrideModifier;
     readonly initializer?: string;
   };
-  readonly children?: OverrideModifier;
 }
 export interface ReadonlyType {
   readonly type: 'readonly_type';
@@ -1067,8 +1062,8 @@ export interface RequiredParameter {
     readonly pattern?: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
-    readonly parameterName: AccessibilityModifier | ParameterName;
-    readonly initializer?: AccessibilityModifier;
+    readonly parameterName: ParameterName;
+    readonly initializer?: ParameterName;
   };
 }
 export interface RestPattern {
