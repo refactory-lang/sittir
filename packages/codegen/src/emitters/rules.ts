@@ -226,6 +226,7 @@ function ruleToTemplate(
 	clauses: ClauseEntry[],
 	immediate: boolean,
 	childSlotMap: Map<string, ChildSlotInfo>,
+	inRepeat = false,
 ): string[] {
 	switch (rule.type) {
 		case 'SEQ': {
@@ -233,7 +234,7 @@ function ruleToTemplate(
 			for (let i = 0; i < rule.members.length; i++) {
 				const member = rule.members[i]!;
 				const isFirst = i === 0;
-				const memberParts = ruleToTemplate(member, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+				const memberParts = ruleToTemplate(member, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
 				if (!isFirst && memberParts.length > 0 && parts.length > 0) {
 					const lastPart = parts[parts.length - 1]!;
 					const nextPart = memberParts[0]!;
@@ -263,7 +264,7 @@ function ruleToTemplate(
 			// Inline _-prefixed (hidden/abstract) rules that contain fields
 			if (rule.name.startsWith('_') && gr[rule.name]) {
 				const inlineSeen = new Set(seen);
-				const inlined = ruleToTemplate(gr[rule.name]!, optional, inlineSeen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+				const inlined = ruleToTemplate(gr[rule.name]!, optional, inlineSeen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
 				const hasRelevantFields = [...inlineSeen].some(f => !seen.has(f) && fieldRequired.has(f));
 				if (hasRelevantFields) {
 					for (const f of inlineSeen) {
@@ -302,7 +303,7 @@ function ruleToTemplate(
 				const parts: string[] = [];
 				for (const m of rule.members) {
 					if (m.type === 'BLANK') continue;
-					parts.push(...ruleToTemplate(m, true, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap));
+					parts.push(...ruleToTemplate(m, true, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat));
 				}
 				return parts;
 			}
@@ -313,22 +314,34 @@ function ruleToTemplate(
 			// wrapped in FIELDs so they emit $VARIABLE via the FIELD handler.
 			// Remaining non-override CHOICEs (structural alternatives) only
 			// contribute first-branch literals.
+			//
+			// Exception: when inside a REPEAT and the CHOICE has bare STRING
+			// members (not wrapped in FIELD after enrichment), suppress all
+			// literals — they're anonymous children that $$$CHILDREN renders.
 			{
+				const suppressLiterals = inRepeat && rule.members.some(m => {
+					if (m.type === 'BLANK') return false;
+					const u = unwrapPrec(m);
+					return u.type === 'STRING';
+				});
 				const result: string[] = [];
 				let isFirst = true;
 				for (const m of rule.members) {
 					if (m.type === 'BLANK') continue;
-					const branchParts = ruleToTemplate(m, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
-					if (isFirst) {
+					const branchParts = ruleToTemplate(m, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
+					if (isFirst && !suppressLiterals) {
 						result.push(...branchParts);
 						isFirst = false;
 					} else {
 						// Keep only variable references from non-first branches
+						// (or all branches when suppressing literals)
 						for (const part of branchParts) {
 							if (part.startsWith('$')) {
-								result.push(' ', part);
+								if (result.length > 0) result.push(' ');
+								result.push(part);
 							}
 						}
+						isFirst = false;
 					}
 				}
 				return result;
@@ -337,16 +350,16 @@ function ruleToTemplate(
 
 		case 'REPEAT':
 		case 'REPEAT1':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, true);
 
 		case 'PREC':
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
 
 		case 'TOKEN':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, false, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, false, childSlotMap, inRepeat);
 
 		case 'IMMEDIATE_TOKEN': {
 			let inner: GrammarRule = rule.content;
@@ -357,7 +370,7 @@ function ruleToTemplate(
 				if (optional) return [];
 				return [inner.value]; // no leading space — immediate
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, true, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, true, childSlotMap, inRepeat);
 		}
 
 		case 'ALIAS':
@@ -378,7 +391,7 @@ function ruleToTemplate(
 				if (optional) return [];
 				return [rule.value];
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap);
+			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
 
 		case 'BLANK':
 		case 'PATTERN':
