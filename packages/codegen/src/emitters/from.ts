@@ -167,6 +167,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
 	const configTypeImports = nodes.map(n => toTypeName(n.kind) + 'Config').sort();
 	out.line(`import type { ${[...baseTypeImports, ...configTypeImports].join(', ')} } from './types.js';`);
+	out.line("import type { KindMap, FromInputMap } from './types.js';");
 	out.line("import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';");
 	out.line();
 
@@ -182,9 +183,18 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line(`import type { ${fromInputImports.join(', ')} } from './types.js';`);
 	out.line();
 
-	// _fromMap — kind → from function, used by all resolvers for kind dispatch
+	// FromMap — typed kind → from function mapping
+	out.line('/** Maps kind string to its typed .from() resolver. */');
+	out.line('export type FromMap = {');
+	out.indent();
+	out.line('[K in keyof FromInputMap]: (input: KindMap[K] | FromInputMap[K] | object) => KindMap[K];');
+	out.dedent();
+	out.line('};');
+	out.line();
+
+	// _fromMap — runtime instance of FromMap
 	out.line('/** @internal Map of kind string to .from() resolver function. */');
-	out.line('export const _fromMap: Record<string, (input: object) => unknown> = {');
+	out.line('export const _fromMap: FromMap = {');
 	out.indent();
 	for (const node of nodes) {
 		const fromFn = `${toFactoryName(node.kind)}From`;
@@ -194,9 +204,11 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line('};');
 	out.line();
 
-	out.line('function _resolveByKind(kind: string, rest: object): unknown {');
+	out.line('export function _resolveByKind<K extends keyof FromMap>(kind: K, rest: object): KindMap[K];');
+	out.line('export function _resolveByKind(kind: string, rest: object): unknown;');
+	out.line('export function _resolveByKind(kind: string, rest: object): unknown {');
 	out.indent();
-	out.line('const fn = _fromMap[kind];');
+	out.line('const fn = _fromMap[kind as keyof FromMap];');
 	out.line("if (fn) return fn(rest);");
 	out.line("throw new Error(`Unknown kind for .from(): '${kind}'`);");
 	out.dedent();
