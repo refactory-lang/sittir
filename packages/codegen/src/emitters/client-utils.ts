@@ -23,7 +23,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Shared client-side resolution utilities for .from() and factories');
 	lines.push('');
 
-	lines.push("import type { AnyNodeData } from '@sittir/types';");
+	lines.push("import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';");
 	lines.push('');
 
 	// Type guards
@@ -44,7 +44,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 
 	// isTreeNode
 	lines.push('/** Returns true if `v` is a TreeNode (SgNode-compatible) — has `type`, `field()`, and `text()`. */');
-	lines.push('export function isTreeNode(v: unknown): boolean {');
+	lines.push('export function isTreeNode(v: unknown): v is AnyTreeNodeOf {');
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push("  const o = v as Record<string, unknown>;");
 	lines.push("  return typeof o['type'] === 'string' && typeof o['field'] === 'function' && typeof o['text'] === 'function';");
@@ -93,6 +93,38 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('    if (score > bestScore || (score === bestScore && matches > bestMatches)) { bestScore = score; bestMatches = matches; best = c; }');
 	lines.push('  }');
 	lines.push('  return best;');
+	lines.push('}');
+	lines.push('');
+
+	// hasKind — checks for { kind: string } discriminant
+	lines.push('// ---------------------------------------------------------------------------');
+	lines.push('// Kind discrimination');
+	lines.push('// ---------------------------------------------------------------------------');
+	lines.push('');
+	lines.push('/** Returns true if `v` has a `kind` string property for branch discrimination. */');
+	lines.push("export function hasKind(v: object): v is { kind: string } & Record<string, unknown> {");
+	lines.push("  return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';");
+	lines.push('}');
+	lines.push('');
+
+	// resolveField — shared field resolution utility
+	lines.push('// ---------------------------------------------------------------------------');
+	lines.push('// Field resolution');
+	lines.push('// ---------------------------------------------------------------------------');
+	lines.push('');
+	lines.push('/**');
+	lines.push(' * Resolve a single field value for .from() input.');
+	lines.push(' * Passes through NodeData, delegates scalars and objects to the resolver.');
+	lines.push(' * Arrays are mapped element-wise.');
+	lines.push(' */');
+	lines.push('export function resolveField<T>(');
+	lines.push('  value: unknown,');
+	lines.push('  resolver: (input: unknown) => T,');
+	lines.push('): T {');
+	lines.push('  if (value == null) return value as T;');
+	lines.push('  if (isNodeData(value)) return value as T;');
+	lines.push('  if (Array.isArray(value)) return value.map(v => resolveField(v, resolver)) as T;');
+	lines.push('  return resolver(value);');
 	lines.push('}');
 	lines.push('');
 

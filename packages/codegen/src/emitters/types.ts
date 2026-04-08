@@ -156,9 +156,9 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
-	lines.push('// FromInput types — derived from concrete interfaces');
+	lines.push('// FromInput types — derived from concrete interfaces, with scalar widenings');
 	for (const kind of nodeKinds) {
-		lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}>;`);
+		lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}, LeafScalarMap>;`);
 	}
 	lines.push('');
 

@@ -517,25 +517,65 @@ export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
 	: never;
 
 /**
- * FromInputOf<T> — widened input type derived from a concrete node interface.
+ * FromInputOf<T, Scalars, Depth> — widened input type derived from a concrete node interface.
  * Accepts NodeData passthroughs, strings for leaves, objects for branches.
  * Required fields stay required; optional fields stay optional.
+ *
+ * @param Scalars - Map of leaf kind → scalar type (e.g. `{ integer_literal: number }`)
+ * @param Depth - Internal recursion counter — stops expanding at depth 3
  */
-export type FromInputOf<T> = {
-	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? K : never]: WidenValue<FieldsOf<T>[K]>;
-} & {
-	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : K]?: WidenValue<FieldsOf<T>[K]>;
-} & {
-	readonly [K in keyof ChildSlotsOf<T>]?: ChildSlotsOf<T>[K];
-};
+export type FromInputOf<T, Scalars = {}, Depth extends number[] = []> =
+	Depth['length'] extends 3 ? T
+	: {
+		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? K : never]:
+			WidenValue<FieldsOf<T>[K], Scalars, [...Depth, 0]>;
+	} & {
+		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : K]?:
+			WidenValue<FieldsOf<T>[K], Scalars, [...Depth, 0]>;
+	} & {
+		readonly [K in keyof ChildSlotsOf<T>]?:
+			WidenChildSlot<ChildSlotsOf<T>[K], Scalars, [...Depth, 0]>;
+	};
 
 /** Keys of T that are required (not optional). */
 type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
 
-/** Widen a value type for FromInput: nodes pass through, leaf text becomes `string | NodeData`. */
-type WidenValue<T> =
-	T extends readonly (infer E)[] ? (WidenValue<E>)[] | WidenValue<E>
-	: T extends { readonly type: string; readonly text: string } ? T | string
-	: T extends { readonly type: string } ? T | FromInputOf<T>
+/** True when T is a single concrete type (literal `type`), false when a union. */
+type IsSingleType<T> = [T] extends [{ readonly type: infer K }]
+	? string extends K ? false
+	: true
+	: false;
+
+/**
+ * Widen a value type for FromInput.
+ * - Arrays: accept `Element[] | Element`
+ * - Leaf nodes: accept `T | string` + scalar widenings from Scalars map
+ * - Single branch: accept `T | FromInputOf<T>` (bare fields, no kind needed)
+ * - Multi-branch union: each member needs `{ kind: K } & FromInputOf<U>`
+ * - Other: pass through unchanged (string literal unions, etc.)
+ */
+type WidenValue<T, Scalars = {}, Depth extends number[] = []> =
+	Depth['length'] extends 3 ? T
+	: T extends readonly (infer E)[] ? (WidenValue<E, Scalars, Depth>)[] | WidenValue<E, Scalars, Depth>
+	: T extends { readonly type: infer K extends string; readonly text: string }
+		// Leaf: accept node, string, or matching scalar
+		? T | string | (K extends keyof Scalars ? Scalars[K] : never)
+	: T extends { readonly type: string }
+		// Branch: check if T is a union of multiple branch types
+		? IsSingleType<T> extends true
+			// Single branch → accept bare fields (no { kind } needed)
+			? T | FromInputOf<T, Scalars, Depth>
+			// Multi branch → each member needs { kind } for discrimination
+			: T extends infer U
+				? U extends { readonly type: infer K extends string }
+					? U | ({ kind: K } & FromInputOf<U, Scalars, Depth>)
+					: never
+				: never
 	: T;
+
+/** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
+type WidenChildSlot<T, Scalars = {}, Depth extends number[] = []> =
+	T extends readonly (infer E)[]
+		? WidenValue<E, Scalars, Depth>[] | WidenValue<E, Scalars, Depth>
+		: WidenValue<T, Scalars, Depth>;
 
