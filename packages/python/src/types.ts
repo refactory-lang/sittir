@@ -248,8 +248,8 @@ export interface AsPattern {
   readonly type: 'as_pattern';
   readonly fields: {
     readonly alias?: string;
+    readonly expression: CasePattern | Expression | Identifier;
   };
-  readonly children: CasePattern | Expression | Identifier;
 }
 export interface AssertStatement {
   readonly type: 'assert_statement';
@@ -280,7 +280,9 @@ export interface AugmentedAssignment {
 }
 export interface Await {
   readonly type: 'await';
-  readonly children: PrimaryExpression;
+  readonly fields: {
+    readonly primaryExpression: PrimaryExpression;
+  };
 }
 export interface BinaryOperator {
   readonly type: 'binary_operator';
@@ -326,7 +328,9 @@ export interface CasePattern {
 }
 export interface Chevron {
   readonly type: 'chevron';
-  readonly children: Expression;
+  readonly fields: {
+    readonly expression: Expression;
+  };
 }
 export interface ClassDefinition {
   readonly type: 'class_definition';
@@ -420,7 +424,9 @@ export interface DictionaryComprehension {
 }
 export interface DictionarySplat {
   readonly type: 'dictionary_splat';
-  readonly children: Expression;
+  readonly fields: {
+    readonly expression: Expression;
+  };
 }
 export interface DictionarySplatPattern {
   readonly type: 'dictionary_splat_pattern';
@@ -468,6 +474,9 @@ export interface ExpressionStatement {
 }
 export interface FinallyClause {
   readonly type: 'finally_clause';
+  readonly fields: {
+    readonly block: Block;
+  };
   readonly children: Block;
 }
 export interface ForInClause {
@@ -534,7 +543,9 @@ export interface GlobalStatement {
 }
 export interface IfClause {
   readonly type: 'if_clause';
-  readonly children: Expression;
+  readonly fields: {
+    readonly expression: Expression;
+  };
 }
 export interface IfStatement {
   readonly type: 'if_statement';
@@ -549,8 +560,8 @@ export interface ImportFromStatement {
   readonly fields: {
     readonly moduleName: DottedName | RelativeImport;
     readonly name?: readonly (AliasedImport | DottedName)[];
+    readonly wildcardImport: WildcardImport;
   };
-  readonly children: WildcardImport;
 }
 export interface ImportStatement {
   readonly type: 'import_statement';
@@ -608,7 +619,9 @@ export interface ListPattern {
 }
 export interface ListSplat {
   readonly type: 'list_splat';
-  readonly children: Attribute | Expression | Identifier | Subscript;
+  readonly fields: {
+    readonly expression: Attribute | Expression | Identifier | Subscript;
+  };
 }
 export interface ListSplatPattern {
   readonly type: 'list_splat_pattern';
@@ -676,8 +689,8 @@ export interface PrintStatement {
   readonly type: 'print_statement';
   readonly fields: {
     readonly argument?: readonly (Expression)[];
+    readonly chevron?: Chevron;
   };
-  readonly children?: Chevron;
 }
 export interface RaiseStatement {
   readonly type: 'raise_statement';
@@ -718,11 +731,15 @@ export interface Slice {
 }
 export interface SplatPattern {
   readonly type: 'splat_pattern';
-  readonly children?: Identifier;
+  readonly fields: {
+    readonly identifier?: Identifier;
+  };
 }
 export interface SplatType {
   readonly type: 'splat_type';
-  readonly children: Identifier;
+  readonly fields: {
+    readonly identifier: Identifier;
+  };
 }
 export interface String {
   readonly type: 'string';
@@ -830,8 +847,8 @@ export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
     readonly body: Block;
+    readonly withClause: WithClause;
   };
-  readonly children: WithClause;
 }
 export interface Yield {
   readonly type: 'yield';

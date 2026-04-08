@@ -95,42 +95,71 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 	const overrides: OverridesConfig = {};
 
 	for (const node of structuralNodes(nodes)) {
-		if (!node.children || !isTupleChildren(node.children)) continue;
+		if (!node.children) continue;
 
 		const fields: Record<string, OverrideFieldDef> = {};
-		const slots = node.children as readonly { multiple: boolean; required?: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] }[];
 
-		for (let i = 0; i < slots.length; i++) {
-			const slot = slots[i]!;
+		if (isTupleChildren(node.children)) {
+			const slots = node.children as readonly { multiple: boolean; required?: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] }[];
 
-			// Skip pure REPEAT slots that are the only slot
-			if (slots.length === 1 && slot.multiple) continue;
+			for (let i = 0; i < slots.length; i++) {
+				const slot = slots[i]!;
 
-			// Build types array from slot kinds
-			const types: OverrideTypeRef[] = slot.kinds.map(k => {
-				const mt = (k as any).modelType;
-				const named = mt !== 'token' && mt !== 'keyword';
-				return { type: k.kind, named };
-			});
+				// Skip pure REPEAT slots that are the only slot
+				if (slots.length === 1 && slot.multiple) continue;
 
-			// Use the slot name from grammar's nameChildSlots when available
-			const slotName = slot.name;
-			let fieldName: string;
+				// Build types array from slot kinds
+				// Only token models are truly anonymous — keywords are named nodes
+				const types: OverrideTypeRef[] = slot.kinds.map(k => {
+					const mt = (k as any).modelType;
+					return { type: k.kind, named: mt !== 'token' };
+				});
 
-			if (slotName && !slotName.startsWith('NEEDS_NAME')) {
-				fieldName = slotName;
-			} else {
-				fieldName = slotName ?? `NEEDS_NAME_${i}`;
-				const kindList = slot.kinds.map(k => k.kind).join(', ');
-				console.warn(`[overrides] ${node.kind}: ${fieldName} — position ${i} (${kindList}) needs a field name`);
+				// Use the slot name from grammar's nameChildSlots when available
+				const slotName = slot.name;
+				let fieldName: string;
+
+				if (slotName && !slotName.startsWith('NEEDS_NAME')) {
+					fieldName = slotName;
+				} else {
+					fieldName = slotName ?? `NEEDS_NAME_${i}`;
+					const kindList = slot.kinds.map(k => k.kind).join(', ');
+					console.warn(`[overrides] ${node.kind}: ${fieldName} — position ${i} (${kindList}) needs a field name`);
+				}
+
+				fields[fieldName] = {
+					types,
+					multiple: slot.multiple,
+					required: slot.required ?? false,
+					position: i,
+				};
 			}
+		} else {
+			// SINGLE child slot — generate override if the kind is a concrete named type
+			// (not a supertype/hidden rule starting with _). Nodes whose sole content IS
+			// the child (wrappers like parenthesized_expression) keep $CHILDREN.
+			const slot = node.children as { multiple: boolean; required?: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] };
 
-			fields[fieldName] = {
-				types,
-				multiple: slot.multiple,
-				required: slot.required ?? false,
-				position: i,
-			};
+			// Skip pure REPEAT (list children) — these are $$CHILDREN content
+			if (slot.multiple) { /* keep as $$$CHILDREN */ }
+			// Skip if kinds include any supertype/hidden (starts with _) — too abstract to name
+			else if (slot.kinds.some(k => k.kind.startsWith('_'))) { /* keep as $CHILDREN */ }
+			// Single concrete kind → promote to named override field
+			// Only when we can derive a meaningful name (single kind → kind-as-name)
+			else if (slot.kinds.length === 1) {
+				const types: OverrideTypeRef[] = slot.kinds.map(k => {
+					const mt = (k as any).modelType;
+					return { type: k.kind, named: mt !== 'token' };
+				});
+				const fieldName = slot.kinds[0]!.kind;
+
+				fields[fieldName] = {
+					types,
+					multiple: slot.multiple,
+					required: slot.required ?? false,
+					position: 0,
+				};
+			}
 		}
 
 		if (Object.keys(fields).length > 0) {

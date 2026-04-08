@@ -246,6 +246,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'as_pattern': [
     { name: 'alias', required: false, multiple: false },
+    { name: 'expression', required: true, multiple: false },
   ],
   'assert_statement': [
   ],
@@ -264,6 +265,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'await': [
+    { name: 'primaryExpression', required: true, multiple: false },
   ],
   'binary_operator': [
     { name: 'left', required: true, multiple: false },
@@ -289,6 +291,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'case_pattern': [
   ],
   'chevron': [
+    { name: 'expression', required: true, multiple: false },
   ],
   'class_definition': [
     { name: 'body', required: true, multiple: false },
@@ -341,6 +344,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'dictionary_splat': [
+    { name: 'expression', required: true, multiple: false },
   ],
   'dictionary_splat_pattern': [
   ],
@@ -365,6 +369,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'expression_statement': [
   ],
   'finally_clause': [
+    { name: 'block', required: true, multiple: false },
   ],
   'for_in_clause': [
     { name: 'left', required: true, multiple: false },
@@ -403,6 +408,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'global_statement': [
   ],
   'if_clause': [
+    { name: 'expression', required: true, multiple: false },
   ],
   'if_statement': [
     { name: 'alternative', required: false, multiple: true },
@@ -412,6 +418,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
     { name: 'name', required: false, multiple: true },
+    { name: 'wildcardImport', required: true, multiple: false },
   ],
   'import_statement': [
     { name: 'name', required: true, multiple: true },
@@ -443,6 +450,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'list_pattern': [
   ],
   'list_splat': [
+    { name: 'expression', required: true, multiple: false },
   ],
   'list_splat_pattern': [
   ],
@@ -479,6 +487,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'print_statement': [
     { name: 'argument', required: false, multiple: true },
+    { name: 'chevron', required: false, multiple: false },
   ],
   'raise_statement': [
     { name: 'cause', required: false, multiple: false },
@@ -500,8 +509,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'step', required: false, multiple: false },
   ],
   'splat_pattern': [
+    { name: 'identifier', required: false, multiple: false },
   ],
   'splat_type': [
+    { name: 'identifier', required: true, multiple: false },
   ],
   'string': [
     { name: 'stringStart', required: true, multiple: false },
@@ -562,6 +573,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'with_statement': [
     { name: 'body', required: true, multiple: false },
+    { name: 'withClause', required: true, multiple: false },
   ],
   'yield': [
   ],

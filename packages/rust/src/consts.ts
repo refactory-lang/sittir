@@ -303,6 +303,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
 }>> = {
   'abstract_type': [
     { name: 'trait', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
   ],
   'arguments': [
   ],
@@ -323,14 +324,17 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'bounds', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
+    { name: 'whereClause', required: false, multiple: false },
   ],
   'async_block': [
+    { name: 'block', required: true, multiple: false },
   ],
   'attribute': [
     { name: 'arguments', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
   'attribute_item': [
+    { name: 'attribute', required: true, multiple: false },
   ],
   'await_expression': [
   ],
@@ -343,8 +347,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'block': [
     { name: 'label', required: false, multiple: false },
-    { name: 'statements', required: false, multiple: true },
-    { name: 'expression', required: false, multiple: false },
   ],
   'block_comment': [
     { name: 'doc', required: false, multiple: false },
@@ -388,6 +390,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
+    { name: 'visibilityModifier', required: false, multiple: false },
   ],
   'const_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -395,6 +398,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'continue_expression': [
+    { name: 'label', required: false, multiple: false },
   ],
   'declaration_list': [
   ],
@@ -414,6 +418,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
+    { name: 'visibilityModifier', required: false, multiple: false },
   ],
   'enum_variant_list': [
   ],
@@ -426,10 +431,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'crate', required: true, multiple: false },
   ],
   'extern_modifier': [
+    { name: 'stringLiteral', required: false, multiple: false },
   ],
   'field_declaration': [
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
+    { name: 'visibilityModifier', required: false, multiple: false },
   ],
   'field_declaration_list': [
   ],
@@ -446,11 +453,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'field_pattern': [
     { name: 'name', required: true, multiple: false },
     { name: 'pattern', required: false, multiple: false },
+    { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'for_expression': [
     { name: 'body', required: true, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
+    { name: 'label', required: false, multiple: false },
   ],
   'for_lifetimes': [
   ],
@@ -488,6 +497,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'functionModifiers', required: false, multiple: false },
   ],
   'gen_block': [
+    { name: 'block', required: true, multiple: false },
   ],
   'generic_function': [
     { name: 'function', required: true, multiple: false },
@@ -518,14 +528,17 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
+    { name: 'whereClause', required: false, multiple: false },
   ],
   'index_expression': [
     { name: 'object', required: true, multiple: false },
     { name: 'index', required: true, multiple: false },
   ],
   'inner_attribute_item': [
+    { name: 'attribute', required: true, multiple: false },
   ],
   'label': [
+    { name: 'identifier', required: true, multiple: false },
   ],
   'let_chain': [
   ],
@@ -538,8 +551,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
+    { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'lifetime': [
+    { name: 'identifier', required: true, multiple: false },
   ],
   'lifetime_parameter': [
     { name: 'bounds', required: false, multiple: false },
@@ -552,6 +567,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'loop_expression': [
     { name: 'body', required: true, multiple: false },
+    { name: 'label', required: false, multiple: false },
   ],
   'macro_definition': [
     { name: 'name', required: true, multiple: false },
@@ -559,6 +575,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'macro_invocation': [
     { name: 'macro', required: true, multiple: false },
+    { name: 'tokenTree', required: true, multiple: false },
   ],
   'macro_rule': [
     { name: 'left', required: true, multiple: false },
@@ -580,6 +597,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'mod_item': [
     { name: 'body', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+    { name: 'visibilityModifier', required: false, multiple: false },
   ],
   'mut_pattern': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -602,6 +620,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'parameter': [
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
+    { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'parameters': [
   ],
@@ -609,6 +628,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'pointer_type': [
     { name: 'type', required: true, multiple: false },
+    { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'qualified_type': [
     { name: 'alias', required: true, multiple: false },
@@ -632,6 +652,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'reference_expression': [
     { name: 'value', required: true, multiple: false },
+    { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'reference_pattern': [
     { name: 'mutableSpecifier', required: false, multiple: false },
@@ -719,6 +740,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'whereClause', required: false, multiple: false },
   ],
   'try_block': [
+    { name: 'block', required: true, multiple: false },
   ],
   'try_expression': [
     { name: 'value', required: true, multiple: false },
@@ -775,6 +797,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'whereClause', required: false, multiple: false },
   ],
   'unsafe_block': [
+    { name: 'block', required: true, multiple: false },
   ],
   'use_as_clause': [
     { name: 'alias', required: true, multiple: false },
@@ -784,13 +807,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'use_declaration': [
     { name: 'argument', required: true, multiple: false },
+    { name: 'visibilityModifier', required: false, multiple: false },
   ],
   'use_list': [
   ],
   'use_wildcard': [
+    { name: 'path', required: false, multiple: false },
   ],
   'variadic_parameter': [
     { name: 'pattern', required: false, multiple: false },
+    { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'visibility_modifier': [
   ],
@@ -803,6 +829,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'while_expression': [
     { name: 'body', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
+    { name: 'label', required: false, multiple: false },
   ],
   'yield_expression': [
   ],

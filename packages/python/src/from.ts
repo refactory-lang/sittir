@@ -397,16 +397,16 @@ export function asPatternFrom(input: unknown): unknown {
     const c = nd.children;
     return as_pattern_({
       alias: f?.['alias'],
-      children: c,
+      expression: f?.['expression'],
     } as unknown as AsPatternConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['alias'] !== undefined) {
     resolved['alias'] = _rd4g2sg(obj['alias']);
   }
-  if (obj.children !== undefined) {
-    resolved.children = _rb6s74c(obj.children);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _rb6s74c(obj['expression']);
   }
   return as_pattern_(resolved as AsPatternConfig);
 }
@@ -523,13 +523,13 @@ export function await_From(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return await_({
-      children: c,
+      primaryExpression: f?.['primary_expression'],
     } as unknown as AwaitConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _resolvePrimaryExpression(obj.children);
+  if (obj['primaryExpression'] !== undefined) {
+    resolved['primaryExpression'] = _resolvePrimaryExpression(obj['primaryExpression']);
   }
   return await_(resolved as AwaitConfig);
 }
@@ -701,13 +701,13 @@ export function chevronFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return chevron_({
-      children: c,
+      expression: f?.['expression'],
     } as unknown as ChevronConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _resolveExpression(obj.children);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _resolveExpression(obj['expression']);
   }
   return chevron_(resolved as ChevronConfig);
 }
@@ -1075,13 +1075,13 @@ export function dictionarySplatFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return dictionary_splat_({
-      children: c,
+      expression: f?.['expression'],
     } as unknown as DictionarySplatConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _resolveExpression(obj.children);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _resolveExpression(obj['expression']);
   }
   return dictionary_splat_(resolved as DictionarySplatConfig);
 }
@@ -1283,11 +1283,15 @@ export function finallyClauseFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return finally_clause_({
+      block: f?.['block'],
       children: c,
     } as unknown as FinallyClauseConfig);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
+  if (obj['block'] !== undefined) {
+    resolved['block'] = _resolveSuite(obj['block']);
+  }
   if (obj.children !== undefined) {
     resolved.children = _resolveSuite(obj.children);
   }
@@ -1543,13 +1547,13 @@ export function ifClauseFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return if_clause_({
-      children: c,
+      expression: f?.['expression'],
     } as unknown as IfClauseConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _resolveExpression(obj.children);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _resolveExpression(obj['expression']);
   }
   return if_clause_(resolved as IfClauseConfig);
 }
@@ -1595,10 +1599,10 @@ export function importFromStatementFrom(input: unknown): unknown {
     return import_from_statement_({
       moduleName: f?.['module_name'],
       name: f?.['name'],
-      children: c,
+      wildcardImport: f?.['wildcard_import'],
     } as unknown as ImportFromStatementConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['moduleName'] !== undefined) {
     resolved['moduleName'] = _rrq3952(obj['moduleName']);
@@ -1608,8 +1612,8 @@ export function importFromStatementFrom(input: unknown): unknown {
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['name'] = arr.map((v: unknown) => _r144bmot(v));
   }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : typeof obj.children === 'string' && obj.children === '*' ? wildcard_import_() : obj.children);
+  if (obj['wildcardImport'] !== undefined) {
+    resolved['wildcardImport'] = (isNodeData(obj['wildcardImport']) ? obj['wildcardImport'] : typeof obj['wildcardImport'] === 'string' && obj['wildcardImport'] === '*' ? wildcard_import_() : obj['wildcardImport']);
   }
   return import_from_statement_(resolved as ImportFromStatementConfig);
 }
@@ -1836,13 +1840,13 @@ export function listSplatFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return list_splat_({
-      children: c,
+      expression: f?.['expression'],
     } as unknown as ListSplatConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _r11t6afm(obj.children);
+  if (obj['expression'] !== undefined) {
+    resolved['expression'] = _r11t6afm(obj['expression']);
   }
   return list_splat_(resolved as ListSplatConfig);
 }
@@ -2125,18 +2129,18 @@ export function printStatementFrom(input: unknown): unknown {
     const c = nd.children;
     return print_statement_({
       argument: f?.['argument'],
-      children: c,
+      chevron: f?.['chevron'],
     } as unknown as PrintStatementConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['argument'] !== undefined) {
     const raw = obj['argument'];
     const arr = Array.isArray(raw) ? raw : [raw];
     resolved['argument'] = arr.map((v: unknown) => _resolveExpression(v));
   }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : Array.isArray(obj.children) ? chevronFrom(obj.children) : typeof obj.children === 'object' ? chevronFrom(obj.children) : obj.children);
+  if (obj['chevron'] !== undefined) {
+    resolved['chevron'] = (isNodeData(obj['chevron']) ? obj['chevron'] : Array.isArray(obj['chevron']) ? chevronFrom(obj['chevron']) : typeof obj['chevron'] === 'object' ? chevronFrom(obj['chevron']) : obj['chevron']);
   }
   return print_statement_(resolved as PrintStatementConfig);
 }
@@ -2293,13 +2297,13 @@ export function splatPatternFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return splat_pattern_({
-      children: c,
+      identifier: f?.['identifier'],
     } as unknown as SplatPatternConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _resolveNamedExpressionLhs(obj.children);
+  if (obj['identifier'] !== undefined) {
+    resolved['identifier'] = _resolveNamedExpressionLhs(obj['identifier']);
   }
   return splat_pattern_(resolved as SplatPatternConfig);
 }
@@ -2313,13 +2317,13 @@ export function splatTypeFrom(input: unknown): unknown {
     const f = nd.fields;
     const c = nd.children;
     return splat_type_({
-      children: c,
+      identifier: f?.['identifier'],
     } as unknown as SplatTypeConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
-  if (obj.children !== undefined) {
-    resolved.children = _resolveNamedExpressionLhs(obj.children);
+  if (obj['identifier'] !== undefined) {
+    resolved['identifier'] = _resolveNamedExpressionLhs(obj['identifier']);
   }
   return splat_type_(resolved as SplatTypeConfig);
 }
@@ -2750,16 +2754,16 @@ export function withStatementFrom(input: unknown): unknown {
     const c = nd.children;
     return with_statement_({
       body: f?.['body'],
-      children: c,
+      withClause: f?.['with_clause'],
     } as unknown as WithStatementConfig);
   }
-  const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
+  const obj = input as Record<string, unknown>;
   const resolved: Record<string, unknown> = {};
   if (obj['body'] !== undefined) {
     resolved['body'] = _r10v9xtg(obj['body']);
   }
-  if (obj.children !== undefined) {
-    resolved.children = (isNodeData(obj.children) ? obj.children : Array.isArray(obj.children) ? withClauseFrom(obj.children) : typeof obj.children === 'object' ? withClauseFrom(obj.children) : obj.children);
+  if (obj['withClause'] !== undefined) {
+    resolved['withClause'] = (isNodeData(obj['withClause']) ? obj['withClause'] : Array.isArray(obj['withClause']) ? withClauseFrom(obj['withClause']) : typeof obj['withClause'] === 'object' ? withClauseFrom(obj['withClause']) : obj['withClause']);
   }
   return with_statement_(resolved as WithStatementConfig);
 }

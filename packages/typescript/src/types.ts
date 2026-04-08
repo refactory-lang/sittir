@@ -340,10 +340,9 @@ export interface AbstractMethodSignature {
     readonly parameters: FormalParameters;
     readonly returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation;
     readonly typeParameters?: TypeParameters;
-    readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: OverrideModifier;
-    readonly callSignature: string;
   };
+  readonly accessibilityModifier?: AccessibilityModifier;
+  readonly overrideModifier?: OverrideModifier;
 }
 export interface AddingTypeAnnotation {
   readonly type: 'adding_type_annotation';
@@ -351,11 +350,8 @@ export interface AddingTypeAnnotation {
 }
 export interface AmbientDeclaration {
   readonly type: 'ambient_declaration';
-  readonly fields: {
-    readonly declaration: Declaration | PropertyIdentifier | StatementBlock;
-    readonly typeAnnotation?: Type;
-    readonly semicolon?: string;
-  };
+  readonly children1: Declaration | PropertyIdentifier | StatementBlock;
+  readonly childType?: Type;
 }
 export interface Arguments {
   readonly type: 'arguments';
@@ -385,10 +381,8 @@ export interface ArrowFunction {
 }
 export interface AsExpression {
   readonly type: 'as_expression';
-  readonly fields: {
-    readonly expression: Expression;
-    readonly typeAnnotation?: Type;
-  };
+  readonly expression: Expression;
+  readonly childType?: Type;
 }
 export interface Asserts {
   readonly type: 'asserts';
@@ -486,16 +480,13 @@ export interface ClassDeclaration {
     readonly decorator?: readonly (Decorator)[];
     readonly name: TypeIdentifier;
     readonly typeParameters?: TypeParameters;
-    readonly classHeritage?: ClassHeritage;
-    readonly automaticSemicolon?: string;
   };
+  readonly classHeritage?: ClassHeritage;
 }
 export interface ClassHeritage {
   readonly type: 'class_heritage';
-  readonly fields: {
-    readonly extendsClause: ExtendsClause | ImplementsClause;
-    readonly implementsClause?: ImplementsClause;
-  };
+  readonly extendsClauseOrImplementsClause: ExtendsClause | ImplementsClause;
+  readonly implementsClause?: ImplementsClause;
 }
 export interface ClassStaticBlock {
   readonly type: 'class_static_block';
@@ -572,9 +563,9 @@ export interface EnumBody {
   readonly type: 'enum_body';
   readonly fields: {
     readonly name?: readonly (PropertyName)[];
-    readonly opening?: EnumAssignment;
-    readonly members?: readonly (EnumAssignment)[];
   };
+  readonly enumAssignment1?: EnumAssignment;
+  readonly enumAssignment2?: readonly (EnumAssignment)[];
 }
 export interface EnumDeclaration {
   readonly type: 'enum_declaration';
@@ -601,7 +592,6 @@ export interface ExportStatement {
     readonly decorator?: readonly (Decorator)[];
     readonly source?: String;
     readonly value?: Expression;
-    readonly semicolonInner?: string;
   };
   readonly children1?: ExportClause | Expression | Identifier | NamespaceExport;
 }
@@ -734,11 +724,8 @@ export interface ImplementsClause {
 }
 export interface ImportAlias {
   readonly type: 'import_alias';
-  readonly fields: {
-    readonly name: Identifier;
-    readonly value: Identifier | NestedIdentifier;
-    readonly semicolon: string;
-  };
+  readonly identifier: Identifier;
+  readonly identifierOrNestedIdentifier: Identifier | NestedIdentifier;
 }
 export interface ImportAttribute {
   readonly type: 'import_attribute';
@@ -746,10 +733,8 @@ export interface ImportAttribute {
 }
 export interface ImportClause {
   readonly type: 'import_clause';
-  readonly fields: {
-    readonly defaultImport: Identifier | NamedImports | NamespaceImport;
-    readonly namedImports?: Identifier | NamedImports | NamespaceImport;
-  };
+  readonly children1: Identifier | NamedImports | NamespaceImport;
+  readonly children2?: Identifier | NamedImports | NamespaceImport;
 }
 export interface ImportRequireClause {
   readonly type: 'import_require_clause';
@@ -769,11 +754,9 @@ export interface ImportStatement {
   readonly type: 'import_statement';
   readonly fields: {
     readonly source?: String;
-    readonly importClause?: ImportClause | ImportRequireClause;
-    readonly fromClause?: string;
-    readonly importAttribute?: ImportAttribute;
-    readonly semicolon: string;
   };
+  readonly importClauseOrImportRequireClause?: ImportClause | ImportRequireClause;
+  readonly importAttribute?: ImportAttribute;
 }
 export interface IndexSignature {
   readonly type: 'index_signature';
@@ -791,10 +774,8 @@ export interface IndexTypeQuery {
 }
 export interface InferType {
   readonly type: 'infer_type';
-  readonly fields: {
-    readonly typeIdentifier: TypeIdentifier;
-    readonly constraint?: Type | TypeIdentifier;
-  };
+  readonly typeIdentifier: TypeIdentifier;
+  readonly typeOrTypeIdentifier?: Type | TypeIdentifier;
 }
 export interface InstantiationExpression {
   readonly type: 'instantiation_expression';
@@ -826,10 +807,8 @@ export interface InternalModule {
 }
 export interface IntersectionType {
   readonly type: 'intersection_type';
-  readonly fields: {
-    readonly left?: Type;
-    readonly right: Type;
-  };
+  readonly childType1?: Type;
+  readonly childType2: Type;
 }
 export interface LabeledStatement {
   readonly type: 'labeled_statement';
@@ -842,9 +821,8 @@ export interface LexicalDeclaration {
   readonly type: 'lexical_declaration';
   readonly fields: {
     readonly kind: 'const' | 'let';
-    readonly declarators: readonly (VariableDeclarator)[];
-    readonly semicolon: string;
   };
+  readonly variableDeclarator: readonly (VariableDeclarator)[];
 }
 export interface LiteralType {
   readonly type: 'literal_type';
@@ -852,10 +830,8 @@ export interface LiteralType {
 }
 export interface LookupType {
   readonly type: 'lookup_type';
-  readonly fields: {
-    readonly primaryType: PrimaryType;
-    readonly indexType: Type;
-  };
+  readonly primaryType: PrimaryType;
+  readonly childType: Type;
 }
 export interface MappedTypeClause {
   readonly type: 'mapped_type_clause';
@@ -881,10 +857,9 @@ export interface MethodDefinition {
     readonly parameters: FormalParameters;
     readonly returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation;
     readonly typeParameters?: TypeParameters;
-    readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: OverrideModifier;
-    readonly callSignature: string;
   };
+  readonly accessibilityModifier?: AccessibilityModifier;
+  readonly overrideModifier?: OverrideModifier;
 }
 export interface MethodSignature {
   readonly type: 'method_signature';
@@ -893,10 +868,9 @@ export interface MethodSignature {
     readonly parameters: FormalParameters;
     readonly returnType?: AssertsAnnotation | TypeAnnotation | TypePredicateAnnotation;
     readonly typeParameters?: TypeParameters;
-    readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: OverrideModifier;
-    readonly callSignature: string;
   };
+  readonly accessibilityModifier?: AccessibilityModifier;
+  readonly overrideModifier?: OverrideModifier;
 }
 export interface Module {
   readonly type: 'module';
@@ -960,11 +934,8 @@ export interface ObjectPattern {
 }
 export interface ObjectType {
   readonly type: 'object_type';
-  readonly fields: {
-    readonly opening?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature;
-    readonly members?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
-    readonly closing?: string;
-  };
+  readonly children1?: CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature;
+  readonly children2?: readonly (CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature)[];
 }
 export interface OmittingTypeAnnotation {
   readonly type: 'omitting_type_annotation';
@@ -982,9 +953,9 @@ export interface OptionalParameter {
     readonly pattern?: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
-    readonly parameterName: ParameterName;
-    readonly initializer?: ParameterName;
   };
+  readonly parameterName1: ParameterName;
+  readonly parameterName2?: ParameterName;
 }
 export interface OptionalType {
   readonly type: 'optional_type';
@@ -1017,19 +988,17 @@ export interface ParenthesizedType {
 }
 export interface Program {
   readonly type: 'program';
-  readonly fields: {
-    readonly hashBangLine?: HashBangLine;
-    readonly statements?: readonly (Statement)[];
-  };
+  readonly hashBangLine?: HashBangLine;
+  readonly statement?: readonly (Statement)[];
 }
 export interface PropertySignature {
   readonly type: 'property_signature';
   readonly fields: {
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
-    readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: OverrideModifier;
   };
+  readonly accessibilityModifier?: AccessibilityModifier;
+  readonly overrideModifier?: OverrideModifier;
 }
 export interface PublicFieldDefinition {
   readonly type: 'public_field_definition';
@@ -1038,10 +1007,9 @@ export interface PublicFieldDefinition {
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
-    readonly accessibilityModifier?: AccessibilityModifier;
-    readonly overrideModifier?: OverrideModifier;
-    readonly initializer?: string;
   };
+  readonly accessibilityModifier?: AccessibilityModifier;
+  readonly overrideModifier?: OverrideModifier;
 }
 export interface ReadonlyType {
   readonly type: 'readonly_type';
@@ -1062,9 +1030,9 @@ export interface RequiredParameter {
     readonly pattern?: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
-    readonly parameterName: ParameterName;
-    readonly initializer?: ParameterName;
   };
+  readonly parameterName1: ParameterName;
+  readonly parameterName2?: ParameterName;
 }
 export interface RestPattern {
   readonly type: 'rest_pattern';
@@ -1080,10 +1048,8 @@ export interface ReturnStatement {
 }
 export interface SatisfiesExpression {
   readonly type: 'satisfies_expression';
-  readonly fields: {
-    readonly expression: Expression;
-    readonly typeAnnotation: Type;
-  };
+  readonly expression: Expression;
+  readonly childType: Type;
 }
 export interface SequenceExpression {
   readonly type: 'sequence_expression';
@@ -1095,10 +1061,7 @@ export interface SpreadElement {
 }
 export interface StatementBlock {
   readonly type: 'statement_block';
-  readonly fields: {
-    readonly statements?: readonly (Statement)[];
-    readonly automaticSemicolon?: string;
-  };
+  readonly statement?: readonly (Statement)[];
 }
 export interface String {
   readonly type: 'string';
@@ -1194,10 +1157,8 @@ export interface TypeArguments {
 }
 export interface TypeAssertion {
   readonly type: 'type_assertion';
-  readonly fields: {
-    readonly typeArguments: TypeArguments;
-    readonly expression: Expression;
-  };
+  readonly typeArguments: TypeArguments;
+  readonly expression: Expression;
 }
 export interface TypeParameter {
   readonly type: 'type_parameter';
@@ -1235,10 +1196,8 @@ export interface UnaryExpression {
 }
 export interface UnionType {
   readonly type: 'union_type';
-  readonly fields: {
-    readonly left?: Type;
-    readonly right: Type;
-  };
+  readonly childType1?: Type;
+  readonly childType2: Type;
 }
 export interface UpdateExpression {
   readonly type: 'update_expression';
@@ -1249,10 +1208,7 @@ export interface UpdateExpression {
 }
 export interface VariableDeclaration {
   readonly type: 'variable_declaration';
-  readonly fields: {
-    readonly declarators: readonly (VariableDeclarator)[];
-    readonly semicolon: string;
-  };
+  readonly variableDeclarator: readonly (VariableDeclarator)[];
 }
 export interface VariableDeclarator {
   readonly type: 'variable_declarator';
@@ -2353,6 +2309,15 @@ export type TypeFromInput =
 ;
 
 // Hidden rule unions (grammar-internal groupings)
+export type ImportIdentifier =
+  | Identifier
+;
+
+export type ParameterName =
+  | AccessibilityModifier
+  | OverrideModifier
+;
+
 export type PropertyName =
   | PropertyIdentifier
   | PrivatePropertyIdentifier
@@ -2392,15 +2357,6 @@ export type ModuleExportName =
 export type Expressions =
   | Expression
   | SequenceExpression
-;
-
-export type ImportIdentifier =
-  | Identifier
-;
-
-export type ParameterName =
-  | AccessibilityModifier
-  | OverrideModifier
 ;
 
 export type TypescriptNode =

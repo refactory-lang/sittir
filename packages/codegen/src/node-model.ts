@@ -618,7 +618,25 @@ function removeOverriddenChildSlots(branch: BranchModel): void {
 	} else if (remaining.length === 1) {
 		branch.children = remaining[0]!;
 	} else {
-		branch.children = remaining;
+		// Merge remaining uncovered slots into a single children slot.
+		// These represent the unnamed body content rendered as $$CHILDREN.
+		const mergedKinds = new Set<string>();
+		let mergedMultiple = false;
+		let mergedRequired = true;
+		let mergedSeparator: string | null = null;
+		for (const slot of remaining) {
+			for (const k of slot.kinds) mergedKinds.add(k);
+			if (slot.multiple) {
+				mergedMultiple = true;
+				mergedSeparator = (slot as ListChildModel).separator ?? mergedSeparator;
+			}
+			if (!slot.required) mergedRequired = false;
+		}
+		if (mergedMultiple) {
+			branch.children = { required: mergedRequired, multiple: true, kinds: mergedKinds, separator: mergedSeparator } as ListChildModel;
+		} else {
+			branch.children = { required: mergedRequired, multiple: false, kinds: mergedKinds } as SingleChildModel;
+		}
 	}
 }
 

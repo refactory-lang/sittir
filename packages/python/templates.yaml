@@ -10,14 +10,14 @@ rules:
   argument_list:
     template: ($$$CHILDREN)
     joinBy: ","
-  as_pattern: $CHILDREN as $ALIAS
+  as_pattern: $EXPRESSION as $ALIAS
   assert_statement:
     template: assert $$$CHILDREN ,
     joinBy: ","
   assignment: "$LEFT : $TYPE = $RIGHT"
   attribute: $OBJECT.$ATTRIBUTE
   augmented_assignment: $LEFT $OPERATOR $RIGHT
-  await: await $CHILDREN
+  await: await $PRIMARY_EXPRESSION
   binary_operator: $LEFT $OPERATOR $RIGHT
   block: $$$CHILDREN $$$ALTERNATIVE
   boolean_operator: $LEFT $OPERATOR $RIGHT
@@ -26,7 +26,7 @@ rules:
     template: "case $$$CHILDREN , $GUARD : $CONSEQUENCE"
     joinBy: ","
   case_pattern: $CHILDREN
-  chevron: ">> $CHILDREN"
+  chevron: ">> $EXPRESSION"
   class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES : $BODY"
   class_pattern: $DOTTED_NAME($$$ARGUMENTS)
   comparison_operator: $LEFT $$$OPERATORS $$$COMPARATORS
@@ -45,7 +45,7 @@ rules:
     template: "{$$$CHILDREN}"
     joinBy: ","
   dictionary_comprehension: "{$BODY $CHILDREN}"
-  dictionary_splat: "** $CHILDREN"
+  dictionary_splat: "** $EXPRESSION"
   dictionary_splat_pattern: "** $CHILDREN"
   dotted_name: $$$CHILDREN.
   elif_clause: "elif $CONDITION : $CONSEQUENCE"
@@ -63,7 +63,7 @@ rules:
   expression_statement:
     template: $$$CHILDREN
     joinBy: ","
-  finally_clause: "finally : $$$CHILDREN"
+  finally_clause: "finally : $$$CHILDREN $BLOCK $$$CHILDREN"
   for_in_clause: for $LEFT in $$$RIGHT
   for_statement: "for $LEFT in $RIGHT : $BODY $ALTERNATIVE"
   format_expression: $EXPRESSION $FORMAT_SPECIFIER $TYPE_CONVERSION
@@ -77,9 +77,9 @@ rules:
   global_statement:
     template: global $$$CHILDREN ,
     joinBy: ","
-  if_clause: if $CHILDREN
+  if_clause: if $EXPRESSION
   if_statement: "if $CONDITION : $CONSEQUENCE $$$ALTERNATIVE"
-  import_from_statement: from $MODULE_NAME import $CHILDREN $$$NAME
+  import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT $$$NAME
   import_statement: import $$$NAME ,
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME = $VALUE
@@ -89,7 +89,7 @@ rules:
   list: "[$$$CHILDREN]"
   list_comprehension: "[$BODY $CHILDREN]"
   list_pattern: "[$$$CHILDREN]"
-  list_splat: "* $CHILDREN"
+  list_splat: "* $EXPRESSION"
   list_splat_pattern: "* $CHILDREN"
   match_statement:
     template: "match $$$SUBJECT , : $BODY"
@@ -109,7 +109,7 @@ rules:
     template: $$$CHILDREN ,
     joinBy: ","
   print_statement:
-    template: print $CHILDREN , $$$ARGUMENT
+    template: print $CHEVRON , $$$ARGUMENT
     joinBy: ","
   raise_statement:
     template: raise $CHILDREN $CAUSE_CLAUSE
@@ -119,8 +119,8 @@ rules:
   set: "{$$$CHILDREN}"
   set_comprehension: "{$BODY $CHILDREN}"
   slice: "$START : $STOP $STEP"
-  splat_pattern: "* $CHILDREN"
-  splat_type: "* $CHILDREN"
+  splat_pattern: "* $IDENTIFIER"
+  splat_type: "* $IDENTIFIER"
   string: $STRING_START $$$CONTENT $STRING_END
   string_content: $$$CHILDREN
   subscript:
@@ -144,5 +144,5 @@ rules:
     template: $$$CHILDREN ,
     joinBy: ","
   with_item: $VALUE
-  with_statement: "with $CHILDREN : $BODY"
+  with_statement: "with $WITH_CLAUSE : $BODY"
   yield: yield from $CHILDREN
