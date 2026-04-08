@@ -53,7 +53,7 @@ export function emitFactory(config: {
 
 	const opt = hasRequiredFields ? '' : '?';
 	lines.push(`export function ${internalName}(`);
-	lines.push(`  config${opt}: ${typeName}Config,`);
+	lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
 	lines.push(`) {`);
 
 	// Build fields object — raw names, values from camelCase config
@@ -286,9 +286,8 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		}
 	}
 	for (const k of leafKinds) allTypeNames.add(toTypeName(k));
-	// Add *Config and *Tree types (Config for factory param, Tree for replace)
+	// Add *Tree types (for replace method parameter)
 	for (const n of nodes) {
-		allTypeNames.add(toTypeName(n.kind) + 'Config');
 		allTypeNames.add(toTypeName(n.kind) + 'Tree');
 	}
 	// Add *Tree types for leaf kinds (used in replace)
@@ -302,7 +301,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	}
 	const sortedTypes = [...allTypeNames].sort();
 	lines.push(`import type { ${sortedTypes.join(', ')} } from './types.js';`);
-	lines.push("import type { Edit, AnyNodeData } from '@sittir/types';");
+	lines.push("import type { Edit, AnyNodeData, ConfigOf } from '@sittir/types';");
 	lines.push("import { createRenderer } from '@sittir/core';");
 	lines.push("import { join, dirname } from 'node:path';");
 	lines.push("import { fileURLToPath } from 'node:url';");

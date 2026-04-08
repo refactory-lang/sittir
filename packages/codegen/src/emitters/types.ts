@@ -12,11 +12,13 @@
  *   6. Discriminated union of all node types
  */
 
-import type { HydratedNodeModel } from '../node-model.ts';
+import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { toTypeName, toFieldName, toGrammarTypeName } from '../naming.ts';
 import { structuralNodes, fieldsOf, leafKindsOf, supertypeEntriesOf, hiddenEntriesOf, childSlotNames } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
+import type { GrammarRule } from '../grammar.ts';
+import { loadGrammar } from '../grammar.ts';
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -35,6 +37,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const ctx = buildProjectionContext(modelMap);
 	const leafSet = new Set(leafKinds);
 
+	const grammarRules = loadGrammar(grammar).rules;
 	const nodeKinds = structNodes.map(n => n.kind);
 	const allKinds = [...nodeKinds, ...leafKinds];
 	const generatedTypes = new Set<string>();
@@ -130,7 +133,14 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// -----------------------------------------------------------------------
 	lines.push('// Config types — derived from concrete interfaces');
 	for (const kind of nodeKinds) {
-		lines.push(`export type ${toTypeName(kind)}Config = ConfigOf<${toTypeName(kind)}>;`);
+		const node = modelMap.get(kind)!;
+		const variantSets = computeVariantFieldSets(node, grammarRules);
+
+		if (variantSets) {
+			emitVariantConfigType(lines, kind, node, variantSets, ctx);
+		} else {
+			lines.push(`export type ${toTypeName(kind)}Config = ConfigOf<${toTypeName(kind)}>;`);
+		}
 	}
 	lines.push('');
 
@@ -369,4 +379,176 @@ function emitLeafInterface(
 		lines.push('  readonly text: string;');
 		lines.push('}');
 	}
+}
+
+// ---------------------------------------------------------------------------
+// Variant config types — union config for top-level CHOICE nodes
+// ---------------------------------------------------------------------------
+
+/**
+ * Detect a top-level non-optional CHOICE and return its branches.
+ * Unwraps PREC wrappers. Returns null if the rule is not a top-level
+ * CHOICE, or if any BLANK member exists (optionality, not variants).
+ */
+function topLevelChoice(rule: GrammarRule): GrammarRule[] | null {
+	let r = rule;
+	while (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') {
+		r = r.content;
+	}
+	if (r.type !== 'CHOICE') return null;
+	if (r.members.some(m => m.type === 'BLANK')) return null;
+	return r.members.length > 1 ? r.members : null;
+}
+
+/** Walk a grammar rule tree, following hidden rule references to collect inlined content. */
+function walkWithInlining(
+	rule: GrammarRule,
+	grammarRules: Record<string, GrammarRule>,
+	fn: (r: GrammarRule) => void,
+	visited?: Set<string>,
+): void {
+	fn(rule);
+
+	// Follow hidden rules to find FIELDs attributed to the parent
+	if (rule.type === 'SYMBOL' && rule.name.startsWith('_') && grammarRules[rule.name]) {
+		const v = visited ?? new Set<string>();
+		if (!v.has(rule.name)) {
+			v.add(rule.name);
+			walkWithInlining(grammarRules[rule.name]!, grammarRules, fn, v);
+		}
+	}
+
+	if ('members' in rule && Array.isArray((rule as any).members)) {
+		for (const m of (rule as any).members as GrammarRule[]) {
+			walkWithInlining(m, grammarRules, fn, visited);
+		}
+	}
+	if ('content' in rule && (rule as any).content) {
+		walkWithInlining((rule as any).content as GrammarRule, grammarRules, fn, visited);
+	}
+}
+
+/** Collect field names (grammar FIELDs + override matches) present in a grammar rule branch. */
+function collectBranchFieldNames(
+	branch: GrammarRule,
+	overrideFields: readonly HydratedFieldModel[],
+	grammarRules: Record<string, GrammarRule>,
+): Set<string> {
+	const fieldNames = new Set<string>();
+	const symbolNames = new Set<string>();
+	const stringValues = new Set<string>();
+
+	walkWithInlining(branch, grammarRules, r => {
+		if (r.type === 'FIELD') fieldNames.add(r.name);
+		if (r.type === 'SYMBOL') symbolNames.add(r.name);
+		if (r.type === 'STRING') stringValues.add(r.value);
+	});
+
+	// Match override fields by their kinds or anonymous token values
+	for (const field of overrideFields) {
+		if (field.kinds.some(k => symbolNames.has(k.kind))) {
+			fieldNames.add(field.name);
+		}
+		if (field.overrideValues?.some(v => stringValues.has(v))) {
+			fieldNames.add(field.name);
+		}
+	}
+
+	return fieldNames;
+}
+
+/**
+ * Compute variant field sets for a node with top-level CHOICE.
+ * Returns distinct field-name sets per branch, or null if no variants
+ * or all branches have the same fields.
+ */
+function computeVariantFieldSets(
+	node: HydratedNodeModel,
+	grammarRules: Record<string, GrammarRule>,
+): Set<string>[] | null {
+	if (node.modelType !== 'branch') return null;
+
+	const rawRule = node.rule?.rule;
+	if (!rawRule) return null;
+
+	const branches = topLevelChoice(rawRule);
+	if (!branches) return null;
+
+	const overrideFields = node.fields.filter(f => f.override);
+	const sets = branches.map(b => collectBranchFieldNames(b, overrideFields, grammarRules));
+
+	// Check if all sets are equal — if so, no union needed
+	const first = [...sets[0]!].sort().join(',');
+	if (sets.every(s => [...s].sort().join(',') === first)) return null;
+
+	return sets;
+}
+
+/** Emit a union config type using Pick<ConfigOf<T>, ...> per variant. */
+function emitVariantConfigType(
+	lines: string[],
+	kind: string,
+	node: HydratedNodeModel,
+	variantSets: Set<string>[],
+	ctx: ProjectionContext,
+): void {
+	const typeName = toTypeName(kind);
+	const fields = node.modelType === 'branch' ? node.fields : [];
+
+	// Map raw field names to property names used in the interface
+	const rawToProp = new Map<string, string>();
+	for (const f of fields) {
+		rawToProp.set(f.name, f.propertyName ?? toFieldName(f.name));
+	}
+
+	// Get child slot property names (included in all variants)
+	const childSlotProps: string[] = [];
+	if (node.modelType === 'branch' && node.children) {
+		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
+		const slotNames = childSlotNames(node.children, ctx);
+		eachChildSlot(node.children, (_slot, i) => {
+			const name = slotNames[i]!;
+			if (!fieldKeys.has(name)) childSlotProps.push(name);
+		});
+	}
+
+	// Find fields not traced to any branch (e.g., from hidden rules with empty types).
+	// These are included in all variants since they're structurally present everywhere.
+	const allBranchFields = new Set<string>();
+	for (const set of variantSets) {
+		for (const name of set) allBranchFields.add(name);
+	}
+	const untrackedProps = fields
+		.filter(f => !allBranchFields.has(f.name))
+		.map(f => f.propertyName ?? toFieldName(f.name));
+
+	// Deduplicate variant property sets
+	const uniqueVariants: string[][] = [];
+	const seen = new Set<string>();
+	for (const rawFieldSet of variantSets) {
+		const props = [...rawFieldSet]
+			.filter(name => rawToProp.has(name))
+			.map(name => rawToProp.get(name)!)
+			.concat(childSlotProps)
+			.concat(untrackedProps)
+			.sort();
+		const key = props.join(',');
+		if (!seen.has(key) && props.length > 0) {
+			seen.add(key);
+			uniqueVariants.push(props);
+		}
+	}
+
+	if (uniqueVariants.length <= 1) {
+		// Collapsed to single variant — use normal ConfigOf
+		lines.push(`export type ${typeName}Config = ConfigOf<${typeName}>;`);
+		return;
+	}
+
+	lines.push(`export type ${typeName}Config =`);
+	for (const props of uniqueVariants) {
+		const pickKeys = props.map(p => `'${p}'`).join(' | ');
+		lines.push(`  | Pick<ConfigOf<${typeName}>, ${pickKeys}>`);
+	}
+	lines.push(';');
 }

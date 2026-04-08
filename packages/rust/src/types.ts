@@ -1419,8 +1419,14 @@ export type ParametersConfig = ConfigOf<Parameters>;
 export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
 export type PointerTypeConfig = ConfigOf<PointerType>;
 export type QualifiedTypeConfig = ConfigOf<QualifiedType>;
-export type RangeExpressionConfig = ConfigOf<RangeExpression>;
-export type RangePatternConfig = ConfigOf<RangePattern>;
+export type RangeExpressionConfig =
+  | Pick<ConfigOf<RangeExpression>, 'end' | 'operator' | 'start'>
+  | Pick<ConfigOf<RangeExpression>, 'operator'>
+;
+export type RangePatternConfig =
+  | Pick<ConfigOf<RangePattern>, 'left' | 'right'>
+  | Pick<ConfigOf<RangePattern>, 'right'>
+;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
 export type RefPatternConfig = ConfigOf<RefPattern>;
 export type ReferenceExpressionConfig = ConfigOf<ReferenceExpression>;

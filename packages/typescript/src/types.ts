@@ -1449,7 +1449,10 @@ export type AugmentedAssignmentExpressionConfig = ConfigOf<AugmentedAssignmentEx
 export type AwaitExpressionConfig = ConfigOf<AwaitExpression>;
 export type BinaryExpressionConfig = ConfigOf<BinaryExpression>;
 export type BreakStatementConfig = ConfigOf<BreakStatement>;
-export type CallExpressionConfig = ConfigOf<CallExpression>;
+export type CallExpressionConfig =
+  | Pick<ConfigOf<CallExpression>, 'arguments' | 'function' | 'typeArguments'>
+  | Pick<ConfigOf<CallExpression>, 'arguments' | 'function'>
+;
 export type CallSignatureConfig = ConfigOf<CallSignature>;
 export type CatchClauseConfig = ConfigOf<CatchClause>;
 export type ClassConfig = ConfigOf<Class>;
@@ -1472,7 +1475,11 @@ export type EnumBodyConfig = ConfigOf<EnumBody>;
 export type EnumDeclarationConfig = ConfigOf<EnumDeclaration>;
 export type ExportClauseConfig = ConfigOf<ExportClause>;
 export type ExportSpecifierConfig = ConfigOf<ExportSpecifier>;
-export type ExportStatementConfig = ConfigOf<ExportStatement>;
+export type ExportStatementConfig =
+  | Pick<ConfigOf<ExportStatement>, 'children' | 'declaration' | 'decorator' | 'semicolonInner' | 'source' | 'value'>
+  | Pick<ConfigOf<ExportStatement>, 'children' | 'declaration' | 'semicolonInner' | 'source'>
+  | Pick<ConfigOf<ExportStatement>, 'children' | 'declaration' | 'semicolonInner'>
+;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type ExtendsClauseConfig = ConfigOf<ExtendsClause>;
 export type ExtendsTypeClauseConfig = ConfigOf<ExtendsTypeClause>;
@@ -1572,7 +1579,10 @@ export type UnaryExpressionConfig = ConfigOf<UnaryExpression>;
 export type UnionTypeConfig = ConfigOf<UnionType>;
 export type UpdateExpressionConfig = ConfigOf<UpdateExpression>;
 export type VariableDeclarationConfig = ConfigOf<VariableDeclaration>;
-export type VariableDeclaratorConfig = ConfigOf<VariableDeclarator>;
+export type VariableDeclaratorConfig =
+  | Pick<ConfigOf<VariableDeclarator>, 'name' | 'type' | 'value'>
+  | Pick<ConfigOf<VariableDeclarator>, 'name' | 'type'>
+;
 export type WhileStatementConfig = ConfigOf<WhileStatement>;
 export type WithStatementConfig = ConfigOf<WithStatement>;
 export type YieldExpressionConfig = ConfigOf<YieldExpression>;

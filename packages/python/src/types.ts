@@ -1015,7 +1015,10 @@ export type ParametersConfig = ConfigOf<Parameters>;
 export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
 export type ParenthesizedListSplatConfig = ConfigOf<ParenthesizedListSplat>;
 export type PatternListConfig = ConfigOf<PatternList>;
-export type PrintStatementConfig = ConfigOf<PrintStatement>;
+export type PrintStatementConfig =
+  | Pick<ConfigOf<PrintStatement>, 'argument' | 'chevron'>
+  | Pick<ConfigOf<PrintStatement>, 'argument'>
+;
 export type RaiseStatementConfig = ConfigOf<RaiseStatement>;
 export type RelativeImportConfig = ConfigOf<RelativeImport>;
 export type ReturnStatementConfig = ConfigOf<ReturnStatement>;
