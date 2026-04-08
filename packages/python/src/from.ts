@@ -7,111 +7,115 @@ import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';
 import { aliased_import_, argument_list_, as_pattern_, assert_statement_, assignment_, attribute_, augmented_assignment_, await_, binary_operator_, block_, boolean_operator_, break_statement_, call_, case_clause_, case_pattern_, chevron_, class_definition_, class_pattern_, comparison_operator_, complex_pattern_, concatenated_string_, conditional_expression_, constrained_type_, continue_statement_, decorated_definition_, decorator_, default_parameter_, delete_statement_, dict_pattern_, dictionary_, dictionary_comprehension_, dictionary_splat_, dictionary_splat_pattern_, dotted_name_, elif_clause_, ellipsis_, else_clause_, escape_interpolation_, escape_sequence_, except_clause_, exec_statement_, expression_list_, expression_statement_, false_, finally_clause_, float_, for_in_clause_, for_statement_, format_expression_, format_specifier_, function_definition_, future_import_statement_, generator_expression_, generic_type_, global_statement_, identifier_, if_clause_, if_statement_, import_from_statement_, import_prefix_, import_statement_, integer_, interpolation_, keyword_argument_, keyword_pattern_, keyword_separator_, lambda_, lambda_parameters_, list_, list_comprehension_, list_pattern_, list_splat_, list_splat_pattern_, match_statement_, member_type_, module_, named_expression_, none_, nonlocal_statement_, not_operator_, pair_, parameters_, parenthesized_expression_, parenthesized_list_splat_, pass_statement_, pattern_list_, positional_separator_, print_statement_, raise_statement_, relative_import_, return_statement_, set_, set_comprehension_, slice_, splat_pattern_, splat_type_, string_, string_content_, string_end_, string_start_, subscript_, true_, try_statement_, tuple_, tuple_pattern_, type_, type_alias_statement_, type_conversion_, type_parameter_, typed_default_parameter_, typed_parameter_, unary_operator_, union_pattern_, union_type_, while_statement_, wildcard_import_, with_clause_, with_item_, with_statement_, yield_ } from './factories.js';
 import type { AliasedImportFromInput, ArgumentListFromInput, AsPatternFromInput, AssertStatementFromInput, AssignmentFromInput, AttributeFromInput, AugmentedAssignmentFromInput, AwaitFromInput, BinaryOperatorFromInput, BlockFromInput, BooleanOperatorFromInput, CallFromInput, CaseClauseFromInput, CasePatternFromInput, ChevronFromInput, ClassDefinitionFromInput, ClassPatternFromInput, ComparisonOperatorFromInput, ComplexPatternFromInput, ConcatenatedStringFromInput, ConditionalExpressionFromInput, ConstrainedTypeFromInput, DecoratedDefinitionFromInput, DecoratorFromInput, DefaultParameterFromInput, DeleteStatementFromInput, DictPatternFromInput, DictionaryFromInput, DictionaryComprehensionFromInput, DictionarySplatFromInput, DictionarySplatPatternFromInput, DottedNameFromInput, ElifClauseFromInput, ElseClauseFromInput, ExceptClauseFromInput, ExecStatementFromInput, ExpressionListFromInput, ExpressionStatementFromInput, FinallyClauseFromInput, ForInClauseFromInput, ForStatementFromInput, FormatExpressionFromInput, FormatSpecifierFromInput, FunctionDefinitionFromInput, FutureImportStatementFromInput, GeneratorExpressionFromInput, GenericTypeFromInput, GlobalStatementFromInput, IfClauseFromInput, IfStatementFromInput, ImportFromStatementFromInput, ImportStatementFromInput, InterpolationFromInput, KeywordArgumentFromInput, KeywordPatternFromInput, LambdaFromInput, LambdaParametersFromInput, ListFromInput, ListComprehensionFromInput, ListPatternFromInput, ListSplatFromInput, ListSplatPatternFromInput, MatchStatementFromInput, MemberTypeFromInput, ModuleFromInput, NamedExpressionFromInput, NonlocalStatementFromInput, NotOperatorFromInput, PairFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, ParenthesizedListSplatFromInput, PatternListFromInput, PrintStatementFromInput, RaiseStatementFromInput, RelativeImportFromInput, ReturnStatementFromInput, SetFromInput, SetComprehensionFromInput, SliceFromInput, SplatPatternFromInput, SplatTypeFromInput, StringFromInput, StringContentFromInput, SubscriptFromInput, TryStatementFromInput, TupleFromInput, TuplePatternFromInput, TypeFromInput, TypeAliasStatementFromInput, TypeParameterFromInput, TypedDefaultParameterFromInput, TypedParameterFromInput, UnaryOperatorFromInput, UnionPatternFromInput, UnionTypeFromInput, WhileStatementFromInput, WithClauseFromInput, WithItemFromInput, WithStatementFromInput, YieldFromInput } from './types.js';
 
+/** @internal Map of kind string to .from() resolver function. */
+export const _fromMap: Record<string, (input: object) => unknown> = {
+  'aliased_import': aliasedImportFrom,
+  'argument_list': argumentListFrom,
+  'as_pattern': asPatternFrom,
+  'assert_statement': assertStatementFrom,
+  'assignment': assignmentFrom,
+  'attribute': attributeFrom,
+  'augmented_assignment': augmentedAssignmentFrom,
+  'await': await_From,
+  'binary_operator': binaryOperatorFrom,
+  'block': blockFrom,
+  'boolean_operator': booleanOperatorFrom,
+  'call': callFrom,
+  'case_clause': caseClauseFrom,
+  'case_pattern': casePatternFrom,
+  'chevron': chevronFrom,
+  'class_definition': classDefinitionFrom,
+  'class_pattern': classPatternFrom,
+  'comparison_operator': comparisonOperatorFrom,
+  'complex_pattern': complexPatternFrom,
+  'concatenated_string': concatenatedStringFrom,
+  'conditional_expression': conditionalExpressionFrom,
+  'constrained_type': constrainedTypeFrom,
+  'decorated_definition': decoratedDefinitionFrom,
+  'decorator': decoratorFrom,
+  'default_parameter': defaultParameterFrom,
+  'delete_statement': deleteStatementFrom,
+  'dict_pattern': dictPatternFrom,
+  'dictionary': dictionaryFrom,
+  'dictionary_comprehension': dictionaryComprehensionFrom,
+  'dictionary_splat': dictionarySplatFrom,
+  'dictionary_splat_pattern': dictionarySplatPatternFrom,
+  'dotted_name': dottedNameFrom,
+  'elif_clause': elifClauseFrom,
+  'else_clause': elseClauseFrom,
+  'except_clause': exceptClauseFrom,
+  'exec_statement': execStatementFrom,
+  'expression_list': expressionListFrom,
+  'expression_statement': expressionStatementFrom,
+  'finally_clause': finallyClauseFrom,
+  'for_in_clause': forInClauseFrom,
+  'for_statement': forStatementFrom,
+  'format_expression': formatExpressionFrom,
+  'format_specifier': formatSpecifierFrom,
+  'function_definition': functionDefinitionFrom,
+  'future_import_statement': futureImportStatementFrom,
+  'generator_expression': generatorExpressionFrom,
+  'generic_type': genericTypeFrom,
+  'global_statement': globalStatementFrom,
+  'if_clause': ifClauseFrom,
+  'if_statement': ifStatementFrom,
+  'import_from_statement': importFromStatementFrom,
+  'import_statement': importStatementFrom,
+  'interpolation': interpolationFrom,
+  'keyword_argument': keywordArgumentFrom,
+  'keyword_pattern': keywordPatternFrom,
+  'lambda': lambdaFrom,
+  'lambda_parameters': lambdaParametersFrom,
+  'list': listFrom,
+  'list_comprehension': listComprehensionFrom,
+  'list_pattern': listPatternFrom,
+  'list_splat': listSplatFrom,
+  'list_splat_pattern': listSplatPatternFrom,
+  'match_statement': matchStatementFrom,
+  'member_type': memberTypeFrom,
+  'module': moduleFrom,
+  'named_expression': namedExpressionFrom,
+  'nonlocal_statement': nonlocalStatementFrom,
+  'not_operator': notOperatorFrom,
+  'pair': pairFrom,
+  'parameters': parametersFrom,
+  'parenthesized_expression': parenthesizedExpressionFrom,
+  'parenthesized_list_splat': parenthesizedListSplatFrom,
+  'pattern_list': patternListFrom,
+  'print_statement': printStatementFrom,
+  'raise_statement': raiseStatementFrom,
+  'relative_import': relativeImportFrom,
+  'return_statement': returnStatementFrom,
+  'set': setFrom,
+  'set_comprehension': setComprehensionFrom,
+  'slice': sliceFrom,
+  'splat_pattern': splatPatternFrom,
+  'splat_type': splatTypeFrom,
+  'string': stringFrom,
+  'string_content': stringContentFrom,
+  'subscript': subscriptFrom,
+  'try_statement': tryStatementFrom,
+  'tuple': tupleFrom,
+  'tuple_pattern': tuplePatternFrom,
+  'type': type_From,
+  'type_alias_statement': typeAliasStatementFrom,
+  'type_parameter': typeParameterFrom,
+  'typed_default_parameter': typedDefaultParameterFrom,
+  'typed_parameter': typedParameterFrom,
+  'unary_operator': unaryOperatorFrom,
+  'union_pattern': unionPatternFrom,
+  'union_type': unionTypeFrom,
+  'while_statement': whileStatementFrom,
+  'with_clause': withClauseFrom,
+  'with_item': withItemFrom,
+  'with_statement': withStatementFrom,
+  'yield': yield_From,
+};
+
 function _resolveByKind(kind: string, rest: object): unknown {
-  switch (kind) {
-    case 'aliased_import': return aliasedImportFrom(rest);
-    case 'argument_list': return argumentListFrom(rest);
-    case 'as_pattern': return asPatternFrom(rest);
-    case 'assert_statement': return assertStatementFrom(rest);
-    case 'assignment': return assignmentFrom(rest);
-    case 'attribute': return attributeFrom(rest);
-    case 'augmented_assignment': return augmentedAssignmentFrom(rest);
-    case 'await': return await_From(rest);
-    case 'binary_operator': return binaryOperatorFrom(rest);
-    case 'block': return blockFrom(rest);
-    case 'boolean_operator': return booleanOperatorFrom(rest);
-    case 'call': return callFrom(rest);
-    case 'case_clause': return caseClauseFrom(rest);
-    case 'case_pattern': return casePatternFrom(rest);
-    case 'chevron': return chevronFrom(rest);
-    case 'class_definition': return classDefinitionFrom(rest);
-    case 'class_pattern': return classPatternFrom(rest);
-    case 'comparison_operator': return comparisonOperatorFrom(rest);
-    case 'complex_pattern': return complexPatternFrom(rest);
-    case 'concatenated_string': return concatenatedStringFrom(rest);
-    case 'conditional_expression': return conditionalExpressionFrom(rest);
-    case 'constrained_type': return constrainedTypeFrom(rest);
-    case 'decorated_definition': return decoratedDefinitionFrom(rest);
-    case 'decorator': return decoratorFrom(rest);
-    case 'default_parameter': return defaultParameterFrom(rest);
-    case 'delete_statement': return deleteStatementFrom(rest);
-    case 'dict_pattern': return dictPatternFrom(rest);
-    case 'dictionary': return dictionaryFrom(rest);
-    case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
-    case 'dictionary_splat': return dictionarySplatFrom(rest);
-    case 'dictionary_splat_pattern': return dictionarySplatPatternFrom(rest);
-    case 'dotted_name': return dottedNameFrom(rest);
-    case 'elif_clause': return elifClauseFrom(rest);
-    case 'else_clause': return elseClauseFrom(rest);
-    case 'except_clause': return exceptClauseFrom(rest);
-    case 'exec_statement': return execStatementFrom(rest);
-    case 'expression_list': return expressionListFrom(rest);
-    case 'expression_statement': return expressionStatementFrom(rest);
-    case 'finally_clause': return finallyClauseFrom(rest);
-    case 'for_in_clause': return forInClauseFrom(rest);
-    case 'for_statement': return forStatementFrom(rest);
-    case 'format_expression': return formatExpressionFrom(rest);
-    case 'format_specifier': return formatSpecifierFrom(rest);
-    case 'function_definition': return functionDefinitionFrom(rest);
-    case 'future_import_statement': return futureImportStatementFrom(rest);
-    case 'generator_expression': return generatorExpressionFrom(rest);
-    case 'generic_type': return genericTypeFrom(rest);
-    case 'global_statement': return globalStatementFrom(rest);
-    case 'if_clause': return ifClauseFrom(rest);
-    case 'if_statement': return ifStatementFrom(rest);
-    case 'import_from_statement': return importFromStatementFrom(rest);
-    case 'import_statement': return importStatementFrom(rest);
-    case 'interpolation': return interpolationFrom(rest);
-    case 'keyword_argument': return keywordArgumentFrom(rest);
-    case 'keyword_pattern': return keywordPatternFrom(rest);
-    case 'lambda': return lambdaFrom(rest);
-    case 'lambda_parameters': return lambdaParametersFrom(rest);
-    case 'list': return listFrom(rest);
-    case 'list_comprehension': return listComprehensionFrom(rest);
-    case 'list_pattern': return listPatternFrom(rest);
-    case 'list_splat': return listSplatFrom(rest);
-    case 'list_splat_pattern': return listSplatPatternFrom(rest);
-    case 'match_statement': return matchStatementFrom(rest);
-    case 'member_type': return memberTypeFrom(rest);
-    case 'module': return moduleFrom(rest);
-    case 'named_expression': return namedExpressionFrom(rest);
-    case 'nonlocal_statement': return nonlocalStatementFrom(rest);
-    case 'not_operator': return notOperatorFrom(rest);
-    case 'pair': return pairFrom(rest);
-    case 'parameters': return parametersFrom(rest);
-    case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-    case 'parenthesized_list_splat': return parenthesizedListSplatFrom(rest);
-    case 'pattern_list': return patternListFrom(rest);
-    case 'print_statement': return printStatementFrom(rest);
-    case 'raise_statement': return raiseStatementFrom(rest);
-    case 'relative_import': return relativeImportFrom(rest);
-    case 'return_statement': return returnStatementFrom(rest);
-    case 'set': return setFrom(rest);
-    case 'set_comprehension': return setComprehensionFrom(rest);
-    case 'slice': return sliceFrom(rest);
-    case 'splat_pattern': return splatPatternFrom(rest);
-    case 'splat_type': return splatTypeFrom(rest);
-    case 'string': return stringFrom(rest);
-    case 'string_content': return stringContentFrom(rest);
-    case 'subscript': return subscriptFrom(rest);
-    case 'try_statement': return tryStatementFrom(rest);
-    case 'tuple': return tupleFrom(rest);
-    case 'tuple_pattern': return tuplePatternFrom(rest);
-    case 'type': return type_From(rest);
-    case 'type_alias_statement': return typeAliasStatementFrom(rest);
-    case 'type_parameter': return typeParameterFrom(rest);
-    case 'typed_default_parameter': return typedDefaultParameterFrom(rest);
-    case 'typed_parameter': return typedParameterFrom(rest);
-    case 'unary_operator': return unaryOperatorFrom(rest);
-    case 'union_pattern': return unionPatternFrom(rest);
-    case 'union_type': return unionTypeFrom(rest);
-    case 'while_statement': return whileStatementFrom(rest);
-    case 'with_clause': return withClauseFrom(rest);
-    case 'with_item': return withItemFrom(rest);
-    case 'with_statement': return withStatementFrom(rest);
-    case 'yield': return yield_From(rest);
-    default: throw new Error(`Unknown kind for .from(): '${kind}'`);
-  }
+  const fn = _fromMap[kind];
+  if (fn) return fn(rest);
+  throw new Error(`Unknown kind for .from(): '${kind}'`);
 }
 
 function _resolveCompoundStatement(v: unknown): unknown {
@@ -123,17 +127,6 @@ function _resolveCompoundStatement(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'class_definition': return classDefinitionFrom(rest);
-        case 'decorated_definition': return decoratedDefinitionFrom(rest);
-        case 'for_statement': return forStatementFrom(rest);
-        case 'function_definition': return functionDefinitionFrom(rest);
-        case 'if_statement': return ifStatementFrom(rest);
-        case 'match_statement': return matchStatementFrom(rest);
-        case 'try_statement': return tryStatementFrom(rest);
-        case 'while_statement': return whileStatementFrom(rest);
-        case 'with_statement': return withStatementFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["class_definition","decorated_definition","for_statement","function_definition","if_statement","match_statement","try_statement","while_statement","with_statement"]);
@@ -155,21 +148,6 @@ function _resolveSimpleStatement(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'assert_statement': return assertStatementFrom(rest);
-        case 'delete_statement': return deleteStatementFrom(rest);
-        case 'exec_statement': return execStatementFrom(rest);
-        case 'expression_statement': return expressionStatementFrom(rest);
-        case 'future_import_statement': return futureImportStatementFrom(rest);
-        case 'global_statement': return globalStatementFrom(rest);
-        case 'import_from_statement': return importFromStatementFrom(rest);
-        case 'import_statement': return importStatementFrom(rest);
-        case 'nonlocal_statement': return nonlocalStatementFrom(rest);
-        case 'print_statement': return printStatementFrom(rest);
-        case 'raise_statement': return raiseStatementFrom(rest);
-        case 'return_statement': return returnStatementFrom(rest);
-        case 'type_alias_statement': return typeAliasStatementFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["assert_statement","delete_statement","exec_statement","expression_statement","future_import_statement","global_statement","import_from_statement","import_statement","nonlocal_statement","print_statement","raise_statement","return_statement","type_alias_statement"]);
@@ -194,26 +172,6 @@ function _resolvePrimaryExpression(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute': return attributeFrom(rest);
-        case 'await': return await_From(rest);
-        case 'binary_operator': return binaryOperatorFrom(rest);
-        case 'call': return callFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'dictionary': return dictionaryFrom(rest);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
-        case 'generator_expression': return generatorExpressionFrom(rest);
-        case 'list': return listFrom(rest);
-        case 'list_comprehension': return listComprehensionFrom(rest);
-        case 'list_splat': return listSplatFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'set': return setFrom(rest);
-        case 'set_comprehension': return setComprehensionFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-        case 'tuple': return tupleFrom(rest);
-        case 'unary_operator': return unaryOperatorFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -238,33 +196,6 @@ function _resolveExpression(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'as_pattern': return asPatternFrom(rest);
-        case 'attribute': return attributeFrom(rest);
-        case 'await': return await_From(rest);
-        case 'binary_operator': return binaryOperatorFrom(rest);
-        case 'boolean_operator': return booleanOperatorFrom(rest);
-        case 'call': return callFrom(rest);
-        case 'comparison_operator': return comparisonOperatorFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'conditional_expression': return conditionalExpressionFrom(rest);
-        case 'dictionary': return dictionaryFrom(rest);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
-        case 'generator_expression': return generatorExpressionFrom(rest);
-        case 'lambda': return lambdaFrom(rest);
-        case 'list': return listFrom(rest);
-        case 'list_comprehension': return listComprehensionFrom(rest);
-        case 'list_splat': return listSplatFrom(rest);
-        case 'named_expression': return namedExpressionFrom(rest);
-        case 'not_operator': return notOperatorFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'set': return setFrom(rest);
-        case 'set_comprehension': return setComprehensionFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-        case 'tuple': return tupleFrom(rest);
-        case 'unary_operator': return unaryOperatorFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","generator_expression","lambda","list","list_comprehension","list_splat","named_expression","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -285,14 +216,6 @@ function _resolveParameter(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'default_parameter': return defaultParameterFrom(rest);
-        case 'dictionary_splat_pattern': return dictionarySplatPatternFrom(rest);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-        case 'typed_default_parameter': return typedDefaultParameterFrom(rest);
-        case 'typed_parameter': return typedParameterFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["default_parameter","dictionary_splat_pattern","list_splat_pattern","tuple_pattern","typed_default_parameter","typed_parameter"]);
@@ -311,13 +234,6 @@ function _resolvePattern(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute': return attributeFrom(rest);
-        case 'list_pattern': return listPatternFrom(rest);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute","list_pattern","list_splat_pattern","subscript","tuple_pattern"]);
@@ -341,18 +257,6 @@ function _resolveSimplePattern(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'class_pattern': return classPatternFrom(rest);
-        case 'complex_pattern': return complexPatternFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'dict_pattern': return dictPatternFrom(rest);
-        case 'dotted_name': return dottedNameFrom(rest);
-        case 'list_pattern': return listPatternFrom(rest);
-        case 'splat_pattern': return splatPatternFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-        case 'union_pattern': return unionPatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);
@@ -371,9 +275,6 @@ function _resolveComprehensionClauses(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'for_in_clause': return forInClauseFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     return forInClauseFrom(v);
@@ -390,9 +291,6 @@ function _resolveSuite(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'block': return blockFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     return blockFrom(v);
@@ -415,34 +313,6 @@ function _resolveExpressions(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'as_pattern': return asPatternFrom(rest);
-        case 'attribute': return attributeFrom(rest);
-        case 'await': return await_From(rest);
-        case 'binary_operator': return binaryOperatorFrom(rest);
-        case 'boolean_operator': return booleanOperatorFrom(rest);
-        case 'call': return callFrom(rest);
-        case 'comparison_operator': return comparisonOperatorFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'conditional_expression': return conditionalExpressionFrom(rest);
-        case 'dictionary': return dictionaryFrom(rest);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
-        case 'expression_list': return expressionListFrom(rest);
-        case 'generator_expression': return generatorExpressionFrom(rest);
-        case 'lambda': return lambdaFrom(rest);
-        case 'list': return listFrom(rest);
-        case 'list_comprehension': return listComprehensionFrom(rest);
-        case 'list_splat': return listSplatFrom(rest);
-        case 'named_expression': return namedExpressionFrom(rest);
-        case 'not_operator': return notOperatorFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'set': return setFrom(rest);
-        case 'set_comprehension': return setComprehensionFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-        case 'tuple': return tupleFrom(rest);
-        case 'unary_operator': return unaryOperatorFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","expression_list","generator_expression","lambda","list","list_comprehension","list_splat","named_expression","not_operator","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -461,14 +331,6 @@ function _resolveLeftHandSide(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute': return attributeFrom(rest);
-        case 'list_pattern': return listPatternFrom(rest);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest);
-        case 'pattern_list': return patternListFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute","list_pattern","list_splat_pattern","pattern_list","subscript","tuple_pattern"]);
@@ -493,38 +355,6 @@ function _resolveRightHandSide(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'as_pattern': return asPatternFrom(rest);
-        case 'assignment': return assignmentFrom(rest);
-        case 'attribute': return attributeFrom(rest);
-        case 'augmented_assignment': return augmentedAssignmentFrom(rest);
-        case 'await': return await_From(rest);
-        case 'binary_operator': return binaryOperatorFrom(rest);
-        case 'boolean_operator': return booleanOperatorFrom(rest);
-        case 'call': return callFrom(rest);
-        case 'comparison_operator': return comparisonOperatorFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'conditional_expression': return conditionalExpressionFrom(rest);
-        case 'dictionary': return dictionaryFrom(rest);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
-        case 'expression_list': return expressionListFrom(rest);
-        case 'generator_expression': return generatorExpressionFrom(rest);
-        case 'lambda': return lambdaFrom(rest);
-        case 'list': return listFrom(rest);
-        case 'list_comprehension': return listComprehensionFrom(rest);
-        case 'list_splat': return listSplatFrom(rest);
-        case 'named_expression': return namedExpressionFrom(rest);
-        case 'not_operator': return notOperatorFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'pattern_list': return patternListFrom(rest);
-        case 'set': return setFrom(rest);
-        case 'set_comprehension': return setComprehensionFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-        case 'tuple': return tupleFrom(rest);
-        case 'unary_operator': return unaryOperatorFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["as_pattern","assignment","attribute","augmented_assignment","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","expression_list","generator_expression","lambda","list","list_comprehension","list_splat","named_expression","not_operator","parenthesized_expression","pattern_list","set","set_comprehension","string","subscript","tuple","unary_operator","yield"]);
@@ -549,36 +379,6 @@ function _resolveFExpression(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'as_pattern': return asPatternFrom(rest);
-        case 'attribute': return attributeFrom(rest);
-        case 'await': return await_From(rest);
-        case 'binary_operator': return binaryOperatorFrom(rest);
-        case 'boolean_operator': return booleanOperatorFrom(rest);
-        case 'call': return callFrom(rest);
-        case 'comparison_operator': return comparisonOperatorFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'conditional_expression': return conditionalExpressionFrom(rest);
-        case 'dictionary': return dictionaryFrom(rest);
-        case 'dictionary_comprehension': return dictionaryComprehensionFrom(rest);
-        case 'expression_list': return expressionListFrom(rest);
-        case 'generator_expression': return generatorExpressionFrom(rest);
-        case 'lambda': return lambdaFrom(rest);
-        case 'list': return listFrom(rest);
-        case 'list_comprehension': return listComprehensionFrom(rest);
-        case 'list_splat': return listSplatFrom(rest);
-        case 'named_expression': return namedExpressionFrom(rest);
-        case 'not_operator': return notOperatorFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'pattern_list': return patternListFrom(rest);
-        case 'set': return setFrom(rest);
-        case 'set_comprehension': return setComprehensionFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-        case 'tuple': return tupleFrom(rest);
-        case 'unary_operator': return unaryOperatorFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["as_pattern","attribute","await","binary_operator","boolean_operator","call","comparison_operator","concatenated_string","conditional_expression","dictionary","dictionary_comprehension","expression_list","generator_expression","lambda","list","list_comprehension","list_splat","named_expression","not_operator","parenthesized_expression","pattern_list","set","set_comprehension","string","subscript","tuple","unary_operator","yield"]);
@@ -612,12 +412,6 @@ function _rkthp94(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'dictionary_splat': return dictionarySplatFrom(rest);
-        case 'keyword_argument': return keywordArgumentFrom(rest);
-        case 'list_splat': return listSplatFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["dictionary_splat","keyword_argument","list_splat","parenthesized_expression","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -651,9 +445,6 @@ function _rb6s74c(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'case_pattern': return casePatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["case_pattern","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -672,9 +463,6 @@ function _r8t0lsb(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'pattern_list': return patternListFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["pattern_list","attribute","list_pattern","list_splat_pattern","subscript","tuple_pattern"]);
@@ -693,13 +481,6 @@ function _r49ezd9(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'assignment': return assignmentFrom(rest);
-        case 'augmented_assignment': return augmentedAssignmentFrom(rest);
-        case 'expression_list': return expressionListFrom(rest);
-        case 'pattern_list': return patternListFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["assignment","augmented_assignment","expression_list","pattern_list","yield","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -784,10 +565,6 @@ function _rgmxmo(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'argument_list': return argumentListFrom(rest);
-        case 'generator_expression': return generatorExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["argument_list","generator_expression"]);
@@ -806,9 +583,6 @@ function _r10v9xtg(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'block': return blockFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["block"]);
@@ -832,20 +606,6 @@ function _r4s6aba(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'as_pattern': return asPatternFrom(rest);
-        case 'class_pattern': return classPatternFrom(rest);
-        case 'complex_pattern': return complexPatternFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'dict_pattern': return dictPatternFrom(rest);
-        case 'dotted_name': return dottedNameFrom(rest);
-        case 'keyword_pattern': return keywordPatternFrom(rest);
-        case 'list_pattern': return listPatternFrom(rest);
-        case 'splat_pattern': return splatPatternFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-        case 'union_pattern': return unionPatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["as_pattern","class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","keyword_pattern","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);
@@ -897,10 +657,6 @@ function _rdlbv6g(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'class_definition': return classDefinitionFrom(rest);
-        case 'function_definition': return functionDefinitionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["class_definition","function_definition"]);
@@ -919,9 +675,6 @@ function _r17ic1ai(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     return tuplePatternFrom(v);
@@ -938,9 +691,6 @@ function _ra9cmgr(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'expression_list': return expressionListFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["expression_list","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -959,10 +709,6 @@ function _rr1mjap(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'dictionary_splat': return dictionarySplatFrom(rest);
-        case 'pair': return pairFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["dictionary_splat","pair"]);
@@ -981,10 +727,6 @@ function _rxj908(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'for_in_clause': return forInClauseFrom(rest);
-        case 'if_clause': return ifClauseFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["for_in_clause","if_clause"]);
@@ -1003,10 +745,6 @@ function _r1odq136(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute': return attributeFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute","subscript"]);
@@ -1025,9 +763,6 @@ function _rq3krei(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'string': return stringFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     return stringFrom(v);
@@ -1044,11 +779,6 @@ function _rldymh6(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'assignment': return assignmentFrom(rest);
-        case 'augmented_assignment': return augmentedAssignmentFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["assignment","augmented_assignment","yield","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1086,9 +816,6 @@ function _r1tj7jk9(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'expression_list': return expressionListFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["expression_list","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1107,11 +834,6 @@ function _r130w83n(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'expression_list': return expressionListFrom(rest);
-        case 'pattern_list': return patternListFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["expression_list","pattern_list","yield","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1130,10 +852,6 @@ function _r144bmot(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'aliased_import': return aliasedImportFrom(rest);
-        case 'dotted_name': return dottedNameFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["aliased_import","dotted_name"]);
@@ -1152,10 +870,6 @@ function _rjyu65p(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'elif_clause': return elifClauseFrom(rest);
-        case 'else_clause': return elseClauseFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["elif_clause","else_clause"]);
@@ -1174,10 +888,6 @@ function _rrq3952(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'dotted_name': return dottedNameFrom(rest);
-        case 'relative_import': return relativeImportFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["dotted_name","relative_import"]);
@@ -1196,11 +906,6 @@ function _r2m155v(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'expression_list': return expressionListFrom(rest);
-        case 'pattern_list': return patternListFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["expression_list","pattern_list","yield","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1224,18 +929,6 @@ function _rk9rdv8(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'class_pattern': return classPatternFrom(rest);
-        case 'complex_pattern': return complexPatternFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'dict_pattern': return dictPatternFrom(rest);
-        case 'dotted_name': return dottedNameFrom(rest);
-        case 'list_pattern': return listPatternFrom(rest);
-        case 'splat_pattern': return splatPatternFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-        case 'union_pattern': return unionPatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);
@@ -1259,18 +952,6 @@ function _r1g8zebv(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'class_pattern': return classPatternFrom(rest);
-        case 'complex_pattern': return complexPatternFrom(rest);
-        case 'concatenated_string': return concatenatedStringFrom(rest);
-        case 'dict_pattern': return dictPatternFrom(rest);
-        case 'dotted_name': return dottedNameFrom(rest);
-        case 'list_pattern': return listPatternFrom(rest);
-        case 'splat_pattern': return splatPatternFrom(rest);
-        case 'string': return stringFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-        case 'union_pattern': return unionPatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["class_pattern","complex_pattern","concatenated_string","dict_pattern","dotted_name","list_pattern","splat_pattern","string","tuple_pattern","union_pattern"]);
@@ -1289,11 +970,6 @@ function _rtx2b9u(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'list_splat': return listSplatFrom(rest);
-        case 'parenthesized_list_splat': return parenthesizedListSplatFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["list_splat","parenthesized_list_splat","yield","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1312,9 +988,6 @@ function _rc9xpef(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'case_pattern': return casePatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["case_pattern","attribute","list_pattern","list_splat_pattern","subscript","tuple_pattern"]);
@@ -1333,10 +1006,6 @@ function _r11t6afm(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute': return attributeFrom(rest);
-        case 'subscript': return subscriptFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute","subscript","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","tuple","unary_operator"]);
@@ -1371,11 +1040,6 @@ function _rs19yyr(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'list_splat': return listSplatFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'yield': return yield_From(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["list_splat","parenthesized_expression","yield","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1394,10 +1058,6 @@ function _rqjjrtc(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'list_splat': return listSplatFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["list_splat","parenthesized_expression"]);
@@ -1416,10 +1076,6 @@ function _r2im5d1(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'interpolation': return interpolationFrom(rest);
-        case 'string_content': return stringContentFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["interpolation","string_content"]);
@@ -1454,9 +1110,6 @@ function _r1s4dtcw(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'slice': return sliceFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["slice","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1475,13 +1128,6 @@ function _rsof3up(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'constrained_type': return constrainedTypeFrom(rest);
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'member_type': return memberTypeFrom(rest);
-        case 'splat_type': return splatTypeFrom(rest);
-        case 'union_type': return unionTypeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["constrained_type","generic_type","member_type","splat_type","union_type","as_pattern","boolean_operator","comparison_operator","conditional_expression","lambda","named_expression","not_operator","attribute","await","binary_operator","call","concatenated_string","dictionary","dictionary_comprehension","generator_expression","list","list_comprehension","list_splat","parenthesized_expression","set","set_comprehension","string","subscript","tuple","unary_operator"]);
@@ -1500,10 +1146,6 @@ function _r10r1qu9(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'dictionary_splat_pattern': return dictionarySplatPatternFrom(rest);
-        case 'list_splat_pattern': return listSplatPatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["dictionary_splat_pattern","list_splat_pattern"]);

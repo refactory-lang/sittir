@@ -7,147 +7,151 @@ import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';
 import { abstract_type_, arguments_, array_expression_, array_type_, assignment_expression_, associated_type_, async_block_, attribute_, attribute_item_, await_expression_, base_field_initializer_, binary_expression_, block_, block_comment_, boolean_literal_, bounded_type_, bracketed_type_, break_expression_, call_expression_, captured_pattern_, char_literal_, closure_expression_, closure_parameters_, compound_assignment_expr_, const_block_, const_item_, const_parameter_, continue_expression_, crate_, declaration_list_, doc_comment_, dynamic_type_, else_clause_, empty_statement_, enum_item_, enum_variant_, enum_variant_list_, escape_sequence_, expression_statement_, extern_crate_declaration_, extern_modifier_, field_declaration_, field_declaration_list_, field_expression_, field_identifier_, field_initializer_, field_initializer_list_, field_pattern_, float_literal_, for_expression_, for_lifetimes_, foreign_mod_item_, fragment_specifier_, function_item_, function_modifiers_, function_signature_item_, function_type_, gen_block_, generic_function_, generic_pattern_, generic_type_, generic_type_with_turbofish_, higher_ranked_trait_bound_, identifier_, if_expression_, impl_item_, index_expression_, inner_attribute_item_, inner_doc_comment_marker_, integer_literal_, label_, let_chain_, let_condition_, let_declaration_, lifetime_, lifetime_parameter_, line_comment_, loop_expression_, macro_definition_, macro_invocation_, macro_rule_, match_arm_, match_block_, match_expression_, match_pattern_, metavariable_, mod_item_, mut_pattern_, mutable_specifier_, negative_literal_, never_type_, or_pattern_, ordered_field_declaration_list_, outer_doc_comment_marker_, parameter_, parameters_, parenthesized_expression_, pointer_type_, primitive_type_, qualified_type_, range_expression_, range_pattern_, raw_string_literal_, ref_pattern_, reference_expression_, reference_pattern_, reference_type_, remaining_field_pattern_, removed_trait_bound_, return_expression_, scoped_identifier_, scoped_type_identifier_, scoped_use_list_, self_, self_parameter_, shebang_, shorthand_field_identifier_, shorthand_field_initializer_, slice_pattern_, source_file_, static_item_, string_content_, string_literal_, struct_expression_, struct_item_, struct_pattern_, super_, token_binding_pattern_, token_repetition_, token_repetition_pattern_, token_tree_, token_tree_pattern_, trait_bounds_, trait_item_, try_block_, try_expression_, tuple_expression_, tuple_pattern_, tuple_struct_pattern_, tuple_type_, type_arguments_, type_binding_, type_cast_expression_, type_identifier_, type_item_, type_parameter_, type_parameters_, unary_expression_, union_item_, unit_expression_, unit_type_, unsafe_block_, use_as_clause_, use_bounds_, use_declaration_, use_list_, use_wildcard_, variadic_parameter_, visibility_modifier_, where_clause_, where_predicate_, while_expression_, yield_expression_ } from './factories.js';
 import type { AbstractTypeFromInput, ArgumentsFromInput, ArrayExpressionFromInput, ArrayTypeFromInput, AssignmentExpressionFromInput, AssociatedTypeFromInput, AsyncBlockFromInput, AttributeFromInput, AttributeItemFromInput, AwaitExpressionFromInput, BaseFieldInitializerFromInput, BinaryExpressionFromInput, BlockFromInput, BlockCommentFromInput, BoundedTypeFromInput, BracketedTypeFromInput, BreakExpressionFromInput, CallExpressionFromInput, CapturedPatternFromInput, ClosureExpressionFromInput, ClosureParametersFromInput, CompoundAssignmentExprFromInput, ConstBlockFromInput, ConstItemFromInput, ConstParameterFromInput, ContinueExpressionFromInput, DeclarationListFromInput, DynamicTypeFromInput, ElseClauseFromInput, EnumItemFromInput, EnumVariantFromInput, EnumVariantListFromInput, ExpressionStatementFromInput, ExternCrateDeclarationFromInput, ExternModifierFromInput, FieldDeclarationFromInput, FieldDeclarationListFromInput, FieldExpressionFromInput, FieldInitializerFromInput, FieldInitializerListFromInput, FieldPatternFromInput, ForExpressionFromInput, ForLifetimesFromInput, ForeignModItemFromInput, FunctionItemFromInput, FunctionModifiersFromInput, FunctionSignatureItemFromInput, FunctionTypeFromInput, GenBlockFromInput, GenericFunctionFromInput, GenericPatternFromInput, GenericTypeFromInput, GenericTypeWithTurbofishFromInput, HigherRankedTraitBoundFromInput, IfExpressionFromInput, ImplItemFromInput, IndexExpressionFromInput, InnerAttributeItemFromInput, LabelFromInput, LetChainFromInput, LetConditionFromInput, LetDeclarationFromInput, LifetimeFromInput, LifetimeParameterFromInput, LineCommentFromInput, LoopExpressionFromInput, MacroDefinitionFromInput, MacroInvocationFromInput, MacroRuleFromInput, MatchArmFromInput, MatchBlockFromInput, MatchExpressionFromInput, MatchPatternFromInput, ModItemFromInput, MutPatternFromInput, NegativeLiteralFromInput, OrPatternFromInput, OrderedFieldDeclarationListFromInput, ParameterFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, PointerTypeFromInput, QualifiedTypeFromInput, RangeExpressionFromInput, RangePatternFromInput, RawStringLiteralFromInput, RefPatternFromInput, ReferenceExpressionFromInput, ReferencePatternFromInput, ReferenceTypeFromInput, RemovedTraitBoundFromInput, ReturnExpressionFromInput, ScopedIdentifierFromInput, ScopedTypeIdentifierFromInput, ScopedUseListFromInput, SelfParameterFromInput, ShorthandFieldInitializerFromInput, SlicePatternFromInput, SourceFileFromInput, StaticItemFromInput, StringLiteralFromInput, StructExpressionFromInput, StructItemFromInput, StructPatternFromInput, TokenBindingPatternFromInput, TokenRepetitionFromInput, TokenRepetitionPatternFromInput, TokenTreeFromInput, TokenTreePatternFromInput, TraitBoundsFromInput, TraitItemFromInput, TryBlockFromInput, TryExpressionFromInput, TupleExpressionFromInput, TuplePatternFromInput, TupleStructPatternFromInput, TupleTypeFromInput, TypeArgumentsFromInput, TypeBindingFromInput, TypeCastExpressionFromInput, TypeItemFromInput, TypeParameterFromInput, TypeParametersFromInput, UnaryExpressionFromInput, UnionItemFromInput, UnsafeBlockFromInput, UseAsClauseFromInput, UseBoundsFromInput, UseDeclarationFromInput, UseListFromInput, UseWildcardFromInput, VariadicParameterFromInput, VisibilityModifierFromInput, WhereClauseFromInput, WherePredicateFromInput, WhileExpressionFromInput, YieldExpressionFromInput } from './types.js';
 
+/** @internal Map of kind string to .from() resolver function. */
+export const _fromMap: Record<string, (input: object) => unknown> = {
+  'abstract_type': abstractTypeFrom,
+  'arguments': arguments_From,
+  'array_expression': arrayExpressionFrom,
+  'array_type': arrayTypeFrom,
+  'assignment_expression': assignmentExpressionFrom,
+  'associated_type': associatedTypeFrom,
+  'async_block': asyncBlockFrom,
+  'attribute': attributeFrom,
+  'attribute_item': attributeItemFrom,
+  'await_expression': awaitExpressionFrom,
+  'base_field_initializer': baseFieldInitializerFrom,
+  'binary_expression': binaryExpressionFrom,
+  'block': blockFrom,
+  'block_comment': blockCommentFrom,
+  'bounded_type': boundedTypeFrom,
+  'bracketed_type': bracketedTypeFrom,
+  'break_expression': breakExpressionFrom,
+  'call_expression': callExpressionFrom,
+  'captured_pattern': capturedPatternFrom,
+  'closure_expression': closureExpressionFrom,
+  'closure_parameters': closureParametersFrom,
+  'compound_assignment_expr': compoundAssignmentExprFrom,
+  'const_block': constBlockFrom,
+  'const_item': constItemFrom,
+  'const_parameter': constParameterFrom,
+  'continue_expression': continueExpressionFrom,
+  'declaration_list': declarationListFrom,
+  'dynamic_type': dynamicTypeFrom,
+  'else_clause': elseClauseFrom,
+  'enum_item': enumItemFrom,
+  'enum_variant': enumVariantFrom,
+  'enum_variant_list': enumVariantListFrom,
+  'expression_statement': expressionStatementFrom,
+  'extern_crate_declaration': externCrateDeclarationFrom,
+  'extern_modifier': externModifierFrom,
+  'field_declaration': fieldDeclarationFrom,
+  'field_declaration_list': fieldDeclarationListFrom,
+  'field_expression': fieldExpressionFrom,
+  'field_initializer': fieldInitializerFrom,
+  'field_initializer_list': fieldInitializerListFrom,
+  'field_pattern': fieldPatternFrom,
+  'for_expression': forExpressionFrom,
+  'for_lifetimes': forLifetimesFrom,
+  'foreign_mod_item': foreignModItemFrom,
+  'function_item': functionItemFrom,
+  'function_modifiers': functionModifiersFrom,
+  'function_signature_item': functionSignatureItemFrom,
+  'function_type': functionTypeFrom,
+  'gen_block': genBlockFrom,
+  'generic_function': genericFunctionFrom,
+  'generic_pattern': genericPatternFrom,
+  'generic_type': genericTypeFrom,
+  'generic_type_with_turbofish': genericTypeWithTurbofishFrom,
+  'higher_ranked_trait_bound': higherRankedTraitBoundFrom,
+  'if_expression': ifExpressionFrom,
+  'impl_item': implItemFrom,
+  'index_expression': indexExpressionFrom,
+  'inner_attribute_item': innerAttributeItemFrom,
+  'label': labelFrom,
+  'let_chain': letChainFrom,
+  'let_condition': letConditionFrom,
+  'let_declaration': letDeclarationFrom,
+  'lifetime': lifetimeFrom,
+  'lifetime_parameter': lifetimeParameterFrom,
+  'line_comment': lineCommentFrom,
+  'loop_expression': loopExpressionFrom,
+  'macro_definition': macroDefinitionFrom,
+  'macro_invocation': macroInvocationFrom,
+  'macro_rule': macroRuleFrom,
+  'match_arm': matchArmFrom,
+  'match_block': matchBlockFrom,
+  'match_expression': matchExpressionFrom,
+  'match_pattern': matchPatternFrom,
+  'mod_item': modItemFrom,
+  'mut_pattern': mutPatternFrom,
+  'negative_literal': negativeLiteralFrom,
+  'or_pattern': orPatternFrom,
+  'ordered_field_declaration_list': orderedFieldDeclarationListFrom,
+  'parameter': parameterFrom,
+  'parameters': parametersFrom,
+  'parenthesized_expression': parenthesizedExpressionFrom,
+  'pointer_type': pointerTypeFrom,
+  'qualified_type': qualifiedTypeFrom,
+  'range_expression': rangeExpressionFrom,
+  'range_pattern': rangePatternFrom,
+  'raw_string_literal': rawStringLiteralFrom,
+  'ref_pattern': refPatternFrom,
+  'reference_expression': referenceExpressionFrom,
+  'reference_pattern': referencePatternFrom,
+  'reference_type': referenceTypeFrom,
+  'removed_trait_bound': removedTraitBoundFrom,
+  'return_expression': returnExpressionFrom,
+  'scoped_identifier': scopedIdentifierFrom,
+  'scoped_type_identifier': scopedTypeIdentifierFrom,
+  'scoped_use_list': scopedUseListFrom,
+  'self_parameter': selfParameterFrom,
+  'shorthand_field_initializer': shorthandFieldInitializerFrom,
+  'slice_pattern': slicePatternFrom,
+  'source_file': sourceFileFrom,
+  'static_item': staticItemFrom,
+  'string_literal': stringLiteralFrom,
+  'struct_expression': structExpressionFrom,
+  'struct_item': structItemFrom,
+  'struct_pattern': structPatternFrom,
+  'token_binding_pattern': tokenBindingPatternFrom,
+  'token_repetition': tokenRepetitionFrom,
+  'token_repetition_pattern': tokenRepetitionPatternFrom,
+  'token_tree': tokenTreeFrom,
+  'token_tree_pattern': tokenTreePatternFrom,
+  'trait_bounds': traitBoundsFrom,
+  'trait_item': traitItemFrom,
+  'try_block': tryBlockFrom,
+  'try_expression': tryExpressionFrom,
+  'tuple_expression': tupleExpressionFrom,
+  'tuple_pattern': tuplePatternFrom,
+  'tuple_struct_pattern': tupleStructPatternFrom,
+  'tuple_type': tupleTypeFrom,
+  'type_arguments': typeArgumentsFrom,
+  'type_binding': typeBindingFrom,
+  'type_cast_expression': typeCastExpressionFrom,
+  'type_item': typeItemFrom,
+  'type_parameter': typeParameterFrom,
+  'type_parameters': typeParametersFrom,
+  'unary_expression': unaryExpressionFrom,
+  'union_item': unionItemFrom,
+  'unsafe_block': unsafeBlockFrom,
+  'use_as_clause': useAsClauseFrom,
+  'use_bounds': useBoundsFrom,
+  'use_declaration': useDeclarationFrom,
+  'use_list': useListFrom,
+  'use_wildcard': useWildcardFrom,
+  'variadic_parameter': variadicParameterFrom,
+  'visibility_modifier': visibilityModifierFrom,
+  'where_clause': whereClauseFrom,
+  'where_predicate': wherePredicateFrom,
+  'while_expression': whileExpressionFrom,
+  'yield_expression': yieldExpressionFrom,
+};
+
 function _resolveByKind(kind: string, rest: object): unknown {
-  switch (kind) {
-    case 'abstract_type': return abstractTypeFrom(rest);
-    case 'arguments': return arguments_From(rest);
-    case 'array_expression': return arrayExpressionFrom(rest);
-    case 'array_type': return arrayTypeFrom(rest);
-    case 'assignment_expression': return assignmentExpressionFrom(rest);
-    case 'associated_type': return associatedTypeFrom(rest);
-    case 'async_block': return asyncBlockFrom(rest);
-    case 'attribute': return attributeFrom(rest);
-    case 'attribute_item': return attributeItemFrom(rest);
-    case 'await_expression': return awaitExpressionFrom(rest);
-    case 'base_field_initializer': return baseFieldInitializerFrom(rest);
-    case 'binary_expression': return binaryExpressionFrom(rest);
-    case 'block': return blockFrom(rest);
-    case 'block_comment': return blockCommentFrom(rest);
-    case 'bounded_type': return boundedTypeFrom(rest);
-    case 'bracketed_type': return bracketedTypeFrom(rest);
-    case 'break_expression': return breakExpressionFrom(rest);
-    case 'call_expression': return callExpressionFrom(rest);
-    case 'captured_pattern': return capturedPatternFrom(rest);
-    case 'closure_expression': return closureExpressionFrom(rest);
-    case 'closure_parameters': return closureParametersFrom(rest);
-    case 'compound_assignment_expr': return compoundAssignmentExprFrom(rest);
-    case 'const_block': return constBlockFrom(rest);
-    case 'const_item': return constItemFrom(rest);
-    case 'const_parameter': return constParameterFrom(rest);
-    case 'continue_expression': return continueExpressionFrom(rest);
-    case 'declaration_list': return declarationListFrom(rest);
-    case 'dynamic_type': return dynamicTypeFrom(rest);
-    case 'else_clause': return elseClauseFrom(rest);
-    case 'enum_item': return enumItemFrom(rest);
-    case 'enum_variant': return enumVariantFrom(rest);
-    case 'enum_variant_list': return enumVariantListFrom(rest);
-    case 'expression_statement': return expressionStatementFrom(rest);
-    case 'extern_crate_declaration': return externCrateDeclarationFrom(rest);
-    case 'extern_modifier': return externModifierFrom(rest);
-    case 'field_declaration': return fieldDeclarationFrom(rest);
-    case 'field_declaration_list': return fieldDeclarationListFrom(rest);
-    case 'field_expression': return fieldExpressionFrom(rest);
-    case 'field_initializer': return fieldInitializerFrom(rest);
-    case 'field_initializer_list': return fieldInitializerListFrom(rest);
-    case 'field_pattern': return fieldPatternFrom(rest);
-    case 'for_expression': return forExpressionFrom(rest);
-    case 'for_lifetimes': return forLifetimesFrom(rest);
-    case 'foreign_mod_item': return foreignModItemFrom(rest);
-    case 'function_item': return functionItemFrom(rest);
-    case 'function_modifiers': return functionModifiersFrom(rest);
-    case 'function_signature_item': return functionSignatureItemFrom(rest);
-    case 'function_type': return functionTypeFrom(rest);
-    case 'gen_block': return genBlockFrom(rest);
-    case 'generic_function': return genericFunctionFrom(rest);
-    case 'generic_pattern': return genericPatternFrom(rest);
-    case 'generic_type': return genericTypeFrom(rest);
-    case 'generic_type_with_turbofish': return genericTypeWithTurbofishFrom(rest);
-    case 'higher_ranked_trait_bound': return higherRankedTraitBoundFrom(rest);
-    case 'if_expression': return ifExpressionFrom(rest);
-    case 'impl_item': return implItemFrom(rest);
-    case 'index_expression': return indexExpressionFrom(rest);
-    case 'inner_attribute_item': return innerAttributeItemFrom(rest);
-    case 'label': return labelFrom(rest);
-    case 'let_chain': return letChainFrom(rest);
-    case 'let_condition': return letConditionFrom(rest);
-    case 'let_declaration': return letDeclarationFrom(rest);
-    case 'lifetime': return lifetimeFrom(rest);
-    case 'lifetime_parameter': return lifetimeParameterFrom(rest);
-    case 'line_comment': return lineCommentFrom(rest);
-    case 'loop_expression': return loopExpressionFrom(rest);
-    case 'macro_definition': return macroDefinitionFrom(rest);
-    case 'macro_invocation': return macroInvocationFrom(rest);
-    case 'macro_rule': return macroRuleFrom(rest);
-    case 'match_arm': return matchArmFrom(rest);
-    case 'match_block': return matchBlockFrom(rest);
-    case 'match_expression': return matchExpressionFrom(rest);
-    case 'match_pattern': return matchPatternFrom(rest);
-    case 'mod_item': return modItemFrom(rest);
-    case 'mut_pattern': return mutPatternFrom(rest);
-    case 'negative_literal': return negativeLiteralFrom(rest);
-    case 'or_pattern': return orPatternFrom(rest);
-    case 'ordered_field_declaration_list': return orderedFieldDeclarationListFrom(rest);
-    case 'parameter': return parameterFrom(rest);
-    case 'parameters': return parametersFrom(rest);
-    case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-    case 'pointer_type': return pointerTypeFrom(rest);
-    case 'qualified_type': return qualifiedTypeFrom(rest);
-    case 'range_expression': return rangeExpressionFrom(rest);
-    case 'range_pattern': return rangePatternFrom(rest);
-    case 'raw_string_literal': return rawStringLiteralFrom(rest);
-    case 'ref_pattern': return refPatternFrom(rest);
-    case 'reference_expression': return referenceExpressionFrom(rest);
-    case 'reference_pattern': return referencePatternFrom(rest);
-    case 'reference_type': return referenceTypeFrom(rest);
-    case 'removed_trait_bound': return removedTraitBoundFrom(rest);
-    case 'return_expression': return returnExpressionFrom(rest);
-    case 'scoped_identifier': return scopedIdentifierFrom(rest);
-    case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-    case 'scoped_use_list': return scopedUseListFrom(rest);
-    case 'self_parameter': return selfParameterFrom(rest);
-    case 'shorthand_field_initializer': return shorthandFieldInitializerFrom(rest);
-    case 'slice_pattern': return slicePatternFrom(rest);
-    case 'source_file': return sourceFileFrom(rest);
-    case 'static_item': return staticItemFrom(rest);
-    case 'string_literal': return stringLiteralFrom(rest);
-    case 'struct_expression': return structExpressionFrom(rest);
-    case 'struct_item': return structItemFrom(rest);
-    case 'struct_pattern': return structPatternFrom(rest);
-    case 'token_binding_pattern': return tokenBindingPatternFrom(rest);
-    case 'token_repetition': return tokenRepetitionFrom(rest);
-    case 'token_repetition_pattern': return tokenRepetitionPatternFrom(rest);
-    case 'token_tree': return tokenTreeFrom(rest);
-    case 'token_tree_pattern': return tokenTreePatternFrom(rest);
-    case 'trait_bounds': return traitBoundsFrom(rest);
-    case 'trait_item': return traitItemFrom(rest);
-    case 'try_block': return tryBlockFrom(rest);
-    case 'try_expression': return tryExpressionFrom(rest);
-    case 'tuple_expression': return tupleExpressionFrom(rest);
-    case 'tuple_pattern': return tuplePatternFrom(rest);
-    case 'tuple_struct_pattern': return tupleStructPatternFrom(rest);
-    case 'tuple_type': return tupleTypeFrom(rest);
-    case 'type_arguments': return typeArgumentsFrom(rest);
-    case 'type_binding': return typeBindingFrom(rest);
-    case 'type_cast_expression': return typeCastExpressionFrom(rest);
-    case 'type_item': return typeItemFrom(rest);
-    case 'type_parameter': return typeParameterFrom(rest);
-    case 'type_parameters': return typeParametersFrom(rest);
-    case 'unary_expression': return unaryExpressionFrom(rest);
-    case 'union_item': return unionItemFrom(rest);
-    case 'unsafe_block': return unsafeBlockFrom(rest);
-    case 'use_as_clause': return useAsClauseFrom(rest);
-    case 'use_bounds': return useBoundsFrom(rest);
-    case 'use_declaration': return useDeclarationFrom(rest);
-    case 'use_list': return useListFrom(rest);
-    case 'use_wildcard': return useWildcardFrom(rest);
-    case 'variadic_parameter': return variadicParameterFrom(rest);
-    case 'visibility_modifier': return visibilityModifierFrom(rest);
-    case 'where_clause': return whereClauseFrom(rest);
-    case 'where_predicate': return wherePredicateFrom(rest);
-    case 'while_expression': return whileExpressionFrom(rest);
-    case 'yield_expression': return yieldExpressionFrom(rest);
-    default: throw new Error(`Unknown kind for .from(): '${kind}'`);
-  }
+  const fn = _fromMap[kind];
+  if (fn) return fn(rest);
+  throw new Error(`Unknown kind for .from(): '${kind}'`);
 }
 
 function _resolveDeclarationStatement(v: unknown): unknown {
@@ -159,28 +163,6 @@ function _resolveDeclarationStatement(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'associated_type': return associatedTypeFrom(rest);
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'const_item': return constItemFrom(rest);
-        case 'enum_item': return enumItemFrom(rest);
-        case 'extern_crate_declaration': return externCrateDeclarationFrom(rest);
-        case 'foreign_mod_item': return foreignModItemFrom(rest);
-        case 'function_item': return functionItemFrom(rest);
-        case 'function_signature_item': return functionSignatureItemFrom(rest);
-        case 'impl_item': return implItemFrom(rest);
-        case 'inner_attribute_item': return innerAttributeItemFrom(rest);
-        case 'let_declaration': return letDeclarationFrom(rest);
-        case 'macro_definition': return macroDefinitionFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'mod_item': return modItemFrom(rest);
-        case 'static_item': return staticItemFrom(rest);
-        case 'struct_item': return structItemFrom(rest);
-        case 'trait_item': return traitItemFrom(rest);
-        case 'type_item': return typeItemFrom(rest);
-        case 'union_item': return unionItemFrom(rest);
-        case 'use_declaration': return useDeclarationFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
@@ -206,10 +188,6 @@ function _resolveLiteral(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'raw_string_literal': return rawStringLiteralFrom(rest);
-        case 'string_literal': return stringLiteralFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["raw_string_literal","string_literal"]);
@@ -238,45 +216,6 @@ function _resolveExpression(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'array_expression': return arrayExpressionFrom(rest);
-        case 'assignment_expression': return assignmentExpressionFrom(rest);
-        case 'async_block': return asyncBlockFrom(rest);
-        case 'await_expression': return awaitExpressionFrom(rest);
-        case 'binary_expression': return binaryExpressionFrom(rest);
-        case 'block': return blockFrom(rest);
-        case 'break_expression': return breakExpressionFrom(rest);
-        case 'call_expression': return callExpressionFrom(rest);
-        case 'closure_expression': return closureExpressionFrom(rest);
-        case 'compound_assignment_expr': return compoundAssignmentExprFrom(rest);
-        case 'const_block': return constBlockFrom(rest);
-        case 'continue_expression': return continueExpressionFrom(rest);
-        case 'field_expression': return fieldExpressionFrom(rest);
-        case 'for_expression': return forExpressionFrom(rest);
-        case 'gen_block': return genBlockFrom(rest);
-        case 'generic_function': return genericFunctionFrom(rest);
-        case 'if_expression': return ifExpressionFrom(rest);
-        case 'index_expression': return indexExpressionFrom(rest);
-        case 'loop_expression': return loopExpressionFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'match_expression': return matchExpressionFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'range_expression': return rangeExpressionFrom(rest);
-        case 'raw_string_literal': return rawStringLiteralFrom(rest);
-        case 'reference_expression': return referenceExpressionFrom(rest);
-        case 'return_expression': return returnExpressionFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'string_literal': return stringLiteralFrom(rest);
-        case 'struct_expression': return structExpressionFrom(rest);
-        case 'try_block': return tryBlockFrom(rest);
-        case 'try_expression': return tryExpressionFrom(rest);
-        case 'tuple_expression': return tupleExpressionFrom(rest);
-        case 'type_cast_expression': return typeCastExpressionFrom(rest);
-        case 'unary_expression': return unaryExpressionFrom(rest);
-        case 'unsafe_block': return unsafeBlockFrom(rest);
-        case 'while_expression': return whileExpressionFrom(rest);
-        case 'yield_expression': return yieldExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
@@ -302,11 +241,6 @@ function _resolveLiteralPattern(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'negative_literal': return negativeLiteralFrom(rest);
-        case 'raw_string_literal': return rawStringLiteralFrom(rest);
-        case 'string_literal': return stringLiteralFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["negative_literal","raw_string_literal","string_literal"]);
@@ -333,25 +267,6 @@ function _resolvePattern(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'captured_pattern': return capturedPatternFrom(rest);
-        case 'const_block': return constBlockFrom(rest);
-        case 'generic_pattern': return genericPatternFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'mut_pattern': return mutPatternFrom(rest);
-        case 'negative_literal': return negativeLiteralFrom(rest);
-        case 'or_pattern': return orPatternFrom(rest);
-        case 'range_pattern': return rangePatternFrom(rest);
-        case 'raw_string_literal': return rawStringLiteralFrom(rest);
-        case 'ref_pattern': return refPatternFrom(rest);
-        case 'reference_pattern': return referencePatternFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'slice_pattern': return slicePatternFrom(rest);
-        case 'string_literal': return stringLiteralFrom(rest);
-        case 'struct_pattern': return structPatternFrom(rest);
-        case 'tuple_pattern': return tuplePatternFrom(rest);
-        case 'tuple_struct_pattern': return tupleStructPatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["captured_pattern","const_block","generic_pattern","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
@@ -374,20 +289,6 @@ function _resolveType(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'abstract_type': return abstractTypeFrom(rest);
-        case 'array_type': return arrayTypeFrom(rest);
-        case 'bounded_type': return boundedTypeFrom(rest);
-        case 'dynamic_type': return dynamicTypeFrom(rest);
-        case 'function_type': return functionTypeFrom(rest);
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'pointer_type': return pointerTypeFrom(rest);
-        case 'reference_type': return referenceTypeFrom(rest);
-        case 'removed_trait_bound': return removedTraitBoundFrom(rest);
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-        case 'tuple_type': return tupleTypeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -410,9 +311,6 @@ function _resolvePath(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     return scopedIdentifierFrom(v);
@@ -429,29 +327,6 @@ function _resolveStatement(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'associated_type': return associatedTypeFrom(rest);
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'const_item': return constItemFrom(rest);
-        case 'enum_item': return enumItemFrom(rest);
-        case 'expression_statement': return expressionStatementFrom(rest);
-        case 'extern_crate_declaration': return externCrateDeclarationFrom(rest);
-        case 'foreign_mod_item': return foreignModItemFrom(rest);
-        case 'function_item': return functionItemFrom(rest);
-        case 'function_signature_item': return functionSignatureItemFrom(rest);
-        case 'impl_item': return implItemFrom(rest);
-        case 'inner_attribute_item': return innerAttributeItemFrom(rest);
-        case 'let_declaration': return letDeclarationFrom(rest);
-        case 'macro_definition': return macroDefinitionFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'mod_item': return modItemFrom(rest);
-        case 'static_item': return staticItemFrom(rest);
-        case 'struct_item': return structItemFrom(rest);
-        case 'trait_item': return traitItemFrom(rest);
-        case 'type_item': return typeItemFrom(rest);
-        case 'union_item': return unionItemFrom(rest);
-        case 'use_declaration': return useDeclarationFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["associated_type","attribute_item","const_item","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
@@ -474,19 +349,6 @@ function _resolveExpressionEndingWithBlock(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'async_block': return asyncBlockFrom(rest);
-        case 'block': return blockFrom(rest);
-        case 'const_block': return constBlockFrom(rest);
-        case 'for_expression': return forExpressionFrom(rest);
-        case 'gen_block': return genBlockFrom(rest);
-        case 'if_expression': return ifExpressionFrom(rest);
-        case 'loop_expression': return loopExpressionFrom(rest);
-        case 'match_expression': return matchExpressionFrom(rest);
-        case 'try_block': return tryBlockFrom(rest);
-        case 'unsafe_block': return unsafeBlockFrom(rest);
-        case 'while_expression': return whileExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["async_block","block","const_block","for_expression","gen_block","if_expression","loop_expression","match_expression","try_block","unsafe_block","while_expression"]);
@@ -530,44 +392,6 @@ function _resolveExpressionExceptRange(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'array_expression': return arrayExpressionFrom(rest);
-        case 'assignment_expression': return assignmentExpressionFrom(rest);
-        case 'async_block': return asyncBlockFrom(rest);
-        case 'await_expression': return awaitExpressionFrom(rest);
-        case 'binary_expression': return binaryExpressionFrom(rest);
-        case 'block': return blockFrom(rest);
-        case 'break_expression': return breakExpressionFrom(rest);
-        case 'call_expression': return callExpressionFrom(rest);
-        case 'closure_expression': return closureExpressionFrom(rest);
-        case 'compound_assignment_expr': return compoundAssignmentExprFrom(rest);
-        case 'const_block': return constBlockFrom(rest);
-        case 'continue_expression': return continueExpressionFrom(rest);
-        case 'field_expression': return fieldExpressionFrom(rest);
-        case 'for_expression': return forExpressionFrom(rest);
-        case 'gen_block': return genBlockFrom(rest);
-        case 'generic_function': return genericFunctionFrom(rest);
-        case 'if_expression': return ifExpressionFrom(rest);
-        case 'index_expression': return indexExpressionFrom(rest);
-        case 'loop_expression': return loopExpressionFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'match_expression': return matchExpressionFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'raw_string_literal': return rawStringLiteralFrom(rest);
-        case 'reference_expression': return referenceExpressionFrom(rest);
-        case 'return_expression': return returnExpressionFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'string_literal': return stringLiteralFrom(rest);
-        case 'struct_expression': return structExpressionFrom(rest);
-        case 'try_block': return tryBlockFrom(rest);
-        case 'try_expression': return tryExpressionFrom(rest);
-        case 'tuple_expression': return tupleExpressionFrom(rest);
-        case 'type_cast_expression': return typeCastExpressionFrom(rest);
-        case 'unary_expression': return unaryExpressionFrom(rest);
-        case 'unsafe_block': return unsafeBlockFrom(rest);
-        case 'while_expression': return whileExpressionFrom(rest);
-        case 'yield_expression': return yieldExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
@@ -626,47 +450,6 @@ function _resolveCondition(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'array_expression': return arrayExpressionFrom(rest);
-        case 'assignment_expression': return assignmentExpressionFrom(rest);
-        case 'async_block': return asyncBlockFrom(rest);
-        case 'await_expression': return awaitExpressionFrom(rest);
-        case 'binary_expression': return binaryExpressionFrom(rest);
-        case 'block': return blockFrom(rest);
-        case 'break_expression': return breakExpressionFrom(rest);
-        case 'call_expression': return callExpressionFrom(rest);
-        case 'closure_expression': return closureExpressionFrom(rest);
-        case 'compound_assignment_expr': return compoundAssignmentExprFrom(rest);
-        case 'const_block': return constBlockFrom(rest);
-        case 'continue_expression': return continueExpressionFrom(rest);
-        case 'field_expression': return fieldExpressionFrom(rest);
-        case 'for_expression': return forExpressionFrom(rest);
-        case 'gen_block': return genBlockFrom(rest);
-        case 'generic_function': return genericFunctionFrom(rest);
-        case 'if_expression': return ifExpressionFrom(rest);
-        case 'index_expression': return indexExpressionFrom(rest);
-        case 'let_chain': return letChainFrom(rest);
-        case 'let_condition': return letConditionFrom(rest);
-        case 'loop_expression': return loopExpressionFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'match_expression': return matchExpressionFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'range_expression': return rangeExpressionFrom(rest);
-        case 'raw_string_literal': return rawStringLiteralFrom(rest);
-        case 'reference_expression': return referenceExpressionFrom(rest);
-        case 'return_expression': return returnExpressionFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'string_literal': return stringLiteralFrom(rest);
-        case 'struct_expression': return structExpressionFrom(rest);
-        case 'try_block': return tryBlockFrom(rest);
-        case 'try_expression': return tryExpressionFrom(rest);
-        case 'tuple_expression': return tupleExpressionFrom(rest);
-        case 'type_cast_expression': return typeCastExpressionFrom(rest);
-        case 'unary_expression': return unaryExpressionFrom(rest);
-        case 'unsafe_block': return unsafeBlockFrom(rest);
-        case 'while_expression': return whileExpressionFrom(rest);
-        case 'yield_expression': return yieldExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","let_chain","let_condition","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
@@ -689,13 +472,6 @@ function _resolveUseClause(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'scoped_use_list': return scopedUseListFrom(rest);
-        case 'use_as_clause': return useAsClauseFrom(rest);
-        case 'use_list': return useListFrom(rest);
-        case 'use_wildcard': return useWildcardFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_identifier","scoped_use_list","use_as_clause","use_list","use_wildcard"]);
@@ -714,14 +490,6 @@ function _rt7h7cy(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'bounded_type': return boundedTypeFrom(rest);
-        case 'function_type': return functionTypeFrom(rest);
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'removed_trait_bound': return removedTraitBoundFrom(rest);
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-        case 'tuple_type': return tupleTypeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["bounded_type","function_type","generic_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -744,9 +512,6 @@ function _r1zauz5(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute_item': return attributeItemFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute_item","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
@@ -785,9 +550,6 @@ function _rhh310(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_identifier"]);
@@ -830,9 +592,6 @@ function _r1ph97dk(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'expression_statement': return expressionStatementFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["expression_statement","associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
@@ -855,10 +614,6 @@ function _rd726k3(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'lifetime': return lifetimeFrom(rest);
-        case 'use_bounds': return useBoundsFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["lifetime","use_bounds","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -881,9 +636,6 @@ function _r1tpbpzq(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'qualified_type': return qualifiedTypeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["qualified_type","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -905,42 +657,6 @@ function _r1hu805q(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'array_expression': return arrayExpressionFrom(rest);
-        case 'assignment_expression': return assignmentExpressionFrom(rest);
-        case 'async_block': return asyncBlockFrom(rest);
-        case 'await_expression': return awaitExpressionFrom(rest);
-        case 'binary_expression': return binaryExpressionFrom(rest);
-        case 'block': return blockFrom(rest);
-        case 'break_expression': return breakExpressionFrom(rest);
-        case 'call_expression': return callExpressionFrom(rest);
-        case 'closure_expression': return closureExpressionFrom(rest);
-        case 'compound_assignment_expr': return compoundAssignmentExprFrom(rest);
-        case 'const_block': return constBlockFrom(rest);
-        case 'continue_expression': return continueExpressionFrom(rest);
-        case 'field_expression': return fieldExpressionFrom(rest);
-        case 'for_expression': return forExpressionFrom(rest);
-        case 'gen_block': return genBlockFrom(rest);
-        case 'generic_function': return genericFunctionFrom(rest);
-        case 'if_expression': return ifExpressionFrom(rest);
-        case 'index_expression': return indexExpressionFrom(rest);
-        case 'loop_expression': return loopExpressionFrom(rest);
-        case 'macro_invocation': return macroInvocationFrom(rest);
-        case 'match_expression': return matchExpressionFrom(rest);
-        case 'parenthesized_expression': return parenthesizedExpressionFrom(rest);
-        case 'reference_expression': return referenceExpressionFrom(rest);
-        case 'return_expression': return returnExpressionFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'struct_expression': return structExpressionFrom(rest);
-        case 'try_block': return tryBlockFrom(rest);
-        case 'try_expression': return tryExpressionFrom(rest);
-        case 'tuple_expression': return tupleExpressionFrom(rest);
-        case 'type_cast_expression': return typeCastExpressionFrom(rest);
-        case 'unary_expression': return unaryExpressionFrom(rest);
-        case 'unsafe_block': return unsafeBlockFrom(rest);
-        case 'while_expression': return whileExpressionFrom(rest);
-        case 'yield_expression': return yieldExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression","string_literal","raw_string_literal"]);
@@ -964,9 +680,6 @@ function _r1dex6mx(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'block': return blockFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["block","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
@@ -989,9 +702,6 @@ function _rmv6nku(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'parameter': return parameterFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["parameter","negative_literal","raw_string_literal","string_literal","captured_pattern","const_block","generic_pattern","macro_invocation","mut_pattern","or_pattern","range_pattern","ref_pattern","reference_pattern","scoped_identifier","slice_pattern","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
@@ -1030,10 +740,6 @@ function _r1repi6d(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'block': return blockFrom(rest);
-        case 'negative_literal': return negativeLiteralFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["block","negative_literal","raw_string_literal","string_literal"]);
@@ -1052,13 +758,6 @@ function _r1cdhv8t(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'function_type': return functionTypeFrom(rest);
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'higher_ranked_trait_bound': return higherRankedTraitBoundFrom(rest);
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-        case 'tuple_type': return tupleTypeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["function_type","generic_type","higher_ranked_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -1081,10 +780,6 @@ function _r1hikcvp(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'block': return blockFrom(rest);
-        case 'if_expression': return ifExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["block","if_expression"]);
@@ -1107,10 +802,6 @@ function _r1sy82yg(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'field_declaration_list': return fieldDeclarationListFrom(rest);
-        case 'ordered_field_declaration_list': return orderedFieldDeclarationListFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["field_declaration_list","ordered_field_declaration_list"]);
@@ -1133,10 +824,6 @@ function _r18tu9jr(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'enum_variant': return enumVariantFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute_item","enum_variant"]);
@@ -1197,10 +884,6 @@ function _r1wxvtav(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'field_declaration': return fieldDeclarationFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute_item","field_declaration"]);
@@ -1241,11 +924,6 @@ function _rc94c35(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'base_field_initializer': return baseFieldInitializerFrom(rest);
-        case 'field_initializer': return fieldInitializerFrom(rest);
-        case 'shorthand_field_initializer': return shorthandFieldInitializerFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["base_field_initializer","field_initializer","shorthand_field_initializer"]);
@@ -1296,9 +974,6 @@ function _r1ochi94(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_type_identifier"]);
@@ -1317,10 +992,6 @@ function _r116cegy(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'field_expression': return fieldExpressionFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["field_expression","scoped_identifier"]);
@@ -1339,9 +1010,6 @@ function _rqccsf7(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     return scopedIdentifierFrom(v);
@@ -1358,10 +1026,6 @@ function _rqw8auo(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_identifier","scoped_type_identifier"]);
@@ -1380,9 +1044,6 @@ function _r11sa8pz(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_identifier"]);
@@ -1405,10 +1066,6 @@ function _r1goghxb(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'let_chain': return letChainFrom(rest);
-        case 'let_condition': return letConditionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["let_chain","let_condition","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]);
@@ -1427,10 +1084,6 @@ function _rhgn5oy(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["generic_type","scoped_type_identifier"]);
@@ -1453,9 +1106,6 @@ function _ry62g3e(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'let_condition': return letConditionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["let_condition","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
@@ -1490,9 +1140,6 @@ function _r1qsfyv8(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_identifier"]);
@@ -1515,10 +1162,6 @@ function _rxot7fv(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'inner_attribute_item': return innerAttributeItemFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute_item","inner_attribute_item"]);
@@ -1580,10 +1223,6 @@ function _r1lprop0(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'visibility_modifier': return visibilityModifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute_item","visibility_modifier"]);
@@ -1622,12 +1261,6 @@ function _ru3k3th(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'parameter': return parameterFrom(rest);
-        case 'self_parameter': return selfParameterFrom(rest);
-        case 'variadic_parameter': return variadicParameterFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute_item","parameter","self_parameter","variadic_parameter","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -1670,9 +1303,6 @@ function _r1pr4kp5(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_identifier","negative_literal","raw_string_literal","string_literal"]);
@@ -1730,11 +1360,6 @@ function _rfcevsg(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'bracketed_type': return bracketedTypeFrom(rest);
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["bracketed_type","generic_type","scoped_identifier"]);
@@ -1769,10 +1394,6 @@ function _r53siua(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'generic_type_with_turbofish': return genericTypeWithTurbofishFrom(rest);
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["generic_type_with_turbofish","scoped_type_identifier"]);
@@ -1791,9 +1412,6 @@ function _r1vr38sb(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'field_pattern': return fieldPatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     return fieldPatternFrom(v);
@@ -1816,10 +1434,6 @@ function _reclzrc(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'token_repetition': return tokenRepetitionFrom(rest);
-        case 'token_tree': return tokenTreeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["token_repetition","token_tree","raw_string_literal","string_literal"]);
@@ -1844,11 +1458,6 @@ function _r14tzyme(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'token_binding_pattern': return tokenBindingPatternFrom(rest);
-        case 'token_repetition_pattern': return tokenRepetitionPatternFrom(rest);
-        case 'token_tree_pattern': return tokenTreePatternFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["token_binding_pattern","token_repetition_pattern","token_tree_pattern","raw_string_literal","string_literal"]);
@@ -1871,10 +1480,6 @@ function _r1nr92n5(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'higher_ranked_trait_bound': return higherRankedTraitBoundFrom(rest);
-        case 'lifetime': return lifetimeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["higher_ranked_trait_bound","lifetime","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -1917,9 +1522,6 @@ function _r95jlc9(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'closure_expression': return closureExpressionFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["closure_expression","negative_literal","raw_string_literal","string_literal","captured_pattern","const_block","generic_pattern","macro_invocation","mut_pattern","or_pattern","range_pattern","ref_pattern","reference_pattern","scoped_identifier","slice_pattern","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
@@ -1938,10 +1540,6 @@ function _r16d3oq5(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["generic_type","scoped_identifier"]);
@@ -1964,12 +1562,6 @@ function _r1co9wyp(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'block': return blockFrom(rest);
-        case 'lifetime': return lifetimeFrom(rest);
-        case 'trait_bounds': return traitBoundsFrom(rest);
-        case 'type_binding': return typeBindingFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["block","lifetime","trait_bounds","type_binding","raw_string_literal","string_literal","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
@@ -1988,12 +1580,6 @@ function _ryeauh7(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'attribute_item': return attributeItemFrom(rest);
-        case 'const_parameter': return constParameterFrom(rest);
-        case 'lifetime_parameter': return lifetimeParameterFrom(rest);
-        case 'type_parameter': return typeParameterFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["attribute_item","const_parameter","lifetime_parameter","type_parameter"]);
@@ -2032,9 +1618,6 @@ function _rnmqc2e(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'lifetime': return lifetimeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["lifetime"]);
@@ -2057,13 +1640,6 @@ function _r1u4xg67(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'scoped_identifier': return scopedIdentifierFrom(rest);
-        case 'scoped_use_list': return scopedUseListFrom(rest);
-        case 'use_as_clause': return useAsClauseFrom(rest);
-        case 'use_list': return useListFrom(rest);
-        case 'use_wildcard': return useWildcardFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["scoped_identifier","scoped_use_list","use_as_clause","use_list","use_wildcard"]);
@@ -2083,16 +1659,6 @@ function _rjhyqcx(v: unknown): unknown {
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
-      switch (k) {
-        case 'array_type': return arrayTypeFrom(rest);
-        case 'generic_type': return genericTypeFrom(rest);
-        case 'higher_ranked_trait_bound': return higherRankedTraitBoundFrom(rest);
-        case 'lifetime': return lifetimeFrom(rest);
-        case 'pointer_type': return pointerTypeFrom(rest);
-        case 'reference_type': return referenceTypeFrom(rest);
-        case 'scoped_type_identifier': return scopedTypeIdentifierFrom(rest);
-        case 'tuple_type': return tupleTypeFrom(rest);
-      }
       return _resolveByKind(k, rest);
     }
     const _k = _inferBranch(v, ["array_type","generic_type","higher_ranked_trait_bound","lifetime","pointer_type","reference_type","scoped_type_identifier","tuple_type"]);

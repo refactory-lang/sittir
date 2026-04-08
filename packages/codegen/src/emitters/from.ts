@@ -182,18 +182,23 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line(`import type { ${fromInputImports.join(', ')} } from './types.js';`);
 	out.line();
 
-	// _resolveByKind dispatch
-	out.line('function _resolveByKind(kind: string, rest: object): unknown {');
-	out.indent();
-	out.line('switch (kind) {');
+	// _fromMap — kind → from function, used by all resolvers for kind dispatch
+	out.line('/** @internal Map of kind string to .from() resolver function. */');
+	out.line('export const _fromMap: Record<string, (input: object) => unknown> = {');
 	out.indent();
 	for (const node of nodes) {
 		const fromFn = `${toFactoryName(node.kind)}From`;
-		out.line(`case '${node.kind}': return ${fromFn}(rest);`);
+		out.line(`'${node.kind}': ${fromFn},`);
 	}
-	out.line(`default: throw new Error(\`Unknown kind for .from(): '\${kind}'\`);`);
 	out.dedent();
-	out.line('}');
+	out.line('};');
+	out.line();
+
+	out.line('function _resolveByKind(kind: string, rest: object): unknown {');
+	out.indent();
+	out.line('const fn = _fromMap[kind];');
+	out.line("if (fn) return fn(rest);");
+	out.line("throw new Error(`Unknown kind for .from(): '${kind}'`);");
 	out.dedent();
 	out.line('}');
 	out.line();
@@ -400,15 +405,6 @@ function emitObjectResolveFormatted(
 	out.line(`if (hasKind(${v})) {`);
 	out.indent();
 	out.line(`const { kind: k, ...rest } = ${v};`);
-	if (branchTypes.length > 0) {
-		out.line('switch (k) {');
-		out.indent();
-		for (const bt of branchTypes) {
-			out.line(`case '${bt}': return ${toFactoryName(bt)}From(rest);`);
-		}
-		out.dedent();
-		out.line('}');
-	}
 	out.line('return _resolveByKind(k, rest);');
 	out.dedent();
 	out.line('}');
