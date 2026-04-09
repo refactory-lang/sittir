@@ -341,6 +341,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	const allTypeImports = [...new Set([...baseTypeImports, ...configTypeImports, ...supertypeUnionImports])].sort();
 	out.line(`import type { ${allTypeImports.join(', ')} } from './types.js';`);
 	out.line("import type { KindMap, FromInputMap } from './types.js';");
+	out.line("import type { FluentNodeOf } from '@sittir/types';");
 	out.line("import { isNodeData, hasKind, resolveField } from './utils.js';");
 	out.line();
 
@@ -360,14 +361,14 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line('/** Maps kind string to its typed .from() resolver. */');
 	out.line('export type FromMap = {');
 	out.indent();
-	out.line('[K in keyof FromInputMap]: (input: KindMap[K] | FromInputMap[K] | object) => KindMap[K];');
+	out.line('[K in keyof FromInputMap]: (input: KindMap[K] | FromInputMap[K]) => FluentNodeOf<KindMap[K]>;');
 	out.dedent();
 	out.line('};');
 	out.line();
 
-	// _fromMap — runtime instance of FromMap
+	// _fromMap — runtime instance
 	out.line('/** @internal Map of kind string to .from() resolver function. */');
-	out.line('export const _fromMap: FromMap = {');
+	out.line('export const _fromMap = {');
 	out.indent();
 	for (const node of nodes) {
 		const fromFn = `${toFactoryName(node.kind)}From`;
@@ -377,11 +378,9 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line('};');
 	out.line();
 
-	out.line('export function _resolveByKind<K extends keyof FromMap>(kind: K, rest: object): KindMap[K];');
-	out.line('export function _resolveByKind(kind: string, rest: object): unknown;');
-	out.line('export function _resolveByKind(kind: string, rest: object): unknown {');
+	out.line('export function _resolveByKind(kind: string, rest: unknown) {');
 	out.indent();
-	out.line('const fn = _fromMap[kind as keyof FromMap];');
+	out.line('const fn = (_fromMap as Record<string, (input: any) => unknown>)[kind];');
 	out.line("if (fn) return fn(rest);");
 	out.line("throw new Error(`Unknown kind for .from(): '${kind}'`);");
 	out.dedent();
@@ -493,8 +492,7 @@ function emitResolverFunction(
 	const allBranch = branchTypes.length + supertypes.length;
 	if (allBranch > 0) {
 		if (allBranch === 1 && branchTypes.length === 1) {
-			const fromFn = `${toFactoryName(branchTypes[0]!)}From`;
-			out.line(`if (Array.isArray(v)) return ${fromFn}(v);`);
+			out.line(`if (Array.isArray(v)) return _resolveByKind('${branchTypes[0]!}', v);`);
 		} else if (allBranch === 1 && supertypes.length === 1) {
 			const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
 			out.line(`if (Array.isArray(v)) return ${resolverFn}(v);`);
@@ -652,14 +650,14 @@ function emitHiddenSeqFieldResolver(
 
 		if (field.multiple) {
 			if (field.required) {
-				out.line(`${camel}: obj['${camel}'] !== undefined ? resolveField(obj['${camel}'], ${resolverCall}) : [],`);
+				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : [],`);
 			} else {
-				out.line(`${camel}: obj['${camel}'] !== undefined ? resolveField(obj['${camel}'], ${resolverCall}) : undefined,`);
+				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
 			}
 		} else if (field.required) {
-			out.line(`${camel}: resolveField(obj['${camel}'], ${resolverCall}),`);
+			out.line(`${camel}: resolveField(obj.${camel}, ${resolverCall}),`);
 		} else {
-			out.line(`${camel}: obj['${camel}'] !== undefined ? resolveField(obj['${camel}'], ${resolverCall}) : undefined,`);
+			out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
 		}
 	}
 
@@ -694,7 +692,7 @@ function emitObjectResolveFormatted(
 	// Object inference (no explicit kind)
 	const allBranch = branchTypes.length + supertypes.length;
 	if (allBranch === 1 && branchTypes.length === 1) {
-		out.line(`return ${toFactoryName(branchTypes[0]!)}From(${v});`);
+		out.line(`return _resolveByKind('${branchTypes[0]!}', ${v});`);
 	} else if (allBranch === 1 && supertypes.length === 1) {
 		const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
 		out.line(`return ${resolverFn}(${v});`);
@@ -737,7 +735,7 @@ function emitFromFunction(
 
 	const exportName = `${camelFactoryName}From`;
 
-	out.line(`export function ${exportName}(input: ${typeName} | ${typeName}FromInput | object): ${typeName} {`);
+	out.line(`export function ${exportName}(input: ${typeName} | ${typeName}FromInput) {`);
 	out.indent();
 
 	// --- Path 1: NodeData → reconstruct via factory ---
@@ -747,25 +745,25 @@ function emitFromFunction(
 	out.indent();
 	for (const f of fields) {
 		const camel = f.propertyName ?? toFieldName(f.name);
-		out.line(`${camel}: input.fields?.['${f.name}'],`);
+		out.line(`${camel}: input.fields?.${f.name},`);
 	}
 	if (node.children != null) {
 		const slotNames = childSlotNames(node.children, ctx);
 		if (!isTupleChildren(node.children)) {
-			out.line(`${slotNames[0]!}: (input as { children?: unknown }).children,`);
+			out.line(`${slotNames[0]!}: (input as any).children,`);
 		}
 	}
 	out.dedent();
-	out.line(`} as ${typeName}Config) as unknown as ${typeName};`);
+	out.line(`} as any);`);
 	out.dedent();
 	out.line('}');
 
-	// --- Path 3: FromInput → resolve ---
+	// --- Path 2: FromInput → resolve ---
 	const hasChildren = node.children != null;
 	if (hasChildren) {
-		out.line('const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;');
+		out.line('const obj: any = Array.isArray(input) ? { children: input } : input;');
 	} else {
-		out.line('const obj = input as Record<string, unknown>;');
+		out.line('const obj: any = input;');
 	}
 
 	// Build the config object with resolved fields
@@ -794,14 +792,14 @@ function emitFromFunction(
 
 		if (field.multiple) {
 			if (field.required) {
-				out.line(`${camel}: obj['${camel}'] !== undefined ? resolveField(obj['${camel}'], ${resolverCall}) : [],`);
+				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : [],`);
 			} else {
-				out.line(`${camel}: obj['${camel}'] !== undefined ? resolveField(obj['${camel}'], ${resolverCall}) : undefined,`);
+				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
 			}
 		} else if (field.required) {
-			out.line(`${camel}: resolveField(obj['${camel}'], ${resolverCall}),`);
+			out.line(`${camel}: resolveField(obj.${camel}, ${resolverCall}),`);
 		} else {
-			out.line(`${camel}: obj['${camel}'] !== undefined ? resolveField(obj['${camel}'], ${resolverCall}) : undefined,`);
+			out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
 		}
 	}
 
@@ -827,7 +825,7 @@ function emitFromFunction(
 	}
 
 	out.dedent();
-	out.line(`} as ${typeName}Config) as unknown as ${typeName};`);
+	out.line(`} as any);`);
 	out.dedent();
 	out.line('}');
 }
@@ -870,8 +868,7 @@ function getResolverExpression(
 	}
 
 	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
-		const fromFn = `${toFactoryName(resolved.branchTypes[0]!)}From`;
-		return `(v: unknown) => (typeof v === 'object' && v !== null ? ${fromFn}(v) : v)`;
+		return `(v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('${resolved.branchTypes[0]!}', v) : v)`;
 	}
 
 	// Single supertype — delegate to its resolver
