@@ -426,6 +426,9 @@ export function emitFrom(config: EmitFromConfig): string {
 		}
 	}
 
+	// --- Emit shared leaf dispatch infrastructure ---
+	emitLeafDispatch(out, leafSet, leafValueMap, keywordKinds, config.grammar);
+
 	// --- Emit shared resolver functions (only referenced ones) ---
 	for (const [, { name, resolved, supertypeKind }] of resolverRegistry) {
 		if (!referencedResolvers.has(name)) continue;
@@ -444,6 +447,125 @@ export function emitFrom(config: EmitFromConfig): string {
 	}
 
 	return out.toString();
+}
+
+// ---------------------------------------------------------------------------
+// Shared leaf dispatch emitter
+// ---------------------------------------------------------------------------
+
+function emitLeafDispatch(
+	out: CodeBuilder,
+	leafSet: Set<string>,
+	leafValueMap: Map<string, string[]>,
+	keywordKinds: Map<string, string>,
+	grammar?: string,
+): void {
+	// _resolveScalar — shared boolean/number dispatch
+	const hasBool = leafSet.has('boolean_literal');
+	const hasInt = leafSet.has('integer_literal');
+	const hasFloat = leafSet.has('float_literal');
+
+	if (hasBool || hasInt || hasFloat) {
+		out.line('/** Resolve JS primitives to leaf factories. Returns undefined if not a scalar. */');
+		out.line('function _resolveScalar(v: unknown): unknown {');
+		out.indent();
+		if (hasBool) {
+			out.line(`if (typeof v === 'boolean') return ${toRawFactoryName('boolean_literal')}(v ? 'true' : 'false');`);
+		}
+		if (hasInt && hasFloat) {
+			out.line(`if (typeof v === 'number') return Number.isInteger(v) ? ${toRawFactoryName('integer_literal')}(\`\${v}\`) : ${toRawFactoryName('float_literal')}(\`\${v}\`);`);
+		} else if (hasInt) {
+			out.line(`if (typeof v === 'number') return ${toRawFactoryName('integer_literal')}(\`\${v}\`);`);
+		} else if (hasFloat) {
+			out.line(`if (typeof v === 'number') return ${toRawFactoryName('float_literal')}(\`\${v}\`);`);
+		}
+		out.line('return undefined;');
+		out.dedent();
+		out.line('}');
+		out.line();
+	}
+
+	// _leafRegistry — kind → { pattern, factory, values } for string dispatch
+	// Collect all leaf kinds that have patterns or values
+	const leafEntries: { kind: string; values?: string[]; pattern?: string; patternFlags?: string; isKeyword: boolean; factory: string }[] = [];
+
+	for (const kind of leafSet) {
+		const factory = toRawFactoryName(kind);
+		const isKeyword = keywordKinds.has(kind);
+		const values = leafValueMap.get(kind);
+
+		if (isKeyword) {
+			leafEntries.push({ kind, isKeyword: true, factory, values: [keywordKinds.get(kind)!] });
+		} else if (values && values.length > 0) {
+			leafEntries.push({ kind, isKeyword: false, factory, values });
+		} else if (grammar) {
+			const pattern = extractLeafPattern(grammar, kind);
+			if (pattern && !pattern.includes('//') && !pattern.includes('/*') && !pattern.includes('\\x')) {
+				try {
+					const flags = pattern.includes('\\p{') ? 'u' : '';
+					new RegExp(`^${pattern}$`, flags);
+					const escaped = pattern.replace(/\//g, '\\/').replace(/`/g, '\\`');
+					leafEntries.push({ kind, isKeyword: false, factory, pattern: escaped, patternFlags: flags });
+				} catch { /* skip unsafe patterns */ }
+			} else {
+				leafEntries.push({ kind, isKeyword: false, factory });
+			}
+		} else {
+			leafEntries.push({ kind, isKeyword: false, factory });
+		}
+	}
+
+	out.line('/** Leaf kind registry for string dispatch. */');
+	out.line('const _leafRegistry: Record<string, { values?: string[]; pattern?: RegExp; factory: (text: string) => unknown }> = {');
+	out.indent();
+	for (const entry of leafEntries) {
+		const parts: string[] = [];
+		if (entry.values) {
+			parts.push(`values: ${JSON.stringify(entry.values)}`);
+		}
+		if (entry.pattern) {
+			parts.push(`pattern: /^${entry.pattern}$/${entry.patternFlags ?? ''}`);
+		}
+		parts.push(`factory: ${entry.isKeyword ? `() => ${entry.factory}()` : entry.factory}`);
+		out.line(`'${entry.kind}': { ${parts.join(', ')} },`);
+	}
+	out.dedent();
+	out.line('};');
+	out.line();
+
+	// Identifier-priority list for fallback
+	const identPriority = ['identifier', 'type_identifier', 'field_identifier', 'shorthand_field_identifier']
+		.filter(k => leafSet.has(k));
+
+	out.line('/**');
+	out.line(' * Resolve a string to the best matching leaf factory from a set of accepted kinds.');
+	out.line(' * Returns undefined if no leaf kind matches.');
+	out.line(' */');
+	out.line('function _resolveLeafString(v: string, kinds: readonly string[]): unknown {');
+	out.indent();
+	out.line('for (const kind of kinds) {');
+	out.indent();
+	out.line('const entry = _leafRegistry[kind];');
+	out.line('if (!entry) continue;');
+	out.line('if (entry.values && entry.values.includes(v)) return entry.factory(v);');
+	out.line('if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);');
+	out.dedent();
+	out.line('}');
+	// Fallback: identifier-like kinds (no pattern, no values)
+	out.line('for (const kind of kinds) {');
+	out.indent();
+	out.line('const entry = _leafRegistry[kind];');
+	out.line('if (entry && !entry.values && !entry.pattern) return entry.factory(v);');
+	out.dedent();
+	out.line('}');
+	out.line('return undefined;');
+	out.dedent();
+	out.line('}');
+	out.line();
+
+	// Emit leaf group arrays (deduplicated)
+	// Collect unique leaf kind sets from all resolvers and assign group IDs
+	// This is deferred to the caller
 }
 
 // ---------------------------------------------------------------------------
@@ -474,32 +596,28 @@ function emitResolverFunction(
 	// NodeData passthrough
 	out.line('if (isNodeData(v)) return v;');
 
-	// Boolean scalar
-	if (leafTypes.includes('boolean_literal') || (leafTypes.length === 0 && leafSet.has('boolean_literal'))) {
-		out.line(`if (typeof v === 'boolean') return ${toRawFactoryName('boolean_literal')}(v ? 'true' : 'false');`);
+	// Scalar widening (boolean → boolean_literal, number → int/float)
+	const hasScalarTypes = leafTypes.includes('boolean_literal') || leafTypes.includes('integer_literal') || leafTypes.includes('float_literal');
+	if (hasScalarTypes) {
+		out.line('{ const s = _resolveScalar(v); if (s !== undefined) return s; }');
 	}
 
-	// Number scalars
-	const hasInt = leafTypes.includes('integer_literal') || (leafTypes.length === 0 && leafSet.has('integer_literal'));
-	const hasFloat = leafTypes.includes('float_literal') || (leafTypes.length === 0 && leafSet.has('float_literal'));
-	if (hasInt && hasFloat) {
-		out.line(`if (typeof v === 'number') {`);
-		out.indent();
-		out.line(`return Number.isInteger(v) ? ${toRawFactoryName('integer_literal')}(\`\${v}\`) : ${toRawFactoryName('float_literal')}(\`\${v}\`);`);
-		out.dedent();
-		out.line('}');
-	} else if (hasInt) {
-		out.line(`if (typeof v === 'number') return ${toRawFactoryName('integer_literal')}(\`\${v}\`);`);
-	} else if (hasFloat) {
-		out.line(`if (typeof v === 'number') return ${toRawFactoryName('float_literal')}(\`\${v}\`);`);
+	// String → leaf dispatch
+	const leafKindsList = JSON.stringify(leafTypes);
+	if (leafTypes.length > 0 || anonTokens.length > 0) {
+		if (anonTokens.length > 0) {
+			const tokenSet = anonTokens.map(t => `'${escapeString(t)}'`).join(', ');
+			out.line(`if (typeof v === 'string') {`);
+			out.indent();
+			out.line(`if ([${tokenSet}].includes(v)) return { type: v, text: v };`);
+			out.line(`const leaf = _resolveLeafString(v, ${leafKindsList}); if (leaf !== undefined) return leaf;`);
+			out.line("throw new Error('Cannot resolve string value: no leaf types accepted for this field');");
+			out.dedent();
+			out.line('}');
+		} else if (leafTypes.length > 0) {
+			out.line(`if (typeof v === 'string') { const leaf = _resolveLeafString(v, ${leafKindsList}); if (leaf !== undefined) return leaf; }`);
+		}
 	}
-
-	// String resolution
-	out.line(`if (typeof v === 'string') {`);
-	out.indent();
-	emitStringResolveFormatted(out, 'v', leafTypes, anonTokens, leafSet, leafValueMap, keywordKinds, grammar);
-	out.dedent();
-	out.line('}');
 
 	// Array resolution
 	const allBranch = branchTypes.length + supertypes.length;
@@ -787,7 +905,7 @@ function emitFromFunction(
 		const slotNames = childSlotNames(node.children, ctx);
 		if (!isTupleChildren(node.children)) {
 			const slot = Array.isArray(node.children) ? node.children[0]! : node.children;
-			const allCovered = node.modelType === 'branch' && slot.kinds.every(k => fieldCoveredKinds.has(k.kind));
+			const allCovered = node.modelType === 'branch' && slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
 			if (!allCovered) {
 				if (slot.multiple) {
 					out.line(`${slotNames[0]!}: input.children,`);

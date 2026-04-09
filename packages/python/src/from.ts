@@ -125,12 +125,53 @@ export function _resolveByKind(kind: string, rest: unknown) {
   throw new Error(`Unknown kind for .from(): '${kind}'`);
 }
 
+/** Leaf kind registry for string dispatch. */
+const _leafRegistry: Record<string, { values?: string[]; pattern?: RegExp; factory: (text: string) => unknown }> = {
+  'break_statement': { values: ["break"], factory: () => break_statement_() },
+  'continue_statement': { values: ["continue"], factory: () => continue_statement_() },
+  'import_prefix': { pattern: /^(?:\.)+$/, factory: import_prefix_ },
+  'keyword_separator': { values: ["*"], factory: () => keyword_separator_() },
+  'pass_statement': { values: ["pass"], factory: () => pass_statement_() },
+  'positional_separator': { values: ["/"], factory: () => positional_separator_() },
+  'wildcard_import': { values: ["*"], factory: () => wildcard_import_() },
+  'comment': { pattern: /^#.*$/, factory: comment_ },
+  'ellipsis': { values: ["..."], factory: () => ellipsis_() },
+  'escape_interpolation': { factory: escape_interpolation_ },
+  'escape_sequence': { pattern: /^\\(?:u[a-fA-F\d]{4}|U[a-fA-F\d]{8}|x[a-fA-F\d]{2}|\d{1,3}|\r?\n|['"abfrntv\\]|N\{[^}]+\})$/, factory: escape_sequence_ },
+  'false': { values: ["False"], factory: () => false_() },
+  'float': { pattern: /^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/, factory: float_ },
+  'identifier': { pattern: /^[_\p{XID_Start}][_\p{XID_Continue}]*$/u, factory: identifier_ },
+  'integer': { pattern: /^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/, factory: integer_ },
+  'line_continuation': { pattern: /^\\(?:?
+| )$/, factory: line_continuation_ },
+  'none': { values: ["None"], factory: () => none_() },
+  'string_end': { factory: string_end_ },
+  'string_start': { factory: string_start_ },
+  'true': { values: ["True"], factory: () => true_() },
+  'type_conversion': { pattern: /^![a-z]$/, factory: type_conversion_ },
+};
+
+/**
+ * Resolve a string to the best matching leaf factory from a set of accepted kinds.
+ * Returns undefined if no leaf kind matches.
+ */
+function _resolveLeafString(v: string, kinds: readonly string[]): unknown {
+  for (const kind of kinds) {
+    const entry = _leafRegistry[kind];
+    if (!entry) continue;
+    if (entry.values && entry.values.includes(v)) return entry.factory(v);
+    if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);
+  }
+  for (const kind of kinds) {
+    const entry = _leafRegistry[kind];
+    if (entry && !entry.values && !entry.pattern) return entry.factory(v);
+  }
+  return undefined;
+}
+
 function _resolveCompoundStatement(v: unknown): CompoundStatement;
 function _resolveCompoundStatement(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -145,12 +186,7 @@ function _resolveCompoundStatement(v: unknown) {
 function _resolveSimpleStatement(v: unknown): SimpleStatement;
 function _resolveSimpleStatement(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^break$/.test(v)) return (v === 'break' ? break_statement_() : (() => { throw new Error(`Expected 'break' for break_statement, got '${v}'`); })());
-    if (/^continue$/.test(v)) return (v === 'continue' ? continue_statement_() : (() => { throw new Error(`Expected 'continue' for continue_statement, got '${v}'`); })());
-    if (/^pass$/.test(v)) return (v === 'pass' ? pass_statement_() : (() => { throw new Error(`Expected 'pass' for pass_statement, got '${v}'`); })());
-    return (v === 'break' ? break_statement_() : (() => { throw new Error(`Expected 'break' for break_statement, got '${v}'`); })());
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["break_statement","continue_statement","pass_statement"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -165,15 +201,7 @@ function _resolveSimpleStatement(v: unknown) {
 function _resolvePrimaryExpression(v: unknown): PrimaryExpression;
 function _resolvePrimaryExpression(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^\.\.\.$/.test(v)) return (v === '...' ? ellipsis_() : (() => { throw new Error(`Expected '...' for ellipsis, got '${v}'`); })());
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["ellipsis","false","float","identifier","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -188,15 +216,7 @@ function _resolvePrimaryExpression(v: unknown) {
 function _resolveExpression(v: unknown): Expression;
 function _resolveExpression(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^\.\.\.$/.test(v)) return (v === '...' ? ellipsis_() : (() => { throw new Error(`Expected '...' for ellipsis, got '${v}'`); })());
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["ellipsis","false","float","identifier","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -211,11 +231,7 @@ function _resolveExpression(v: unknown) {
 function _resolveParameter(v: unknown): Parameter;
 function _resolveParameter(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^\*$/.test(v)) return (v === '*' ? keyword_separator_() : (() => { throw new Error(`Expected '*' for keyword_separator, got '${v}'`); })());
-    if (/^\/$/.test(v)) return (v === '/' ? positional_separator_() : (() => { throw new Error(`Expected '/' for positional_separator, got '${v}'`); })());
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier","keyword_separator","positional_separator"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -230,9 +246,7 @@ function _resolveParameter(v: unknown) {
 function _resolvePattern(v: unknown): Pattern;
 function _resolvePattern(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -247,14 +261,7 @@ function _resolvePattern(v: unknown) {
 function _resolveSimplePattern(v: unknown): SimplePattern;
 function _resolveSimplePattern(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["false","float","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -269,9 +276,6 @@ function _resolveSimplePattern(v: unknown) {
 function _resolveComprehensionClauses(v: unknown): ComprehensionClauses;
 function _resolveComprehensionClauses(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('for_in_clause', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -286,9 +290,6 @@ function _resolveComprehensionClauses(v: unknown) {
 function _resolveSuite(v: unknown): Suite;
 function _resolveSuite(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('block', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -303,15 +304,7 @@ function _resolveSuite(v: unknown) {
 function _resolveExpressions(v: unknown): Expressions;
 function _resolveExpressions(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^\.\.\.$/.test(v)) return (v === '...' ? ellipsis_() : (() => { throw new Error(`Expected '...' for ellipsis, got '${v}'`); })());
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["ellipsis","false","float","identifier","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -326,9 +319,7 @@ function _resolveExpressions(v: unknown) {
 function _resolveLeftHandSide(v: unknown): LeftHandSide;
 function _resolveLeftHandSide(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -343,15 +334,7 @@ function _resolveLeftHandSide(v: unknown) {
 function _resolveRightHandSide(v: unknown): RightHandSide;
 function _resolveRightHandSide(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^\.\.\.$/.test(v)) return (v === '...' ? ellipsis_() : (() => { throw new Error(`Expected '...' for ellipsis, got '${v}'`); })());
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["ellipsis","false","float","identifier","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -366,15 +349,7 @@ function _resolveRightHandSide(v: unknown) {
 function _resolveFExpression(v: unknown): FExpression;
 function _resolveFExpression(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^\.\.\.$/.test(v)) return (v === '...' ? ellipsis_() : (() => { throw new Error(`Expected '...' for ellipsis, got '${v}'`); })());
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["ellipsis","false","float","identifier","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -389,9 +364,7 @@ function _resolveFExpression(v: unknown) {
 function _resolveNamedExpressionLhs(v: unknown): NamedExpressionLhs;
 function _resolveNamedExpressionLhs(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -405,9 +378,6 @@ function _resolveNamedExpressionLhs(v: unknown) {
 function _resolveSimplePattern2(v: unknown): KindMap['dotted_name'];
 function _resolveSimplePattern2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('dotted_name', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -422,9 +392,6 @@ function _resolveSimplePattern2(v: unknown) {
 function _r1pqs0ui(v: unknown): KindMap['dictionary_splat'] | KindMap['keyword_argument'] | KindMap['list_splat'] | KindMap['parenthesized_expression'] | Expression;
 function _r1pqs0ui(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -439,9 +406,6 @@ function _r1pqs0ui(v: unknown) {
 function _resolveComprehensionClauses2(v: unknown): string;
 function _resolveComprehensionClauses2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -455,9 +419,7 @@ function _resolveComprehensionClauses2(v: unknown) {
 function _r1mkpyke(v: unknown): KindMap['identifier'] | KindMap['case_pattern'] | Expression;
 function _r1mkpyke(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -472,9 +434,6 @@ function _r1mkpyke(v: unknown) {
 function _resolveComprehensionClauses3(v: unknown): Expression;
 function _resolveComprehensionClauses3(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveExpression(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -489,9 +448,6 @@ function _resolveComprehensionClauses3(v: unknown) {
 function _resolveLeftHandSide2(v: unknown): KindMap['pattern_list'] | LeftHandSide | Pattern;
 function _resolveLeftHandSide2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -506,9 +462,6 @@ function _resolveLeftHandSide2(v: unknown) {
 function _resolveRightHandSide2(v: unknown): KindMap['assignment'] | KindMap['augmented_assignment'] | KindMap['expression_list'] | KindMap['pattern_list'] | KindMap['yield'] | RightHandSide | Expression;
 function _resolveRightHandSide2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -523,9 +476,6 @@ function _resolveRightHandSide2(v: unknown) {
 function _rtec52c(v: unknown): KindMap['type'];
 function _rtec52c(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('type', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -540,9 +490,6 @@ function _rtec52c(v: unknown) {
 function _resolveComprehensionClauses4(v: unknown): PrimaryExpression;
 function _resolveComprehensionClauses4(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolvePrimaryExpression(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -559,6 +506,7 @@ function _resolveComprehensionClauses5(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['%=', '&=', '**=', '*=', '+=', '-=', '//=', '/=', '<<=', '>>=', '@=', '^=', '|='].includes(v)) return { type: v, text: v };
+    const leaf = _resolveLeafString(v, []); if (leaf !== undefined) return leaf;
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
   if (typeof v === 'object' && v !== null) {
@@ -576,6 +524,7 @@ function _resolveComprehensionClauses6(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['%', '&', '*', '**', '+', '-', '/', '//', '<<', '>>', '@', '^', '|'].includes(v)) return { type: v, text: v };
+    const leaf = _resolveLeafString(v, []); if (leaf !== undefined) return leaf;
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
   if (typeof v === 'object' && v !== null) {
@@ -591,9 +540,6 @@ function _resolveComprehensionClauses6(v: unknown) {
 function _r1ednr96(v: unknown): KindMap['case_clause'];
 function _r1ednr96(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('case_clause', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -608,9 +554,6 @@ function _r1ednr96(v: unknown) {
 function _resolveComprehensionClauses7(v: unknown): CompoundStatement | SimpleStatement;
 function _resolveComprehensionClauses7(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -627,6 +570,7 @@ function _resolveComprehensionClauses8(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['and', 'or'].includes(v)) return { type: v, text: v };
+    const leaf = _resolveLeafString(v, []); if (leaf !== undefined) return leaf;
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
   if (typeof v === 'object' && v !== null) {
@@ -642,9 +586,6 @@ function _resolveComprehensionClauses8(v: unknown) {
 function _r1wv67cy(v: unknown): KindMap['argument_list'] | KindMap['generator_expression'];
 function _r1wv67cy(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -659,9 +600,6 @@ function _r1wv67cy(v: unknown) {
 function _resolveSuite2(v: unknown): KindMap['block'] | Suite;
 function _resolveSuite2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -676,9 +614,6 @@ function _resolveSuite2(v: unknown) {
 function _r17d6grx(v: unknown): KindMap['if_clause'];
 function _r17d6grx(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('if_clause', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -693,9 +628,6 @@ function _r17d6grx(v: unknown) {
 function _rflltaz(v: unknown): KindMap['case_pattern'];
 function _rflltaz(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('case_pattern', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -710,14 +642,7 @@ function _rflltaz(v: unknown) {
 function _r17obc8i(v: unknown): KindMap['false'] | KindMap['float'] | KindMap['integer'] | KindMap['none'] | KindMap['true'] | KindMap['as_pattern'] | KindMap['class_pattern'] | KindMap['complex_pattern'] | KindMap['concatenated_string'] | KindMap['dict_pattern'] | KindMap['dotted_name'] | KindMap['keyword_pattern'] | KindMap['list_pattern'] | KindMap['splat_pattern'] | KindMap['string'] | KindMap['tuple_pattern'] | KindMap['union_pattern'] | SimplePattern;
 function _r17obc8i(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["false","float","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -732,9 +657,6 @@ function _r17obc8i(v: unknown) {
 function _r3e3k0(v: unknown): KindMap['argument_list'];
 function _r3e3k0(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('argument_list', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -749,9 +671,6 @@ function _r3e3k0(v: unknown) {
 function _reaq3s4(v: unknown): KindMap['type_parameter'];
 function _reaq3s4(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('type_parameter', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -768,6 +687,7 @@ function _resolveComprehensionClauses9(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['!=', '<', '<=', '<>', '==', '>', '>=', 'in', 'is', 'is not', 'not in'].includes(v)) return { type: v, text: v };
+    const leaf = _resolveLeafString(v, []); if (leaf !== undefined) return leaf;
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
   if (typeof v === 'object' && v !== null) {
@@ -783,11 +703,7 @@ function _resolveComprehensionClauses9(v: unknown) {
 function _resolveSimplePattern3(v: unknown): KindMap['float'] | KindMap['integer'];
 function _resolveSimplePattern3(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    return float_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["float","integer"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -801,9 +717,6 @@ function _resolveSimplePattern3(v: unknown) {
 function _resolveSimplePattern4(v: unknown): KindMap['string'];
 function _resolveSimplePattern4(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('string', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -818,9 +731,6 @@ function _resolveSimplePattern4(v: unknown) {
 function _resolveCompoundStatement2(v: unknown): KindMap['class_definition'] | KindMap['function_definition'];
 function _resolveCompoundStatement2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -835,9 +745,6 @@ function _resolveCompoundStatement2(v: unknown) {
 function _r1fl8679(v: unknown): KindMap['decorator'];
 function _r1fl8679(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('decorator', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -852,9 +759,7 @@ function _r1fl8679(v: unknown) {
 function _resolvePattern2(v: unknown): KindMap['identifier'] | KindMap['tuple_pattern'];
 function _resolvePattern2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) return _resolveByKind('tuple_pattern', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -869,9 +774,6 @@ function _resolvePattern2(v: unknown) {
 function _resolveExpressions2(v: unknown): KindMap['expression_list'] | Expression;
 function _resolveExpressions2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -886,9 +788,6 @@ function _resolveExpressions2(v: unknown) {
 function _resolveSimplePattern5(v: unknown): KindMap['splat_pattern'];
 function _resolveSimplePattern5(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('splat_pattern', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -903,9 +802,6 @@ function _resolveSimplePattern5(v: unknown) {
 function _r34sltf(v: unknown): KindMap['dictionary_splat'] | KindMap['pair'];
 function _r34sltf(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -920,9 +816,6 @@ function _r34sltf(v: unknown) {
 function _rte8hta(v: unknown): KindMap['pair'];
 function _rte8hta(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('pair', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -937,9 +830,6 @@ function _rte8hta(v: unknown) {
 function _ryqidua(v: unknown): KindMap['for_in_clause'] | KindMap['if_clause'] | ComprehensionClauses;
 function _ryqidua(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -954,9 +844,7 @@ function _ryqidua(v: unknown) {
 function _resolvePattern3(v: unknown): KindMap['identifier'] | KindMap['attribute'] | KindMap['subscript'];
 function _resolvePattern3(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -971,9 +859,7 @@ function _resolvePattern3(v: unknown) {
 function _resolvePrimaryExpression2(v: unknown): KindMap['identifier'] | KindMap['string'];
 function _resolvePrimaryExpression2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) return _resolveByKind('string', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -988,9 +874,6 @@ function _resolvePrimaryExpression2(v: unknown) {
 function _resolveRightHandSide3(v: unknown): KindMap['assignment'] | KindMap['augmented_assignment'] | KindMap['yield'] | Expression;
 function _resolveRightHandSide3(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1007,6 +890,7 @@ function _resolveComprehensionClauses10(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if ([','].includes(v)) return { type: v, text: v };
+    const leaf = _resolveLeafString(v, []); if (leaf !== undefined) return leaf;
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
@@ -1023,9 +907,6 @@ function _resolveComprehensionClauses10(v: unknown) {
 function _r1totjtz(v: unknown): KindMap['else_clause'];
 function _r1totjtz(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('else_clause', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1040,9 +921,6 @@ function _r1totjtz(v: unknown) {
 function _resolveExpressions3(v: unknown): KindMap['expression_list'] | Expressions | Expression;
 function _resolveExpressions3(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1057,9 +935,6 @@ function _resolveExpressions3(v: unknown) {
 function _resolveFExpression2(v: unknown): KindMap['expression_list'] | KindMap['pattern_list'] | KindMap['yield'] | Expression;
 function _resolveFExpression2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1074,9 +949,6 @@ function _resolveFExpression2(v: unknown) {
 function _rt4o2h0(v: unknown): KindMap['format_specifier'];
 function _rt4o2h0(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('format_specifier', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1091,9 +963,7 @@ function _rt4o2h0(v: unknown) {
 function _rd1leh5(v: unknown): KindMap['type_conversion'];
 function _rd1leh5(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return type_conversion_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["type_conversion"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -1107,9 +977,6 @@ function _rd1leh5(v: unknown) {
 function _r15bktga(v: unknown): KindMap['format_expression'];
 function _r15bktga(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('format_expression', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1124,9 +991,6 @@ function _r15bktga(v: unknown) {
 function _r1tsfyeu(v: unknown): KindMap['parameters'];
 function _r1tsfyeu(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('parameters', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1141,9 +1005,6 @@ function _r1tsfyeu(v: unknown) {
 function _r1s79fxb(v: unknown): KindMap['aliased_import'] | KindMap['dotted_name'];
 function _r1s79fxb(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1158,9 +1019,6 @@ function _r1s79fxb(v: unknown) {
 function _rn6vv1r(v: unknown): KindMap['elif_clause'] | KindMap['else_clause'];
 function _rn6vv1r(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1175,9 +1033,6 @@ function _rn6vv1r(v: unknown) {
 function _r2jsk94(v: unknown): KindMap['dotted_name'] | KindMap['relative_import'];
 function _r2jsk94(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1192,9 +1047,7 @@ function _r2jsk94(v: unknown) {
 function _r18yiena(v: unknown): KindMap['wildcard_import'];
 function _r18yiena(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return (v === '*' ? wildcard_import_() : (() => { throw new Error(`Expected '*' for wildcard_import, got '${v}'`); })());
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["wildcard_import"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -1208,9 +1061,6 @@ function _r18yiena(v: unknown) {
 function _resolveFExpression3(v: unknown): KindMap['expression_list'] | KindMap['pattern_list'] | KindMap['yield'] | FExpression | Expression;
 function _resolveFExpression3(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1225,14 +1075,7 @@ function _resolveFExpression3(v: unknown) {
 function _rfpc4ja(v: unknown): KindMap['false'] | KindMap['float'] | KindMap['identifier'] | KindMap['integer'] | KindMap['none'] | KindMap['true'] | KindMap['class_pattern'] | KindMap['complex_pattern'] | KindMap['concatenated_string'] | KindMap['dict_pattern'] | KindMap['dotted_name'] | KindMap['list_pattern'] | KindMap['splat_pattern'] | KindMap['string'] | KindMap['tuple_pattern'] | KindMap['union_pattern'];
 function _rfpc4ja(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["false","float","identifier","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1247,14 +1090,7 @@ function _rfpc4ja(v: unknown) {
 function _resolveSimplePattern6(v: unknown): KindMap['false'] | KindMap['float'] | KindMap['integer'] | KindMap['none'] | KindMap['true'] | KindMap['class_pattern'] | KindMap['complex_pattern'] | KindMap['concatenated_string'] | KindMap['dict_pattern'] | KindMap['dotted_name'] | KindMap['list_pattern'] | KindMap['splat_pattern'] | KindMap['string'] | KindMap['tuple_pattern'] | KindMap['union_pattern'] | SimplePattern;
 function _resolveSimplePattern6(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-    if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
-    if (/^(?:(?:0x|0X)(?:_?[A-Fa-f0-9]+)+[Ll]?|(?:0o|0O)(?:_?[0-7]+)+[Ll]?|(?:0b|0B)(?:_?[0-1]+)+[Ll]?|(?:[0-9]+_?)+(?:[Ll]?|[jJ]?))$/.test(v)) return integer_(v);
-    if (/^None$/.test(v)) return (v === 'None' ? none_() : (() => { throw new Error(`Expected 'None' for none, got '${v}'`); })());
-    if (/^True$/.test(v)) return (v === 'True' ? true_() : (() => { throw new Error(`Expected 'True' for true, got '${v}'`); })());
-    return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["false","float","integer","none","true"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1269,9 +1105,6 @@ function _resolveSimplePattern6(v: unknown) {
 function _ruhfgja(v: unknown): KindMap['lambda_parameters'];
 function _ruhfgja(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('lambda_parameters', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1286,9 +1119,6 @@ function _ruhfgja(v: unknown) {
 function _resolveComprehensionClauses11(v: unknown): Parameter;
 function _resolveComprehensionClauses11(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveParameter(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1303,9 +1133,6 @@ function _resolveComprehensionClauses11(v: unknown) {
 function _rr83r9g(v: unknown): KindMap['list_splat'] | KindMap['parenthesized_list_splat'] | KindMap['yield'] | Expression;
 function _rr83r9g(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1320,9 +1147,6 @@ function _rr83r9g(v: unknown) {
 function _rflltaz2(v: unknown): KindMap['case_pattern'] | Pattern;
 function _rflltaz2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1337,9 +1161,7 @@ function _rflltaz2(v: unknown) {
 function _resolvePattern4(v: unknown): KindMap['identifier'] | KindMap['attribute'] | KindMap['subscript'] | Expression;
 function _resolvePattern4(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1354,9 +1176,7 @@ function _resolvePattern4(v: unknown) {
 function _resolveNamedExpressionLhs2(v: unknown): KindMap['identifier'] | NamedExpressionLhs;
 function _resolveNamedExpressionLhs2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) return _resolveNamedExpressionLhs(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1371,9 +1191,6 @@ function _resolveNamedExpressionLhs2(v: unknown) {
 function _resolveFExpression4(v: unknown): KindMap['list_splat'] | KindMap['parenthesized_expression'] | KindMap['yield'] | Expression;
 function _resolveFExpression4(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1388,9 +1205,6 @@ function _resolveFExpression4(v: unknown) {
 function _resolvePrimaryExpression3(v: unknown): KindMap['list_splat'] | KindMap['parenthesized_expression'];
 function _resolvePrimaryExpression3(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1405,9 +1219,6 @@ function _resolvePrimaryExpression3(v: unknown) {
 function _resolveComprehensionClauses12(v: unknown): Pattern;
 function _resolveComprehensionClauses12(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolvePattern(v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1422,9 +1233,6 @@ function _resolveComprehensionClauses12(v: unknown) {
 function _rnbxrnb(v: unknown): KindMap['chevron'];
 function _rnbxrnb(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('chevron', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1439,9 +1247,7 @@ function _rnbxrnb(v: unknown) {
 function _rtjvpca(v: unknown): KindMap['import_prefix'];
 function _rtjvpca(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return import_prefix_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["import_prefix"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -1455,9 +1261,7 @@ function _rtjvpca(v: unknown) {
 function _r11rdi4m(v: unknown): KindMap['string_start'];
 function _r11rdi4m(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return string_start_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["string_start"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -1471,9 +1275,6 @@ function _r11rdi4m(v: unknown) {
 function _r14l28kn(v: unknown): KindMap['interpolation'] | KindMap['string_content'];
 function _r14l28kn(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1488,9 +1289,7 @@ function _r14l28kn(v: unknown) {
 function _r8ytgv(v: unknown): KindMap['string_end'];
 function _r8ytgv(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return string_end_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["string_end"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -1504,10 +1303,7 @@ function _r8ytgv(v: unknown) {
 function _r1qu323z(v: unknown): KindMap['escape_interpolation'] | KindMap['escape_sequence'];
 function _r1qu323z(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    if (/^\\(?:u[a-fA-F\d]{4}|U[a-fA-F\d]{8}|x[a-fA-F\d]{2}|\d{1,3}|\r?\n|['"abfrntv\\]|N\{[^}]+\})$/.test(v)) return escape_sequence_(v);
-    return escape_interpolation_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["escape_interpolation","escape_sequence"]); if (leaf !== undefined) return leaf; }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
       const { kind: k, ...rest } = v;
@@ -1521,9 +1317,6 @@ function _r1qu323z(v: unknown) {
 function _r1apoc2a(v: unknown): KindMap['slice'] | Expression;
 function _r1apoc2a(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1538,9 +1331,6 @@ function _r1apoc2a(v: unknown) {
 function _r16jeonb(v: unknown): KindMap['except_clause'];
 function _r16jeonb(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('except_clause', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1555,9 +1345,6 @@ function _r16jeonb(v: unknown) {
 function _rqhziy5(v: unknown): KindMap['finally_clause'];
 function _rqhziy5(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('finally_clause', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1572,9 +1359,6 @@ function _rqhziy5(v: unknown) {
 function _r1f2r8fn(v: unknown): KindMap['constrained_type'] | KindMap['generic_type'] | KindMap['member_type'] | KindMap['splat_type'] | KindMap['union_type'] | Expression;
 function _r1f2r8fn(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1589,9 +1373,7 @@ function _r1f2r8fn(v: unknown) {
 function _resolveParameter2(v: unknown): KindMap['identifier'] | KindMap['dictionary_splat_pattern'] | KindMap['list_splat_pattern'];
 function _resolveParameter2(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return identifier_(v);
-  }
+  if (typeof v === 'string') { const leaf = _resolveLeafString(v, ["identifier"]); if (leaf !== undefined) return leaf; }
   if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1608,6 +1390,7 @@ function _resolveComprehensionClauses13(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['+', '-', '~'].includes(v)) return { type: v, text: v };
+    const leaf = _resolveLeafString(v, []); if (leaf !== undefined) return leaf;
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
   if (typeof v === 'object' && v !== null) {
@@ -1623,9 +1406,6 @@ function _resolveComprehensionClauses13(v: unknown) {
 function _r7jahe4(v: unknown): KindMap['with_item'];
 function _r7jahe4(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('with_item', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1640,9 +1420,6 @@ function _r7jahe4(v: unknown) {
 function _rxymsmy(v: unknown): KindMap['with_clause'];
 function _rxymsmy(v: unknown) {
   if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
   if (Array.isArray(v)) return _resolveByKind('with_clause', v);
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
