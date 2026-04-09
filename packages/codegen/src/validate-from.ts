@@ -264,7 +264,12 @@ export async function validateFrom(
 				const fromResult = fromMap[kind]!(readData) as AnyNodeData;
 				let factoryResult: AnyNodeData;
 				try {
-					factoryResult = factoryMap[kind]!(readData.fields ?? {}) as AnyNodeData;
+					// Children-only factories use rest params — spread children directly
+					if (!readData.fields && readData.children) {
+						factoryResult = (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...readData.children);
+					} else {
+						factoryResult = factoryMap[kind]!(readData.fields ?? {}) as AnyNodeData;
+					}
 				} catch {
 					skip++;
 					continue;

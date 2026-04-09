@@ -312,7 +312,12 @@ export async function validateFactoryRoundTrip(
 			let factoryData: AnyNodeData;
 			if (factory) {
 				try {
-					factoryData = factory(readData.fields ?? {}) as AnyNodeData;
+					// Children-only factories use rest params — spread children directly
+					if (!readData.fields && readData.children) {
+						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...readData.children);
+					} else {
+						factoryData = factory(readData.fields ?? {}) as AnyNodeData;
+					}
 				} catch {
 					// Factory may fail on raw readNode fields — fall back to strip
 					factoryData = stripToFactory(readData);
