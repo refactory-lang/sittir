@@ -341,7 +341,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	const allTypeImports = [...new Set([...baseTypeImports, ...configTypeImports, ...supertypeUnionImports])].sort();
 	out.line(`import type { ${allTypeImports.join(', ')} } from './types.js';`);
 	out.line("import type { KindMap, FromInputMap } from './types.js';");
-	out.line("import type { FluentNodeOf } from '@sittir/types';");
+	out.line("import type { RuntimeNodeOf } from '@sittir/types';");
 	out.line("import { isNodeData, hasKind, resolveField } from './utils.js';");
 	out.line();
 
@@ -361,7 +361,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line('/** Maps kind string to its typed .from() resolver. */');
 	out.line('export type FromMap = {');
 	out.indent();
-	out.line('[K in keyof FromInputMap]: (input: KindMap[K] | FromInputMap[K]) => FluentNodeOf<KindMap[K]>;');
+	out.line('[K in keyof FromInputMap]: (input: KindMap[K] | FromInputMap[K]) => RuntimeNodeOf<KindMap[K]>;');
 	out.dedent();
 	out.line('};');
 	out.line();
@@ -735,11 +735,11 @@ function emitFromFunction(
 
 	const exportName = `${camelFactoryName}From`;
 
-	out.line(`export function ${exportName}(input: ${typeName} | ${typeName}FromInput) {`);
+	out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}> | ${typeName}FromInput) {`);
 	out.indent();
 
 	// --- Path 1: NodeData → reconstruct via factory ---
-	out.line('if (isNodeData(input)) {');
+	out.line(`if (isNodeData<'${node.kind}'>(input)) {`);
 	out.indent();
 	out.line(`return ${factoryName}({`);
 	out.indent();

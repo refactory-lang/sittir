@@ -29,8 +29,16 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// ---------------------------------------------------------------------------');
 	lines.push('');
 
-	// isNodeData — generic narrowing
-	lines.push('/** Returns true if `v` is a NodeData. Narrows to AnyNodeData. */');
+	// isNodeData — narrows to RuntimeNodeOf<KindMap[K]>
+	lines.push('/**');
+	lines.push(' * Type guard: returns true if `v` is a NodeData (has `type` + `fields` or `text`).');
+	lines.push(' * Generic overload narrows from a union of RuntimeNodeOf, FromInput, or TreeNode');
+	lines.push(' * to RuntimeNodeOf<KindMap[K]>.');
+	lines.push(' */');
+	lines.push('export function isNodeData<K extends keyof KindMap & keyof FromInputMap>(');
+	lines.push('  v: RuntimeNodeOf<KindMap[K]> | FromInputMap[K] | TreeNodeOf<KindMap[K]>');
+	lines.push('): v is RuntimeNodeOf<KindMap[K]>;');
+	lines.push('export function isNodeData(v: unknown): v is AnyNodeData;');
 	lines.push('export function isNodeData(v: unknown): v is AnyNodeData {');
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push("  const o = v as Record<string, unknown>;");
@@ -39,8 +47,15 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	// isTreeNode — generic narrowing
-	lines.push('/** Returns true if `v` is a TreeNode (SgNode-compatible). */');
+	// isTreeNode — narrows to TreeNodeOf<KindMap[K]>
+	lines.push('/**');
+	lines.push(' * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).');
+	lines.push(' * Generic overload narrows from a union to TreeNodeOf<KindMap[K]>.');
+	lines.push(' */');
+	lines.push('export function isTreeNode<K extends keyof KindMap & keyof FromInputMap>(');
+	lines.push('  v: TreeNodeOf<KindMap[K]> | RuntimeNodeOf<KindMap[K]>');
+	lines.push('): v is TreeNodeOf<KindMap[K]>;');
+	lines.push('export function isTreeNode(v: unknown): v is AnyTreeNodeOf;');
 	lines.push('export function isTreeNode(v: unknown): v is AnyTreeNodeOf {');
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push("  const o = v as Record<string, unknown>;");

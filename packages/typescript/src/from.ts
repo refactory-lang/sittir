@@ -1732,8 +1732,8 @@ function _resolveParameterNameFields(
   };
 }
 
-export function abstractClassDeclarationFrom(input: AbstractClassDeclaration | AbstractClassDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function abstractClassDeclarationFrom(input: RuntimeNodeOf<AbstractClassDeclaration> | AbstractClassDeclarationFromInput) {
+  if (isNodeData<'abstract_class_declaration'>(input)) {
     return abstract_class_declaration_({
       body: input.fields?.body,
       decorator: input.fields?.decorator,
@@ -1752,8 +1752,8 @@ export function abstractClassDeclarationFrom(input: AbstractClassDeclaration | A
   } as any);
 }
 
-export function abstractMethodSignatureFrom(input: AbstractMethodSignature | AbstractMethodSignatureFromInput) {
-  if (isNodeData(input)) {
+export function abstractMethodSignatureFrom(input: RuntimeNodeOf<AbstractMethodSignature> | AbstractMethodSignatureFromInput) {
+  if (isNodeData<'abstract_method_signature'>(input)) {
     return abstract_method_signature_({
       name: input.fields?.name,
       parameters: input.fields?.parameters,
@@ -1773,8 +1773,8 @@ export function abstractMethodSignatureFrom(input: AbstractMethodSignature | Abs
   } as any);
 }
 
-export function addingTypeAnnotationFrom(input: AddingTypeAnnotation | AddingTypeAnnotationFromInput) {
-  if (isNodeData(input)) {
+export function addingTypeAnnotationFrom(input: RuntimeNodeOf<AddingTypeAnnotation> | AddingTypeAnnotationFromInput) {
+  if (isNodeData<'adding_type_annotation'>(input)) {
     return adding_type_annotation_({
       children: (input as any).children,
     } as any);
@@ -1785,8 +1785,8 @@ export function addingTypeAnnotationFrom(input: AddingTypeAnnotation | AddingTyp
   } as any);
 }
 
-export function ambientDeclarationFrom(input: AmbientDeclaration | AmbientDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function ambientDeclarationFrom(input: RuntimeNodeOf<AmbientDeclaration> | AmbientDeclarationFromInput) {
+  if (isNodeData<'ambient_declaration'>(input)) {
     return ambient_declaration_({
       declaration: input.fields?.declaration,
       typeAnnotation: input.fields?.type_annotation,
@@ -1801,8 +1801,8 @@ export function ambientDeclarationFrom(input: AmbientDeclaration | AmbientDeclar
   } as any);
 }
 
-export function arguments_From(input: Arguments | ArgumentsFromInput) {
-  if (isNodeData(input)) {
+export function arguments_From(input: RuntimeNodeOf<Arguments> | ArgumentsFromInput) {
+  if (isNodeData<'arguments'>(input)) {
     return arguments_({
       children: (input as any).children,
     } as any);
@@ -1813,8 +1813,8 @@ export function arguments_From(input: Arguments | ArgumentsFromInput) {
   } as any);
 }
 
-export function arrayFrom(input: Array | ArrayFromInput) {
-  if (isNodeData(input)) {
+export function arrayFrom(input: RuntimeNodeOf<Array> | ArrayFromInput) {
+  if (isNodeData<'array'>(input)) {
     return array_({
       children: (input as any).children,
     } as any);
@@ -1825,8 +1825,8 @@ export function arrayFrom(input: Array | ArrayFromInput) {
   } as any);
 }
 
-export function arrayPatternFrom(input: ArrayPattern | ArrayPatternFromInput) {
-  if (isNodeData(input)) {
+export function arrayPatternFrom(input: RuntimeNodeOf<ArrayPattern> | ArrayPatternFromInput) {
+  if (isNodeData<'array_pattern'>(input)) {
     return array_pattern_({
       children: (input as any).children,
     } as any);
@@ -1837,8 +1837,8 @@ export function arrayPatternFrom(input: ArrayPattern | ArrayPatternFromInput) {
   } as any);
 }
 
-export function arrayTypeFrom(input: ArrayType | ArrayTypeFromInput) {
-  if (isNodeData(input)) {
+export function arrayTypeFrom(input: RuntimeNodeOf<ArrayType> | ArrayTypeFromInput) {
+  if (isNodeData<'array_type'>(input)) {
     return array_type_({
       primaryType: input.fields?.primary_type,
     } as any);
@@ -1849,8 +1849,8 @@ export function arrayTypeFrom(input: ArrayType | ArrayTypeFromInput) {
   } as any);
 }
 
-export function arrowFunctionFrom(input: ArrowFunction | ArrowFunctionFromInput) {
-  if (isNodeData(input)) {
+export function arrowFunctionFrom(input: RuntimeNodeOf<ArrowFunction> | ArrowFunctionFromInput) {
+  if (isNodeData<'arrow_function'>(input)) {
     return arrow_function_({
       body: input.fields?.body,
       parameter: input.fields?.parameter,
@@ -1867,8 +1867,8 @@ export function arrowFunctionFrom(input: ArrowFunction | ArrowFunctionFromInput)
   } as any);
 }
 
-export function asExpressionFrom(input: AsExpression | AsExpressionFromInput) {
-  if (isNodeData(input)) {
+export function asExpressionFrom(input: RuntimeNodeOf<AsExpression> | AsExpressionFromInput) {
+  if (isNodeData<'as_expression'>(input)) {
     return as_expression_({
       expression: input.fields?.expression,
       typeAnnotation: input.fields?.type_annotation,
@@ -1881,8 +1881,8 @@ export function asExpressionFrom(input: AsExpression | AsExpressionFromInput) {
   } as any);
 }
 
-export function assertsFrom(input: Asserts | AssertsFromInput) {
-  if (isNodeData(input)) {
+export function assertsFrom(input: RuntimeNodeOf<Asserts> | AssertsFromInput) {
+  if (isNodeData<'asserts'>(input)) {
     return asserts_({
       children: (input as any).children,
     } as any);
@@ -1893,8 +1893,8 @@ export function assertsFrom(input: Asserts | AssertsFromInput) {
   } as any);
 }
 
-export function assertsAnnotationFrom(input: AssertsAnnotation | AssertsAnnotationFromInput) {
-  if (isNodeData(input)) {
+export function assertsAnnotationFrom(input: RuntimeNodeOf<AssertsAnnotation> | AssertsAnnotationFromInput) {
+  if (isNodeData<'asserts_annotation'>(input)) {
     return asserts_annotation_({
       asserts: input.fields?.asserts,
     } as any);
@@ -1905,8 +1905,8 @@ export function assertsAnnotationFrom(input: AssertsAnnotation | AssertsAnnotati
   } as any);
 }
 
-export function assignmentExpressionFrom(input: AssignmentExpression | AssignmentExpressionFromInput) {
-  if (isNodeData(input)) {
+export function assignmentExpressionFrom(input: RuntimeNodeOf<AssignmentExpression> | AssignmentExpressionFromInput) {
+  if (isNodeData<'assignment_expression'>(input)) {
     return assignment_expression_({
       left: input.fields?.left,
       right: input.fields?.right,
@@ -1919,8 +1919,8 @@ export function assignmentExpressionFrom(input: AssignmentExpression | Assignmen
   } as any);
 }
 
-export function assignmentPatternFrom(input: AssignmentPattern | AssignmentPatternFromInput) {
-  if (isNodeData(input)) {
+export function assignmentPatternFrom(input: RuntimeNodeOf<AssignmentPattern> | AssignmentPatternFromInput) {
+  if (isNodeData<'assignment_pattern'>(input)) {
     return assignment_pattern_({
       left: input.fields?.left,
       right: input.fields?.right,
@@ -1933,8 +1933,8 @@ export function assignmentPatternFrom(input: AssignmentPattern | AssignmentPatte
   } as any);
 }
 
-export function augmentedAssignmentExpressionFrom(input: AugmentedAssignmentExpression | AugmentedAssignmentExpressionFromInput) {
-  if (isNodeData(input)) {
+export function augmentedAssignmentExpressionFrom(input: RuntimeNodeOf<AugmentedAssignmentExpression> | AugmentedAssignmentExpressionFromInput) {
+  if (isNodeData<'augmented_assignment_expression'>(input)) {
     return augmented_assignment_expression_({
       left: input.fields?.left,
       operator: input.fields?.operator,
@@ -1949,8 +1949,8 @@ export function augmentedAssignmentExpressionFrom(input: AugmentedAssignmentExpr
   } as any);
 }
 
-export function awaitExpressionFrom(input: AwaitExpression | AwaitExpressionFromInput) {
-  if (isNodeData(input)) {
+export function awaitExpressionFrom(input: RuntimeNodeOf<AwaitExpression> | AwaitExpressionFromInput) {
+  if (isNodeData<'await_expression'>(input)) {
     return await_expression_({
       expression: input.fields?.expression,
     } as any);
@@ -1961,8 +1961,8 @@ export function awaitExpressionFrom(input: AwaitExpression | AwaitExpressionFrom
   } as any);
 }
 
-export function binaryExpressionFrom(input: BinaryExpression | BinaryExpressionFromInput) {
-  if (isNodeData(input)) {
+export function binaryExpressionFrom(input: RuntimeNodeOf<BinaryExpression> | BinaryExpressionFromInput) {
+  if (isNodeData<'binary_expression'>(input)) {
     return binary_expression_({
       left: input.fields?.left,
       operator: input.fields?.operator,
@@ -1977,8 +1977,8 @@ export function binaryExpressionFrom(input: BinaryExpression | BinaryExpressionF
   } as any);
 }
 
-export function breakStatementFrom(input: BreakStatement | BreakStatementFromInput) {
-  if (isNodeData(input)) {
+export function breakStatementFrom(input: RuntimeNodeOf<BreakStatement> | BreakStatementFromInput) {
+  if (isNodeData<'break_statement'>(input)) {
     return break_statement_({
       label: input.fields?.label,
     } as any);
@@ -1989,8 +1989,8 @@ export function breakStatementFrom(input: BreakStatement | BreakStatementFromInp
   } as any);
 }
 
-export function callExpressionFrom(input: CallExpression | CallExpressionFromInput) {
-  if (isNodeData(input)) {
+export function callExpressionFrom(input: RuntimeNodeOf<CallExpression> | CallExpressionFromInput) {
+  if (isNodeData<'call_expression'>(input)) {
     return call_expression_({
       arguments: input.fields?.arguments,
       function: input.fields?.function,
@@ -2005,8 +2005,8 @@ export function callExpressionFrom(input: CallExpression | CallExpressionFromInp
   } as any);
 }
 
-export function callSignatureFrom(input: CallSignature | CallSignatureFromInput) {
-  if (isNodeData(input)) {
+export function callSignatureFrom(input: RuntimeNodeOf<CallSignature> | CallSignatureFromInput) {
+  if (isNodeData<'call_signature'>(input)) {
     return call_signature_({
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
@@ -2019,8 +2019,8 @@ export function callSignatureFrom(input: CallSignature | CallSignatureFromInput)
   } as any);
 }
 
-export function catchClauseFrom(input: CatchClause | CatchClauseFromInput) {
-  if (isNodeData(input)) {
+export function catchClauseFrom(input: RuntimeNodeOf<CatchClause> | CatchClauseFromInput) {
+  if (isNodeData<'catch_clause'>(input)) {
     return catch_clause_({
       body: input.fields?.body,
       parameter: input.fields?.parameter,
@@ -2035,8 +2035,8 @@ export function catchClauseFrom(input: CatchClause | CatchClauseFromInput) {
   } as any);
 }
 
-export function class_From(input: Class | ClassFromInput) {
-  if (isNodeData(input)) {
+export function class_From(input: RuntimeNodeOf<Class> | ClassFromInput) {
+  if (isNodeData<'class'>(input)) {
     return class_({
       body: input.fields?.body,
       decorator: input.fields?.decorator,
@@ -2055,8 +2055,8 @@ export function class_From(input: Class | ClassFromInput) {
   } as any);
 }
 
-export function classBodyFrom(input: ClassBody | ClassBodyFromInput) {
-  if (isNodeData(input)) {
+export function classBodyFrom(input: RuntimeNodeOf<ClassBody> | ClassBodyFromInput) {
+  if (isNodeData<'class_body'>(input)) {
     return class_body_({
       decorator: input.fields?.decorator,
       children: (input as any).children,
@@ -2069,8 +2069,8 @@ export function classBodyFrom(input: ClassBody | ClassBodyFromInput) {
   } as any);
 }
 
-export function classDeclarationFrom(input: ClassDeclaration | ClassDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function classDeclarationFrom(input: RuntimeNodeOf<ClassDeclaration> | ClassDeclarationFromInput) {
+  if (isNodeData<'class_declaration'>(input)) {
     return class_declaration_({
       body: input.fields?.body,
       decorator: input.fields?.decorator,
@@ -2091,8 +2091,8 @@ export function classDeclarationFrom(input: ClassDeclaration | ClassDeclarationF
   } as any);
 }
 
-export function classHeritageFrom(input: ClassHeritage | ClassHeritageFromInput) {
-  if (isNodeData(input)) {
+export function classHeritageFrom(input: RuntimeNodeOf<ClassHeritage> | ClassHeritageFromInput) {
+  if (isNodeData<'class_heritage'>(input)) {
     return class_heritage_({
       extendsClause: input.fields?.extends_clause,
       implementsClause: input.fields?.implements_clause,
@@ -2105,8 +2105,8 @@ export function classHeritageFrom(input: ClassHeritage | ClassHeritageFromInput)
   } as any);
 }
 
-export function classStaticBlockFrom(input: ClassStaticBlock | ClassStaticBlockFromInput) {
-  if (isNodeData(input)) {
+export function classStaticBlockFrom(input: RuntimeNodeOf<ClassStaticBlock> | ClassStaticBlockFromInput) {
+  if (isNodeData<'class_static_block'>(input)) {
     return class_static_block_({
       body: input.fields?.body,
     } as any);
@@ -2117,8 +2117,8 @@ export function classStaticBlockFrom(input: ClassStaticBlock | ClassStaticBlockF
   } as any);
 }
 
-export function computedPropertyNameFrom(input: ComputedPropertyName | ComputedPropertyNameFromInput) {
-  if (isNodeData(input)) {
+export function computedPropertyNameFrom(input: RuntimeNodeOf<ComputedPropertyName> | ComputedPropertyNameFromInput) {
+  if (isNodeData<'computed_property_name'>(input)) {
     return computed_property_name_({
       expression: input.fields?.expression,
     } as any);
@@ -2129,8 +2129,8 @@ export function computedPropertyNameFrom(input: ComputedPropertyName | ComputedP
   } as any);
 }
 
-export function conditionalTypeFrom(input: ConditionalType | ConditionalTypeFromInput) {
-  if (isNodeData(input)) {
+export function conditionalTypeFrom(input: RuntimeNodeOf<ConditionalType> | ConditionalTypeFromInput) {
+  if (isNodeData<'conditional_type'>(input)) {
     return conditional_type_({
       alternative: input.fields?.alternative,
       consequence: input.fields?.consequence,
@@ -2147,8 +2147,8 @@ export function conditionalTypeFrom(input: ConditionalType | ConditionalTypeFrom
   } as any);
 }
 
-export function constraintFrom(input: Constraint | ConstraintFromInput) {
-  if (isNodeData(input)) {
+export function constraintFrom(input: RuntimeNodeOf<Constraint> | ConstraintFromInput) {
+  if (isNodeData<'constraint'>(input)) {
     return constraint_({
       children: (input as any).children,
     } as any);
@@ -2159,8 +2159,8 @@ export function constraintFrom(input: Constraint | ConstraintFromInput) {
   } as any);
 }
 
-export function constructSignatureFrom(input: ConstructSignature | ConstructSignatureFromInput) {
-  if (isNodeData(input)) {
+export function constructSignatureFrom(input: RuntimeNodeOf<ConstructSignature> | ConstructSignatureFromInput) {
+  if (isNodeData<'construct_signature'>(input)) {
     return construct_signature_({
       parameters: input.fields?.parameters,
       type: input.fields?.type,
@@ -2175,8 +2175,8 @@ export function constructSignatureFrom(input: ConstructSignature | ConstructSign
   } as any);
 }
 
-export function constructorTypeFrom(input: ConstructorType | ConstructorTypeFromInput) {
-  if (isNodeData(input)) {
+export function constructorTypeFrom(input: RuntimeNodeOf<ConstructorType> | ConstructorTypeFromInput) {
+  if (isNodeData<'constructor_type'>(input)) {
     return constructor_type_({
       parameters: input.fields?.parameters,
       type: input.fields?.type,
@@ -2191,8 +2191,8 @@ export function constructorTypeFrom(input: ConstructorType | ConstructorTypeFrom
   } as any);
 }
 
-export function continueStatementFrom(input: ContinueStatement | ContinueStatementFromInput) {
-  if (isNodeData(input)) {
+export function continueStatementFrom(input: RuntimeNodeOf<ContinueStatement> | ContinueStatementFromInput) {
+  if (isNodeData<'continue_statement'>(input)) {
     return continue_statement_({
       label: input.fields?.label,
     } as any);
@@ -2203,8 +2203,8 @@ export function continueStatementFrom(input: ContinueStatement | ContinueStateme
   } as any);
 }
 
-export function decoratorFrom(input: Decorator | DecoratorFromInput) {
-  if (isNodeData(input)) {
+export function decoratorFrom(input: RuntimeNodeOf<Decorator> | DecoratorFromInput) {
+  if (isNodeData<'decorator'>(input)) {
     return decorator_({
       children: (input as any).children,
     } as any);
@@ -2215,8 +2215,8 @@ export function decoratorFrom(input: Decorator | DecoratorFromInput) {
   } as any);
 }
 
-export function defaultTypeFrom(input: DefaultType | DefaultTypeFromInput) {
-  if (isNodeData(input)) {
+export function defaultTypeFrom(input: RuntimeNodeOf<DefaultType> | DefaultTypeFromInput) {
+  if (isNodeData<'default_type'>(input)) {
     return default_type_({
       children: (input as any).children,
     } as any);
@@ -2227,8 +2227,8 @@ export function defaultTypeFrom(input: DefaultType | DefaultTypeFromInput) {
   } as any);
 }
 
-export function doStatementFrom(input: DoStatement | DoStatementFromInput) {
-  if (isNodeData(input)) {
+export function doStatementFrom(input: RuntimeNodeOf<DoStatement> | DoStatementFromInput) {
+  if (isNodeData<'do_statement'>(input)) {
     return do_statement_({
       body: input.fields?.body,
       condition: input.fields?.condition,
@@ -2241,8 +2241,8 @@ export function doStatementFrom(input: DoStatement | DoStatementFromInput) {
   } as any);
 }
 
-export function elseClauseFrom(input: ElseClause | ElseClauseFromInput) {
-  if (isNodeData(input)) {
+export function elseClauseFrom(input: RuntimeNodeOf<ElseClause> | ElseClauseFromInput) {
+  if (isNodeData<'else_clause'>(input)) {
     return else_clause_({
       statement: input.fields?.statement,
     } as any);
@@ -2253,8 +2253,8 @@ export function elseClauseFrom(input: ElseClause | ElseClauseFromInput) {
   } as any);
 }
 
-export function enumAssignmentFrom(input: EnumAssignment | EnumAssignmentFromInput) {
-  if (isNodeData(input)) {
+export function enumAssignmentFrom(input: RuntimeNodeOf<EnumAssignment> | EnumAssignmentFromInput) {
+  if (isNodeData<'enum_assignment'>(input)) {
     return enum_assignment_({
       name: input.fields?.name,
       value: input.fields?.value,
@@ -2267,8 +2267,8 @@ export function enumAssignmentFrom(input: EnumAssignment | EnumAssignmentFromInp
   } as any);
 }
 
-export function enumBodyFrom(input: EnumBody | EnumBodyFromInput) {
-  if (isNodeData(input)) {
+export function enumBodyFrom(input: RuntimeNodeOf<EnumBody> | EnumBodyFromInput) {
+  if (isNodeData<'enum_body'>(input)) {
     return enum_body_({
       name: input.fields?.name,
       opening: input.fields?.opening,
@@ -2283,8 +2283,8 @@ export function enumBodyFrom(input: EnumBody | EnumBodyFromInput) {
   } as any);
 }
 
-export function enumDeclarationFrom(input: EnumDeclaration | EnumDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function enumDeclarationFrom(input: RuntimeNodeOf<EnumDeclaration> | EnumDeclarationFromInput) {
+  if (isNodeData<'enum_declaration'>(input)) {
     return enum_declaration_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2297,8 +2297,8 @@ export function enumDeclarationFrom(input: EnumDeclaration | EnumDeclarationFrom
   } as any);
 }
 
-export function exportClauseFrom(input: ExportClause | ExportClauseFromInput) {
-  if (isNodeData(input)) {
+export function exportClauseFrom(input: RuntimeNodeOf<ExportClause> | ExportClauseFromInput) {
+  if (isNodeData<'export_clause'>(input)) {
     return export_clause_({
       children: (input as any).children,
     } as any);
@@ -2309,8 +2309,8 @@ export function exportClauseFrom(input: ExportClause | ExportClauseFromInput) {
   } as any);
 }
 
-export function exportSpecifierFrom(input: ExportSpecifier | ExportSpecifierFromInput) {
-  if (isNodeData(input)) {
+export function exportSpecifierFrom(input: RuntimeNodeOf<ExportSpecifier> | ExportSpecifierFromInput) {
+  if (isNodeData<'export_specifier'>(input)) {
     return export_specifier_({
       alias: input.fields?.alias,
       name: input.fields?.name,
@@ -2323,8 +2323,8 @@ export function exportSpecifierFrom(input: ExportSpecifier | ExportSpecifierFrom
   } as any);
 }
 
-export function exportStatementFrom(input: ExportStatement | ExportStatementFromInput) {
-  if (isNodeData(input)) {
+export function exportStatementFrom(input: RuntimeNodeOf<ExportStatement> | ExportStatementFromInput) {
+  if (isNodeData<'export_statement'>(input)) {
     return export_statement_({
       declaration: input.fields?.declaration,
       decorator: input.fields?.decorator,
@@ -2343,8 +2343,8 @@ export function exportStatementFrom(input: ExportStatement | ExportStatementFrom
   } as any);
 }
 
-export function expressionStatementFrom(input: ExpressionStatement | ExpressionStatementFromInput) {
-  if (isNodeData(input)) {
+export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement> | ExpressionStatementFromInput) {
+  if (isNodeData<'expression_statement'>(input)) {
     return expression_statement_({
       children: (input as any).children,
     } as any);
@@ -2355,8 +2355,8 @@ export function expressionStatementFrom(input: ExpressionStatement | ExpressionS
   } as any);
 }
 
-export function extendsClauseFrom(input: ExtendsClause | ExtendsClauseFromInput) {
-  if (isNodeData(input)) {
+export function extendsClauseFrom(input: RuntimeNodeOf<ExtendsClause> | ExtendsClauseFromInput) {
+  if (isNodeData<'extends_clause'>(input)) {
     return extends_clause_({
       typeArguments: input.fields?.type_arguments,
       value: input.fields?.value,
@@ -2369,8 +2369,8 @@ export function extendsClauseFrom(input: ExtendsClause | ExtendsClauseFromInput)
   } as any);
 }
 
-export function extendsTypeClauseFrom(input: ExtendsTypeClause | ExtendsTypeClauseFromInput) {
-  if (isNodeData(input)) {
+export function extendsTypeClauseFrom(input: RuntimeNodeOf<ExtendsTypeClause> | ExtendsTypeClauseFromInput) {
+  if (isNodeData<'extends_type_clause'>(input)) {
     return extends_type_clause_({
       type: input.fields?.type,
     } as any);
@@ -2381,8 +2381,8 @@ export function extendsTypeClauseFrom(input: ExtendsTypeClause | ExtendsTypeClau
   } as any);
 }
 
-export function finallyClauseFrom(input: FinallyClause | FinallyClauseFromInput) {
-  if (isNodeData(input)) {
+export function finallyClauseFrom(input: RuntimeNodeOf<FinallyClause> | FinallyClauseFromInput) {
+  if (isNodeData<'finally_clause'>(input)) {
     return finally_clause_({
       body: input.fields?.body,
     } as any);
@@ -2393,8 +2393,8 @@ export function finallyClauseFrom(input: FinallyClause | FinallyClauseFromInput)
   } as any);
 }
 
-export function flowMaybeTypeFrom(input: FlowMaybeType | FlowMaybeTypeFromInput) {
-  if (isNodeData(input)) {
+export function flowMaybeTypeFrom(input: RuntimeNodeOf<FlowMaybeType> | FlowMaybeTypeFromInput) {
+  if (isNodeData<'flow_maybe_type'>(input)) {
     return flow_maybe_type_({
       primaryType: input.fields?.primary_type,
     } as any);
@@ -2405,8 +2405,8 @@ export function flowMaybeTypeFrom(input: FlowMaybeType | FlowMaybeTypeFromInput)
   } as any);
 }
 
-export function forInStatementFrom(input: ForInStatement | ForInStatementFromInput) {
-  if (isNodeData(input)) {
+export function forInStatementFrom(input: RuntimeNodeOf<ForInStatement> | ForInStatementFromInput) {
+  if (isNodeData<'for_in_statement'>(input)) {
     return for_in_statement_({
       body: input.fields?.body,
       kind: input.fields?.kind,
@@ -2427,8 +2427,8 @@ export function forInStatementFrom(input: ForInStatement | ForInStatementFromInp
   } as any);
 }
 
-export function forStatementFrom(input: ForStatement | ForStatementFromInput) {
-  if (isNodeData(input)) {
+export function forStatementFrom(input: RuntimeNodeOf<ForStatement> | ForStatementFromInput) {
+  if (isNodeData<'for_statement'>(input)) {
     return for_statement_({
       body: input.fields?.body,
       condition: input.fields?.condition,
@@ -2445,8 +2445,8 @@ export function forStatementFrom(input: ForStatement | ForStatementFromInput) {
   } as any);
 }
 
-export function formalParametersFrom(input: FormalParameters | FormalParametersFromInput) {
-  if (isNodeData(input)) {
+export function formalParametersFrom(input: RuntimeNodeOf<FormalParameters> | FormalParametersFromInput) {
+  if (isNodeData<'formal_parameters'>(input)) {
     return formal_parameters_({
       children: (input as any).children,
     } as any);
@@ -2457,8 +2457,8 @@ export function formalParametersFrom(input: FormalParameters | FormalParametersF
   } as any);
 }
 
-export function functionDeclarationFrom(input: FunctionDeclaration | FunctionDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function functionDeclarationFrom(input: RuntimeNodeOf<FunctionDeclaration> | FunctionDeclarationFromInput) {
+  if (isNodeData<'function_declaration'>(input)) {
     return function_declaration_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2475,8 +2475,8 @@ export function functionDeclarationFrom(input: FunctionDeclaration | FunctionDec
   } as any);
 }
 
-export function functionExpressionFrom(input: FunctionExpression | FunctionExpressionFromInput) {
-  if (isNodeData(input)) {
+export function functionExpressionFrom(input: RuntimeNodeOf<FunctionExpression> | FunctionExpressionFromInput) {
+  if (isNodeData<'function_expression'>(input)) {
     return function_expression_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2493,8 +2493,8 @@ export function functionExpressionFrom(input: FunctionExpression | FunctionExpre
   } as any);
 }
 
-export function functionSignatureFrom(input: FunctionSignature | FunctionSignatureFromInput) {
-  if (isNodeData(input)) {
+export function functionSignatureFrom(input: RuntimeNodeOf<FunctionSignature> | FunctionSignatureFromInput) {
+  if (isNodeData<'function_signature'>(input)) {
     return function_signature_({
       name: input.fields?.name,
       parameters: input.fields?.parameters,
@@ -2509,8 +2509,8 @@ export function functionSignatureFrom(input: FunctionSignature | FunctionSignatu
   } as any);
 }
 
-export function functionTypeFrom(input: FunctionType | FunctionTypeFromInput) {
-  if (isNodeData(input)) {
+export function functionTypeFrom(input: RuntimeNodeOf<FunctionType> | FunctionTypeFromInput) {
+  if (isNodeData<'function_type'>(input)) {
     return function_type_({
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
@@ -2525,8 +2525,8 @@ export function functionTypeFrom(input: FunctionType | FunctionTypeFromInput) {
   } as any);
 }
 
-export function generatorFunctionFrom(input: GeneratorFunction | GeneratorFunctionFromInput) {
-  if (isNodeData(input)) {
+export function generatorFunctionFrom(input: RuntimeNodeOf<GeneratorFunction> | GeneratorFunctionFromInput) {
+  if (isNodeData<'generator_function'>(input)) {
     return generator_function_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2543,8 +2543,8 @@ export function generatorFunctionFrom(input: GeneratorFunction | GeneratorFuncti
   } as any);
 }
 
-export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclaration | GeneratorFunctionDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function generatorFunctionDeclarationFrom(input: RuntimeNodeOf<GeneratorFunctionDeclaration> | GeneratorFunctionDeclarationFromInput) {
+  if (isNodeData<'generator_function_declaration'>(input)) {
     return generator_function_declaration_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2561,8 +2561,8 @@ export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclara
   } as any);
 }
 
-export function genericTypeFrom(input: GenericType | GenericTypeFromInput) {
-  if (isNodeData(input)) {
+export function genericTypeFrom(input: RuntimeNodeOf<GenericType> | GenericTypeFromInput) {
+  if (isNodeData<'generic_type'>(input)) {
     return generic_type_({
       name: input.fields?.name,
       typeArguments: input.fields?.type_arguments,
@@ -2575,8 +2575,8 @@ export function genericTypeFrom(input: GenericType | GenericTypeFromInput) {
   } as any);
 }
 
-export function ifStatementFrom(input: IfStatement | IfStatementFromInput) {
-  if (isNodeData(input)) {
+export function ifStatementFrom(input: RuntimeNodeOf<IfStatement> | IfStatementFromInput) {
+  if (isNodeData<'if_statement'>(input)) {
     return if_statement_({
       alternative: input.fields?.alternative,
       condition: input.fields?.condition,
@@ -2591,8 +2591,8 @@ export function ifStatementFrom(input: IfStatement | IfStatementFromInput) {
   } as any);
 }
 
-export function implementsClauseFrom(input: ImplementsClause | ImplementsClauseFromInput) {
-  if (isNodeData(input)) {
+export function implementsClauseFrom(input: RuntimeNodeOf<ImplementsClause> | ImplementsClauseFromInput) {
+  if (isNodeData<'implements_clause'>(input)) {
     return implements_clause_({
       children: (input as any).children,
     } as any);
@@ -2603,8 +2603,8 @@ export function implementsClauseFrom(input: ImplementsClause | ImplementsClauseF
   } as any);
 }
 
-export function importAliasFrom(input: ImportAlias | ImportAliasFromInput) {
-  if (isNodeData(input)) {
+export function importAliasFrom(input: RuntimeNodeOf<ImportAlias> | ImportAliasFromInput) {
+  if (isNodeData<'import_alias'>(input)) {
     return import_alias_({
       name: input.fields?.name,
       value: input.fields?.value,
@@ -2619,8 +2619,8 @@ export function importAliasFrom(input: ImportAlias | ImportAliasFromInput) {
   } as any);
 }
 
-export function importAttributeFrom(input: ImportAttribute | ImportAttributeFromInput) {
-  if (isNodeData(input)) {
+export function importAttributeFrom(input: RuntimeNodeOf<ImportAttribute> | ImportAttributeFromInput) {
+  if (isNodeData<'import_attribute'>(input)) {
     return import_attribute_({
       object: input.fields?.object,
     } as any);
@@ -2631,8 +2631,8 @@ export function importAttributeFrom(input: ImportAttribute | ImportAttributeFrom
   } as any);
 }
 
-export function importClauseFrom(input: ImportClause | ImportClauseFromInput) {
-  if (isNodeData(input)) {
+export function importClauseFrom(input: RuntimeNodeOf<ImportClause> | ImportClauseFromInput) {
+  if (isNodeData<'import_clause'>(input)) {
     return import_clause_({
       defaultImport: input.fields?.default_import,
       namedImports: input.fields?.named_imports,
@@ -2645,8 +2645,8 @@ export function importClauseFrom(input: ImportClause | ImportClauseFromInput) {
   } as any);
 }
 
-export function importRequireClauseFrom(input: ImportRequireClause | ImportRequireClauseFromInput) {
-  if (isNodeData(input)) {
+export function importRequireClauseFrom(input: RuntimeNodeOf<ImportRequireClause> | ImportRequireClauseFromInput) {
+  if (isNodeData<'import_require_clause'>(input)) {
     return import_require_clause_({
       source: input.fields?.source,
       identifier: input.fields?.identifier,
@@ -2659,8 +2659,8 @@ export function importRequireClauseFrom(input: ImportRequireClause | ImportRequi
   } as any);
 }
 
-export function importSpecifierFrom(input: ImportSpecifier | ImportSpecifierFromInput) {
-  if (isNodeData(input)) {
+export function importSpecifierFrom(input: RuntimeNodeOf<ImportSpecifier> | ImportSpecifierFromInput) {
+  if (isNodeData<'import_specifier'>(input)) {
     return import_specifier_({
       alias: input.fields?.alias,
       name: input.fields?.name,
@@ -2673,8 +2673,8 @@ export function importSpecifierFrom(input: ImportSpecifier | ImportSpecifierFrom
   } as any);
 }
 
-export function importStatementFrom(input: ImportStatement | ImportStatementFromInput) {
-  if (isNodeData(input)) {
+export function importStatementFrom(input: RuntimeNodeOf<ImportStatement> | ImportStatementFromInput) {
+  if (isNodeData<'import_statement'>(input)) {
     return import_statement_({
       source: input.fields?.source,
       importClause: input.fields?.import_clause,
@@ -2693,8 +2693,8 @@ export function importStatementFrom(input: ImportStatement | ImportStatementFrom
   } as any);
 }
 
-export function indexSignatureFrom(input: IndexSignature | IndexSignatureFromInput) {
-  if (isNodeData(input)) {
+export function indexSignatureFrom(input: RuntimeNodeOf<IndexSignature> | IndexSignatureFromInput) {
+  if (isNodeData<'index_signature'>(input)) {
     return index_signature_({
       indexType: input.fields?.index_type,
       name: input.fields?.name,
@@ -2713,8 +2713,8 @@ export function indexSignatureFrom(input: IndexSignature | IndexSignatureFromInp
   } as any);
 }
 
-export function indexTypeQueryFrom(input: IndexTypeQuery | IndexTypeQueryFromInput) {
-  if (isNodeData(input)) {
+export function indexTypeQueryFrom(input: RuntimeNodeOf<IndexTypeQuery> | IndexTypeQueryFromInput) {
+  if (isNodeData<'index_type_query'>(input)) {
     return index_type_query_({
       primaryType: input.fields?.primary_type,
     } as any);
@@ -2725,8 +2725,8 @@ export function indexTypeQueryFrom(input: IndexTypeQuery | IndexTypeQueryFromInp
   } as any);
 }
 
-export function inferTypeFrom(input: InferType | InferTypeFromInput) {
-  if (isNodeData(input)) {
+export function inferTypeFrom(input: RuntimeNodeOf<InferType> | InferTypeFromInput) {
+  if (isNodeData<'infer_type'>(input)) {
     return infer_type_({
       typeIdentifier: input.fields?.type_identifier,
       constraint: input.fields?.constraint,
@@ -2739,8 +2739,8 @@ export function inferTypeFrom(input: InferType | InferTypeFromInput) {
   } as any);
 }
 
-export function instantiationExpressionFrom(input: InstantiationExpression | InstantiationExpressionFromInput) {
-  if (isNodeData(input)) {
+export function instantiationExpressionFrom(input: RuntimeNodeOf<InstantiationExpression> | InstantiationExpressionFromInput) {
+  if (isNodeData<'instantiation_expression'>(input)) {
     return instantiation_expression_({
       function: input.fields?.function,
       typeArguments: input.fields?.type_arguments,
@@ -2755,8 +2755,8 @@ export function instantiationExpressionFrom(input: InstantiationExpression | Ins
   } as any);
 }
 
-export function interfaceBodyFrom(input: InterfaceBody | InterfaceBodyFromInput) {
-  if (isNodeData(input)) {
+export function interfaceBodyFrom(input: RuntimeNodeOf<InterfaceBody> | InterfaceBodyFromInput) {
+  if (isNodeData<'interface_body'>(input)) {
     return interface_body_({
       children: (input as any).children,
     } as any);
@@ -2767,8 +2767,8 @@ export function interfaceBodyFrom(input: InterfaceBody | InterfaceBodyFromInput)
   } as any);
 }
 
-export function interfaceDeclarationFrom(input: InterfaceDeclaration | InterfaceDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function interfaceDeclarationFrom(input: RuntimeNodeOf<InterfaceDeclaration> | InterfaceDeclarationFromInput) {
+  if (isNodeData<'interface_declaration'>(input)) {
     return interface_declaration_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2785,8 +2785,8 @@ export function interfaceDeclarationFrom(input: InterfaceDeclaration | Interface
   } as any);
 }
 
-export function internalModuleFrom(input: InternalModule | InternalModuleFromInput) {
-  if (isNodeData(input)) {
+export function internalModuleFrom(input: RuntimeNodeOf<InternalModule> | InternalModuleFromInput) {
+  if (isNodeData<'internal_module'>(input)) {
     return internal_module_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2799,8 +2799,8 @@ export function internalModuleFrom(input: InternalModule | InternalModuleFromInp
   } as any);
 }
 
-export function intersectionTypeFrom(input: IntersectionType | IntersectionTypeFromInput) {
-  if (isNodeData(input)) {
+export function intersectionTypeFrom(input: RuntimeNodeOf<IntersectionType> | IntersectionTypeFromInput) {
+  if (isNodeData<'intersection_type'>(input)) {
     return intersection_type_({
       left: input.fields?.left,
       right: input.fields?.right,
@@ -2813,8 +2813,8 @@ export function intersectionTypeFrom(input: IntersectionType | IntersectionTypeF
   } as any);
 }
 
-export function labeledStatementFrom(input: LabeledStatement | LabeledStatementFromInput) {
-  if (isNodeData(input)) {
+export function labeledStatementFrom(input: RuntimeNodeOf<LabeledStatement> | LabeledStatementFromInput) {
+  if (isNodeData<'labeled_statement'>(input)) {
     return labeled_statement_({
       body: input.fields?.body,
       label: input.fields?.label,
@@ -2827,8 +2827,8 @@ export function labeledStatementFrom(input: LabeledStatement | LabeledStatementF
   } as any);
 }
 
-export function lexicalDeclarationFrom(input: LexicalDeclaration | LexicalDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function lexicalDeclarationFrom(input: RuntimeNodeOf<LexicalDeclaration> | LexicalDeclarationFromInput) {
+  if (isNodeData<'lexical_declaration'>(input)) {
     return lexical_declaration_({
       kind: input.fields?.kind,
       declarators: input.fields?.declarators,
@@ -2843,8 +2843,8 @@ export function lexicalDeclarationFrom(input: LexicalDeclaration | LexicalDeclar
   } as any);
 }
 
-export function literalTypeFrom(input: LiteralType | LiteralTypeFromInput) {
-  if (isNodeData(input)) {
+export function literalTypeFrom(input: RuntimeNodeOf<LiteralType> | LiteralTypeFromInput) {
+  if (isNodeData<'literal_type'>(input)) {
     return literal_type_({
       children: (input as any).children,
     } as any);
@@ -2855,8 +2855,8 @@ export function literalTypeFrom(input: LiteralType | LiteralTypeFromInput) {
   } as any);
 }
 
-export function lookupTypeFrom(input: LookupType | LookupTypeFromInput) {
-  if (isNodeData(input)) {
+export function lookupTypeFrom(input: RuntimeNodeOf<LookupType> | LookupTypeFromInput) {
+  if (isNodeData<'lookup_type'>(input)) {
     return lookup_type_({
       primaryType: input.fields?.primary_type,
       indexType: input.fields?.index_type,
@@ -2869,8 +2869,8 @@ export function lookupTypeFrom(input: LookupType | LookupTypeFromInput) {
   } as any);
 }
 
-export function mappedTypeClauseFrom(input: MappedTypeClause | MappedTypeClauseFromInput) {
-  if (isNodeData(input)) {
+export function mappedTypeClauseFrom(input: RuntimeNodeOf<MappedTypeClause> | MappedTypeClauseFromInput) {
+  if (isNodeData<'mapped_type_clause'>(input)) {
     return mapped_type_clause_({
       alias: input.fields?.alias,
       name: input.fields?.name,
@@ -2885,8 +2885,8 @@ export function mappedTypeClauseFrom(input: MappedTypeClause | MappedTypeClauseF
   } as any);
 }
 
-export function memberExpressionFrom(input: MemberExpression | MemberExpressionFromInput) {
-  if (isNodeData(input)) {
+export function memberExpressionFrom(input: RuntimeNodeOf<MemberExpression> | MemberExpressionFromInput) {
+  if (isNodeData<'member_expression'>(input)) {
     return member_expression_({
       object: input.fields?.object,
       optionalChain: input.fields?.optional_chain,
@@ -2901,8 +2901,8 @@ export function memberExpressionFrom(input: MemberExpression | MemberExpressionF
   } as any);
 }
 
-export function methodDefinitionFrom(input: MethodDefinition | MethodDefinitionFromInput) {
-  if (isNodeData(input)) {
+export function methodDefinitionFrom(input: RuntimeNodeOf<MethodDefinition> | MethodDefinitionFromInput) {
+  if (isNodeData<'method_definition'>(input)) {
     return method_definition_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2924,8 +2924,8 @@ export function methodDefinitionFrom(input: MethodDefinition | MethodDefinitionF
   } as any);
 }
 
-export function methodSignatureFrom(input: MethodSignature | MethodSignatureFromInput) {
-  if (isNodeData(input)) {
+export function methodSignatureFrom(input: RuntimeNodeOf<MethodSignature> | MethodSignatureFromInput) {
+  if (isNodeData<'method_signature'>(input)) {
     return method_signature_({
       name: input.fields?.name,
       parameters: input.fields?.parameters,
@@ -2945,8 +2945,8 @@ export function methodSignatureFrom(input: MethodSignature | MethodSignatureFrom
   } as any);
 }
 
-export function moduleFrom(input: Module | ModuleFromInput) {
-  if (isNodeData(input)) {
+export function moduleFrom(input: RuntimeNodeOf<Module> | ModuleFromInput) {
+  if (isNodeData<'module'>(input)) {
     return module_({
       body: input.fields?.body,
       name: input.fields?.name,
@@ -2959,8 +2959,8 @@ export function moduleFrom(input: Module | ModuleFromInput) {
   } as any);
 }
 
-export function namedImportsFrom(input: NamedImports | NamedImportsFromInput) {
-  if (isNodeData(input)) {
+export function namedImportsFrom(input: RuntimeNodeOf<NamedImports> | NamedImportsFromInput) {
+  if (isNodeData<'named_imports'>(input)) {
     return named_imports_({
       children: (input as any).children,
     } as any);
@@ -2971,8 +2971,8 @@ export function namedImportsFrom(input: NamedImports | NamedImportsFromInput) {
   } as any);
 }
 
-export function namespaceExportFrom(input: NamespaceExport | NamespaceExportFromInput) {
-  if (isNodeData(input)) {
+export function namespaceExportFrom(input: RuntimeNodeOf<NamespaceExport> | NamespaceExportFromInput) {
+  if (isNodeData<'namespace_export'>(input)) {
     return namespace_export_({
       children: (input as any).children,
     } as any);
@@ -2983,8 +2983,8 @@ export function namespaceExportFrom(input: NamespaceExport | NamespaceExportFrom
   } as any);
 }
 
-export function namespaceImportFrom(input: NamespaceImport | NamespaceImportFromInput) {
-  if (isNodeData(input)) {
+export function namespaceImportFrom(input: RuntimeNodeOf<NamespaceImport> | NamespaceImportFromInput) {
+  if (isNodeData<'namespace_import'>(input)) {
     return namespace_import_({
       identifier: input.fields?.identifier,
     } as any);
@@ -2995,8 +2995,8 @@ export function namespaceImportFrom(input: NamespaceImport | NamespaceImportFrom
   } as any);
 }
 
-export function nestedIdentifierFrom(input: NestedIdentifier | NestedIdentifierFromInput) {
-  if (isNodeData(input)) {
+export function nestedIdentifierFrom(input: RuntimeNodeOf<NestedIdentifier> | NestedIdentifierFromInput) {
+  if (isNodeData<'nested_identifier'>(input)) {
     return nested_identifier_({
       object: input.fields?.object,
       property: input.fields?.property,
@@ -3009,8 +3009,8 @@ export function nestedIdentifierFrom(input: NestedIdentifier | NestedIdentifierF
   } as any);
 }
 
-export function nestedTypeIdentifierFrom(input: NestedTypeIdentifier | NestedTypeIdentifierFromInput) {
-  if (isNodeData(input)) {
+export function nestedTypeIdentifierFrom(input: RuntimeNodeOf<NestedTypeIdentifier> | NestedTypeIdentifierFromInput) {
+  if (isNodeData<'nested_type_identifier'>(input)) {
     return nested_type_identifier_({
       module: input.fields?.module,
       name: input.fields?.name,
@@ -3023,8 +3023,8 @@ export function nestedTypeIdentifierFrom(input: NestedTypeIdentifier | NestedTyp
   } as any);
 }
 
-export function newExpressionFrom(input: NewExpression | NewExpressionFromInput) {
-  if (isNodeData(input)) {
+export function newExpressionFrom(input: RuntimeNodeOf<NewExpression> | NewExpressionFromInput) {
+  if (isNodeData<'new_expression'>(input)) {
     return new_expression_({
       arguments: input.fields?.arguments,
       constructor: input.fields?.constructor,
@@ -3039,8 +3039,8 @@ export function newExpressionFrom(input: NewExpression | NewExpressionFromInput)
   } as any);
 }
 
-export function nonNullExpressionFrom(input: NonNullExpression | NonNullExpressionFromInput) {
-  if (isNodeData(input)) {
+export function nonNullExpressionFrom(input: RuntimeNodeOf<NonNullExpression> | NonNullExpressionFromInput) {
+  if (isNodeData<'non_null_expression'>(input)) {
     return non_null_expression_({
       expression: input.fields?.expression,
     } as any);
@@ -3051,8 +3051,8 @@ export function nonNullExpressionFrom(input: NonNullExpression | NonNullExpressi
   } as any);
 }
 
-export function objectFrom(input: Object | ObjectFromInput) {
-  if (isNodeData(input)) {
+export function objectFrom(input: RuntimeNodeOf<Object> | ObjectFromInput) {
+  if (isNodeData<'object'>(input)) {
     return object_({
       children: (input as any).children,
     } as any);
@@ -3063,8 +3063,8 @@ export function objectFrom(input: Object | ObjectFromInput) {
   } as any);
 }
 
-export function objectAssignmentPatternFrom(input: ObjectAssignmentPattern | ObjectAssignmentPatternFromInput) {
-  if (isNodeData(input)) {
+export function objectAssignmentPatternFrom(input: RuntimeNodeOf<ObjectAssignmentPattern> | ObjectAssignmentPatternFromInput) {
+  if (isNodeData<'object_assignment_pattern'>(input)) {
     return object_assignment_pattern_({
       left: input.fields?.left,
       right: input.fields?.right,
@@ -3077,8 +3077,8 @@ export function objectAssignmentPatternFrom(input: ObjectAssignmentPattern | Obj
   } as any);
 }
 
-export function objectPatternFrom(input: ObjectPattern | ObjectPatternFromInput) {
-  if (isNodeData(input)) {
+export function objectPatternFrom(input: RuntimeNodeOf<ObjectPattern> | ObjectPatternFromInput) {
+  if (isNodeData<'object_pattern'>(input)) {
     return object_pattern_({
       children: (input as any).children,
     } as any);
@@ -3089,8 +3089,8 @@ export function objectPatternFrom(input: ObjectPattern | ObjectPatternFromInput)
   } as any);
 }
 
-export function objectTypeFrom(input: ObjectType | ObjectTypeFromInput) {
-  if (isNodeData(input)) {
+export function objectTypeFrom(input: RuntimeNodeOf<ObjectType> | ObjectTypeFromInput) {
+  if (isNodeData<'object_type'>(input)) {
     return object_type_({
       opening: input.fields?.opening,
       members: input.fields?.members,
@@ -3105,8 +3105,8 @@ export function objectTypeFrom(input: ObjectType | ObjectTypeFromInput) {
   } as any);
 }
 
-export function omittingTypeAnnotationFrom(input: OmittingTypeAnnotation | OmittingTypeAnnotationFromInput) {
-  if (isNodeData(input)) {
+export function omittingTypeAnnotationFrom(input: RuntimeNodeOf<OmittingTypeAnnotation> | OmittingTypeAnnotationFromInput) {
+  if (isNodeData<'omitting_type_annotation'>(input)) {
     return omitting_type_annotation_({
       children: (input as any).children,
     } as any);
@@ -3117,8 +3117,8 @@ export function omittingTypeAnnotationFrom(input: OmittingTypeAnnotation | Omitt
   } as any);
 }
 
-export function optingTypeAnnotationFrom(input: OptingTypeAnnotation | OptingTypeAnnotationFromInput) {
-  if (isNodeData(input)) {
+export function optingTypeAnnotationFrom(input: RuntimeNodeOf<OptingTypeAnnotation> | OptingTypeAnnotationFromInput) {
+  if (isNodeData<'opting_type_annotation'>(input)) {
     return opting_type_annotation_({
       children: (input as any).children,
     } as any);
@@ -3129,8 +3129,8 @@ export function optingTypeAnnotationFrom(input: OptingTypeAnnotation | OptingTyp
   } as any);
 }
 
-export function optionalParameterFrom(input: OptionalParameter | OptionalParameterFromInput) {
-  if (isNodeData(input)) {
+export function optionalParameterFrom(input: RuntimeNodeOf<OptionalParameter> | OptionalParameterFromInput) {
+  if (isNodeData<'optional_parameter'>(input)) {
     return optional_parameter_({
       decorator: input.fields?.decorator,
       name: input.fields?.name,
@@ -3152,8 +3152,8 @@ export function optionalParameterFrom(input: OptionalParameter | OptionalParamet
   } as any);
 }
 
-export function optionalTypeFrom(input: OptionalType | OptionalTypeFromInput) {
-  if (isNodeData(input)) {
+export function optionalTypeFrom(input: RuntimeNodeOf<OptionalType> | OptionalTypeFromInput) {
+  if (isNodeData<'optional_type'>(input)) {
     return optional_type_({
       children: (input as any).children,
     } as any);
@@ -3164,8 +3164,8 @@ export function optionalTypeFrom(input: OptionalType | OptionalTypeFromInput) {
   } as any);
 }
 
-export function pairFrom(input: Pair | PairFromInput) {
-  if (isNodeData(input)) {
+export function pairFrom(input: RuntimeNodeOf<Pair> | PairFromInput) {
+  if (isNodeData<'pair'>(input)) {
     return pair_({
       key: input.fields?.key,
       value: input.fields?.value,
@@ -3178,8 +3178,8 @@ export function pairFrom(input: Pair | PairFromInput) {
   } as any);
 }
 
-export function pairPatternFrom(input: PairPattern | PairPatternFromInput) {
-  if (isNodeData(input)) {
+export function pairPatternFrom(input: RuntimeNodeOf<PairPattern> | PairPatternFromInput) {
+  if (isNodeData<'pair_pattern'>(input)) {
     return pair_pattern_({
       key: input.fields?.key,
       value: input.fields?.value,
@@ -3192,8 +3192,8 @@ export function pairPatternFrom(input: PairPattern | PairPatternFromInput) {
   } as any);
 }
 
-export function parenthesizedExpressionFrom(input: ParenthesizedExpression | ParenthesizedExpressionFromInput) {
-  if (isNodeData(input)) {
+export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedExpression> | ParenthesizedExpressionFromInput) {
+  if (isNodeData<'parenthesized_expression'>(input)) {
     return parenthesized_expression_({
       type: input.fields?.type,
       children: (input as any).children,
@@ -3206,8 +3206,8 @@ export function parenthesizedExpressionFrom(input: ParenthesizedExpression | Par
   } as any);
 }
 
-export function parenthesizedTypeFrom(input: ParenthesizedType | ParenthesizedTypeFromInput) {
-  if (isNodeData(input)) {
+export function parenthesizedTypeFrom(input: RuntimeNodeOf<ParenthesizedType> | ParenthesizedTypeFromInput) {
+  if (isNodeData<'parenthesized_type'>(input)) {
     return parenthesized_type_({
       children: (input as any).children,
     } as any);
@@ -3218,8 +3218,8 @@ export function parenthesizedTypeFrom(input: ParenthesizedType | ParenthesizedTy
   } as any);
 }
 
-export function programFrom(input: Program | ProgramFromInput) {
-  if (isNodeData(input)) {
+export function programFrom(input: RuntimeNodeOf<Program> | ProgramFromInput) {
+  if (isNodeData<'program'>(input)) {
     return program_({
       hashBangLine: input.fields?.hash_bang_line,
       statements: input.fields?.statements,
@@ -3232,8 +3232,8 @@ export function programFrom(input: Program | ProgramFromInput) {
   } as any);
 }
 
-export function propertySignatureFrom(input: PropertySignature | PropertySignatureFromInput) {
-  if (isNodeData(input)) {
+export function propertySignatureFrom(input: RuntimeNodeOf<PropertySignature> | PropertySignatureFromInput) {
+  if (isNodeData<'property_signature'>(input)) {
     return property_signature_({
       name: input.fields?.name,
       type: input.fields?.type,
@@ -3250,8 +3250,8 @@ export function propertySignatureFrom(input: PropertySignature | PropertySignatu
   } as any);
 }
 
-export function publicFieldDefinitionFrom(input: PublicFieldDefinition | PublicFieldDefinitionFromInput) {
-  if (isNodeData(input)) {
+export function publicFieldDefinitionFrom(input: RuntimeNodeOf<PublicFieldDefinition> | PublicFieldDefinitionFromInput) {
+  if (isNodeData<'public_field_definition'>(input)) {
     return public_field_definition_({
       decorator: input.fields?.decorator,
       name: input.fields?.name,
@@ -3274,8 +3274,8 @@ export function publicFieldDefinitionFrom(input: PublicFieldDefinition | PublicF
   } as any);
 }
 
-export function readonlyTypeFrom(input: ReadonlyType | ReadonlyTypeFromInput) {
-  if (isNodeData(input)) {
+export function readonlyTypeFrom(input: RuntimeNodeOf<ReadonlyType> | ReadonlyTypeFromInput) {
+  if (isNodeData<'readonly_type'>(input)) {
     return readonly_type_({
       children: (input as any).children,
     } as any);
@@ -3286,8 +3286,8 @@ export function readonlyTypeFrom(input: ReadonlyType | ReadonlyTypeFromInput) {
   } as any);
 }
 
-export function regexFrom(input: Regex | RegexFromInput) {
-  if (isNodeData(input)) {
+export function regexFrom(input: RuntimeNodeOf<Regex> | RegexFromInput) {
+  if (isNodeData<'regex'>(input)) {
     return regex_({
       flags: input.fields?.flags,
       pattern: input.fields?.pattern,
@@ -3300,8 +3300,8 @@ export function regexFrom(input: Regex | RegexFromInput) {
   } as any);
 }
 
-export function requiredParameterFrom(input: RequiredParameter | RequiredParameterFromInput) {
-  if (isNodeData(input)) {
+export function requiredParameterFrom(input: RuntimeNodeOf<RequiredParameter> | RequiredParameterFromInput) {
+  if (isNodeData<'required_parameter'>(input)) {
     return required_parameter_({
       decorator: input.fields?.decorator,
       name: input.fields?.name,
@@ -3323,8 +3323,8 @@ export function requiredParameterFrom(input: RequiredParameter | RequiredParamet
   } as any);
 }
 
-export function restPatternFrom(input: RestPattern | RestPatternFromInput) {
-  if (isNodeData(input)) {
+export function restPatternFrom(input: RuntimeNodeOf<RestPattern> | RestPatternFromInput) {
+  if (isNodeData<'rest_pattern'>(input)) {
     return rest_pattern_({
       children: (input as any).children,
     } as any);
@@ -3335,8 +3335,8 @@ export function restPatternFrom(input: RestPattern | RestPatternFromInput) {
   } as any);
 }
 
-export function restTypeFrom(input: RestType | RestTypeFromInput) {
-  if (isNodeData(input)) {
+export function restTypeFrom(input: RuntimeNodeOf<RestType> | RestTypeFromInput) {
+  if (isNodeData<'rest_type'>(input)) {
     return rest_type_({
       children: (input as any).children,
     } as any);
@@ -3347,8 +3347,8 @@ export function restTypeFrom(input: RestType | RestTypeFromInput) {
   } as any);
 }
 
-export function returnStatementFrom(input: ReturnStatement | ReturnStatementFromInput) {
-  if (isNodeData(input)) {
+export function returnStatementFrom(input: RuntimeNodeOf<ReturnStatement> | ReturnStatementFromInput) {
+  if (isNodeData<'return_statement'>(input)) {
     return return_statement_({
       children: (input as any).children,
     } as any);
@@ -3359,8 +3359,8 @@ export function returnStatementFrom(input: ReturnStatement | ReturnStatementFrom
   } as any);
 }
 
-export function satisfiesExpressionFrom(input: SatisfiesExpression | SatisfiesExpressionFromInput) {
-  if (isNodeData(input)) {
+export function satisfiesExpressionFrom(input: RuntimeNodeOf<SatisfiesExpression> | SatisfiesExpressionFromInput) {
+  if (isNodeData<'satisfies_expression'>(input)) {
     return satisfies_expression_({
       expression: input.fields?.expression,
       typeAnnotation: input.fields?.type_annotation,
@@ -3373,8 +3373,8 @@ export function satisfiesExpressionFrom(input: SatisfiesExpression | SatisfiesEx
   } as any);
 }
 
-export function sequenceExpressionFrom(input: SequenceExpression | SequenceExpressionFromInput) {
-  if (isNodeData(input)) {
+export function sequenceExpressionFrom(input: RuntimeNodeOf<SequenceExpression> | SequenceExpressionFromInput) {
+  if (isNodeData<'sequence_expression'>(input)) {
     return sequence_expression_({
       children: (input as any).children,
     } as any);
@@ -3385,8 +3385,8 @@ export function sequenceExpressionFrom(input: SequenceExpression | SequenceExpre
   } as any);
 }
 
-export function spreadElementFrom(input: SpreadElement | SpreadElementFromInput) {
-  if (isNodeData(input)) {
+export function spreadElementFrom(input: RuntimeNodeOf<SpreadElement> | SpreadElementFromInput) {
+  if (isNodeData<'spread_element'>(input)) {
     return spread_element_({
       expression: input.fields?.expression,
     } as any);
@@ -3397,8 +3397,8 @@ export function spreadElementFrom(input: SpreadElement | SpreadElementFromInput)
   } as any);
 }
 
-export function statementBlockFrom(input: StatementBlock | StatementBlockFromInput) {
-  if (isNodeData(input)) {
+export function statementBlockFrom(input: RuntimeNodeOf<StatementBlock> | StatementBlockFromInput) {
+  if (isNodeData<'statement_block'>(input)) {
     return statement_block_({
       statements: input.fields?.statements,
       automaticSemicolon: input.fields?.automatic_semicolon,
@@ -3411,8 +3411,8 @@ export function statementBlockFrom(input: StatementBlock | StatementBlockFromInp
   } as any);
 }
 
-export function stringFrom(input: String | StringFromInput) {
-  if (isNodeData(input)) {
+export function stringFrom(input: RuntimeNodeOf<String> | StringFromInput) {
+  if (isNodeData<'string'>(input)) {
     return string_({
       children: (input as any).children,
     } as any);
@@ -3423,8 +3423,8 @@ export function stringFrom(input: String | StringFromInput) {
   } as any);
 }
 
-export function subscriptExpressionFrom(input: SubscriptExpression | SubscriptExpressionFromInput) {
-  if (isNodeData(input)) {
+export function subscriptExpressionFrom(input: RuntimeNodeOf<SubscriptExpression> | SubscriptExpressionFromInput) {
+  if (isNodeData<'subscript_expression'>(input)) {
     return subscript_expression_({
       index: input.fields?.index,
       object: input.fields?.object,
@@ -3439,8 +3439,8 @@ export function subscriptExpressionFrom(input: SubscriptExpression | SubscriptEx
   } as any);
 }
 
-export function switchBodyFrom(input: SwitchBody | SwitchBodyFromInput) {
-  if (isNodeData(input)) {
+export function switchBodyFrom(input: RuntimeNodeOf<SwitchBody> | SwitchBodyFromInput) {
+  if (isNodeData<'switch_body'>(input)) {
     return switch_body_({
       children: (input as any).children,
     } as any);
@@ -3451,8 +3451,8 @@ export function switchBodyFrom(input: SwitchBody | SwitchBodyFromInput) {
   } as any);
 }
 
-export function switchCaseFrom(input: SwitchCase | SwitchCaseFromInput) {
-  if (isNodeData(input)) {
+export function switchCaseFrom(input: RuntimeNodeOf<SwitchCase> | SwitchCaseFromInput) {
+  if (isNodeData<'switch_case'>(input)) {
     return switch_case_({
       body: input.fields?.body,
       value: input.fields?.value,
@@ -3465,8 +3465,8 @@ export function switchCaseFrom(input: SwitchCase | SwitchCaseFromInput) {
   } as any);
 }
 
-export function switchDefaultFrom(input: SwitchDefault | SwitchDefaultFromInput) {
-  if (isNodeData(input)) {
+export function switchDefaultFrom(input: RuntimeNodeOf<SwitchDefault> | SwitchDefaultFromInput) {
+  if (isNodeData<'switch_default'>(input)) {
     return switch_default_({
       body: input.fields?.body,
     } as any);
@@ -3477,8 +3477,8 @@ export function switchDefaultFrom(input: SwitchDefault | SwitchDefaultFromInput)
   } as any);
 }
 
-export function switchStatementFrom(input: SwitchStatement | SwitchStatementFromInput) {
-  if (isNodeData(input)) {
+export function switchStatementFrom(input: RuntimeNodeOf<SwitchStatement> | SwitchStatementFromInput) {
+  if (isNodeData<'switch_statement'>(input)) {
     return switch_statement_({
       body: input.fields?.body,
       value: input.fields?.value,
@@ -3491,8 +3491,8 @@ export function switchStatementFrom(input: SwitchStatement | SwitchStatementFrom
   } as any);
 }
 
-export function templateLiteralTypeFrom(input: TemplateLiteralType | TemplateLiteralTypeFromInput) {
-  if (isNodeData(input)) {
+export function templateLiteralTypeFrom(input: RuntimeNodeOf<TemplateLiteralType> | TemplateLiteralTypeFromInput) {
+  if (isNodeData<'template_literal_type'>(input)) {
     return template_literal_type_({
       children: (input as any).children,
     } as any);
@@ -3503,8 +3503,8 @@ export function templateLiteralTypeFrom(input: TemplateLiteralType | TemplateLit
   } as any);
 }
 
-export function templateStringFrom(input: TemplateString | TemplateStringFromInput) {
-  if (isNodeData(input)) {
+export function templateStringFrom(input: RuntimeNodeOf<TemplateString> | TemplateStringFromInput) {
+  if (isNodeData<'template_string'>(input)) {
     return template_string_({
       children: (input as any).children,
     } as any);
@@ -3515,8 +3515,8 @@ export function templateStringFrom(input: TemplateString | TemplateStringFromInp
   } as any);
 }
 
-export function templateSubstitutionFrom(input: TemplateSubstitution | TemplateSubstitutionFromInput) {
-  if (isNodeData(input)) {
+export function templateSubstitutionFrom(input: RuntimeNodeOf<TemplateSubstitution> | TemplateSubstitutionFromInput) {
+  if (isNodeData<'template_substitution'>(input)) {
     return template_substitution_({
       children: (input as any).children,
     } as any);
@@ -3527,8 +3527,8 @@ export function templateSubstitutionFrom(input: TemplateSubstitution | TemplateS
   } as any);
 }
 
-export function templateTypeFrom(input: TemplateType | TemplateTypeFromInput) {
-  if (isNodeData(input)) {
+export function templateTypeFrom(input: RuntimeNodeOf<TemplateType> | TemplateTypeFromInput) {
+  if (isNodeData<'template_type'>(input)) {
     return template_type_({
       children: (input as any).children,
     } as any);
@@ -3539,8 +3539,8 @@ export function templateTypeFrom(input: TemplateType | TemplateTypeFromInput) {
   } as any);
 }
 
-export function ternaryExpressionFrom(input: TernaryExpression | TernaryExpressionFromInput) {
-  if (isNodeData(input)) {
+export function ternaryExpressionFrom(input: RuntimeNodeOf<TernaryExpression> | TernaryExpressionFromInput) {
+  if (isNodeData<'ternary_expression'>(input)) {
     return ternary_expression_({
       alternative: input.fields?.alternative,
       condition: input.fields?.condition,
@@ -3555,8 +3555,8 @@ export function ternaryExpressionFrom(input: TernaryExpression | TernaryExpressi
   } as any);
 }
 
-export function throwStatementFrom(input: ThrowStatement | ThrowStatementFromInput) {
-  if (isNodeData(input)) {
+export function throwStatementFrom(input: RuntimeNodeOf<ThrowStatement> | ThrowStatementFromInput) {
+  if (isNodeData<'throw_statement'>(input)) {
     return throw_statement_({
       children: (input as any).children,
     } as any);
@@ -3567,8 +3567,8 @@ export function throwStatementFrom(input: ThrowStatement | ThrowStatementFromInp
   } as any);
 }
 
-export function tryStatementFrom(input: TryStatement | TryStatementFromInput) {
-  if (isNodeData(input)) {
+export function tryStatementFrom(input: RuntimeNodeOf<TryStatement> | TryStatementFromInput) {
+  if (isNodeData<'try_statement'>(input)) {
     return try_statement_({
       body: input.fields?.body,
       finalizer: input.fields?.finalizer,
@@ -3583,8 +3583,8 @@ export function tryStatementFrom(input: TryStatement | TryStatementFromInput) {
   } as any);
 }
 
-export function tupleTypeFrom(input: TupleType | TupleTypeFromInput) {
-  if (isNodeData(input)) {
+export function tupleTypeFrom(input: RuntimeNodeOf<TupleType> | TupleTypeFromInput) {
+  if (isNodeData<'tuple_type'>(input)) {
     return tuple_type_({
       children: (input as any).children,
     } as any);
@@ -3595,8 +3595,8 @@ export function tupleTypeFrom(input: TupleType | TupleTypeFromInput) {
   } as any);
 }
 
-export function typeAliasDeclarationFrom(input: TypeAliasDeclaration | TypeAliasDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function typeAliasDeclarationFrom(input: RuntimeNodeOf<TypeAliasDeclaration> | TypeAliasDeclarationFromInput) {
+  if (isNodeData<'type_alias_declaration'>(input)) {
     return type_alias_declaration_({
       name: input.fields?.name,
       typeParameters: input.fields?.type_parameters,
@@ -3611,8 +3611,8 @@ export function typeAliasDeclarationFrom(input: TypeAliasDeclaration | TypeAlias
   } as any);
 }
 
-export function typeAnnotationFrom(input: TypeAnnotation | TypeAnnotationFromInput) {
-  if (isNodeData(input)) {
+export function typeAnnotationFrom(input: RuntimeNodeOf<TypeAnnotation> | TypeAnnotationFromInput) {
+  if (isNodeData<'type_annotation'>(input)) {
     return type_annotation_({
       children: (input as any).children,
     } as any);
@@ -3623,8 +3623,8 @@ export function typeAnnotationFrom(input: TypeAnnotation | TypeAnnotationFromInp
   } as any);
 }
 
-export function typeArgumentsFrom(input: TypeArguments | TypeArgumentsFromInput) {
-  if (isNodeData(input)) {
+export function typeArgumentsFrom(input: RuntimeNodeOf<TypeArguments> | TypeArgumentsFromInput) {
+  if (isNodeData<'type_arguments'>(input)) {
     return type_arguments_({
       children: (input as any).children,
     } as any);
@@ -3635,8 +3635,8 @@ export function typeArgumentsFrom(input: TypeArguments | TypeArgumentsFromInput)
   } as any);
 }
 
-export function typeAssertionFrom(input: TypeAssertion | TypeAssertionFromInput) {
-  if (isNodeData(input)) {
+export function typeAssertionFrom(input: RuntimeNodeOf<TypeAssertion> | TypeAssertionFromInput) {
+  if (isNodeData<'type_assertion'>(input)) {
     return type_assertion_({
       typeArguments: input.fields?.type_arguments,
       expression: input.fields?.expression,
@@ -3649,8 +3649,8 @@ export function typeAssertionFrom(input: TypeAssertion | TypeAssertionFromInput)
   } as any);
 }
 
-export function typeParameterFrom(input: TypeParameter | TypeParameterFromInput) {
-  if (isNodeData(input)) {
+export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypeParameterFromInput) {
+  if (isNodeData<'type_parameter'>(input)) {
     return type_parameter_({
       constraint: input.fields?.constraint,
       name: input.fields?.name,
@@ -3665,8 +3665,8 @@ export function typeParameterFrom(input: TypeParameter | TypeParameterFromInput)
   } as any);
 }
 
-export function typeParametersFrom(input: TypeParameters | TypeParametersFromInput) {
-  if (isNodeData(input)) {
+export function typeParametersFrom(input: RuntimeNodeOf<TypeParameters> | TypeParametersFromInput) {
+  if (isNodeData<'type_parameters'>(input)) {
     return type_parameters_({
       children: (input as any).children,
     } as any);
@@ -3677,8 +3677,8 @@ export function typeParametersFrom(input: TypeParameters | TypeParametersFromInp
   } as any);
 }
 
-export function typePredicateFrom(input: TypePredicate | TypePredicateFromInput) {
-  if (isNodeData(input)) {
+export function typePredicateFrom(input: RuntimeNodeOf<TypePredicate> | TypePredicateFromInput) {
+  if (isNodeData<'type_predicate'>(input)) {
     return type_predicate_({
       name: input.fields?.name,
       type: input.fields?.type,
@@ -3691,8 +3691,8 @@ export function typePredicateFrom(input: TypePredicate | TypePredicateFromInput)
   } as any);
 }
 
-export function typePredicateAnnotationFrom(input: TypePredicateAnnotation | TypePredicateAnnotationFromInput) {
-  if (isNodeData(input)) {
+export function typePredicateAnnotationFrom(input: RuntimeNodeOf<TypePredicateAnnotation> | TypePredicateAnnotationFromInput) {
+  if (isNodeData<'type_predicate_annotation'>(input)) {
     return type_predicate_annotation_({
       typePredicate: input.fields?.type_predicate,
     } as any);
@@ -3703,8 +3703,8 @@ export function typePredicateAnnotationFrom(input: TypePredicateAnnotation | Typ
   } as any);
 }
 
-export function typeQueryFrom(input: TypeQuery | TypeQueryFromInput) {
-  if (isNodeData(input)) {
+export function typeQueryFrom(input: RuntimeNodeOf<TypeQuery> | TypeQueryFromInput) {
+  if (isNodeData<'type_query'>(input)) {
     return type_query_({
       children: (input as any).children,
     } as any);
@@ -3715,8 +3715,8 @@ export function typeQueryFrom(input: TypeQuery | TypeQueryFromInput) {
   } as any);
 }
 
-export function unaryExpressionFrom(input: UnaryExpression | UnaryExpressionFromInput) {
-  if (isNodeData(input)) {
+export function unaryExpressionFrom(input: RuntimeNodeOf<UnaryExpression> | UnaryExpressionFromInput) {
+  if (isNodeData<'unary_expression'>(input)) {
     return unary_expression_({
       argument: input.fields?.argument,
       operator: input.fields?.operator,
@@ -3729,8 +3729,8 @@ export function unaryExpressionFrom(input: UnaryExpression | UnaryExpressionFrom
   } as any);
 }
 
-export function unionTypeFrom(input: UnionType | UnionTypeFromInput) {
-  if (isNodeData(input)) {
+export function unionTypeFrom(input: RuntimeNodeOf<UnionType> | UnionTypeFromInput) {
+  if (isNodeData<'union_type'>(input)) {
     return union_type_({
       left: input.fields?.left,
       right: input.fields?.right,
@@ -3743,8 +3743,8 @@ export function unionTypeFrom(input: UnionType | UnionTypeFromInput) {
   } as any);
 }
 
-export function updateExpressionFrom(input: UpdateExpression | UpdateExpressionFromInput) {
-  if (isNodeData(input)) {
+export function updateExpressionFrom(input: RuntimeNodeOf<UpdateExpression> | UpdateExpressionFromInput) {
+  if (isNodeData<'update_expression'>(input)) {
     return update_expression_({
       argument: input.fields?.argument,
       operator: input.fields?.operator,
@@ -3757,8 +3757,8 @@ export function updateExpressionFrom(input: UpdateExpression | UpdateExpressionF
   } as any);
 }
 
-export function variableDeclarationFrom(input: VariableDeclaration | VariableDeclarationFromInput) {
-  if (isNodeData(input)) {
+export function variableDeclarationFrom(input: RuntimeNodeOf<VariableDeclaration> | VariableDeclarationFromInput) {
+  if (isNodeData<'variable_declaration'>(input)) {
     return variable_declaration_({
       declarators: input.fields?.declarators,
       semicolon: input.fields?.semicolon,
@@ -3771,8 +3771,8 @@ export function variableDeclarationFrom(input: VariableDeclaration | VariableDec
   } as any);
 }
 
-export function variableDeclaratorFrom(input: VariableDeclarator | VariableDeclaratorFromInput) {
-  if (isNodeData(input)) {
+export function variableDeclaratorFrom(input: RuntimeNodeOf<VariableDeclarator> | VariableDeclaratorFromInput) {
+  if (isNodeData<'variable_declarator'>(input)) {
     return variable_declarator_({
       name: input.fields?.name,
       type: input.fields?.type,
@@ -3787,8 +3787,8 @@ export function variableDeclaratorFrom(input: VariableDeclarator | VariableDecla
   } as any);
 }
 
-export function whileStatementFrom(input: WhileStatement | WhileStatementFromInput) {
-  if (isNodeData(input)) {
+export function whileStatementFrom(input: RuntimeNodeOf<WhileStatement> | WhileStatementFromInput) {
+  if (isNodeData<'while_statement'>(input)) {
     return while_statement_({
       body: input.fields?.body,
       condition: input.fields?.condition,
@@ -3801,8 +3801,8 @@ export function whileStatementFrom(input: WhileStatement | WhileStatementFromInp
   } as any);
 }
 
-export function withStatementFrom(input: WithStatement | WithStatementFromInput) {
-  if (isNodeData(input)) {
+export function withStatementFrom(input: RuntimeNodeOf<WithStatement> | WithStatementFromInput) {
+  if (isNodeData<'with_statement'>(input)) {
     return with_statement_({
       body: input.fields?.body,
       object: input.fields?.object,
@@ -3815,8 +3815,8 @@ export function withStatementFrom(input: WithStatement | WithStatementFromInput)
   } as any);
 }
 
-export function yieldExpressionFrom(input: YieldExpression | YieldExpressionFromInput) {
-  if (isNodeData(input)) {
+export function yieldExpressionFrom(input: RuntimeNodeOf<YieldExpression> | YieldExpressionFromInput) {
+  if (isNodeData<'yield_expression'>(input)) {
     return yield_expression_({
       expression: input.fields?.expression,
     } as any);

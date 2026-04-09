@@ -8,7 +8,15 @@ import type { KindMap, ConfigMap, FromInputMap } from './types.js';
 // Type guards
 // ---------------------------------------------------------------------------
 
-/** Returns true if `v` is a NodeData. Narrows to AnyNodeData. */
+/**
+ * Type guard: returns true if `v` is a NodeData (has `type` + `fields` or `text`).
+ * Generic overload narrows from a union of RuntimeNodeOf, FromInput, or TreeNode
+ * to RuntimeNodeOf<KindMap[K]>.
+ */
+export function isNodeData<K extends keyof KindMap & keyof FromInputMap>(
+  v: RuntimeNodeOf<KindMap[K]> | FromInputMap[K] | TreeNodeOf<KindMap[K]>
+): v is RuntimeNodeOf<KindMap[K]>;
+export function isNodeData(v: unknown): v is AnyNodeData;
 export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
@@ -16,7 +24,14 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   return (o['fields'] !== null && typeof o['fields'] === 'object') || typeof o['text'] === 'string';
 }
 
-/** Returns true if `v` is a TreeNode (SgNode-compatible). */
+/**
+ * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).
+ * Generic overload narrows from a union to TreeNodeOf<KindMap[K]>.
+ */
+export function isTreeNode<K extends keyof KindMap & keyof FromInputMap>(
+  v: TreeNodeOf<KindMap[K]> | RuntimeNodeOf<KindMap[K]>
+): v is TreeNodeOf<KindMap[K]>;
+export function isTreeNode(v: unknown): v is AnyTreeNodeOf;
 export function isTreeNode(v: unknown): v is AnyTreeNodeOf {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
