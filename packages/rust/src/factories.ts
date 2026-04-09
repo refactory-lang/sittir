@@ -242,7 +242,7 @@ export function attribute_(
     children,
     arguments(arguments_?: TokenTree) { return arguments_ !== undefined ? attribute_({ ...config, arguments: arguments_ }) : fields.arguments; },
     value(value?: Expression) { return value !== undefined ? attribute_({ ...config, value: value }) : fields.value; },
-    child(child?: Path) { return child !== undefined ? attribute_({ ...config, children: child }) : config?.children; },
+    child(child?: Path) { return child !== undefined ? attribute_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -282,7 +282,7 @@ export function await_expression_(
     type: 'await_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? await_expression_({ ...config, children: child }) : config?.children; },
+    child(child?: Expression) { return child !== undefined ? await_expression_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -301,7 +301,7 @@ export function base_field_initializer_(
     type: 'base_field_initializer' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? base_field_initializer_({ ...config, children: child }) : config?.children; },
+    child(child?: Expression) { return child !== undefined ? base_field_initializer_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -418,7 +418,7 @@ export function bracketed_type_(
     type: 'bracketed_type' as const,
     named: true as const,
     children,
-    child(child?: QualifiedType | Type) { return child !== undefined ? bracketed_type_({ ...config, children: child }) : config?.children; },
+    child(child?: QualifiedType | Type) { return child !== undefined ? bracketed_type_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -717,7 +717,7 @@ export function else_clause_(
     type: 'else_clause' as const,
     named: true as const,
     children,
-    child(child?: Block | IfExpression) { return child !== undefined ? else_clause_({ ...config, children: child }) : config?.children; },
+    child(child?: Block | IfExpression) { return child !== undefined ? else_clause_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -812,7 +812,7 @@ export function expression_statement_(
     type: 'expression_statement' as const,
     named: true as const,
     children,
-    child(child?: Expression | ExpressionEndingWithBlock) { return child !== undefined ? expression_statement_({ ...config, children: child }) : config?.children; },
+    child(child?: Expression | ExpressionEndingWithBlock) { return child !== undefined ? expression_statement_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1268,7 +1268,7 @@ export function generic_pattern_(
     fields,
     children,
     typeArguments(typeArguments?: TypeArguments) { return typeArguments !== undefined ? generic_pattern_({ ...config, typeArguments: typeArguments }) : fields.type_arguments; },
-    child(child?: Identifier | ScopedIdentifier) { return child !== undefined ? generic_pattern_({ ...config, children: child }) : config?.children; },
+    child(child?: Identifier | ScopedIdentifier) { return child !== undefined ? generic_pattern_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1783,7 +1783,7 @@ export function match_pattern_(
     fields,
     children,
     condition(condition?: Condition | Expression | LetChain | LetCondition) { return condition !== undefined ? match_pattern_({ ...config, condition: condition }) : fields.condition; },
-    child(child?: Pattern) { return child !== undefined ? match_pattern_({ ...config, children: child }) : config?.children; },
+    child(child?: Pattern) { return child !== undefined ? match_pattern_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1968,7 +1968,7 @@ export function parenthesized_expression_(
     type: 'parenthesized_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? parenthesized_expression_({ ...config, children: child }) : config?.children; },
+    child(child?: Expression) { return child !== undefined ? parenthesized_expression_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2106,7 +2106,7 @@ export function ref_pattern_(
     type: 'ref_pattern' as const,
     named: true as const,
     children,
-    child(child?: Pattern) { return child !== undefined ? ref_pattern_({ ...config, children: child }) : config?.children; },
+    child(child?: Pattern) { return child !== undefined ? ref_pattern_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2196,7 +2196,7 @@ export function removed_trait_bound_(
     type: 'removed_trait_bound' as const,
     named: true as const,
     children,
-    child(child?: Type) { return child !== undefined ? removed_trait_bound_({ ...config, children: child }) : config?.children; },
+    child(child?: Type) { return child !== undefined ? removed_trait_bound_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2215,7 +2215,7 @@ export function return_expression_(
     type: 'return_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? return_expression_({ ...config, children: child }) : config?.children; },
+    child(child?: Expression) { return child !== undefined ? return_expression_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3118,7 +3118,7 @@ export function use_wildcard_(
     fields,
     children,
     path(path?: Path) { return path !== undefined ? use_wildcard_({ ...config, path: path }) : fields.path; },
-    child(child?: Path) { return child !== undefined ? use_wildcard_({ ...config, children: child }) : config?.children; },
+    child(child?: Path) { return child !== undefined ? use_wildcard_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3167,7 +3167,7 @@ export function visibility_modifier_(
     children,
     pub(pub?: 'pub') { return pub !== undefined ? visibility_modifier_({ ...config, pub: pub }) : fields.pub; },
     in(in_?: 'in') { return in_ !== undefined ? visibility_modifier_({ ...config, in: in_ }) : fields.in; },
-    child(child?: Path) { return child !== undefined ? visibility_modifier_({ ...config, children: child }) : config?.children; },
+    child(child?: Path) { return child !== undefined ? visibility_modifier_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3254,7 +3254,7 @@ export function yield_expression_(
     type: 'yield_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? yield_expression_({ ...config, children: child }) : config?.children; },
+    child(child?: Expression) { return child !== undefined ? yield_expression_({ ...config, children: [child] }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

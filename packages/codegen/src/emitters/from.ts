@@ -816,12 +816,12 @@ function emitFromFunction(
 			if (slotProj.collapsedTypes.length === 0) return;
 			const slotResolver = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
-			if (slot.multiple && slot.required) {
-				out.line(`${propName}: obj['${propName}'] !== undefined ? resolveField(obj['${propName}'], ${slotResolver}) : [],`);
-			} else if (slot.multiple) {
-				out.line(`${propName}: obj['${propName}'] !== undefined ? resolveField(obj['${propName}'], ${slotResolver}) : undefined,`);
+			// Children slots are always arrays in the config
+			const wrapArray = `((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.${propName}, ${slotResolver}))`;
+			if (slot.required) {
+				out.line(`${propName}: obj.${propName} !== undefined ? ${wrapArray} : [],`);
 			} else {
-				out.line(`${propName}: obj['${propName}'] !== undefined ? resolveField(obj['${propName}'], ${slotResolver}) : undefined,`);
+				out.line(`${propName}: obj.${propName} !== undefined ? ${wrapArray} : undefined,`);
 			}
 		});
 	}

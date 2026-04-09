@@ -324,7 +324,7 @@ export interface CaseClause {
 }
 export interface CasePattern {
   readonly type: 'case_pattern';
-  readonly children: AsPattern | KeywordPattern | SimplePattern;
+  readonly children: readonly (AsPattern | KeywordPattern | SimplePattern)[];
 }
 export interface Chevron {
   readonly type: 'chevron';
@@ -405,7 +405,7 @@ export interface DefaultParameter {
 }
 export interface DeleteStatement {
   readonly type: 'delete_statement';
-  readonly children: Expression | ExpressionList;
+  readonly children: readonly (Expression | ExpressionList)[];
 }
 export interface DictPattern {
   readonly type: 'dict_pattern';
@@ -420,7 +420,7 @@ export interface DictionaryComprehension {
   readonly fields: {
     readonly body: Pair;
   };
-  readonly children: ForInClause | IfClause;
+  readonly children: readonly (ForInClause | IfClause)[];
 }
 export interface DictionarySplat {
   readonly type: 'dictionary_splat';
@@ -430,7 +430,7 @@ export interface DictionarySplat {
 }
 export interface DictionarySplatPattern {
   readonly type: 'dictionary_splat_pattern';
-  readonly children: Attribute | Identifier | Subscript;
+  readonly children: readonly (Attribute | Identifier | Subscript)[];
 }
 export interface DottedName {
   readonly type: 'dotted_name';
@@ -455,7 +455,7 @@ export interface ExceptClause {
     readonly alias?: Expression;
     readonly value?: readonly (Expression)[];
   };
-  readonly children: Block;
+  readonly children: readonly (Block)[];
 }
 export interface ExecStatement {
   readonly type: 'exec_statement';
@@ -477,7 +477,7 @@ export interface FinallyClause {
   readonly fields: {
     readonly block: Block;
   };
-  readonly children: Block;
+  readonly children: readonly (Block)[];
 }
 export interface ForInClause {
   readonly type: 'for_in_clause';
@@ -528,7 +528,7 @@ export interface GeneratorExpression {
   readonly fields: {
     readonly body: Expression;
   };
-  readonly children: ForInClause | IfClause;
+  readonly children: readonly (ForInClause | IfClause)[];
 }
 export interface GenericType {
   readonly type: 'generic_type';
@@ -611,7 +611,7 @@ export interface ListComprehension {
   readonly fields: {
     readonly body: Expression;
   };
-  readonly children: ForInClause | IfClause;
+  readonly children: readonly (ForInClause | IfClause)[];
 }
 export interface ListPattern {
   readonly type: 'list_pattern';
@@ -625,7 +625,7 @@ export interface ListSplat {
 }
 export interface ListSplatPattern {
   readonly type: 'list_splat_pattern';
-  readonly children: Attribute | Identifier | Subscript;
+  readonly children: readonly (Attribute | Identifier | Subscript)[];
 }
 export interface MatchStatement {
   readonly type: 'match_statement';
@@ -675,11 +675,11 @@ export interface Parameters {
 }
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
-  readonly children: Expression | ListSplat | ParenthesizedExpression | Yield;
+  readonly children: readonly (Expression | ListSplat | ParenthesizedExpression | Yield)[];
 }
 export interface ParenthesizedListSplat {
   readonly type: 'parenthesized_list_splat';
-  readonly children: ListSplat | ParenthesizedExpression;
+  readonly children: readonly (ListSplat | ParenthesizedExpression)[];
 }
 export interface PatternList {
   readonly type: 'pattern_list';
@@ -697,7 +697,7 @@ export interface RaiseStatement {
   readonly fields: {
     readonly cause?: Expression;
   };
-  readonly children?: Expression | ExpressionList | Expressions;
+  readonly children?: readonly (Expression | ExpressionList | Expressions)[];
 }
 export interface RelativeImport {
   readonly type: 'relative_import';
@@ -708,7 +708,7 @@ export interface RelativeImport {
 }
 export interface ReturnStatement {
   readonly type: 'return_statement';
-  readonly children?: Expression | ExpressionList;
+  readonly children?: readonly (Expression | ExpressionList)[];
 }
 export interface Set {
   readonly type: 'set';
@@ -719,7 +719,7 @@ export interface SetComprehension {
   readonly fields: {
     readonly body: Expression;
   };
-  readonly children: ForInClause | IfClause;
+  readonly children: readonly (ForInClause | IfClause)[];
 }
 export interface Slice {
   readonly type: 'slice';
@@ -779,7 +779,7 @@ export interface TuplePattern {
 }
 export interface Type {
   readonly type: 'type';
-  readonly children: ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType;
+  readonly children: readonly (ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType)[];
 }
 export interface TypeAliasStatement {
   readonly type: 'type_alias_statement';
@@ -805,7 +805,7 @@ export interface TypedParameter {
   readonly fields: {
     readonly type: Type;
   };
-  readonly children: DictionarySplatPattern | Identifier | ListSplatPattern;
+  readonly children: readonly (DictionarySplatPattern | Identifier | ListSplatPattern)[];
 }
 export interface UnaryOperator {
   readonly type: 'unary_operator';
@@ -852,7 +852,7 @@ export interface WithStatement {
 }
 export interface Yield {
   readonly type: 'yield';
-  readonly children?: Expression | ExpressionList | Expressions;
+  readonly children?: readonly (Expression | ExpressionList | Expressions)[];
 }
 
 // Leaf node types

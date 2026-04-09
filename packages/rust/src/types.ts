@@ -366,7 +366,7 @@ export interface Attribute {
     readonly arguments?: TokenTree;
     readonly value?: Expression;
   };
-  readonly children: Path;
+  readonly children: readonly (Path)[];
 }
 export interface AttributeItem {
   readonly type: 'attribute_item';
@@ -376,11 +376,11 @@ export interface AttributeItem {
 }
 export interface AwaitExpression {
   readonly type: 'await_expression';
-  readonly children: Expression;
+  readonly children: readonly (Expression)[];
 }
 export interface BaseFieldInitializer {
   readonly type: 'base_field_initializer';
-  readonly children: Expression;
+  readonly children: readonly (Expression)[];
 }
 export interface BinaryExpression {
   readonly type: 'binary_expression';
@@ -414,7 +414,7 @@ export interface BoundedType {
 }
 export interface BracketedType {
   readonly type: 'bracketed_type';
-  readonly children: QualifiedType | Type;
+  readonly children: readonly (QualifiedType | Type)[];
 }
 export interface BreakExpression {
   readonly type: 'break_expression';
@@ -501,7 +501,7 @@ export interface DynamicType {
 }
 export interface ElseClause {
   readonly type: 'else_clause';
-  readonly children: Block | IfExpression;
+  readonly children: readonly (Block | IfExpression)[];
 }
 export interface EnumItem {
   readonly type: 'enum_item';
@@ -528,7 +528,7 @@ export interface EnumVariantList {
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
-  readonly children: Expression | ExpressionEndingWithBlock;
+  readonly children: readonly (Expression | ExpressionEndingWithBlock)[];
 }
 export interface ExternCrateDeclaration {
   readonly type: 'extern_crate_declaration';
@@ -668,7 +668,7 @@ export interface GenericPattern {
   readonly fields: {
     readonly typeArguments: TypeArguments;
   };
-  readonly children: Identifier | ScopedIdentifier;
+  readonly children: readonly (Identifier | ScopedIdentifier)[];
 }
 export interface GenericType {
   readonly type: 'generic_type';
@@ -822,7 +822,7 @@ export interface MatchPattern {
   readonly fields: {
     readonly condition?: Condition | Expression | LetChain | LetCondition;
   };
-  readonly children: Pattern;
+  readonly children: readonly (Pattern)[];
 }
 export interface ModItem {
   readonly type: 'mod_item';
@@ -876,7 +876,7 @@ export interface Parameters {
 }
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
-  readonly children: Expression;
+  readonly children: readonly (Expression)[];
 }
 export interface PointerType {
   readonly type: 'pointer_type';
@@ -917,7 +917,7 @@ export interface RawStringLiteral {
 }
 export interface RefPattern {
   readonly type: 'ref_pattern';
-  readonly children: Pattern;
+  readonly children: readonly (Pattern)[];
 }
 export interface ReferenceExpression {
   readonly type: 'reference_expression';
@@ -943,11 +943,11 @@ export interface ReferenceType {
 }
 export interface RemovedTraitBound {
   readonly type: 'removed_trait_bound';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface ReturnExpression {
   readonly type: 'return_expression';
-  readonly children?: Expression;
+  readonly children?: readonly (Expression)[];
 }
 export interface ScopedIdentifier {
   readonly type: 'scoped_identifier';
@@ -1201,7 +1201,7 @@ export interface UseWildcard {
   readonly fields: {
     readonly path?: Path;
   };
-  readonly children?: Path;
+  readonly children?: readonly (Path)[];
 }
 export interface VariadicParameter {
   readonly type: 'variadic_parameter';
@@ -1216,7 +1216,7 @@ export interface VisibilityModifier {
     readonly pub?: 'pub';
     readonly in?: 'in';
   };
-  readonly children?: Path;
+  readonly children?: readonly (Path)[];
 }
 export interface WhereClause {
   readonly type: 'where_clause';
@@ -1239,7 +1239,7 @@ export interface WhileExpression {
 }
 export interface YieldExpression {
   readonly type: 'yield_expression';
-  readonly children?: Expression;
+  readonly children?: readonly (Expression)[];
 }
 
 // Leaf node types

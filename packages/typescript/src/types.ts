@@ -346,7 +346,7 @@ export interface AbstractMethodSignature {
 }
 export interface AddingTypeAnnotation {
   readonly type: 'adding_type_annotation';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface AmbientDeclaration {
   readonly type: 'ambient_declaration';
@@ -393,7 +393,7 @@ export interface AsExpression {
 }
 export interface Asserts {
   readonly type: 'asserts';
-  readonly children: Identifier | This | TypePredicate;
+  readonly children: readonly (Identifier | This | TypePredicate)[];
 }
 export interface AssertsAnnotation {
   readonly type: 'asserts_annotation';
@@ -525,7 +525,7 @@ export interface ConditionalType {
 }
 export interface Constraint {
   readonly type: 'constraint';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface ConstructSignature {
   readonly type: 'construct_signature';
@@ -551,11 +551,11 @@ export interface ContinueStatement {
 }
 export interface Decorator {
   readonly type: 'decorator';
-  readonly children: CallExpression | Identifier | MemberExpression | ParenthesizedExpression;
+  readonly children: readonly (CallExpression | Identifier | MemberExpression | ParenthesizedExpression)[];
 }
 export interface DefaultType {
   readonly type: 'default_type';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface DoStatement {
   readonly type: 'do_statement';
@@ -611,11 +611,11 @@ export interface ExportStatement {
     readonly source?: String;
     readonly value?: Expression;
   };
-  readonly children?: ExportClause | Expression | Identifier | NamespaceExport;
+  readonly children?: readonly (ExportClause | Expression | Identifier | NamespaceExport)[];
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
-  readonly children: Expression | SequenceExpression;
+  readonly children: readonly (Expression | SequenceExpression)[];
 }
 export interface ExtendsClause {
   readonly type: 'extends_clause';
@@ -862,7 +862,7 @@ export interface LexicalDeclaration {
 }
 export interface LiteralType {
   readonly type: 'literal_type';
-  readonly children: False | Null | Number | String | True | UnaryExpression | Undefined;
+  readonly children: readonly (False | Null | Number | String | True | UnaryExpression | Undefined)[];
 }
 export interface LookupType {
   readonly type: 'lookup_type';
@@ -923,7 +923,7 @@ export interface NamedImports {
 }
 export interface NamespaceExport {
   readonly type: 'namespace_export';
-  readonly children: ModuleExportName;
+  readonly children: readonly (ModuleExportName)[];
 }
 export interface NamespaceImport {
   readonly type: 'namespace_import';
@@ -984,11 +984,11 @@ export interface ObjectType {
 }
 export interface OmittingTypeAnnotation {
   readonly type: 'omitting_type_annotation';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface OptingTypeAnnotation {
   readonly type: 'opting_type_annotation';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface OptionalParameter {
   readonly type: 'optional_parameter';
@@ -1004,7 +1004,7 @@ export interface OptionalParameter {
 }
 export interface OptionalType {
   readonly type: 'optional_type';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface Pair {
   readonly type: 'pair';
@@ -1025,11 +1025,11 @@ export interface ParenthesizedExpression {
   readonly fields: {
     readonly type?: TypeAnnotation;
   };
-  readonly children: CallExpression | Expression | Identifier | MemberExpression | SequenceExpression;
+  readonly children: readonly (CallExpression | Expression | Identifier | MemberExpression | SequenceExpression)[];
 }
 export interface ParenthesizedType {
   readonly type: 'parenthesized_type';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface Program {
   readonly type: 'program';
@@ -1061,7 +1061,7 @@ export interface PublicFieldDefinition {
 }
 export interface ReadonlyType {
   readonly type: 'readonly_type';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface Regex {
   readonly type: 'regex';
@@ -1084,15 +1084,15 @@ export interface RequiredParameter {
 }
 export interface RestPattern {
   readonly type: 'rest_pattern';
-  readonly children: LhsExpression;
+  readonly children: readonly (LhsExpression)[];
 }
 export interface RestType {
   readonly type: 'rest_type';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface ReturnStatement {
   readonly type: 'return_statement';
-  readonly children?: Expression | SequenceExpression;
+  readonly children?: readonly (Expression | SequenceExpression)[];
 }
 export interface SatisfiesExpression {
   readonly type: 'satisfies_expression';
@@ -1164,11 +1164,11 @@ export interface TemplateString {
 }
 export interface TemplateSubstitution {
   readonly type: 'template_substitution';
-  readonly children: Expression | SequenceExpression;
+  readonly children: readonly (Expression | SequenceExpression)[];
 }
 export interface TemplateType {
   readonly type: 'template_type';
-  readonly children: InferType | PrimaryType;
+  readonly children: readonly (InferType | PrimaryType)[];
 }
 export interface TernaryExpression {
   readonly type: 'ternary_expression';
@@ -1180,7 +1180,7 @@ export interface TernaryExpression {
 }
 export interface ThrowStatement {
   readonly type: 'throw_statement';
-  readonly children: Expression | SequenceExpression;
+  readonly children: readonly (Expression | SequenceExpression)[];
 }
 export interface TryStatement {
   readonly type: 'try_statement';
@@ -1204,7 +1204,7 @@ export interface TypeAliasDeclaration {
 }
 export interface TypeAnnotation {
   readonly type: 'type_annotation';
-  readonly children: Type;
+  readonly children: readonly (Type)[];
 }
 export interface TypeArguments {
   readonly type: 'type_arguments';
@@ -1244,7 +1244,7 @@ export interface TypePredicateAnnotation {
 }
 export interface TypeQuery {
   readonly type: 'type_query';
-  readonly children: CallExpression | Identifier | InstantiationExpression | MemberExpression | SubscriptExpression | This;
+  readonly children: readonly (CallExpression | Identifier | InstantiationExpression | MemberExpression | SubscriptExpression | This)[];
 }
 export interface UnaryExpression {
   readonly type: 'unary_expression';
