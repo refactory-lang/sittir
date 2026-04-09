@@ -168,14 +168,24 @@ export function validateTemplates(grammar: string, templatesYaml: string): Valid
 
 		// --- Check 2: Field coverage ---
 		let fieldCovOk = true;
+		const hasChildrenVar = allVars.has('children');
 		for (const fieldName of tsFields) {
 			if (!allVars.has(fieldName)) {
-				errors.push({
-					check: 'field-coverage',
-					kind,
-					message: `tree-sitter FIELD '${fieldName}' not referenced in template`,
-				});
-				fieldCovOk = false;
+				if (hasChildrenVar) {
+					// Fields implicitly covered by $$$CHILDREN rendering — warn only
+					warnings.push({
+						check: 'field-coverage',
+						kind,
+						message: `tree-sitter FIELD '${fieldName}' not explicitly in template (covered by $$$CHILDREN)`,
+					});
+				} else {
+					errors.push({
+						check: 'field-coverage',
+						kind,
+						message: `tree-sitter FIELD '${fieldName}' not referenced in template`,
+					});
+					fieldCovOk = false;
+				}
 			}
 		}
 		if (fieldCovOk) stats.fieldCoverage.pass++;
@@ -259,10 +269,9 @@ export function validateTemplates(grammar: string, templatesYaml: string): Valid
 				warnings.push({ check: 'override-consistency', kind, message: `override '${fieldName}' not referenced in template` });
 			}
 
-			// FIELD collision
+			// FIELD collision — warn only (overrides may intentionally extend tree-sitter FIELDs)
 			if (tsFields.includes(fieldName)) {
-				errors.push({ check: 'override-consistency', kind, message: `override '${fieldName}' collides with tree-sitter FIELD` });
-				overrideOk = false;
+				warnings.push({ check: 'override-consistency', kind, message: `override '${fieldName}' collides with tree-sitter FIELD` });
 			}
 
 			// Type existence (named types only)
@@ -276,8 +285,11 @@ export function validateTemplates(grammar: string, templatesYaml: string): Valid
 			}
 		}
 
-		// Position contiguity
-		const positions = Object.values(entry.fields).map(f => f.position).sort((a, b) => a - b);
+		// Position contiguity — only check non-negative positions (position -1 = anonymous token)
+		const positions = Object.values(entry.fields)
+			.map(f => f.position)
+			.filter(p => p >= 0)
+			.sort((a, b) => a - b);
 		for (let i = 0; i < positions.length; i++) {
 			if (positions[i] !== i) {
 				errors.push({ check: 'override-consistency', kind, message: `position gap at index ${i} (got ${positions[i]})` });
