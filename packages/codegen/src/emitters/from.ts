@@ -127,6 +127,10 @@ function resolverReturnType(resolved: ResolvedFieldTypes, supertypeKind?: string
 	const members: string[] = [];
 	for (const kind of resolved.leafTypes) members.push(`KindMap['${kind}']`);
 	for (const kind of resolved.branchTypes) members.push(`KindMap['${kind}']`);
+	for (const kind of resolved.supertypes) {
+		const cleanName = kind.replace(/^_/, '');
+		members.push(toTypeName(cleanName));
+	}
 	if (members.length === 0) return 'unknown';
 	return members.join(' | ');
 }
@@ -646,10 +650,12 @@ function emitHiddenSeqFieldResolver(
 		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 		if (field.multiple) {
+			// Coerce to array so resolveField returns T[] (array overload)
+			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
 			if (field.required) {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : [],`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : [],`);
 			} else {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : undefined,`);
 			}
 		} else if (field.required) {
 			out.line(`${configKey}: resolveField(obj.${inputKey}, ${resolverCall}),`);
@@ -789,10 +795,12 @@ function emitFromFunction(
 		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 		if (field.multiple) {
+			// Coerce to array so resolveField returns T[] (array overload)
+			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
 			if (field.required) {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : [],`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : [],`);
 			} else {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : undefined,`);
 			}
 		} else if (field.required) {
 			out.line(`${configKey}: resolveField(obj.${inputKey}, ${resolverCall}),`);
@@ -812,12 +820,15 @@ function emitFromFunction(
 			if (slotProj.collapsedTypes.length === 0) return;
 			const slotResolver = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
-			if (slot.multiple && slot.required) {
-				out.line(`${propName}: obj['${propName}'] !== undefined ? resolveField(obj['${propName}'], ${slotResolver}) : [],`);
-			} else if (slot.multiple) {
-				out.line(`${propName}: obj['${propName}'] !== undefined ? resolveField(obj['${propName}'], ${slotResolver}) : undefined,`);
+			if (slot.multiple) {
+				const toArr = `(Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}]) as unknown[]`;
+				if (slot.required) {
+					out.line(`${propName}: obj.${propName} !== undefined ? resolveField(${toArr}, ${slotResolver}) : [],`);
+				} else {
+					out.line(`${propName}: obj.${propName} !== undefined ? resolveField(${toArr}, ${slotResolver}) : undefined,`);
+				}
 			} else {
-				out.line(`${propName}: obj['${propName}'] !== undefined ? resolveField(obj['${propName}'], ${slotResolver}) : undefined,`);
+				out.line(`${propName}: obj.${propName} !== undefined ? resolveField(obj.${propName}, ${slotResolver}) : undefined,`);
 			}
 		});
 	}
