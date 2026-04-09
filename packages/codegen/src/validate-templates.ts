@@ -414,19 +414,17 @@ export function formatValidationReport(result: ValidationResult): string {
 	if (errors.length > 0) {
 		lines.push('');
 		lines.push(`  Errors (${errors.length}):`);
-		for (const e of errors.slice(0, 20)) {
+		for (const e of errors) {
 			lines.push(`    ${e.kind}: [${e.check}] ${e.message}`);
 		}
-		if (errors.length > 20) lines.push(`    ... and ${errors.length - 20} more`);
 	}
 
 	if (warnings.length > 0) {
 		lines.push('');
 		lines.push(`  Warnings (${warnings.length}):`);
-		for (const w of warnings.slice(0, 10)) {
+		for (const w of warnings) {
 			lines.push(`    ${w.kind}: [${w.check}] ${w.message}`);
 		}
-		if (warnings.length > 10) lines.push(`    ... and ${warnings.length - 10} more`);
 	}
 
 	return lines.join('\n');

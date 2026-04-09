@@ -362,10 +362,9 @@ export function formatRoundTripReport(result: RoundTripResult): string {
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(`  ${icon} ${result.pass}/${result.total} round-trip (${result.skip} skipped, ${result.errors.length} errors)`);
 	if (result.errors.length > 0) {
-		for (const e of result.errors.slice(0, 15)) {
+		for (const e of result.errors) {
 			lines.push(`    x ${e.name}: ${e.message}`);
 		}
-		if (result.errors.length > 15) lines.push(`    ... and ${result.errors.length - 15} more`);
 	}
 	return lines.join('\n');
 }

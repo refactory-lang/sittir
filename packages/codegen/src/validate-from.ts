@@ -313,11 +313,10 @@ export function formatFromReport(result: FromValidationResult): string {
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped)`);
 	if (result.errors.length > 0) {
-		for (const e of result.errors.slice(0, 15)) {
+		for (const e of result.errors) {
 			const prefix = e.severity === 'error' ? 'x' : '!';
 			lines.push(`    ${prefix} ${e.kind}: ${e.message}`);
 		}
-		if (result.errors.length > 15) lines.push(`    ... and ${result.errors.length - 15} more`);
 	}
 	return lines.join('\n');
 }

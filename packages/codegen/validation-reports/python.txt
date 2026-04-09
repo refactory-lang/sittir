@@ -46,7 +46,205 @@ Running round-trip validation...
     x Comparison operators [module]: re-parse error: "a < b <= c == d >= e > f not a == b or c == d a not in b a is not b a is b and c"
     x Assignments [module]: re-parse error: "a = 1 a, b = 1, 2 a, *c = 1, 2, 3 a, = 1, 2 a[b] = c = d a, *b.c = d"
     x Assignments with type annotations [assignment]: re-parse error: "tail_leaves=[] List[Leaf]"
-    ... and 86 more
+    x Augmented assignments [module]: re-parse error: "a += 1 b >>= 2 c //= 1 d @= e f -= 2 g %= 2 h /= 5 i *= 2.2 j &= 1 k ^= 0 l <<= "
+    x Named expressions [module]: re-parse error: "a := x (y := f(x)) foo(x=(y := f(x))) y0 = (y1 := f(x)) def foo(answer=(p := 42)"
+    x Yield expressions [yield]: re-parse error: "yield from yield"
+    x lambdas [module]: re-parse error: "lambda b, c: d("e" % f) lambda: True lambda a, b = c, *d, **e: a lambda (a, b): "
+    x Tuples with splats [tuple]: re-parse error: "() foo *bar *baz"
+    x Tuples with yield [tuple]: re-parse error: "() a yield a, b, c"
+    x Default Tuple Arguments [default_parameter]: kind not found in re-parsed tree
+    x Conditional if expressions [module]: re-parse error: "a = b if c else d something() if a else d slice(1,1,1) if a else d"
+    x Async context managers and iterators [with_statement]: re-parse error: "with a as b: async for c in d:
+ [e async for f in g]"
+    x Arbitrary indentation between brackets [list]: re-parse error: "[] 3"
+    x Splat Inside of Expression List [module]: re-parse error: "a,c = [1,2],3 w, x, y, z = 0, *a, c"
+    x Type expressions [module]: re-parse error: "a: A[T] | B y: type[int] = int"
+    x Integers [module]: re-parse error: "-1 0xDEAD 0XDEAD 1j -1j 0o123 0O123 0b001 0B001 1_1 0B1_1 0O1_1 0L"
+    x Floats [module]: re-parse error: "-.6_6 +.1_1 123.4123 123.123J 1_1.3_1 1_1. 1e+3_4j .3e1_4"
+    x Scientific Notation Floats [module]: re-parse error: "1e322 1e-3 1e+3 1.8e10 1.e10 -1e10"
+    x Strings [string_content]: re-parse error: "I'm ok"
+    x Raw strings [module]: re-parse error: "'ab\x00cd' "\n" # no escape sequences in these r'ab\x00cd' ur"\n" # raw f-string"
+    x Raw strings with escaped quotes [string_content]: re-parse error: "(\n|\A)#include\s*['\"]"
+    x Format strings [module]: re-parse error: "# nested! f"a {b(f'c {e} d')} e" f"""a"{b}c""" f"""a""{b}c""" f"a {{}} e" f"a {b"
+    x Format strings with format specifiers [string_content]: kind not found in re-parsed tree
+    x Template Strings [string_content]: kind not found in re-parsed tree
+    x Unicode escape sequences [string_content]: re-parse error: "\x12 \123 \u1234"
+    x Other primitives [module]: re-parse error: "True False None"
+    x Concatenated strings [string_content]: kind not found in re-parsed tree
+    x Multi-line strings [string_content]: re-parse error: "
+A double quote hello,
+without double or single quotes.
+"
+    x Lists [module]: re-parse error: "[a, b, [c, d]] [*()] [*[]] [*a] [*a.b] [*a[b].c] [*a()]"
+    x List comprehensions [module]: re-parse error: "[a + b for (a, b) in items] [a for b in c for a in b] [(x,y) for x in [1,2,3] fo"
+    x Dictionaries [module]: re-parse error: "{a: 1, b: 2} {} {**{}} {**a} {**a.b} {**a[b].c} {**a()}"
+    x Dictionary comprehensions [module]: re-parse error: "{a: b for a, b in items} {a: b for c in d for e in items}"
+    x Sets [module]: re-parse error: "{a, b, c,} {*{}}"
+    x Set comprehensions [module]: re-parse error: "{a[b][c] for a, b, c in items} {r for s in qs for n in ms}"
+    x Generator expression [module]: re-parse error: "(a[b][c] for a, b, c in items) dict((a, b) for a, b in d) (a for b in c for d in"
+    x Matching specific values [module]: re-parse error: "match command.split():
+ case ["quit"]:
+ print("Goodbye!")
+ quit_game()
+ case ["l"
+    x Matching multiple values [module]: re-parse error: "match command.split():
+ case ["drop", *objects]:
+ for obj in objects:
+ character"
+    x Adding a wild card [module]: re-parse error: "match command.split():
+# ^ conditional
+ case ["quit"]: ... # Code omitted for br"
+    x Or patterns [module]: re-parse error: "match command.split():
+ case ["north"] | ["go", "north"]:
+ current_room = curren"
+    x As patterns [module]: re-parse error: "match command.split():
+ case ["go", ("north" | "south" | "east" | "west") as dir"
+    x Actually not match [module]: re-parse error: "match = 2 match, a = 2, 3 match: int = secret x, match = 2, "hey, what's up?" *m"
+    x Match is match but not pattern matching [module]: re-parse error: "a = [match] match = [match]"
+    x Match kwargs [keyword_argument]: kind not found in re-parsed tree
+    x Match kwargs 2 [keyword_argument]: kind not found in re-parsed tree
+    x Case used as identifier [module]: re-parse error: "a = [case] case = [case] just_in_case = call_me(case=True)"
+    x If guards [module]: re-parse error: "match 0:
+ case 0 if False:
+ x = False
+ case 0 if True:
+ x = True"
+    x Literals [module]: re-parse error: "match xxx:
+ case 3 | -3:
+ pass
+ case "something":
+ pass
+ case "something" "else""
+    x Comma separated cases [module]: re-parse error: "match (0, 1, 2):
+ case 0,1:
+ x = 0
+ case 0, *x:
+ x = 0"
+    x Case terminating in comma [module]: re-parse error: "match x,:
+ case *x,:
+ y = 0"
+    x Multiple match patterns [module]: re-parse error: "match ..., ...:
+ case a, b:
+ return locals()"
+    x Match match, case case [module]: re-parse error: "match = case = 0 match match:
+ case case:
+ x = 0"
+    x Walrus match (Issue #150) [string_content]: re-parse error: "(-)?(\d+:)?\d?\d:\d\d(\.\d*)?"
+    x Matching objects [module]: re-parse error: "match event.get():
+ case Click(position=(x, y)):
+ handle_click_at(x, y)
+ case Ke"
+    x Positional arguments [module]: re-parse error: "match event.get():
+ case Click((x, y)):
+ handle_click_at(x, y)"
+    x Constants and enums [module]: re-parse error: "match event.get():
+ case Click((x, y), button=Button.LEFT): # This is a left cli"
+    x Dict mappings [module]: re-parse error: "for action in actions:
+ match action:
+ case {"text": message, "color": c}:
+ ui.s"
+    x Builtin classes [module]: re-parse error: "for action in actions:
+ match action:
+ case {"text": str(message), "color": str("
+    x Complex case patterns on classes [module]: re-parse error: "match x:
+ case Something(): # no args
+ foo1()
+ case Something.Else(): # more com"
+    x Complex case patterns on complex numbers [module]: re-parse error: "match x:
+ case -3 + 5j:
+ pass
+ case -3 + 5j as b2:
+ pass
+ case 3j as b1, -3 + 5j"
+    x Maybe sequence pattern right hand side precedence validation [module]: re-parse error: "match x:
+ case a1, *a2, a3:
+ pass"
+    x Import statements [module]: re-parse error: "import a, b import b.c as d import a.b.c"
+    x Import-from statements [module]: re-parse error: "from a import b from a import * from a import (b, c) from a.b import c from . im"
+    x Future import statements [module]: re-parse error: "from __future__ import print_statement from __future__ import python4 from __fut"
+    x Print statements [module]: re-parse error: "print a print b, c print 0 or 1, 1 or 0, print 0 or 1 print not True"
+    x Print statements with redirection [module]: re-parse error: "print >> a print >> a, "b", "c""
+    x Assert statements [module]: re-parse error: "assert a assert b, c"
+    x Expression statements [module]: re-parse error: "a b + c 1, 2, 3 1, 2, 3,"
+    x Delete statements [expression_list]: kind not found in re-parsed tree
+    x Return statements [module]: re-parse error: "return return a + b, c return not b"
+    x If else statements [module]: re-parse error: "if a:
+ b
+elif c:
+ d
+else:
+ f if a:
+ b
+else:
+ f if a: b if a: b; c"
+    x Nested if statements [module]: re-parse error: "if a:
+ if b:
+ c
+ else:
+ if e:
+ f g"
+    x While statements [module]: re-parse error: "while a:
+ b while c:
+ d
+else:
+ e
+ f"
+    x For statements [module]: re-parse error: "for line, i in lines:
+ print line
+ for character, j in line:
+ print character
+el"
+    x Try statements [module]: re-parse error: "try:
+ a
+except b:
+ c
+except d as e:
+ f
+except g, h:
+ i
+except:
+ j try:
+ a
+except"
+    x With statements [module]: re-parse error: "with a as b:
+ c with (open('d') as d,
+ open('e') as e):
+ f with e as f, g as h,:"
+    x Async Function definitions [module]: re-parse error: "async def a():
+ b async def c(d):
+ e async def g(g, h,):
+ i async def c(a: str):"
+    x Function definitions [module]: re-parse error: "def e((a,b)):
+ return (a,b) def e(*list: str):
+ pass def e(**list: str):
+ pass d"
+    x Class definitions [module]: re-parse error: "class A:
+ def b(self):
+ return c class B():
+ pass class B(method1):
+ def method1"
+    x Class definitions with superclasses [class_definition]: re-parse error: "class A (B, C): def d():
+ e"
+    x Decorated definitions [decorated_definition]: re-parse error: "@a.b class C:
+ @d(1)
+ @e[2].f.g
+ def f():
+ g
+
+ @f()
+ async def f():
+ g"
+    x Raise statements [module]: re-parse error: "raise raise RuntimeError('NO') raise RunTimeError('NO') from e"
+    x Comments at the ends of indented blocks [function_definition]: re-parse error: "def a () : if b:
+ b # comment
+ b # comment"
+    x Newline tokens followed by comments [string_content]: kind not found in re-parsed tree
+    x Global statements [module]: re-parse error: "global a global a, b"
+    x Exec statements [module]: re-parse error: "exec '1+1' exec 'x+=1' in None exec 'x+=1' in a, b func = "print" exec func in {"
+    x Escaped newline [string_content]: kind not found in re-parsed tree
+    x Statements with semicolons [module]: re-parse error: "foo foo bar foo bar"
+    x Type Alias Statements [module]: re-parse error: "type Point = tuple[float, float] type Point[T] = tuple[T, T] type IntFunc[**P] ="
+    x Generic Function Definitions [type]: kind not found in re-parsed tree
   x 35/99 factory round-trip (12 skipped, 52 errors)
     x slice: re-parse error: ":"
     x await: kind not found in re-parse (rendered: "await")
@@ -63,7 +261,49 @@ Running round-trip validation...
     x pattern_list: re-parse error: ","
     x expression_list: re-parse error: ","
     x generic_type: kind not found in re-parse (rendered: "List")
-    ... and 37 more
+    x parenthesized_expression: kind not found in re-parse (rendered: "()")
+    x typed_default_parameter: kind not found in re-parse (rendered: "answer: (p := 42)=5")
+    x yield: re-parse error: "yield from"
+    x generator_expression: kind not found in re-parse (rendered: "(x )")
+    x for_in_clause: re-parse error: "for xin range(1, 10)"
+    x tuple_pattern: kind not found in re-parse (rendered: "()")
+    x conditional_expression: re-parse error: "if else"
+    x with_statement: re-parse error: "with : async for c in d:
+ [e async for f in g]"
+    x with_item: kind not found in re-parse (rendered: "a as b")
+    x as_pattern: re-parse error: "aas b"
+    x for_statement: re-parse error: "for cin d: [e async for f in g]"
+    x list_comprehension: kind not found in re-parse (rendered: "[e ]")
+    x union_type: kind not found in re-parse (rendered: "A[T]|B")
+    x interpolation: kind not found in re-parse (rendered: "{0 }")
+    x format_specifier: re-parse error: ":"
+    x format_expression: kind not found in re-parse (rendered: "c.d")
+    x if_clause: re-parse error: "if"
+    x dictionary_comprehension: kind not found in re-parse (rendered: "{a: b }")
+    x set: kind not found in re-parse (rendered: "{}")
+    x set_comprehension: kind not found in re-parse (rendered: "{a[b][c] }")
+    x match_statement: re-parse error: "match command.split(): 
+ case ["quit"]:
+ print("Goodbye!")
+ "
+    x case_clause: kind not found in re-parse (rendered: "case : print("Goodbye!")
+ quit_game()")
+    x list_pattern: kind not found in re-parse (rendered: "[]")
+    x splat_pattern: kind not found in re-parse (rendered: "*objects")
+    x class_pattern: re-parse error: "(position=(x, y) )"
+    x keyword_pattern: re-parse error: "(x, y)="
+    x dict_pattern: kind not found in re-parse (rendered: "{}")
+    x complex_pattern: kind not found in re-parse (rendered: "3 + 5j")
+    x aliased_import: re-parse error: "b.cas d"
+    x import_from_statement: re-parse error: "from import b"
+    x chevron: re-parse error: ">>"
+    x delete_statement: re-parse error: "del"
+    x nonlocal_statement: re-parse error: "nonlocal"
+    x class_definition: re-parse error: "class A : def b(self):
+ return c"
+    x global_statement: re-parse error: "global"
+    x splat_type: kind not found in re-parse (rendered: "*P")
+    x constrained_type: re-parse error: ": Hashable"
   x 55/99 from() correctness (0 undefined, 44 divergent, 0 skipped)
     ! module: from() diverges: children: 1 vs 0
     ! expression_statement: from() diverges: children: 1 vs 0
@@ -80,7 +320,35 @@ Running round-trip validation...
     ! dictionary: from() diverges: children: 3 vs 0
     ! tuple: from() diverges: children: 2 vs 0
     ! pattern_list: from() diverges: children: 3 vs 0
-    ... and 29 more
+    ! expression_list: from() diverges: children: 3 vs 0
+    ! type_parameter: from() diverges: children: 3 vs 0
+    ! list: from() diverges: children: 2 vs 0
+    ! parenthesized_expression: from() diverges: children: 1 vs 0
+    ! yield: from() diverges: children: 1 vs 0
+    ! generator_expression: from() diverges: children: 1 vs 0
+    ! lambda_parameters: from() diverges: children: 3 vs 0
+    ! tuple_pattern: from() diverges: children: 5 vs 0
+    ! with_clause: from() diverges: children: 1 vs 0
+    ! list_comprehension: from() diverges: children: 1 vs 0
+    ! concatenated_string: from() diverges: children: 2 vs 0
+    ! format_specifier: from() diverges: children: 1 vs 0
+    ! dictionary_comprehension: from() diverges: children: 1 vs 0
+    ! set: from() diverges: children: 8 vs 0
+    ! set_comprehension: from() diverges: children: 1 vs 0
+    ! case_clause: from() diverges: children: 3 vs 0
+    ! case_pattern: from() diverges: children: 1 vs 0
+    ! list_pattern: from() diverges: children: 3 vs 0
+    ! dotted_name: from() diverges: children: 1 vs 0
+    ! union_pattern: from() diverges: children: 3 vs 0
+    ! raise_statement: from() diverges: children: 1 vs 0
+    ! dict_pattern: from() diverges: children: 5 vs 0
+    ! delete_statement: from() diverges: children: 1 vs 0
+    ! except_clause: from() diverges: children: 1 vs 0
+    ! finally_clause: from() diverges: children: 1 vs 0
+    ! nonlocal_statement: from() diverges: children: 2 vs 0
+    ! decorated_definition: from() diverges: children: 1 vs 0
+    ! global_statement: from() diverges: children: 2 vs 0
+    ! exec_statement: from() diverges: children: 1 vs 0
 
 153 round-trip failure(s) — see above.
 
