@@ -6,5 +6,5 @@ export type { BoundRenderer, RulesConfig } from './render.ts';
 export { validateFull } from './validate.ts';
 export { replace, bindRange, replaceField } from './edit.ts';
 export { toCst } from './cst.ts';
-export { readNode } from './readNode.ts';
-export type { TreeHandle, OverridesConfig, OverrideFieldSpec, NodeOverrides } from './readNode.ts';
+export { readNode, buildFieldPromotionMap } from './readNode.ts';
+export type { TreeHandle, OverridesConfig, OverrideFieldSpec, NodeOverrides, FieldPromotionMap } from './readNode.ts';

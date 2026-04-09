@@ -5,8 +5,8 @@
  * delimiters, keywords). Every entry carries `nodeId` for O(1) drill-in via
  * `tree.nodeById()`.
  *
- * When `overrides` is provided, unnamed children whose kind matches an
- * override entry are promoted to `fields` under the override's field name.
+ * When a `FieldPromotionMap` is provided, unnamed children whose kind matches
+ * an override entry are promoted to `fields` under the override's field name.
  * This replaces the need for assign.ts — overrides.json drives field
  * promotion directly.
  *
@@ -48,34 +48,59 @@ export interface NodeOverrides {
  */
 export type OverridesConfig = Record<string, NodeOverrides>;
 
+// ---------------------------------------------------------------------------
+// Precomputed field promotion map
+// ---------------------------------------------------------------------------
+
+interface FieldPromotion {
+	fieldName: string;
+	multiple: boolean;
+}
+
+/**
+ * Precomputed lookup: nodeKind → (childKind → FieldPromotion).
+ * Built once from OverridesConfig, used by every readNode call.
+ */
+export type FieldPromotionMap = ReadonlyMap<string, ReadonlyMap<string, FieldPromotion>>;
+
+/**
+ * Build a FieldPromotionMap from an OverridesConfig.
+ * Call once at startup; pass the result to readNode.
+ */
+export function buildFieldPromotionMap(overrides: OverridesConfig): FieldPromotionMap {
+	const outer = new Map<string, Map<string, FieldPromotion>>();
+	for (const [nodeKind, nodeSpec] of Object.entries(overrides)) {
+		const inner = new Map<string, FieldPromotion>();
+		for (const [fieldName, fieldSpec] of Object.entries(nodeSpec.fields)) {
+			const promotion: FieldPromotion = { fieldName, multiple: fieldSpec.multiple };
+			for (const t of fieldSpec.types) {
+				inner.set(t.type, promotion);
+			}
+		}
+		if (inner.size > 0) outer.set(nodeKind, inner);
+	}
+	return outer;
+}
+
 /**
  * Read a single tree node one level deep.
  *
  * - Returns ALL children (named + anonymous)
  * - Every child carries `nodeId` for lazy drill-in
  * - No recursion — wrap.ts provides lazy getters
- * - When `overrides` is provided, promotes unnamed children to fields
+ * - When `promotions` is provided, promotes unnamed children to fields
  *
  * @param tree - The tree handle for node lookup
  * @param nodeId - If provided, read this node; otherwise read the root
- * @param overrides - Optional overrides.json config for field promotion
+ * @param promotions - Precomputed field promotion map (from buildFieldPromotionMap)
  */
-export function readNode(tree: TreeHandle, nodeId?: number, overrides?: OverridesConfig): AnyNodeData {
+export function readNode(tree: TreeHandle, nodeId?: number, promotions?: FieldPromotionMap): AnyNodeData {
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
 	const fields: Record<string, AnyNodeData | AnyNodeData[]> = {};
 	const children: AnyNodeData[] = [];
 
-	// Build kind → { fieldName, multiple } map from overrides for this node kind
-	const kindToField = new Map<string, { fieldName: string; multiple: boolean }>();
-	const nodeOverrides = overrides?.[node.type];
-	if (nodeOverrides) {
-		for (const [fieldName, spec] of Object.entries(nodeOverrides.fields)) {
-			for (const t of spec.types) {
-				kindToField.set(t.type, { fieldName, multiple: spec.multiple });
-			}
-		}
-	}
+	const kindToField = promotions?.get(node.type);
 
 	const allChildren = node.children();
 	for (let i = 0; i < allChildren.length; i++) {
@@ -92,7 +117,7 @@ export function readNode(tree: TreeHandle, nodeId?: number, overrides?: Override
 		const fname = (node as any).fieldNameForChild?.(i) as string | null | undefined;
 		if (fname) {
 			fields[fname] = entry;
-		} else if (child.isNamed() && kindToField.has(child.type)) {
+		} else if (child.isNamed() && kindToField?.has(child.type)) {
 			const { fieldName, multiple } = kindToField.get(child.type)!;
 			if (multiple) {
 				if (!fields[fieldName]) fields[fieldName] = [];
