@@ -282,7 +282,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	const allTypeImports = [...new Set([...baseTypeImports, ...configTypeImports, ...supertypeUnionImports])].sort();
 	out.line(`import type { ${allTypeImports.join(', ')} } from './types.js';`);
 	out.line("import type { KindMap, FromInputMap } from './types.js';");
-	out.line("import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';");
+	out.line("import { isNodeData, hasKind, resolveField } from './utils.js';");
 	out.line();
 
 	// Import factory functions
@@ -329,8 +329,28 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line('}');
 	out.line();
 
-	// --- Emit shared resolver functions ---
+	// --- Collect referenced resolver names ---
+	const referencedResolvers = new Set<string>();
+	for (const node of nodes) {
+		const fields = fieldsOf(node);
+		for (const field of fields) {
+			const fieldProj = projectKinds(field.kinds, ctx);
+			const expr = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+			// Named resolvers start with _ and don't contain arrow syntax
+			if (expr.startsWith('_') && !expr.includes('=>')) referencedResolvers.add(expr);
+		}
+		if (node.children != null) {
+			eachChildSlot(node.children, (slot) => {
+				const slotProj = projectKinds(slot.kinds, ctx);
+				const expr = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+				if (expr.startsWith('_') && !expr.includes('=>')) referencedResolvers.add(expr);
+			});
+		}
+	}
+
+	// --- Emit shared resolver functions (only referenced ones) ---
 	for (const [, { name, resolved, supertypeKind }] of resolverRegistry) {
+		if (!referencedResolvers.has(name)) continue;
 		emitResolverFunction(out, name, resolved, supertypeKind, leafSet, leafValueMap, keywordKinds, nodes, supertypeResolverNames, ctx.expandedSupertypes, branchNodeSet, config.grammar);
 	}
 
@@ -613,15 +633,13 @@ function emitObjectResolveFormatted(
 		const resolverFn = supertypeResolverNames.get(supertypes[0]!)!;
 		out.line(`return ${resolverFn}(${v});`);
 	} else if (allBranch > 1) {
-		// Expand supertypes to concrete branch types for inference
+		// Multi-branch without { kind } — require discrimination
 		const allConcreteBranches = [...branchTypes];
 		for (const st of supertypes) {
 			const subs = expandedSupertypes.get(st);
 			if (subs) for (const s of subs) { if (branchNodeSet.has(s) && !allConcreteBranches.includes(s)) allConcreteBranches.push(s); }
 		}
-		out.line(`const _k = _inferBranch(${v}, ${JSON.stringify(allConcreteBranches)});`);
-		out.line(`if (_k) return _resolveByKind(_k, ${v});`);
-		out.line(`throw new Error(\`Cannot infer kind for object with keys: \${Object.keys(${v}).join(', ')}. Candidates: ${allConcreteBranches.join(', ')}. Use { kind: '...' } to disambiguate.\`);`);
+		out.line(`throw new Error(\`Multiple branch types possible for object with keys: \${Object.keys(${v}).join(', ')}. Candidates: ${allConcreteBranches.join(', ')}. Use { kind: '...' } to disambiguate.\`);`);
 	} else {
 		out.line("throw new Error('No branch types accepted for object value');");
 	}

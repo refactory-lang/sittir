@@ -3,7 +3,7 @@
 
 import type { AbstractType, AbstractTypeConfig, Arguments, ArgumentsConfig, ArrayExpression, ArrayExpressionConfig, ArrayType, ArrayTypeConfig, AssignmentExpression, AssignmentExpressionConfig, AssociatedType, AssociatedTypeConfig, AsyncBlock, AsyncBlockConfig, Attribute, AttributeConfig, AttributeItem, AttributeItemConfig, AwaitExpression, AwaitExpressionConfig, BaseFieldInitializer, BaseFieldInitializerConfig, BinaryExpression, BinaryExpressionConfig, Block, BlockComment, BlockCommentConfig, BlockConfig, BoundedType, BoundedTypeConfig, BracketedType, BracketedTypeConfig, BreakExpression, BreakExpressionConfig, CallExpression, CallExpressionConfig, CapturedPattern, CapturedPatternConfig, ClosureExpression, ClosureExpressionConfig, ClosureParameters, ClosureParametersConfig, CompoundAssignmentExpr, CompoundAssignmentExprConfig, Condition, ConstBlock, ConstBlockConfig, ConstItem, ConstItemConfig, ConstParameter, ConstParameterConfig, ContinueExpression, ContinueExpressionConfig, DeclarationList, DeclarationListConfig, DeclarationStatement, DynamicType, DynamicTypeConfig, ElseClause, ElseClauseConfig, EnumItem, EnumItemConfig, EnumVariant, EnumVariantConfig, EnumVariantList, EnumVariantListConfig, Expression, ExpressionEndingWithBlock, ExpressionExceptRange, ExpressionStatement, ExpressionStatementConfig, ExternCrateDeclaration, ExternCrateDeclarationConfig, ExternModifier, ExternModifierConfig, FieldDeclaration, FieldDeclarationConfig, FieldDeclarationList, FieldDeclarationListConfig, FieldExpression, FieldExpressionConfig, FieldIdentifier, FieldInitializer, FieldInitializerConfig, FieldInitializerList, FieldInitializerListConfig, FieldPattern, FieldPatternConfig, ForExpression, ForExpressionConfig, ForLifetimes, ForLifetimesConfig, ForeignModItem, ForeignModItemConfig, FunctionItem, FunctionItemConfig, FunctionModifiers, FunctionModifiersConfig, FunctionSignatureItem, FunctionSignatureItemConfig, FunctionType, FunctionTypeConfig, GenBlock, GenBlockConfig, GenericFunction, GenericFunctionConfig, GenericPattern, GenericPatternConfig, GenericType, GenericTypeConfig, GenericTypeWithTurbofish, GenericTypeWithTurbofishConfig, HigherRankedTraitBound, HigherRankedTraitBoundConfig, IfExpression, IfExpressionConfig, ImplItem, ImplItemConfig, IndexExpression, IndexExpressionConfig, InnerAttributeItem, InnerAttributeItemConfig, Label, LabelConfig, LetChain, LetChainConfig, LetCondition, LetConditionConfig, LetDeclaration, LetDeclarationConfig, Lifetime, LifetimeConfig, LifetimeParameter, LifetimeParameterConfig, LineComment, LineCommentConfig, Literal, LiteralPattern, LoopExpression, LoopExpressionConfig, MacroDefinition, MacroDefinitionConfig, MacroInvocation, MacroInvocationConfig, MacroRule, MacroRuleConfig, MatchArm, MatchArmConfig, MatchBlock, MatchBlockConfig, MatchExpression, MatchExpressionConfig, MatchPattern, MatchPatternConfig, ModItem, ModItemConfig, MutPattern, MutPatternConfig, NegativeLiteral, NegativeLiteralConfig, OrPattern, OrPatternConfig, OrderedFieldDeclarationList, OrderedFieldDeclarationListConfig, Parameter, ParameterConfig, Parameters, ParametersConfig, ParenthesizedExpression, ParenthesizedExpressionConfig, Path, Pattern, PointerType, PointerTypeConfig, QualifiedType, QualifiedTypeConfig, RangeExpression, RangeExpressionConfig, RangePattern, RangePatternConfig, RawStringLiteral, RawStringLiteralConfig, RefPattern, RefPatternConfig, ReferenceExpression, ReferenceExpressionConfig, ReferencePattern, ReferencePatternConfig, ReferenceType, ReferenceTypeConfig, RemovedTraitBound, RemovedTraitBoundConfig, ReservedIdentifier, ReturnExpression, ReturnExpressionConfig, ScopedIdentifier, ScopedIdentifierConfig, ScopedTypeIdentifier, ScopedTypeIdentifierConfig, ScopedUseList, ScopedUseListConfig, SelfParameter, SelfParameterConfig, ShorthandFieldInitializer, ShorthandFieldInitializerConfig, SlicePattern, SlicePatternConfig, SourceFile, SourceFileConfig, Statement, StaticItem, StaticItemConfig, StringLiteral, StringLiteralConfig, StructExpression, StructExpressionConfig, StructItem, StructItemConfig, StructPattern, StructPatternConfig, TokenBindingPattern, TokenBindingPatternConfig, TokenRepetition, TokenRepetitionConfig, TokenRepetitionPattern, TokenRepetitionPatternConfig, TokenTree, TokenTreeConfig, TokenTreePattern, TokenTreePatternConfig, TraitBounds, TraitBoundsConfig, TraitItem, TraitItemConfig, TryBlock, TryBlockConfig, TryExpression, TryExpressionConfig, TupleExpression, TupleExpressionConfig, TuplePattern, TuplePatternConfig, TupleStructPattern, TupleStructPatternConfig, TupleType, TupleTypeConfig, Type, TypeArguments, TypeArgumentsConfig, TypeBinding, TypeBindingConfig, TypeCastExpression, TypeCastExpressionConfig, TypeIdentifier, TypeItem, TypeItemConfig, TypeParameter, TypeParameterConfig, TypeParameters, TypeParametersConfig, UnaryExpression, UnaryExpressionConfig, UnionItem, UnionItemConfig, UnsafeBlock, UnsafeBlockConfig, UseAsClause, UseAsClauseConfig, UseBounds, UseBoundsConfig, UseClause, UseDeclaration, UseDeclarationConfig, UseList, UseListConfig, UseWildcard, UseWildcardConfig, VariadicParameter, VariadicParameterConfig, VisibilityModifier, VisibilityModifierConfig, WhereClause, WhereClauseConfig, WherePredicate, WherePredicateConfig, WhileExpression, WhileExpressionConfig, YieldExpression, YieldExpressionConfig } from './types.js';
 import type { KindMap, FromInputMap } from './types.js';
-import { isNodeData, _inferBranch, hasKind, resolveField } from './utils.js';
+import { isNodeData, hasKind, resolveField } from './utils.js';
 
 import { abstract_type_, arguments_, array_expression_, array_type_, assignment_expression_, associated_type_, async_block_, attribute_, attribute_item_, await_expression_, base_field_initializer_, binary_expression_, block_, block_comment_, boolean_literal_, bounded_type_, bracketed_type_, break_expression_, call_expression_, captured_pattern_, char_literal_, closure_expression_, closure_parameters_, compound_assignment_expr_, const_block_, const_item_, const_parameter_, continue_expression_, crate_, declaration_list_, doc_comment_, dynamic_type_, else_clause_, empty_statement_, enum_item_, enum_variant_, enum_variant_list_, escape_sequence_, expression_statement_, extern_crate_declaration_, extern_modifier_, field_declaration_, field_declaration_list_, field_expression_, field_identifier_, field_initializer_, field_initializer_list_, field_pattern_, float_literal_, for_expression_, for_lifetimes_, foreign_mod_item_, fragment_specifier_, function_item_, function_modifiers_, function_signature_item_, function_type_, gen_block_, generic_function_, generic_pattern_, generic_type_, generic_type_with_turbofish_, higher_ranked_trait_bound_, identifier_, if_expression_, impl_item_, index_expression_, inner_attribute_item_, inner_doc_comment_marker_, integer_literal_, label_, let_chain_, let_condition_, let_declaration_, lifetime_, lifetime_parameter_, line_comment_, loop_expression_, macro_definition_, macro_invocation_, macro_rule_, match_arm_, match_block_, match_expression_, match_pattern_, metavariable_, mod_item_, mut_pattern_, mutable_specifier_, negative_literal_, never_type_, or_pattern_, ordered_field_declaration_list_, outer_doc_comment_marker_, parameter_, parameters_, parenthesized_expression_, pointer_type_, primitive_type_, qualified_type_, range_expression_, range_pattern_, raw_string_literal_, ref_pattern_, reference_expression_, reference_pattern_, reference_type_, remaining_field_pattern_, removed_trait_bound_, return_expression_, scoped_identifier_, scoped_type_identifier_, scoped_use_list_, self_, self_parameter_, shebang_, shorthand_field_identifier_, shorthand_field_initializer_, slice_pattern_, source_file_, static_item_, string_content_, string_literal_, struct_expression_, struct_item_, struct_pattern_, super_, token_binding_pattern_, token_repetition_, token_repetition_pattern_, token_tree_, token_tree_pattern_, trait_bounds_, trait_item_, try_block_, try_expression_, tuple_expression_, tuple_pattern_, tuple_struct_pattern_, tuple_type_, type_arguments_, type_binding_, type_cast_expression_, type_identifier_, type_item_, type_parameter_, type_parameters_, unary_expression_, union_item_, unit_expression_, unit_type_, unsafe_block_, use_as_clause_, use_bounds_, use_declaration_, use_list_, use_wildcard_, variadic_parameter_, visibility_modifier_, where_clause_, where_predicate_, while_expression_, yield_expression_ } from './factories.js';
 import type { AbstractTypeFromInput, ArgumentsFromInput, ArrayExpressionFromInput, ArrayTypeFromInput, AssignmentExpressionFromInput, AssociatedTypeFromInput, AsyncBlockFromInput, AttributeFromInput, AttributeItemFromInput, AwaitExpressionFromInput, BaseFieldInitializerFromInput, BinaryExpressionFromInput, BlockFromInput, BlockCommentFromInput, BoundedTypeFromInput, BracketedTypeFromInput, BreakExpressionFromInput, CallExpressionFromInput, CapturedPatternFromInput, ClosureExpressionFromInput, ClosureParametersFromInput, CompoundAssignmentExprFromInput, ConstBlockFromInput, ConstItemFromInput, ConstParameterFromInput, ContinueExpressionFromInput, DeclarationListFromInput, DynamicTypeFromInput, ElseClauseFromInput, EnumItemFromInput, EnumVariantFromInput, EnumVariantListFromInput, ExpressionStatementFromInput, ExternCrateDeclarationFromInput, ExternModifierFromInput, FieldDeclarationFromInput, FieldDeclarationListFromInput, FieldExpressionFromInput, FieldInitializerFromInput, FieldInitializerListFromInput, FieldPatternFromInput, ForExpressionFromInput, ForLifetimesFromInput, ForeignModItemFromInput, FunctionItemFromInput, FunctionModifiersFromInput, FunctionSignatureItemFromInput, FunctionTypeFromInput, GenBlockFromInput, GenericFunctionFromInput, GenericPatternFromInput, GenericTypeFromInput, GenericTypeWithTurbofishFromInput, HigherRankedTraitBoundFromInput, IfExpressionFromInput, ImplItemFromInput, IndexExpressionFromInput, InnerAttributeItemFromInput, LabelFromInput, LetChainFromInput, LetConditionFromInput, LetDeclarationFromInput, LifetimeFromInput, LifetimeParameterFromInput, LineCommentFromInput, LoopExpressionFromInput, MacroDefinitionFromInput, MacroInvocationFromInput, MacroRuleFromInput, MatchArmFromInput, MatchBlockFromInput, MatchExpressionFromInput, MatchPatternFromInput, ModItemFromInput, MutPatternFromInput, NegativeLiteralFromInput, OrPatternFromInput, OrderedFieldDeclarationListFromInput, ParameterFromInput, ParametersFromInput, ParenthesizedExpressionFromInput, PointerTypeFromInput, QualifiedTypeFromInput, RangeExpressionFromInput, RangePatternFromInput, RawStringLiteralFromInput, RefPatternFromInput, ReferenceExpressionFromInput, ReferencePatternFromInput, ReferenceTypeFromInput, RemovedTraitBoundFromInput, ReturnExpressionFromInput, ScopedIdentifierFromInput, ScopedTypeIdentifierFromInput, ScopedUseListFromInput, SelfParameterFromInput, ShorthandFieldInitializerFromInput, SlicePatternFromInput, SourceFileFromInput, StaticItemFromInput, StringLiteralFromInput, StructExpressionFromInput, StructItemFromInput, StructPatternFromInput, TokenBindingPatternFromInput, TokenRepetitionFromInput, TokenRepetitionPatternFromInput, TokenTreeFromInput, TokenTreePatternFromInput, TraitBoundsFromInput, TraitItemFromInput, TryBlockFromInput, TryExpressionFromInput, TupleExpressionFromInput, TuplePatternFromInput, TupleStructPatternFromInput, TupleTypeFromInput, TypeArgumentsFromInput, TypeBindingFromInput, TypeCastExpressionFromInput, TypeItemFromInput, TypeParameterFromInput, TypeParametersFromInput, UnaryExpressionFromInput, UnionItemFromInput, UnsafeBlockFromInput, UseAsClauseFromInput, UseBoundsFromInput, UseDeclarationFromInput, UseListFromInput, UseWildcardFromInput, VariadicParameterFromInput, VisibilityModifierFromInput, WhereClauseFromInput, WherePredicateFromInput, WhileExpressionFromInput, YieldExpressionFromInput } from './types.js';
@@ -174,35 +174,7 @@ function _resolveDeclarationStatement(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration. Use { kind: '...' } to disambiguate.`);
-  }
-  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
-}
-
-function _resolveLiteral(v: unknown): Literal;
-function _resolveLiteral(v: unknown) {
-  if (isNodeData(v)) return v;
-  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
-  if (typeof v === 'number') {
-    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
-  }
-  if (typeof v === 'string') {
-    if (['false', 'true'].includes(v)) return boolean_literal_(v);
-    if (/^b?'(?:\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})|[^\\'])?'$/.test(v)) return char_literal_(v);
-    if (/^(?:[0-9][0-9_]*|0x[0-9a-fA-F_]+|0b[01_]+|0o[0-7_]+)(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64)?$/.test(v)) return integer_literal_(v);
-    return float_literal_(v);
-  }
-  if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
-  if (typeof v === 'object' && v !== null) {
-    if (hasKind(v)) {
-      const { kind: k, ...rest } = v;
-      return _resolveByKind(k, rest);
-    }
-    const _k = _inferBranch(v, ["raw_string_literal","string_literal"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -229,35 +201,7 @@ function _resolveExpression(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, raw_string_literal, reference_expression, return_expression, scoped_identifier, string_literal, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
-  }
-  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
-}
-
-function _resolveLiteralPattern(v: unknown): LiteralPattern;
-function _resolveLiteralPattern(v: unknown) {
-  if (isNodeData(v)) return v;
-  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
-  if (typeof v === 'number') {
-    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
-  }
-  if (typeof v === 'string') {
-    if (['false', 'true'].includes(v)) return boolean_literal_(v);
-    if (/^b?'(?:\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})|[^\\'])?'$/.test(v)) return char_literal_(v);
-    if (/^(?:[0-9][0-9_]*|0x[0-9a-fA-F_]+|0b[01_]+|0o[0-7_]+)(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64)?$/.test(v)) return integer_literal_(v);
-    return float_literal_(v);
-  }
-  if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
-  if (typeof v === 'object' && v !== null) {
-    if (hasKind(v)) {
-      const { kind: k, ...rest } = v;
-      return _resolveByKind(k, rest);
-    }
-    const _k = _inferBranch(v, ["negative_literal","raw_string_literal","string_literal"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: negative_literal, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, raw_string_literal, reference_expression, return_expression, scoped_identifier, string_literal, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -282,9 +226,7 @@ function _resolvePattern(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["captured_pattern","const_block","generic_pattern","macro_invocation","mut_pattern","negative_literal","or_pattern","range_pattern","raw_string_literal","ref_pattern","reference_pattern","scoped_identifier","slice_pattern","string_literal","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: captured_pattern, const_block, generic_pattern, macro_invocation, mut_pattern, negative_literal, or_pattern, range_pattern, raw_string_literal, ref_pattern, reference_pattern, scoped_identifier, slice_pattern, string_literal, struct_pattern, tuple_pattern, tuple_struct_pattern. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: captured_pattern, const_block, generic_pattern, macro_invocation, mut_pattern, negative_literal, or_pattern, range_pattern, raw_string_literal, ref_pattern, reference_pattern, scoped_identifier, slice_pattern, string_literal, struct_pattern, tuple_pattern, tuple_struct_pattern. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -305,9 +247,7 @@ function _resolveType(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -345,93 +285,7 @@ function _resolveStatement(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["associated_type","attribute_item","const_item","enum_item","expression_statement","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: associated_type, attribute_item, const_item, enum_item, expression_statement, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration. Use { kind: '...' } to disambiguate.`);
-  }
-  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
-}
-
-function _resolveExpressionEndingWithBlock(v: unknown): ExpressionEndingWithBlock;
-function _resolveExpressionEndingWithBlock(v: unknown) {
-  if (isNodeData(v)) return v;
-  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
-  if (typeof v === 'number') {
-    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
-  }
-  if (typeof v === 'string') {
-    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
-  }
-  if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
-  if (typeof v === 'object' && v !== null) {
-    if (hasKind(v)) {
-      const { kind: k, ...rest } = v;
-      return _resolveByKind(k, rest);
-    }
-    const _k = _inferBranch(v, ["async_block","block","const_block","for_expression","gen_block","if_expression","loop_expression","match_expression","try_block","unsafe_block","while_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: async_block, block, const_block, for_expression, gen_block, if_expression, loop_expression, match_expression, try_block, unsafe_block, while_expression. Use { kind: '...' } to disambiguate.`);
-  }
-  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
-}
-
-function _resolveTypeIdentifier(v: unknown): TypeIdentifier;
-function _resolveTypeIdentifier(v: unknown) {
-  if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return type_identifier_(v);
-  }
-  if (typeof v === 'object' && v !== null) {
-    if (hasKind(v)) {
-      const { kind: k, ...rest } = v;
-      return _resolveByKind(k, rest);
-    }
-    throw new Error('No branch types accepted for object value');
-  }
-  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
-}
-
-function _resolveExpressionExceptRange(v: unknown): ExpressionExceptRange;
-function _resolveExpressionExceptRange(v: unknown) {
-  if (isNodeData(v)) return v;
-  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
-  if (typeof v === 'number') {
-    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
-  }
-  if (typeof v === 'string') {
-    if (['false', 'true'].includes(v)) return boolean_literal_(v);
-    if (/^b?'(?:\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})|[^\\'])?'$/.test(v)) return char_literal_(v);
-    if (/^(?:[0-9][0-9_]*|0x[0-9a-fA-F_]+|0b[01_]+|0o[0-7_]+)(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64)?$/.test(v)) return integer_literal_(v);
-    if (/^\$[a-zA-Z_]\w*$/.test(v)) return metavariable_(v);
-    if (/^self$/.test(v)) return (v === 'self' ? self_() : (() => { throw new Error(`Expected 'self' for self, got '${v}'`); })());
-    if (/^\(\)$/.test(v)) return (v === '()' ? unit_expression_() : (() => { throw new Error(`Expected '()' for unit_expression, got '${v}'`); })());
-    return identifier_(v);
-  }
-  if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
-  if (typeof v === 'object' && v !== null) {
-    if (hasKind(v)) {
-      const { kind: k, ...rest } = v;
-      return _resolveByKind(k, rest);
-    }
-    const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, raw_string_literal, reference_expression, return_expression, scoped_identifier, string_literal, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
-  }
-  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
-}
-
-function _resolveFieldIdentifier(v: unknown): FieldIdentifier;
-function _resolveFieldIdentifier(v: unknown) {
-  if (isNodeData(v)) return v;
-  if (typeof v === 'string') {
-    return field_identifier_(v);
-  }
-  if (typeof v === 'object' && v !== null) {
-    if (hasKind(v)) {
-      const { kind: k, ...rest } = v;
-      return _resolveByKind(k, rest);
-    }
-    throw new Error('No branch types accepted for object value');
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: associated_type, attribute_item, const_item, enum_item, expression_statement, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -452,35 +306,6 @@ function _resolveReservedIdentifier(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveCondition(v: unknown): Condition;
-function _resolveCondition(v: unknown) {
-  if (isNodeData(v)) return v;
-  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
-  if (typeof v === 'number') {
-    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
-  }
-  if (typeof v === 'string') {
-    if (['false', 'true'].includes(v)) return boolean_literal_(v);
-    if (/^b?'(?:\\(?:[^xu]|u[0-9a-fA-F]{4}|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2})|[^\\'])?'$/.test(v)) return char_literal_(v);
-    if (/^(?:[0-9][0-9_]*|0x[0-9a-fA-F_]+|0b[01_]+|0o[0-7_]+)(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64)?$/.test(v)) return integer_literal_(v);
-    if (/^\$[a-zA-Z_]\w*$/.test(v)) return metavariable_(v);
-    if (/^self$/.test(v)) return (v === 'self' ? self_() : (() => { throw new Error(`Expected 'self' for self, got '${v}'`); })());
-    if (/^\(\)$/.test(v)) return (v === '()' ? unit_expression_() : (() => { throw new Error(`Expected '()' for unit_expression, got '${v}'`); })());
-    return identifier_(v);
-  }
-  if (Array.isArray(v)) throw new Error('Array value with ambiguous branch types — use {kind} to disambiguate');
-  if (typeof v === 'object' && v !== null) {
-    if (hasKind(v)) {
-      const { kind: k, ...rest } = v;
-      return _resolveByKind(k, rest);
-    }
-    const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","let_chain","let_condition","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","raw_string_literal","reference_expression","return_expression","scoped_identifier","string_literal","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, let_chain, let_condition, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, raw_string_literal, reference_expression, return_expression, scoped_identifier, string_literal, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
-  }
-  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
-}
-
 function _resolveUseClause(v: unknown): UseClause;
 function _resolveUseClause(v: unknown) {
   if (isNodeData(v)) return v;
@@ -497,9 +322,7 @@ function _resolveUseClause(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_identifier","scoped_use_list","use_as_clause","use_list","use_wildcard"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, scoped_use_list, use_as_clause, use_list, use_wildcard. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, scoped_use_list, use_as_clause, use_list, use_wildcard. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -516,9 +339,7 @@ function _rt7h7cy(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["bounded_type","function_type","generic_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: bounded_type, function_type, generic_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: bounded_type, function_type, generic_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -539,9 +360,7 @@ function _r1zauz5(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["attribute_item","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -579,9 +398,7 @@ function _rhh310(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -623,9 +440,7 @@ function _r1ph97dk(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["expression_statement","associated_type","attribute_item","const_item","enum_item","extern_crate_declaration","foreign_mod_item","function_item","function_signature_item","impl_item","inner_attribute_item","let_declaration","macro_definition","macro_invocation","mod_item","static_item","struct_item","trait_item","type_item","union_item","use_declaration","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: expression_statement, associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: expression_statement, associated_type, attribute_item, const_item, enum_item, extern_crate_declaration, foreign_mod_item, function_item, function_signature_item, impl_item, inner_attribute_item, let_declaration, macro_definition, macro_invocation, mod_item, static_item, struct_item, trait_item, type_item, union_item, use_declaration, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -646,9 +461,7 @@ function _rd726k3(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["lifetime","use_bounds","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: lifetime, use_bounds, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: lifetime, use_bounds, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -669,9 +482,7 @@ function _r1tpbpzq(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["qualified_type","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: qualified_type, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: qualified_type, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -691,9 +502,7 @@ function _r1hu805q(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression","string_literal","raw_string_literal"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression, string_literal, raw_string_literal. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression, string_literal, raw_string_literal. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -715,9 +524,7 @@ function _r1dex6mx(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["block","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -801,9 +608,7 @@ function _rmv6nku(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["parameter","negative_literal","raw_string_literal","string_literal","captured_pattern","const_block","generic_pattern","macro_invocation","mut_pattern","or_pattern","range_pattern","ref_pattern","reference_pattern","scoped_identifier","slice_pattern","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: parameter, negative_literal, raw_string_literal, string_literal, captured_pattern, const_block, generic_pattern, macro_invocation, mut_pattern, or_pattern, range_pattern, ref_pattern, reference_pattern, scoped_identifier, slice_pattern, struct_pattern, tuple_pattern, tuple_struct_pattern. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: parameter, negative_literal, raw_string_literal, string_literal, captured_pattern, const_block, generic_pattern, macro_invocation, mut_pattern, or_pattern, range_pattern, ref_pattern, reference_pattern, scoped_identifier, slice_pattern, struct_pattern, tuple_pattern, tuple_struct_pattern. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -841,9 +646,7 @@ function _r1repi6d(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["block","negative_literal","raw_string_literal","string_literal"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, negative_literal, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, negative_literal, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -860,9 +663,7 @@ function _r1cdhv8t(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["function_type","generic_type","higher_ranked_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: function_type, generic_type, higher_ranked_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: function_type, generic_type, higher_ranked_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -883,9 +684,7 @@ function _r1hikcvp(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["block","if_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, if_expression. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, if_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -906,9 +705,7 @@ function _r1sy82yg(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["field_declaration_list","ordered_field_declaration_list"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: field_declaration_list, ordered_field_declaration_list. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: field_declaration_list, ordered_field_declaration_list. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -929,9 +726,7 @@ function _r18tu9jr(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["attribute_item","enum_variant"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, enum_variant. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, enum_variant. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -952,9 +747,7 @@ function _rub5wwz(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -992,9 +785,7 @@ function _r1wxvtav(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["attribute_item","field_declaration"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, field_declaration. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, field_declaration. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1034,9 +825,7 @@ function _rc94c35(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["base_field_initializer","field_initializer","shorthand_field_initializer"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: base_field_initializer, field_initializer, shorthand_field_initializer. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: base_field_initializer, field_initializer, shorthand_field_initializer. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1150,9 +939,7 @@ function _r1ochi94(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_type_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1169,9 +956,7 @@ function _r116cegy(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["field_expression","scoped_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: field_expression, scoped_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: field_expression, scoped_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1205,9 +990,7 @@ function _rqw8auo(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_identifier","scoped_type_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1224,9 +1007,7 @@ function _r11sa8pz(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1247,9 +1028,7 @@ function _r1goghxb(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["let_chain","let_condition","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: let_chain, let_condition, unary_expression, reference_expression, try_expression, binary_expression, assignment_expression, compound_assignment_expr, type_cast_expression, call_expression, return_expression, yield_expression, string_literal, raw_string_literal, scoped_identifier, generic_function, await_expression, field_expression, array_expression, tuple_expression, macro_invocation, break_expression, continue_expression, index_expression, closure_expression, parenthesized_expression, struct_expression, unsafe_block, async_block, gen_block, try_block, block, if_expression, match_expression, while_expression, loop_expression, for_expression, const_block, range_expression. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: let_chain, let_condition, unary_expression, reference_expression, try_expression, binary_expression, assignment_expression, compound_assignment_expr, type_cast_expression, call_expression, return_expression, yield_expression, string_literal, raw_string_literal, scoped_identifier, generic_function, await_expression, field_expression, array_expression, tuple_expression, macro_invocation, break_expression, continue_expression, index_expression, closure_expression, parenthesized_expression, struct_expression, unsafe_block, async_block, gen_block, try_block, block, if_expression, match_expression, while_expression, loop_expression, for_expression, const_block, range_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1266,9 +1045,7 @@ function _rhgn5oy(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["generic_type","scoped_type_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: generic_type, scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: generic_type, scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1289,9 +1066,7 @@ function _ry62g3e(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["let_condition","raw_string_literal","string_literal","array_expression","assignment_expression","async_block","await_expression","binary_expression","block","break_expression","call_expression","closure_expression","compound_assignment_expr","const_block","continue_expression","field_expression","for_expression","gen_block","generic_function","if_expression","index_expression","loop_expression","macro_invocation","match_expression","parenthesized_expression","range_expression","reference_expression","return_expression","scoped_identifier","struct_expression","try_block","try_expression","tuple_expression","type_cast_expression","unary_expression","unsafe_block","while_expression","yield_expression"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: let_condition, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: let_condition, raw_string_literal, string_literal, array_expression, assignment_expression, async_block, await_expression, binary_expression, block, break_expression, call_expression, closure_expression, compound_assignment_expr, const_block, continue_expression, field_expression, for_expression, gen_block, generic_function, if_expression, index_expression, loop_expression, macro_invocation, match_expression, parenthesized_expression, range_expression, reference_expression, return_expression, scoped_identifier, struct_expression, try_block, try_expression, tuple_expression, type_cast_expression, unary_expression, unsafe_block, while_expression, yield_expression. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1325,9 +1100,7 @@ function _r1qsfyv8(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1348,9 +1121,7 @@ function _rxot7fv(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["attribute_item","inner_attribute_item"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, inner_attribute_item. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, inner_attribute_item. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1412,9 +1183,7 @@ function _r1lprop0(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["attribute_item","visibility_modifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, visibility_modifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, visibility_modifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1452,9 +1221,7 @@ function _ru3k3th(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["attribute_item","parameter","self_parameter","variadic_parameter","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, parameter, self_parameter, variadic_parameter, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, parameter, self_parameter, variadic_parameter, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1496,9 +1263,7 @@ function _r1pr4kp5(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_identifier","negative_literal","raw_string_literal","string_literal"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, negative_literal, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, negative_literal, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1556,9 +1321,7 @@ function _rfcevsg(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["bracketed_type","generic_type","scoped_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: bracketed_type, generic_type, scoped_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: bracketed_type, generic_type, scoped_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1592,9 +1355,7 @@ function _r53siua(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["generic_type_with_turbofish","scoped_type_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: generic_type_with_turbofish, scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: generic_type_with_turbofish, scoped_type_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1634,9 +1395,7 @@ function _reclzrc(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["token_repetition","token_tree","raw_string_literal","string_literal"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: token_repetition, token_tree, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: token_repetition, token_tree, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1659,9 +1418,7 @@ function _r14tzyme(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["token_binding_pattern","token_repetition_pattern","token_tree_pattern","raw_string_literal","string_literal"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: token_binding_pattern, token_repetition_pattern, token_tree_pattern, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: token_binding_pattern, token_repetition_pattern, token_tree_pattern, raw_string_literal, string_literal. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1682,9 +1439,7 @@ function _r1nr92n5(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["higher_ranked_trait_bound","lifetime","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: higher_ranked_trait_bound, lifetime, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: higher_ranked_trait_bound, lifetime, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1726,9 +1481,7 @@ function _r95jlc9(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["closure_expression","negative_literal","raw_string_literal","string_literal","captured_pattern","const_block","generic_pattern","macro_invocation","mut_pattern","or_pattern","range_pattern","ref_pattern","reference_pattern","scoped_identifier","slice_pattern","struct_pattern","tuple_pattern","tuple_struct_pattern"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: closure_expression, negative_literal, raw_string_literal, string_literal, captured_pattern, const_block, generic_pattern, macro_invocation, mut_pattern, or_pattern, range_pattern, ref_pattern, reference_pattern, scoped_identifier, slice_pattern, struct_pattern, tuple_pattern, tuple_struct_pattern. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: closure_expression, negative_literal, raw_string_literal, string_literal, captured_pattern, const_block, generic_pattern, macro_invocation, mut_pattern, or_pattern, range_pattern, ref_pattern, reference_pattern, scoped_identifier, slice_pattern, struct_pattern, tuple_pattern, tuple_struct_pattern. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1745,9 +1498,7 @@ function _r16d3oq5(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["generic_type","scoped_identifier"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: generic_type, scoped_identifier. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: generic_type, scoped_identifier. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1768,9 +1519,7 @@ function _r1co9wyp(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["block","lifetime","trait_bounds","type_binding","raw_string_literal","string_literal","abstract_type","array_type","bounded_type","dynamic_type","function_type","generic_type","macro_invocation","pointer_type","reference_type","removed_trait_bound","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, lifetime, trait_bounds, type_binding, raw_string_literal, string_literal, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: block, lifetime, trait_bounds, type_binding, raw_string_literal, string_literal, abstract_type, array_type, bounded_type, dynamic_type, function_type, generic_type, macro_invocation, pointer_type, reference_type, removed_trait_bound, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1787,9 +1536,7 @@ function _ryeauh7(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["attribute_item","const_parameter","lifetime_parameter","type_parameter"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, const_parameter, lifetime_parameter, type_parameter. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: attribute_item, const_parameter, lifetime_parameter, type_parameter. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1827,9 +1574,7 @@ function _rnmqc2e(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["lifetime"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: lifetime. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: lifetime. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1850,9 +1595,7 @@ function _r1u4xg67(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["scoped_identifier","scoped_use_list","use_as_clause","use_list","use_wildcard"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, scoped_use_list, use_as_clause, use_list, use_wildcard. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: scoped_identifier, scoped_use_list, use_as_clause, use_list, use_wildcard. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1912,9 +1655,7 @@ function _rjhyqcx(v: unknown) {
       const { kind: k, ...rest } = v;
       return _resolveByKind(k, rest);
     }
-    const _k = _inferBranch(v, ["array_type","generic_type","higher_ranked_trait_bound","lifetime","pointer_type","reference_type","scoped_type_identifier","tuple_type"]);
-    if (_k) return _resolveByKind(_k, v);
-    throw new Error(`Cannot infer kind for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_type, generic_type, higher_ranked_trait_bound, lifetime, pointer_type, reference_type, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
+    throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: array_type, generic_type, higher_ranked_trait_bound, lifetime, pointer_type, reference_type, scoped_type_identifier, tuple_type. Use { kind: '...' } to disambiguate.`);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
