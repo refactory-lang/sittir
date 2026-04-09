@@ -280,13 +280,9 @@ export function emitFrom(config: EmitFromConfig): string {
 		const key = resolverKey(resolved);
 
 		if (!resolverRegistry.has(key)) {
-			const totalNonAnon = resolved.leafTypes.length + resolved.branchTypes.length + resolved.supertypes.length;
-			const isSimple = totalNonAnon === 1 && resolved.anonTokens.length === 0;
-			if (!isSimple) {
-				const name = deriveResolverName(resolved, ctx.expandedSupertypes, usedResolverNames);
-				usedResolverNames.add(name);
-				resolverRegistry.set(key, { name, resolved });
-			}
+			const name = deriveResolverName(resolved, ctx.expandedSupertypes, usedResolverNames);
+			usedResolverNames.add(name);
+			resolverRegistry.set(key, { name, resolved });
 		}
 
 		const entry = resolverRegistry.get(key);
@@ -845,42 +841,15 @@ function getResolverExpression(
 	leafSet: Set<string>,
 	branchNodeSet: Set<string>,
 	supertypeSet: Set<string>,
-	keywordKinds: Map<string, string>,
+	_keywordKinds: Map<string, string>,
 	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
-	supertypeResolverNames: Map<string, string>,
+	_supertypeResolverNames: Map<string, string>,
 ): string {
 	const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet, supertypeSet);
 	const key = resolverKey(resolved);
 	const entry = resolverRegistry.get(key);
-
-	// Named resolver available — use it
-	if (entry) {
-		return entry.name;
-	}
-
-	// Simple cases — inline arrow
-	if (resolved.leafTypes.length === 1 && resolved.branchTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
-		const lt = resolved.leafTypes[0]!;
-		if (keywordKinds.has(lt)) {
-			const text = keywordKinds.get(lt)!;
-			return `(v: unknown) => (typeof v === 'string' && v === '${escapeString(text)}' ? ${toRawFactoryName(lt)}() : v)`;
-		}
-		const factory = toRawFactoryName(lt);
-		return `(v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? ${factory}('' + v) : v)`;
-	}
-
-	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
-		return `(v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('${resolved.branchTypes[0]!}', v) : v)`;
-	}
-
-	// Single supertype — delegate to its resolver
-	if (resolved.supertypes.length === 1 && resolved.leafTypes.length === 0 && resolved.branchTypes.length === 0 && resolved.anonTokens.length === 0) {
-		const resolverFn = supertypeResolverNames.get(resolved.supertypes[0]!);
-		if (resolverFn) return resolverFn;
-	}
-
-	// Shouldn't happen — complex cases always get a named resolver
-	return resolverNameHash(key);
+	if (!entry) throw new Error(`No resolver for key: ${key}`);
+	return entry.name;
 }
 
 // ---------------------------------------------------------------------------

@@ -402,6 +402,23 @@ function _resolveNamedExpressionLhs(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _resolveSimplePattern2(v: unknown): KindMap['dotted_name'];
+function _resolveSimplePattern2(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('dotted_name', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('dotted_name', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _r1pqs0ui(v: unknown): KindMap['dictionary_splat'] | KindMap['keyword_argument'] | KindMap['list_splat'] | KindMap['parenthesized_expression'];
 function _r1pqs0ui(v: unknown) {
   if (isNodeData(v)) return v;
@@ -452,6 +469,23 @@ function _r1mkpyke(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _resolveComprehensionClauses3(v: unknown): unknown;
+function _resolveComprehensionClauses3(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveExpression(v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveExpression(v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _resolveLeftHandSide2(v: unknown): KindMap['pattern_list'];
 function _resolveLeftHandSide2(v: unknown) {
   if (isNodeData(v)) return v;
@@ -486,8 +520,42 @@ function _resolveRightHandSide2(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveComprehensionClauses3(v: unknown): unknown;
-function _resolveComprehensionClauses3(v: unknown) {
+function _rtec52c(v: unknown): KindMap['type'];
+function _rtec52c(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('type', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('type', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _resolveComprehensionClauses4(v: unknown): unknown;
+function _resolveComprehensionClauses4(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolvePrimaryExpression(v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolvePrimaryExpression(v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _resolveComprehensionClauses5(v: unknown): unknown;
+function _resolveComprehensionClauses5(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['%=', '&=', '**=', '*=', '+=', '-=', '//=', '/=', '<<=', '>>=', '@=', '^=', '|='].includes(v)) return { type: v, text: v };
@@ -503,8 +571,8 @@ function _resolveComprehensionClauses3(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveComprehensionClauses4(v: unknown): unknown;
-function _resolveComprehensionClauses4(v: unknown) {
+function _resolveComprehensionClauses6(v: unknown): unknown;
+function _resolveComprehensionClauses6(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['%', '&', '*', '**', '+', '-', '/', '//', '<<', '>>', '@', '^', '|'].includes(v)) return { type: v, text: v };
@@ -520,8 +588,25 @@ function _resolveComprehensionClauses4(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveComprehensionClauses5(v: unknown): unknown;
-function _resolveComprehensionClauses5(v: unknown) {
+function _r1ednr96(v: unknown): KindMap['case_clause'];
+function _r1ednr96(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('case_clause', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('case_clause', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _resolveComprehensionClauses7(v: unknown): unknown;
+function _resolveComprehensionClauses7(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
@@ -537,8 +622,8 @@ function _resolveComprehensionClauses5(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveComprehensionClauses6(v: unknown): unknown;
-function _resolveComprehensionClauses6(v: unknown) {
+function _resolveComprehensionClauses8(v: unknown): unknown;
+function _resolveComprehensionClauses8(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['and', 'or'].includes(v)) return { type: v, text: v };
@@ -588,6 +673,40 @@ function _resolveSuite2(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _r17d6grx(v: unknown): KindMap['if_clause'];
+function _r17d6grx(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('if_clause', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('if_clause', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rflltaz(v: unknown): KindMap['case_pattern'];
+function _rflltaz(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('case_pattern', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('case_pattern', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _r17obc8i(v: unknown): KindMap['false'] | KindMap['float'] | KindMap['integer'] | KindMap['none'] | KindMap['true'] | KindMap['as_pattern'] | KindMap['class_pattern'] | KindMap['complex_pattern'] | KindMap['concatenated_string'] | KindMap['dict_pattern'] | KindMap['dotted_name'] | KindMap['keyword_pattern'] | KindMap['list_pattern'] | KindMap['splat_pattern'] | KindMap['string'] | KindMap['tuple_pattern'] | KindMap['union_pattern'];
 function _r17obc8i(v: unknown) {
   if (isNodeData(v)) return v;
@@ -610,8 +729,42 @@ function _r17obc8i(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveComprehensionClauses7(v: unknown): unknown;
-function _resolveComprehensionClauses7(v: unknown) {
+function _r3e3k0(v: unknown): KindMap['argument_list'];
+function _r3e3k0(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('argument_list', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('argument_list', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _reaq3s4(v: unknown): KindMap['type_parameter'];
+function _reaq3s4(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('type_parameter', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('type_parameter', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _resolveComprehensionClauses9(v: unknown): unknown;
+function _resolveComprehensionClauses9(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['!=', '<', '<=', '<>', '==', '>', '>=', 'in', 'is', 'is not', 'not in'].includes(v)) return { type: v, text: v };
@@ -627,8 +780,8 @@ function _resolveComprehensionClauses7(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveSimplePattern2(v: unknown): KindMap['float'] | KindMap['integer'];
-function _resolveSimplePattern2(v: unknown) {
+function _resolveSimplePattern3(v: unknown): KindMap['float'] | KindMap['integer'];
+function _resolveSimplePattern3(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (/^(?:(?:[0-9]+_?)+\.(?:[0-9]+_?)+?[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+?\.(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+?|(?:[0-9]+_?)+[eE][\+-]?(?:[0-9]+_?)+)[jJ]?$/.test(v)) return float_(v);
@@ -641,6 +794,23 @@ function _resolveSimplePattern2(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _resolveSimplePattern4(v: unknown): KindMap['string'];
+function _resolveSimplePattern4(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('string', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('string', v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -658,6 +828,23 @@ function _resolveCompoundStatement2(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: class_definition, function_definition. Use { kind: '...' } to disambiguate.`);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r1fl8679(v: unknown): KindMap['decorator'];
+function _r1fl8679(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('decorator', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('decorator', v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -696,6 +883,23 @@ function _resolveExpressions2(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _resolveSimplePattern5(v: unknown): KindMap['splat_pattern'];
+function _resolveSimplePattern5(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('splat_pattern', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('splat_pattern', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _r34sltf(v: unknown): KindMap['dictionary_splat'] | KindMap['pair'];
 function _r34sltf(v: unknown) {
   if (isNodeData(v)) return v;
@@ -709,6 +913,23 @@ function _r34sltf(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: dictionary_splat, pair. Use { kind: '...' } to disambiguate.`);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rte8hta(v: unknown): KindMap['pair'];
+function _rte8hta(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('pair', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('pair', v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -781,8 +1002,8 @@ function _resolveRightHandSide3(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveComprehensionClauses8(v: unknown): unknown;
-function _resolveComprehensionClauses8(v: unknown) {
+function _resolveComprehensionClauses10(v: unknown): unknown;
+function _resolveComprehensionClauses10(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if ([','].includes(v)) return { type: v, text: v };
@@ -795,6 +1016,23 @@ function _resolveComprehensionClauses8(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: as_pattern, boolean_operator, comparison_operator, conditional_expression, lambda, named_expression, not_operator, attribute, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r1totjtz(v: unknown): KindMap['else_clause'];
+function _r1totjtz(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('else_clause', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('else_clause', v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -829,6 +1067,73 @@ function _resolveFExpression2(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: expression_list, pattern_list, yield, as_pattern, boolean_operator, comparison_operator, conditional_expression, lambda, named_expression, not_operator, attribute, await, binary_operator, call, concatenated_string, dictionary, dictionary_comprehension, generator_expression, list, list_comprehension, list_splat, parenthesized_expression, set, set_comprehension, string, subscript, tuple, unary_operator. Use { kind: '...' } to disambiguate.`);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rt4o2h0(v: unknown): KindMap['format_specifier'];
+function _rt4o2h0(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('format_specifier', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('format_specifier', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rd1leh5(v: unknown): KindMap['type_conversion'];
+function _rd1leh5(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    return type_conversion_(v);
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r15bktga(v: unknown): KindMap['format_expression'];
+function _r15bktga(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('format_expression', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('format_expression', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r1tsfyeu(v: unknown): KindMap['parameters'];
+function _r1tsfyeu(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('parameters', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('parameters', v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -884,6 +1189,22 @@ function _r2jsk94(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _r18yiena(v: unknown): KindMap['wildcard_import'];
+function _r18yiena(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    return (v === '*' ? wildcard_import_() : (() => { throw new Error(`Expected '*' for wildcard_import, got '${v}'`); })());
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _resolveFExpression3(v: unknown): KindMap['expression_list'] | KindMap['pattern_list'] | KindMap['yield'];
 function _resolveFExpression3(v: unknown) {
   if (isNodeData(v)) return v;
@@ -923,8 +1244,8 @@ function _rfpc4ja(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveSimplePattern3(v: unknown): KindMap['false'] | KindMap['float'] | KindMap['integer'] | KindMap['none'] | KindMap['true'] | KindMap['class_pattern'] | KindMap['complex_pattern'] | KindMap['concatenated_string'] | KindMap['dict_pattern'] | KindMap['dotted_name'] | KindMap['list_pattern'] | KindMap['splat_pattern'] | KindMap['string'] | KindMap['tuple_pattern'] | KindMap['union_pattern'];
-function _resolveSimplePattern3(v: unknown) {
+function _resolveSimplePattern6(v: unknown): KindMap['false'] | KindMap['float'] | KindMap['integer'] | KindMap['none'] | KindMap['true'] | KindMap['class_pattern'] | KindMap['complex_pattern'] | KindMap['concatenated_string'] | KindMap['dict_pattern'] | KindMap['dotted_name'] | KindMap['list_pattern'] | KindMap['splat_pattern'] | KindMap['string'] | KindMap['tuple_pattern'] | KindMap['union_pattern'];
+function _resolveSimplePattern6(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (/^False$/.test(v)) return (v === 'False' ? false_() : (() => { throw new Error(`Expected 'False' for false, got '${v}'`); })());
@@ -941,6 +1262,40 @@ function _resolveSimplePattern3(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: class_pattern, complex_pattern, concatenated_string, dict_pattern, dotted_name, list_pattern, splat_pattern, string, tuple_pattern, union_pattern. Use { kind: '...' } to disambiguate.`);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _ruhfgja(v: unknown): KindMap['lambda_parameters'];
+function _ruhfgja(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('lambda_parameters', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('lambda_parameters', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _resolveComprehensionClauses11(v: unknown): unknown;
+function _resolveComprehensionClauses11(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveParameter(v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveParameter(v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -962,8 +1317,8 @@ function _rr83r9g(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _rflltaz(v: unknown): KindMap['case_pattern'];
-function _rflltaz(v: unknown) {
+function _rflltaz2(v: unknown): KindMap['case_pattern'];
+function _rflltaz2(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     throw new Error('Cannot resolve string value: no leaf types accepted for this field');
@@ -1047,6 +1402,72 @@ function _resolvePrimaryExpression3(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _resolveComprehensionClauses12(v: unknown): unknown;
+function _resolveComprehensionClauses12(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolvePattern(v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolvePattern(v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rnbxrnb(v: unknown): KindMap['chevron'];
+function _rnbxrnb(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('chevron', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('chevron', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rtjvpca(v: unknown): KindMap['import_prefix'];
+function _rtjvpca(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    return import_prefix_(v);
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r11rdi4m(v: unknown): KindMap['string_start'];
+function _r11rdi4m(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    return string_start_(v);
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _r14l28kn(v: unknown): KindMap['interpolation'] | KindMap['string_content'];
 function _r14l28kn(v: unknown) {
   if (isNodeData(v)) return v;
@@ -1060,6 +1481,22 @@ function _r14l28kn(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error(`Multiple branch types possible for object with keys: ${Object.keys(v).join(', ')}. Candidates: interpolation, string_content. Use { kind: '...' } to disambiguate.`);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r8ytgv(v: unknown): KindMap['string_end'];
+function _r8ytgv(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    return string_end_(v);
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1098,6 +1535,40 @@ function _r1apoc2a(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _r16jeonb(v: unknown): KindMap['except_clause'];
+function _r16jeonb(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('except_clause', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('except_clause', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rqhziy5(v: unknown): KindMap['finally_clause'];
+function _rqhziy5(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('finally_clause', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('finally_clause', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _r1f2r8fn(v: unknown): KindMap['constrained_type'] | KindMap['generic_type'] | KindMap['member_type'] | KindMap['splat_type'] | KindMap['union_type'];
 function _r1f2r8fn(v: unknown) {
   if (isNodeData(v)) return v;
@@ -1132,8 +1603,8 @@ function _resolveParameter2(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveComprehensionClauses9(v: unknown): unknown;
-function _resolveComprehensionClauses9(v: unknown) {
+function _resolveComprehensionClauses13(v: unknown): unknown;
+function _resolveComprehensionClauses13(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
     if (['+', '-', '~'].includes(v)) return { type: v, text: v };
@@ -1145,6 +1616,40 @@ function _resolveComprehensionClauses9(v: unknown) {
       return _resolveByKind(k, rest);
     }
     throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r7jahe4(v: unknown): KindMap['with_item'];
+function _r7jahe4(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('with_item', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('with_item', v);
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _rxymsmy(v: unknown): KindMap['with_clause'];
+function _rxymsmy(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'string') {
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (Array.isArray(v)) return _resolveByKind('with_clause', v);
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    return _resolveByKind('with_clause', v);
   }
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
@@ -1168,7 +1673,7 @@ export function aliasedImportFrom(input: RuntimeNodeOf<AliasedImport> | AliasedI
   const obj = input as AliasedImportFromInput;
   return aliased_import_({
     alias: resolveField(obj.alias, _resolveNamedExpressionLhs),
-    name: resolveField(obj.name, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)),
+    name: resolveField(obj.name, _resolveSimplePattern2),
   } as any);
 }
 
@@ -1206,7 +1711,7 @@ export function assertStatementFrom(input: RuntimeNodeOf<AssertStatement> | Asse
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AssertStatementFromInput;
   return assert_statement_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses3) : [],
   } as any);
 }
 
@@ -1222,7 +1727,7 @@ export function assignmentFrom(input: RuntimeNodeOf<Assignment> | AssignmentFrom
   return assignment_({
     left: resolveField(obj.left, _resolveLeftHandSide2),
     right: obj.right !== undefined ? resolveField(obj.right, _resolveRightHandSide2) : undefined,
-    type: obj.type !== undefined ? resolveField(obj.type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : undefined,
+    type: obj.type !== undefined ? resolveField(obj.type, _rtec52c) : undefined,
   } as any);
 }
 
@@ -1236,7 +1741,7 @@ export function attributeFrom(input: RuntimeNodeOf<Attribute> | AttributeFromInp
   const obj = input as AttributeFromInput;
   return attribute_({
     attribute: resolveField(obj.attribute, _resolveNamedExpressionLhs),
-    object: resolveField(obj.object, _resolvePrimaryExpression),
+    object: resolveField(obj.object, _resolveComprehensionClauses4),
   } as any);
 }
 
@@ -1251,7 +1756,7 @@ export function augmentedAssignmentFrom(input: RuntimeNodeOf<AugmentedAssignment
   const obj = input as AugmentedAssignmentFromInput;
   return augmented_assignment_({
     left: resolveField(obj.left, _resolveLeftHandSide2),
-    operator: resolveField(obj.operator, _resolveComprehensionClauses3),
+    operator: resolveField(obj.operator, _resolveComprehensionClauses5),
     right: resolveField(obj.right, _resolveRightHandSide2),
   } as any);
 }
@@ -1264,7 +1769,7 @@ export function await_From(input: RuntimeNodeOf<Await> | AwaitFromInput) {
   }
   const obj = input as AwaitFromInput;
   return await_({
-    primaryExpression: resolveField(obj.primary_expression, _resolvePrimaryExpression),
+    primaryExpression: resolveField(obj.primary_expression, _resolveComprehensionClauses4),
   } as any);
 }
 
@@ -1278,9 +1783,9 @@ export function binaryOperatorFrom(input: RuntimeNodeOf<BinaryOperator> | Binary
   }
   const obj = input as BinaryOperatorFromInput;
   return binary_operator_({
-    left: resolveField(obj.left, _resolvePrimaryExpression),
-    operator: resolveField(obj.operator, _resolveComprehensionClauses4),
-    right: resolveField(obj.right, _resolvePrimaryExpression),
+    left: resolveField(obj.left, _resolveComprehensionClauses4),
+    operator: resolveField(obj.operator, _resolveComprehensionClauses6),
+    right: resolveField(obj.right, _resolveComprehensionClauses4),
   } as any);
 }
 
@@ -1293,8 +1798,8 @@ export function blockFrom(input: RuntimeNodeOf<Block> | BlockFromInput) {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as BlockFromInput;
   return block_({
-    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('case_clause', v) : v)) : undefined,
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses5) : undefined,
+    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, _r1ednr96) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses7) : undefined,
   } as any);
 }
 
@@ -1308,9 +1813,9 @@ export function booleanOperatorFrom(input: RuntimeNodeOf<BooleanOperator> | Bool
   }
   const obj = input as BooleanOperatorFromInput;
   return boolean_operator_({
-    left: resolveField(obj.left, _resolveExpression),
-    operator: resolveField(obj.operator, _resolveComprehensionClauses6),
-    right: resolveField(obj.right, _resolveExpression),
+    left: resolveField(obj.left, _resolveComprehensionClauses3),
+    operator: resolveField(obj.operator, _resolveComprehensionClauses8),
+    right: resolveField(obj.right, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -1324,7 +1829,7 @@ export function callFrom(input: RuntimeNodeOf<Call> | CallFromInput) {
   const obj = input as CallFromInput;
   return call_({
     arguments: resolveField(obj.arguments, _r1wv67cy),
-    function: resolveField(obj.function, _resolvePrimaryExpression),
+    function: resolveField(obj.function, _resolveComprehensionClauses4),
   } as any);
 }
 
@@ -1339,8 +1844,8 @@ export function caseClauseFrom(input: RuntimeNodeOf<CaseClause> | CaseClauseFrom
   const obj = (Array.isArray(input) ? { children: input } : input) as CaseClauseFromInput;
   return case_clause_({
     consequence: resolveField(obj.consequence, _resolveSuite2),
-    guard: obj.guard !== undefined ? resolveField(obj.guard, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('if_clause', v) : v)) : undefined,
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('case_pattern', v) : v)) : [],
+    guard: obj.guard !== undefined ? resolveField(obj.guard, _r17d6grx) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rflltaz) : [],
   } as any);
 }
 
@@ -1364,7 +1869,7 @@ export function chevronFrom(input: RuntimeNodeOf<Chevron> | ChevronFromInput) {
   }
   const obj = input as ChevronFromInput;
   return chevron_({
-    expression: resolveField(obj.expression, _resolveExpression),
+    expression: resolveField(obj.expression, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -1381,8 +1886,8 @@ export function classDefinitionFrom(input: RuntimeNodeOf<ClassDefinition> | Clas
   return class_definition_({
     body: resolveField(obj.body, _resolveSuite2),
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
-    superclasses: obj.superclasses !== undefined ? resolveField(obj.superclasses, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('argument_list', v) : v)) : undefined,
-    typeParameters: obj.type_parameters !== undefined ? resolveField(obj.type_parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)) : undefined,
+    superclasses: obj.superclasses !== undefined ? resolveField(obj.superclasses, _r3e3k0) : undefined,
+    typeParameters: obj.type_parameters !== undefined ? resolveField(obj.type_parameters, _reaq3s4) : undefined,
   } as any);
 }
 
@@ -1395,8 +1900,8 @@ export function classPatternFrom(input: RuntimeNodeOf<ClassPattern> | ClassPatte
   }
   const obj = input as ClassPatternFromInput;
   return class_pattern_({
-    dottedName: resolveField(obj.dotted_name, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)),
-    arguments: obj.arguments !== undefined ? resolveField(obj.arguments, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('case_pattern', v) : v)) : undefined,
+    dottedName: resolveField(obj.dotted_name, _resolveSimplePattern2),
+    arguments: obj.arguments !== undefined ? resolveField(obj.arguments, _rflltaz) : undefined,
   } as any);
 }
 
@@ -1410,9 +1915,9 @@ export function comparisonOperatorFrom(input: RuntimeNodeOf<ComparisonOperator> 
   }
   const obj = input as ComparisonOperatorFromInput;
   return comparison_operator_({
-    operators: obj.operators !== undefined ? resolveField(obj.operators, _resolveComprehensionClauses7) : [],
-    left: resolveField(obj.left, _resolvePrimaryExpression),
-    comparators: obj.comparators !== undefined ? resolveField(obj.comparators, _resolvePrimaryExpression) : [],
+    operators: obj.operators !== undefined ? resolveField(obj.operators, _resolveComprehensionClauses9) : [],
+    left: resolveField(obj.left, _resolveComprehensionClauses4),
+    comparators: obj.comparators !== undefined ? resolveField(obj.comparators, _resolveComprehensionClauses4) : [],
   } as any);
 }
 
@@ -1425,8 +1930,8 @@ export function complexPatternFrom(input: RuntimeNodeOf<ComplexPattern> | Comple
   }
   const obj = input as ComplexPatternFromInput;
   return complex_pattern_({
-    real: resolveField(obj.real, _resolveSimplePattern2),
-    imaginary: resolveField(obj.imaginary, _resolveSimplePattern2),
+    real: resolveField(obj.real, _resolveSimplePattern3),
+    imaginary: resolveField(obj.imaginary, _resolveSimplePattern3),
   } as any);
 }
 
@@ -1438,7 +1943,7 @@ export function concatenatedStringFrom(input: RuntimeNodeOf<ConcatenatedString> 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ConcatenatedStringFromInput;
   return concatenated_string_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('string', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveSimplePattern4) : [],
   } as any);
 }
 
@@ -1452,9 +1957,9 @@ export function conditionalExpressionFrom(input: RuntimeNodeOf<ConditionalExpres
   }
   const obj = input as ConditionalExpressionFromInput;
   return conditional_expression_({
-    body: resolveField(obj.body, _resolveExpression),
-    condition: resolveField(obj.condition, _resolveExpression),
-    alternative: resolveField(obj.alternative, _resolveExpression),
+    body: resolveField(obj.body, _resolveComprehensionClauses3),
+    condition: resolveField(obj.condition, _resolveComprehensionClauses3),
+    alternative: resolveField(obj.alternative, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -1467,8 +1972,8 @@ export function constrainedTypeFrom(input: RuntimeNodeOf<ConstrainedType> | Cons
   }
   const obj = input as ConstrainedTypeFromInput;
   return constrained_type_({
-    baseType: resolveField(obj.base_type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
-    constraint: resolveField(obj.constraint, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    baseType: resolveField(obj.base_type, _rtec52c),
+    constraint: resolveField(obj.constraint, _rtec52c),
   } as any);
 }
 
@@ -1482,7 +1987,7 @@ export function decoratedDefinitionFrom(input: RuntimeNodeOf<DecoratedDefinition
   const obj = (Array.isArray(input) ? { children: input } : input) as DecoratedDefinitionFromInput;
   return decorated_definition_({
     definition: resolveField(obj.definition, _resolveCompoundStatement2),
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('decorator', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r1fl8679) : [],
   } as any);
 }
 
@@ -1495,7 +2000,7 @@ export function decoratorFrom(input: RuntimeNodeOf<Decorator> | DecoratorFromInp
   }
   const obj = input as DecoratorFromInput;
   return decorator_({
-    expression: resolveField(obj.expression, _resolveExpression),
+    expression: resolveField(obj.expression, _resolveComprehensionClauses3),
     newline: resolveField(obj.newline, _resolveComprehensionClauses2),
   } as any);
 }
@@ -1510,7 +2015,7 @@ export function defaultParameterFrom(input: RuntimeNodeOf<DefaultParameter> | De
   const obj = input as DefaultParameterFromInput;
   return default_parameter_({
     name: resolveField(obj.name, _resolvePattern2),
-    value: resolveField(obj.value, _resolveExpression),
+    value: resolveField(obj.value, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -1534,7 +2039,7 @@ export function dictPatternFrom(input: RuntimeNodeOf<DictPattern> | DictPatternF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DictPatternFromInput;
   return dict_pattern_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('splat_pattern', v) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveSimplePattern5) : undefined,
   } as any);
 }
 
@@ -1559,7 +2064,7 @@ export function dictionaryComprehensionFrom(input: RuntimeNodeOf<DictionaryCompr
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DictionaryComprehensionFromInput;
   return dictionary_comprehension_({
-    body: resolveField(obj.body, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('pair', v) : v)),
+    body: resolveField(obj.body, _rte8hta),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
   } as any);
 }
@@ -1572,7 +2077,7 @@ export function dictionarySplatFrom(input: RuntimeNodeOf<DictionarySplat> | Dict
   }
   const obj = input as DictionarySplatFromInput;
   return dictionary_splat_({
-    expression: resolveField(obj.expression, _resolveExpression),
+    expression: resolveField(obj.expression, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -1609,7 +2114,7 @@ export function elifClauseFrom(input: RuntimeNodeOf<ElifClause> | ElifClauseFrom
   }
   const obj = input as ElifClauseFromInput;
   return elif_clause_({
-    condition: resolveField(obj.condition, _resolveExpression),
+    condition: resolveField(obj.condition, _resolveComprehensionClauses3),
     consequence: resolveField(obj.consequence, _resolveSuite2),
   } as any);
 }
@@ -1636,8 +2141,8 @@ export function exceptClauseFrom(input: RuntimeNodeOf<ExceptClause> | ExceptClau
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExceptClauseFromInput;
   return except_clause_({
-    alias: obj.alias !== undefined ? resolveField(obj.alias, _resolveExpression) : undefined,
-    value: obj.value !== undefined ? resolveField(obj.value, _resolveExpression) : undefined,
+    alias: obj.alias !== undefined ? resolveField(obj.alias, _resolveComprehensionClauses3) : undefined,
+    value: obj.value !== undefined ? resolveField(obj.value, _resolveComprehensionClauses3) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveSuite2) : undefined,
   } as any);
 }
@@ -1652,7 +2157,7 @@ export function execStatementFrom(input: RuntimeNodeOf<ExecStatement> | ExecStat
   const obj = (Array.isArray(input) ? { children: input } : input) as ExecStatementFromInput;
   return exec_statement_({
     code: resolveField(obj.code, _resolvePrimaryExpression2),
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses3) : undefined,
   } as any);
 }
 
@@ -1664,7 +2169,7 @@ export function expressionListFrom(input: RuntimeNodeOf<ExpressionList> | Expres
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionListFromInput;
   return expression_list_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses3) : [],
   } as any);
 }
 
@@ -1704,7 +2209,7 @@ export function forInClauseFrom(input: RuntimeNodeOf<ForInClause> | ForInClauseF
   const obj = input as ForInClauseFromInput;
   return for_in_clause_({
     left: resolveField(obj.left, _resolveLeftHandSide2),
-    right: obj.right !== undefined ? resolveField(obj.right, _resolveComprehensionClauses8) : [],
+    right: obj.right !== undefined ? resolveField(obj.right, _resolveComprehensionClauses10) : [],
   } as any);
 }
 
@@ -1719,7 +2224,7 @@ export function forStatementFrom(input: RuntimeNodeOf<ForStatement> | ForStateme
   }
   const obj = input as ForStatementFromInput;
   return for_statement_({
-    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
+    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, _r1totjtz) : undefined,
     body: resolveField(obj.body, _resolveSuite2),
     left: resolveField(obj.left, _resolveLeftHandSide2),
     right: resolveField(obj.right, _resolveExpressions3),
@@ -1737,8 +2242,8 @@ export function formatExpressionFrom(input: RuntimeNodeOf<FormatExpression> | Fo
   const obj = input as FormatExpressionFromInput;
   return format_expression_({
     expression: resolveField(obj.expression, _resolveFExpression2),
-    formatSpecifier: obj.format_specifier !== undefined ? resolveField(obj.format_specifier, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('format_specifier', v) : v)) : undefined,
-    typeConversion: obj.type_conversion !== undefined ? resolveField(obj.type_conversion, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
+    formatSpecifier: obj.format_specifier !== undefined ? resolveField(obj.format_specifier, _rt4o2h0) : undefined,
+    typeConversion: obj.type_conversion !== undefined ? resolveField(obj.type_conversion, _rd1leh5) : undefined,
   } as any);
 }
 
@@ -1750,7 +2255,7 @@ export function formatSpecifierFrom(input: RuntimeNodeOf<FormatSpecifier> | Form
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FormatSpecifierFromInput;
   return format_specifier_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('format_expression', v) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r15bktga) : undefined,
   } as any);
 }
 
@@ -1768,9 +2273,9 @@ export function functionDefinitionFrom(input: RuntimeNodeOf<FunctionDefinition> 
   return function_definition_({
     body: resolveField(obj.body, _resolveSuite2),
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
-    parameters: resolveField(obj.parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('parameters', v) : v)),
-    returnType: obj.return_type !== undefined ? resolveField(obj.return_type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : undefined,
-    typeParameters: obj.type_parameters !== undefined ? resolveField(obj.type_parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)) : undefined,
+    parameters: resolveField(obj.parameters, _r1tsfyeu),
+    returnType: obj.return_type !== undefined ? resolveField(obj.return_type, _rtec52c) : undefined,
+    typeParameters: obj.type_parameters !== undefined ? resolveField(obj.type_parameters, _reaq3s4) : undefined,
   } as any);
 }
 
@@ -1795,7 +2300,7 @@ export function generatorExpressionFrom(input: RuntimeNodeOf<GeneratorExpression
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as GeneratorExpressionFromInput;
   return generator_expression_({
-    body: resolveField(obj.body, _resolveExpression),
+    body: resolveField(obj.body, _resolveComprehensionClauses3),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
   } as any);
 }
@@ -1810,7 +2315,7 @@ export function genericTypeFrom(input: RuntimeNodeOf<GenericType> | GenericTypeF
   const obj = input as GenericTypeFromInput;
   return generic_type_({
     identifier: resolveField(obj.identifier, _resolveNamedExpressionLhs),
-    typeParameter: resolveField(obj.type_parameter, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)),
+    typeParameter: resolveField(obj.type_parameter, _reaq3s4),
   } as any);
 }
 
@@ -1834,7 +2339,7 @@ export function ifClauseFrom(input: RuntimeNodeOf<IfClause> | IfClauseFromInput)
   }
   const obj = input as IfClauseFromInput;
   return if_clause_({
-    expression: resolveField(obj.expression, _resolveExpression),
+    expression: resolveField(obj.expression, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -1849,7 +2354,7 @@ export function ifStatementFrom(input: RuntimeNodeOf<IfStatement> | IfStatementF
   const obj = input as IfStatementFromInput;
   return if_statement_({
     alternative: obj.alternative !== undefined ? resolveField(obj.alternative, _rn6vv1r) : undefined,
-    condition: resolveField(obj.condition, _resolveExpression),
+    condition: resolveField(obj.condition, _resolveComprehensionClauses3),
     consequence: resolveField(obj.consequence, _resolveSuite2),
   } as any);
 }
@@ -1866,7 +2371,7 @@ export function importFromStatementFrom(input: RuntimeNodeOf<ImportFromStatement
   return import_from_statement_({
     ..._resolveImportListFields(obj),
     moduleName: resolveField(obj.module_name, _r2jsk94),
-    wildcardImport: resolveField(obj.wildcard_import, (v: unknown) => (typeof v === 'string' && v === '*' ? wildcard_import_() : v)),
+    wildcardImport: resolveField(obj.wildcard_import, _r18yiena),
   } as any);
 }
 
@@ -1893,8 +2398,8 @@ export function interpolationFrom(input: RuntimeNodeOf<Interpolation> | Interpol
   const obj = input as InterpolationFromInput;
   return interpolation_({
     expression: resolveField(obj.expression, _resolveFExpression3),
-    formatSpecifier: obj.format_specifier !== undefined ? resolveField(obj.format_specifier, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('format_specifier', v) : v)) : undefined,
-    typeConversion: obj.type_conversion !== undefined ? resolveField(obj.type_conversion, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
+    formatSpecifier: obj.format_specifier !== undefined ? resolveField(obj.format_specifier, _rt4o2h0) : undefined,
+    typeConversion: obj.type_conversion !== undefined ? resolveField(obj.type_conversion, _rd1leh5) : undefined,
   } as any);
 }
 
@@ -1908,7 +2413,7 @@ export function keywordArgumentFrom(input: RuntimeNodeOf<KeywordArgument> | Keyw
   const obj = input as KeywordArgumentFromInput;
   return keyword_argument_({
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
-    value: resolveField(obj.value, _resolveExpression),
+    value: resolveField(obj.value, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -1922,7 +2427,7 @@ export function keywordPatternFrom(input: RuntimeNodeOf<KeywordPattern> | Keywor
   const obj = input as KeywordPatternFromInput;
   return keyword_pattern_({
     identifier: resolveField(obj.identifier, _rfpc4ja),
-    simplePattern: resolveField(obj.simple_pattern, _resolveSimplePattern3),
+    simplePattern: resolveField(obj.simple_pattern, _resolveSimplePattern6),
   } as any);
 }
 
@@ -1935,8 +2440,8 @@ export function lambdaFrom(input: RuntimeNodeOf<Lambda> | LambdaFromInput) {
   }
   const obj = input as LambdaFromInput;
   return lambda_({
-    body: resolveField(obj.body, _resolveExpression),
-    parameters: obj.parameters !== undefined ? resolveField(obj.parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('lambda_parameters', v) : v)) : undefined,
+    body: resolveField(obj.body, _resolveComprehensionClauses3),
+    parameters: obj.parameters !== undefined ? resolveField(obj.parameters, _ruhfgja) : undefined,
   } as any);
 }
 
@@ -1948,7 +2453,7 @@ export function lambdaParametersFrom(input: RuntimeNodeOf<LambdaParameters> | La
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as LambdaParametersFromInput;
   return lambda_parameters_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveParameter) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses11) : [],
   } as any);
 }
 
@@ -1973,7 +2478,7 @@ export function listComprehensionFrom(input: RuntimeNodeOf<ListComprehension> | 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ListComprehensionFromInput;
   return list_comprehension_({
-    body: resolveField(obj.body, _resolveExpression),
+    body: resolveField(obj.body, _resolveComprehensionClauses3),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
   } as any);
 }
@@ -1986,7 +2491,7 @@ export function listPatternFrom(input: RuntimeNodeOf<ListPattern> | ListPatternF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ListPatternFromInput;
   return list_pattern_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _rflltaz) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rflltaz2) : undefined,
   } as any);
 }
 
@@ -2024,7 +2529,7 @@ export function matchStatementFrom(input: RuntimeNodeOf<MatchStatement> | MatchS
   const obj = input as MatchStatementFromInput;
   return match_statement_({
     body: resolveField(obj.body, _resolveSuite),
-    subject: obj.subject !== undefined ? resolveField(obj.subject, _resolveExpression) : [],
+    subject: obj.subject !== undefined ? resolveField(obj.subject, _resolveComprehensionClauses3) : [],
   } as any);
 }
 
@@ -2037,7 +2542,7 @@ export function memberTypeFrom(input: RuntimeNodeOf<MemberType> | MemberTypeFrom
   }
   const obj = input as MemberTypeFromInput;
   return member_type_({
-    baseType: resolveField(obj.base_type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    baseType: resolveField(obj.base_type, _rtec52c),
     identifier: resolveField(obj.identifier, _resolveNamedExpressionLhs),
   } as any);
 }
@@ -2050,7 +2555,7 @@ export function moduleFrom(input: RuntimeNodeOf<Module> | ModuleFromInput) {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ModuleFromInput;
   return module_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses5) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses7) : undefined,
   } as any);
 }
 
@@ -2064,7 +2569,7 @@ export function namedExpressionFrom(input: RuntimeNodeOf<NamedExpression> | Name
   const obj = input as NamedExpressionFromInput;
   return named_expression_({
     name: resolveField(obj.name, _resolveNamedExpressionLhs2),
-    value: resolveField(obj.value, _resolveExpression),
+    value: resolveField(obj.value, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -2088,7 +2593,7 @@ export function notOperatorFrom(input: RuntimeNodeOf<NotOperator> | NotOperatorF
   }
   const obj = input as NotOperatorFromInput;
   return not_operator_({
-    argument: resolveField(obj.argument, _resolveExpression),
+    argument: resolveField(obj.argument, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -2101,8 +2606,8 @@ export function pairFrom(input: RuntimeNodeOf<Pair> | PairFromInput) {
   }
   const obj = input as PairFromInput;
   return pair_({
-    key: resolveField(obj.key, _resolveExpression),
-    value: resolveField(obj.value, _resolveExpression),
+    key: resolveField(obj.key, _resolveComprehensionClauses3),
+    value: resolveField(obj.value, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -2114,7 +2619,7 @@ export function parametersFrom(input: RuntimeNodeOf<Parameters> | ParametersFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParametersFromInput;
   return parameters_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveParameter) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses11) : undefined,
   } as any);
 }
 
@@ -2150,7 +2655,7 @@ export function patternListFrom(input: RuntimeNodeOf<PatternList> | PatternListF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as PatternListFromInput;
   return pattern_list_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses12) : [],
   } as any);
 }
 
@@ -2163,8 +2668,8 @@ export function printStatementFrom(input: RuntimeNodeOf<PrintStatement> | PrintS
   }
   const obj = input as PrintStatementFromInput;
   return print_statement_({
-    argument: obj.argument !== undefined ? resolveField(obj.argument, _resolveExpression) : undefined,
-    chevron: obj.chevron !== undefined ? resolveField(obj.chevron, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('chevron', v) : v)) : undefined,
+    argument: obj.argument !== undefined ? resolveField(obj.argument, _resolveComprehensionClauses3) : undefined,
+    chevron: obj.chevron !== undefined ? resolveField(obj.chevron, _rnbxrnb) : undefined,
   } as any);
 }
 
@@ -2177,7 +2682,7 @@ export function raiseStatementFrom(input: RuntimeNodeOf<RaiseStatement> | RaiseS
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RaiseStatementFromInput;
   return raise_statement_({
-    cause: obj.cause !== undefined ? resolveField(obj.cause, _resolveExpression) : undefined,
+    cause: obj.cause !== undefined ? resolveField(obj.cause, _resolveComprehensionClauses3) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpressions3) : undefined,
   } as any);
 }
@@ -2191,8 +2696,8 @@ export function relativeImportFrom(input: RuntimeNodeOf<RelativeImport> | Relati
   }
   const obj = input as RelativeImportFromInput;
   return relative_import_({
-    importPrefix: resolveField(obj.import_prefix, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? import_prefix_('' + v) : v)),
-    dottedName: obj.dotted_name !== undefined ? resolveField(obj.dotted_name, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)) : undefined,
+    importPrefix: resolveField(obj.import_prefix, _rtjvpca),
+    dottedName: obj.dotted_name !== undefined ? resolveField(obj.dotted_name, _resolveSimplePattern2) : undefined,
   } as any);
 }
 
@@ -2229,7 +2734,7 @@ export function setComprehensionFrom(input: RuntimeNodeOf<SetComprehension> | Se
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as SetComprehensionFromInput;
   return set_comprehension_({
-    body: resolveField(obj.body, _resolveExpression),
+    body: resolveField(obj.body, _resolveComprehensionClauses3),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
   } as any);
 }
@@ -2244,9 +2749,9 @@ export function sliceFrom(input: RuntimeNodeOf<Slice> | SliceFromInput) {
   }
   const obj = input as SliceFromInput;
   return slice_({
-    start: obj.start !== undefined ? resolveField(obj.start, _resolveExpression) : undefined,
-    stop: obj.stop !== undefined ? resolveField(obj.stop, _resolveExpression) : undefined,
-    step: obj.step !== undefined ? resolveField(obj.step, _resolveExpression) : undefined,
+    start: obj.start !== undefined ? resolveField(obj.start, _resolveComprehensionClauses3) : undefined,
+    stop: obj.stop !== undefined ? resolveField(obj.stop, _resolveComprehensionClauses3) : undefined,
+    step: obj.step !== undefined ? resolveField(obj.step, _resolveComprehensionClauses3) : undefined,
   } as any);
 }
 
@@ -2284,9 +2789,9 @@ export function stringFrom(input: RuntimeNodeOf<String> | StringFromInput) {
   }
   const obj = input as StringFromInput;
   return string_({
-    stringStart: resolveField(obj.string_start, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? string_start_('' + v) : v)),
+    stringStart: resolveField(obj.string_start, _r11rdi4m),
     content: obj.content !== undefined ? resolveField(obj.content, _r14l28kn) : undefined,
-    stringEnd: resolveField(obj.string_end, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? string_end_('' + v) : v)),
+    stringEnd: resolveField(obj.string_end, _r8ytgv),
   } as any);
 }
 
@@ -2312,7 +2817,7 @@ export function subscriptFrom(input: RuntimeNodeOf<Subscript> | SubscriptFromInp
   const obj = input as SubscriptFromInput;
   return subscript_({
     subscript: obj.subscript !== undefined ? resolveField(obj.subscript, _r1apoc2a) : [],
-    value: resolveField(obj.value, _resolvePrimaryExpression),
+    value: resolveField(obj.value, _resolveComprehensionClauses4),
   } as any);
 }
 
@@ -2328,9 +2833,9 @@ export function tryStatementFrom(input: RuntimeNodeOf<TryStatement> | TryStateme
   const obj = input as TryStatementFromInput;
   return try_statement_({
     body: resolveField(obj.body, _resolveSuite2),
-    exceptClauses: obj.except_clauses !== undefined ? resolveField(obj.except_clauses, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('except_clause', v) : v)) : undefined,
-    elseClause: obj.else_clause !== undefined ? resolveField(obj.else_clause, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
-    finallyClause: obj.finally_clause !== undefined ? resolveField(obj.finally_clause, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('finally_clause', v) : v)) : undefined,
+    exceptClauses: obj.except_clauses !== undefined ? resolveField(obj.except_clauses, _r16jeonb) : undefined,
+    elseClause: obj.else_clause !== undefined ? resolveField(obj.else_clause, _r1totjtz) : undefined,
+    finallyClause: obj.finally_clause !== undefined ? resolveField(obj.finally_clause, _rqhziy5) : undefined,
   } as any);
 }
 
@@ -2354,7 +2859,7 @@ export function tuplePatternFrom(input: RuntimeNodeOf<TuplePattern> | TuplePatte
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TuplePatternFromInput;
   return tuple_pattern_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], _rflltaz) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rflltaz2) : undefined,
   } as any);
 }
 
@@ -2379,8 +2884,8 @@ export function typeAliasStatementFrom(input: RuntimeNodeOf<TypeAliasStatement> 
   }
   const obj = input as TypeAliasStatementFromInput;
   return type_alias_statement_({
-    left: resolveField(obj.left, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
-    right: resolveField(obj.right, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    left: resolveField(obj.left, _rtec52c),
+    right: resolveField(obj.right, _rtec52c),
   } as any);
 }
 
@@ -2392,7 +2897,7 @@ export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypePara
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeParameterFromInput;
   return type_parameter_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rtec52c) : [],
   } as any);
 }
 
@@ -2407,8 +2912,8 @@ export function typedDefaultParameterFrom(input: RuntimeNodeOf<TypedDefaultParam
   const obj = input as TypedDefaultParameterFromInput;
   return typed_default_parameter_({
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
-    type: resolveField(obj.type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
-    value: resolveField(obj.value, _resolveExpression),
+    type: resolveField(obj.type, _rtec52c),
+    value: resolveField(obj.value, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -2421,7 +2926,7 @@ export function typedParameterFrom(input: RuntimeNodeOf<TypedParameter> | TypedP
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypedParameterFromInput;
   return typed_parameter_({
-    type: resolveField(obj.type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    type: resolveField(obj.type, _rtec52c),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveParameter2) : undefined,
   } as any);
 }
@@ -2435,8 +2940,8 @@ export function unaryOperatorFrom(input: RuntimeNodeOf<UnaryOperator> | UnaryOpe
   }
   const obj = input as UnaryOperatorFromInput;
   return unary_operator_({
-    argument: resolveField(obj.argument, _resolvePrimaryExpression),
-    operator: resolveField(obj.operator, _resolveComprehensionClauses9),
+    argument: resolveField(obj.argument, _resolveComprehensionClauses4),
+    operator: resolveField(obj.operator, _resolveComprehensionClauses13),
   } as any);
 }
 
@@ -2461,8 +2966,8 @@ export function unionTypeFrom(input: RuntimeNodeOf<UnionType> | UnionTypeFromInp
   }
   const obj = input as UnionTypeFromInput;
   return union_type_({
-    left: resolveField(obj.left, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
-    right: resolveField(obj.right, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    left: resolveField(obj.left, _rtec52c),
+    right: resolveField(obj.right, _rtec52c),
   } as any);
 }
 
@@ -2476,9 +2981,9 @@ export function whileStatementFrom(input: RuntimeNodeOf<WhileStatement> | WhileS
   }
   const obj = input as WhileStatementFromInput;
   return while_statement_({
-    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
+    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, _r1totjtz) : undefined,
     body: resolveField(obj.body, _resolveSuite2),
-    condition: resolveField(obj.condition, _resolveExpression),
+    condition: resolveField(obj.condition, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -2490,7 +2995,7 @@ export function withClauseFrom(input: RuntimeNodeOf<WithClause> | WithClauseFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as WithClauseFromInput;
   return with_clause_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('with_item', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r7jahe4) : [],
   } as any);
 }
 
@@ -2502,7 +3007,7 @@ export function withItemFrom(input: RuntimeNodeOf<WithItem> | WithItemFromInput)
   }
   const obj = input as WithItemFromInput;
   return with_item_({
-    value: resolveField(obj.value, _resolveExpression),
+    value: resolveField(obj.value, _resolveComprehensionClauses3),
   } as any);
 }
 
@@ -2516,7 +3021,7 @@ export function withStatementFrom(input: RuntimeNodeOf<WithStatement> | WithStat
   const obj = input as WithStatementFromInput;
   return with_statement_({
     body: resolveField(obj.body, _resolveSuite2),
-    withClause: resolveField(obj.with_clause, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('with_clause', v) : v)),
+    withClause: resolveField(obj.with_clause, _rxymsmy),
   } as any);
 }
 
