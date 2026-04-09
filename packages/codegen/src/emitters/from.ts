@@ -131,6 +131,9 @@ function resolverReturnType(resolved: ResolvedFieldTypes, supertypeKind?: string
 		const cleanName = kind.replace(/^_/, '');
 		members.push(toTypeName(cleanName));
 	}
+	for (const token of resolved.anonTokens) {
+		members.push(`'${escapeString(token)}'`);
+	}
 	if (members.length === 0) return 'unknown';
 	return members.join(' | ');
 }

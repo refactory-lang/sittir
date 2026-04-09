@@ -746,7 +746,7 @@ function _ro854vq(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier5(v: unknown): unknown;
+function _resolveTypeIdentifier5(v: unknown): '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
 function _resolveTypeIdentifier5(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -961,7 +961,7 @@ function _resolveTypeIdentifier6(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveExpressionEndingWithBlock3(v: unknown): KindMap['block'] | Expression;
+function _resolveExpressionEndingWithBlock3(v: unknown): KindMap['block'] | Expression | '_';
 function _resolveExpressionEndingWithBlock3(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1004,7 +1004,7 @@ function _rdch49e(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier7(v: unknown): unknown;
+function _resolveTypeIdentifier7(v: unknown): 'async';
 function _resolveTypeIdentifier7(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1025,7 +1025,7 @@ function _resolveTypeIdentifier7(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier8(v: unknown): unknown;
+function _resolveTypeIdentifier8(v: unknown): 'move';
 function _resolveTypeIdentifier8(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1046,7 +1046,7 @@ function _resolveTypeIdentifier8(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier9(v: unknown): unknown;
+function _resolveTypeIdentifier9(v: unknown): 'static';
 function _resolveTypeIdentifier9(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1088,7 +1088,7 @@ function _r1q9fx9f(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier10(v: unknown): unknown;
+function _resolveTypeIdentifier10(v: unknown): '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
 function _resolveTypeIdentifier10(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1560,7 +1560,7 @@ function _r1qmi2a1(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier13(v: unknown): unknown;
+function _resolveTypeIdentifier13(v: unknown): 'default';
 function _resolveTypeIdentifier13(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1581,7 +1581,7 @@ function _resolveTypeIdentifier13(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier14(v: unknown): unknown;
+function _resolveTypeIdentifier14(v: unknown): 'const';
 function _resolveTypeIdentifier14(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1602,7 +1602,7 @@ function _resolveTypeIdentifier14(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier15(v: unknown): unknown;
+function _resolveTypeIdentifier15(v: unknown): 'unsafe';
 function _resolveTypeIdentifier15(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -1990,7 +1990,7 @@ function _rduwnrt(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier16(v: unknown): unknown;
+function _resolveTypeIdentifier16(v: unknown): '-';
 function _resolveTypeIdentifier16(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -2090,7 +2090,7 @@ function _rbdp9li(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier17(v: unknown): unknown;
+function _resolveTypeIdentifier17(v: unknown): '..' | '..=' | '...';
 function _resolveTypeIdentifier17(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -2451,7 +2451,7 @@ function _r1g3soma(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier20(v: unknown): unknown;
+function _resolveTypeIdentifier20(v: unknown): '?';
 function _resolveTypeIdentifier20(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -2548,7 +2548,7 @@ function _rrcyxzh(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier21(v: unknown): unknown;
+function _resolveTypeIdentifier21(v: unknown): '-' | '*' | '!';
 function _resolveTypeIdentifier21(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -2628,7 +2628,7 @@ function _resolveUseClause3(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier22(v: unknown): unknown;
+function _resolveTypeIdentifier22(v: unknown): 'pub';
 function _resolveTypeIdentifier22(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
@@ -2649,7 +2649,7 @@ function _resolveTypeIdentifier22(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier23(v: unknown): unknown;
+function _resolveTypeIdentifier23(v: unknown): 'in';
 function _resolveTypeIdentifier23(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');

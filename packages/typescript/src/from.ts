@@ -863,7 +863,7 @@ function _resolveAugmentedAssignmentLhs2(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier8(v: unknown): unknown;
+function _resolveTypeIdentifier8(v: unknown): '%=' | '&&=' | '&=' | '**=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '>>>=' | '??=' | '^=' | '|=' | '||=';
 function _resolveTypeIdentifier8(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -897,7 +897,7 @@ function _resolvePropertyName3(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier9(v: unknown): unknown;
+function _resolveTypeIdentifier9(v: unknown): '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
 function _resolveTypeIdentifier9(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -1287,7 +1287,7 @@ function _resolvePrimaryType2(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier11(v: unknown): unknown;
+function _resolveTypeIdentifier11(v: unknown): 'const' | 'let' | 'var';
 function _resolveTypeIdentifier11(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -1322,7 +1322,7 @@ function _rh2pegt2(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier12(v: unknown): unknown;
+function _resolveTypeIdentifier12(v: unknown): 'in' | 'of';
 function _resolveTypeIdentifier12(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -1356,7 +1356,7 @@ function _resolveExpressions3(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _r1wds2lp(v: unknown): KindMap['empty_statement'] | KindMap['sequence_expression'] | Expressions | Expression;
+function _r1wds2lp(v: unknown): KindMap['empty_statement'] | KindMap['sequence_expression'] | Expressions | Expression | ';';
 function _r1wds2lp(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -1594,7 +1594,7 @@ function _r1n7cbqo(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier13(v: unknown): unknown;
+function _resolveTypeIdentifier13(v: unknown): '+' | '-';
 function _resolveTypeIdentifier13(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -1748,7 +1748,7 @@ function _r17uug3x(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier15(v: unknown): unknown;
+function _resolveTypeIdentifier15(v: unknown): 'const' | 'let';
 function _resolveTypeIdentifier15(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -2416,7 +2416,7 @@ function _resolvePropertyName6(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier18(v: unknown): unknown;
+function _resolveTypeIdentifier18(v: unknown): '!' | '+' | '-' | 'delete' | 'typeof' | 'void' | '~';
 function _resolveTypeIdentifier18(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
@@ -2433,7 +2433,7 @@ function _resolveTypeIdentifier18(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
-function _resolveTypeIdentifier19(v: unknown): unknown;
+function _resolveTypeIdentifier19(v: unknown): '++' | '--';
 function _resolveTypeIdentifier19(v: unknown) {
   if (isNodeData(v)) return v;
   if (typeof v === 'string') {
