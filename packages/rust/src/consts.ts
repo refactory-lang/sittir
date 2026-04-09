@@ -375,6 +375,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
+    { name: 'async', required: false, multiple: false },
+    { name: 'move', required: false, multiple: false },
+    { name: 'static', required: false, multiple: false },
   ],
   'closure_parameters': [
   ],
@@ -479,6 +482,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'whereClause', required: false, multiple: false },
   ],
   'function_modifiers': [
+    { name: 'async', required: false, multiple: false },
+    { name: 'default', required: false, multiple: false },
+    { name: 'const', required: false, multiple: false },
+    { name: 'unsafe', required: false, multiple: false },
   ],
   'function_signature_item': [
     { name: 'name', required: true, multiple: false },
@@ -819,6 +826,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'visibility_modifier': [
+    { name: 'pub', required: false, multiple: false },
+    { name: 'in', required: false, multiple: false },
   ],
   'where_clause': [
   ],

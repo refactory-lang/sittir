@@ -198,6 +198,28 @@
       }
     }
   },
+  "closure_expression": {
+    "fields": {
+      "async": {
+        "types": [{ "type": "async", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
+      },
+      "move": {
+        "types": [{ "type": "move", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
+      },
+      "static": {
+        "types": [{ "type": "static", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
+      }
+    }
+  },
   "const_item": {
     "fields": {
       "visibility_modifier": {
@@ -378,6 +400,34 @@
         "multiple": false,
         "required": true,
         "position": 1
+      }
+    }
+  },
+  "function_modifiers": {
+    "fields": {
+      "async": {
+        "types": [{ "type": "async", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
+      },
+      "default": {
+        "types": [{ "type": "default", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
+      },
+      "const": {
+        "types": [{ "type": "const", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
+      },
+      "unsafe": {
+        "types": [{ "type": "unsafe", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
       }
     }
   },
@@ -1394,6 +1444,22 @@
         "multiple": false,
         "required": false,
         "position": 0
+      }
+    }
+  },
+  "visibility_modifier": {
+    "fields": {
+      "pub": {
+        "types": [{ "type": "pub", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
+      },
+      "in": {
+        "types": [{ "type": "in", "named": false }],
+        "multiple": false,
+        "required": false,
+        "position": -1
       }
     }
   }

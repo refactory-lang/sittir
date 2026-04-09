@@ -505,6 +505,9 @@ export function closure_expression_(
     body: config.body,
     parameters: config.parameters,
     return_type: config.returnType,
+    async: config.async,
+    move: config.move,
+    static: config.static,
   };
   return {
     type: 'closure_expression' as const,
@@ -513,6 +516,9 @@ export function closure_expression_(
     body(body?: Block | Expression) { return body !== undefined ? closure_expression_({ ...config, body: body }) : fields.body; },
     parameters(parameters?: ClosureParameters) { return parameters !== undefined ? closure_expression_({ ...config, parameters: parameters }) : fields.parameters; },
     returnType(returnType?: Type) { return returnType !== undefined ? closure_expression_({ ...config, returnType: returnType }) : fields.return_type; },
+    async(async?: 'async') { return async !== undefined ? closure_expression_({ ...config, async: async }) : fields.async; },
+    move(move?: 'move') { return move !== undefined ? closure_expression_({ ...config, move: move }) : fields.move; },
+    static(static_?: 'static') { return static_ !== undefined ? closure_expression_({ ...config, static: static_ }) : fields.static; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1115,11 +1121,22 @@ export function function_item_(
 export function function_modifiers_(
   config?: ConfigOf<FunctionModifiers>,
 ) {
+  const fields = {
+    async: config?.async,
+    default: config?.default,
+    const: config?.const,
+    unsafe: config?.unsafe,
+  };
   const children = config?.children ?? [];
   return {
     type: 'function_modifiers' as const,
     named: true as const,
+    fields,
     children,
+    async(async?: 'async') { return async !== undefined ? function_modifiers_({ ...config, async: async }) : fields.async; },
+    default(default_?: 'default') { return default_ !== undefined ? function_modifiers_({ ...config, default: default_ }) : fields.default; },
+    const(const_?: 'const') { return const_ !== undefined ? function_modifiers_({ ...config, const: const_ }) : fields.const; },
+    unsafe(unsafe?: 'unsafe') { return unsafe !== undefined ? function_modifiers_({ ...config, unsafe: unsafe }) : fields.unsafe; },
     getChildren() { return children; },
     setChildren(...children: (ExternModifier)[]) { return function_modifiers_({ ...config, children }); },
     render() { return render(this); },
@@ -3138,11 +3155,18 @@ export function variadic_parameter_(
 export function visibility_modifier_(
   config?: ConfigOf<VisibilityModifier>,
 ) {
+  const fields = {
+    pub: config?.pub,
+    in: config?.in,
+  };
   const children = config?.children ? [config?.children] : [];
   return {
     type: 'visibility_modifier' as const,
     named: true as const,
+    fields,
     children,
+    pub(pub?: 'pub') { return pub !== undefined ? visibility_modifier_({ ...config, pub: pub }) : fields.pub; },
+    in(in_?: 'in') { return in_ !== undefined ? visibility_modifier_({ ...config, in: in_ }) : fields.in; },
     child(child?: Path) { return child !== undefined ? visibility_modifier_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

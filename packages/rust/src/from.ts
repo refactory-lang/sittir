@@ -722,6 +722,69 @@ function _r1dex6mx(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _r13hd526(v: unknown): unknown;
+function _r13hd526(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['async'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _re496wn(v: unknown): unknown;
+function _re496wn(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['move'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r100m9e0(v: unknown): unknown;
+function _r100m9e0(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['static'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _rmv6nku(v: unknown): KindMap['parameter'];
 function _rmv6nku(v: unknown) {
   if (isNodeData(v)) return v;
@@ -1001,6 +1064,69 @@ function _r1lphd8c(v: unknown) {
   if (typeof v === 'string') {
     if (/^\$[a-zA-Z_]\w*$/.test(v)) return metavariable_(v);
     return identifier_(v);
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r672z45(v: unknown): unknown;
+function _r672z45(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['default'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r13ion5z(v: unknown): unknown;
+function _r13ion5z(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['const'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _r117cs82(v: unknown): unknown;
+function _r117cs82(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['unsafe'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
   }
   if (typeof v === 'object' && v !== null) {
     if (hasKind(v)) {
@@ -1731,6 +1857,48 @@ function _r1u4xg67(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+function _r19mnnrb(v: unknown): unknown;
+function _r19mnnrb(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['pub'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
+function _reapg5z(v: unknown): unknown;
+function _reapg5z(v: unknown) {
+  if (isNodeData(v)) return v;
+  if (typeof v === 'boolean') return boolean_literal_(v ? 'true' : 'false');
+  if (typeof v === 'number') {
+    return Number.isInteger(v) ? integer_literal_(`${v}`) : float_literal_(`${v}`);
+  }
+  if (typeof v === 'string') {
+    if (['in'].includes(v)) return { type: v, text: v };
+    throw new Error('Cannot resolve string value: no leaf types accepted for this field');
+  }
+  if (typeof v === 'object' && v !== null) {
+    if (hasKind(v)) {
+      const { kind: k, ...rest } = v;
+      return _resolveByKind(k, rest);
+    }
+    throw new Error('No branch types accepted for object value');
+  }
+  throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
+}
+
 function _rjhyqcx(v: unknown): KindMap['primitive_type'] | KindMap['type_identifier'] | KindMap['array_type'] | KindMap['generic_type'] | KindMap['higher_ranked_trait_bound'] | KindMap['lifetime'] | KindMap['pointer_type'] | KindMap['reference_type'] | KindMap['scoped_type_identifier'] | KindMap['tuple_type'];
 function _rjhyqcx(v: unknown) {
   if (isNodeData(v)) return v;
@@ -2023,6 +2191,9 @@ export function closureExpressionFrom(input: ClosureExpression | ClosureExpressi
       body: input.fields?.['body'],
       parameters: input.fields?.['parameters'],
       returnType: input.fields?.['return_type'],
+      async: input.fields?.['async'],
+      move: input.fields?.['move'],
+      static: input.fields?.['static'],
     } as ClosureExpressionConfig) as unknown as ClosureExpression;
   }
   const obj = input as Record<string, unknown>;
@@ -2030,6 +2201,9 @@ export function closureExpressionFrom(input: ClosureExpression | ClosureExpressi
     body: resolveField(obj['body'], _r1dex6mx),
     parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? closureParametersFrom(v) : v)),
     returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _resolveType) : undefined,
+    async: obj['async'] !== undefined ? resolveField(obj['async'], _r13hd526) : undefined,
+    move: obj['move'] !== undefined ? resolveField(obj['move'], _re496wn) : undefined,
+    static: obj['static'] !== undefined ? resolveField(obj['static'], _r100m9e0) : undefined,
   } as ClosureExpressionConfig) as unknown as ClosureExpression;
 }
 
@@ -2408,11 +2582,19 @@ export function functionItemFrom(input: FunctionItem | FunctionItemFromInput | o
 export function functionModifiersFrom(input: FunctionModifiers | FunctionModifiersFromInput | object): FunctionModifiers {
   if (isNodeData(input)) {
     return function_modifiers_({
+      async: input.fields?.['async'],
+      default: input.fields?.['default'],
+      const: input.fields?.['const'],
+      unsafe: input.fields?.['unsafe'],
       children: (input as { children?: unknown }).children,
     } as FunctionModifiersConfig) as unknown as FunctionModifiers;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return function_modifiers_({
+    async: obj['async'] !== undefined ? resolveField(obj['async'], _r13hd526) : undefined,
+    default: obj['default'] !== undefined ? resolveField(obj['default'], _r672z45) : undefined,
+    const: obj['const'] !== undefined ? resolveField(obj['const'], _r13ion5z) : undefined,
+    unsafe: obj['unsafe'] !== undefined ? resolveField(obj['unsafe'], _r117cs82) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? externModifierFrom(v) : v)) : undefined,
   } as FunctionModifiersConfig) as unknown as FunctionModifiers;
 }
@@ -3664,11 +3846,15 @@ export function variadicParameterFrom(input: VariadicParameter | VariadicParamet
 export function visibilityModifierFrom(input: VisibilityModifier | VisibilityModifierFromInput | object): VisibilityModifier {
   if (isNodeData(input)) {
     return visibility_modifier_({
+      pub: input.fields?.['pub'],
+      in: input.fields?.['in'],
       children: (input as { children?: unknown }).children,
     } as VisibilityModifierConfig) as unknown as VisibilityModifier;
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return visibility_modifier_({
+    pub: obj['pub'] !== undefined ? resolveField(obj['pub'], _r19mnnrb) : undefined,
+    in: obj['in'] !== undefined ? resolveField(obj['in'], _reapg5z) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _rhh310) : undefined,
   } as VisibilityModifierConfig) as unknown as VisibilityModifier;
 }

@@ -443,6 +443,9 @@ export interface ClosureExpression {
     readonly body: Block | Expression;
     readonly parameters: ClosureParameters;
     readonly returnType?: Type;
+    readonly async?: 'async';
+    readonly move?: 'move';
+    readonly static?: 'static';
   };
 }
 export interface ClosureParameters {
@@ -617,6 +620,12 @@ export interface FunctionItem {
 }
 export interface FunctionModifiers {
   readonly type: 'function_modifiers';
+  readonly fields: {
+    readonly async?: 'async';
+    readonly default?: 'default';
+    readonly const?: 'const';
+    readonly unsafe?: 'unsafe';
+  };
   readonly children?: readonly (ExternModifier)[];
 }
 export interface FunctionSignatureItem {
@@ -1203,6 +1212,10 @@ export interface VariadicParameter {
 }
 export interface VisibilityModifier {
   readonly type: 'visibility_modifier';
+  readonly fields: {
+    readonly pub?: 'pub';
+    readonly in?: 'in';
+  };
   readonly children?: Path;
 }
 export interface WhereClause {
@@ -1474,7 +1487,10 @@ export type UseDeclarationConfig = ConfigOf<UseDeclaration>;
 export type UseListConfig = ConfigOf<UseList>;
 export type UseWildcardConfig = ConfigOf<UseWildcard>;
 export type VariadicParameterConfig = ConfigOf<VariadicParameter>;
-export type VisibilityModifierConfig = ConfigOf<VisibilityModifier>;
+export type VisibilityModifierConfig =
+  | Pick<ConfigOf<VisibilityModifier>, 'children'>
+  | Pick<ConfigOf<VisibilityModifier>, 'children' | 'in' | 'pub'>
+;
 export type WhereClauseConfig = ConfigOf<WhereClause>;
 export type WherePredicateConfig = ConfigOf<WherePredicate>;
 export type WhileExpressionConfig = ConfigOf<WhileExpression>;

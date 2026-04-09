@@ -434,11 +434,17 @@ export function wrapCapturedPattern(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapClosureExpression(data: AnyNodeData, tree: TreeHandle): unknown {
+  promoteAnon(data, 'async', ["async"]);
+  promoteAnon(data, 'move', ["move"]);
+  promoteAnon(data, 'static', ["static"]);
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
+    get async() { return (data.fields?.['async'] as AnyNodeData | undefined)?.text; },
+    get move() { return (data.fields?.['move'] as AnyNodeData | undefined)?.text; },
+    get static() { return (data.fields?.['static'] as AnyNodeData | undefined)?.text; },
   };
 }
 
@@ -670,8 +676,16 @@ export function wrapFunctionItem(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapFunctionModifiers(data: AnyNodeData, tree: TreeHandle): unknown {
+  promoteAnon(data, 'async', ["async"]);
+  promoteAnon(data, 'default', ["default"]);
+  promoteAnon(data, 'const', ["const"]);
+  promoteAnon(data, 'unsafe', ["unsafe"]);
   return {
     ...data,
+    get async() { return (data.fields?.['async'] as AnyNodeData | undefined)?.text; },
+    get default() { return (data.fields?.['default'] as AnyNodeData | undefined)?.text; },
+    get const() { return (data.fields?.['const'] as AnyNodeData | undefined)?.text; },
+    get unsafe() { return (data.fields?.['unsafe'] as AnyNodeData | undefined)?.text; },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
@@ -1455,8 +1469,12 @@ export function wrapVariadicParameter(data: AnyNodeData, tree: TreeHandle): unkn
 }
 
 export function wrapVisibilityModifier(data: AnyNodeData, tree: TreeHandle): unknown {
+  promoteAnon(data, 'pub', ["pub"]);
+  promoteAnon(data, 'in', ["in"]);
   return {
     ...data,
+    get pub() { return (data.fields?.['pub'] as AnyNodeData | undefined)?.text; },
+    get in() { return (data.fields?.['in'] as AnyNodeData | undefined)?.text; },
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }

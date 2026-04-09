@@ -34,7 +34,7 @@ rules:
   call_expression: $FUNCTION $ARGUMENTS
   captured_pattern: $IDENTIFIER @ $PATTERN
   closure_expression:
-    template: $PARAMETERS $RETURN_TYPE_CLAUSE $BODY
+    template: $STATIC $ASYNC $MOVE $PARAMETERS $RETURN_TYPE_CLAUSE $BODY
     return_type_clause: -> $RETURN_TYPE
   closure_parameters:
     template: "| $$$CHILDREN |"
@@ -85,7 +85,7 @@ rules:
   function_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
     return_type_clause: -> $RETURN_TYPE
-  function_modifiers: $$$CHILDREN
+  function_modifiers: $ASYNC $DEFAULT $CONST $UNSAFE $$$CHILDREN
   function_signature_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE ;
     return_type_clause: -> $RETURN_TYPE
@@ -238,7 +238,7 @@ rules:
     pattern_clause: "$PATTERN :"
   visibility_modifier:
     - $CHILDREN
-    - pub $CHILDREN
+    - $PUB $CHILDREN $IN
   where_clause:
     template: where $$$CHILDREN
     joinBy: ","
