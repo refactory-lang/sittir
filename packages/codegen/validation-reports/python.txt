@@ -1,0 +1,73 @@
+Generating python IR...
+  'block': node-types=branch, grammar=leaf
+  'delete_statement': node-types=container, grammar=leaf
+  'finally_clause': node-types=branch, grammar=leaf
+  'future_import_statement': node-types=branch, grammar=leaf
+  'import_statement': node-types=branch, grammar=leaf
+  'lambda_parameters': node-types=container, grammar=leaf
+  'list': node-types=container, grammar=leaf
+  'list_pattern': node-types=container, grammar=leaf
+  'module': node-types=container, grammar=leaf
+  'parameters': node-types=container, grammar=leaf
+  'return_statement': node-types=container, grammar=leaf
+  'set': node-types=container, grammar=leaf
+  'tuple': node-types=container, grammar=leaf
+  'tuple_pattern': node-types=container, grammar=leaf
+  'union_pattern': node-types=container, grammar=leaf
+
+@sittir/python: 101 kinds
+  v 101/101 variable resolution
+  v 101/101 field coverage
+  v 26/26 override consistency (26 nodes with overrides)
+  v 101/101 template structure
+
+  Warnings (2):
+    dict_pattern: [field-coverage] tree-sitter FIELD 'key' not explicitly in template (covered by $$$CHILDREN)
+    dict_pattern: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+
+Running round-trip validation...
+  x 14/115 round-trip (0 skipped, 101 errors)
+    x Subscript expressions [module]: re-parse error: "a[1] b[2, 3] c[4, 5,]"
+    x Subscript slice expressions [module]: re-parse error: "a[:] b[5:] b[5:6, ...] c[::]"
+    x Await expressions [module]: re-parse error: "await i(j, 5) return await i(j, 5) async def region_exists(region: str) -> bool:"
+    x Call expressions [module]: re-parse error: "__a__() b(1) c(e, f=g) i(j, 5,)"
+    x Print used as an identifier [module]: re-parse error: "print() print(a) print(a, b=c) print(d, e) print(d, *e) print(*f, **g,) a(print)"
+    x Print used as a parameter [module]: re-parse error: "def a(print):
+ b def a(printer=print):
+ c def a(*print):
+ b def a(**print):
+ b d"
+    x Exec used as an identifier [module]: re-parse error: "exec("print \"'%s' has %i characters\" % (public_function(), len(public_function"
+    x Async / await used as identifiers [module]: re-parse error: "async = 4 await = 5 print async, await"
+    x Calls with splats [module]: re-parse error: "a(*()) a(**{}) a(*b) c(d, *e, **g)"
+    x Math operators [module]: re-parse error: "a + b * c ** d - e / 5 a // 2 -5 +x ~x"
+    x Binary Addition / Subtraction With Floats [module]: re-parse error: ".1-.0 .1+.0 .1-0 .1+0 1-.0 1+.0"
+    x Boolean operators [module]: re-parse error: "a or b and c not d not a and b or c a and not b and c"
+    x Comparison operators [module]: re-parse error: "a < b <= c == d >= e > f not a == b or c == d a not in b a is not b a is b and c"
+    x Assignments [module]: re-parse error: "a = 1 a, b = 1, 2 a, *c = 1, 2, 3 a, = 1, 2 a[b] = c = d a, *b.c = d"
+    x Assignments with type annotations [assignment]: re-parse error: "tail_leaves=[] List[Leaf]"
+    ... and 86 more
+  x 40/99 factory round-trip (0 skipped, 59 errors)
+    x slice: re-parse error: ":"
+    x await: kind not found in re-parse (rendered: "await")
+    x return_statement: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x typed_parameter: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x type: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x comparison_operator: re-parse error: "in"
+    x keyword_argument: kind not found in re-parse (rendered: "f=g")
+    x dictionary_splat: re-parse error: "**"
+    x default_parameter: kind not found in re-parse (rendered: "printer=print")
+    x list_splat_pattern: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x dictionary_splat_pattern: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x string_content: re-parse error: "\" \""
+    x pair: re-parse error: ""__builtins__": None"
+    x pattern_list: kind not found in re-parse (rendered: "a,b ,")
+    x expression_list: kind not found in re-parse (rendered: "1,2 ,")
+    ... and 44 more
+
+160 round-trip failure(s) — see above.
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+

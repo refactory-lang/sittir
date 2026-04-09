@@ -1,0 +1,33 @@
+Generating typescript IR...
+  'call_signature': node-types=branch, grammar=leaf
+  'expression_statement': node-types=container, grammar=leaf
+  'extends_clause': node-types=branch, grammar=leaf
+  'formal_parameters': node-types=container, grammar=leaf
+  'internal_module': node-types=branch, grammar=leaf
+  'module': node-types=branch, grammar=leaf
+  'namespace_export': node-types=container, grammar=leaf
+  'rest_pattern': node-types=container, grammar=leaf
+  'return_statement': node-types=container, grammar=leaf
+  'template_substitution': node-types=container, grammar=leaf
+  'throw_statement': node-types=container, grammar=leaf
+  'tuple_type': node-types=container, grammar=leaf
+
+@sittir/typescript: 145 kinds
+  v 145/145 variable resolution
+  v 145/145 field coverage
+  v 46/46 override consistency (46 nodes with overrides)
+  v 145/145 template structure
+  v 1/1 variant subtypes
+
+  Warnings (2):
+    export_statement: [override-consistency] override 'declaration' collides with tree-sitter FIELD
+    export_statement: [override-consistency] override 'source' collides with tree-sitter FIELD
+
+Running round-trip validation...
+  v 0/4 round-trip (4 skipped, 0 errors)
+  v 0/0 factory round-trip (0 skipped, 0 errors)
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+

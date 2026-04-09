@@ -1,0 +1,57 @@
+Generating rust IR...
+  'token_repetition': node-types=container, grammar=leaf
+  'token_repetition_pattern': node-types=container, grammar=leaf
+  'token_tree': node-types=container, grammar=leaf
+  'token_tree_pattern': node-types=container, grammar=leaf
+  'use_list': node-types=container, grammar=leaf
+  'use_wildcard': node-types=branch, grammar=leaf
+
+@sittir/rust: 137 kinds
+  v 137/137 variable resolution
+  v 137/137 field coverage
+  v 64/64 override consistency (64 nodes with overrides)
+  v 137/137 template structure
+  v 2/2 variant subtypes
+
+Running round-trip validation...
+  x 28/149 round-trip (2 skipped, 119 errors)
+    x Async function [try_expression]: re-parse error: "?"
+    x Await expression [await_expression]: re-parse error: "futures.await"
+    x Async closure [closure_expression]: re-parse error: "async || ()"
+    x Async move async move closure [closure_expression]: re-parse error: "async move || async move {}"
+    x Gen Block [yield_expression]: re-parse error: "yield yield"
+    x Function declarations [return_expression]: re-parse error: "return return"
+    x Functions with abstract return types [abstract_type]: re-parse error: "impl B"
+    x Impl with lifetimes first [abstract_type]: re-parse error: "impl 'a + Clone"
+    x Functions with precise capture syntax [bounded_type]: re-parse error: "use<'_, T> +"
+    x Functions with empty precise capture syntax [bounded_type]: re-parse error: "use<> +"
+    x Extern function declarations [string_literal]: re-parse error: "" C ""
+    x Use declarations [scoped_identifier]: re-parse error: "phrases::japanese"
+    x Variable bindings [string_literal]: re-parse error: "" ""
+    x Let-else Statements [struct_pattern]: re-parse error: "Foo::Bar{texts,values}"
+    x Structs [struct_item]: re-parse error: "struct Proton"
+    ... and 104 more
+  x 62/135 factory round-trip (2 skipped, 71 errors)
+    x try_expression: re-parse error: "?"
+    x await_expression: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x expression_statement: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x call_expression: re-parse error: "futures.await?.function ()"
+    x field_expression: re-parse error: "futures.await?.function"
+    x closure_expression: re-parse error: "async || ()"
+    x yield_expression: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x return_expression: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x binary_expression: re-parse error: "x + y"
+    x reference_type: re-parse error: "& str"
+    x token_tree: re-parse error: "("Got: {}" slice)"
+    x string_literal: re-parse error: "" Got: {} ""
+    x array_type: re-parse error: "[u32 ; 2]"
+    x array_expression: re-parse error: "[ ; ]"
+    x tuple_type: re-parse error: "(u32,u16)"
+    ... and 56 more
+
+190 round-trip failure(s) — see above.
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+
